@@ -1,0 +1,82 @@
+\RequirePackage[l2tabu, orthodox]{nag}
+\documentclass[paper=a4,twoside,colorback,accentcolor=tud9c,11pt,bigchapter,longdoc]{tudreport}
+\usepackage{ngerman}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx} % \includegraphics
+\usepackage[%final
+]{showkeys} % display labels and refs
+\usepackage{cleveref} % \cref
+\usepackage{booktabs} % tabulars with no vertical border
+\usepackage{microtype} % Wordspacing tweak
+\usepackage{xspace} % intelligent spaces
+\usepackage[section]{placeins} % Introduce \FloatBarrier to display all floats before this line
+\usepackage[bottom]{footmisc} % controlling footnotes
+
+\newcommand{\tkAuthor}{Florian Müller\xspace}
+\newcommand{\tkThesisType}{Masterarbeit\xspace}
+\newcommand{\tkTitle}{Interlinking Social Online Communities\xspace}
+\newcommand{\tkAdvisor}{Prof. Dr. Max Mühlhäuser\xspace}
+\newcommand{\tkResp}{Dipl.-Inform. Kai Höver\xspace}
+\newcommand{\tkSubmissionDate}{\today\xspace}
+
+\usepackage[pdftex,hyperfootnotes=true,pdfpagelabels]{hyperref}
+	\pdfcompresslevel=9
+	\pdfadjustspacing=1 
+\hypersetup{%
+    colorlinks=false, linktocpage=false, pdfstartpage=1, pdfstartview=FitV,%
+    breaklinks=true, pdfpagemode=UseNone, pageanchor=true, pdfpagemode=UseOutlines, pdfborder={0 0 0},
+    pdftitle={\tkTitle, \tkThesisType},%
+    pdfauthor={\tkAuthor},%
+    pdfsubject={},%
+    pdfkeywords={},%
+    pdfcreator={},%
+    pdfproducer={}%
+}
+
+\begin{document}
+
+\title{\tkTitle}
+\subtitle{\tkThesisType}
+\subsubtitle{
+\noindent
+von \tkAuthor \\
+Betreuer: \tkAdvisor \\
+Verantwortlicher Mitarbeiter: \tkResp \\
+Darmstadt, \tkSubmissionDate
+}
+\institution{
+Fachbereich Informatik\\
+Telekooperation\\
+Prof. Dr. Max Mühlhäuser
+}
+
+\pagenumbering{roman}
+\maketitle
+
+%\thispagestyle{empty}
+\chapter*{Ehrenwörtliche Erklärung}
+
+Hiermit versichere ich, die vorliegende \tkThesisType ohne Hilfe Dritter und nur mit den angegebenen Quellen 
+und Hilfsmitteln angefertigt zu haben. Alle Stellen, die aus den Quellen entnommen wurden, sind als solche 
+kenntlich gemacht worden. Diese Arbeit hat in dieser oder ähnlicher Form noch keiner Prüfungsbehörde vorgelegen.
+	
+\vskip5ex
+Darmstadt, den \tkSubmissionDate
+\vskip6ex
+\tudrule[0.5\textwidth]\\
+{\normalsize(\tkAuthor)}
+
+\cleardoublepage
+\tableofcontents
+\cleardoublepage
+
+\pagenumbering{arabic}
+
+% include thesis content
+\include{content}
+
+\addcontentsline{toc}{chapter}{Literaturverzeichnis}
+\bibliographystyle{geralpha}
+\bibliography{bibliography}
+
+\end{document}

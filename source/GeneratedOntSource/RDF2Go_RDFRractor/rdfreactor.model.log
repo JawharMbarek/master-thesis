@@ -1,0 +1,194 @@
+
+JModel
+  JPackage de.m0ep.uni.ma.rdf.sioc
+    JClass Thing -> http://www.w3.org/2000/01/rdf-schema#Class
+      extends: org.ontoware.rdfreactor.schema.rdfs.Class, 
+      comment: This class acts as a catch-all for all properties, for which no domain has specified.
+      Creator (-1/-1)  -> http://rdfs.org/sioc/ns#has_creator, types: 'UserAccount',. Inverse: Creator.
+      Date (-1/-1)  -> http://purl.org/dc/terms/date, types: 'Thing',. Inverse: Date.
+      Depiction (-1/-1)  -> http://xmlns.com/foaf/0.1/depiction, types: 'Thing',. Inverse: Depiction.
+      Description (-1/-1)  -> http://purl.org/dc/terms/description, types: 'Thing',. Inverse: Description.
+      DisjointWith (-1/-1)  -> http://www.w3.org/2002/07/owl#disjointWith, types: 'Thing',. Inverse: DisjointWith.
+      EquivalentClass (-1/-1)  -> http://www.w3.org/2002/07/owl#equivalentClass, types: 'Thing',. Inverse: EquivalentClass.
+      Function (-1/-1)  -> http://rdfs.org/sioc/ns#has_function, types: 'Role',. Inverse: Function.
+      Id (-1/-1)  -> http://rdfs.org/sioc/ns#id, types: 'java.lang.String',. Inverse: Id.
+      InverseOf (-1/-1)  -> http://www.w3.org/2002/07/owl#inverseOf, types: 'Thing',. Inverse: InverseOf.
+      Lastactivitydate (-1/-1)  -> http://rdfs.org/sioc/ns#last_activity_date, types: 'java.lang.String',. Inverse: Lastactivitydate.
+      Lastreplydate (-1/-1)  -> http://rdfs.org/sioc/ns#last_reply_date, types: 'java.lang.String',. Inverse: Lastreplydate.
+      Linksto (-1/-1)  -> http://rdfs.org/sioc/ns#links_to, types: 'Thing',. Inverse: Linksto.
+      Name (-1/-1)  -> http://rdfs.org/sioc/ns#name, types: 'java.lang.String',. Inverse: Name.
+      Note (-1/-1)  -> http://rdfs.org/sioc/ns#note, types: 'java.lang.String',. Inverse: Note.
+      Numauthors (-1/-1)  -> http://rdfs.org/sioc/ns#num_authors, types: 'java.lang.Integer',. Inverse: Numauthors.
+      Numreplies (-1/-1)  -> http://rdfs.org/sioc/ns#num_replies, types: 'java.lang.Integer',. Inverse: Numreplies.
+      Numviews (-1/-1)  -> http://rdfs.org/sioc/ns#num_views, types: 'java.lang.Integer',. Inverse: Numviews.
+      Owner (-1/-1)  -> http://rdfs.org/sioc/ns#has_owner, types: 'UserAccount',. Inverse: Owner.
+      References (-1/-1)  -> http://purl.org/dc/terms/references, types: 'Thing',. Inverse: References.
+      Relatedto (-1/-1)  -> http://rdfs.org/sioc/ns#related_to, types: 'Thing',. Inverse: Relatedto.
+      Scopeof (-1/-1)  -> http://rdfs.org/sioc/ns#scope_of, types: 'Role',. Inverse: Scopeof.
+      Space (-1/-1)  -> http://rdfs.org/sioc/ns#has_space, types: 'Space',. Inverse: Space.
+      TermsSubject (-1/-1)  -> http://purl.org/dc/terms/subject, types: 'Thing',. Inverse: TermsSubject.
+      Title (-1/-1)  -> http://purl.org/dc/terms/title, types: 'Thing',. Inverse: Title.
+      Topic (-1/-1)  -> http://rdfs.org/sioc/ns#topic, types: 'Thing',. Inverse: Topic.
+      VersionInfo (-1/-1)  -> http://www.w3.org/2002/07/owl#versionInfo, types: 'Thing',. Inverse: VersionInfo.
+    JClass Forum -> http://rdfs.org/sioc/ns#Forum
+      extends: Container, org.ontoware.rdfreactor.schema.rdfs.Resource, Forum, 
+      comment: A discussion area on which Posts or entries are made.
+      Host (-1/-1)  -> http://rdfs.org/sioc/ns#has_host, types: 'Site',. Inverse: Host.
+      Moderator (-1/-1)  -> http://rdfs.org/sioc/ns#has_moderator, types: 'UserAccount',. Inverse: Moderator.
+      Numthreads (-1/-1)  -> http://rdfs.org/sioc/ns#num_threads, types: 'java.lang.Integer',. Inverse: Numthreads.
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass Post -> http://rdfs.org/sioc/ns#Post
+      extends: Item, Document, Post, org.ontoware.rdfreactor.schema.rdfs.Resource, 
+      comment: An article or message that can be posted to a Forum.
+      Contentencoded (-1/-1)  -> http://rdfs.org/sioc/ns#content_encoded, types: 'java.lang.String',. Inverse: Contentencoded.
+      Createdat (-1/-1)  -> http://rdfs.org/sioc/ns#created_at, types: 'java.lang.String',. Inverse: Createdat.
+      Modifiedat (-1/-1)  -> http://rdfs.org/sioc/ns#modified_at, types: 'java.lang.String',. Inverse: Modifiedat.
+      NsDescription (-1/-1)  -> http://rdfs.org/sioc/ns#description, types: 'java.lang.String',. Inverse: NsDescription.
+      NsTitle (-1/-1)  -> http://rdfs.org/sioc/ns#title, types: 'java.lang.String',. Inverse: NsTitle.
+      Reference (-1/-1)  -> http://rdfs.org/sioc/ns#reference, types: 'Thing',. Inverse: Reference.
+      Subject (-1/-1)  -> http://rdfs.org/sioc/ns#subject, types: 'java.lang.String',. Inverse: Subject.
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass Site -> http://rdfs.org/sioc/ns#Site
+      extends: Space, org.ontoware.rdfreactor.schema.rdfs.Resource, Site, 
+      comment: A Site can be the location of an online community or set of communities, with UserAccounts and Usergroups creating Items in a set of Containers. It can be thought of as a web-accessible data Space.
+      Administrator (-1/-1)  -> http://rdfs.org/sioc/ns#has_administrator, types: 'UserAccount',. Inverse: Administrator.
+      Hostof (-1/-1)  -> http://rdfs.org/sioc/ns#host_of, types: 'Forum',. Inverse: Hostof.
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass UserAccount -> http://rdfs.org/sioc/ns#UserAccount
+      extends: OnlineAccount, org.ontoware.rdfreactor.schema.rdfs.Resource, UserAccount, 
+      comment: A user account in an online community site.
+      Accountof (-1/-1)  -> http://rdfs.org/sioc/ns#account_of, types: 'Agent',. Inverse: Accountof.
+      Administratorof (-1/-1)  -> http://rdfs.org/sioc/ns#administrator_of, types: 'Site',. Inverse: Administratorof.
+      Avatar (-1/-1)  -> http://rdfs.org/sioc/ns#avatar, types: 'Thing',. Inverse: Avatar.
+      Creatorof (-1/-1)  -> http://rdfs.org/sioc/ns#creator_of, types: 'Thing',. Inverse: Creatorof.
+      Email (-1/-1)  -> http://rdfs.org/sioc/ns#email, types: 'Thing',. Inverse: Email.
+      Emailsha1 (-1/-1)  -> http://rdfs.org/sioc/ns#email_sha1, types: 'java.lang.String',. Inverse: Emailsha1.
+      Firstname (-1/-1)  -> http://rdfs.org/sioc/ns#first_name, types: 'java.lang.String',. Inverse: Firstname.
+      Follows (-1/-1)  -> http://rdfs.org/sioc/ns#follows, types: 'UserAccount',. Inverse: Follows.
+      Lastname (-1/-1)  -> http://rdfs.org/sioc/ns#last_name, types: 'java.lang.String',. Inverse: Lastname.
+      Memberof (-1/-1)  -> http://rdfs.org/sioc/ns#member_of, types: 'Usergroup',. Inverse: Memberof.
+      Moderatorof (-1/-1)  -> http://rdfs.org/sioc/ns#moderator_of, types: 'Forum',. Inverse: Moderatorof.
+      Modifierof (-1/-1)  -> http://rdfs.org/sioc/ns#modifier_of, types: 'Item',. Inverse: Modifierof.
+      Ownerof (-1/-1)  -> http://rdfs.org/sioc/ns#owner_of, types: 'Thing',. Inverse: Ownerof.
+      Subscriberof (-1/-1)  -> http://rdfs.org/sioc/ns#subscriber_of, types: 'Container',. Inverse: Subscriberof.
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass Thread -> http://rdfs.org/sioc/ns#Thread
+      extends: Container, org.ontoware.rdfreactor.schema.rdfs.Resource, Thread, 
+      comment: A container for a series of threaded discussion Posts or Items.
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass User -> http://rdfs.org/sioc/ns#User
+      extends: OnlineAccount, org.ontoware.rdfreactor.schema.rdfs.Resource, User, 
+      comment: UserAccount is now preferred. This is a deprecated class for a User in an online community site.
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass Container -> http://rdfs.org/sioc/ns#Container
+      extends: org.ontoware.rdfreactor.schema.rdfs.Resource, Container, 
+      comment: An area in which content Items are contained.
+      Containerof (-1/-1)  -> http://rdfs.org/sioc/ns#container_of, types: 'Item',. Inverse: Containerof.
+      Lastitemdate (-1/-1)  -> http://rdfs.org/sioc/ns#last_item_date, types: 'java.lang.String',. Inverse: Lastitemdate.
+      Numitems (-1/-1)  -> http://rdfs.org/sioc/ns#num_items, types: 'java.lang.Integer',. Inverse: Numitems.
+      Parent (-1/-1)  -> http://rdfs.org/sioc/ns#has_parent, types: 'Container',. Inverse: Parent.
+      Parentof (-1/-1)  -> http://rdfs.org/sioc/ns#parent_of, types: 'Container',. Inverse: Parentof.
+      Subscriber (-1/-1)  -> http://rdfs.org/sioc/ns#has_subscriber, types: 'UserAccount',. Inverse: Subscriber.
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass Item -> http://rdfs.org/sioc/ns#Item
+      extends: org.ontoware.rdfreactor.schema.rdfs.Resource, Item, 
+      comment: An Item is something which can be in a Container.
+      About (-1/-1)  -> http://rdfs.org/sioc/ns#about, types: 'Thing',. Inverse: About.
+      Addressedto (-1/-1)  -> http://rdfs.org/sioc/ns#addressed_to, types: 'Thing',. Inverse: Addressedto.
+      Attachment (-1/-1)  -> http://rdfs.org/sioc/ns#attachment, types: 'Thing',. Inverse: Attachment.
+      Container (-1/-1)  -> http://rdfs.org/sioc/ns#has_container, types: 'Container',. Inverse: Container.
+      Content (-1/-1)  -> http://rdfs.org/sioc/ns#content, types: 'java.lang.String',. Inverse: Content.
+      Discussion (-1/-1)  -> http://rdfs.org/sioc/ns#has_discussion, types: 'Thing',. Inverse: Discussion.
+      Earlierversion (-1/-1)  -> http://rdfs.org/sioc/ns#earlier_version, types: 'Item',. Inverse: Earlierversion.
+      Embedsknowledge (-1/-1)  -> http://rdfs.org/sioc/ns#embeds_knowledge, types: 'Graph',. Inverse: Embedsknowledge.
+      Ipaddress (-1/-1)  -> http://rdfs.org/sioc/ns#ip_address, types: 'java.lang.String',. Inverse: Ipaddress.
+      Laterversion (-1/-1)  -> http://rdfs.org/sioc/ns#later_version, types: 'Item',. Inverse: Laterversion.
+      Latestversion (-1/-1)  -> http://rdfs.org/sioc/ns#latest_version, types: 'Item',. Inverse: Latestversion.
+      Modifier (-1/-1)  -> http://rdfs.org/sioc/ns#has_modifier, types: 'UserAccount',. Inverse: Modifier.
+      Nextbydate (-1/-1)  -> http://rdfs.org/sioc/ns#next_by_date, types: 'Item',. Inverse: Nextbydate.
+      Nextversion (-1/-1)  -> http://rdfs.org/sioc/ns#next_version, types: 'Item',. Inverse: Nextversion.
+      Previousbydate (-1/-1)  -> http://rdfs.org/sioc/ns#previous_by_date, types: 'Item',. Inverse: Previousbydate.
+      Previousversion (-1/-1)  -> http://rdfs.org/sioc/ns#previous_version, types: 'Item',. Inverse: Previousversion.
+      Reply (-1/-1)  -> http://rdfs.org/sioc/ns#has_reply, types: 'Item',. Inverse: Reply.
+      Replyof (-1/-1)  -> http://rdfs.org/sioc/ns#reply_of, types: 'Item',. Inverse: Replyof.
+      Sibling (-1/-1)  -> http://rdfs.org/sioc/ns#sibling, types: 'Item',. Inverse: Sibling.
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass Document -> http://xmlns.com/foaf/0.1/Document
+      extends: org.ontoware.rdfreactor.schema.rdfs.Resource, Document, 
+      comment: 
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass Agent -> http://xmlns.com/foaf/0.1/Agent
+      extends: org.ontoware.rdfreactor.schema.rdfs.Resource, Agent, 
+      comment: 
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass OnlineAccount -> http://xmlns.com/foaf/0.1/OnlineAccount
+      extends: org.ontoware.rdfreactor.schema.rdfs.Resource, OnlineAccount, 
+      comment: 
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass Space -> http://rdfs.org/sioc/ns#Space
+      extends: org.ontoware.rdfreactor.schema.rdfs.Resource, Space, 
+      comment: A Space is a place where data resides, e.g. on a website, desktop, fileshare, etc.
+      Spaceof (-1/-1)  -> http://rdfs.org/sioc/ns#space_of, types: 'Thing',. Inverse: Spaceof.
+      Usergroup (-1/-1)  -> http://rdfs.org/sioc/ns#has_usergroup, types: 'Usergroup',. Inverse: Usergroup.
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass Graph -> http://www.w3.org/2004/03/trix/rdfg-1/Graph
+      extends: org.ontoware.rdfreactor.schema.rdfs.Resource, Graph, 
+      comment: 
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass Role -> http://rdfs.org/sioc/ns#Role
+      extends: org.ontoware.rdfreactor.schema.rdfs.Resource, Role, 
+      comment: A Role is a function of a UserAccount within a scope of a particular Forum, Site, etc.
+      Functionof (-1/-1)  -> http://rdfs.org/sioc/ns#function_of, types: 'Thing',. Inverse: Functionof.
+      Scope (-1/-1)  -> http://rdfs.org/sioc/ns#has_scope, types: 'Thing',. Inverse: Scope.
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.
+    JClass Usergroup -> http://rdfs.org/sioc/ns#Usergroup
+      extends: org.ontoware.rdfreactor.schema.rdfs.Resource, Usergroup, 
+      comment: A set of UserAccounts whose owners have a common purpose or interest. Can be used for access control purposes.
+      Member (-1/-1)  -> http://rdfs.org/sioc/ns#has_member, types: 'UserAccount',. Inverse: Member.
+      Usergroupof (-1/-1)  -> http://rdfs.org/sioc/ns#usergroup_of, types: 'Space',. Inverse: Usergroupof.
+      comment (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#comment, types: . Inverse: comment.
+      label (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#label, types: . Inverse: label.
+      member (-1/-1)  -> http://www.w3.org/2000/01/rdf-schema#member, types: . Inverse: member.
+      type (-1/-1)  -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type, types: . Inverse: type.

@@ -1,5 +1,5 @@
 /* CVS $Id: $ */
-package de.m0ep.uni.ma.jena.vocabulary;
+package de.m0ep.uni.ma.rdf.vocabulary;
  
 import com.hp.hpl.jena.rdf.model.*;
  

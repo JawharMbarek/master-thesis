@@ -1,3 +1,4 @@
+package de.m0ep.uni.ma.rdf.vocabulary;
 /* CVS $Id: $ */
  
 import com.hp.hpl.jena.rdf.model.*;

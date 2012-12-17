@@ -1,0 +1,35 @@
+#surefire
+#Mon Dec 17 15:37:44 CET 2012
+testClassesDirectory=/home/florian/Develop/uni/master-thesis/source/ApacheJenaTNE/target/test-classes
+classPathUrl.4=/home/florian/.m2/repository/xerces/xercesImpl/2.10.0/xercesImpl-2.10.0.jar
+classPathUrl.3=/home/florian/.m2/repository/org/apache/jena/jena-iri/0.9.4/jena-iri-0.9.4.jar
+classPathUrl.2=/home/florian/.m2/repository/org/apache/jena/jena-core/2.7.4/jena-core-2.7.4.jar
+useManifestOnlyJar=true
+classPathUrl.1=/home/florian/Develop/uni/master-thesis/source/ApacheJenaTNE/target/classes
+reportsDirectory=/home/florian/Develop/uni/master-thesis/source/ApacheJenaTNE/target/surefire-reports
+classPathUrl.0=/home/florian/Develop/uni/master-thesis/source/ApacheJenaTNE/target/test-classes
+dirscanner.0=directoryScannerOptions
+providerConfiguration=org.apache.maven.surefire.junit4.JUnit4Provider
+testSuiteDefinitionTestSourceDirectory=/home/florian/Develop/uni/master-thesis/source/ApacheJenaTNE/src/test/java
+surefireClassPathUrl.1=/home/florian/.m2/repository/org/apache/maven/surefire/surefire-api/2.7.1/surefire-api-2.7.1.jar
+surefireClassPathUrl.0=/home/florian/.m2/repository/org/apache/maven/surefire/surefire-junit4/2.7.1/surefire-junit4-2.7.1.jar
+report.2=org.apache.maven.surefire.report.XMLReporter
+useSystemClassLoader=true
+report.1=org.apache.maven.surefire.report.BriefFileReporter
+report.0=org.apache.maven.surefire.report.ForkingConsoleReporter
+excludes0=**/*$*
+isTrimStackTrace=true
+dirscanner.0.params=/home/florian/Develop/uni/master-thesis/source/ApacheJenaTNE/target/test-classes|[**/Test*.java, **/*Test.java, **/*TestCase.java]|[**/*$*]
+includes2=**/*TestCase.java
+enableAssertions=true
+includes1=**/*Test.java
+failIfNoTests=false
+includes0=**/Test*.java
+dirscanner.0.types=java.io.File|java.util.ArrayList|java.util.ArrayList
+classPathUrl.10=/home/florian/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar
+classPathUrl.9=/home/florian/.m2/repository/junit/junit/4.11/junit-4.11.jar
+classPathUrl.8=/home/florian/.m2/repository/log4j/log4j/1.2.16/log4j-1.2.16.jar
+classPathUrl.7=/home/florian/.m2/repository/org/slf4j/slf4j-log4j12/1.6.4/slf4j-log4j12-1.6.4.jar
+childDelegation=false
+classPathUrl.6=/home/florian/.m2/repository/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4.jar
+classPathUrl.5=/home/florian/.m2/repository/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.jar

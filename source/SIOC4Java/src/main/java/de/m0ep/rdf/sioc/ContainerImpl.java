@@ -3,8 +3,8 @@ package de.m0ep.rdf.sioc;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -58,7 +58,7 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
         ContainerImpl impl = new ContainerImpl( resource, model );
 
         if( !impl.isRDFType( SIOC.Container ) )
-            impl.resource().addProperty( RDF.type, SIOC.Container );
+            impl.model().add( impl.resource(), RDF.type, SIOC.Container );
 
         return impl;
     }
@@ -71,7 +71,8 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
     public Set<Item> getContainerOf() {
         Set<Item> result = new HashSet<Item>();
 
-        StmtIterator iter = resource().listProperties( SIOC.container_of );
+        StmtIterator iter = model().listStatements( resource(),
+                SIOC.container_of, (RDFNode) null );
 
         while ( iter.hasNext() ) {
             Statement stmt = iter.nextStatement();
@@ -90,7 +91,7 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
      * @see de.m0ep.rdf.sioc.Container#addContainerOf(de.m0ep.rdf.sioc.Item)
      */
     public void addContainerOf( final Item item ) {
-        resource().addProperty( SIOC.container_of, item.getUri() );
+        model().add( resource(), SIOC.container_of, item.resource() );
     }
 
     /**
@@ -103,16 +104,23 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
     }
 
     /**
+     * Remove all Items from this container
+     */
+    public void removeAllContainerOf() {
+        model().removeAll( resource(), SIOC.container_of, null );
+    }
+
+    /**
      * Get the parent Container of this Container
      * 
      * @see de.m0ep.rdf.sioc.Container#getParent()
      */
     public Container getParent() {
-        Resource resource = resource().getPropertyResourceValue(
-                SIOC.has_parent );
+        Statement stmt = model().getProperty( resource(), SIOC.has_parent );
 
-        if( null != resource )
-            return SIOCFactory.getContainer( resource, model() );
+        if( null != stmt && stmt.getObject().isURIResource() )
+            return SIOCFactory.getContainer( stmt.getObject().asResource(),
+                    model() );
 
         return null;
     }
@@ -127,9 +135,9 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
      */
     public void setParent( final Container parent ) {
         if( null == parent )
-            resource().removeAll( SIOC.has_parent );
+            model().removeAll( resource(), SIOC.has_parent, null );
         else
-            resource().addProperty( SIOC.has_parent, parent.getUri() );
+            model().add( resource(), SIOC.has_parent, parent.resource() );
     }
 
     /**
@@ -142,7 +150,8 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
     public Set<UserAccount> getSubscriber() {
         Set<UserAccount> result = new HashSet<UserAccount>();
 
-        StmtIterator iter = resource().listProperties( SIOC.has_subscriber );
+        StmtIterator iter = model().listStatements( resource(),
+                SIOC.has_subscriber, (RDFNode) null );
 
         while ( iter.hasNext() ) {
             Statement stmt = iter.nextStatement();
@@ -163,7 +172,7 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
      * @see de.m0ep.rdf.sioc.Container#addSubscriber(de.m0ep.rdf.sioc.UserAccount)
      */
     public void addSubscriber( final UserAccount account ) {
-        resource().addProperty( SIOC.has_subscriber, account.getUri() );
+        model().add( resource(), SIOC.has_subscriber, account.resource() );
     }
 
     /**
@@ -176,17 +185,25 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
     }
 
     /**
+     * Remove all subscribers from this Container
+     */
+    @Override
+    public void removeAllSubscriber() {
+        model().removeAll( resource(), SIOC.has_subscriber, null );
+    }
+
+    /**
      * Get the date of the last item in this Container
      * 
      * @return Literal
      * 
      * @see de.m0ep.rdf.sioc.Container#getLastItemDate()
      */
-    public Literal getLastItemDate() {
-        Statement stmt = resource().getProperty( SIOC.last_item_date );
+    public String getLastItemDate() {
+        Statement stmt = model().getProperty( resource(), SIOC.last_item_date );
 
-        if( null != stmt )
-            return stmt.getObject().asLiteral();
+        if( null != stmt && stmt.getObject().isLiteral() )
+            return stmt.getObject().asLiteral().getString();
 
         return null;
     }
@@ -200,11 +217,12 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
      * @see de.m0ep.rdf.sioc.Container#setLastItemDate(com.hp.hpl.jena.rdf.model.
      *      Literal)
      */
-    public void setLastItemDate( Literal date ) {
+    public void setLastItemDate( String date ) {
         if( null == date )
-            resource().removeAll( SIOC.last_item_date );
+            model().removeAll( resource(), SIOC.last_item_date, null );
         else
-            resource().addLiteral( SIOC.last_item_date, date );
+            model().addLiteral( resource(), SIOC.last_item_date,
+                    model().createLiteral( date ) );
     }
 
     /**
@@ -215,7 +233,7 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
      * @see de.m0ep.rdf.sioc.Container#getNumItems()
      */
     public int getNumItems() {
-        Statement stmt = resource().getProperty( SIOC.last_item_date );
+        Statement stmt = model().getProperty( resource(), SIOC.num_items );
 
         if( null != stmt && stmt.getObject().isLiteral() )
             return stmt.getObject().asLiteral().getInt();
@@ -233,9 +251,9 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
      */
     public void setNumItems( Integer numItems ) {
         if( null == numItems )
-            resource().removeAll( SIOC.num_items );
+            model().removeAll( resource(), SIOC.num_items, null );
         else
-            resource().addLiteral( SIOC.num_items, numItems );
+            model().addLiteral( resource(), SIOC.num_items, numItems.intValue() );
     }
 
     /**
@@ -248,7 +266,8 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
     public Set<Container> getParentOf() {
         Set<Container> result = new HashSet<Container>();
 
-        StmtIterator iter = resource().listProperties( SIOC.parent_of );
+        StmtIterator iter = model().listStatements( resource(), SIOC.parent_of,
+                (RDFNode) null );
         while ( iter.hasNext() ) {
             Statement stmt = iter.nextStatement();
 
@@ -268,7 +287,7 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
      * @see de.m0ep.rdf.sioc.Container#addParentOf(de.m0ep.rdf.sioc.Container)
      */
     public void addParentOf( Container child ) {
-        resource().addProperty( SIOC.parent_of, child.getUri() );
+        model().add( resource(), SIOC.parent_of, child.resource() );
     }
 
     /**
@@ -282,4 +301,12 @@ public class ContainerImpl extends SIOCBaseImpl implements Container {
         model().removeAll( resource(), SIOC.parent_of, child.resource() );
     }
 
+    /**
+     * Remove all child Container from this Container
+     */
+    @Override
+    public void removeAllParentOf() {
+        resource().removeAll( SIOC.parent_of );
+        model().removeAll( resource(), SIOC.parent_of, null );
+    }
 }

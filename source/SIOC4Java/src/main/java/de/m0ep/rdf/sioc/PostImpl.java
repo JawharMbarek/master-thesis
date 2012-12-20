@@ -25,14 +25,14 @@ public class PostImpl extends ItemImpl implements Post {
         PostImpl impl = new PostImpl( resource, model );
 
         if( !impl.isRDFType( SIOC.Post ) )
-            impl.resource().addProperty( RDF.type, SIOC.Post );
+            impl.model().add( impl.resource(), RDF.type, SIOC.Post );
 
         // set superclass type
         if( !impl.isRDFType( SIOC.Item ) )
-            impl.resource().addProperty( RDF.type, SIOC.Item );
+            impl.model().add( impl.resource(), RDF.type, SIOC.Item );
 
         if( !impl.isRDFType( FOAF.Document ) )
-            impl.resource().addProperty( RDF.type, FOAF.Document );
+            impl.model().add( impl.resource(), RDF.type, FOAF.Document );
 
         return impl;
     }

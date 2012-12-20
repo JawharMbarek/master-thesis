@@ -32,10 +32,10 @@ public class UserAccountImpl extends SIOCBaseImpl implements UserAccount {
         UserAccountImpl impl = new UserAccountImpl( resource, model );
 
         if( !impl.isRDFType( SIOC.UserAccount ) )
-            impl.resource().addProperty( RDF.type, SIOC.UserAccount );
+            impl.model().add( impl.resource(), RDF.type, SIOC.UserAccount );
 
         if( !impl.isRDFType( FOAF.OnlineAccount ) )
-            impl.resource().addProperty( RDF.type, FOAF.OnlineAccount );
+            impl.model().add( impl.resource(), RDF.type, FOAF.OnlineAccount );
 
         return impl;
     }

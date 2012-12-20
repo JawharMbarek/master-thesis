@@ -25,7 +25,7 @@ public class CommunityImpl extends SIOCBaseImpl implements Community {
         CommunityImpl impl = new CommunityImpl( resource, model );
 
         if( !impl.isRDFType( SIOC.Community ) )
-            impl.resource().addProperty( RDF.type, SIOC.Community );
+            impl.model().add( impl.resource(), RDF.type, SIOC.Community );
 
         return impl;
     }

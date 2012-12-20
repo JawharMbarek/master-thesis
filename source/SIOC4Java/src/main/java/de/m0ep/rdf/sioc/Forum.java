@@ -42,6 +42,11 @@ public interface Forum extends Container {
     public void removeModerator( UserAccount account );
 
     /**
+     * sioc:has_moderator - A UserAccount that is a moderator of this Forum.
+     */
+    public void removeAllModerators();
+
+    /**
      * sioc:num_threads - The number of Threads (AKA discussion topics) in a
      * Forum.
      * 

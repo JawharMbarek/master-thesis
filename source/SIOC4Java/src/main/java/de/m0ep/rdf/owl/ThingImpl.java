@@ -80,4 +80,37 @@ public class ThingImpl implements Thing {
     public boolean isRDFType( Resource type ) {
         return resource.hasProperty( RDF.type, type );
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+
+        result = prime * result
+                + ( ( resource == null ) ? 0 : resource.hashCode() );
+
+        return result;
+    }
+
+    @Override
+    public boolean equals( Object obj ) {
+        if( this == obj )
+            return true;
+
+        if( obj == null )
+            return false;
+
+        if( getClass() != obj.getClass() )
+            return false;
+
+        ThingImpl other = (ThingImpl) obj;
+
+        if( resource == null ) {
+            if( other.resource != null )
+                return false;
+        } else if( !resource.equals( other.resource ) )
+            return false;
+        return true;
+    }
+
 }

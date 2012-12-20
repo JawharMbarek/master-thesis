@@ -28,7 +28,7 @@ public class ItemImpl extends SIOCBaseImpl implements Item {
         ItemImpl impl = new ItemImpl( resource, model );
 
         if( !impl.isRDFType( SIOC.Item ) )
-            impl.resource().addProperty( RDF.type, SIOC.Item );
+            impl.model().add( impl.resource(), RDF.type, SIOC.Item );
 
         return impl;
     }

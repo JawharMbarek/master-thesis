@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.m0ep.rdf.sioc.vocabulary.SIOC;
@@ -26,21 +27,30 @@ public class ForumImpl extends ContainerImpl implements Forum {
         ForumImpl impl = new ForumImpl( resource, model );
 
         if( !impl.isRDFType( SIOC.Forum ) )
-            impl.resource().addProperty( RDF.type, SIOC.Forum );
+            impl.model().add( impl.resource(), RDF.type, SIOC.Forum );
 
         if( !impl.isRDFType( SIOC.Container ) )
-            impl.resource().addProperty( RDF.type, SIOC.Container );
+            impl.model().add( impl.resource(), RDF.type, SIOC.Container );
 
         return impl;
     }
 
     public Site getHost() {
-        // TODO Auto-generated method stub
+        Statement stmt = model().getProperty( resource(), SIOC.has_host );
+
+        if( null != stmt && stmt.getObject().isURIResource() ) {
+            return SIOCFactory.getSite( stmt.getObject().asResource(), model() );
+        }
+
         return null;
     }
 
     public void setHost( Site host ) {
-        // TODO Auto-generated method stub
+        if( null == host ) {
+            model().removeAll( resource(), SIOC.has_host, null );
+        } else {
+            model().add( resource(), SIOC.has_host, host.resource() );
+        }
 
     }
 
@@ -55,6 +65,11 @@ public class ForumImpl extends ContainerImpl implements Forum {
     }
 
     public void removeModerator( UserAccount account ) {
+        // TODO Auto-generated method stub
+
+    }
+
+    public void removeAllModerators() {
         // TODO Auto-generated method stub
 
     }

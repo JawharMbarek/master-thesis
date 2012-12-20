@@ -2,8 +2,6 @@ package de.m0ep.rdf.sioc;
 
 import java.util.Set;
 
-import com.hp.hpl.jena.rdf.model.Literal;
-
 /**
  * Interface Container sioc:Container - An area in which content Items are
  * contained.
@@ -28,6 +26,11 @@ public interface Container extends SIOCBase {
      * @param item
      */
     public void removeContainerOf( Item item );
+
+    /**
+     * sioc:container_of - An Item that this Container contains.
+     */
+    public void removeAllContainerOf();
 
     /**
      * sioc:has_parent - A Container or Forum that this Container or Forum is a
@@ -65,12 +68,17 @@ public interface Container extends SIOCBase {
     public void removeSubscriber( UserAccount account );
 
     /**
+     * sioc:has_subscriber - A UserAccount that is subscribed to this Container.
+     */
+    public void removeAllSubscriber();
+
+    /**
      * sioc:last_item_date - The date and time of the last Post (or Item) in a
      * Forum (or a Container), in ISO 8601 format.
      * 
      * @return Literal
      */
-    public Literal getLastItemDate();
+    public String getLastItemDate();
 
     /**
      * sioc:last_item_date - The date and time of the last Post (or Item) in a
@@ -78,7 +86,7 @@ public interface Container extends SIOCBase {
      * 
      * @param date
      */
-    public void setLastItemDate( Literal date );
+    public void setLastItemDate( String date );
 
     /**
      * sioc:num_items - The number of Posts (or Items) in a Forum (or a
@@ -117,5 +125,11 @@ public interface Container extends SIOCBase {
      * @param child
      */
     public void removeParentOf( Container container );
+
+    /**
+     * sioc:parent_of - A child Container or Forum that this Container or Forum
+     * is a parent of.
+     */
+    public void removeAllParentOf();
 
 }

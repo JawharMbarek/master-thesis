@@ -26,7 +26,7 @@ public class RoleImpl extends SIOCBaseImpl implements Role {
         RoleImpl impl = new RoleImpl( resource, model );
 
         if( !impl.isRDFType( SIOC.Role ) )
-            impl.resource().addProperty( RDF.type, SIOC.Role );
+            impl.model().add( impl.resource(), RDF.type, SIOC.Role );
 
         return impl;
     }

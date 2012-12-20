@@ -26,7 +26,7 @@ public class SpaceImpl extends SIOCBaseImpl implements Space {
         SpaceImpl impl = new SpaceImpl( resource, model );
 
         if( !impl.isRDFType( SIOC.Space ) )
-            impl.resource().addProperty( RDF.type, SIOC.Space );
+            impl.model().add( impl.resource(), RDF.type, SIOC.Space );
 
         return impl;
     }

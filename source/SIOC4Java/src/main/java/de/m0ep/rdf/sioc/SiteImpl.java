@@ -26,11 +26,11 @@ public class SiteImpl extends SpaceImpl implements Site {
         SiteImpl impl = new SiteImpl( resource, model );
 
         if( !impl.isRDFType( SIOC.Site ) )
-            impl.resource().addProperty( RDF.type, SIOC.Site );
+            impl.model().add( impl.resource(), RDF.type, SIOC.Site );
 
         // Set superclass type
         if( !impl.isRDFType( SIOC.Space ) )
-            impl.resource().addProperty( RDF.type, SIOC.Space );
+            impl.model().add( impl.resource(), RDF.type, SIOC.Space );
 
         return impl;
     }

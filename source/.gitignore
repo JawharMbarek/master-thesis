@@ -5,10 +5,14 @@ bin/**
 bin/**/*
 tmp/**
 tmp/**/*
+/target/**
+/target/**/*
 *.tmp
+*.class
 *.bak
 *.swp
 *~.nib
+*.log
 local.properties
 .classpath
 .settings/

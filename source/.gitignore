@@ -1,12 +1,10 @@
 # Eclipse
 .project
 .metadata
-bin/**
-bin/**/*
-tmp/**
-tmp/**/*
-/target/**
-/target/**/*
+bin/*
+tmp/*
+/target/*
+
 *.tmp
 *.class
 *.bak

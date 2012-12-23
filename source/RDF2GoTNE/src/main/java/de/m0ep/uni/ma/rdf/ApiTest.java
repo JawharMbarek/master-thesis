@@ -1,13 +1,14 @@
 package de.m0ep.uni.ma.rdf;
 
-import java.io.IOException;
-
+import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.RDF2Go;
-import org.ontoware.rdf2go.exception.ModelRuntimeException;
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.Statement;
+import org.ontoware.rdf2go.model.node.Variable;
 
 import de.m0ep.uni.ma.rdf.sioc.Post;
 import de.m0ep.uni.ma.rdf.sioc.UserAccount;
+import de.m0ep.uni.ma.rdf.vocabularies.DCTerms;
 
 public class ApiTest {
 
@@ -33,16 +34,32 @@ public class ApiTest {
         post.setSIOCCreator( user );
         post.setSIOCTitle( model.createPlainLiteral( "Testpost" ) );
 
+        Post post2 = new Post( model, NS + "test2", true );
+        post2.setSIOCContent( "Hallo, World!" );
+        post2.setSIOCCreator( user );
+        post2.setSIOCTitle( model.createPlainLiteral( "Testpost2" ) );
 
-        try {
-            model.writeTo( System.out );
-        } catch ( ModelRuntimeException e ) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch ( IOException e ) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        post2.setSIOCReplyof( post );
+        post.addSIOCReply( post2 );
+
+        model.addStatement( post.asResource(), DCTerms.title,
+                model.createPlainLiteral( "Testpost" ) );
+        model.addStatement( post.asResource(), DCTerms.title,
+                model.createPlainLiteral( "Testpost" ) );
+        model.addStatement( post.asResource(), DCTerms.title,
+                model.createPlainLiteral( "Testpost" ) );
+
+
+        ClosableIterator<Statement> result = model.findStatements(
+                Variable.ANY, Variable.ANY, Variable.ANY );
+
+        while ( result.hasNext() ) {
+            Statement next = result.next();
+
+            System.out.println( next );
         }
+
+        // model.dump();
     }
 
 }

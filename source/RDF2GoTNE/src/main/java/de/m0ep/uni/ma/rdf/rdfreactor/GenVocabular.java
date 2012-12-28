@@ -32,6 +32,14 @@ public class GenVocabular {
                 "http://purl.org/dc/terms/", "-namespacestrict", "true" };
 
         VocabularyWriter.main( args );
+
+        args = new String[] { "-i",
+                "src/main/resources/ontologies/sioc_types.rdf", "-o",
+                "gen/vocabularies", "--package",
+                "de.m0ep.uni.ma.rdf.vocabularies", "-n", "SIOCTypes", "-a",
+                "http://rdfs.org/sioc/types#", "-namespacestrict", "true" };
+
+        VocabularyWriter.main( args );
     }
 
 }

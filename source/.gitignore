@@ -1,8 +1,14 @@
+# other
+/gen
+
 # Eclipse
 .project
 .metadata
 bin/
 tmp/
+.settings/
+.classpath
+.loadpath
 
 # Apache Maven
 target/
@@ -15,9 +21,7 @@ target/
 *.log
 *.log.1
 local.properties
-.classpath
-.settings/
-.loadpath
+
 
 # External tool builders
 .externalToolBuilders/

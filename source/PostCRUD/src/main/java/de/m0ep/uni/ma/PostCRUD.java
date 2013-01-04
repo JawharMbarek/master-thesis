@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -14,8 +16,10 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -34,11 +38,14 @@ import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.Reasoning;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Statement;
+import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.impl.NotifyingModelLayer;
+import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.Variable;
 import org.ontoware.rdf2go.util.RDFTool;
 
+import de.m0ep.uni.ma.rdf.ResourceIO;
 import de.m0ep.uni.ma.rdf.sioc.Post;
 
 public class PostCRUD extends JFrame {
@@ -48,6 +55,8 @@ public class PostCRUD extends JFrame {
 
     private JButton             newPost;
     private JButton             deletePost;
+    private JButton             exportPost;
+    private JButton             importPost;
     
     private JList<String>       list;
     private ListModel<String>   listModel;
@@ -75,27 +84,101 @@ public class PostCRUD extends JFrame {
             }
         });
         buttonGroup.add( newPost );
+        
         deletePost = new JButton( "Delete Post" );
         deletePost.addActionListener( new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent e ) {
-                int i = list.getSelectedIndex();
+                List<String> values = list.getSelectedValuesList();
 
-                if( 0 <= i ) {
-
-                    String uri = listModel.getElementAt( i );
-                    Post.deleteAllProperties( PostCRUD.this.model,
-                            PostCRUD.this.model.createURI( uri ) );
+                if( 0 < values.size() ) {
+                    for ( String value : values ) {
+                        Post.deleteAllProperties( PostCRUD.this.model,
+                                PostCRUD.this.model.createURI( value ) );
+                    }
                 }
             }
         } );
         buttonGroup.add( deletePost );
+       
+        exportPost = new JButton( "Export" );
+        exportPost.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed( ActionEvent e ) {
+                List<String> values = list.getSelectedValuesList();
+
+                if( 0 < values.size() ) {
+                    JFileChooser fc = new JFileChooser();
+                    fc.setDialogType( JFileChooser.SAVE_DIALOG );
+                    fc.setDialogTitle( "Save Post(s)" );
+                    fc.setSelectedFile( new File( "*.rdf" ) );
+                    int res = fc.showDialog( PostCRUD.this, "Save" );
+                    
+                    if(JFileChooser.APPROVE_OPTION == res){
+                        File outFile = fc.getSelectedFile();
+                    
+                        Resource[] resources = new Resource[values.size()];
+                        for ( int i = 0; i < values.size(); i++ ) {
+                            resources[i] = model.createURI( values.get( i ) );
+                        }
+                    
+                        try {
+                            ResourceIO.write( PostCRUD.this.model, outFile,
+                                    Syntax.RdfXml, resources );
+                        } catch ( IOException e1 ) {
+                            JOptionPane.showMessageDialog(
+                                    PostCRUD.this,
+                                    "Faild to save Post to "
+                                                    + outFile.getAbsolutePath()
+                                                    + "\n\n"
+                                            + e1.getLocalizedMessage(),
+                                    "Error", JOptionPane.ERROR_MESSAGE );
+                        }
+                    }
+                }
+            }
+        } );
+        buttonGroup.add( exportPost );
+        
+        importPost = new JButton("Import");
+        importPost.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed( ActionEvent e ) {
+                JFileChooser fc = new JFileChooser();
+                fc.setDialogType( JFileChooser.OPEN_DIALOG );
+                fc.setFileSelectionMode( JFileChooser.FILES_ONLY );
+                fc.setMultiSelectionEnabled( true );
+                fc.setDialogTitle( "Load Post(s)" );
+                int res = fc.showDialog( PostCRUD.this, "Open" );
+
+                if( JFileChooser.APPROVE_OPTION == res ) {
+                    System.out.println( "open " );
+                    File[] files = fc.getSelectedFiles();
+
+                    for ( File file : files ) {
+                        System.out.println( file );
+                        try {
+                            ResourceIO.read( PostCRUD.this.model, file );
+                        } catch ( IOException e1 ) {
+                            JOptionPane.showMessageDialog(
+                                    PostCRUD.this,
+                                    "Faild to read Post from "
+                                            + file.getAbsolutePath() + "\n\n"
+                                            + e1.getLocalizedMessage(),
+                                    "Error", JOptionPane.ERROR_MESSAGE );
+                        }
+                    }
+                }
+            }
+        } );
+        buttonGroup.add( importPost );
+        
         add( buttonGroup, BorderLayout.SOUTH );
 
 
         listModel = new PostListModel( this.model );
         list = new JList<String>( listModel );
-        list.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
+        list.setSelectionMode( ListSelectionModel.MULTIPLE_INTERVAL_SELECTION );
         list.addListSelectionListener( new ListSelectionListener() {
 
             @Override

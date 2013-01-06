@@ -24,7 +24,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -58,8 +57,8 @@ public class PostCRUD extends JFrame {
     private JButton             exportPost;
     private JButton             importPost;
     
-    private JList               list;
-    private ListModel           listModel;
+    private JList<String>       list;
+    private PostListModel       listModel;
     private JTree               treePane;
     private DefaultTreeModel    treeModel;
 
@@ -89,10 +88,10 @@ public class PostCRUD extends JFrame {
         deletePost.addActionListener( new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent e ) {
-                Object[] values = list.getSelectedValues();
+                List<String> values = list.getSelectedValuesList();
 
-                if( 0 < values.length ) {
-                    for ( Object value : values ) {
+                if( !values.isEmpty() ) {
+                    for ( String value : values ) {
                         Post.deleteAllProperties( PostCRUD.this.model,
                                 PostCRUD.this.model.createURI( value.toString() ) );
                     }
@@ -105,9 +104,9 @@ public class PostCRUD extends JFrame {
         exportPost.addActionListener( new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent e ) {
-                Object[] values = list.getSelectedValues();
+                List<String> values = list.getSelectedValuesList();
 
-                if( 0 < values.length ) {
+                if( !values.isEmpty() ) {
                     JFileChooser fc = new JFileChooser();
                     fc.setDialogType( JFileChooser.SAVE_DIALOG );
                     fc.setDialogTitle( "Save Post(s)" );
@@ -117,9 +116,9 @@ public class PostCRUD extends JFrame {
                     if(JFileChooser.APPROVE_OPTION == res){
                         File outFile = fc.getSelectedFile();
                     
-                        Resource[] resources = new Resource[values.length];
-                        for ( int i = 0; i < values.length; i++ ) {
-                            resources[i] = model.createURI( values[i]
+                        Resource[] resources = new Resource[values.size()];
+                        for ( int i = 0; i < values.size(); i++ ) {
+                            resources[i] = model.createURI( values.get( i )
                                     .toString() );
                         }
                     
@@ -177,8 +176,8 @@ public class PostCRUD extends JFrame {
         add( buttonGroup, BorderLayout.SOUTH );
 
 
-        listModel = (ListModel) new PostListModel( this.model );
-        list = new JList( listModel );
+        listModel = new PostListModel( this.model );
+        list = new JList<String>( listModel );
         list.setSelectionMode( ListSelectionModel.MULTIPLE_INTERVAL_SELECTION );
         list.addListSelectionListener( new ListSelectionListener() {
 
@@ -187,9 +186,9 @@ public class PostCRUD extends JFrame {
                 if( e.getValueIsAdjusting() )
                     return;
 
-                Object[] selected = list.getSelectedValues();
+                List<String> selected = list.getSelectedValuesList();
 
-                if( 0 == selected.length ) {
+                if( selected.isEmpty() ) {
                     treeModel.setRoot( null );
                     return;
                 }
@@ -198,8 +197,8 @@ public class PostCRUD extends JFrame {
                         "Selected posts" );
                 treeModel.setRoot( root );
 
-                for ( Object object : selected ) {
-                    addPostToTree( root, model, object.toString() );
+                for ( String uri : selected ) {
+                    addPostToTree( root, model, uri );
                 }
 
                 for ( int i = 0; i < treePane.getRowCount(); i++ ) {

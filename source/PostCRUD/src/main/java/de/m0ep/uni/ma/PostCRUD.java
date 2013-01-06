@@ -58,8 +58,8 @@ public class PostCRUD extends JFrame {
     private JButton             exportPost;
     private JButton             importPost;
     
-    private JList<String>       list;
-    private ListModel<String>   listModel;
+    private JList               list;
+    private ListModel           listModel;
     private JTree               treePane;
     private DefaultTreeModel    treeModel;
 
@@ -89,12 +89,12 @@ public class PostCRUD extends JFrame {
         deletePost.addActionListener( new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent e ) {
-                List<String> values = list.getSelectedValuesList();
+                Object[] values = list.getSelectedValues();
 
-                if( 0 < values.size() ) {
-                    for ( String value : values ) {
+                if( 0 < values.length ) {
+                    for ( Object value : values ) {
                         Post.deleteAllProperties( PostCRUD.this.model,
-                                PostCRUD.this.model.createURI( value ) );
+                                PostCRUD.this.model.createURI( value.toString() ) );
                     }
                 }
             }
@@ -105,9 +105,9 @@ public class PostCRUD extends JFrame {
         exportPost.addActionListener( new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent e ) {
-                List<String> values = list.getSelectedValuesList();
+                Object[] values = list.getSelectedValues();
 
-                if( 0 < values.size() ) {
+                if( 0 < values.length ) {
                     JFileChooser fc = new JFileChooser();
                     fc.setDialogType( JFileChooser.SAVE_DIALOG );
                     fc.setDialogTitle( "Save Post(s)" );
@@ -117,9 +117,10 @@ public class PostCRUD extends JFrame {
                     if(JFileChooser.APPROVE_OPTION == res){
                         File outFile = fc.getSelectedFile();
                     
-                        Resource[] resources = new Resource[values.size()];
-                        for ( int i = 0; i < values.size(); i++ ) {
-                            resources[i] = model.createURI( values.get( i ) );
+                        Resource[] resources = new Resource[values.length];
+                        for ( int i = 0; i < values.length; i++ ) {
+                            resources[i] = model.createURI( values[i]
+                                    .toString() );
                         }
                     
                         try {
@@ -176,62 +177,30 @@ public class PostCRUD extends JFrame {
         add( buttonGroup, BorderLayout.SOUTH );
 
 
-        listModel = new PostListModel( this.model );
-        list = new JList<String>( listModel );
+        listModel = (ListModel) new PostListModel( this.model );
+        list = new JList( listModel );
         list.setSelectionMode( ListSelectionModel.MULTIPLE_INTERVAL_SELECTION );
         list.addListSelectionListener( new ListSelectionListener() {
 
             @Override
             public void valueChanged( ListSelectionEvent e ) {
-                Model m = PostCRUD.this.model;
-                String uri = list.getSelectedValue();
+                if( e.getValueIsAdjusting() )
+                    return;
 
-                if( null == uri ) {
+                Object[] selected = list.getSelectedValues();
+
+                if( 0 == selected.length ) {
                     treeModel.setRoot( null );
                     return;
                 }
 
-                TreeNode root = new DefaultMutableTreeNode( uri );
+                MutableTreeNode root = new DefaultMutableTreeNode(
+                        "Selected posts" );
                 treeModel.setRoot( root );
 
-                ClosableIterator<Statement> iter = m.findStatements(
-                        m.createURI( uri ), Variable.ANY, Variable.ANY );
-
-                while ( iter.hasNext() ) {
-                    Statement statement = (Statement) iter.next();
-
-                    TreeNode child = null;
-                    String childName = getLastElementOfUri( statement
-                            .getPredicate().toString() );
-                    
-                    
-                    @SuppressWarnings( "unchecked" )
-                    Enumeration<TreeNode> children = root.children();
-                    
-                    while ( children.hasMoreElements() ) {
-                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) children
-                                .nextElement();
-
-                        if( node.getUserObject().equals( childName ) ) {
-                            child = node;
-                            break;
-                        }
-                    }
-
-                    if( null == child ) {
-                        child = new DefaultMutableTreeNode( childName );
-                        treeModel.insertNodeInto( (MutableTreeNode) child,
-                                (MutableTreeNode) root,
-                                root.getChildCount() );
-                    }
-
-                    MutableTreeNode leaf = new DefaultMutableTreeNode(
-                            statement.getObject().toString() );
-                    treeModel.insertNodeInto( leaf, (MutableTreeNode) child,
-                            child.getChildCount() );
-
+                for ( Object object : selected ) {
+                    addPostToTree( root, model, object.toString() );
                 }
-                iter.close();
 
                 for ( int i = 0; i < treePane.getRowCount(); i++ ) {
                     treePane.expandRow( i );
@@ -246,6 +215,50 @@ public class PostCRUD extends JFrame {
         JSplitPane split = new JSplitPane( JSplitPane.HORIZONTAL_SPLIT,
                 new JScrollPane( list ), new JScrollPane( treePane ) );
         add( split, BorderLayout.CENTER );
+    }
+
+    private void addPostToTree( MutableTreeNode root, Model model,
+            String postURI ) {
+
+        MutableTreeNode post = new DefaultMutableTreeNode( postURI );
+        treeModel.insertNodeInto( post, root, root.getChildCount() );
+
+        ClosableIterator<Statement> iter = model.findStatements(
+                model.createURI( postURI ), Variable.ANY, Variable.ANY );
+
+        while ( iter.hasNext() ) {
+            Statement statement = (Statement) iter.next();
+
+            TreeNode property = null;
+            String propertyName = getLastElementOfURI( statement.getPredicate()
+                    .toString() );
+
+            @SuppressWarnings( "unchecked" )
+            Enumeration<TreeNode> children = post.children();
+
+            while ( children.hasMoreElements() ) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) children
+                        .nextElement();
+
+                if( node.getUserObject().equals( propertyName ) ) {
+                    property = node;
+                    break;
+                }
+            }
+
+            if( null == property ) {
+                property = new DefaultMutableTreeNode( propertyName );
+                treeModel.insertNodeInto( (MutableTreeNode) property,
+                        (MutableTreeNode) post, post.getChildCount() );
+            }
+
+            MutableTreeNode leaf = new DefaultMutableTreeNode( statement
+                    .getObject().toString() );
+            treeModel.insertNodeInto( leaf, (MutableTreeNode) property,
+                    property.getChildCount() );
+
+        }
+        iter.close();
     }
 
     /**
@@ -266,7 +279,7 @@ public class PostCRUD extends JFrame {
      * @param uri
      * @return
      */
-    public String getLastElementOfUri( String uri ) {
+    public String getLastElementOfURI( String uri ) {
         // search for fragment
         int index = uri.lastIndexOf( '#' );
 
@@ -278,7 +291,7 @@ public class PostCRUD extends JFrame {
         return uri.substring( index + 1 );
     }
 
-    private List<URI> getAllManagedUris( List<URI> uris, Class<?> clazz ) {
+    public List<URI> getAllManagedUris( List<URI> uris, Class<?> clazz ) {
         if( null == uris )
             uris = new ArrayList<URI>();
 

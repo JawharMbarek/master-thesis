@@ -15,7 +15,7 @@ import com.google.common.base.Preconditions;
 
 import de.m0ep.uni.ma.rdf.vocabularies.SIOC;
 
-public class PostListModel extends AbstractListModel<String> implements
+public class PostListModel extends AbstractListModel implements
         ModelChangedListener {
 
     /**

@@ -1,5 +1,6 @@
 package de.m0ep.uni.ma.rdf;
 
+import java.util.Date;
 import java.util.Iterator;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
@@ -10,6 +11,7 @@ import org.ontoware.rdf2go.model.ModelChangedListener;
 import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.impl.NotifyingModelLayer;
 import org.ontoware.rdf2go.model.node.Variable;
+import org.ontoware.rdf2go.util.RDFTool;
 
 import de.m0ep.uni.ma.rdf.sioc.Post;
 import de.m0ep.uni.ma.rdf.sioc.UserAccount;
@@ -86,12 +88,14 @@ public class ApiTest {
         Post post = new Post( model, NS + "test", true );
         post.setSIOCContent( "Hallo, Welt!" );
         post.setSIOCCreator( user );
-        post.setSIOCTitle( model.createPlainLiteral( "Testpost" ) );
+        post.setDCTermsTitle( model.createPlainLiteral( "Testpost" ) );
+        post.setDCTermsCreated( RDFTool.dateTime2String( new Date() ) );
 
         Post post2 = new Post( model, NS + "test2", true );
         post2.setSIOCContent( "Hallo, World!" );
         post2.setSIOCCreator( user );
-        post2.setSIOCTitle( model.createPlainLiteral( "Testpost2" ) );
+        post2.setDCTermsTitle( model.createPlainLiteral( "Testpost2" ) );
+        post2.setDCTermsCreated( RDFTool.dateTime2String( new Date() ) );
 
         post2.setSIOCReplyof( post );
         post.addSIOCReply( post2 );
@@ -102,9 +106,8 @@ public class ApiTest {
                 model.createPlainLiteral( "Testpost" ) );
         model.addStatement( post.asResource(), DCTerms.title,
                 model.createPlainLiteral( "Testpost" ) );
-        post.setSIOCTitle( model.createPlainLiteral( "Updated Title" ) );
+        post.setDCTermsTitle( model.createPlainLiteral( "Updated Title" ) );
 
-        System.out.println( post );
 
 
         ClosableIterator<Statement> result = model.findStatements(

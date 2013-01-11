@@ -1,15 +1,21 @@
 package de.m0ep.uni.ma;
 
+import de.m0ep.uni.ma.plugin.Plugin;
+
 public class PluginA implements Plugin {
 
-    @Override
     public String getName() {
-        return "plugin A";
+        return "A";
     }
 
     @Override
-    public void init() {
-        System.out.println( "init Plugin " + getName() );
+    public void onLoad() {
+        System.out.println( "loaded" );
+    }
+
+    @Override
+    public void onUnload() {
+        System.out.println( "unloaded" );
     }
 
 }

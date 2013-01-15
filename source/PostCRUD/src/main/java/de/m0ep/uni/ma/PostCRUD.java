@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -15,16 +16,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -49,10 +41,11 @@ import de.m0ep.uni.ma.rdf.sioc.Post;
 
 public class PostCRUD extends JFrame {
     private static final long   serialVersionUID = 5598704821953402509L;
-    private static final String NS               = "http://m0ep.de/rdf/";
+    public static final String  NS               = "http://m0ep.de/rdf/";
     private NotifyingModelLayer model;
 
     private JButton             newPost;
+    private JButton             genPost;
     private JButton             deletePost;
     private JButton             exportPost;
     private JButton             importPost;
@@ -66,7 +59,7 @@ public class PostCRUD extends JFrame {
         this.model = new NotifyingModelLayer( model );
         
         setLayout( new BorderLayout() );
-        setSize( 500, 500 );
+        setSize( 600, 500 );
 
         JPanel buttonGroup = new JPanel();
         buttonGroup.setLayout( new FlowLayout( FlowLayout.CENTER ) );
@@ -75,15 +68,25 @@ public class PostCRUD extends JFrame {
         newPost.addActionListener( new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent e ) {
-                long id = new Date().getTime();
-                Post p = new Post( PostCRUD.this.model, NS + id, true );
-                p.setSIOCTitle( model.createPlainLiteral( "test titel" ) );
-                p.addSIOCDate( model.createPlainLiteral( RDFTool
-                        .dateTime2String( new Date() ) ) );
+                PostDialog.showCreateDialog( PostCRUD.this.model );
             }
         });
         buttonGroup.add( newPost );
         
+        genPost = new JButton( "Generate Post" );
+        genPost.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed( ActionEvent e ) {
+                long id = new Date().getTime();
+                Post p = new Post( PostCRUD.this.model, NS + id, true );
+                p.setSIOCId( Long.toString( id ) );
+                p.setDCTermsTitle( model.createPlainLiteral( "test titel" ) );
+                p.addDCTermsCreated( model.createPlainLiteral( RDFTool
+                        .dateTime2String( new Date() ) ) );
+            }
+        } );
+        buttonGroup.add( genPost );
+
         deletePost = new JButton( "Delete Post" );
         deletePost.addActionListener( new ActionListener() {
             @Override
@@ -205,6 +208,16 @@ public class PostCRUD extends JFrame {
                     treePane.expandRow( i );
                 }
             }
+        } );
+
+        list.addMouseListener( new MouseAdapter() {
+            public void mouseClicked( java.awt.event.MouseEvent e ) {
+                if( 2 == e.getClickCount() ) {
+                    String uri = list.getSelectedValue();
+                    PostDialog.showEditDialog( PostCRUD.this.model,
+                            PostCRUD.this.model.createURI( uri ) );
+                }
+            };
         } );
 
         treeModel = new DefaultTreeModel( null );

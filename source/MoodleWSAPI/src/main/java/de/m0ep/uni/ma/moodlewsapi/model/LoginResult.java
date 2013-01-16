@@ -2,11 +2,11 @@ package de.m0ep.uni.ma.moodlewsapi.model;
 
 public class LoginResult {
     private int    client;
-    private String sessionKey;
+    private String sessionkey;
 
     public LoginResult( int client, String sessionKey ) {
         this.client = client;
-        this.sessionKey = sessionKey;
+        this.sessionkey = sessionKey;
     }
 
     public int getClient() {
@@ -14,6 +14,6 @@ public class LoginResult {
     }
 
     public String getSessionKey() {
-        return sessionKey;
+        return sessionkey;
     }
 }

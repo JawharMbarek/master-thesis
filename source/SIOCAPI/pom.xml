@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>de.m0ep.uni.ma</groupId>
+  <artifactId>SIOCAPI</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+  	<dependency>
+  		<groupId>org.semweb4j</groupId>
+  		<artifactId>rdfreactor.generator</artifactId>
+  		<version>4.8.1</version>
+  		<exclusions>
+  			<exclusion>
+  				<artifactId>rdf2go.impl.sesame23</artifactId>
+  				<groupId>org.semweb4j</groupId>
+  			</exclusion>
+  		</exclusions>
+  	</dependency>
+  </dependencies>
+  <name>SIOC API</name>
+  <description>An API for the SIOC RDF Format based on RDF2Go and RDFReactor</description>
+</project>

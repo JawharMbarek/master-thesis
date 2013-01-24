@@ -1,8 +1,6 @@
 package de.m0ep.uni.ma;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.logging.Logger;
 
 import de.m0ep.uni.ma.plugin.Plugin;
@@ -28,9 +26,9 @@ public class PluginTest {
             System.out.println( "\t" + "class: " + p.getClass().getName()
                     + " | name: " + p.getName() );
         }
-
-        URL[] urls = ( (URLClassLoader) ClassLoader.getSystemClassLoader() )
-                .getURLs();
+        //
+        // URL[] urls = ( (URLClassLoader) ClassLoader.getSystemClassLoader() )
+        // .getURLs();
 
 
         pluginService.unload();

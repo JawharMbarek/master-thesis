@@ -1940,9 +1940,9 @@ public class Thing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Thing> getAllDCTermsDate( Model model,
+    public static ClosableIterator<String> getAllDCTermsDate( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, DATE, Thing.class );
+        return Base.getAll( model, instanceResource, DATE, String.class );
     }
 
     /**
@@ -1958,9 +1958,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get11static-reactorresult]
      */
-    public static ReactorResult<Thing> getAllDCTermsDate_as( Model model,
+    public static ReactorResult<String> getAllDCTermsDate_as( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, DATE, Thing.class );
+        return Base.getAll_as( model, instanceResource, DATE, String.class );
     }
 
     /**
@@ -1968,8 +1968,8 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Thing> getAllDCTermsDate() {
-        return Base.getAll( this.model, this.getResource(), DATE, Thing.class );
+    public ClosableIterator<String> getAllDCTermsDate() {
+        return Base.getAll( this.model, this.getResource(), DATE, String.class );
     }
 
     /**
@@ -1981,9 +1981,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllDCTermsDate_as() {
+    public ReactorResult<String> getAllDCTermsDate_as() {
         return Base.getAll_as( this.model, this.getResource(), DATE,
-                Thing.class );
+                String.class );
     }
 
     /**
@@ -2028,7 +2028,7 @@ public class Thing extends OwlThing {
      */
     public static void addDCTermsDate( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.add( model, instanceResource, DATE, value );
     }
 
@@ -2037,7 +2037,7 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addDCTermsDate( Thing value ) {
+    public void addDCTermsDate( String value ) {
         Base.add( this.model, this.getResource(), DATE, value );
     }
 
@@ -2094,7 +2094,7 @@ public class Thing extends OwlThing {
      */
     public static void setDCTermsDate( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.set( model, instanceResource, DATE, value );
     }
 
@@ -2109,7 +2109,7 @@ public class Thing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setDCTermsDate( Thing value ) {
+    public void setDCTermsDate( String value ) {
         Base.set( this.model, this.getResource(), DATE, value );
     }
 
@@ -2157,7 +2157,7 @@ public class Thing extends OwlThing {
      */
     public static void removeDCTermsDate( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.remove( model, instanceResource, DATE, value );
     }
 
@@ -2332,10 +2332,10 @@ public class Thing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Thing> getAllDCTermsDescription(
+    public static ClosableIterator<String> getAllDCTermsDescription(
             Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, DESCRIPTION, Thing.class );
+        return Base.getAll( model, instanceResource, DESCRIPTION, String.class );
     }
 
     /**
@@ -2351,11 +2351,11 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get11static-reactorresult]
      */
-    public static ReactorResult<Thing> getAllDCTermsDescription_as(
+    public static ReactorResult<String> getAllDCTermsDescription_as(
             Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
         return Base.getAll_as( model, instanceResource, DESCRIPTION,
-                Thing.class );
+                String.class );
     }
 
     /**
@@ -2364,9 +2364,9 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Thing> getAllDCTermsDescription() {
+    public ClosableIterator<String> getAllDCTermsDescription() {
         return Base.getAll( this.model, this.getResource(), DESCRIPTION,
-                Thing.class );
+                String.class );
     }
 
     /**
@@ -2378,9 +2378,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllDCTermsDescription_as() {
+    public ReactorResult<String> getAllDCTermsDescription_as() {
         return Base.getAll_as( this.model, this.getResource(), DESCRIPTION,
-                Thing.class );
+                String.class );
     }
 
     /**
@@ -2426,7 +2426,7 @@ public class Thing extends OwlThing {
      */
     public static void addDCTermsDescription( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.add( model, instanceResource, DESCRIPTION, value );
     }
 
@@ -2435,7 +2435,7 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addDCTermsDescription( Thing value ) {
+    public void addDCTermsDescription( String value ) {
         Base.add( this.model, this.getResource(), DESCRIPTION, value );
     }
 
@@ -2493,7 +2493,7 @@ public class Thing extends OwlThing {
      */
     public static void setDCTermsDescription( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.set( model, instanceResource, DESCRIPTION, value );
     }
 
@@ -2508,7 +2508,7 @@ public class Thing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setDCTermsDescription( Thing value ) {
+    public void setDCTermsDescription( String value ) {
         Base.set( this.model, this.getResource(), DESCRIPTION, value );
     }
 
@@ -8695,9 +8695,9 @@ public class Thing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Thing> getAllDCTermsSubject( Model model,
+    public static ClosableIterator<String> getAllDCTermsSubject( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, SUBJECT, Thing.class );
+        return Base.getAll( model, instanceResource, SUBJECT, String.class );
     }
 
     /**
@@ -8713,9 +8713,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get11static-reactorresult]
      */
-    public static ReactorResult<Thing> getAllDCTermsSubject_as( Model model,
+    public static ReactorResult<String> getAllDCTermsSubject_as( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, SUBJECT, Thing.class );
+        return Base.getAll_as( model, instanceResource, SUBJECT, String.class );
     }
 
     /**
@@ -8723,9 +8723,9 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Thing> getAllDCTermsSubject() {
+    public ClosableIterator<String> getAllDCTermsSubject() {
         return Base.getAll( this.model, this.getResource(), SUBJECT,
-                Thing.class );
+                String.class );
     }
 
     /**
@@ -8737,9 +8737,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllDCTermsSubject_as() {
+    public ReactorResult<String> getAllDCTermsSubject_as() {
         return Base.getAll_as( this.model, this.getResource(), SUBJECT,
-                Thing.class );
+                String.class );
     }
 
     /**
@@ -8784,7 +8784,7 @@ public class Thing extends OwlThing {
      */
     public static void addDCTermsSubject( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.add( model, instanceResource, SUBJECT, value );
     }
 
@@ -8793,7 +8793,7 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addDCTermsSubject( Thing value ) {
+    public void addDCTermsSubject( String value ) {
         Base.add( this.model, this.getResource(), SUBJECT, value );
     }
 
@@ -8850,7 +8850,7 @@ public class Thing extends OwlThing {
      */
     public static void setDCTermsSubject( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.set( model, instanceResource, SUBJECT, value );
     }
 
@@ -8865,7 +8865,7 @@ public class Thing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setDCTermsSubject( Thing value ) {
+    public void setDCTermsSubject( String value ) {
         Base.set( this.model, this.getResource(), SUBJECT, value );
     }
 
@@ -8914,7 +8914,7 @@ public class Thing extends OwlThing {
      */
     public static void removeDCTermsSubject( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.remove( model, instanceResource, SUBJECT, value );
     }
 
@@ -9087,9 +9087,9 @@ public class Thing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Thing> getAllDCTermsTitle( Model model,
+    public static ClosableIterator<String> getAllDCTermsTitle( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, TITLE, Thing.class );
+        return Base.getAll( model, instanceResource, TITLE, String.class );
     }
 
     /**
@@ -9105,9 +9105,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get11static-reactorresult]
      */
-    public static ReactorResult<Thing> getAllDCTermsTitle_as( Model model,
+    public static ReactorResult<String> getAllDCTermsTitle_as( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, TITLE, Thing.class );
+        return Base.getAll_as( model, instanceResource, TITLE, String.class );
     }
 
     /**
@@ -9115,8 +9115,9 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Thing> getAllDCTermsTitle() {
-        return Base.getAll( this.model, this.getResource(), TITLE, Thing.class );
+    public ClosableIterator<String> getAllDCTermsTitle() {
+        return Base
+                .getAll( this.model, this.getResource(), TITLE, String.class );
     }
 
     /**
@@ -9128,9 +9129,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllDCTermsTitle_as() {
+    public ReactorResult<String> getAllDCTermsTitle_as() {
         return Base.getAll_as( this.model, this.getResource(), TITLE,
-                Thing.class );
+                String.class );
     }
 
     /**
@@ -9175,7 +9176,7 @@ public class Thing extends OwlThing {
      */
     public static void addDCTermsTitle( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.add( model, instanceResource, TITLE, value );
     }
 
@@ -9184,7 +9185,7 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addDCTermsTitle( Thing value ) {
+    public void addDCTermsTitle( String value ) {
         Base.add( this.model, this.getResource(), TITLE, value );
     }
 
@@ -9241,7 +9242,7 @@ public class Thing extends OwlThing {
      */
     public static void setDCTermsTitle( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.set( model, instanceResource, TITLE, value );
     }
 
@@ -9256,7 +9257,7 @@ public class Thing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setDCTermsTitle( Thing value ) {
+    public void setDCTermsTitle( String value ) {
         Base.set( this.model, this.getResource(), TITLE, value );
     }
 
@@ -9304,7 +9305,7 @@ public class Thing extends OwlThing {
      */
     public static void removeDCTermsTitle( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.remove( model, instanceResource, TITLE, value );
     }
 
@@ -9477,9 +9478,9 @@ public class Thing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Thing> getAllSIOCTopic( Model model,
+    public static ClosableIterator<String> getAllSIOCTopic( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, TOPIC, Thing.class );
+        return Base.getAll( model, instanceResource, TOPIC, String.class );
     }
 
     /**
@@ -9495,9 +9496,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get11static-reactorresult]
      */
-    public static ReactorResult<Thing> getAllSIOCTopic_as( Model model,
+    public static ReactorResult<String> getAllSIOCTopic_as( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, TOPIC, Thing.class );
+        return Base.getAll_as( model, instanceResource, TOPIC, String.class );
     }
 
     /**
@@ -9505,8 +9506,9 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Thing> getAllSIOCTopic() {
-        return Base.getAll( this.model, this.getResource(), TOPIC, Thing.class );
+    public ClosableIterator<String> getAllSIOCTopic() {
+        return Base
+                .getAll( this.model, this.getResource(), TOPIC, String.class );
     }
 
     /**
@@ -9518,9 +9520,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllSIOCTopic_as() {
+    public ReactorResult<String> getAllSIOCTopic_as() {
         return Base.getAll_as( this.model, this.getResource(), TOPIC,
-                Thing.class );
+                String.class );
     }
 
     /**
@@ -9565,7 +9567,7 @@ public class Thing extends OwlThing {
      */
     public static void addSIOCTopic( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.add( model, instanceResource, TOPIC, value );
     }
 
@@ -9574,7 +9576,7 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addSIOCTopic( Thing value ) {
+    public void addSIOCTopic( String value ) {
         Base.add( this.model, this.getResource(), TOPIC, value );
     }
 
@@ -9631,7 +9633,7 @@ public class Thing extends OwlThing {
      */
     public static void setSIOCTopic( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.set( model, instanceResource, TOPIC, value );
     }
 
@@ -9646,7 +9648,7 @@ public class Thing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setSIOCTopic( Thing value ) {
+    public void setSIOCTopic( String value ) {
         Base.set( this.model, this.getResource(), TOPIC, value );
     }
 
@@ -9694,7 +9696,7 @@ public class Thing extends OwlThing {
      */
     public static void removeSIOCTopic( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.remove( model, instanceResource, TOPIC, value );
     }
 
@@ -11272,9 +11274,9 @@ public class Thing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Thing> getAllFOAFGivenname( Model model,
+    public static ClosableIterator<String> getAllFOAFGivenname( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, GIVENNAME, Thing.class );
+        return Base.getAll( model, instanceResource, GIVENNAME, String.class );
     }
 
     /**
@@ -11290,20 +11292,10 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get11static-reactorresult]
      */
-    public static ReactorResult<Thing> getAllFOAFGivenname_as( Model model,
+    public static ReactorResult<String> getAllFOAFGivenname_as( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, GIVENNAME, Thing.class );
-    }
-
-    /**
-     * Get all values of property Givenname * @return a ClosableIterator of
-     * $type
-     * 
-     * [Generated from RDFReactor template rule #get12dynamic]
-     */
-    public ClosableIterator<Thing> getAllFOAFGivenname() {
-        return Base.getAll( this.model, this.getResource(), GIVENNAME,
-                Thing.class );
+        return Base
+                .getAll_as( model, instanceResource, GIVENNAME, String.class );
     }
 
     /**
@@ -11315,9 +11307,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllFOAFGivenname_as() {
+    public ReactorResult<String> getAllFOAFGivenname_as() {
         return Base.getAll_as( this.model, this.getResource(), GIVENNAME,
-                Thing.class );
+                String.class );
     }
 
     /**
@@ -11362,7 +11354,7 @@ public class Thing extends OwlThing {
      */
     public static void addFOAFGivenname( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.add( model, instanceResource, GIVENNAME, value );
     }
 
@@ -11371,7 +11363,7 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addFOAFGivenname( Thing value ) {
+    public void addFOAFGivenname( String value ) {
         Base.add( this.model, this.getResource(), GIVENNAME, value );
     }
 
@@ -11428,7 +11420,7 @@ public class Thing extends OwlThing {
      */
     public static void setFOAFGivenname( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.set( model, instanceResource, GIVENNAME, value );
     }
 
@@ -11443,7 +11435,7 @@ public class Thing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setFOAFGivenname( Thing value ) {
+    public void setFOAFGivenname( String value ) {
         Base.set( this.model, this.getResource(), GIVENNAME, value );
     }
 
@@ -11491,7 +11483,7 @@ public class Thing extends OwlThing {
      */
     public static void removeFOAFGivenname( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.remove( model, instanceResource, GIVENNAME, value );
     }
 
@@ -13646,9 +13638,9 @@ public class Thing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Thing> getAllFOAFNickname( Model model,
+    public static ClosableIterator<String> getAllFOAFNickname( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, NICKNAME, Thing.class );
+        return Base.getAll( model, instanceResource, NICKNAME, String.class );
     }
 
     /**
@@ -13664,9 +13656,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get11static-reactorresult]
      */
-    public static ReactorResult<Thing> getAllFOAFNickname_as( Model model,
+    public static ReactorResult<String> getAllFOAFNickname_as( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, NICKNAME, Thing.class );
+        return Base.getAll_as( model, instanceResource, NICKNAME, String.class );
     }
 
     /**
@@ -13674,9 +13666,9 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Thing> getAllFOAFNickname() {
+    public ClosableIterator<String> getAllFOAFNickname() {
         return Base.getAll( this.model, this.getResource(), NICKNAME,
-                Thing.class );
+                String.class );
     }
 
     /**
@@ -13688,9 +13680,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllFOAFNickname_as() {
+    public ReactorResult<String> getAllFOAFNickname_as() {
         return Base.getAll_as( this.model, this.getResource(), NICKNAME,
-                Thing.class );
+                String.class );
     }
 
     /**
@@ -13735,7 +13727,7 @@ public class Thing extends OwlThing {
      */
     public static void addFOAFNickname( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.add( model, instanceResource, NICKNAME, value );
     }
 
@@ -13744,7 +13736,7 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addFOAFNickname( Thing value ) {
+    public void addFOAFNickname( String value ) {
         Base.add( this.model, this.getResource(), NICKNAME, value );
     }
 
@@ -13801,7 +13793,7 @@ public class Thing extends OwlThing {
      */
     public static void setFOAFNickname( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.set( model, instanceResource, NICKNAME, value );
     }
 
@@ -13816,7 +13808,7 @@ public class Thing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setFOAFNickname( Thing value ) {
+    public void setFOAFNickname( String value ) {
         Base.set( this.model, this.getResource(), NICKNAME, value );
     }
 
@@ -13864,7 +13856,7 @@ public class Thing extends OwlThing {
      */
     public static void removeFOAFNickname( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.remove( model, instanceResource, NICKNAME, value );
     }
 
@@ -14428,9 +14420,9 @@ public class Thing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Thing> getAllFOAFPhone( Model model,
+    public static ClosableIterator<String> getAllFOAFPhone( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, PHONE, Thing.class );
+        return Base.getAll( model, instanceResource, PHONE, String.class );
     }
 
     /**
@@ -14446,9 +14438,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get11static-reactorresult]
      */
-    public static ReactorResult<Thing> getAllFOAFPhone_as( Model model,
+    public static ReactorResult<String> getAllFOAFPhone_as( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, PHONE, Thing.class );
+        return Base.getAll_as( model, instanceResource, PHONE, String.class );
     }
 
     /**
@@ -14456,8 +14448,9 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Thing> getAllFOAFPhone() {
-        return Base.getAll( this.model, this.getResource(), PHONE, Thing.class );
+    public ClosableIterator<String> getAllFOAFPhone() {
+        return Base
+                .getAll( this.model, this.getResource(), PHONE, String.class );
     }
 
     /**
@@ -14469,9 +14462,9 @@ public class Thing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllFOAFPhone_as() {
+    public ReactorResult<String> getAllFOAFPhone_as() {
         return Base.getAll_as( this.model, this.getResource(), PHONE,
-                Thing.class );
+                String.class );
     }
 
     /**
@@ -14516,7 +14509,7 @@ public class Thing extends OwlThing {
      */
     public static void addFOAFPhone( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.add( model, instanceResource, PHONE, value );
     }
 
@@ -14525,7 +14518,7 @@ public class Thing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addFOAFPhone( Thing value ) {
+    public void addFOAFPhone( String value ) {
         Base.add( this.model, this.getResource(), PHONE, value );
     }
 
@@ -14582,7 +14575,7 @@ public class Thing extends OwlThing {
      */
     public static void setFOAFPhone( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.set( model, instanceResource, PHONE, value );
     }
 
@@ -14597,7 +14590,7 @@ public class Thing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setFOAFPhone( Thing value ) {
+    public void setFOAFPhone( String value ) {
         Base.set( this.model, this.getResource(), PHONE, value );
     }
 
@@ -14645,7 +14638,7 @@ public class Thing extends OwlThing {
      */
     public static void removeFOAFPhone( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Thing value ) {
+            String value ) {
         Base.remove( model, instanceResource, PHONE, value );
     }
 

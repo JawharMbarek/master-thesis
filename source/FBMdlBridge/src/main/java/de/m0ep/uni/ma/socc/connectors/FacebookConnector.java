@@ -1,9 +1,7 @@
-package de.m0ep.uni.ma.socc.provider;
+package de.m0ep.uni.ma.socc.connectors;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.ontoware.rdf2go.util.RDFTool;
@@ -11,16 +9,15 @@ import org.ontoware.rdf2go.util.RDFTool;
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
+import com.restfb.types.FacebookType;
 import com.restfb.types.Group;
 import com.restfb.types.User;
-import com.restfb.util.StringUtils;
 
 import de.m0ep.uni.ma.rdf.sioc.Forum;
 import de.m0ep.uni.ma.rdf.sioc.UserAccount;
-import de.m0ep.uni.ma.socc.Connector;
-import de.m0ep.uni.ma.socc.SIOCFactory;
+import de.m0ep.uni.ma.socc.SIOCModel;
 
-public class FacebookProvider implements Connector {
+public class FacebookConnector implements Connector {
 
     public static final String URL              = "http://facebook.com/";
     public static final String ID               = "com.facebook";
@@ -29,14 +26,11 @@ public class FacebookProvider implements Connector {
 
     private Properties config;
 
-    private SIOCFactory        siocFactory;
+    private SIOCModel          model;
     private FacebookClient     client;
 
-    private Map<Forum, String> connectionMap;
 
-    public FacebookProvider( SIOCFactory factory ) {
-        this.siocFactory = factory;
-        this.connectionMap = new HashMap<Forum, String>();
+    public FacebookConnector() {
     }
 
     public String getId() {
@@ -51,7 +45,8 @@ public class FacebookProvider implements Connector {
         return NAME;
     }
 
-    public void init( Properties config ) {
+    public void init( SIOCModel model, Properties config ) {
+        this.model = model;
         this.config = config;
 
         String token = this.config.getProperty( KEY_ACCESS_TOKEN );
@@ -70,25 +65,30 @@ public class FacebookProvider implements Connector {
     public List<Forum> getForums() {
         List<Forum> result = new ArrayList<Forum>();
 
-        Forum wall = siocFactory.createForum( "me/feed" );
+        Forum wall = model.createForum( URL + "me/feed" );
+        wall.setSIOCId( "me" );
         wall.setSIOCName( "Wall" );
         
-        connectionMap.put( wall, "me/feed" );
         result.add( wall );
 
-        Connection<Group> groupsConnections = client.fetchConnection(
-                "me/groups",
-                Group.class );
+        Connection<FacebookType> groupsConnections = client.fetchConnection(
+                "me/groups", FacebookType.class );
 
-        for ( List<Group> myGroups : groupsConnections ) {
-            for ( Group group : myGroups ) {
-                Forum forum = siocFactory.createForum( group.getId() );
-                forum.setSIOCName( "Group: " + group.getName() );
-                forum.setDCTermsDescription( StringUtils.trimToEmpty( group
-                        .getDescription() ) );
+        for ( List<FacebookType> myGroups : groupsConnections ) {
+            for ( FacebookType type : myGroups ) {
+                Group group = client.fetchObject( type.getId(), Group.class );
+
+                Forum forum = model.createForum( URL + group.getId() );
+                forum.setSIOCId( group.getId() );
+                forum.setSIOCName( group.getName() );
                 
+                if( null != group.getDescription() )
+                    forum.setDCTermsDescription( group.getDescription() );
 
-                connectionMap.put( forum, group.getId() + "/feed" );
+                if( null != group.getUpdatedTime() )
+                    forum.setDCTermsModified( RDFTool.dateTime2String( group
+                            .getUpdatedTime() ) );
+
                 result.add( forum );
             }
         }
@@ -101,7 +101,8 @@ public class FacebookProvider implements Connector {
         User user = client.fetchObject( "me", User.class );
 
         if( null != user ) {
-            result = siocFactory.createUserAccount( user.getId() );
+            result = model.createUserAccount( URL + user.getId() );
+            result.setSIOCId( user.getId() );
             result.setFOAFName( user.getName() );
             result.setFOAFAccountname( user.getUsername() );
             result.setDCTermsModified( RDFTool.dateTime2String( user

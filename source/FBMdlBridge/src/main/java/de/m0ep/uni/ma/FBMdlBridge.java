@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.m0ep.uni.ma.rdf.sioc.Forum;
+import de.m0ep.uni.ma.rdf.sioc.Thread;
 import de.m0ep.uni.ma.rdf.sioc.UserAccount;
 import de.m0ep.uni.ma.socc.DefaultSIOCModel;
 import de.m0ep.uni.ma.socc.SIOCModel;
@@ -46,32 +47,57 @@ public class FBMdlBridge {
         // Connector connector = new MoodleConnector();
 
         for ( Connector connector : connectors ) {
-            connector.init( siocModel, config );
-            System.out.println( connector.getUserFriendlyName() );
-            System.out.println( "======================" );
-            System.out.println( "Forums" );
-            System.out.println( "======================" );
-            for ( Forum forum : connector.getForums() ) {
-                System.out.println( forum.getResource().toString() );
-                System.out.println( forum.getAllSIOCName_as().firstValue() );
-
-                if( forum.hasDCTermsDescription() )
-                    System.out.println( forum.getAllDCTermsDescription_as()
-                            .firstValue() );
-
-                if( forum.hasDCTermsModified() )
-                    System.out.println( forum.getAllDCTermsModified_as()
-                            .firstValue() );
+            try {
+                connector.init( siocModel, config );
+                System.out.println( connector.getUserFriendlyName() );
                 System.out.println( "======================" );
+                System.out.println( "Forums" );
+                System.out.println( "======================" );
+                for ( Forum forum : connector.getForums() ) {
+                    System.out.println( forum.getResource().toString() );
+                    System.out.println( forum.getAllSIOCName_as().firstValue() );
+
+                    if( forum.hasDCTermsDescription() )
+                        System.out.println( forum.getAllDCTermsDescription_as()
+                                .firstValue() );
+
+                    if( forum.hasDCTermsModified() )
+                        System.out.println( forum.getAllDCTermsModified_as()
+                                .firstValue() );
+
+                    List<Thread> threads = connector.getThreads( forum );
+                    if( !threads.isEmpty() ) {
+                        System.out.println( "Threads" );
+                        for ( Thread thread : threads ) {
+                            System.out.println( "\t"
+                                    + thread.getAllSIOCName_as().firstValue() );
+                            System.out
+.println( "\t\tId: "
+                                    + thread.getAllSIOCId_as().firstValue() );
+                            System.out.println( "\t\tLast Item Date: "
+                                    + thread.getAllSIOCLastitemdate_as()
+                                            .firstValue() );
+                            System.out
+                                    .println( "\t\tParent: "
+                                            + thread.getAllSIOCParent_as()
+                                                    .firstValue() );
+                        }
+                    }
+
+                    System.out.println( "======================" );
+                }
+
+                System.out.println( "UserAccount" );
+                System.out.println( "======================" );
+                UserAccount user = connector.getUser();
+
+                System.out.println( user.getAllFOAFAccountname_as()
+                        .firstValue() );
+                System.out.println( user.getAllFOAFName_as().firstValue() );
+            } catch ( Throwable t ) {
+                t.printStackTrace();
+                log.warn( "{}", t.getLocalizedMessage() );
             }
-
-            System.out.println( "UserAccount" );
-            System.out.println( "======================" );
-            UserAccount user = connector.getUser();
-
-            System.out.println( user.getAllFOAFAccountname_as().firstValue() );
-            System.out.println( user.getAllFOAFName_as().firstValue() );
-
         }
     }
 }

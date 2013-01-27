@@ -1,17 +1,24 @@
 package de.m0ep.uni.ma.socc.connectors;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import net.patrickpollet.moodlews_gson.core.CourseRecord;
+import net.patrickpollet.moodlews_gson.core.ForumDiscussionRecord;
 import net.patrickpollet.moodlews_gson.core.ForumRecord;
 import net.patrickpollet.moodlews_gson.core.LoginReturn;
 import net.patrickpollet.moodlews_gson.core.Mdl_restserverBindingStub;
 import net.patrickpollet.moodlews_gson.core.UserRecord;
+
+import org.ontoware.rdf2go.util.RDFTool;
+
 import de.m0ep.uni.ma.rdf.sioc.Forum;
+import de.m0ep.uni.ma.rdf.sioc.Post;
+import de.m0ep.uni.ma.rdf.sioc.Thread;
 import de.m0ep.uni.ma.rdf.sioc.UserAccount;
 import de.m0ep.uni.ma.socc.SIOCModel;
 
@@ -79,6 +86,58 @@ public class MoodleConnector implements Connector {
         }
 
         return result;
+    }
+
+    public List<Thread> getThreads( Forum forum ) {
+        List<Thread> threads = new ArrayList<Thread>();
+        int id = Integer.parseInt( forum.getAllSIOCId_as().firstValue() );
+        
+        ForumDiscussionRecord[] discussionRecords = moodle
+                .get_forum_discussions( login.getClient(),
+                        login.getSessionkey(),
+                id, 25 );
+        
+        for ( ForumDiscussionRecord record : discussionRecords ) {
+            if( null != record.getError() && !record.getError().isEmpty() ) {
+                threads.clear();
+                return threads;
+            }
+
+            Thread thread = model.createThread( URL + id + "/"
+ + record.getId() );
+
+            System.out.println( record );
+
+            thread.setSIOCId( Integer.toString( record.getId() ) );
+            thread.setSIOCName( record.getName() );
+            thread.setSIOCLastitemdate( RDFTool.dateTime2String( new Date(
+                    (long) record.getTimemodified() * 1000 ) ) );
+            thread.setSIOCParent( forum );
+
+            threads.add( thread );
+        }
+
+        return threads;
+    }
+
+    public boolean canPostOn( Forum forum ) {
+        return false;
+    }
+
+    public boolean canPostOn( Thread thread ) {
+        return true;
+    }
+
+    public void publishPost( Forum forum ) {
+        // TODO Auto-generated method stub
+    }
+
+    public void publishPost( Thread thread ) {
+        // TODO Auto-generated method stub
+    }
+
+    public void commentPost( Post parent ) {
+        // TODO Auto-generated method stub
     }
 
     public UserAccount getUser() {

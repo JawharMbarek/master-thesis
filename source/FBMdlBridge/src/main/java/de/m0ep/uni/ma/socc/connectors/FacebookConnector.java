@@ -14,6 +14,8 @@ import com.restfb.types.Group;
 import com.restfb.types.User;
 
 import de.m0ep.uni.ma.rdf.sioc.Forum;
+import de.m0ep.uni.ma.rdf.sioc.Post;
+import de.m0ep.uni.ma.rdf.sioc.Thread;
 import de.m0ep.uni.ma.rdf.sioc.UserAccount;
 import de.m0ep.uni.ma.socc.SIOCModel;
 
@@ -90,6 +92,30 @@ public class FacebookConnector implements Connector {
         }
 
         return result;
+    }
+
+    public List<Thread> getThreads( Forum forum ) {
+        return new ArrayList<Thread>();
+    }
+
+    public boolean canPostOn( Forum forum ) {
+        return true;
+    }
+
+    public boolean canPostOn( Thread thread ) {
+        return false;
+    }
+
+    public void publishPost( Forum forum ) {
+        // TODO Auto-generated method stub
+    }
+
+    public void publishPost( Thread thread ) {
+        // TODO Auto-generated method stub
+    }
+
+    public void commentPost( Post parent ) {
+        // TODO Auto-generated method stub
     }
 
     public UserAccount getUser() {

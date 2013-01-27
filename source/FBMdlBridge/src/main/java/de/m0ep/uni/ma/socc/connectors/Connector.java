@@ -14,8 +14,6 @@ public interface Connector {
 
     public String getId();
 
-    public String getURL();
-
     public String getUserFriendlyName();
 
     public List<Forum> getForums();

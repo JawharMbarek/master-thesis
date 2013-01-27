@@ -37,10 +37,6 @@ public class FacebookConnector implements Connector {
         return ID;
     }
 
-    public String getURL() {
-        return URL;
-    }
-
     public String getUserFriendlyName() {
         return NAME;
     }

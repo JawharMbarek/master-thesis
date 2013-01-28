@@ -16,6 +16,7 @@ import net.patrickpollet.moodlews_gson.core.UserRecord;
 
 import org.ontoware.rdf2go.util.RDFTool;
 
+import de.m0ep.uni.ma.rdf.sioc.Container;
 import de.m0ep.uni.ma.rdf.sioc.Forum;
 import de.m0ep.uni.ma.rdf.sioc.Post;
 import de.m0ep.uni.ma.rdf.sioc.Thread;
@@ -120,20 +121,19 @@ public class MoodleConnector implements Connector {
         return threads;
     }
 
-    public boolean canPostOn( Forum forum ) {
+    public List<Post> getPost( Container container ) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public boolean canPostOn( Container container ) {
+        // TODO Auto-generated method stub
         return false;
     }
 
-    public boolean canPostOn( Thread thread ) {
-        return true;
-    }
-
-    public void publishPost( Forum forum ) {
+    public void publishPost( Container container ) {
         // TODO Auto-generated method stub
-    }
 
-    public void publishPost( Thread thread ) {
-        // TODO Auto-generated method stub
     }
 
     public void commentPost( Post parent ) {

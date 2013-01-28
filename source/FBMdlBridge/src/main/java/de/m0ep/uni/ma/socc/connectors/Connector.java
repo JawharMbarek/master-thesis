@@ -3,6 +3,7 @@ package de.m0ep.uni.ma.socc.connectors;
 import java.util.List;
 import java.util.Properties;
 
+import de.m0ep.uni.ma.rdf.sioc.Container;
 import de.m0ep.uni.ma.rdf.sioc.Forum;
 import de.m0ep.uni.ma.rdf.sioc.Post;
 import de.m0ep.uni.ma.rdf.sioc.Thread;
@@ -22,13 +23,12 @@ public interface Connector {
 
     public List<Thread> getThreads( Forum forum );
 
-    public boolean canPostOn( Forum forum );
+    public List<Post> getPost( Container container );
 
-    public boolean canPostOn( Thread thread );
+    public boolean canPostOn( Container container );
 
-    public void publishPost( Forum forum );
+    public void publishPost( Container container );
 
-    public void publishPost( Thread thread );
 
     public void commentPost( Post parent );
 

@@ -44,6 +44,7 @@ public class ConnectorView extends JFrame {
     public ConnectorView( final Connector connector ) {
         this.connector = connector;
 
+        setTitle( connector.getUserFriendlyName() );
         setSize( 500, 500 );
         setLayout( new BorderLayout() );
         setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
@@ -56,6 +57,9 @@ public class ConnectorView extends JFrame {
 
             public void valueChanged( TreeSelectionEvent e ) {
                 TreePath path = forumTree.getSelectionPath();
+                if( null == path )
+                    return;
+
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) path
                         .getLastPathComponent();
                 ForumTreeObject fto = (ForumTreeObject) node.getUserObject();
@@ -139,7 +143,7 @@ public class ConnectorView extends JFrame {
             
             JPanel base = new JPanel();
             base.setBorder( new SoftBevelBorder( BevelBorder.RAISED ) );
-            base.setLayout( new GridLayout( 4, 1 ) );
+            base.setLayout( new GridLayout( 5, 1 ) );
             base.add(new JLabel( value.getAllDCTermsTitle_as().firstValue()));
             base.add(new JLabel( value.getAllDCTermsCreated_as().firstValue()));
             base.add(new JLabel( value.getAllSIOCContent_as().firstValue()));
@@ -147,6 +151,14 @@ public class ConnectorView extends JFrame {
                 base.add( new JLabel( value.getAllSIOCAttachment_as()
                         .firstValue()
                     .toString() ) );
+            else {
+                base.add( new JLabel( "-no attachment-" ) );
+            }
+            if( value.hasSIOCReplyof() ) {
+                base.add( new JLabel( "parent: "
+                        + value.getAllSIOCReplyof_as().firstValue()
+                                .toString() ) );
+            }
             
             return base;
         }

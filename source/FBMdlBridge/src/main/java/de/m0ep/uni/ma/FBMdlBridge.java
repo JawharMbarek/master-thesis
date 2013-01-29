@@ -1,7 +1,9 @@
 package de.m0ep.uni.ma;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ import de.m0ep.uni.ma.socc.DefaultSIOCModel;
 import de.m0ep.uni.ma.socc.SIOCModel;
 import de.m0ep.uni.ma.socc.connectors.Connector;
 import de.m0ep.uni.ma.socc.connectors.FacebookConnector;
+import de.m0ep.uni.ma.socc.connectors.MoodleConnector;
 
 public class FBMdlBridge {
     private static final Logger log = LoggerFactory.getLogger( FBMdlBridge.class );
@@ -35,15 +38,20 @@ public class FBMdlBridge {
         log.info( "{}", new Date() );
 
         SIOCModel siocModel = new DefaultSIOCModel();
-        // List<Connector> connectors = new ArrayList<Connector>();
-        // connectors.add( new FacebookConnector() );
-        // connectors.add( new MoodleConnector() );
+        List<Connector> connectors = new ArrayList<Connector>();
+        connectors.add( new FacebookConnector() );
+        connectors.add( new MoodleConnector() );
+
+        for ( Connector connector : connectors ) {
+            connector.init( siocModel, config );
+            ConnectorView connectorView = new ConnectorView( connector );
+            connectorView.setVisible( true );
+        }
 
         // Connector connector = new MoodleConnector();
-        Connector connector = new FacebookConnector();
-        connector.init( siocModel, config );
-        ConnectorView connectorView = new ConnectorView( connector );
-        connectorView.setVisible( true );
+        // // Connector connector = new FacebookConnector();
+        // ConnectorView connectorView = new ConnectorView( connector );
+        // connectorView.setVisible( true );
 
         /*
          * for ( Connector connector : connectors ) { try { connector.init(

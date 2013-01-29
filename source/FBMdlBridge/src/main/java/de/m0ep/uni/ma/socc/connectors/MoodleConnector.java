@@ -9,12 +9,15 @@ import java.util.Properties;
 
 import net.patrickpollet.moodlews_gson.core.CourseRecord;
 import net.patrickpollet.moodlews_gson.core.ForumDiscussionRecord;
+import net.patrickpollet.moodlews_gson.core.ForumPostRecord;
 import net.patrickpollet.moodlews_gson.core.ForumRecord;
 import net.patrickpollet.moodlews_gson.core.LoginReturn;
 import net.patrickpollet.moodlews_gson.core.Mdl_restserverBindingStub;
 import net.patrickpollet.moodlews_gson.core.UserRecord;
 
 import org.ontoware.rdf2go.util.RDFTool;
+
+import com.google.common.base.Preconditions;
 
 import de.m0ep.uni.ma.rdf.sioc.Container;
 import de.m0ep.uni.ma.rdf.sioc.Forum;
@@ -35,16 +38,20 @@ public class MoodleConnector implements Connector {
 
     private SIOCModel                 model;
 
+    int                               limit = 25;
+
     public void init( SIOCModel model, Properties config ) {
         this.model = model;
 
         moodle = new Mdl_restserverBindingStub(
-                config.getProperty( "moodle.url" ), "json", false );
+                config.getProperty( "moodle.url" ) + "wspp/service_pp2.php",
+                "json", false );
         
         login = moodle.login( config.getProperty( "moodle.username" ),
                 config.getProperty( "moodle.password" ) );
 
         myId = moodle.get_my_id( login.getClient(), login.getSessionkey() );
+        limit = Integer.parseInt( config.getProperty( "post_limit", "25" ) );
     }
 
     public void destroy() {
@@ -67,7 +74,8 @@ public class MoodleConnector implements Connector {
         Map<Integer, CourseRecord> courses = new HashMap<Integer, CourseRecord>();
 
         for ( ForumRecord forumRecord : forumRecords ) {
-            Forum forum = model.createForum( URL + forumRecord.getId() );
+            Forum forum = model.createForum( URL + "forum/"
+                    + forumRecord.getId() );
             forum.setSIOCId( Integer.toString( forumRecord.getId() ) );
 
             CourseRecord course = courses.get( forumRecord.getCourse() );
@@ -91,12 +99,12 @@ public class MoodleConnector implements Connector {
 
     public List<Thread> getThreads( Forum forum ) {
         List<Thread> threads = new ArrayList<Thread>();
-        int id = Integer.parseInt( forum.getAllSIOCId_as().firstValue() );
+        int forumId = Integer.parseInt( forum.getAllSIOCId_as().firstValue() );
         
         ForumDiscussionRecord[] discussionRecords = moodle
                 .get_forum_discussions( login.getClient(),
                         login.getSessionkey(),
-                id, 25 );
+ forumId, 25 );
         
         for ( ForumDiscussionRecord record : discussionRecords ) {
             if( null != record.getError() && !record.getError().isEmpty() ) {
@@ -104,10 +112,8 @@ public class MoodleConnector implements Connector {
                 return threads;
             }
 
-            Thread thread = model.createThread( URL + id + "/"
+            Thread thread = model.createThread( URL + "thread/"
  + record.getId() );
-
-            System.out.println( record );
 
             thread.setSIOCId( Integer.toString( record.getId() ) );
             thread.setSIOCName( record.getName() );
@@ -122,13 +128,60 @@ public class MoodleConnector implements Connector {
     }
 
     public List<Post> getPost( Container container ) {
-        // TODO Auto-generated method stub
-        return null;
+        Preconditions.checkArgument( canPostOn( container ) );
+        System.out.println( "getPost" );
+        
+        List<Post> result = new ArrayList<Post>();
+        ForumPostRecord[] postRecords = moodle.get_forum_posts(
+                login.getClient(), login.getSessionkey(),
+                Integer.parseInt( container.getAllSIOCId_as().firstValue() ),
+                limit );
+        
+        for ( ForumPostRecord postRecord : postRecords ) {
+            addPost( result, postRecord, container, null );
+        }
+        
+        return result;
+    }
+
+    public void addPost( List<Post> result, ForumPostRecord postRecord,
+            Container discussion, Post parent ) {
+        Post post = model.createPost( URL + "post/" + postRecord.getId() );
+
+        System.out.println( postRecord );
+        if( null != parent )
+            post.setSIOCReplyof( parent );
+        post.setSIOCContainer( discussion );
+        post.setSIOCId( Integer.toString( postRecord.getId() ) );
+        post.setDCTermsSubject( postRecord.getSubject() );
+        post.setSIOCContent( postRecord.getMessage() );
+        post.setDCTermsCreated( RDFTool.dateTime2String( new Date(
+                (long) postRecord.getCreated() * 1000 ) ) );
+        post.setDCTermsModified( RDFTool.dateTime2String( new Date(
+                (long) postRecord.getModified() * 1000 ) ) );
+        // if( null != postRecord.getAttachment()
+        // && !postRecord.getAttachment().isEmpty() ) {
+        // // FileRecord attachment = moodle.get_resourcefile_byid(
+        // // login.getClient(),
+        // // login.getSessionkey(),
+        // // Integer.parseInt( postRecord.getAttachment() ) );
+        // // post.setSIOCAttachment( ( (DefaultSIOCModel) model )
+        // // .getDelegatingModel()
+        // // .createURI( attachment.getFileurl() ) );
+        // System.out.println( postRecord.getAttachment() );
+        // }
+
+        result.add( post );
+
+        for ( ForumPostRecord child : postRecord.getChildren() ) {
+            addPost( result, child, discussion, post );
+        }
     }
 
     public boolean canPostOn( Container container ) {
-        // TODO Auto-generated method stub
-        return false;
+
+        return container.getResource().toString()
+                .startsWith( URL + "thread/" );
     }
 
     public void publishPost( Container container ) {

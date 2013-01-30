@@ -13,7 +13,6 @@ import de.m0ep.uni.ma.socc.DefaultSIOCModel;
 import de.m0ep.uni.ma.socc.SIOCModel;
 import de.m0ep.uni.ma.socc.connectors.Connector;
 import de.m0ep.uni.ma.socc.connectors.FacebookConnector;
-import de.m0ep.uni.ma.socc.connectors.MoodleConnector;
 
 public class FBMdlBridge {
     private static final Logger log = LoggerFactory.getLogger( FBMdlBridge.class );
@@ -40,12 +39,17 @@ public class FBMdlBridge {
         SIOCModel siocModel = new DefaultSIOCModel();
         List<Connector> connectors = new ArrayList<Connector>();
         connectors.add( new FacebookConnector() );
-        connectors.add( new MoodleConnector() );
+        // connectors.add( new MoodleConnector() );
 
         for ( Connector connector : connectors ) {
-            connector.init( siocModel, config );
-            ConnectorView connectorView = new ConnectorView( connector );
-            connectorView.setVisible( true );
+            try {
+                connector.init( siocModel, config );
+                ConnectorView connectorView = new ConnectorView( connector );
+                connectorView.setVisible( true );
+            } catch ( Exception e ) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
 
         // Connector connector = new MoodleConnector();

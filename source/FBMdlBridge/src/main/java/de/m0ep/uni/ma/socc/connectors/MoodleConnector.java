@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import net.patrickpollet.moodlews_gson.core.CourseRecord;
 import net.patrickpollet.moodlews_gson.core.ForumDiscussionRecord;
+import net.patrickpollet.moodlews_gson.core.ForumPostDatum;
 import net.patrickpollet.moodlews_gson.core.ForumPostRecord;
 import net.patrickpollet.moodlews_gson.core.ForumRecord;
 import net.patrickpollet.moodlews_gson.core.LoginReturn;
@@ -38,32 +39,39 @@ public class MoodleConnector implements Connector {
 
     private SIOCModel                 model;
 
-    int                               limit = 25;
+    private int                       limit;
+    private String                    url;
 
     public void init( SIOCModel model, Properties config ) {
         this.model = model;
+        this.url = config.getProperty( "moodle.url" );
 
-        moodle = new Mdl_restserverBindingStub(
+        this.moodle = new Mdl_restserverBindingStub(
                 config.getProperty( "moodle.url" ) + "wspp/service_pp2.php",
-                "json", false );
+                "json", true );
         
-        login = moodle.login( config.getProperty( "moodle.username" ),
+        this.login = moodle.login( config.getProperty( "moodle.username" ),
                 config.getProperty( "moodle.password" ) );
 
-        myId = moodle.get_my_id( login.getClient(), login.getSessionkey() );
-        limit = Integer.parseInt( config.getProperty( "post_limit", "25" ) );
+        this.myId = moodle.get_my_id( login.getClient(), login.getSessionkey() );
+        this.limit = Integer
+                .parseInt( config.getProperty( "post_limit", "25" ) );
     }
 
     public void destroy() {
         moodle.logout( login.getClient(), login.getSessionkey() );
     }
 
-    public String getId() {
-        return ID;
+    public String getURL() {
+        return url;
     }
 
     public String getUserFriendlyName() {
         return NAME;
+    }
+
+    public SIOCModel getModel() {
+        return model;
     }
 
     public List<Forum> getForums() {
@@ -74,7 +82,7 @@ public class MoodleConnector implements Connector {
         Map<Integer, CourseRecord> courses = new HashMap<Integer, CourseRecord>();
 
         for ( ForumRecord forumRecord : forumRecords ) {
-            Forum forum = model.createForum( URL + "forum/"
+            Forum forum = model.createForum( getURL() + "forum/"
                     + forumRecord.getId() );
             forum.setSIOCId( Integer.toString( forumRecord.getId() ) );
 
@@ -112,7 +120,7 @@ public class MoodleConnector implements Connector {
                 return threads;
             }
 
-            Thread thread = model.createThread( URL + "thread/"
+            Thread thread = model.createThread( getURL() + "thread/"
  + record.getId() );
 
             thread.setSIOCId( Integer.toString( record.getId() ) );
@@ -129,7 +137,6 @@ public class MoodleConnector implements Connector {
 
     public List<Post> getPost( Container container ) {
         Preconditions.checkArgument( canPostOn( container ) );
-        System.out.println( "getPost" );
         
         List<Post> result = new ArrayList<Post>();
         ForumPostRecord[] postRecords = moodle.get_forum_posts(
@@ -146,9 +153,8 @@ public class MoodleConnector implements Connector {
 
     public void addPost( List<Post> result, ForumPostRecord postRecord,
             Container discussion, Post parent ) {
-        Post post = model.createPost( URL + "post/" + postRecord.getId() );
+        Post post = model.createPost( getURL() + "post/" + postRecord.getId() );
 
-        System.out.println( postRecord );
         if( null != parent )
             post.setSIOCReplyof( parent );
         post.setSIOCContainer( discussion );
@@ -159,17 +165,6 @@ public class MoodleConnector implements Connector {
                 (long) postRecord.getCreated() * 1000 ) ) );
         post.setDCTermsModified( RDFTool.dateTime2String( new Date(
                 (long) postRecord.getModified() * 1000 ) ) );
-        // if( null != postRecord.getAttachment()
-        // && !postRecord.getAttachment().isEmpty() ) {
-        // // FileRecord attachment = moodle.get_resourcefile_byid(
-        // // login.getClient(),
-        // // login.getSessionkey(),
-        // // Integer.parseInt( postRecord.getAttachment() ) );
-        // // post.setSIOCAttachment( ( (DefaultSIOCModel) model )
-        // // .getDelegatingModel()
-        // // .createURI( attachment.getFileurl() ) );
-        // System.out.println( postRecord.getAttachment() );
-        // }
 
         result.add( post );
 
@@ -181,16 +176,49 @@ public class MoodleConnector implements Connector {
     public boolean canPostOn( Container container ) {
 
         return container.getResource().toString()
-                .startsWith( URL + "thread/" );
+                .startsWith( getURL() + "thread/" );
     }
 
-    public void publishPost( Container container ) {
-        // TODO Auto-generated method stub
+    public void publishPost( Post post, Container container ) {
+        Preconditions.checkArgument( post.hasSIOCContent() );
+        Preconditions.checkArgument( canPostOn( container ) );
 
+        ForumPostDatum datum = new ForumPostDatum();
+        datum.setMessage( post.getAllSIOCContent_as().firstValue() );
+        if( post.hasDCTermsTitle() ) {
+            datum.setSubject( post.getAllDCTermsTitle_as().firstValue() );
+        } else if( post.hasDCTermsSubject() ) {
+            datum.setSubject( post.getAllDCTermsSubject_as().firstValue() );
+        } else {
+            datum.setSubject( "" );
+        }
+
+        // get first post of the discussion to post a reply
+        ForumPostRecord[] posts = moodle
+                .get_forum_posts( login.getClient(), login.getSessionkey(),
+                Integer.parseInt( container.getAllSIOCId_as().firstValue() ), 1 );
+
+        if( 0 != posts.length )
+            moodle.forum_add_reply( login.getClient(), login.getSessionkey(),
+                posts[0].getId(), datum );
     }
 
-    public void commentPost( Post parent ) {
-        // TODO Auto-generated method stub
+    public void commentPost( Post post, Post parent ) {
+        Preconditions.checkArgument( post.hasSIOCContent() );
+
+        ForumPostDatum datum = new ForumPostDatum();
+        datum.setMessage( post.getAllSIOCContent_as().firstValue() );
+        if( post.hasDCTermsTitle() ) {
+            datum.setSubject( post.getAllDCTermsTitle_as().firstValue() );
+        } else if( post.hasDCTermsSubject() ) {
+            datum.setSubject( post.getAllDCTermsSubject_as().firstValue() );
+        } else {
+            datum.setSubject( "" );
+        }
+
+        moodle.forum_add_reply( login.getClient(), login.getSessionkey(),
+                Integer.parseInt( parent.getAllSIOCId_as().firstValue() ),
+                datum );
     }
 
     public UserAccount getUser() {

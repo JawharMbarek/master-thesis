@@ -3,15 +3,24 @@ package de.m0ep.uni.ma;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.BevelBorder;
@@ -30,16 +39,20 @@ import de.m0ep.uni.ma.rdf.sioc.Thread;
 import de.m0ep.uni.ma.socc.connectors.Connector;
 
 public class ConnectorView extends JFrame {
+    private static final long      serialVersionUID = 7211115399954970463L;
+
     private Connector connector;
     
-    DefaultTreeModel       forumTreeModel;
-    MutableTreeNode        forumTreeRoot;
-    JTree                  forumTree;
+    private DefaultTreeModel       forumTreeModel;
+    private MutableTreeNode        forumTreeRoot;
+    private JTree                  forumTree;
 
-    JList<Post>            postList;
-    DefaultListModel<Post> postListModel;
-    ListCellRenderer<Post> postListCellRenderer;
+    private JList<Post>            postList;
+    private DefaultListModel<Post> postListModel;
+    private ListCellRenderer<Post> postListCellRenderer;
     
+
+    private Container              currentPostSelection;
 
     public ConnectorView( final Connector connector ) {
         this.connector = connector;
@@ -66,23 +79,96 @@ public class ConnectorView extends JFrame {
 
                 if( 2 == path.getPathCount() || 3 == path.getPathCount() ) {
                     if( connector.canPostOn( fto.container ) ) {
+                        currentPostSelection = fto.container;
                         updatePosts( fto.container );
                     }
                 }
             }
         } );
 
+        JPanel postPanel = new JPanel( new BorderLayout() );
+
         postListModel = new DefaultListModel<Post>();
         postListCellRenderer = new PostListCellRenderer();
         postList = new JList<Post>( postListModel );
         postList.setCellRenderer( postListCellRenderer );
 
+        postList.addMouseListener( new MouseAdapter() {
+            @Override
+            public void mouseClicked( MouseEvent e ) {
+                if( MouseEvent.BUTTON3 == e.getButton() ) {
+                    int index = postList.locationToIndex( e.getPoint() );
+
+                    if( 0 <= index ) {
+                        Post p = postListModel.get( index );
+                        postReply( p );
+                    }
+                }
+            }
+        } );
+
+        postPanel.add( new JScrollPane( postList ), BorderLayout.CENTER );
+
+        JButton btnCreatePost = new JButton( "Create Post" );
+        btnCreatePost.addActionListener( new ActionListener() {
+
+            public void actionPerformed( ActionEvent e ) {
+                postNew();
+            }
+        } );
+        postPanel.add( btnCreatePost, BorderLayout.SOUTH );
 
         JSplitPane centerPane = new JSplitPane( JSplitPane.HORIZONTAL_SPLIT,
-                new JScrollPane( forumTree ), new JScrollPane( postList ) );
+                new JScrollPane( forumTree ), postPanel );
         add( centerPane, BorderLayout.CENTER );
 
         updateForums();
+    }
+
+    protected void postReply( Post parent ) {
+        JTextField subject = new JTextField();
+        JTextField content = new JTextField();
+
+        JComponent[] input = { new JLabel( "subject" ), subject,
+                new JLabel( "message" ), content };
+
+        int action = JOptionPane.showConfirmDialog( this, input, "Post Reply",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE );
+
+        if( JOptionPane.OK_OPTION == action ) {
+            System.out.println( subject.getText() + " " + content.getText() );
+            
+            Post reply = connector.getModel().createPost(
+                    "http://example.com/tmppost/" + new Date().getTime() );
+            reply.setDCTermsTitle( subject.getText() );
+            reply.setSIOCContent( content.getText() );
+
+            connector.commentPost( reply, parent );
+            connector.getModel().removePost( reply );
+        }
+    }
+
+    protected void postNew() {
+        JTextField subject = new JTextField();
+        JTextField content = new JTextField();
+
+        JComponent[] input = { new JLabel( "subject" ), subject,
+                new JLabel( "message" ), content };
+
+        int action = JOptionPane.showConfirmDialog( this, input, "Post Reply",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE );
+
+        if( JOptionPane.OK_OPTION == action ) {
+            System.out.println( subject.getText() + " " + content.getText() );
+
+            Post post = connector.getModel().createPost(
+                    "http://example.com/tmppost/" + new Date().getTime() );
+            post.setDCTermsTitle( subject.getText() );
+            post.setSIOCContent( content.getText() );
+
+            connector.publishPost( post, currentPostSelection );
+            connector.getModel().removePost( post );
+        }
     }
 
     private void updateForums() {
@@ -138,28 +224,38 @@ public class ConnectorView extends JFrame {
     private static class PostListCellRenderer implements ListCellRenderer<Post>{
 
         public Component getListCellRendererComponent(
-                JList<? extends Post> list, Post value, int index,
-                boolean isSelected, boolean cellHasFocus ) {
+                final JList<? extends Post> list, final Post value,
+                final int index, final boolean isSelected,
+                final boolean cellHasFocus ) {
             
             JPanel base = new JPanel();
             base.setBorder( new SoftBevelBorder( BevelBorder.RAISED ) );
-            base.setLayout( new GridLayout( 5, 1 ) );
-            base.add(new JLabel( value.getAllDCTermsTitle_as().firstValue()));
-            base.add(new JLabel( value.getAllDCTermsCreated_as().firstValue()));
-            base.add(new JLabel( value.getAllSIOCContent_as().firstValue()));
-            if( value.hasSIOCAttachment() )
-                base.add( new JLabel( value.getAllSIOCAttachment_as()
-                        .firstValue()
-                    .toString() ) );
-            else {
-                base.add( new JLabel( "-no attachment-" ) );
-            }
-            if( value.hasSIOCReplyof() ) {
-                base.add( new JLabel( "parent: "
-                        + value.getAllSIOCReplyof_as().firstValue()
-                                .toString() ) );
-            }
+            base.setLayout( new GridLayout( 6, 1 ) );
             
+            JLabel title = new JLabel( 
+ ( value.hasDCTermsTitle() ) ? value
+                    .getAllDCTermsTitle_as().firstValue() : value
+                    .getAllDCTermsSubject_as().firstValue() );
+            base.add( title );
+
+            JLabel created = new JLabel( value.getAllDCTermsCreated_as().firstValue());
+            base.add(created);
+
+            JLabel content = new JLabel( value.getAllSIOCContent_as()
+                    .firstValue() );
+            base.add(content);
+
+            JLabel attachment = new JLabel(
+                    ( value.hasSIOCAttachment() ) ? ( value
+                            .getAllSIOCAttachment_as().firstValue().toString() )
+                            : ( "-no attachment-" ) );
+            base.add( attachment );
+
+            JLabel parent = new JLabel( ( value.hasSIOCReplyof() ) ? ( value
+                    .getAllSIOCReplyof_as().firstValue().toString() )
+                    : ( "-no parent-" ) );
+            base.add( parent );
+
             return base;
         }
     }

@@ -7,7 +7,10 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.ontoware.rdf2go.util.RDFTool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
@@ -30,6 +33,9 @@ import de.m0ep.uni.ma.socc.SIOCModel;
 
 public class FacebookConnector implements Connector {
 
+    private static final Logger log              = LoggerFactory
+                                                         .getLogger( FacebookConnector.class );
+
     public static final String URL              = "http://facebook.com/";
     public static final String ID               = "com.facebook";
     public static final String NAME             = "Facebook";
@@ -41,22 +47,31 @@ public class FacebookConnector implements Connector {
     private FacebookClient     client;
 
     private Set<String>        postable;
+    private int                post_limit;
+
 
     public FacebookConnector() {
         this.postable = new HashSet<String>();
     }
 
-    public String getId() {
-        return ID;
+    public String getURL() {
+        return URL;
     }
 
     public String getUserFriendlyName() {
         return NAME;
     }
 
+    public SIOCModel getModel() {
+        return model;
+    }
+
     public void init( SIOCModel model, Properties config ) {
         this.model = model;
         this.config = config;
+        this.post_limit = Integer
+                .parseInt( config.getProperty( "post_limit", "25" ) );
+
 
 
         String token = this.config.getProperty( KEY_ACCESS_TOKEN );
@@ -88,7 +103,8 @@ public class FacebookConnector implements Connector {
             for ( FacebookType type : myGroups ) {
                 Group group = client.fetchObject( type.getId(), Group.class );
 
-                Forum forum = model.createForum( URL + group.getId() );
+                Forum forum = model.createForum( URL + "groups/"
+                        + group.getId() );
                 forum.setSIOCId( group.getId() );
                 forum.setSIOCName( group.getName() );
                 
@@ -114,13 +130,15 @@ public class FacebookConnector implements Connector {
     public List<Post> getPost( Container container ) {
         List<Post> result = new ArrayList<Post>();
         String id = container.getAllSIOCId_as().firstValue();
+        log.debug( "get posts" );
 
         Connection<FacebookType> feed = client.fetchConnection( id + "/feed",
                 FacebookType.class, Parameter.with( "fields", "id, type" ) );
 
-        int i = 0;
+        int loaded_posts = 0;
         for ( List<FacebookType> ftypes : feed ) {
             for ( FacebookType ftype : ftypes ) {
+                log.debug( ftype.toString() );
                 String type = ftype.getType();
 
                 if( null != type ) {
@@ -200,11 +218,11 @@ public class FacebookConnector implements Connector {
                     }
 
                     result.add( siocPost );
-                    i++;
-                }
 
-                if( 25 == i )
-                    return result;
+                    System.out.println( post_limit + " " + loaded_posts );
+                    if( post_limit == ++loaded_posts )
+                        return result;
+                }
             }
         }
 
@@ -216,13 +234,26 @@ public class FacebookConnector implements Connector {
     }
 
 
-    public void publishPost( Container container ) {
-        // TODO Auto-generated method stub
+    public void publishPost( Post post, Container container ) {
+        Preconditions.checkArgument( canPostOn( container ) );
 
+        client.publish( container.getAllSIOCId_as()
+                .firstValue() + "/feed",
+ FacebookType.class, Parameter
+                .with(
+                "message", post
+.getAllSIOCContent_as()
+.firstValue() ) );
     }
 
-    public void commentPost( Post parent ) {
-        // TODO Auto-generated method stub
+    public void commentPost( Post post, Post parent ) {
+        client.publish( parent.getAllSIOCId_as()
+                .firstValue() + "/comments",
+ FacebookType.class, Parameter
+                .with(
+                "message", post
+.getAllSIOCContent_as()
+.firstValue() ) );
 
     }
 

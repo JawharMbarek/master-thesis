@@ -15,9 +15,11 @@ public interface Connector {
 
     public void destroy();
 
-    public String getId();
+    public String getURL();
 
     public String getUserFriendlyName();
+
+    public SIOCModel getModel();
 
     public List<Forum> getForums();
 
@@ -27,10 +29,10 @@ public interface Connector {
 
     public boolean canPostOn( Container container );
 
-    public void publishPost( Container container );
+    public void publishPost( Post post, Container container );
 
 
-    public void commentPost( Post parent );
+    public void commentPost( Post post, Post parent );
 
     public UserAccount getUser();
 }

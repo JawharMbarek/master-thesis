@@ -63,6 +63,10 @@ public class Item extends SIOCThing {
     /** http://rdfs.org/sioc/ns#content */
 	public static final URI CONTENT = new URIImpl("http://rdfs.org/sioc/ns#content",false);
 
+    public static final URI   CONTENT_ENCODED  = new URIImpl(
+                                                       "http://purl.org/rss/1.0/modules/content/encoded",
+                                                       false );
+
     /** http://rdfs.org/sioc/ns#has_discussion */
 	public static final URI DISCUSSION = new URIImpl("http://rdfs.org/sioc/ns#has_discussion",false);
 
@@ -2280,6 +2284,396 @@ public class Item extends SIOCThing {
     public void removeAllContent() {
 		Base.removeAll(this.model, this.getResource(), CONTENT);
 	}
+
+    /**
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@5e9384fb has at
+     * least one value set
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @return true if this property has at least one value
+     * 
+     *         [Generated from RDFReactor template rule #get0has-static]
+     */
+    public static boolean hasContentEncoded( Model model, org.ontoware.rdf2go.model.node.Resource instanceResource ) {
+        return Base.has( model, instanceResource, CONTENT_ENCODED );
+    }
+
+    /**
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@5e9384fb has at
+     * least one value set
+     * 
+     * @return true if this property has at least one value
+     * 
+     *         [Generated from RDFReactor template rule #get0has-dynamic]
+     */
+    public boolean hasContentEncoded() {
+        return Base.has( this.model, this.getResource(), CONTENT_ENCODED );
+    }
+
+    /**
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@5e9384fb has
+     * the given value (maybe among other values).
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be checked
+     * @return true if this property contains (maybe among other) the given
+     *         value
+     * 
+     *         [Generated from RDFReactor template rule #get0has-value-static]
+     */
+    public static boolean hasContentEncoded( Model model, org.ontoware.rdf2go.model.node.Resource instanceResource, org.ontoware.rdf2go.model.node.Node value ) {
+        return Base.hasValue( model, instanceResource, CONTENT_ENCODED, value );
+    }
+
+    /**
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@5e9384fb has
+     * the given value (maybe among other values).
+     * 
+     * @param value
+     *            the value to be checked
+     * @return true if this property contains (maybe among other) the given
+     *         value
+     * 
+     *         [Generated from RDFReactor template rule #get0has-value-dynamic]
+     */
+    public boolean hasContentEncoded( org.ontoware.rdf2go.model.node.Node value ) {
+        return Base.hasValue( this.model, this.getResource(), CONTENT_ENCODED,
+                value );
+    }
+
+    /**
+     * Get all values of property ContentEncoded as an Iterator over RDF2Go
+     * nodes
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @return a ClosableIterator of RDF2Go Nodes
+     * 
+     *         [Generated from RDFReactor template rule #get7static]
+     */
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllContentEncoded_asNode( Model model, org.ontoware.rdf2go.model.node.Resource instanceResource ) {
+        return Base.getAll_asNode( model, instanceResource, CONTENT_ENCODED );
+    }
+
+    /**
+     * Get all values of property ContentEncoded as a ReactorResult of RDF2Go
+     * nodes
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @return a List of RDF2Go Nodes
+     * 
+     *         [Generated from RDFReactor template rule
+     *         #get7static-reactor-result]
+     */
+    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllContentEncoded_asNode_( Model model, org.ontoware.rdf2go.model.node.Resource instanceResource ) {
+        return Base.getAll_as( model, instanceResource, CONTENT_ENCODED,
+                org.ontoware.rdf2go.model.node.Node.class );
+    }
+
+    /**
+     * Get all values of property ContentEncoded as an Iterator over RDF2Go
+     * nodes
+     * 
+     * @return a ClosableIterator of RDF2Go Nodes
+     * 
+     *         [Generated from RDFReactor template rule #get8dynamic]
+     */
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllContentEncoded_asNode() {
+        return Base.getAll_asNode( this.model, this.getResource(),
+                CONTENT_ENCODED );
+    }
+
+    /**
+     * Get all values of property ContentEncoded as a ReactorResult of RDF2Go
+     * nodes
+     * 
+     * @return a List of RDF2Go Nodes
+     * 
+     *         [Generated from RDFReactor template rule
+     *         #get8dynamic-reactor-result]
+     */
+    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllContentEncoded_asNode_() {
+        return Base.getAll_as( this.model, this.getResource(), CONTENT_ENCODED,
+                org.ontoware.rdf2go.model.node.Node.class );
+    }
+
+    /**
+     * Get all values of property ContentEncoded * @param model an RDF2Go model
+     * 
+     * @param resource
+     *            an RDF2Go resource
+     * @return a ClosableIterator of $type
+     * 
+     *         [Generated from RDFReactor template rule #get11static]
+     */
+    public static ClosableIterator<java.lang.String> getAllContentEncoded( Model model, org.ontoware.rdf2go.model.node.Resource instanceResource ) {
+        return Base.getAll( model, instanceResource, CONTENT_ENCODED,
+                java.lang.String.class );
+    }
+
+    /**
+     * Get all values of property ContentEncoded as a ReactorResult of
+     * java.lang.String
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @return a ReactorResult of $type which can conveniently be converted to
+     *         iterator, list or array
+     * 
+     *         [Generated from RDFReactor template rule
+     *         #get11static-reactorresult]
+     */
+    public static ReactorResult<java.lang.String> getAllContentEncoded_as( Model model, org.ontoware.rdf2go.model.node.Resource instanceResource ) {
+        return Base.getAll_as( model, instanceResource, CONTENT_ENCODED,
+                java.lang.String.class );
+    }
+
+    /**
+     * Get all values of property ContentEncoded * @return a ClosableIterator of
+     * $type
+     * 
+     * [Generated from RDFReactor template rule #get12dynamic]
+     */
+    public ClosableIterator<java.lang.String> getAllContentEncoded() {
+        return Base.getAll( this.model, this.getResource(), CONTENT_ENCODED,
+                java.lang.String.class );
+    }
+
+    /**
+     * Get all values of property ContentEncoded as a ReactorResult of
+     * java.lang.String
+     * 
+     * @return a ReactorResult of $type which can conveniently be converted to
+     *         iterator, list or array
+     * 
+     *         [Generated from RDFReactor template rule
+     *         #get12dynamic-reactorresult]
+     */
+    public ReactorResult<java.lang.String> getAllContentEncoded_as() {
+        return Base.getAll_as( this.model, this.getResource(), CONTENT_ENCODED,
+                java.lang.String.class );
+    }
+
+    /**
+     * Adds a value to property ContentEncoded as an RDF2Go node
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #add1static]
+     */
+    public static void addContentEncoded( Model model, org.ontoware.rdf2go.model.node.Resource instanceResource, org.ontoware.rdf2go.model.node.Node value ) {
+        Base.add( model, instanceResource, CONTENT_ENCODED, value );
+    }
+
+    /**
+     * Adds a value to property ContentEncoded as an RDF2Go node
+     * 
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #add1dynamic]
+     */
+    public void addContentEncoded( org.ontoware.rdf2go.model.node.Node value ) {
+        Base.add( this.model, this.getResource(), CONTENT_ENCODED, value );
+    }
+
+    /**
+     * Adds a value to property ContentEncoded from an instance of
+     * java.lang.String
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * 
+     *            [Generated from RDFReactor template rule #add3static]
+     */
+    public static void addContentEncoded( Model model, org.ontoware.rdf2go.model.node.Resource instanceResource, java.lang.String value ) {
+        Base.add( model, instanceResource, CONTENT_ENCODED, value );
+    }
+
+    /**
+     * Adds a value to property ContentEncoded from an instance of
+     * java.lang.String
+     * 
+     * [Generated from RDFReactor template rule #add4dynamic]
+     */
+    public void addContentEncoded( java.lang.String value ) {
+        Base.add( this.model, this.getResource(), CONTENT_ENCODED, value );
+    }
+
+    /**
+     * Sets a value of property ContentEncoded from an RDF2Go node.
+     * First, all existing values are removed, then this value is added.
+     * Cardinality constraints are not checked, but this method exists only for
+     * properties with
+     * no minCardinality or minCardinality == 1.
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be set
+     * 
+     *            [Generated from RDFReactor template rule #set1static]
+     */
+    public static void setContentEncoded( Model model, org.ontoware.rdf2go.model.node.Resource instanceResource, org.ontoware.rdf2go.model.node.Node value ) {
+        Base.set( model, instanceResource, CONTENT_ENCODED, value );
+    }
+
+    /**
+     * Sets a value of property ContentEncoded from an RDF2Go node.
+     * First, all existing values are removed, then this value is added.
+     * Cardinality constraints are not checked, but this method exists only for
+     * properties with
+     * no minCardinality or minCardinality == 1.
+     * 
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #set1dynamic]
+     */
+    public void setContentEncoded( org.ontoware.rdf2go.model.node.Node value ) {
+        Base.set( this.model, this.getResource(), CONTENT_ENCODED, value );
+    }
+
+    /**
+     * Sets a value of property ContentEncoded from an instance of
+     * java.lang.String
+     * First, all existing values are removed, then this value is added.
+     * Cardinality constraints are not checked, but this method exists only for
+     * properties with
+     * no minCardinality or minCardinality == 1.
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #set3static]
+     */
+    public static void setContentEncoded( Model model, org.ontoware.rdf2go.model.node.Resource instanceResource, java.lang.String value ) {
+        Base.set( model, instanceResource, CONTENT_ENCODED, value );
+    }
+
+    /**
+     * Sets a value of property ContentEncoded from an instance of
+     * java.lang.String
+     * First, all existing values are removed, then this value is added.
+     * Cardinality constraints are not checked, but this method exists only for
+     * properties with
+     * no minCardinality or minCardinality == 1.
+     * 
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #set4dynamic]
+     */
+    public void setContentEncoded( java.lang.String value ) {
+        Base.set( this.model, this.getResource(), CONTENT_ENCODED, value );
+    }
+
+    /**
+     * Removes a value of property ContentEncoded as an RDF2Go node
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove1static]
+     */
+    public static void removeContentEncoded( Model model, org.ontoware.rdf2go.model.node.Resource instanceResource, org.ontoware.rdf2go.model.node.Node value ) {
+        Base.remove( model, instanceResource, CONTENT_ENCODED, value );
+    }
+
+    /**
+     * Removes a value of property ContentEncoded as an RDF2Go node
+     * 
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove1dynamic]
+     */
+    public void removeContentEncoded( org.ontoware.rdf2go.model.node.Node value ) {
+        Base.remove( this.model, this.getResource(), CONTENT_ENCODED, value );
+    }
+
+    /**
+     * Removes a value of property ContentEncoded given as an instance of
+     * java.lang.String
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove3static]
+     */
+    public static void removeContentEncoded( Model model, org.ontoware.rdf2go.model.node.Resource instanceResource, java.lang.String value ) {
+        Base.remove( model, instanceResource, CONTENT_ENCODED, value );
+    }
+
+    /**
+     * Removes a value of property ContentEncoded given as an instance of
+     * java.lang.String
+     * 
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove4dynamic]
+     */
+    public void removeContentEncoded( java.lang.String value ) {
+        Base.remove( this.model, this.getResource(), CONTENT_ENCODED, value );
+    }
+
+    /**
+     * Removes all values of property ContentEncoded * @param model an RDF2Go
+     * model
+     * 
+     * @param resource
+     *            an RDF2Go resource
+     * 
+     *            [Generated from RDFReactor template rule #removeall1static]
+     */
+    public static void removeAllContentEncoded( Model model, org.ontoware.rdf2go.model.node.Resource instanceResource ) {
+        Base.removeAll( model, instanceResource, CONTENT_ENCODED );
+    }
+
+    /**
+     * Removes all values of property ContentEncoded *
+     * [Generated from RDFReactor template rule #removeall1dynamic]
+     */
+    public void removeAllContentEncoded() {
+        Base.removeAll( this.model, this.getResource(), CONTENT_ENCODED );
+    }
+
      /**
      * Check if org.ontoware.rdfreactor.generator.java.JProperty@23dc51cb has at least one value set 
      * @param model an RDF2Go model

@@ -17,14 +17,16 @@ import net.patrickpollet.moodlews_gson.core.Mdl_restserverBindingStub;
 import net.patrickpollet.moodlews_gson.core.UserRecord;
 
 import org.ontoware.rdf2go.util.RDFTool;
+import org.rdfs.sioc.Container;
+import org.rdfs.sioc.Forum;
+import org.rdfs.sioc.Post;
+import org.rdfs.sioc.SIOCThing;
+import org.rdfs.sioc.Site;
+import org.rdfs.sioc.Thread;
+import org.rdfs.sioc.UserAccount;
 
 import com.google.common.base.Preconditions;
 
-import de.m0ep.uni.ma.rdf.sioc.Container;
-import de.m0ep.uni.ma.rdf.sioc.Forum;
-import de.m0ep.uni.ma.rdf.sioc.Post;
-import de.m0ep.uni.ma.rdf.sioc.Thread;
-import de.m0ep.uni.ma.rdf.sioc.UserAccount;
 import de.m0ep.uni.ma.socc.SIOCModel;
 
 public class MoodleConnector implements Connector {
@@ -74,6 +76,11 @@ public class MoodleConnector implements Connector {
         return model;
     }
 
+    public Site getSite() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     public List<Forum> getForums() {
         List<Forum> result = new ArrayList<Forum>();
         ForumRecord[] forumRecords = moodle.get_all_forums( login.getClient(),
@@ -84,7 +91,7 @@ public class MoodleConnector implements Connector {
         for ( ForumRecord forumRecord : forumRecords ) {
             Forum forum = model.createForum( getURL() + "forum/"
                     + forumRecord.getId() );
-            forum.setSIOCId( Integer.toString( forumRecord.getId() ) );
+            forum.setId( Integer.toString( forumRecord.getId() ) );
 
             CourseRecord course = courses.get( forumRecord.getCourse() );
             if( null == course ) {
@@ -96,7 +103,7 @@ public class MoodleConnector implements Connector {
                 courses.put( course.getId(), course );
             }
 
-            forum.setSIOCName( course.getFullname() + "/"
+            forum.setName( course.getFullname() + "/"
                     + forumRecord.getName() );
 
             result.add( forum );
@@ -107,7 +114,7 @@ public class MoodleConnector implements Connector {
 
     public List<Thread> getThreads( Forum forum ) {
         List<Thread> threads = new ArrayList<Thread>();
-        int forumId = Integer.parseInt( forum.getAllSIOCId_as().firstValue() );
+        int forumId = Integer.parseInt( forum.getAllId_as().firstValue() );
         
         ForumDiscussionRecord[] discussionRecords = moodle
                 .get_forum_discussions( login.getClient(),
@@ -123,11 +130,11 @@ public class MoodleConnector implements Connector {
             Thread thread = model.createThread( getURL() + "thread/"
  + record.getId() );
 
-            thread.setSIOCId( Integer.toString( record.getId() ) );
-            thread.setSIOCName( record.getName() );
-            thread.setSIOCLastitemdate( RDFTool.dateTime2String( new Date(
+            thread.setId( Integer.toString( record.getId() ) );
+            thread.setName( record.getName() );
+            thread.setLastitemdate( RDFTool.dateTime2String( new Date(
                     (long) record.getTimemodified() * 1000 ) ) );
-            thread.setSIOCParent( forum );
+            thread.setParent( forum );
 
             threads.add( thread );
         }
@@ -141,7 +148,7 @@ public class MoodleConnector implements Connector {
         List<Post> result = new ArrayList<Post>();
         ForumPostRecord[] postRecords = moodle.get_forum_posts(
                 login.getClient(), login.getSessionkey(),
-                Integer.parseInt( container.getAllSIOCId_as().firstValue() ),
+                        Integer.parseInt( container.getAllId_as().firstValue() ),
                 limit );
         
         for ( ForumPostRecord postRecord : postRecords ) {
@@ -156,14 +163,14 @@ public class MoodleConnector implements Connector {
         Post post = model.createPost( getURL() + "post/" + postRecord.getId() );
 
         if( null != parent )
-            post.setSIOCReplyof( parent );
-        post.setSIOCContainer( discussion );
-        post.setSIOCId( Integer.toString( postRecord.getId() ) );
-        post.setDCTermsSubject( postRecord.getSubject() );
-        post.setSIOCContent( postRecord.getMessage() );
-        post.setDCTermsCreated( RDFTool.dateTime2String( new Date(
+            post.setReplyof( parent );
+        post.setContainer( discussion );
+        post.setId( Integer.toString( postRecord.getId() ) );
+        post.setSubject( postRecord.getSubject() );
+        post.setContent( postRecord.getMessage() );
+        post.setCreated( RDFTool.dateTime2String( new Date(
                 (long) postRecord.getCreated() * 1000 ) ) );
-        post.setDCTermsModified( RDFTool.dateTime2String( new Date(
+        post.setModified( RDFTool.dateTime2String( new Date(
                 (long) postRecord.getModified() * 1000 ) ) );
 
         result.add( post );
@@ -180,15 +187,15 @@ public class MoodleConnector implements Connector {
     }
 
     public void publishPost( Post post, Container container ) {
-        Preconditions.checkArgument( post.hasSIOCContent() );
+        Preconditions.checkArgument( post.hasContent() );
         Preconditions.checkArgument( canPostOn( container ) );
 
         ForumPostDatum datum = new ForumPostDatum();
-        datum.setMessage( post.getAllSIOCContent_as().firstValue() );
-        if( post.hasDCTermsTitle() ) {
-            datum.setSubject( post.getAllDCTermsTitle_as().firstValue() );
-        } else if( post.hasDCTermsSubject() ) {
-            datum.setSubject( post.getAllDCTermsSubject_as().firstValue() );
+        datum.setMessage( post.getAllContent_as().firstValue() );
+        if( post.hasTitle() ) {
+            datum.setSubject( post.getAllTitle_as().firstValue() );
+        } else if( post.hasSubject() ) {
+            datum.setSubject( post.getAllSubject_as().firstValue() );
         } else {
             datum.setSubject( "" );
         }
@@ -196,7 +203,7 @@ public class MoodleConnector implements Connector {
         // get first post of the discussion to post a reply
         ForumPostRecord[] posts = moodle
                 .get_forum_posts( login.getClient(), login.getSessionkey(),
-                Integer.parseInt( container.getAllSIOCId_as().firstValue() ), 1 );
+                Integer.parseInt( container.getAllId_as().firstValue() ), 1 );
 
         if( 0 != posts.length )
             moodle.forum_add_reply( login.getClient(), login.getSessionkey(),
@@ -204,33 +211,34 @@ public class MoodleConnector implements Connector {
     }
 
     public void commentPost( Post post, Post parent ) {
-        Preconditions.checkArgument( post.hasSIOCContent() );
+        Preconditions.checkArgument( post.hasContent() );
 
         ForumPostDatum datum = new ForumPostDatum();
-        datum.setMessage( post.getAllSIOCContent_as().firstValue() );
-        if( post.hasDCTermsTitle() ) {
-            datum.setSubject( post.getAllDCTermsTitle_as().firstValue() );
-        } else if( post.hasDCTermsSubject() ) {
-            datum.setSubject( post.getAllDCTermsSubject_as().firstValue() );
+        datum.setMessage( post.getAllContent_as().firstValue() );
+        if( post.hasTitle() ) {
+            datum.setSubject( post.getAllTitle_as().firstValue() );
+        } else if( post.hasSubject() ) {
+            datum.setSubject( post.getAllSubject_as().firstValue() );
         } else {
             datum.setSubject( "" );
         }
 
         moodle.forum_add_reply( login.getClient(), login.getSessionkey(),
-                Integer.parseInt( parent.getAllSIOCId_as().firstValue() ),
+                Integer.parseInt( parent.getAllId_as().firstValue() ),
                 datum );
     }
 
-    public UserAccount getUser() {
+    public UserAccount getUserAccount() {
         UserRecord[] userRecords = moodle.get_user_byid( login.getClient(), login.getSessionkey(), myId );
         
         if(null != userRecords && 0 < userRecords.length){
             UserRecord user = userRecords[0];
             UserAccount result = model.createUserAccount( URL + user.getId() );
 
-            result.setSIOCId( Integer.toString( user.getId() ) );
-            result.setFOAFName( user.getFirstname() + " " + user.getLastname() );
-            result.setFOAFAccountname( user.getUsername() );
+            SIOCThing.setId( result.getModel(), result.asResource(),
+                    Integer.toString( user.getId() ) );
+            result.setName( user.getFirstname() + " " + user.getLastname() );
+            result.setAccountname( user.getUsername() );
             
             return result;
         }

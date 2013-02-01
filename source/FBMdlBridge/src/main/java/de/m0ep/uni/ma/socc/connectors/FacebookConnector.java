@@ -7,6 +7,13 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.ontoware.rdf2go.util.RDFTool;
+import org.rdfs.sioc.Container;
+import org.rdfs.sioc.Forum;
+import org.rdfs.sioc.Post;
+import org.rdfs.sioc.SIOCThing;
+import org.rdfs.sioc.Site;
+import org.rdfs.sioc.Thread;
+import org.rdfs.sioc.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,11 +30,6 @@ import com.restfb.types.User;
 import com.restfb.types.Video;
 import com.restfb.util.StringUtils;
 
-import de.m0ep.uni.ma.rdf.sioc.Container;
-import de.m0ep.uni.ma.rdf.sioc.Forum;
-import de.m0ep.uni.ma.rdf.sioc.Post;
-import de.m0ep.uni.ma.rdf.sioc.Thread;
-import de.m0ep.uni.ma.rdf.sioc.UserAccount;
 import de.m0ep.uni.ma.socc.DefaultSIOCModel;
 import de.m0ep.uni.ma.socc.SIOCModel;
 
@@ -43,7 +45,7 @@ public class FacebookConnector implements Connector {
 
     private Properties config;
 
-    private SIOCModel          model;
+    private SIOCModel           model;
     private FacebookClient     client;
 
     private Set<String>        postable;
@@ -87,12 +89,17 @@ public class FacebookConnector implements Connector {
         client = null;
     }
 
+    public Site getSite() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     public List<Forum> getForums() {
         List<Forum> result = new ArrayList<Forum>();
 
         Forum wall = model.createForum( URL + "me/feed" );
-        wall.setSIOCId( "me" );
-        wall.setSIOCName( "Wall" );
+        wall.setId( "me" );
+        wall.setName( "Wall" );
         postable.add( wall.getResource().toString() );
         result.add( wall );
 
@@ -105,14 +112,14 @@ public class FacebookConnector implements Connector {
 
                 Forum forum = model.createForum( URL + "groups/"
                         + group.getId() );
-                forum.setSIOCId( group.getId() );
-                forum.setSIOCName( group.getName() );
+                forum.setId( group.getId() );
+                forum.setName( group.getName() );
                 
                 if( null != group.getDescription() )
-                    forum.setDCTermsDescription( group.getDescription() );
+                    forum.setDescription( group.getDescription() );
 
                 if( null != group.getUpdatedTime() )
-                    forum.setDCTermsModified( RDFTool.dateTime2String( group
+                    forum.setModified( RDFTool.dateTime2String( group
                             .getUpdatedTime() ) );
 
                 postable.add( forum.getResource().toString() );
@@ -129,7 +136,7 @@ public class FacebookConnector implements Connector {
 
     public List<Post> getPost( Container container ) {
         List<Post> result = new ArrayList<Post>();
-        String id = container.getAllSIOCId_as().firstValue();
+        String id = container.getAllId_as().firstValue();
         log.debug( "get posts" );
 
         Connection<FacebookType> feed = client.fetchConnection( id + "/feed",
@@ -143,7 +150,7 @@ public class FacebookConnector implements Connector {
 
                 if( null != type ) {
                     Post siocPost = model.createPost( URL + ftype.getId() );
-                    siocPost.setSIOCId( ftype.getId() );
+                    siocPost.setId( ftype.getId() );
 
                     if( "status".equals( type ) ) {
                         com.restfb.types.Post post = client.fetchObject(
@@ -158,12 +165,12 @@ public class FacebookConnector implements Connector {
                             continue;
                         }
 
-                        siocPost.setDCTermsTitle( type );
-                        siocPost.setDCTermsCreated( RDFTool
+                        siocPost.setTitle( type );
+                        siocPost.setCreated( RDFTool
                                 .dateTime2String( post.getCreatedTime() ) );
-                        siocPost.setDCTermsModified( RDFTool
+                        siocPost.setModified( RDFTool
                                 .dateTime2String( post.getUpdatedTime() ) );
-                        siocPost.setSIOCContent( StringUtils.trimToEmpty( post
+                        siocPost.setContent( StringUtils.trimToEmpty( post
                                 .getMessage() ) );
 
                     } else if( "photo".equals( type ) ) {
@@ -171,11 +178,11 @@ public class FacebookConnector implements Connector {
                                 Photo.class, Parameter.with( "fields",
                                         "created_time, link, name" ) );
 
-                        siocPost.setDCTermsTitle( StringUtils
+                        siocPost.setTitle( StringUtils
                                 .trimToEmpty( photo.getName() ) );
-                        siocPost.setDCTermsCreated( RDFTool
+                        siocPost.setCreated( RDFTool
                                 .dateTime2String( photo.getCreatedTime() ) );
-                        siocPost.setSIOCAttachment( ( (DefaultSIOCModel) model )
+                        siocPost.setAttachment( ( (DefaultSIOCModel) model )
                                 .getDelegatingModel().createURI(
                                         photo.getLink() ) );
 
@@ -186,14 +193,14 @@ public class FacebookConnector implements Connector {
                                                 .with( "fields",
                                                         "created_time, updated_time, source, name, description" ) );
 
-                        siocPost.setDCTermsTitle( video.getName() );
-                        siocPost.setDCTermsDescription( StringUtils
+                        siocPost.setTitle( video.getName() );
+                        siocPost.setDescription( StringUtils
                                 .trimToEmpty( video.getDescription() ) );
-                        siocPost.setDCTermsCreated( RDFTool
+                        siocPost.setCreated( RDFTool
                                 .dateTime2String( video.getCreatedTime() ) );
-                        siocPost.setDCTermsModified( RDFTool
+                        siocPost.setModified( RDFTool
                                 .dateTime2String( video.getUpdatedTime() ) );
-                        siocPost.setSIOCAttachment( ( (DefaultSIOCModel) model )
+                        siocPost.setAttachment( ( (DefaultSIOCModel) model )
                                 .getDelegatingModel().createURI(
                                         video.getSource() ) );
 
@@ -202,13 +209,13 @@ public class FacebookConnector implements Connector {
                                 Link.class, Parameter.with( "fields",
                                         "created_time, link, message, name" ) );
 
-                        siocPost.setDCTermsTitle( StringUtils.trimToEmpty( link
+                        siocPost.setTitle( StringUtils.trimToEmpty( link
                                 .getName() ) );
-                        siocPost.setDCTermsCreated( RDFTool
+                        siocPost.setCreated( RDFTool
                                 .dateTime2String( link.getCreatedTime() ) );
-                        siocPost.setSIOCContent( StringUtils.trimToEmpty( link
+                        siocPost.setContent( StringUtils.trimToEmpty( link
                                 .getMessage() ) );
-                        siocPost.setSIOCAttachment( ( (DefaultSIOCModel) model )
+                        siocPost.setAttachment( ( (DefaultSIOCModel) model )
                                 .getDelegatingModel()
                                 .createURI( link.getLink() ) );
                     }
@@ -237,36 +244,36 @@ public class FacebookConnector implements Connector {
     public void publishPost( Post post, Container container ) {
         Preconditions.checkArgument( canPostOn( container ) );
 
-        client.publish( container.getAllSIOCId_as()
+        client.publish( container.getAllId_as()
                 .firstValue() + "/feed",
  FacebookType.class, Parameter
                 .with(
                 "message", post
-.getAllSIOCContent_as()
+                        .getAllContent_as()
 .firstValue() ) );
     }
 
     public void commentPost( Post post, Post parent ) {
-        client.publish( parent.getAllSIOCId_as()
+        client.publish( parent.getAllId_as()
                 .firstValue() + "/comments",
  FacebookType.class, Parameter
                 .with(
                 "message", post
-.getAllSIOCContent_as()
+                        .getAllContent_as()
 .firstValue() ) );
 
     }
 
-    public UserAccount getUser() {
+    public UserAccount getUserAccount() {
         UserAccount result = null;
         User user = client.fetchObject( "me", User.class );
 
         if( null != user ) {
             result = model.createUserAccount( URL + user.getId() );
-            result.setSIOCId( user.getId() );
-            result.setFOAFName( user.getName() );
-            result.setFOAFAccountname( user.getUsername() );
-            result.setDCTermsModified( RDFTool.dateTime2String( user
+            SIOCThing.setId( result.getModel(), result.asResource(), user.getId() );
+            result.setName( user.getName() );
+            result.setAccountname( user.getUsername() );
+            result.setModified( RDFTool.dateTime2String( user
                     .getUpdatedTime() ) );
         }
 

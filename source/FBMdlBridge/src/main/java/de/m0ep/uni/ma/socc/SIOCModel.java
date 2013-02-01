@@ -2,15 +2,15 @@ package de.m0ep.uni.ma.socc;
 
 import java.util.List;
 
-import de.m0ep.uni.ma.rdf.sioc.Container;
-import de.m0ep.uni.ma.rdf.sioc.Forum;
-import de.m0ep.uni.ma.rdf.sioc.Item;
-import de.m0ep.uni.ma.rdf.sioc.Post;
-import de.m0ep.uni.ma.rdf.sioc.Role;
-import de.m0ep.uni.ma.rdf.sioc.Space;
-import de.m0ep.uni.ma.rdf.sioc.Thread;
-import de.m0ep.uni.ma.rdf.sioc.UserAccount;
-import de.m0ep.uni.ma.rdf.sioc.Usergroup;
+import org.rdfs.sioc.Container;
+import org.rdfs.sioc.Forum;
+import org.rdfs.sioc.Item;
+import org.rdfs.sioc.Post;
+import org.rdfs.sioc.Role;
+import org.rdfs.sioc.Space;
+import org.rdfs.sioc.Thread;
+import org.rdfs.sioc.UserAccount;
+import org.rdfs.sioc.Usergroup;
 
 public interface SIOCModel {
 

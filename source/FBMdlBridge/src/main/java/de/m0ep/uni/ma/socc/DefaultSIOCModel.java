@@ -7,21 +7,17 @@ import java.util.List;
 import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdfreactor.runtime.ReactorResult;
+import org.rdfs.sioc.Container;
+import org.rdfs.sioc.Forum;
+import org.rdfs.sioc.Item;
+import org.rdfs.sioc.Post;
+import org.rdfs.sioc.Role;
+import org.rdfs.sioc.Space;
+import org.rdfs.sioc.Thread;
+import org.rdfs.sioc.UserAccount;
+import org.rdfs.sioc.Usergroup;
 
 import com.google.common.base.Preconditions;
-
-import de.m0ep.uni.ma.rdf.sioc.Container;
-import de.m0ep.uni.ma.rdf.sioc.Forum;
-import de.m0ep.uni.ma.rdf.sioc.Item;
-import de.m0ep.uni.ma.rdf.sioc.Post;
-import de.m0ep.uni.ma.rdf.sioc.Role;
-import de.m0ep.uni.ma.rdf.sioc.Space;
-import de.m0ep.uni.ma.rdf.sioc.Thread;
-import de.m0ep.uni.ma.rdf.sioc.UserAccount;
-import de.m0ep.uni.ma.rdf.sioc.Usergroup;
-import de.m0ep.uni.ma.rdf.vocabularies.DCTerms;
-import de.m0ep.uni.ma.rdf.vocabularies.FOAF;
-import de.m0ep.uni.ma.rdf.vocabularies.SIOC;
 
 public class DefaultSIOCModel implements SIOCModel {
 
@@ -30,7 +26,6 @@ public class DefaultSIOCModel implements SIOCModel {
     public DefaultSIOCModel() {
         this.model = RDF2Go.getModelFactory().createModel();
         this.model.open();
-        initModel();
     }
 
     public DefaultSIOCModel( final Model model ) {
@@ -38,13 +33,6 @@ public class DefaultSIOCModel implements SIOCModel {
         Preconditions.checkArgument( model.isOpen(), "model have to ne open" );
 
         this.model = model;
-        initModel();
-    }
-
-    private void initModel() {
-        model.setNamespace( "sioc", SIOC.NS_SIOC.toString() );
-        model.setNamespace( "foaf", FOAF.NS_FOAF.toString() );
-        model.setNamespace( "dcterms", DCTerms.NS_DCTerms.toString() );
     }
 
     public Model getDelegatingModel() {

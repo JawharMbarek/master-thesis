@@ -32,10 +32,11 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import de.m0ep.uni.ma.rdf.sioc.Container;
-import de.m0ep.uni.ma.rdf.sioc.Forum;
-import de.m0ep.uni.ma.rdf.sioc.Post;
-import de.m0ep.uni.ma.rdf.sioc.Thread;
+import org.rdfs.sioc.Container;
+import org.rdfs.sioc.Forum;
+import org.rdfs.sioc.Post;
+import org.rdfs.sioc.Thread;
+
 import de.m0ep.uni.ma.socc.connectors.Connector;
 
 public class ConnectorView extends JFrame {
@@ -140,8 +141,8 @@ public class ConnectorView extends JFrame {
             
             Post reply = connector.getModel().createPost(
                     "http://example.com/tmppost/" + new Date().getTime() );
-            reply.setDCTermsTitle( subject.getText() );
-            reply.setSIOCContent( content.getText() );
+            reply.setTitle( subject.getText() );
+            reply.setContent( content.getText() );
 
             connector.commentPost( reply, parent );
             connector.getModel().removePost( reply );
@@ -163,8 +164,8 @@ public class ConnectorView extends JFrame {
 
             Post post = connector.getModel().createPost(
                     "http://example.com/tmppost/" + new Date().getTime() );
-            post.setDCTermsTitle( subject.getText() );
-            post.setSIOCContent( content.getText() );
+            post.setTitle( subject.getText() );
+            post.setContent( content.getText() );
 
             connector.publishPost( post, currentPostSelection );
             connector.getModel().removePost( post );
@@ -178,13 +179,13 @@ public class ConnectorView extends JFrame {
         
         for(Forum forum : forums){
             ForumTreeObject forumFto = new ForumTreeObject( forum
-                    .getAllSIOCName_as().firstValue(), forum );
+                    .getAllName_as().firstValue(), forum );
             MutableTreeNode forumNode = new DefaultMutableTreeNode( forumFto );
             
             List<Thread> threads = connector.getThreads( forum );
             for ( Thread thread : threads ) {
                 ForumTreeObject threadFto = new ForumTreeObject( thread
-                        .getAllSIOCName_as().firstValue(), thread );
+                        .getAllName_as().firstValue(), thread );
                 MutableTreeNode threadNode = new DefaultMutableTreeNode(
                         threadFto );
                 forumNode.insert( threadNode, forumNode.getChildCount() );
@@ -233,26 +234,26 @@ public class ConnectorView extends JFrame {
             base.setLayout( new GridLayout( 6, 1 ) );
             
             JLabel title = new JLabel( 
- ( value.hasDCTermsTitle() ) ? value
-                    .getAllDCTermsTitle_as().firstValue() : value
-                    .getAllDCTermsSubject_as().firstValue() );
+ ( value.hasTitle() ) ? value
+                    .getAllTitle_as().firstValue() : value.getAllSubject_as()
+                    .firstValue() );
             base.add( title );
 
-            JLabel created = new JLabel( value.getAllDCTermsCreated_as().firstValue());
+            JLabel created = new JLabel( value.getAllCreated_as().firstValue() );
             base.add(created);
 
-            JLabel content = new JLabel( value.getAllSIOCContent_as()
+            JLabel content = new JLabel( value.getAllContent_as()
                     .firstValue() );
             base.add(content);
 
             JLabel attachment = new JLabel(
-                    ( value.hasSIOCAttachment() ) ? ( value
-                            .getAllSIOCAttachment_as().firstValue().toString() )
+ ( value.hasAttachment() ) ? ( value
+                    .getAllAttachment_as().firstValue().toString() )
                             : ( "-no attachment-" ) );
             base.add( attachment );
 
-            JLabel parent = new JLabel( ( value.hasSIOCReplyof() ) ? ( value
-                    .getAllSIOCReplyof_as().firstValue().toString() )
+            JLabel parent = new JLabel( ( value.hasReplyof() ) ? ( value
+                    .getAllReplyof_as().firstValue().toString() )
                     : ( "-no parent-" ) );
             base.add( parent );
 

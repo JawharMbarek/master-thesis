@@ -1,21 +1,34 @@
+# other
+/gen
+Backup/
+
 # Eclipse
 .project
 .metadata
-bin/**
-bin/**/*
-tmp/**
-tmp/**/*
+bin/
+tmp/
+.settings/
+.classpath
+.loadpath
+
+# Apache Maven
+target/
+
 *.tmp
+*.class
 *.bak
 *.swp
 *~.nib
+*.log
+*.log.1
 local.properties
-.classpath
-.settings/
-.loadpath
+
 
 # External tool builders
 .externalToolBuilders/
 
 # Locally stored "Eclipse launch configurations"
 *.launch
+
+# PMD Code Analyzer
+.pmd

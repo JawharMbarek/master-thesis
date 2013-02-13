@@ -1,7 +1,9 @@
 package de.m0ep.socc;
 
-import java.util.List;
+import java.util.Iterator;
+import java.util.Properties;
 
+import org.ontoware.rdf2go.model.Model;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
@@ -18,15 +20,23 @@ public interface Connector {
 
     public String getURL();
 
+    public Properties getConfig();
+
+    public Model getModel();
+
     public Site getSite();
 
-    public List<Forum> getForums();
+    public UserAccount getUser();
 
-    public List<Thread> getThreads( Forum forum );
+    public Iterator<Forum> getForums();
 
-    public List<Post> getPosts(Container container);
+    public Iterator<Thread> getThreads(Forum forum);
 
-    public List<Usergroup> getUsergroups();
+    public Iterator<Post> getPosts(Container container);
+
+    public Iterator<Usergroup> getUsergroups();
+
+    public Iterator<UserAccount> getUserAccounts();
 
     public boolean canPostOn( Container container );
 
@@ -35,8 +45,4 @@ public interface Connector {
     public void publishPost( Post post, Container container );
 
     public void replyPost(Post post, Post parent);
-
-    public UserAccount getUser();
-
-    public List<UserAccount> getAllUserAccounts();
 }

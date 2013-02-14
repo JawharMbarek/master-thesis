@@ -68,7 +68,7 @@ public abstract class AbstractConnector implements Connector {
 	return new ArrayList<UserAccount>().iterator();
     }
 
-    public boolean canPostOn(Container container) {
+    public boolean canPublishOn(Container container) {
 	return false;
     }
 

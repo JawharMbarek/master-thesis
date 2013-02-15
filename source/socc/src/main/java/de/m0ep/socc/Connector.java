@@ -38,7 +38,7 @@ public interface Connector {
 
     public Iterator<UserAccount> getUserAccounts();
 
-    public boolean canPostOn( Container container );
+    public boolean canPublishOn( Container container );
 
     public boolean canReplyOn(Post parent);
 

@@ -1904,7 +1904,7 @@ public class UserAccount extends OnlineAccount {
      */
     public static ClosableIterator<SIOCThing> getAllEmail( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-		return Base.getAll(model, instanceResource, EMAIL, SIOCThing.class);
+        return Base.getAll( model, instanceResource, EMAIL, SIOCThing.class );
 	}
 	
     /**
@@ -1917,7 +1917,7 @@ public class UserAccount extends OnlineAccount {
      */
     public static ReactorResult<SIOCThing> getAllEmail_as( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-		return Base.getAll_as(model, instanceResource, EMAIL, SIOCThing.class);
+        return Base.getAll_as( model, instanceResource, EMAIL, SIOCThing.class );
 	}
 
     /**
@@ -1926,7 +1926,8 @@ public class UserAccount extends OnlineAccount {
 	 * [Generated from RDFReactor template rule #get12dynamic] 
      */
     public ClosableIterator<SIOCThing> getAllEmail() {
-		return Base.getAll(this.model, this.getResource(), EMAIL, SIOCThing.class);
+        return Base.getAll( this.model, this.getResource(), EMAIL,
+                SIOCThing.class );
 	}
 
     /**
@@ -1936,7 +1937,8 @@ public class UserAccount extends OnlineAccount {
 	 * [Generated from RDFReactor template rule #get12dynamic-reactorresult] 
      */
     public ReactorResult<SIOCThing> getAllEmail_as() {
-		return Base.getAll_as(this.model, this.getResource(), EMAIL, SIOCThing.class);
+        return Base.getAll_as( this.model, this.getResource(), EMAIL,
+                SIOCThing.class );
 	}
  
     /**
@@ -2027,7 +2029,7 @@ public class UserAccount extends OnlineAccount {
      */
     public static void setEmail( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            SIOCThing value ) {
+ SIOCThing value ) {
 		Base.set(model, instanceResource, EMAIL, value);
 	}
 	
@@ -2079,7 +2081,7 @@ public class UserAccount extends OnlineAccount {
      */
     public static void removeEmail( Model model,
             org.ontoware.rdf2go.model.node.Resource instanceResource,
-            SIOCThing value ) {
+ SIOCThing value ) {
 		Base.remove(model, instanceResource, EMAIL, value);
 	}
 	

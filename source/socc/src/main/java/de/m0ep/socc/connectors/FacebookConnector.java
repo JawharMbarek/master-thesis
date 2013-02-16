@@ -53,12 +53,10 @@ public class FacebookConnector extends AbstractConnector {
         this.myId = me.getId();
     }
 
-    @Override
     public String getURL() {
         return "http://www.facebook.com/";
     }
 
-    @Override
     public Site getSite() {
         URI uri = URIUtils.createURI( getURL() );
 
@@ -71,7 +69,6 @@ public class FacebookConnector extends AbstractConnector {
         }
     }
 
-    @Override
     public UserAccount getUser() {
         URI uri = (URI) new URIImpl( getURL() + myId );
 
@@ -104,7 +101,6 @@ public class FacebookConnector extends AbstractConnector {
         }
     }
 
-    @Override
     public Iterator<Forum> getForums() {
         List<Forum> result = new ArrayList<Forum>();
 
@@ -209,13 +205,11 @@ public class FacebookConnector extends AbstractConnector {
             this.container = container;
         }
 
-        @Override
         public boolean hasNext() {
             return null != feed && null != page
                     && ( feed.hasNext() || page.hasNext() );
         }
 
-        @Override
         public Post next() {
             if( !hasNext() )
                 throw new NoSuchElementException( "nothing here" );
@@ -234,7 +228,6 @@ public class FacebookConnector extends AbstractConnector {
             return null;
         }
 
-        @Override
         public void remove() {
             throw new UnsupportedOperationException( "remove is not supported" );
         }

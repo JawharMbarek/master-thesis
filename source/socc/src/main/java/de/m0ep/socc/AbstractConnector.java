@@ -38,12 +38,10 @@ public abstract class AbstractConnector implements Connector {
 	return id;
     }
 
-    @Override
     public Properties getConfig() {
 	return config;
     }
 
-    @Override
     public Model getModel() {
 	return model;
     }

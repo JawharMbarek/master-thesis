@@ -9,12 +9,10 @@ import de.m0ep.socc.ConnectorFactory;
 
 public class FacebookConnectorFactory implements ConnectorFactory {
 
-    @Override
     public String getConnectorName() {
 	return "Facebook";
     }
 
-    @Override
     public Connector createConnector(String id, Model model, Properties config) {
 	return new FacebookConnector(id, model, config);
     }

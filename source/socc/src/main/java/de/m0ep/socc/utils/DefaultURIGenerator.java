@@ -42,7 +42,6 @@ public class DefaultURIGenerator implements URIGenerator {
      * {@link Connector#getURL()}  + "usergroup/" + id
      * </pre>
      */
-    @Override
     public URI createUsergroupURI(final String id) {
 	Preconditions.checkNotNull(id, "id cannot be null");
 	return new URIImpl(connector.getURL() + "usergroup/" + id, true);
@@ -55,7 +54,6 @@ public class DefaultURIGenerator implements URIGenerator {
      * {@link Connector#getURL()}  + "user/" + id
      * </pre>
      */
-    @Override
     public URI createUserAccountURI(final String id) {
 	Preconditions.checkNotNull(id, "id cannot be null");
 	return new URIImpl(connector.getURL() + "user/" + id, true);
@@ -68,7 +66,6 @@ public class DefaultURIGenerator implements URIGenerator {
      * {@link Connector#getURL()}  + "site/" + id
      * </pre>
      */
-    @Override
     public URI createSiteURI(final String id) {
 	Preconditions.checkNotNull(id, "id cannot be null");
 	return new URIImpl(connector.getURL() + "site/" + id, true);
@@ -81,7 +78,6 @@ public class DefaultURIGenerator implements URIGenerator {
      * {@link Connector#getURL()}  + "forum/" + id
      * </pre>
      */
-    @Override
     public URI createForumURI(final String id) {
 	Preconditions.checkNotNull(id, "id cannot be null");
 	return new URIImpl(connector.getURL() + "forum/" + id, true);
@@ -94,7 +90,6 @@ public class DefaultURIGenerator implements URIGenerator {
      * {@link Connector#getURL()} + "thread/" + id
      * </pre>
      */
-    @Override
     public URI createThreadURI(final String id) {
 	Preconditions.checkNotNull(id, "id cannot be null");
 	return new URIImpl(connector.getURL() + "thread/" + id, true);
@@ -107,7 +102,6 @@ public class DefaultURIGenerator implements URIGenerator {
      * {@link Connector#getURL()}  + "post/" + id
      * </pre>
      */
-    @Override
     public URI createPostURI(final String id) {
 	Preconditions.checkNotNull(id, "id cannot be null");
 	return new URIImpl(connector.getURL() + "post/" + id, true);

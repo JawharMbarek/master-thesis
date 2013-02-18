@@ -70,35 +70,7 @@ public class FacebookConnector extends AbstractConnector {
     }
 
     public UserAccount getUser() {
-        URI uri = (URI) new URIImpl( getURL() + myId );
-
-        if( !UserAccount.hasInstance( getModel(), uri ) ) {
-            User me = client.fetchObject( myId, User.class );
-            UserAccount result = new UserAccount( getModel(), uri, true );
-
-            // SIOC statements
-            SIOCThing.setId( getModel(), result, me.getId() );
-            SIOCThing.setIsPartOf( getModel(), result, getSite() );
-
-            if( null != me.getEmail() && !me.getEmail().isEmpty() ) {
-                result.setEmail( URIUtils.createMailtoURI( me.getEmail() ) );
-                result.setEmailsha1( DigestUtils.sha1Hex( me.getEmail() ) );
-            }
-
-            if( null != me.getUsername() && !me.getUsername().isEmpty() )
-                result.setAccountname( me.getUsername() );
-
-            if( null != me.getName() && !me.getName().isEmpty() )
-                result.setName( me.getName() );
-
-            if( null != me.getUpdatedTime() )
-                result.setModified( RDFTool.dateTime2String( me
-                        .getUpdatedTime() ) );
-
-            return result;
-        } else {
-            return UserAccount.getInstance( getModel(), uri );
-        }
+	return getUser(myId);
     }
 
     public Iterator<Forum> getForums() {
@@ -129,7 +101,7 @@ public class FacebookConnector extends AbstractConnector {
                 if( !Forum.hasInstance( getModel(), uri ) ) {
                     Forum forum = new Forum( getModel(), uri, true );
                     forum.setId( group.getId() );
-                    forum.setName( group.getName() );
+		    forum.setName(group.getName() + "'s Wall");
                     forum.setHost( getSite() );
 
                     if( null != group.getDescription()
@@ -221,7 +193,8 @@ public class FacebookConnector extends AbstractConnector {
             if( page.hasNext() ) {
                 JsonObject next = page.next();
                 System.out.println( "\t" + next.getString( "id" ) );
-                Post result = parsePost( next );
+		Post result = FacebookPostParser.parse(FacebookConnector.this,
+			next, container);
                 return result;
             }
 
@@ -233,7 +206,43 @@ public class FacebookConnector extends AbstractConnector {
         }
     }
 
-    private Post parsePost(final JsonObject obj) {
-        return null;
+    /* package */FacebookClient getFacebookClient() {
+	return client;
+    }
+
+    /* package */UserAccount getUser(final String id) {
+	URI uri = (URI) new URIImpl(getURL() + id);
+
+	if (!UserAccount.hasInstance(getModel(), uri)) {
+	    User user = client.fetchObject(id, User.class);
+	    UserAccount result = new UserAccount(getModel(), uri, true);
+
+	    // SIOC statements
+	    SIOCThing.setId(getModel(), result, user.getId());
+	    SIOCThing.setIsPartOf(getModel(), result, getSite());
+
+	    if (null != user.getEmail() && !user.getEmail().isEmpty()) {
+		result.setEmail(URIUtils.createMailtoURI(user.getEmail()));
+		result.setEmailsha1(DigestUtils.sha1Hex(user.getEmail()));
+	    }
+
+	    if (null != user.getUsername() && !user.getUsername().isEmpty())
+		result.setAccountname(user.getUsername());
+
+	    if (null != user.getName() && !user.getName().isEmpty())
+		result.setName(user.getName());
+
+	    if (null != user.getUpdatedTime())
+		result.setModified(RDFTool.dateTime2String(user
+			.getUpdatedTime()));
+
+	    if (null != user.getLink())
+		result.setAccountservicehomepage(URIUtils.createURI(user
+			.getLink()));
+
+	    return result;
+	} else {
+	    return UserAccount.getInstance(getModel(), uri);
+	}
     }
 }

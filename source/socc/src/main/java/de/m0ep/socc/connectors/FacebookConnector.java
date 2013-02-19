@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.ontoware.rdf2go.model.Model;
@@ -22,10 +23,14 @@ import org.rdfs.sioc.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
+import com.restfb.FacebookClient.AccessToken;
 import com.restfb.Parameter;
+import com.restfb.exception.FacebookOAuthException;
 import com.restfb.json.JsonObject;
 import com.restfb.types.FacebookType;
 import com.restfb.types.Group;
@@ -35,19 +40,27 @@ import de.m0ep.socc.AbstractConnector;
 import de.m0ep.socc.utils.URIUtils;
 
 public class FacebookConnector extends AbstractConnector {
-
     private static final Logger LOG = LoggerFactory
                                             .getLogger( FacebookConnector.class );
 
+    public static final String CONFIG_ACCESS_TOKEN = "access_token";
+    public static final String CONFIG_CLIENT_ID = "client_id";
+    public static final String CONFIG_CLIENT_SECRET = "client_secret";
+
+    private static final String CONNECTION_COMMENTS = "comments";
+    private static final String CONNECTION_FEED = "feed";
+
     private FacebookClient client;
     private String myId;
-
+    private Properties config;
 
     public FacebookConnector(String id, Model model, Properties config) {
         super( id, model, config );
 
+	this.config = config;
         this.client = new DefaultFacebookClient(
-                config.getProperty( "access_token" ) );
+		config.getProperty(CONFIG_ACCESS_TOKEN));
+
         FacebookType me = client.fetchObject( "me", FacebookType.class,
                 Parameter.with( "fields", "id" ) );
         this.myId = me.getId();
@@ -76,7 +89,7 @@ public class FacebookConnector extends AbstractConnector {
     public Iterator<Forum> getForums() {
         List<Forum> result = new ArrayList<Forum>();
 
-        URI uri = URIUtils.createURI( getURL() + myId + "/feed" );
+	URI uri = URIUtils.createURI(getURL() + myId + "/" + CONNECTION_FEED);
         if( !Forum.hasInstance( getModel(), uri ) ) {
             Forum wall = new Forum( getModel(), uri, true );
             wall.setId( myId );
@@ -95,8 +108,8 @@ public class FacebookConnector extends AbstractConnector {
 
         for ( List<Group> myGroups : groupsConnections ) {
             for ( Group group : myGroups ) {
-                uri = URIUtils.createURI( getURL() + group.getId()
-                        + "/feed" );
+		uri = URIUtils.createURI(getURL() + group.getId() + "/"
+			+ CONNECTION_FEED);
 
                 if( !Forum.hasInstance( getModel(), uri ) ) {
                     Forum forum = new Forum( getModel(), uri, true );
@@ -129,9 +142,8 @@ public class FacebookConnector extends AbstractConnector {
 
         Connection<JsonObject> feed;
         try {
-            feed = client.fetchConnection( "/"
-                    + container
-                    .getAllId_as().firstValue() + "/feed", JsonObject.class );
+	    feed = client.fetchConnection(container.getAllId_as().firstValue()
+		    + "/" + CONNECTION_FEED, JsonObject.class);
         } catch ( Exception e ) {
             LOG.warn( e.getMessage(), e );
             return super.getPosts( container );
@@ -143,8 +155,11 @@ public class FacebookConnector extends AbstractConnector {
     @Override
     public boolean canPublishOn(Container container) {
         if( getModel().contains( container, RDF.type, SIOC.Forum ) ) {
-            Forum forum = (Forum) container;
-            return forum.hasHost( getSite() );
+	    Forum forum = Forum
+		    .getInstance(getModel(), container.getResource());
+	    return forum.hasHost(getSite())
+		    && hasConnection(container.getAllId_as().firstValue(),
+			    CONNECTION_FEED);
         }
 
         return false;
@@ -153,58 +168,81 @@ public class FacebookConnector extends AbstractConnector {
     @Override
     public boolean canReplyOn(Post parent) {
         /**
-         * We can reply on this post if:
-         * - this post is not already a reply
-         * - we can publish on the container of this post
-         */
+	 * We can reply on this post if: - this post is not already a reply - we
+	 * can publish on the container of this post - the post id is like
+	 * "[0-9]+_[0-9]+" Post has a "comments" connection
+	 */
         if( !parent.hasReplyof() && parent.hasContainer() ) {
             Container container = parent.getAllContainer_as().firstValue();
-            return canPublishOn( container );
+            String id = parent.getAllId_as().firstValue();
+            
+	    return canPublishOn(container)
+		    && Pattern.matches("^\\d+_\\d+$", id)
+		    && hasConnection(parent.getAllId_as().firstValue(),
+			    CONNECTION_COMMENTS);
         }
 
         return false;
     }
 
-    private class PostIterator implements Iterator<Post> {
-        private final Iterator<List<JsonObject>> feed;
-        private final Container                  container;
-        private Iterator<JsonObject>             page;
+    public boolean publishPost(final Post post, final Container container) {
+	Preconditions.checkArgument(canPublishOn(container));
 
-        public PostIterator( final Iterator<List<JsonObject>> feed,
-                final Container container ) {
-            this.feed = feed;
-            this.page = feed.next().iterator();
-            this.container = container;
-        }
+	List<Parameter> params = new ArrayList<>();
 
-        public boolean hasNext() {
-            return null != feed && null != page
-                    && ( feed.hasNext() || page.hasNext() );
-        }
+	if (post.hasContent())
+	    params.add(Parameter.with("message", post.getAllContent_as()
+		    .firstValue()));
 
-        public Post next() {
-            if( !hasNext() )
-                throw new NoSuchElementException( "nothing here" );
-            // page is empty, fetch next
-            if( feed.hasNext() && !page.hasNext() ){
-                page = feed.next().iterator();
-            }
+	if (post.hasAttachment())
+	    params.add(Parameter.with("link", post.getAllAttachment_as()
+		    .firstValue()));
 
-            if( page.hasNext() ) {
-                JsonObject next = page.next();
-                System.out.println( "\t" + next.getString( "id" ) );
-		Post result = FacebookPostParser.parse(FacebookConnector.this,
-			next, container);
-                return result;
-            }
+	if (post.hasTitle())
+	    params.add(Parameter.with("caption", post.getAllTitle_as()
+		    .firstValue()));
 
-            return null;
-        }
+	if (post.hasDescription())
+	    params.add(Parameter.with("description", post
+		    .getAllDescription_as().firstValue()));
 
-        public void remove() {
-            throw new UnsupportedOperationException( "remove is not supported" );
-        }
-    }
+	if (post.hasName())
+	    params.add(Parameter
+		    .with("name", post.getAllName_as().firstValue()));
+
+	FacebookType result;
+	try {
+	    result = client.publish(container.getAllId_as().firstValue()
+	    	+ "/" + CONNECTION_FEED,
+	    	FacebookType.class, params.toArray(new Parameter[0]));
+	} catch (Throwable e) {
+	    Throwables.propagateIfInstanceOf(e, FacebookOAuthException.class);
+	    return false;
+	}
+
+	return null != result && null != result.getId()
+		&& !result.getId().isEmpty();
+    };
+
+    public boolean replyPost(final Post post, final Post parent) {
+	Preconditions.checkArgument(canReplyOn(parent),
+		"cannot reply on that post");
+	Preconditions.checkArgument(post.hasContent(), "Post has no content");
+
+	FacebookType result;
+	try {
+	    result = client
+	    	.publish(parent.getAllId_as().firstValue() + "/"
+	    		+ CONNECTION_COMMENTS, FacebookType.class,
+	    	Parameter.with("message", post.getAllContent_as().firstValue()));
+	} catch (Throwable e) {
+	    Throwables.propagateIfInstanceOf(e, FacebookOAuthException.class);
+	    return false;
+	}
+
+	return null != result && null != result.getId()
+		&& !result.getId().isEmpty();
+    };
 
     /* package */FacebookClient getFacebookClient() {
 	return client;
@@ -244,5 +282,80 @@ public class FacebookConnector extends AbstractConnector {
 	} else {
 	    return UserAccount.getInstance(getModel(), uri);
 	}
+    }
+
+    /* package */void tryToExtendAccessToken(){
+	AccessToken token = client.obtainExtendedAccessToken(
+		config.getProperty(CONFIG_CLIENT_ID),
+		config.getProperty(CONFIG_CLIENT_SECRET),
+		config.getProperty(CONFIG_ACCESS_TOKEN));
+
+	config.setProperty(CONFIG_ACCESS_TOKEN, token.getAccessToken());
+	client = new DefaultFacebookClient(token.getAccessToken());
+    }
+
+    /* package */boolean hasConnection(final String id, final String connection) {
+
+	try {
+	    JsonObject obj = client.fetchObject(id, JsonObject.class,
+		    Parameter.with("fields", "id"),
+		    Parameter.with("metadata", "1"));
+
+	    if (null != obj && obj.has("metadata")) {
+		JsonObject metadata = obj.getJsonObject("metadata");
+
+		if (metadata.has("connections")) {
+		    JsonObject connections = metadata
+			    .getJsonObject("connections");
+
+		    return connections.has(connection);
+		}
+	    }
+
+	} catch (Throwable t) {
+	    LOG.warn("something not right...", t);
+	}
+
+	return false;
+    }
+    
+    private class PostIterator implements Iterator<Post> {
+        private final Iterator<List<JsonObject>> feed;
+        private final Container                  container;
+        private Iterator<JsonObject>             page;
+
+        public PostIterator( final Iterator<List<JsonObject>> feed,
+                final Container container ) {
+            this.feed = feed;
+            this.page = feed.next().iterator();
+            this.container = container;
+        }
+
+        public boolean hasNext() {
+            return null != feed && null != page
+                    && ( feed.hasNext() || page.hasNext() );
+        }
+
+        public Post next() {
+            if( !hasNext() )
+                throw new NoSuchElementException( "nothing here" );
+            // page is empty, fetch next
+            if( feed.hasNext() && !page.hasNext() ){
+                page = feed.next().iterator();
+            }
+
+            if( page.hasNext() ) {
+                JsonObject next = page.next();
+		Post result = FacebookPostParser.parse(FacebookConnector.this,
+			next, container);
+                return result;
+            }
+
+            return null;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException( "remove is not supported" );
+        }
     }
 }

@@ -12,6 +12,8 @@ import de.m0ep.socc.utils.URIUtils;
 
 public class FacebookPostParser {
 
+    private static final String DESCRIPTION = "description";
+    private static final String CAPTION = "caption";
     private static final String SOURCE = "source";
     private static final String UPDATED_TIME = "updated_time";
     private static final String LINK = "link";
@@ -32,7 +34,6 @@ public class FacebookPostParser {
 
     public static Post parse(final FacebookConnector connector,
 	    final JsonObject obj, final Container parentContainer) {
-	String id = obj.getString(ID);
 	String type = obj.getString(TYPE);
 	Post post = null;
 	
@@ -82,6 +83,10 @@ public class FacebookPostParser {
 	    else if (obj.has(MESSAGE))
 		result.setContent(obj.getString(MESSAGE));
 
+	    /* just in case... */
+	    if (obj.has(LINK))
+		result.setAttachment(URIUtils.createURI(obj.getString(LINK)));
+
 	    if (obj.has(CREATED_TIME))
 		result.setCreated(obj.getString(CREATED_TIME));
 
@@ -116,6 +121,12 @@ public class FacebookPostParser {
 
 	    if (obj.has(LINK))
 		result.setAttachment(URIUtils.createURI(obj.getString(LINK)));
+
+	    if (obj.has(CAPTION))
+		result.setTitle(CAPTION);
+
+	    if (obj.has(DESCRIPTION))
+		result.setDescription(obj.getString(DESCRIPTION));
 
 	    if (obj.has(STORY))
 		result.setContent(obj.getString(STORY));
@@ -156,7 +167,6 @@ public class FacebookPostParser {
 
 	    if (obj.has(SOURCE))
 		result.setAttachment(URIUtils.createURI(obj.getString(SOURCE)));
-
 
 	    if (obj.has(STORY))
 		result.setContent(obj.getString(STORY));

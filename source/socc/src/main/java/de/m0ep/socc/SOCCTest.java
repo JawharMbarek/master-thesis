@@ -17,6 +17,8 @@ import de.m0ep.socc.connectors.FacebookConnector;
 
 public class SOCCTest {
 
+    private static Connector connector;
+
     /**
      * @param args
      */
@@ -26,17 +28,16 @@ public class SOCCTest {
 
         Properties config = new Properties();
         config.put(
-                "access_token",
-		"AAACEdEose0cBANEXYyMEZCkwyyY9breh3m6BdfjBtabld8oDcdLYQRtLPseDKF3InRZBqoHj79CivtAZCo9ZA4kFl3dp3Gp9ZCybajCYZC9oh80frOfwlV");
+		FacebookConnector.CONFIG_ACCESS_TOKEN,
+		"AAACEdEose0cBAEjDt3QIGvPW7bZBHLxsP4yWDwme9hC8V0zdJ1Io53zlwZBZAToatYDOQwzKvyOsw9ZB9nSsBnoyj050R4kZCZBLwioRgMx6Ls7OFKqFn9");
+	config.put(FacebookConnector.CONFIG_CLIENT_ID, "218182098322396");
+	config.put(FacebookConnector.CONFIG_CLIENT_SECRET,
+		"7b80b9d7265c719e1d9efe112e4dbada");
 
-        Connector connector = new FacebookConnector( "facebook", model, config );
+	connector = new FacebookConnector("facebook", model, config);
 
         UserAccount user = connector.getUser();
-
-        System.out.println( user.getAllEmail_as().firstValue() );
-        System.out.println( user.getAllEmailsha1_as().firstValue() );
-        System.out.println( user.getAllAccountname_as().firstValue() );
-        System.out.println( user.getAllName_as().firstValue() );
+	printUser(user);
 
         Iterator<Forum> forums = connector.getForums();
 
@@ -50,60 +51,73 @@ public class SOCCTest {
             System.out.println( forum.getAllDescription_as().firstValue() );
             System.out.println( forum.getAllModified_as().firstValue() );
             System.out.println( forum.getAllHost_as().firstValue() );
-            System.out.println( "-----------" );
+	    System.out.println("canpublish: " + connector.canPublishOn(forum));
             Iterator<Post> posts = connector.getPosts( forum );
 
             int ctr = 0;
             while ( posts.hasNext() ) {
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>");
                 Post post = (Post) posts.next();
-
 		printPost(post);
-		System.out.println("~~~~~~~~~~~~~~");
                 
-		if (15 == ctr++)
+		if (5 == ctr++)
                     break;
             }
 
-            System.out.println( "===========" );
+	    System.out.println("====================");
+	    break;
         }
+
+	// doPost();
 
         model.dump();
     }
 
+    private static void doPost() {
+	Post p = new Post(connector.getModel(), true);
+	p.setContent("Hallo, Welt! :>");
+	connector.publishPost(p, connector.getForums().next());
+	Post.deleteAllProperties(p.getModel(), p);
+    }
+
     static void printUser(UserAccount user) {
 	System.out.println(user);
-	System.out.println("\t" + SIOCThing.getAllId_as(user.getModel(), user));
-	System.out.println("\t" + user.getAllName_as().firstValue());
-	System.out.println("\t" + user.getAllAccountname_as().firstValue());
-	System.out.println("\t"
-		+ user.getAllAccountservicehomepage_as().firstValue());
+	System.out.println(SIOCThing.getAllId_as(user.getModel(), user)
+		.firstValue());
+	System.out.println(user.getAllName_as().firstValue());
+	System.out.println(user.getAllAccountname_as().firstValue());
+	System.out.println(user.getAllAccountservicehomepage_as().firstValue());
     }
 
     static void printPost(Item post) {
+	System.out.println("Post-----------------");
 	System.out.println(post);
-	System.out.println("\t" + post.getAllId_as().firstValue());
-	System.out.println("\t" + post.getAllContent_as().firstValue());
-	System.out.println("\t" + post.getAllCreated_as().firstValue());
+	System.out.println(post.getAllId_as().firstValue());
+	System.out.println(post.getAllContent_as().firstValue());
+	System.out.println(post.getAllCreated_as().firstValue());
+	System.out.println("canreply: "
+		+ connector.canReplyOn(Post.getInstance(post.getModel(),
+			post.getResource())));
 
 	if (post.hasCreator()) {
-	    System.out.println("From-----------------");
+	    System.out.println(">From----------------");
 	    printUser(post.getAllCreator_as().firstValue());
 	}
 
 	if (post.hasAttachment()) {
-	    System.out.println("Attachments----------");
+	    System.out.println(">Attachments---------");
 
 	    ClosableIterator<Node> attachments = post.getAllAttachment_asNode();
 	    while (attachments.hasNext()) {
 		Node node = (Node) attachments.next();
-		System.out.println("\t" + node);
+		System.out.println(node);
 
 	    }
 	    attachments.close();
 	}
 
 	if (post.hasReply()) {
-	    System.out.println("Replies--------------");
+	    System.out.println(">Replies-------------");
 
 	    ClosableIterator<Item> replies = post.getAllReply();
 

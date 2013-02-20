@@ -14,6 +14,7 @@ import org.rdfs.sioc.SIOCThing;
 import org.rdfs.sioc.UserAccount;
 
 import de.m0ep.socc.connectors.FacebookConnector;
+import de.m0ep.socc.connectors.MoodleConnector;
 
 public class SOCCTest {
 
@@ -29,12 +30,17 @@ public class SOCCTest {
         Properties config = new Properties();
         config.put(
 		FacebookConnector.CONFIG_ACCESS_TOKEN,
-		"AAACEdEose0cBAEjDt3QIGvPW7bZBHLxsP4yWDwme9hC8V0zdJ1Io53zlwZBZAToatYDOQwzKvyOsw9ZB9nSsBnoyj050R4kZCZBLwioRgMx6Ls7OFKqFn9");
+		"AAACEdEose0cBAEAslVwUVZBVqRZBVRbpFVwyICwErRFGVVkU9sPiTwiEFf4WZCkzK7mj6pNGZC37w63CKBmrrR5aDaWYtLZAR3ZAJVjZArGKzKOQYa1I4z6");
 	config.put(FacebookConnector.CONFIG_CLIENT_ID, "218182098322396");
 	config.put(FacebookConnector.CONFIG_CLIENT_SECRET,
 		"7b80b9d7265c719e1d9efe112e4dbada");
+	config.put(MoodleConnector.CONFIG_MOODLE_URL,
+		"http://localhost/florian/moodle24/");
+	config.put(MoodleConnector.CONFIG_USERNAME, "admin");
+	config.put(MoodleConnector.CONFIG_PASSWORD, "admin");
 
 	connector = new FacebookConnector("facebook", model, config);
+	// connector = new MoodleConnector("Moodle", model, config);
 
         UserAccount user = connector.getUser();
 	printUser(user);

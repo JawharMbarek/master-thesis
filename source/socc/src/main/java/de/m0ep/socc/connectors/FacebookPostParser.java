@@ -8,7 +8,7 @@ import com.restfb.json.JsonArray;
 import com.restfb.json.JsonObject;
 
 import de.m0ep.socc.ConnectorException;
-import de.m0ep.socc.utils.URIUtils;
+import de.m0ep.socc.utils.RDFUtils;
 
 public class FacebookPostParser {
 
@@ -68,7 +68,7 @@ public class FacebookPostParser {
     private static Post parseStatusMessage(FacebookConnector connector,
 	    JsonObject obj, final Container parentContainer) {
 	String id = obj.getString(ID);
-	URI uri = URIUtils.createURI(connector.getURL() + id);
+	URI uri = RDFUtils.createURI(connector.getURL() + id);
 
 	if (!Post.hasInstance(connector.getModel(), uri)) {
 	    Post result = new Post(connector.getModel(), uri, true);
@@ -85,7 +85,7 @@ public class FacebookPostParser {
 
 	    /* just in case... */
 	    if (obj.has(LINK))
-		result.setAttachment(URIUtils.createURI(obj.getString(LINK)));
+		result.setAttachment(RDFUtils.createURI(obj.getString(LINK)));
 
 	    if (obj.has(CREATED_TIME))
 		result.setCreated(obj.getString(CREATED_TIME));
@@ -106,7 +106,7 @@ public class FacebookPostParser {
     private static Post parseLinkMessage(FacebookConnector connector,
 	    JsonObject obj, final Container parentContainer) {
 	String id = obj.getString(ID);
-	URI uri = URIUtils.createURI(connector.getURL() + id);
+	URI uri = RDFUtils.createURI(connector.getURL() + id);
 
 	if (!Post.hasInstance(connector.getModel(), uri)) {
 	    Post result = new Post(connector.getModel(), uri, true);
@@ -120,7 +120,7 @@ public class FacebookPostParser {
 		result.setName(obj.getString(NAME));
 
 	    if (obj.has(LINK))
-		result.setAttachment(URIUtils.createURI(obj.getString(LINK)));
+		result.setAttachment(RDFUtils.createURI(obj.getString(LINK)));
 
 	    if (obj.has(CAPTION))
 		result.setTitle(CAPTION);
@@ -152,7 +152,7 @@ public class FacebookPostParser {
     private static Post parseVideoMessage(FacebookConnector connector,
 	    JsonObject obj, final Container parentContainer) {
 	String id = obj.getString(ID);
-	URI uri = URIUtils.createURI(connector.getURL() + id);
+	URI uri = RDFUtils.createURI(connector.getURL() + id);
 
 	if (!Post.hasInstance(connector.getModel(), uri)) {
 	    Post result = new Post(connector.getModel(), uri, true);
@@ -166,7 +166,7 @@ public class FacebookPostParser {
 		result.setName(obj.getString(NAME));
 
 	    if (obj.has(SOURCE))
-		result.setAttachment(URIUtils.createURI(obj.getString(SOURCE)));
+		result.setAttachment(RDFUtils.createURI(obj.getString(SOURCE)));
 
 	    if (obj.has(STORY))
 		result.setContent(obj.getString(STORY));
@@ -193,7 +193,7 @@ public class FacebookPostParser {
 	    JsonObject obj, final Container parentContainer) {
 
 	String id = obj.getString(ID);
-	URI uri = URIUtils.createURI(connector.getURL() + id);
+	URI uri = RDFUtils.createURI(connector.getURL() + id);
 
 	if (!Post.hasInstance(connector.getModel(), uri)) {
 	    Post result = new Post(connector.getModel(), uri, true);
@@ -207,7 +207,7 @@ public class FacebookPostParser {
 		result.setName(obj.getString(NAME));
 
 	    if (obj.has(LINK))
-		result.setAttachment(URIUtils.createURI(obj.getString(LINK)));
+		result.setAttachment(RDFUtils.createURI(obj.getString(LINK)));
 
 	    if (obj.has(STORY))
 		result.setContent(obj.getString(STORY));
@@ -234,7 +234,7 @@ public class FacebookPostParser {
 	    final JsonObject obj, final Post parentPost) {
 	
 	String id = obj.getString(ID);
-	URI uri = URIUtils.createURI(connector.getURL() + id);
+	URI uri = RDFUtils.createURI(connector.getURL() + id);
 	
 	if (!Post.hasInstance(connector.getModel(), uri)) {
 	    Post result = new Post(connector.getModel(), uri, true);

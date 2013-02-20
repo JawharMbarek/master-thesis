@@ -1,6 +1,7 @@
 package de.m0ep.socc.connectors;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -37,7 +38,7 @@ import com.restfb.types.Group;
 import com.restfb.types.User;
 
 import de.m0ep.socc.AbstractConnector;
-import de.m0ep.socc.utils.URIUtils;
+import de.m0ep.socc.utils.RDFUtils;
 
 public class FacebookConnector extends AbstractConnector {
     private static final Logger LOG = LoggerFactory
@@ -71,7 +72,7 @@ public class FacebookConnector extends AbstractConnector {
     }
 
     public Site getSite() {
-        URI uri = URIUtils.createURI( getURL() );
+        URI uri = RDFUtils.createURI( getURL() );
 
         if( !Site.hasInstance( getModel(), uri ) ) {
             Site result = new Site( getModel(), uri, true );
@@ -89,7 +90,7 @@ public class FacebookConnector extends AbstractConnector {
     public Iterator<Forum> getForums() {
         List<Forum> result = new ArrayList<Forum>();
 
-	URI uri = URIUtils.createURI(getURL() + myId + "/" + CONNECTION_FEED);
+	URI uri = RDFUtils.createURI(getURL() + myId + "/" + CONNECTION_FEED);
         if( !Forum.hasInstance( getModel(), uri ) ) {
             Forum wall = new Forum( getModel(), uri, true );
             wall.setId( myId );
@@ -108,7 +109,7 @@ public class FacebookConnector extends AbstractConnector {
 
         for ( List<Group> myGroups : groupsConnections ) {
             for ( Group group : myGroups ) {
-		uri = URIUtils.createURI(getURL() + group.getId() + "/"
+		uri = RDFUtils.createURI(getURL() + group.getId() + "/"
 			+ CONNECTION_FEED);
 
                 if( !Forum.hasInstance( getModel(), uri ) ) {
@@ -132,7 +133,7 @@ public class FacebookConnector extends AbstractConnector {
             }
         }
 
-        return result.iterator();
+	return Collections.unmodifiableList(result).iterator();
     }
 
     @Override
@@ -260,7 +261,7 @@ public class FacebookConnector extends AbstractConnector {
 	    SIOCThing.setIsPartOf(getModel(), result, getSite());
 
 	    if (null != user.getEmail() && !user.getEmail().isEmpty()) {
-		result.setEmail(URIUtils.createMailtoURI(user.getEmail()));
+		result.setEmail(RDFUtils.createMailtoURI(user.getEmail()));
 		result.setEmailsha1(DigestUtils.sha1Hex(user.getEmail()));
 	    }
 
@@ -275,7 +276,7 @@ public class FacebookConnector extends AbstractConnector {
 			.getUpdatedTime()));
 
 	    if (null != user.getLink())
-		result.setAccountservicehomepage(URIUtils.createURI(user
+		result.setAccountservicehomepage(RDFUtils.createURI(user
 			.getLink()));
 
 	    return result;

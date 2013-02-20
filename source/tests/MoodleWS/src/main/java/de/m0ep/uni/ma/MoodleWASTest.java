@@ -31,8 +31,8 @@ public class MoodleWASTest {
 	moodle.forum_add_discussion(client, sesskey, 1, discussionDatum);
 
 	ForumPostDatum post = new ForumPostDatum(moodle.getNAMESPACE());
-	post.setMessage("Eclipse here");
-	post.setSubject("Post from eclipse");
+	post.setMessage("Ich zeig Kai mal was");
+	post.setSubject("testpost");
 	moodle.forum_add_reply(client, sesskey, 5, post);
 
 	moodle.get_all_forums(client, sesskey, "", "");

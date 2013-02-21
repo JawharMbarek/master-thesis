@@ -94,7 +94,7 @@ public class FacebookPostParser {
 		result.setModified(obj.getString(UPDATED_TIME));
 
 	    result.setContainer(parentContainer);
-	    parentContainer.setContainerof(result);
+	    parentContainer.addContainerof(result);
 
 	    return result;
 
@@ -140,7 +140,7 @@ public class FacebookPostParser {
 		result.setModified(obj.getString(UPDATED_TIME));
 
 	    result.setContainer(parentContainer);
-	    parentContainer.setContainerof(result);
+	    parentContainer.addContainerof(result);
 
 	    return result;
 
@@ -180,7 +180,7 @@ public class FacebookPostParser {
 		result.setModified(obj.getString(UPDATED_TIME));
 
 	    result.setContainer(parentContainer);
-	    parentContainer.setContainerof(result);
+	    parentContainer.addContainerof(result);
 
 	    return result;
 
@@ -221,7 +221,7 @@ public class FacebookPostParser {
 		result.setModified(obj.getString(UPDATED_TIME));
 
 	    result.setContainer(parentContainer);
-	    parentContainer.setContainerof(result);
+	    parentContainer.addContainerof(result);
 
 	    return result;
 
@@ -250,8 +250,8 @@ public class FacebookPostParser {
 	    if (obj.has(CREATED_TIME))
 		result.setCreated(obj.getString(CREATED_TIME));
 
-	    parentPost.addReply(result);
 	    result.setReplyof(parentPost);
+	    parentPost.addReply(result);
 
 	    return result;
 

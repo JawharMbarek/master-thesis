@@ -97,6 +97,7 @@ public class FacebookConnector extends AbstractConnector {
             wall.setName( getUser().getAllAccountname_as().firstValue()
                     + "'s Wall" );
             wall.setHost( getSite() );
+	    getSite().addHostof(wall);
 
             result.add( wall );
         } else {
@@ -117,6 +118,7 @@ public class FacebookConnector extends AbstractConnector {
                     forum.setId( group.getId() );
 		    forum.setName(group.getName() + "'s Wall");
                     forum.setHost( getSite() );
+		    getSite().addHostof(forum);
 
                     if( null != group.getDescription()
                             && !group.getDescription().isEmpty() )
@@ -186,6 +188,11 @@ public class FacebookConnector extends AbstractConnector {
         return false;
     }
 
+    @Override
+    public boolean hasPosts(Container container) {
+	return canPublishOn(container);
+    }
+
     public boolean publishPost(final Post post, final Container container) {
 	Preconditions.checkArgument(canPublishOn(container));
 
@@ -220,6 +227,8 @@ public class FacebookConnector extends AbstractConnector {
 	    Throwables.propagateIfInstanceOf(e, FacebookOAuthException.class);
 	    return false;
 	}
+
+	// TODO Add Post to model
 
 	return null != result && null != result.getId()
 		&& !result.getId().isEmpty();

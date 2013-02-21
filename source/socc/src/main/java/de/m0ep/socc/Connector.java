@@ -42,6 +42,8 @@ public interface Connector {
 
     public boolean canReplyOn(Post parent);
 
+    public boolean hasPosts(Container container);
+
     public boolean publishPost(Post post, Container container);
 
     public boolean replyPost(Post post, Post parent);

@@ -74,6 +74,10 @@ public abstract class AbstractConnector implements Connector {
 	return false;
     }
 
+    public boolean hasPosts(Container container) {
+	return false;
+    }
+
     public boolean publishPost(Post post, Container container) {
 	return false;
     }

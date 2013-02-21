@@ -36,6 +36,7 @@ import de.m0ep.moodlews.soap.LoginReturn;
 import de.m0ep.moodlews.soap.Mdl_soapserverBindingStub;
 import de.m0ep.moodlews.soap.UserRecord;
 import de.m0ep.socc.AbstractConnector;
+import de.m0ep.socc.ConnectorException;
 import de.m0ep.socc.utils.RDFUtils;
 import de.m0ep.socc.utils.StringUtils;
 
@@ -114,6 +115,9 @@ public class MoodleConnector extends AbstractConnector {
 	List<Forum> result = new ArrayList<Forum>();
 	ForumRecord[] forums = moodle.get_all_forums(client, sesskey, "", "");
 
+	if (null == forums)
+	    forums = new ForumRecord[0];
+
 	for (ForumRecord forum : forums) {
 	    URI uri = RDFUtils.createURI(getURL() + URI_FORUM_PATH
 		    + forum.getId());
@@ -123,8 +127,8 @@ public class MoodleConnector extends AbstractConnector {
 		CourseRecord course = getCourse(forum.getCourse());
 
 		entry.setId(Integer.toString(forum.getId()));
-		entry.setModified(RDFTool.dateTime2String(new Date((long) forum
-			.getTimemodified() * 1000)));
+		entry.setModified(RDFTool.dateTime2String(makeDate(forum
+			.getTimemodified())));
 		entry.setDescription(forum.getIntro());
 		entry.setName(course.getFullname() + "/" + forum.getName());
 		entry.setHost(getSite());
@@ -144,8 +148,13 @@ public class MoodleConnector extends AbstractConnector {
 
 	List<Thread> result = new ArrayList<Thread>();
 	int forumid = Integer.parseInt(forum.getAllId_as().firstValue());
-	ForumDiscussionRecord[] forumDiscussions = moodle
-		.get_forum_discussions(client, sesskey, forumid, 999);
+	ForumDiscussionRecord[] forumDiscussions = null;
+
+	forumDiscussions = moodle.get_forum_discussions(client, sesskey,
+		forumid, 999);
+
+	if (null == forumDiscussions)
+	    forumDiscussions = new ForumDiscussionRecord[0];
 
 	for (ForumDiscussionRecord discussion : forumDiscussions) {
 	    URI uri = RDFUtils.createURI(getURL() + URI_THREAD_PATH
@@ -157,8 +166,8 @@ public class MoodleConnector extends AbstractConnector {
 		entry.setId(Integer.toString(discussion.getId()));
 		entry.setParent(forum);
 		forum.addParentof(entry);
-		entry.setModified(RDFTool.dateTime2String(new Date(
-			(long) discussion.getTimemodified() * 1000)));
+		entry.setModified(RDFTool.dateTime2String(makeDate(discussion
+			.getTimemodified())));
 
 		entry.setCreator(getUser(discussion.getUserid()));
 		entry.setName(discussion.getName());
@@ -173,62 +182,99 @@ public class MoodleConnector extends AbstractConnector {
     }
 
     public Iterator<Post> getPosts(Container container) {
-	Preconditions.checkArgument(canPublishOn(container));
-	
+	Preconditions.checkArgument(hasPosts(container));
+
 	List<Post> result = new ArrayList<Post>();
-	int discussionId = Integer.parseInt(container.getAllId_as().firstValue());
+	int discussionId = Integer.parseInt(container.getAllId_as()
+		.firstValue());
 	ForumPostRecord[] posts = moodle.get_forum_posts(client, sesskey,
 		discussionId, 999);
 
+	if (null == posts)
+	    posts = new ForumPostRecord[0];
+
 	for (ForumPostRecord post : posts)
-	    addPost(result, post, null, container);
+	    addPostToList(result, post, container);
 
 	return Collections.unmodifiableList(result).iterator();
     }
 
-    /* package */void addPost(List<Post> result, final ForumPostRecord post, final Post parent, final Container discussion){
-	URI uri = RDFUtils.createURI(getURL() + URI_POST_PATH
- + post.getId());
-	
+    protected void addPostToList(List<Post> result, final ForumPostRecord post,
+	    final Container discussion) {
+	URI uri = RDFUtils.createURI(getURL() + URI_POST_PATH + post.getId());
+	Post entry = null;
+
 	if (!Post.hasInstance(getModel(), uri)) {
-		Post entry = new Post(getModel(), uri, true);
+	    entry = new Post(getModel(), uri, true);
 
-		entry.setId(Integer.toString(post.getId()));
-		entry.setContainer(discussion);
-		entry.setDiscussion(discussion);
-		
-		if(null != parent)
-		    entry.setReplyof(parent);
-		
-		entry.setSubject(post.getSubject());
+	    entry.setId(Integer.toString(post.getId()));
 
-		entry.setContent(StringUtils.stripHTML(post.getMessage()));
-		entry.setContentEncoded(post.getMessage());
+	    entry.setContainer(discussion);
+	    discussion.addContainerof(entry);
+	    entry.setDiscussion(discussion);
 
-		entry.setCreated(RDFTool.dateTime2String(new Date((long) post
-			.getCreated() * 1000)));
+	    entry.setCreator(getUser(post.getUserid()));
 
-		entry.setModified(RDFTool.dateTime2String(new Date((long) post
-			.getModified() * 1000)));
-		
-		for(ForumPostRecord comment : post.getChildren()){
-		addPost(result, comment, entry, discussion);
-		}
+	    entry.setSubject(post.getSubject());
+	    entry.setContent(StringUtils.stripHTML(post.getMessage()));
+	    entry.setContentEncoded(post.getMessage());
 
-		result.add(entry);
+	    entry.setCreated(RDFTool.dateTime2String(makeDate(post.getCreated())));
+
+	    entry.setModified(RDFTool.dateTime2String(makeDate(post
+		    .getModified())));
+	} else {
+	    entry = Post.getInstance(getModel(), uri);
 	}
-	
-	result.add(Post.getInstance(getModel(), uri));
+
+	if (null != entry) {
+	    for (ForumPostRecord comment : post.getChildren())
+		loadReplys(comment, entry, discussion);
+
+	    result.add(entry);
+	}
+    }
+
+    protected void loadReplys(final ForumPostRecord post, final Post parent,
+	    final Container discussion) {
+	URI uri = RDFUtils.createURI(getURL() + URI_POST_PATH + post.getId());
+	Post entry = null;
+
+	if (!Post.hasInstance(getModel(), uri)) {
+	    entry = new Post(getModel(), uri, true);
+
+	    entry.setId(Integer.toString(post.getId()));
+	    entry.setDiscussion(discussion);
+	    entry.setCreator(getUser(post.getUserid()));
+
+	    entry.setReplyof(parent);
+	    parent.addReply(entry);
+
+	    entry.setSubject(post.getSubject());
+
+	    entry.setContent(StringUtils.stripHTML(post.getMessage()));
+	    entry.setContentEncoded(post.getMessage());
+
+	    entry.setCreated(RDFTool.dateTime2String(makeDate(post.getCreated())));
+
+	    entry.setModified(RDFTool.dateTime2String(makeDate(post
+		    .getModified())));
+	} else {
+	    entry = Post.getInstance(getModel(), uri);
+	}
+
+	if (null != entry)
+	    for (ForumPostRecord comment : post.getChildren())
+		loadReplys(comment, entry, discussion);
     }
 
     public boolean canPublishOn(Container container) {
 
 	/*
-	 * @formatter:off Can publish on this conainer if: - It's a Thread - Has
-	 * a parent that is a Forum - The parent forum belongs to this moodle
-	 * instance
-	 * 
-	 * @formatter:on
+	 * Can publish on this conainer if: 
+	 * - It's a Thread 
+	 * - Has a parent that is a Forum 
+	 * - The parent forum belongs to this moodle instance
 	 */
 
 	if (getModel().contains(container, RDF.type, SIOC.Thread)) {
@@ -250,11 +296,11 @@ public class MoodleConnector extends AbstractConnector {
 
     @Override
     public boolean canReplyOn(Post parent) {
-	/**
-	 * @formatter:off We can reply on this post if: - it has a container
-	 *                that is a thread - this thread has a parent Forum -
-	 *                the parent forum belongs to this moodle instance
-	 * @formatter:on
+	/*
+	 * We can reply on this post if: 
+	 * - it has a container that is a thread 
+	 * - this thread has a parent Forum 
+	 * - the parent forum belongs to this moodle instance
 	 */
 	if (parent.hasContainer()) {
 	    Container container = parent.getAllContainer_as().firstValue();
@@ -275,6 +321,10 @@ public class MoodleConnector extends AbstractConnector {
 	}
 
 	return false;
+    }
+
+    public boolean hasPosts(Container container) {
+	return canPublishOn(container);
     }
 
     public boolean publishPost(Post post, Container container) {
@@ -307,13 +357,13 @@ public class MoodleConnector extends AbstractConnector {
 	return false;
     }
 
-    /* package */UserAccount getUser(int id) {
+    protected UserAccount getUser(int id) {
 	URI uri = RDFUtils.createURI(getURL() + URI_USER_PATH + id);
 
 	if (!UserAccount.hasInstance(getModel(), uri)) {
 	    UserRecord[] users = moodle.get_user_byid(client, sesskey, myId);
 
-	    if (0 < users.length) {
+	    if (null != users && 0 < users.length) {
 		UserRecord me = users[0];
 		UserAccount result = new UserAccount(getModel(), uri, true);
 		SIOCThing.setId(getModel(), result,
@@ -326,18 +376,20 @@ public class MoodleConnector extends AbstractConnector {
 		result.setEmail(RDFUtils.createMailtoURI(me.getEmail()));
 		result.setEmailsha1(DigestUtils.sha1Hex(me.getEmail()));
 		result.setAccountservicehomepage(RDFUtils.createURI(getURL()
-			+ "/user/profile.php?id=" + me.getId()));
+			+ "user/profile.php?id=" + me.getId()));
 		result.setDescription(RDFUtils.createLiteral(me
 			.getDescription()));
 
 		return result;
 	    }
+
+	    throw new ConnectorException("Can't retriev user with id=" + id);
 	}
 
 	return UserAccount.getInstance(getModel(), uri);
     }
 
-    /* package */CourseRecord getCourse(final int id) {
+    protected CourseRecord getCourse(final int id) {
 	if (courses.containsKey(id))
 	    return courses.get(id);
 
@@ -347,5 +399,9 @@ public class MoodleConnector extends AbstractConnector {
 	CourseRecord course = courseRecords[0];
 	courses.put(course.getId(), course);
 	return course;
+    }
+
+    protected Date makeDate(final int time) {
+	return new Date((long) time * 1000L);
     }
 }

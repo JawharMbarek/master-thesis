@@ -5,14 +5,29 @@
   <version>0.0.1-SNAPSHOT</version>
   <dependencies>
   	<dependency>
-  		<groupId>net.patrickpollet</groupId>
-  		<artifactId>moodlews_gson</artifactId>
-  		<version>1.8.6</version>
-  	</dependency>
-  	<dependency>
   		<groupId>com.google.guava</groupId>
   		<artifactId>guava</artifactId>
   		<version>14.0-rc2</version>
   	</dependency>
+    <dependency>
+      <groupId>com.google.code.ksoap2-android</groupId>
+      <artifactId>ksoap2-android</artifactId>
+      <version>3.0.0-RC.4</version>
+    </dependency>
+    <dependency>
+    	<groupId>axis</groupId>
+    	<artifactId>axis</artifactId>
+    	<version>1.4</version>
+    </dependency>
+    <dependency>
+    	<groupId>net.patrickpollet</groupId>
+    	<artifactId>moodlews_ksoap2</artifactId>
+    	<version>1.8.5</version>
+    </dependency>
+    <dependency>
+    	<groupId>net.patrickpollet</groupId>
+    	<artifactId>moodlews_gson</artifactId>
+    	<version>1.8.6</version>
+    </dependency>
   </dependencies>
 </project>

@@ -27,5 +27,10 @@
   		<artifactId>google-api-services-plus</artifactId>
   		<version>v1-rev40-1.12.0-beta</version>
   	</dependency>
+  	<dependency>
+  		<groupId>com.google.guava</groupId>
+  		<artifactId>guava</artifactId>
+  		<version>14.0-rc3</version>
+  	</dependency>
   </dependencies>
 </project>

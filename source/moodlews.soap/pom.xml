@@ -10,5 +10,10 @@
   		<artifactId>moodlews_ksoap2</artifactId>
   		<version>1.8.5</version>
   	</dependency>
+  	<dependency>
+  		<groupId>com.google.code.ksoap2-android</groupId>
+  		<artifactId>ksoap2-j2se</artifactId>
+  		<version>3.0.0-RC.4</version>
+  	</dependency>
   </dependencies>
 </project>

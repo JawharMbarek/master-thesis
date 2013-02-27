@@ -1,0 +1,4 @@
+de.m0ep.socc.connectors.moodle.MoodleConnectorFactory
+de.m0ep.socc.connectors.facebook.FacebookConnectorFactory
+de.m0ep.socc.connectors.google.plus.GooglePlusConnectorFactory
+de.m0ep.socc.connectors.google.youtube.YoutubeConnectorFactory

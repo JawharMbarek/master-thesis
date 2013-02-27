@@ -2,15 +2,43 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.m0ep.socc</groupId>
   <artifactId>socc</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <name>SOCC API</name>
   <description>Social Online Community Connector</description>
+  
+  <licenses>
+    <license>
+      <name>The MIT License</name>
+      <url>http://fm.mit-license.org/</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
+  <developers>
+    <developer>
+      <id>m0ep</id>
+      <name>Florian Müller</name>
+      <email>florian.mueller@m0ep.de</email>
+      <url>http://m0ep.de</url>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+      <properties>
+        <picUrl>https://gravatar.com/avatar/a5234d4086bb18020d74ae5a3018ef1b.jpg</picUrl>
+      </properties>
+    </developer>
+  </developers>
+  
+  <scm>
+    <url>https://github.com/m0ep/master-thesis</url>
+    <connection>scm:git:https://github.com/m0ep/master-thesis</connection>
+    <developerConnection>scm:git:https://github.com/m0ep/master-thesis</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+  
   <dependencies>
-  	<dependency>
-  		<groupId>org.rdfs</groupId>
-  		<artifactId>sioc</artifactId>
-  		<version>0.3-SNAPSHOT</version>
-  	</dependency>
   	<dependency>
   		<groupId>com.google.guava</groupId>
   		<artifactId>guava</artifactId>
@@ -32,14 +60,19 @@
   		<version>1.7</version>
   	</dependency>
   	<dependency>
-  		<groupId>de.m0ep</groupId>
-  		<artifactId>moodlews_soap</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
   		<groupId>org.jsoup</groupId>
   		<artifactId>jsoup</artifactId>
   		<version>1.7.2</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>de.m0ep.moodle</groupId>
+  		<artifactId>moodlews_ksoap2</artifactId>
+  		<version>0.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>de.m0ep.rdf2go</groupId>
+  		<artifactId>sioc-foaf</artifactId>
+  		<version>0.4</version>
   	</dependency>
   </dependencies>
 </project>

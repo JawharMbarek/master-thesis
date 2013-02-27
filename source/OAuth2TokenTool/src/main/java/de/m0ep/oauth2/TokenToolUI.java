@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 public class TokenToolUI extends JFrame {
-
+    private static final long serialVersionUID = 8733990698950061930L;
     private JPanel contentPane;
 
     /**

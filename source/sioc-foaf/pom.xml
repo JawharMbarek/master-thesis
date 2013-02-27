@@ -1,13 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>de.m0ep.uni.ma</groupId>
-  <artifactId>FBMdlBridge</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  
+  <!-- Maven Infos -->
+  
+  <groupId>de.m0ep.rdf2go</groupId>
+  <artifactId>sioc-foaf</artifactId>
+  <version>0.4</version>
   
   <!-- Project Infos -->
   
-  <name>FBMdlBridge</name>
-  <description>Write post on facebook, copy it to Moodle and back</description>
+  <name>sioc</name>
+  <description>An API for the SIOC and FOAF Format based on RDF2Go and RDFReactor</description>
   
   <licenses>
     <license>
@@ -43,44 +46,12 @@
   
   <!-- Dependencies -->
   
-  <dependencyManagement>
-  	<dependencies>
-  		<dependency>
-  			<groupId>com.google.guava</groupId>
-  			<artifactId>guava</artifactId>
-  			<version>14.0-rc1</version>
-  		</dependency>
-  		<dependency>
-  			<groupId>de.m0ep.uni.ma</groupId>
-  			<artifactId>SIOCAPI</artifactId>
-  			<version>0.3-SNAPSHOT</version>
-  		</dependency>
-  	</dependencies>
-  </dependencyManagement>
+  
   <dependencies>
   	<dependency>
   		<groupId>org.semweb4j</groupId>
   		<artifactId>rdfreactor.generator</artifactId>
   		<version>4.8.1</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>com.restfb</groupId>
-  		<artifactId>restfb</artifactId>
-  		<version>1.6.11</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>net.patrickpollet</groupId>
-  		<artifactId>moodlews_gson</artifactId>
-  		<version>1.8.6</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>com.google.guava</groupId>
-  		<artifactId>guava</artifactId>
-  	</dependency>
-  	<dependency>
-  		<groupId>de.m0ep.rdf2go</groupId>
-  		<artifactId>sioc-foaf</artifactId>
-  		<version>0.4</version>
   	</dependency>
   </dependencies>
 </project>

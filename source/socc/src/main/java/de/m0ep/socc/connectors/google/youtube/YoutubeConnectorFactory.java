@@ -15,6 +15,17 @@ public class YoutubeConnectorFactory implements ConnectorFactory {
     }
 
     @Override
+    public String getUniqueFactoryName() {
+	return "YoutubeConnectorFactory_v2";
+    }
+
+    @Override
+    public String[] getConfigKeys() {
+	return new String[] { YoutubeConnector.CONFIG_USERNAME,
+		YoutubeConnector.CONFIG_PASSWORD };
+    }
+
+    @Override
     public Connector createConnector(String id, Model model, Properties config) {
 	return new YoutubeConnector(id, model, config);
     }

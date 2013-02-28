@@ -22,9 +22,12 @@ import org.rdfs.sioc.SIOCThing;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import de.m0ep.socc.config.SOCCConfig;
 import de.m0ep.socc.connectors.Connector;
 import de.m0ep.socc.connectors.ConnectorFactory;
-import de.m0ep.socc.connectors.facebook.FacebookConnector;
 import de.m0ep.socc.connectors.moodle.MoodleConnector;
 
 public class SOCCTest {
@@ -41,12 +44,12 @@ public class SOCCTest {
 	model.open();
 
 	Properties config = new Properties();
-	config.put(
-		FacebookConnector.CONFIG_ACCESS_TOKEN,
-		"AAADGb3p3g9wBAEBIgudxWemgEWEjsMZAfBO6q8ZBs8SvkHu9eTC5yfzCWrPkwNZBSOwGqmaQF7Axpj7ZBsH27CjFt6alhbZBSOq74wurtVAZDZD");
-	config.put(FacebookConnector.CONFIG_CLIENT_ID, "218182098322396");
-	config.put(FacebookConnector.CONFIG_CLIENT_SECRET,
-		"7b80b9d7265c719e1d9efe112e4dbada");
+	// config.put(
+	// FacebookConnector.CONFIG_ACCESS_TOKEN,
+	// "AAADGb3p3g9wBAEBIgudxWemgEWEjsMZAfBO6q8ZBs8SvkHu9eTC5yfzCWrPkwNZBSOwGqmaQF7Axpj7ZBsH27CjFt6alhbZBSOq74wurtVAZDZD");
+	// config.put(FacebookConnector.CONFIG_CLIENT_ID, "218182098322396");
+	// config.put(FacebookConnector.CONFIG_CLIENT_SECRET,
+	// "7b80b9d7265c719e1d9efe112e4dbada");
 	config.put(MoodleConnector.CONFIG_MOODLE_URL,
 		"http://localhost/florian/moodle24/");
 	config.put(MoodleConnector.CONFIG_USERNAME, "admin");
@@ -57,15 +60,24 @@ public class SOCCTest {
 	// new MoodleConnector("Moodle", model, config)
 	};
 
+
 	ServiceLoader<ConnectorFactory> factoryLoader = ServiceLoader
 		.load(ConnectorFactory.class);
+
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	Connector c = new MoodleConnector("Moodle", model, config);
+	SOCCConfig cfg = new SOCCConfig();
+
+
 
 	Iterator<ConnectorFactory> iter = factoryLoader.iterator();
 	while (iter.hasNext()) {
 	    ConnectorFactory factory = (ConnectorFactory) iter.next();
 	    System.out.println(factory.getConnectorName());
-
+	    cfg.addConnector(c, factory);
 	}
+
+	System.out.println(gson.toJson(cfg));
 
 	for (Connector connector : connectors) {
 	    printConnector(connector);

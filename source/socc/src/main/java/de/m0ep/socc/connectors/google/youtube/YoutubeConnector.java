@@ -9,6 +9,8 @@ import org.rdfs.sioc.UserAccount;
 import de.m0ep.socc.connectors.AbstractConnector;
 
 public class YoutubeConnector extends AbstractConnector {
+    public static final String CONFIG_USERNAME = "username";
+    public static final String CONFIG_PASSWORD = "password";
 
     public YoutubeConnector(String id, Model model, Properties config) {
 	super(id, model, config);

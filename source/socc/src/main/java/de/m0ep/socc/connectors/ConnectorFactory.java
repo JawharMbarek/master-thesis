@@ -12,11 +12,25 @@ import org.ontoware.rdf2go.model.Model;
  */
 public interface ConnectorFactory {
     /**
-     * Return a human readable name for this connectors
+     * Returns a human readable name for this connectors
      * 
      * @return Name for this connectors
      */
     public String getConnectorName();
+
+    /**
+     * Returns a unique name for this factory
+     * 
+     * @return
+     */
+    public String getUniqueFactoryName();
+
+    /**
+     * Returns keys for configuration parameters that should be loaded/stored
+     * 
+     * @return
+     */
+    public String[] getConfigKeys();
 
     /**
      * Create a new {@link Connector}.

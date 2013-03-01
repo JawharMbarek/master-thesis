@@ -86,13 +86,13 @@ public class PlusSample {
                 JSON_FACTORY );
 
         // set up authorization code flow
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets,
-                Collections.singleton( PlusScopes.PLUS_ME ) )
-                .setCredentialStore( credentialStore2 ).build();
+	GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+		HTTP_TRANSPORT, JSON_FACTORY, clientSecrets,
+		Collections.singleton(PlusScopes.PLUS_ME)).setCredentialStore(
+		credentialStore2).build();
         // authorize
         return new AuthorizationCodeInstalledApp( flow,
-                new LocalServerReceiver() ).authorize( "user" );
+		new LocalServerReceiver()).authorize("user");
     }
 
     public static void main( String[] args ) {
@@ -101,13 +101,14 @@ public class PlusSample {
                 // authorization
                 Credential credential = authorize();
                 // set up global Plus instance
-                plus = new Plus.Builder( HTTP_TRANSPORT, JSON_FACTORY,
-                        credential ).setApplicationName( APPLICATION_NAME )
-                        .build();
+		plus = new Plus.Builder(HTTP_TRANSPORT, JSON_FACTORY,
+			credential).setApplicationName(APPLICATION_NAME)
+			.build();
+
                 // run commands
-                listActivities();
-                getActivity();
-                getProfile();
+		// listActivities();
+		// getActivity();
+		// getProfile();
                 // success!
                 return;
             } catch ( IOException e ) {

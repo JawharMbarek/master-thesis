@@ -78,9 +78,9 @@
   		<artifactId>guava</artifactId>
   	</dependency>
   	<dependency>
-  		<groupId>org.rdfs</groupId>
-  		<artifactId>sioc</artifactId>
-  		<version>0.3-SNAPSHOT</version>
+  		<groupId>de.m0ep.rdf2go</groupId>
+  		<artifactId>sioc-foaf</artifactId>
+  		<version>0.4</version>
   	</dependency>
   </dependencies>
 </project>

@@ -1,57 +1,75 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <!-- Maven Infos -->
-  
-  <groupId>de.m0ep.rdf2go</groupId>
-  <artifactId>sioc-foaf</artifactId>
-  <version>0.4</version>
-  
-  <!-- Project Infos -->
-  
-  <name>sioc</name>
-  <description>An API for the SIOC and FOAF Format based on RDF2Go and RDFReactor</description>
-  
-  <licenses>
-    <license>
-      <name>The MIT License</name>
-      <url>http://fm.mit-license.org/</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  
-  <developers>
-    <developer>
-      <id>m0ep</id>
-      <name>Florian Müller</name>
-      <email>florian.mueller@m0ep.de</email>
-      <url>http://m0ep.de</url>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-      <timezone>+1</timezone>
-      <properties>
-        <picUrl>https://gravatar.com/avatar/a5234d4086bb18020d74ae5a3018ef1b.jpg</picUrl>
-      </properties>
-    </developer>
-  </developers>
-  
-  <scm>
-    <url>https://github.com/m0ep/master-thesis</url>
-    <connection>scm:git:https://github.com/m0ep/master-thesis</connection>
-    <developerConnection>scm:git:https://github.com/m0ep/master-thesis</developerConnection>
-    <tag>HEAD</tag>
-  </scm>
-  
-  <!-- Dependencies -->
-  
-  
-  <dependencies>
-  	<dependency>
-  		<groupId>org.semweb4j</groupId>
-  		<artifactId>rdfreactor.generator</artifactId>
-  		<version>4.8.1</version>
-  	</dependency>
-  </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- Maven Infos -->
+
+	<groupId>de.m0ep.rdf2go</groupId>
+	<artifactId>sioc-foaf</artifactId>
+	<version>0.4</version>
+
+	<!-- Project Infos -->
+
+	<name>sioc</name>
+	<description>An API for the SIOC and FOAF Format based on RDF2Go and RDFReactor</description>
+
+	<licenses>
+		<license>
+			<name>The MIT License</name>
+			<url>http://fm.mit-license.org/</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>m0ep</id>
+			<name>Florian Müller</name>
+			<email>florian.mueller@m0ep.de</email>
+			<url>http://m0ep.de</url>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+			<properties>
+				<picUrl>https://gravatar.com/avatar/a5234d4086bb18020d74ae5a3018ef1b.jpg</picUrl>
+			</properties>
+		</developer>
+	</developers>
+
+	<scm>
+		<url>https://github.com/m0ep/master-thesis</url>
+		<connection>scm:git:https://github.com/m0ep/master-thesis</connection>
+		<developerConnection>scm:git:https://github.com/m0ep/master-thesis</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<!-- Build Settings -->
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!-- Dependencies -->
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.semweb4j</groupId>
+			<artifactId>rdfreactor.generator</artifactId>
+			<version>4.8.1</version>
+		</dependency>
+	</dependencies>
+
 </project>

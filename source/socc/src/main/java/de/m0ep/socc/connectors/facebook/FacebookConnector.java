@@ -41,7 +41,7 @@ import de.m0ep.socc.utils.RDF2GoUtils;
 
 public class FacebookConnector extends AbstractConnector {
     private static final Logger LOG = LoggerFactory
-                                            .getLogger( FacebookConnector.class );
+	    .getLogger(FacebookConnector.class);
 
     public static final String CONFIG_ACCESS_TOKEN = "access_token";
     public static final String CONFIG_CLIENT_ID = "client_id";
@@ -55,31 +55,31 @@ public class FacebookConnector extends AbstractConnector {
     private Properties config;
 
     public FacebookConnector(String id, Model model, Properties config) {
-        super( id, model, config );
+	super(id, model, config);
 
 	this.config = config;
-        this.client = new DefaultFacebookClient(
+	this.client = new DefaultFacebookClient(
 		config.getProperty(CONFIG_ACCESS_TOKEN));
 
-        FacebookType me = client.fetchObject( "me", FacebookType.class,
-                Parameter.with( "fields", "id" ) );
-        this.myId = me.getId();
+	FacebookType me = client.fetchObject("me", FacebookType.class,
+		Parameter.with("fields", "id"));
+	this.myId = me.getId();
     }
 
     public String getURL() {
-        return "http://www.facebook.com/";
+	return "http://www.facebook.com/";
     }
 
     public Site getSite() {
 	URI uri = RDF2GoUtils.createURI(getURL());
 
-        if( !Site.hasInstance( getModel(), uri ) ) {
-            Site result = new Site( getModel(), uri, true );
-            result.setName( "Facebook" );
-            return result;
-        } else {
-            return Site.getInstance( getModel(), uri );
-        }
+	if (!Site.hasInstance(getModel(), uri)) {
+	    Site result = new Site(getModel(), uri, true);
+	    result.setName("Facebook");
+	    return result;
+	} else {
+	    return Site.getInstance(getModel(), uri);
+	}
     }
 
     public UserAccount getUser() {
@@ -87,105 +87,105 @@ public class FacebookConnector extends AbstractConnector {
     }
 
     public Iterator<Forum> getForums() {
-        List<Forum> result = new ArrayList<Forum>();
+	List<Forum> result = new ArrayList<Forum>();
 
 	URI uri = RDF2GoUtils
 		.createURI(getURL() + myId + "/" + CONNECTION_FEED);
-        if( !Forum.hasInstance( getModel(), uri ) ) {
-            Forum wall = new Forum( getModel(), uri, true );
-            wall.setId( myId );
-            wall.setName( getUser().getAllAccountname_as().firstValue()
-                    + "'s Wall" );
-            wall.setHost( getSite() );
+	if (!Forum.hasInstance(getModel(), uri)) {
+	    Forum wall = new Forum(getModel(), uri, true);
+	    wall.setId(myId);
+	    wall.setName(getUser().getAllAccountname_as().firstValue()
+		    + "'s Wall");
+	    wall.setHost(getSite());
 	    getSite().addHostof(wall);
 
-            result.add( wall );
-        } else {
-            result.add( Forum.getInstance( getModel(), uri ) );
-        }
+	    result.add(wall);
+	} else {
+	    result.add(Forum.getInstance(getModel(), uri));
+	}
 
-        Connection<Group> groupsConnections = client.fetchConnection(
-                "me/groups", Group.class,
-                Parameter.with( "fields", "name,id,description,updated_time" ) );
+	Connection<Group> groupsConnections = client.fetchConnection(
+		"me/groups", Group.class,
+		Parameter.with("fields", "name,id,description,updated_time"));
 
-        for ( List<Group> myGroups : groupsConnections ) {
-            for ( Group group : myGroups ) {
+	for (List<Group> myGroups : groupsConnections) {
+	    for (Group group : myGroups) {
 		uri = RDF2GoUtils.createURI(getURL() + group.getId() + "/"
 			+ CONNECTION_FEED);
 
-                if( !Forum.hasInstance( getModel(), uri ) ) {
-                    Forum forum = new Forum( getModel(), uri, true );
-                    forum.setId( group.getId() );
+		if (!Forum.hasInstance(getModel(), uri)) {
+		    Forum forum = new Forum(getModel(), uri, true);
+		    forum.setId(group.getId());
 		    forum.setName(group.getName() + "'s Wall");
-                    forum.setHost( getSite() );
+		    forum.setHost(getSite());
 		    getSite().addHostof(forum);
 
-                    if( null != group.getDescription()
-                            && !group.getDescription().isEmpty() )
-                        forum.setDescription( group.getDescription() );
+		    if (null != group.getDescription()
+			    && !group.getDescription().isEmpty())
+			forum.setDescription(group.getDescription());
 
-                    if( null != group.getUpdatedTime() )
-                        forum.setModified( RDFTool.dateTime2String( group
-                                .getUpdatedTime() ) );
+		    if (null != group.getUpdatedTime())
+			forum.setModified(RDFTool.dateTime2String(group
+				.getUpdatedTime()));
 
-                    result.add( forum );
-                } else {
-                    result.add( Forum.getInstance( getModel(), uri ) );
-                }
-            }
-        }
+		    result.add(forum);
+		} else {
+		    result.add(Forum.getInstance(getModel(), uri));
+		}
+	    }
+	}
 
 	return Collections.unmodifiableList(result).iterator();
     }
 
     @Override
     public Iterator<Post> getPosts(Container container) {
-        if( !canPublishOn( container ) )
-            return super.getPosts( container );
+	if (!canPublishOn(container))
+	    return super.getPosts(container);
 
-        Connection<JsonObject> feed;
-        try {
+	Connection<JsonObject> feed;
+	try {
 	    feed = client.fetchConnection(container.getAllId_as().firstValue()
 		    + "/" + CONNECTION_FEED, JsonObject.class);
-        } catch ( Exception e ) {
-            LOG.warn( e.getMessage(), e );
-            return super.getPosts( container );
-        }
+	} catch (Exception e) {
+	    LOG.warn(e.getMessage(), e);
+	    return super.getPosts(container);
+	}
 
-        return new PostIterator( feed.iterator(), container );
+	return new PostIterator(feed.iterator(), container);
     }
 
     @Override
     public boolean canPublishOn(Container container) {
-        if( getModel().contains( container, RDF.type, SIOC.Forum ) ) {
+	if (getModel().contains(container, RDF.type, SIOC.Forum)) {
 	    Forum forum = Forum
 		    .getInstance(getModel(), container.getResource());
 	    return forum.hasHost(getSite())
 		    && hasConnection(container.getAllId_as().firstValue(),
 			    CONNECTION_FEED);
-        }
+	}
 
-        return false;
+	return false;
     }
 
     @Override
     public boolean canReplyOn(Post parent) {
-        /**
+	/**
 	 * We can reply on this post if: - this post is not already a reply - we
 	 * can publish on the container of this post - the post id is like
 	 * "[0-9]+_[0-9]+" Post has a "comments" connection
 	 */
-        if( !parent.hasReplyof() && parent.hasContainer() ) {
-            Container container = parent.getAllContainer_as().firstValue();
-            String id = parent.getAllId_as().firstValue();
-            
+	if (!parent.hasReplyof() && parent.hasContainer()) {
+	    Container container = parent.getAllContainer_as().firstValue();
+	    String id = parent.getAllId_as().firstValue();
+
 	    return canPublishOn(container)
 		    && Pattern.matches("^\\d+_\\d+$", id)
 		    && hasConnection(parent.getAllId_as().firstValue(),
 			    CONNECTION_COMMENTS);
-        }
+	}
 
-        return false;
+	return false;
     }
 
     @Override
@@ -199,7 +199,7 @@ public class FacebookConnector extends AbstractConnector {
 	Preconditions.checkArgument(post.hasContent());
 	Preconditions.checkArgument(canPublishOn(container));
 
-	List<Parameter> params = new ArrayList<>();
+	List<Parameter> params = new ArrayList<Parameter>();
 
 	if (post.hasContent())
 	    params.add(Parameter.with("message", post.getAllContent_as()
@@ -223,9 +223,9 @@ public class FacebookConnector extends AbstractConnector {
 
 	FacebookType result;
 	try {
-	    result = client.publish(container.getAllId_as().firstValue()
-	    	+ "/" + CONNECTION_FEED,
-	    	FacebookType.class, params.toArray(new Parameter[0]));
+	    result = client.publish(container.getAllId_as().firstValue() + "/"
+		    + CONNECTION_FEED, FacebookType.class,
+		    params.toArray(new Parameter[0]));
 	} catch (Throwable e) {
 	    Throwables.propagateIfInstanceOf(e, FacebookOAuthException.class);
 	    return false;
@@ -246,10 +246,9 @@ public class FacebookConnector extends AbstractConnector {
 
 	FacebookType result;
 	try {
-	    result = client
-	    	.publish(parent.getAllId_as().firstValue() + "/"
-	    		+ CONNECTION_COMMENTS, FacebookType.class,
-	    	Parameter.with("message", post.getAllContent_as().firstValue()));
+	    result = client.publish(parent.getAllId_as().firstValue() + "/"
+		    + CONNECTION_COMMENTS, FacebookType.class, Parameter.with(
+		    "message", post.getAllContent_as().firstValue()));
 	} catch (Throwable e) {
 	    Throwables.propagateIfInstanceOf(e, FacebookOAuthException.class);
 	    return false;
@@ -301,7 +300,7 @@ public class FacebookConnector extends AbstractConnector {
 	}
     }
 
-    /* package */void tryToExtendAccessToken(){
+    /* package */void tryToExtendAccessToken() {
 	AccessToken token = client.obtainExtendedAccessToken(
 		config.getProperty(CONFIG_CLIENT_ID),
 		config.getProperty(CONFIG_CLIENT_SECRET),
@@ -336,44 +335,44 @@ public class FacebookConnector extends AbstractConnector {
 
 	return false;
     }
-    
+
     private class PostIterator implements Iterator<Post> {
-        private final Iterator<List<JsonObject>> feed;
-        private final Container                  container;
-        private Iterator<JsonObject>             page;
+	private final Iterator<List<JsonObject>> feed;
+	private final Container container;
+	private Iterator<JsonObject> page;
 
-        public PostIterator( final Iterator<List<JsonObject>> feed,
-                final Container container ) {
-            this.feed = feed;
-            this.page = feed.next().iterator();
-            this.container = container;
-        }
+	public PostIterator(final Iterator<List<JsonObject>> feed,
+		final Container container) {
+	    this.feed = feed;
+	    this.page = feed.next().iterator();
+	    this.container = container;
+	}
 
-        public boolean hasNext() {
-            return null != feed && null != page
-                    && ( feed.hasNext() || page.hasNext() );
-        }
+	public boolean hasNext() {
+	    return null != feed && null != page
+		    && (feed.hasNext() || page.hasNext());
+	}
 
-        public Post next() {
-            if( !hasNext() )
-                throw new NoSuchElementException( "nothing here" );
-            // page is empty, fetch next
-            if( feed.hasNext() && !page.hasNext() ){
-                page = feed.next().iterator();
-            }
+	public Post next() {
+	    if (!hasNext())
+		throw new NoSuchElementException("nothing here");
+	    // page is empty, fetch next
+	    if (feed.hasNext() && !page.hasNext()) {
+		page = feed.next().iterator();
+	    }
 
-            if( page.hasNext() ) {
-                JsonObject next = page.next();
+	    if (page.hasNext()) {
+		JsonObject next = page.next();
 		Post result = FacebookPostParser.parse(FacebookConnector.this,
 			next, container);
-                return result;
-            }
+		return result;
+	    }
 
-            return null;
-        }
+	    return null;
+	}
 
-        public void remove() {
-            throw new UnsupportedOperationException( "remove is not supported" );
-        }
+	public void remove() {
+	    throw new UnsupportedOperationException("remove is not supported");
+	}
     }
 }

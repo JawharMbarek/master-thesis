@@ -52,19 +52,15 @@ public abstract class AbstractConnector implements Connector {
 	Preconditions.checkArgument(model.isOpen(), "model is not open");
     }
 
-
     /**
      * @see Connector#destroy()
      */
-    @Override
     public void destroy() {
     }
-
 
     /**
      * @see Connector#getId()
      */
-    @Override
     public String getId() {
 	return id;
     }
@@ -72,13 +68,11 @@ public abstract class AbstractConnector implements Connector {
     /**
      * @see Connector#getURL()
      */
-    @Override
     public abstract String getURL();
 
     /**
      * @see Connector#getConfig()
      */
-    @Override
     public Properties getConfig() {
 	return config;
     }
@@ -86,7 +80,6 @@ public abstract class AbstractConnector implements Connector {
     /**
      * @see Connector#getConfig()
      */
-    @Override
     public Model getModel() {
 	return model;
     }
@@ -94,19 +87,16 @@ public abstract class AbstractConnector implements Connector {
     /**
      * @see Connector#getSite()
      */
-    @Override
     public abstract Site getSite();
 
     /**
      * @see Connector#getUser()
      */
-    @Override
     public abstract UserAccount getUser();
 
     /**
      * @see Connector#getForums()
      */
-    @Override
     public Iterator<Forum> getForums() {
 	return new ArrayList<Forum>().iterator();
     }
@@ -114,7 +104,6 @@ public abstract class AbstractConnector implements Connector {
     /**
      * @see Connector#getThreads(Forum)
      */
-    @Override
     public Iterator<Thread> getThreads(Forum forum) {
 	return new ArrayList<Thread>().iterator();
     }
@@ -122,7 +111,6 @@ public abstract class AbstractConnector implements Connector {
     /**
      * @see Connector#getPosts(Container)
      */
-    @Override
     public Iterator<Post> getPosts(Container container) {
 	return new ArrayList<Post>().iterator();
     }
@@ -130,7 +118,6 @@ public abstract class AbstractConnector implements Connector {
     /**
      * @see Connector#getUsergroups()
      */
-    @Override
     public Iterator<Usergroup> getUsergroups() {
 	return new ArrayList<Usergroup>().iterator();
     }
@@ -138,7 +125,6 @@ public abstract class AbstractConnector implements Connector {
     /**
      * @see Connector#getUserAccounts()
      */
-    @Override
     public Iterator<UserAccount> getUserAccounts() {
 	return new ArrayList<UserAccount>().iterator();
     }
@@ -146,7 +132,6 @@ public abstract class AbstractConnector implements Connector {
     /**
      * @see Connector#canPublishOn(Container)
      */
-    @Override
     public boolean canPublishOn(Container container) {
 	return false;
     }
@@ -154,7 +139,6 @@ public abstract class AbstractConnector implements Connector {
     /**
      * @see Connector#canReplyOn(Post)
      */
-    @Override
     public boolean canReplyOn(Post parent) {
 	return false;
     }
@@ -162,7 +146,6 @@ public abstract class AbstractConnector implements Connector {
     /**
      * @see Connector#hasPosts(Container)
      */
-    @Override
     public boolean hasPosts(Container container) {
 	return false;
     }
@@ -170,7 +153,6 @@ public abstract class AbstractConnector implements Connector {
     /**
      * @see Connector#publishPost(Post, Container)
      */
-    @Override
     public boolean publishPost(Post post, Container container) {
 	return false;
     }
@@ -178,7 +160,6 @@ public abstract class AbstractConnector implements Connector {
     /**
      * @see Connector#replyPost(Post, Post)
      */
-    @Override
     public boolean replyPost(Post post, Post parent) {
 	return false;
     }

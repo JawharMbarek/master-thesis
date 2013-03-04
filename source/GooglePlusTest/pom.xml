@@ -32,5 +32,10 @@
   		<artifactId>guava</artifactId>
   		<version>14.0-rc3</version>
   	</dependency>
+  	<dependency>
+  		<groupId>com.google.oauth-client</groupId>
+  		<artifactId>google-oauth-client-java6</artifactId>
+  		<version>1.13.1-beta</version>
+  	</dependency>
   </dependencies>
 </project>

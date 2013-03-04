@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.ServiceLoader;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.RDF2Go;
@@ -22,12 +21,8 @@ import org.rdfs.sioc.SIOCThing;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import de.m0ep.socc.config.SOCCConfig;
 import de.m0ep.socc.connectors.Connector;
-import de.m0ep.socc.connectors.ConnectorFactory;
+import de.m0ep.socc.connectors.google.plus.GooglePlusConnector;
 import de.m0ep.socc.connectors.moodle.MoodleConnector;
 
 public class SOCCTest {
@@ -55,29 +50,15 @@ public class SOCCTest {
 	config.put(MoodleConnector.CONFIG_USERNAME, "admin");
 	config.put(MoodleConnector.CONFIG_PASSWORD, "admin");
 
+	config.put(GooglePlusConnector.CONFIG_CLIENT_SECRETS_FILE,
+		"client_secrets.json");
+	config.put(GooglePlusConnector.CONFIG_USER_ID, "me");
+
 	Connector[] connectors = {
 	// new FacebookConnector("facebook", model, config),
 	// new MoodleConnector("Moodle", model, config)
+	new GooglePlusConnector("google+", model, config)
 	};
-
-
-	ServiceLoader<ConnectorFactory> factoryLoader = ServiceLoader
-		.load(ConnectorFactory.class);
-
-	Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	Connector c = new MoodleConnector("Moodle", model, config);
-	SOCCConfig cfg = new SOCCConfig();
-
-
-
-	Iterator<ConnectorFactory> iter = factoryLoader.iterator();
-	while (iter.hasNext()) {
-	    ConnectorFactory factory = (ConnectorFactory) iter.next();
-	    System.out.println(factory.getConnectorName());
-	    cfg.addConnector(c, factory);
-	}
-
-	System.out.println(gson.toJson(cfg));
 
 	for (Connector connector : connectors) {
 	    printConnector(connector);

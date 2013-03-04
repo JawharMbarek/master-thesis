@@ -22,8 +22,10 @@
 
 package de.m0ep.socc.connectors.facebook;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -52,6 +54,7 @@ import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.FacebookClient.AccessToken;
 import com.restfb.Parameter;
+import com.restfb.exception.FacebookException;
 import com.restfb.exception.FacebookOAuthException;
 import com.restfb.json.JsonObject;
 import com.restfb.types.FacebookType;
@@ -76,6 +79,8 @@ public class FacebookConnector extends AbstractConnector {
     private String myId;
     private Properties config;
 
+    List<Container> postContainer;
+
     public FacebookConnector(String id, Model model, Properties config) {
 	super(id, model, config);
 
@@ -86,6 +91,7 @@ public class FacebookConnector extends AbstractConnector {
 	FacebookType me = client.fetchObject("me", FacebookType.class,
 		Parameter.with("fields", "id"));
 	this.myId = me.getId();
+	this.postContainer = new ArrayList<Container>();
     }
 
     public String getURL() {
@@ -281,6 +287,60 @@ public class FacebookConnector extends AbstractConnector {
 	return null != result && null != result.getId()
 		&& !result.getId().isEmpty();
     };
+
+    public java.util.Iterator<Post> pollPosts() {
+	List<Post> result = new ArrayList<Post>();
+
+	Iterator<Forum> forums = getForums();
+
+	while (forums.hasNext()) {
+	    Forum container = forums.next();
+	    long unixtime = 0;
+
+	    if (container.hasLastitemdate()) {
+		try {
+		    String lastItemDate = container.getLastitemdate();
+		    Date date = RDFTool.string2DateTime(lastItemDate);
+		    unixtime = date.getTime() / 1000L;
+		} catch (ParseException e) {
+		    // use 0 as since parameter
+		}
+	    }
+
+	    Connection<JsonObject> feed = null;
+	    try {
+		feed = client.fetchConnection(container.getId() + "/"
+			+ CONNECTION_FEED, JsonObject.class,
+			Parameter.with("since", unixtime));
+	    } catch (FacebookException e) {
+		// skip container
+		continue;
+	    }
+
+	    for (List<JsonObject> posts : feed) {
+		for (JsonObject post : posts) {
+		    try {
+			if (post.has("created_time")) {
+			    Date date = RDFTool.string2DateTime(post
+				    .getString("created_time"));
+
+			    if (unixtime >= date.getTime() / 1000L)
+				return Collections.unmodifiableList(result)
+					.iterator();
+
+			    result.add(FacebookPostParser.parse(this, post,
+				    container));
+			}
+
+		    } catch (Exception e) {
+			// skip post
+		    }
+		}
+	    }
+	}
+
+	return Collections.unmodifiableList(result).iterator();
+    }
 
     /* package */FacebookClient getFacebookClient() {
 	return client;

@@ -185,4 +185,11 @@ public abstract class AbstractConnector implements Connector {
     public boolean replyPost(Post post, Post parent) {
 	return false;
     }
+
+    /**
+     * @see Connector#pollPosts()
+     */
+    public Iterator<Post> pollPosts() {
+	return new ArrayList<Post>().iterator();
+    }
 }

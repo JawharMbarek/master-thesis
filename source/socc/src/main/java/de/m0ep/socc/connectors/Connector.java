@@ -142,7 +142,7 @@ public interface Connector {
      * @return Returns true if it's ok to publish {@link Post}s on this
      *         {@link Container}, false otherwise.
      */
-    public boolean canPublishOn( Container container );
+    public boolean canPublishOn(Container container);
 
     /**
      * Tests if it's possible to post a reply on this {@link Post}
@@ -186,4 +186,12 @@ public interface Connector {
      * @return Returns true if replying was successful, false otherwise.
      */
     public boolean replyPost(Post post, Post parent);
+
+    /**
+     * Poll this connector to retriev all new {@link Post}s since the last call
+     * of {@link Connector#pollPosts()}
+     * 
+     * @return Iterator of all new Posts
+     */
+    public Iterator<Post> pollPosts();
 }

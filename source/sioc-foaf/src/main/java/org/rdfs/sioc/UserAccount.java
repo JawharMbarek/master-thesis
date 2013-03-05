@@ -5722,6 +5722,21 @@ public class UserAccount extends SIOCThing {
     }
 
     /**
+     * Get all values of property Accountname as a ReactorResult of
+     * java.lang.String
+     * 
+     * @return a ReactorResult of $type which can conveniently be converted to
+     *         iterator, list or array
+     * 
+     *         [Generated from RDFReactor template rule
+     *         #get12dynamic-reactorresult]
+     */
+    public String getAccountname() {
+	return Base.getAll_as(this.model, this.getResource(), ACCOUNTNAME,
+		java.lang.String.class).firstValue();
+    }
+
+    /**
      * Adds a value to property Accountname as an RDF2Go node
      * 
      * @param model
@@ -6128,6 +6143,21 @@ public class UserAccount extends SIOCThing {
     public ReactorResult<Document> getAllAccountservicehomepage_as() {
 	return Base.getAll_as(this.model, this.getResource(),
 		ACCOUNTSERVICEHOMEPAGE, Document.class);
+    }
+
+    /**
+     * Get all values of property Accountservicehomepage as a ReactorResult of
+     * Document
+     * 
+     * @return a ReactorResult of $type which can conveniently be converted to
+     *         iterator, list or array
+     * 
+     *         [Generated from RDFReactor template rule
+     *         #get12dynamic-reactorresult]
+     */
+    public Document getAccountservicehomepage() {
+	return Base.getAll_as(this.model, this.getResource(),
+		ACCOUNTSERVICEHOMEPAGE, Document.class).firstValue();
     }
 
     /**

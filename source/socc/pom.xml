@@ -116,5 +116,10 @@
         <artifactId>google-oauth-client-jetty</artifactId>
         <version>1.11.0-beta</version>
     </dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>20030211.134440</version>
+		</dependency>
 	</dependencies>
 </project>

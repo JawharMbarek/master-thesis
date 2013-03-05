@@ -28,8 +28,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -52,7 +52,6 @@ import com.google.common.base.Throwables;
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
-import com.restfb.FacebookClient.AccessToken;
 import com.restfb.Parameter;
 import com.restfb.exception.FacebookException;
 import com.restfb.exception.FacebookOAuthException;
@@ -62,33 +61,34 @@ import com.restfb.types.Group;
 import com.restfb.types.User;
 
 import de.m0ep.socc.connectors.AbstractConnector;
+import de.m0ep.socc.connectors.ConnectorConfig;
+import de.m0ep.socc.utils.ConfigUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
 
 public class FacebookConnector extends AbstractConnector {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(FacebookConnector.class);
 
-    public static final String CONFIG_ACCESS_TOKEN = "access_token";
-    public static final String CONFIG_CLIENT_ID = "client_id";
-    public static final String CONFIG_CLIENT_SECRET = "client_secret";
-
     private static final String CONNECTION_COMMENTS = "comments";
     private static final String CONNECTION_FEED = "feed";
+    private static final String SPECIAL_ID_ME = "me";
 
     private FacebookClient client;
     private String myId;
-    private Properties config;
+    private FacebookConnectorConfig fbConfig;
 
     List<Container> postContainer;
 
-    public FacebookConnector(String id, Model model, Properties config) {
-	super(id, model, config);
+    public FacebookConnector(String id, Model model,
+	    Map<String, Object> parameters) {
+	super(id, model, parameters);
 
-	this.config = config;
-	this.client = new DefaultFacebookClient(
-		config.getProperty(CONFIG_ACCESS_TOKEN));
+	fbConfig = new FacebookConnectorConfig();
+	ConfigUtils.setProperties(fbConfig, parameters);
 
-	FacebookType me = client.fetchObject("me", FacebookType.class,
+	this.client = new DefaultFacebookClient(fbConfig.getAccessToken());
+
+	FacebookType me = client.fetchObject(SPECIAL_ID_ME, FacebookType.class,
 		Parameter.with("fields", "id"));
 	this.myId = me.getId();
 	this.postContainer = new ArrayList<Container>();
@@ -96,6 +96,11 @@ public class FacebookConnector extends AbstractConnector {
 
     public String getURL() {
 	return "http://www.facebook.com/";
+    }
+
+    @Override
+    public ConnectorConfig saveConfiguration() {
+	return fbConfig;
     }
 
     public Site getSite() {
@@ -110,8 +115,44 @@ public class FacebookConnector extends AbstractConnector {
 	}
     }
 
-    public UserAccount getUser() {
-	return getUser(myId);
+    public UserAccount getLoginUser() {
+	return getUserAccount(myId);
+    }
+
+    public UserAccount getUserAccount(final String id) {
+	URI uri = (URI) new URIImpl(getURL() + id);
+
+	if (!UserAccount.hasInstance(getModel(), uri)) {
+	    User user = client.fetchObject(id, User.class);
+	    UserAccount result = new UserAccount(getModel(), uri, true);
+
+	    // SIOC statements
+	    result.setId(user.getId());
+	    result.setIsPartOf(getSite());
+
+	    if (null != user.getEmail() && !user.getEmail().isEmpty()) {
+		result.setEmail(RDF2GoUtils.createMailtoURI(user.getEmail()));
+		result.setEmailsha1(DigestUtils.sha1Hex(user.getEmail()));
+	    }
+
+	    if (null != user.getUsername() && !user.getUsername().isEmpty())
+		result.setAccountname(user.getUsername());
+
+	    if (null != user.getName() && !user.getName().isEmpty())
+		result.setName(user.getName());
+
+	    if (null != user.getUpdatedTime())
+		result.setModified(RDFTool.dateTime2String(user
+			.getUpdatedTime()));
+
+	    if (null != user.getLink())
+		result.setAccountservicehomepage(RDF2GoUtils.createURI(user
+			.getLink()));
+
+	    return result;
+	} else {
+	    return UserAccount.getInstance(getModel(), uri);
+	}
     }
 
     public Iterator<Forum> getForums() {
@@ -122,8 +163,7 @@ public class FacebookConnector extends AbstractConnector {
 	if (!Forum.hasInstance(getModel(), uri)) {
 	    Forum wall = new Forum(getModel(), uri, true);
 	    wall.setId(myId);
-	    wall.setName(getUser().getAllAccountname_as().firstValue()
-		    + "'s Wall");
+	    wall.setName(getLoginUser().getAccountname() + "'s Wall");
 	    wall.setHost(getSite());
 	    getSite().addHostof(wall);
 
@@ -173,8 +213,8 @@ public class FacebookConnector extends AbstractConnector {
 
 	Connection<JsonObject> feed;
 	try {
-	    feed = client.fetchConnection(container.getAllId_as().firstValue()
-		    + "/" + CONNECTION_FEED, JsonObject.class);
+	    feed = client.fetchConnection(container.getId() + "/"
+		    + CONNECTION_FEED, JsonObject.class);
 	} catch (Exception e) {
 	    LOG.warn(e.getMessage(), e);
 	    return super.getPosts(container);
@@ -189,8 +229,7 @@ public class FacebookConnector extends AbstractConnector {
 	    Forum forum = Forum
 		    .getInstance(getModel(), container.getResource());
 	    return forum.hasHost(getSite())
-		    && hasConnection(container.getAllId_as().firstValue(),
-			    CONNECTION_FEED);
+		    && hasConnection(container.getId(), CONNECTION_FEED);
 	}
 
 	return false;
@@ -204,13 +243,12 @@ public class FacebookConnector extends AbstractConnector {
 	 * "[0-9]+_[0-9]+" Post has a "comments" connection
 	 */
 	if (!parent.hasReplyof() && parent.hasContainer()) {
-	    Container container = parent.getAllContainer_as().firstValue();
-	    String id = parent.getAllId_as().firstValue();
+	    Container container = parent.getContainer();
+	    String id = parent.getId();
 
 	    return canPublishOn(container)
 		    && Pattern.matches("^\\d+_\\d+$", id)
-		    && hasConnection(parent.getAllId_as().firstValue(),
-			    CONNECTION_COMMENTS);
+		    && hasConnection(parent.getId(), CONNECTION_COMMENTS);
 	}
 
 	return false;
@@ -230,30 +268,24 @@ public class FacebookConnector extends AbstractConnector {
 	List<Parameter> params = new ArrayList<Parameter>();
 
 	if (post.hasContent())
-	    params.add(Parameter.with("message", post.getAllContent_as()
-		    .firstValue()));
+	    params.add(Parameter.with("message", post.getContent()));
 
 	if (post.hasAttachment())
-	    params.add(Parameter.with("link", post.getAllAttachment_as()
-		    .firstValue()));
+	    params.add(Parameter.with("link", post.getAttachment()));
 
 	if (post.hasTitle())
-	    params.add(Parameter.with("caption", post.getAllTitle_as()
-		    .firstValue()));
+	    params.add(Parameter.with("caption", post.getTitle()));
 
 	if (post.hasDescription())
-	    params.add(Parameter.with("description", post
-		    .getAllDescription_as().firstValue()));
+	    params.add(Parameter.with("description", post.getDescription()));
 
 	if (post.hasName())
-	    params.add(Parameter
-		    .with("name", post.getAllName_as().firstValue()));
+	    params.add(Parameter.with("name", post.getName()));
 
 	FacebookType result;
 	try {
-	    result = client.publish(container.getAllId_as().firstValue() + "/"
-		    + CONNECTION_FEED, FacebookType.class,
-		    params.toArray(new Parameter[0]));
+	    result = client.publish(container.getId() + "/" + CONNECTION_FEED,
+		    FacebookType.class, params.toArray(new Parameter[0]));
 	} catch (Throwable e) {
 	    Throwables.propagateIfInstanceOf(e, FacebookOAuthException.class);
 	    return false;
@@ -274,9 +306,9 @@ public class FacebookConnector extends AbstractConnector {
 
 	FacebookType result;
 	try {
-	    result = client.publish(parent.getAllId_as().firstValue() + "/"
-		    + CONNECTION_COMMENTS, FacebookType.class, Parameter.with(
-		    "message", post.getAllContent_as().firstValue()));
+	    result = client.publish(parent.getId() + "/" + CONNECTION_COMMENTS,
+		    FacebookType.class,
+		    Parameter.with("message", post.getContent()));
 	} catch (Throwable e) {
 	    Throwables.propagateIfInstanceOf(e, FacebookOAuthException.class);
 	    return false;
@@ -288,18 +320,18 @@ public class FacebookConnector extends AbstractConnector {
 		&& !result.getId().isEmpty();
     };
 
-    public java.util.Iterator<Post> pollPosts() {
+    public java.util.Iterator<Post> pollNewPosts(Container container) {
 	List<Post> result = new ArrayList<Post>();
 
 	Iterator<Forum> forums = getForums();
 
 	while (forums.hasNext()) {
-	    Forum container = forums.next();
+	    Forum forum = forums.next();
 	    long unixtime = 0;
 
-	    if (container.hasLastitemdate()) {
+	    if (forum.hasLastitemdate()) {
 		try {
-		    String lastItemDate = container.getLastitemdate();
+		    String lastItemDate = forum.getLastitemdate();
 		    Date date = RDFTool.string2DateTime(lastItemDate);
 		    unixtime = date.getTime() / 1000L;
 		} catch (ParseException e) {
@@ -309,11 +341,11 @@ public class FacebookConnector extends AbstractConnector {
 
 	    Connection<JsonObject> feed = null;
 	    try {
-		feed = client.fetchConnection(container.getId() + "/"
+		feed = client.fetchConnection(forum.getId() + "/"
 			+ CONNECTION_FEED, JsonObject.class,
 			Parameter.with("since", unixtime));
 	    } catch (FacebookException e) {
-		// skip container
+		LOG.debug("skip container " + forum.getId(), e);
 		continue;
 	    }
 
@@ -329,11 +361,11 @@ public class FacebookConnector extends AbstractConnector {
 					.iterator();
 
 			    result.add(FacebookPostParser.parse(this, post,
-				    container));
+				    forum));
 			}
 
 		    } catch (Exception e) {
-			// skip post
+			LOG.debug("skip message " + post.getString("id"), e);
 		    }
 		}
 	    }
@@ -344,53 +376,6 @@ public class FacebookConnector extends AbstractConnector {
 
     /* package */FacebookClient getFacebookClient() {
 	return client;
-    }
-
-    /* package */UserAccount getUser(final String id) {
-	URI uri = (URI) new URIImpl(getURL() + id);
-
-	if (!UserAccount.hasInstance(getModel(), uri)) {
-	    User user = client.fetchObject(id, User.class);
-	    UserAccount result = new UserAccount(getModel(), uri, true);
-
-	    // SIOC statements
-	    result.setId(user.getId());
-	    result.setIsPartOf(getSite());
-
-	    if (null != user.getEmail() && !user.getEmail().isEmpty()) {
-		result.setEmail(RDF2GoUtils.createMailtoURI(user.getEmail()));
-		result.setEmailsha1(DigestUtils.sha1Hex(user.getEmail()));
-	    }
-
-	    if (null != user.getUsername() && !user.getUsername().isEmpty())
-		result.setAccountname(user.getUsername());
-
-	    if (null != user.getName() && !user.getName().isEmpty())
-		result.setName(user.getName());
-
-	    if (null != user.getUpdatedTime())
-		result.setModified(RDFTool.dateTime2String(user
-			.getUpdatedTime()));
-
-	    if (null != user.getLink())
-		result.setAccountservicehomepage(RDF2GoUtils.createURI(user
-			.getLink()));
-
-	    return result;
-	} else {
-	    return UserAccount.getInstance(getModel(), uri);
-	}
-    }
-
-    /* package */void tryToExtendAccessToken() {
-	AccessToken token = client.obtainExtendedAccessToken(
-		config.getProperty(CONFIG_CLIENT_ID),
-		config.getProperty(CONFIG_CLIENT_SECRET),
-		config.getProperty(CONFIG_ACCESS_TOKEN));
-
-	config.setProperty(CONFIG_ACCESS_TOKEN, token.getAccessToken());
-	client = new DefaultFacebookClient(token.getAccessToken());
-	// TODO does this really work???
     }
 
     /* package */boolean hasConnection(final String id, final String connection) {

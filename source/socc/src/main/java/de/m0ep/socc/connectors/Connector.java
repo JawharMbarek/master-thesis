@@ -23,7 +23,6 @@
 package de.m0ep.socc.connectors;
 
 import java.util.Iterator;
-import java.util.Properties;
 
 import org.ontoware.rdf2go.model.Model;
 import org.rdfs.sioc.Container;
@@ -62,11 +61,11 @@ public interface Connector {
     public String getURL();
 
     /**
-     * Returns the config of this Connector
+     * Returns the current {@link ConnectorConfig} to save it for later use
      * 
-     * @return Config of this Connector
+     * @return Current used {@link ConnectorConfig}
      */
-    public Properties getConfig();
+    public ConnectorConfig saveConfiguration();
 
     /**
      * Get the {@link Model} used by this Connector
@@ -88,14 +87,60 @@ public interface Connector {
      * 
      * @return {@link UserAccount} object of the used user.
      */
-    public UserAccount getUser();
+    public UserAccount getLoginUser();
 
     /**
-     * Returns all accessable {@link Forum}s of this community.
+     * Returns the {@link UserAccount} with the committed id
      * 
-     * @return Iterator of all accessable {@link Forum}s.
+     * @param id
+     *            Id of the {@link UserAccount}
+     * 
+     * @return The {@link UserAccount} with this id
+     * 
+     * @throws ConnectorException
+     *             Thrown if there is no user with this id
+     */
+    public UserAccount getUserAccount(String id) throws ConnectorException;
+
+    /**
+     * Returns all known {@link UserAccount}s of this community.
+     * 
+     * @return Iterator of all found {@link UserAccount}s.
+     */
+    public Iterator<UserAccount> getUserAccounts();
+
+    /**
+     * Returns the {@link Forum} with the committed id
+     * 
+     * @param id
+     *            Id of the {@link Forum}
+     * 
+     * @return The {@link Forum} with this id
+     * 
+     * @throws ConnectorException
+     *             Thrown if there is no forum with this id
+     */
+    public Forum getForum(String id) throws ConnectorException;
+
+    /**
+     * Returns all accessible {@link Forum}s of this community.
+     * 
+     * @return Iterator of all accessible {@link Forum}s.
      */
     public Iterator<Forum> getForums();
+
+    /**
+     * Returns the {@link Thread} with the committed id
+     * 
+     * @param id
+     *            Id of the {@link Thread}
+     * 
+     * @return The {@link Thread} with this id
+     * 
+     * @throws ConnectorException
+     *             Thrown if there is no thread with this id
+     */
+    public Thread getThread(String id) throws ConnectorException;
 
     /**
      * Returns all {@link Thread}s of the given {@link Forum}.
@@ -106,6 +151,19 @@ public interface Connector {
      * @return Iterator of all found {@link Thread}s.
      */
     public Iterator<Thread> getThreads(Forum forum);
+
+    /**
+     * Returns the {@link Post} with the committed id
+     * 
+     * @param id
+     *            Id of the {@link Post}
+     * 
+     * @return The {@link Post} with this id
+     * 
+     * @throws ConnectorException
+     *             Thrown if there is no post with this id
+     */
+    public Post getPost(String id) throws ConnectorException;
 
     /**
      * Returns all {@link Post}s an their Replies (also Posts) inside the given
@@ -120,18 +178,35 @@ public interface Connector {
     public Iterator<Post> getPosts(Container container);
 
     /**
+     * Poll this connector to retrieve all new {@link Post}s since the last call
+     * of {@link Connector#pollNewPosts(Container)}
+     * 
+     * @param container
+     *            The container where should be polled to get new posts
+     * 
+     * @return Iterator of all new Posts
+     */
+    public Iterator<Post> pollNewPosts(Container container);
+
+    /**
+     * Returns the {@link Usergroup} with the committed id
+     * 
+     * @param id
+     *            Id of the {@link Usergroup}
+     * 
+     * @return The {@link Usergroup} with this id
+     * 
+     * @throws ConnectorException
+     *             Thrown if there is no usergroup with this id
+     */
+    public Usergroup getUsergroup(String id) throws ConnectorException;
+
+    /**
      * Returns all known {@link Usergroup}s of this community.
      * 
      * @return Iterator of all found {@link Usergroup}s.
      */
     public Iterator<Usergroup> getUsergroups();
-
-    /**
-     * Returns all known {@link UserAccount}s of this community.
-     * 
-     * @return Iterator of all found {@link UserAccount}s.
-     */
-    public Iterator<UserAccount> getUserAccounts();
 
     /**
      * Tests if {@link Post}s can be published on this {@link Container}
@@ -186,12 +261,4 @@ public interface Connector {
      * @return Returns true if replying was successful, false otherwise.
      */
     public boolean replyPost(Post post, Post parent);
-
-    /**
-     * Poll this connector to retriev all new {@link Post}s since the last call
-     * of {@link Connector#pollPosts()}
-     * 
-     * @return Iterator of all new Posts
-     */
-    public Iterator<Post> pollPosts();
 }

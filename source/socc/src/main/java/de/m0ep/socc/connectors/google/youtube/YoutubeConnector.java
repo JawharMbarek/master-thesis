@@ -22,21 +22,26 @@
 
 package de.m0ep.socc.connectors.google.youtube;
 
-import java.util.Properties;
+import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.UserAccount;
 
 import de.m0ep.socc.connectors.AbstractConnector;
+import de.m0ep.socc.connectors.ConnectorConfig;
+import de.m0ep.socc.utils.ConfigUtils;
 
 public class YoutubeConnector extends AbstractConnector {
-    public static final String CONFIG_USERNAME = "username";
-    public static final String CONFIG_PASSWORD = "password";
 
-    public YoutubeConnector(String id, Model model, Properties config) {
-	super(id, model, config);
-	// TODO Auto-generated constructor stub
+    YoutubeConnectorConfig ytConfig;
+
+    public YoutubeConnector(String id, Model model,
+	    Map<String, Object> parameters) {
+	super(id, model, parameters);
+
+	this.ytConfig = new YoutubeConnectorConfig();
+	ConfigUtils.setProperties(ytConfig, parameters);
     }
 
     @Override
@@ -46,13 +51,18 @@ public class YoutubeConnector extends AbstractConnector {
     }
 
     @Override
+    public ConnectorConfig saveConfiguration() {
+	return ytConfig;
+    }
+
+    @Override
     public Site getSite() {
 	// TODO Auto-generated method stub
 	return null;
     }
 
     @Override
-    public UserAccount getUser() {
+    public UserAccount getLoginUser() {
 	// TODO Auto-generated method stub
 	return null;
     }

@@ -4,8 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
+import java.util.Map;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.RDF2Go;
@@ -22,7 +23,8 @@ import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 
 import de.m0ep.socc.connectors.Connector;
-import de.m0ep.socc.connectors.facebook.FacebookConnector;
+import de.m0ep.socc.connectors.facebook.FacebookConnectorConfig;
+import de.m0ep.socc.utils.ConfigUtils;
 
 public class SOCCTest {
 
@@ -37,12 +39,12 @@ public class SOCCTest {
 	Model model = RDF2Go.getModelFactory().createModel();
 	model.open();
 
-	Properties config = new Properties();
+	Map<String, Object> config = new HashMap<String, Object>();
 	config.put(
-		FacebookConnector.CONFIG_ACCESS_TOKEN,
+		FacebookConnectorConfig.ACCESS_TOKEN,
 		"AAACEdEose0cBAKtwLtIOX4cNO9wCaOkKndCmgERoWZBMievDgqsL9GGPKv2ZBa3Tjtj8l1ZB5j2qKZAePnmZBk29wMo0APEV2JB7Bjc80wtWGLGk960iu");
-	config.put(FacebookConnector.CONFIG_CLIENT_ID, "218182098322396");
-	config.put(FacebookConnector.CONFIG_CLIENT_SECRET,
+	config.put(FacebookConnectorConfig.CLIENT_ID, "218182098322396");
+	config.put(FacebookConnectorConfig.CLIENT_SECRET,
 		"7b80b9d7265c719e1d9efe112e4dbada");
 	// config.put(MoodleConnector.CONFIG_MOODLE_URL,
 	// "http://localhost/florian/moodle24/");
@@ -54,29 +56,18 @@ public class SOCCTest {
 	// config.put(GooglePlusConnector.CONFIG_USER_ID, "me");
 
 	Connector[] connectors = {
- new FacebookConnector("facebook", model,
-		config),
+	// new FacebookConnector("facebook", model,config),
 	// new MoodleConnector("Moodle", model, config)
 	// new GooglePlusConnector("google+", model, config)
 	};
 
-	for (Connector connector : connectors) {
-	    // printConnector(connector);
-	    Iterator<Post> posts = connector.pollPosts();
-	    int ctr = 0;
-	    while (posts.hasNext()) {
-		posts.next();
-		ctr++;
-	    }
-	    System.out.println(ctr);
+	for (String property : ConfigUtils
+		.getPropertyNames(FacebookConnectorConfig.class)) {
+	    System.out.println(property);
+	}
 
-	    posts = connector.pollPosts();
-	    ctr = 0;
-	    while (posts.hasNext()) {
-		posts.next();
-		ctr++;
-	    }
-	    System.out.println(ctr);
+	for (Connector connector : connectors) {
+	    printConnector(connector);
 	}
 
 	System.out.println();
@@ -106,7 +97,7 @@ public class SOCCTest {
 	System.out.println("=====================================");
 	System.out.println("=====================================");
 
-	UserAccount user = connector.getUser();
+	UserAccount user = connector.getLoginUser();
 	printUser(user, 0);
 
 	Iterator<Forum> forums = connector.getForums();

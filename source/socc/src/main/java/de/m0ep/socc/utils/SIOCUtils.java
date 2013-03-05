@@ -29,8 +29,7 @@ import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
 
-
-public class SOCCUtils {
+public class SIOCUtils {
     public static void updateLastItemDate(Container container, Post post) {
 	if (post.hasCreated()) {
 	    if (container.hasLastitemdate()) {

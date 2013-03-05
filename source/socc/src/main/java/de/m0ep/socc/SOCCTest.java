@@ -22,8 +22,7 @@ import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 
 import de.m0ep.socc.connectors.Connector;
-import de.m0ep.socc.connectors.google.plus.GooglePlusConnector;
-import de.m0ep.socc.connectors.moodle.MoodleConnector;
+import de.m0ep.socc.connectors.facebook.FacebookConnector;
 
 public class SOCCTest {
 
@@ -39,29 +38,45 @@ public class SOCCTest {
 	model.open();
 
 	Properties config = new Properties();
-	// config.put(
-	// FacebookConnector.CONFIG_ACCESS_TOKEN,
-	// "AAADGb3p3g9wBAEBIgudxWemgEWEjsMZAfBO6q8ZBs8SvkHu9eTC5yfzCWrPkwNZBSOwGqmaQF7Axpj7ZBsH27CjFt6alhbZBSOq74wurtVAZDZD");
-	// config.put(FacebookConnector.CONFIG_CLIENT_ID, "218182098322396");
-	// config.put(FacebookConnector.CONFIG_CLIENT_SECRET,
-	// "7b80b9d7265c719e1d9efe112e4dbada");
-	config.put(MoodleConnector.CONFIG_MOODLE_URL,
-		"http://localhost/florian/moodle24/");
-	config.put(MoodleConnector.CONFIG_USERNAME, "admin");
-	config.put(MoodleConnector.CONFIG_PASSWORD, "admin");
-
-	config.put(GooglePlusConnector.CONFIG_CLIENT_SECRETS_FILE,
-		"client_secrets.json");
-	config.put(GooglePlusConnector.CONFIG_USER_ID, "me");
+	config.put(
+		FacebookConnector.CONFIG_ACCESS_TOKEN,
+		"AAACEdEose0cBAKtwLtIOX4cNO9wCaOkKndCmgERoWZBMievDgqsL9GGPKv2ZBa3Tjtj8l1ZB5j2qKZAePnmZBk29wMo0APEV2JB7Bjc80wtWGLGk960iu");
+	config.put(FacebookConnector.CONFIG_CLIENT_ID, "218182098322396");
+	config.put(FacebookConnector.CONFIG_CLIENT_SECRET,
+		"7b80b9d7265c719e1d9efe112e4dbada");
+	// config.put(MoodleConnector.CONFIG_MOODLE_URL,
+	// "http://localhost/florian/moodle24/");
+	// config.put(MoodleConnector.CONFIG_USERNAME, "admin");
+	// config.put(MoodleConnector.CONFIG_PASSWORD, "admin");
+	//
+	// config.put(GooglePlusConnector.CONFIG_CLIENT_SECRETS_FILE,
+	// "client_secrets.json");
+	// config.put(GooglePlusConnector.CONFIG_USER_ID, "me");
 
 	Connector[] connectors = {
-	// new FacebookConnector("facebook", model, config),
+ new FacebookConnector("facebook", model,
+		config),
 	// new MoodleConnector("Moodle", model, config)
-	new GooglePlusConnector("google+", model, config)
+	// new GooglePlusConnector("google+", model, config)
 	};
 
 	for (Connector connector : connectors) {
-	    printConnector(connector);
+	    // printConnector(connector);
+	    Iterator<Post> posts = connector.pollPosts();
+	    int ctr = 0;
+	    while (posts.hasNext()) {
+		posts.next();
+		ctr++;
+	    }
+	    System.out.println(ctr);
+
+	    posts = connector.pollPosts();
+	    ctr = 0;
+	    while (posts.hasNext()) {
+		posts.next();
+		ctr++;
+	    }
+	    System.out.println(ctr);
 	}
 
 	System.out.println();
@@ -74,8 +89,7 @@ public class SOCCTest {
 	    String filename = "fb_mdl-" + new Date().getTime() + ".rdf";
 	    System.out.println("Write model to " + filename);
 	    try {
-		model.writeTo(
-			new FileOutputStream(filename), Syntax.RdfXml);
+		model.writeTo(new FileOutputStream(filename), Syntax.RdfXml);
 	    } catch (ModelRuntimeException e) {
 		e.printStackTrace();
 	    } catch (FileNotFoundException e) {

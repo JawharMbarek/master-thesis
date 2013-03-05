@@ -1,3 +1,25 @@
+/*
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package de.m0ep.socc.connectors.facebook;
 
 import org.ontoware.rdf2go.model.node.URI;
@@ -9,21 +31,14 @@ import com.restfb.json.JsonObject;
 
 import de.m0ep.socc.connectors.ConnectorException;
 import de.m0ep.socc.utils.RDF2GoUtils;
+import de.m0ep.socc.utils.SOCCUtils;
 import de.m0ep.socc.utils.StringUtils;
 
 public class FacebookPostParser {
 
-    private static final String DESCRIPTION = "description";
-    private static final String CAPTION = "caption";
-    private static final String SOURCE = "source";
-    private static final String UPDATED_TIME = "updated_time";
-    private static final String LINK = "link";
-    private static final String NAME = "name";
-    private static final String FROM = "from";
-    private static final String CREATED_TIME = "created_time";
     private static final String TYPE_PHOTO = "photo";
     private static final String TYPE_STATUS = "status";
-    private static final String TYPE_LINK = LINK;
+    private static final String TYPE_LINK = "link";
     private static final String TYPE_VIDEO = "video";
 
     private static final String ID = "id";
@@ -32,33 +47,50 @@ public class FacebookPostParser {
     private static final String MESSAGE = "message";
     private static final String COMMENTS = "comments";
     private static final String DATA = "data";
+    private static final String DESCRIPTION = "description";
+    private static final String CAPTION = "caption";
+    private static final String SOURCE = "source";
+    private static final String UPDATED_TIME = "updated_time";
+    private static final String LINK = "link";
+    private static final String NAME = "name";
+    private static final String FROM = "from";
+    private static final String CREATED_TIME = "created_time";
 
     public static Post parse(final FacebookConnector connector,
 	    final JsonObject obj, final Container parentContainer) {
 	String type = obj.getString(TYPE);
 	Post post = null;
-	
-	if(TYPE_STATUS.equalsIgnoreCase(type)){
+
+	if (TYPE_STATUS.equalsIgnoreCase(type)) {
 	    post = parseStatusMessage(connector, obj, parentContainer);
-	}
-	else if(TYPE_LINK.equalsIgnoreCase(type)){
+	} else if (TYPE_LINK.equalsIgnoreCase(type)) {
 	    post = parseLinkMessage(connector, obj, parentContainer);
-	}else if(TYPE_VIDEO.equalsIgnoreCase(type)){
+	} else if (TYPE_VIDEO.equalsIgnoreCase(type)) {
 	    post = parseVideoMessage(connector, obj, parentContainer);
 	} else if (TYPE_PHOTO.equalsIgnoreCase(type)) {
 	    post = parsePhotoMessage(connector, obj, parentContainer);
 	} else {
 	    throw new ConnectorException("failed to parse object");
 	}
-	
-	if (null != post && obj.has(COMMENTS)) {
-	    JsonObject comments = obj.getJsonObject(COMMENTS);
 
-	    if (comments.has(DATA)) {
-		JsonArray data = comments.getJsonArray(DATA);
+	if (null != post) {
+	    post.setContainer(parentContainer);
+	    parentContainer.addContainerof(post);
+	    SOCCUtils.updateLastItemDate(parentContainer, post);
 
-		for (int i = 0; i < data.length(); i++) {
-		    addComment(connector, data.getJsonObject(i), post);
+	    if (obj.has(COMMENTS)) {
+		JsonObject comments = obj.getJsonObject(COMMENTS);
+
+		if (comments.has(DATA)) {
+		    JsonArray data = comments.getJsonArray(DATA);
+
+		    for (int i = 0; i < data.length(); i++) {
+			Post comment = parseComment(connector,
+				data.getJsonObject(i), post);
+			comment.setReplyof(post);
+			post.addReply(comment);
+			SOCCUtils.updateLastReplyDate(post, comment);
+		    }
 		}
 	    }
 	}
@@ -79,12 +111,12 @@ public class FacebookPostParser {
 		result.setCreator(connector.getUser(obj.getJsonObject(FROM)
 			.getString(ID)));
 
-	    String content = ""; 
+	    String content = "";
 	    if (obj.has(STORY))
 		content = obj.getString(STORY);
 	    else if (obj.has(MESSAGE))
 		content = obj.getString(MESSAGE);
-	    
+
 	    result.setContent(StringUtils.stripHTML(content));
 	    result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
 
@@ -97,9 +129,6 @@ public class FacebookPostParser {
 
 	    if (obj.has(UPDATED_TIME))
 		result.setModified(obj.getString(UPDATED_TIME));
-
-	    result.setContainer(parentContainer);
-	    parentContainer.addContainerof(result);
 
 	    return result;
 
@@ -132,13 +161,13 @@ public class FacebookPostParser {
 
 	    if (obj.has(DESCRIPTION))
 		result.setDescription(obj.getString(DESCRIPTION));
-	    
-	    String content = ""; 
+
+	    String content = "";
 	    if (obj.has(STORY))
 		content = obj.getString(STORY);
 	    else if (obj.has(MESSAGE))
 		content = obj.getString(MESSAGE);
-	    
+
 	    result.setContent(StringUtils.stripHTML(content));
 	    result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
 
@@ -147,9 +176,6 @@ public class FacebookPostParser {
 
 	    if (obj.has(UPDATED_TIME))
 		result.setModified(obj.getString(UPDATED_TIME));
-
-	    result.setContainer(parentContainer);
-	    parentContainer.addContainerof(result);
 
 	    return result;
 
@@ -193,9 +219,6 @@ public class FacebookPostParser {
 	    if (obj.has(UPDATED_TIME))
 		result.setModified(obj.getString(UPDATED_TIME));
 
-	    result.setContainer(parentContainer);
-	    parentContainer.addContainerof(result);
-
 	    return result;
 
 	} else {
@@ -238,9 +261,6 @@ public class FacebookPostParser {
 	    if (obj.has(UPDATED_TIME))
 		result.setModified(obj.getString(UPDATED_TIME));
 
-	    result.setContainer(parentContainer);
-	    parentContainer.addContainerof(result);
-
 	    return result;
 
 	} else {
@@ -248,12 +268,12 @@ public class FacebookPostParser {
 	}
     }
 
-    private static Post addComment(final FacebookConnector connector,
+    private static Post parseComment(final FacebookConnector connector,
 	    final JsonObject obj, final Post parentPost) {
-	
+
 	String id = obj.getString(ID);
 	URI uri = RDF2GoUtils.createURI(connector.getURL() + id);
-	
+
 	if (!Post.hasInstance(connector.getModel(), uri)) {
 	    Post result = new Post(connector.getModel(), uri, true);
 	    result.setId(id);
@@ -271,9 +291,6 @@ public class FacebookPostParser {
 
 	    if (obj.has(CREATED_TIME))
 		result.setCreated(obj.getString(CREATED_TIME));
-
-	    result.setReplyof(parentPost);
-	    parentPost.addReply(result);
 
 	    return result;
 

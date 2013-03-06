@@ -24,7 +24,7 @@ package de.m0ep.socc.connectors;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Properties;
+import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 import org.rdfs.sioc.Container;
@@ -47,7 +47,6 @@ import com.google.common.base.Preconditions;
 public abstract class AbstractConnector implements Connector {
     private String id;
     private Model model;
-    private Properties config;
 
     /**
      * {@link AbstractConnector} constructor to create a new connector.
@@ -65,131 +64,203 @@ public abstract class AbstractConnector implements Connector {
      *             Thrown if id is empty or mode is not open.
      */
     public AbstractConnector(final String id, final Model model,
-	    final Properties config) {
+	    final Map<String, Object> parameters) {
 	this.id = Preconditions.checkNotNull(id, "id can't be null");
 	this.model = Preconditions.checkNotNull(model, "model can't be null");
-	this.config = Preconditions
-		.checkNotNull(config, "config can't be null");
 	Preconditions.checkArgument(!id.isEmpty(), "id can't be empty");
 	Preconditions.checkArgument(model.isOpen(), "model is not open");
     }
 
     /**
-     * @see Connector#destroy()
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#destroy()
      */
     public void destroy() {
     }
 
     /**
-     * @see Connector#getId()
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getId()
      */
     public String getId() {
 	return id;
     }
 
     /**
-     * @see Connector#getURL()
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getURL()
      */
     public abstract String getURL();
 
     /**
-     * @see Connector#getConfig()
-     */
-    public Properties getConfig() {
-	return config;
-    }
-
-    /**
-     * @see Connector#getConfig()
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getModel()
      */
     public Model getModel() {
 	return model;
     }
 
     /**
-     * @see Connector#getSite()
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getSite()
      */
     public abstract Site getSite();
 
     /**
-     * @see Connector#getUser()
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getLoginUser()
      */
-    public abstract UserAccount getUser();
+    public abstract UserAccount getLoginUser();
 
     /**
-     * @see Connector#getForums()
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getUserAccount(java.lang.String)
      */
-    public Iterator<Forum> getForums() {
-	return new ArrayList<Forum>().iterator();
+    public UserAccount getUserAccount(String id) throws ConnectorException {
+	throw new ConnectorException("There is no user with the id=" + id);
     }
 
     /**
-     * @see Connector#getThreads(Forum)
-     */
-    public Iterator<Thread> getThreads(Forum forum) {
-	return new ArrayList<Thread>().iterator();
-    }
-
-    /**
-     * @see Connector#getPosts(Container)
-     */
-    public Iterator<Post> getPosts(Container container) {
-	return new ArrayList<Post>().iterator();
-    }
-
-    /**
-     * @see Connector#getUsergroups()
-     */
-    public Iterator<Usergroup> getUsergroups() {
-	return new ArrayList<Usergroup>().iterator();
-    }
-
-    /**
-     * @see Connector#getUserAccounts()
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getUserAccounts()
      */
     public Iterator<UserAccount> getUserAccounts() {
 	return new ArrayList<UserAccount>().iterator();
     }
 
     /**
-     * @see Connector#canPublishOn(Container)
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getForum(java.lang.String)
+     */
+    public Forum getForum(String id) throws ConnectorException {
+	throw new ConnectorException("There is no forum with the id=" + id);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getForums()
+     */
+    public Iterator<Forum> getForums() {
+	return new ArrayList<Forum>().iterator();
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getThread(java.lang.String)
+     */
+    public Thread getThread(String id) throws ConnectorException {
+	throw new ConnectorException("There is no thread with the id=" + id);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getThreads(org.rdfs.sioc.Forum)
+     */
+    public Iterator<Thread> getThreads(Forum forum) {
+	return new ArrayList<Thread>().iterator();
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getPost(java.lang.String)
+     */
+    public Post getPost(String id) throws ConnectorException {
+	throw new ConnectorException("There is no post with the id=" + id);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getPosts(org.rdfs.sioc.Container)
+     */
+    public Iterator<Post> getPosts(Container container) {
+	return new ArrayList<Post>().iterator();
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getUsergroup(java.lang.String)
+     */
+    public Usergroup getUsergroup(String id) throws ConnectorException {
+	throw new ConnectorException("There is no usergroup with the id=" + id);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#getUsergroups()
+     */
+    public Iterator<Usergroup> getUsergroups() {
+	return new ArrayList<Usergroup>().iterator();
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#canPublishOn(org.rdfs.sioc.Container)
      */
     public boolean canPublishOn(Container container) {
 	return false;
     }
 
     /**
-     * @see Connector#canReplyOn(Post)
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#canReplyOn(org.rdfs.sioc.Post)
      */
     public boolean canReplyOn(Post parent) {
 	return false;
     }
 
     /**
-     * @see Connector#hasPosts(Container)
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#hasPosts(org.rdfs.sioc.Container)
      */
     public boolean hasPosts(Container container) {
 	return false;
     }
 
     /**
-     * @see Connector#publishPost(Post, Container)
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#publishPost(org.rdfs.sioc.Post,
+     *      org.rdfs.sioc.Container)
      */
     public boolean publishPost(Post post, Container container) {
 	return false;
     }
 
     /**
-     * @see Connector#replyPost(Post, Post)
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#replyPost(org.rdfs.sioc.Post,
+     *      org.rdfs.sioc.Post)
      */
     public boolean replyPost(Post post, Post parent) {
 	return false;
     }
 
     /**
-     * @see Connector#pollPosts()
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.Connector#pollNewPosts(org.rdfs.sioc.Container)
      */
-    public Iterator<Post> pollPosts() {
+    public Iterator<Post> pollNewPosts(Container container) {
 	return new ArrayList<Post>().iterator();
     }
 }

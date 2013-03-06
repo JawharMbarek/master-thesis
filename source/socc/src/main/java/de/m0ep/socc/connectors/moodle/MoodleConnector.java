@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.ontoware.rdf2go.model.Model;
@@ -55,14 +54,13 @@ import de.m0ep.moodlews.soap.LoginReturn;
 import de.m0ep.moodlews.soap.Mdl_soapserverBindingStub;
 import de.m0ep.moodlews.soap.UserRecord;
 import de.m0ep.socc.connectors.AbstractConnector;
+import de.m0ep.socc.connectors.ConnectorConfig;
 import de.m0ep.socc.connectors.ConnectorException;
+import de.m0ep.socc.utils.ConfigUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.StringUtils;
 
 public class MoodleConnector extends AbstractConnector {
-    public static final String CONFIG_MOODLE_URL = "moodle_url";
-    public static final String CONFIG_USERNAME = "username";
-    public static final String CONFIG_PASSWORD = "password";
     public static final String MOODLEWS_PATH = "wspp/service_pp2.php";
 
     private static final String URI_USER_PATH = "user/";
@@ -70,35 +68,27 @@ public class MoodleConnector extends AbstractConnector {
     private static final String URI_THREAD_PATH = "discussion/";
     private static final String URI_POST_PATH = "post/";
 
-    private String moodle_url;
-    private String username;
-    private String password;
     private Mdl_soapserverBindingStub moodle;
+    private MoodleConnectorConfig mdlConfig;
 
     private int client;
     private String sesskey;
     private int myId;
-    Map<Integer, CourseRecord> courses = new HashMap<Integer, CourseRecord>();
 
-    public MoodleConnector(String id, Model model, Properties config) {
-	super(id, model, config);
+    private Map<Integer, CourseRecord> courses = new HashMap<Integer, CourseRecord>();
 
-	Preconditions.checkArgument(config.containsKey(CONFIG_MOODLE_URL),
-		"no moodle url in config");
-	Preconditions.checkArgument(config.containsKey(CONFIG_USERNAME),
-		"no username in config");
-	Preconditions.checkArgument(config.containsKey(CONFIG_PASSWORD),
-		"no password in config");
+    public MoodleConnector(String id, Model model,
+	    Map<String, Object> parameters) {
+	super(id, model, parameters);
 
-	this.moodle_url = StringUtils.endsWithSlash(config.getProperty(
-		CONFIG_MOODLE_URL, ""));
-	this.username = config.getProperty(CONFIG_USERNAME, "");
-	this.password = config.getProperty(CONFIG_PASSWORD, "");
+	this.mdlConfig = new MoodleConnectorConfig();
+	ConfigUtils.setProperties(this.mdlConfig, parameters);
 
 	this.moodle = new Mdl_soapserverBindingStub(getURL() + MOODLEWS_PATH,
 		getURL() + "/wspp/wsdl2", false);
 
-	LoginReturn login = moodle.login(username, password);
+	LoginReturn login = moodle.login(mdlConfig.getUsername(),
+		mdlConfig.getPassword());
 	this.client = login.getClient();
 	this.sesskey = login.getSessionkey();
 	this.myId = moodle.get_my_id(client, sesskey);
@@ -106,7 +96,12 @@ public class MoodleConnector extends AbstractConnector {
 
     @Override
     public String getURL() {
-	return moodle_url;
+	return StringUtils.endsWithSlash(mdlConfig.getUrl());
+    }
+
+    @Override
+    public ConnectorConfig saveConfiguration() {
+	return mdlConfig;
     }
 
     @Override
@@ -123,7 +118,7 @@ public class MoodleConnector extends AbstractConnector {
     }
 
     @Override
-    public UserAccount getUser() {
+    public UserAccount getLoginUser() {
 	return getUser(myId);
     }
 
@@ -291,10 +286,8 @@ public class MoodleConnector extends AbstractConnector {
     public boolean canPublishOn(Container container) {
 
 	/*
-	 * Can publish on this conainer if: 
-	 * - It's a Thread 
-	 * - Has a parent that is a Forum 
-	 * - The parent forum belongs to this moodle instance
+	 * Can publish on this conainer if: - It's a Thread - Has a parent that
+	 * is a Forum - The parent forum belongs to this moodle instance
 	 */
 
 	if (getModel().contains(container, RDF.type, SIOC.Thread)) {
@@ -317,10 +310,9 @@ public class MoodleConnector extends AbstractConnector {
     @Override
     public boolean canReplyOn(Post parent) {
 	/*
-	 * We can reply on this post if: 
-	 * - it has a container that is a thread 
-	 * - this thread has a parent Forum 
-	 * - the parent forum belongs to this moodle instance
+	 * We can reply on this post if: - it has a container that is a thread -
+	 * this thread has a parent Forum - the parent forum belongs to this
+	 * moodle instance
 	 */
 	if (parent.hasContainer()) {
 	    Container container = parent.getAllContainer_as().firstValue();

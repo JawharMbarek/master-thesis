@@ -31,7 +31,7 @@ import com.restfb.json.JsonObject;
 
 import de.m0ep.socc.connectors.ConnectorException;
 import de.m0ep.socc.utils.RDF2GoUtils;
-import de.m0ep.socc.utils.SOCCUtils;
+import de.m0ep.socc.utils.SIOCUtils;
 import de.m0ep.socc.utils.StringUtils;
 
 public class FacebookPostParser {
@@ -76,7 +76,7 @@ public class FacebookPostParser {
 	if (null != post) {
 	    post.setContainer(parentContainer);
 	    parentContainer.addContainerof(post);
-	    SOCCUtils.updateLastItemDate(parentContainer, post);
+	    SIOCUtils.updateLastItemDate(parentContainer, post);
 
 	    if (obj.has(COMMENTS)) {
 		JsonObject comments = obj.getJsonObject(COMMENTS);
@@ -89,7 +89,7 @@ public class FacebookPostParser {
 				data.getJsonObject(i), post);
 			comment.setReplyof(post);
 			post.addReply(comment);
-			SOCCUtils.updateLastReplyDate(post, comment);
+			SIOCUtils.updateLastReplyDate(post, comment);
 		    }
 		}
 	    }
@@ -108,7 +108,7 @@ public class FacebookPostParser {
 	    result.setId(id);
 
 	    if (obj.has(FROM))
-		result.setCreator(connector.getUser(obj.getJsonObject(FROM)
+		result.setCreator(connector.getUserAccount(obj.getJsonObject(FROM)
 			.getString(ID)));
 
 	    String content = "";
@@ -147,7 +147,7 @@ public class FacebookPostParser {
 	    result.setId(id);
 
 	    if (obj.has(FROM))
-		result.setCreator(connector.getUser(obj.getJsonObject(FROM)
+		result.setCreator(connector.getUserAccount(obj.getJsonObject(FROM)
 			.getString(ID)));
 
 	    if (obj.has(NAME))
@@ -194,7 +194,7 @@ public class FacebookPostParser {
 	    result.setId(id);
 
 	    if (obj.has(FROM))
-		result.setCreator(connector.getUser(obj.getJsonObject(FROM)
+		result.setCreator(connector.getUserAccount(obj.getJsonObject(FROM)
 			.getString(ID)));
 
 	    if (obj.has(NAME))
@@ -237,7 +237,7 @@ public class FacebookPostParser {
 	    result.setId(id);
 
 	    if (obj.has(FROM))
-		result.setCreator(connector.getUser(obj.getJsonObject(FROM)
+		result.setCreator(connector.getUserAccount(obj.getJsonObject(FROM)
 			.getString(ID)));
 
 	    if (obj.has(NAME))
@@ -279,7 +279,7 @@ public class FacebookPostParser {
 	    result.setId(id);
 
 	    if (obj.has(FROM))
-		result.setCreator(connector.getUser(obj.getJsonObject(FROM)
+		result.setCreator(connector.getUserAccount(obj.getJsonObject(FROM)
 			.getString(ID)));
 
 	    String content = "";

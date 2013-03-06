@@ -22,6 +22,7 @@
 
 package de.m0ep.socc.connectors;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.ontoware.rdf2go.model.Model;
@@ -66,5 +67,5 @@ public interface ConnectorFactory {
      *            the new {@link Connector}.
      * @return
      */
-    public Connector createConnector(String id, Model model, Properties config);
+    public Connector createConnector(String id, Model model, Map<String, Object> config);
 }

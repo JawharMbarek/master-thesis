@@ -22,12 +22,13 @@
 
 package de.m0ep.socc.connectors.moodle;
 
-import java.util.Properties;
+import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.connectors.Connector;
 import de.m0ep.socc.connectors.ConnectorFactory;
+import de.m0ep.socc.utils.ConfigUtils;
 
 public class MoodleConnectorFactory implements ConnectorFactory {
 
@@ -40,12 +41,11 @@ public class MoodleConnectorFactory implements ConnectorFactory {
     }
 
     public String[] getConfigKeys() {
-	return new String[] { MoodleConnector.CONFIG_MOODLE_URL,
-		MoodleConnector.CONFIG_USERNAME,
-		MoodleConnector.CONFIG_PASSWORD };
+	return ConfigUtils.getPropertyNames(MoodleConnectorConfig.class);
     }
 
-    public Connector createConnector(String id, Model model, Properties config) {
+    public Connector createConnector(String id, Model model,
+	    Map<String, Object> config) {
 	return new MoodleConnector(id, model, config);
     }
 

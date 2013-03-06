@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>de.m0ep.uni.ma</groupId>
+  <artifactId>GooglePlusTest</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  
+  <repositories>
+    <repository>
+      <id>googleapis</id>
+      <url>https://google-api-client-libraries.appspot.com/mavenrepo</url>
+    </repository>
+  </repositories>
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>com.google.http-client</groupId>
+  		<artifactId>google-http-client-jackson</artifactId>
+  		<version>1.12.0-beta</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.google.oauth-client</groupId>
+  		<artifactId>google-oauth-client-jetty</artifactId>
+  		<version>1.11.0-beta</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.google.apis</groupId>
+  		<artifactId>google-api-services-plus</artifactId>
+  		<version>v1-rev40-1.12.0-beta</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.google.guava</groupId>
+  		<artifactId>guava</artifactId>
+  		<version>14.0-rc3</version>
+  	</dependency>
+  </dependencies>
+</project>

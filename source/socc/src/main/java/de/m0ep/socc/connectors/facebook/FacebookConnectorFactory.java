@@ -22,12 +22,13 @@
 
 package de.m0ep.socc.connectors.facebook;
 
-import java.util.Properties;
+import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.connectors.Connector;
 import de.m0ep.socc.connectors.ConnectorFactory;
+import de.m0ep.socc.utils.ConfigUtils;
 
 public class FacebookConnectorFactory implements ConnectorFactory {
 
@@ -40,12 +41,11 @@ public class FacebookConnectorFactory implements ConnectorFactory {
     }
 
     public String[] getConfigKeys() {
-	return new String[] { FacebookConnector.CONFIG_ACCESS_TOKEN,
-		FacebookConnector.CONFIG_CLIENT_ID,
-		FacebookConnector.CONFIG_CLIENT_SECRET };
+	return ConfigUtils.getPropertyNames(FacebookConnectorConfig.class);
     }
 
-    public Connector createConnector(String id, Model model, Properties config) {
+    public Connector createConnector(String id, Model model,
+	    Map<String, Object> config) {
 	return new FacebookConnector(id, model, config);
     }
 }

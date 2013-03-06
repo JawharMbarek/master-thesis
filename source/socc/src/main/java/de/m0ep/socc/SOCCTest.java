@@ -4,8 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
+import java.util.Map;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.RDF2Go;
@@ -22,7 +23,8 @@ import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 
 import de.m0ep.socc.connectors.Connector;
-import de.m0ep.socc.connectors.facebook.FacebookConnector;
+import de.m0ep.socc.connectors.moodle.MoodleConnector;
+import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
 
 public class SOCCTest {
 
@@ -37,46 +39,30 @@ public class SOCCTest {
 	Model model = RDF2Go.getModelFactory().createModel();
 	model.open();
 
-	Properties config = new Properties();
-	config.put(
-		FacebookConnector.CONFIG_ACCESS_TOKEN,
-		"AAACEdEose0cBAKtwLtIOX4cNO9wCaOkKndCmgERoWZBMievDgqsL9GGPKv2ZBa3Tjtj8l1ZB5j2qKZAePnmZBk29wMo0APEV2JB7Bjc80wtWGLGk960iu");
-	config.put(FacebookConnector.CONFIG_CLIENT_ID, "218182098322396");
-	config.put(FacebookConnector.CONFIG_CLIENT_SECRET,
-		"7b80b9d7265c719e1d9efe112e4dbada");
-	// config.put(MoodleConnector.CONFIG_MOODLE_URL,
-	// "http://localhost/florian/moodle24/");
-	// config.put(MoodleConnector.CONFIG_USERNAME, "admin");
-	// config.put(MoodleConnector.CONFIG_PASSWORD, "admin");
+	Map<String, Object> parameter = new HashMap<String, Object>();
+	// config.put(
+	// FacebookConnectorConfig.ACCESS_TOKEN,
+	// "AAACEdEose0cBAKtwLtIOX4cNO9wCaOkKndCmgERoWZBMievDgqsL9GGPKv2ZBa3Tjtj8l1ZB5j2qKZAePnmZBk29wMo0APEV2JB7Bjc80wtWGLGk960iu");
+	// config.put(FacebookConnectorConfig.CLIENT_ID, "218182098322396");
+	// config.put(FacebookConnectorConfig.CLIENT_SECRET,
+	// "7b80b9d7265c719e1d9efe112e4dbada");
+	parameter.put(MoodleConnectorConfig.URL,
+		"http://localhost/florian/moodle24/");
+	parameter.put(MoodleConnectorConfig.USERNAME, "admin");
+	parameter.put(MoodleConnectorConfig.PASSWORD, "admin");
 	//
 	// config.put(GooglePlusConnector.CONFIG_CLIENT_SECRETS_FILE,
 	// "client_secrets.json");
 	// config.put(GooglePlusConnector.CONFIG_USER_ID, "me");
 
 	Connector[] connectors = {
- new FacebookConnector("facebook", model,
-		config),
-	// new MoodleConnector("Moodle", model, config)
+	// new FacebookConnector("facebook", model,config),
+	new MoodleConnector("Moodle", model, parameter)
 	// new GooglePlusConnector("google+", model, config)
 	};
 
 	for (Connector connector : connectors) {
-	    // printConnector(connector);
-	    Iterator<Post> posts = connector.pollPosts();
-	    int ctr = 0;
-	    while (posts.hasNext()) {
-		posts.next();
-		ctr++;
-	    }
-	    System.out.println(ctr);
-
-	    posts = connector.pollPosts();
-	    ctr = 0;
-	    while (posts.hasNext()) {
-		posts.next();
-		ctr++;
-	    }
-	    System.out.println(ctr);
+	    printConnector(connector);
 	}
 
 	System.out.println();
@@ -106,7 +92,7 @@ public class SOCCTest {
 	System.out.println("=====================================");
 	System.out.println("=====================================");
 
-	UserAccount user = connector.getUser();
+	UserAccount user = connector.getLoginUser();
 	printUser(user, 0);
 
 	Iterator<Forum> forums = connector.getForums();

@@ -22,12 +22,13 @@
 
 package de.m0ep.socc.connectors.google.youtube;
 
-import java.util.Properties;
+import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.connectors.Connector;
 import de.m0ep.socc.connectors.ConnectorFactory;
+import de.m0ep.socc.utils.ConfigUtils;
 
 public class YoutubeConnectorFactory implements ConnectorFactory {
 
@@ -40,11 +41,11 @@ public class YoutubeConnectorFactory implements ConnectorFactory {
     }
 
     public String[] getConfigKeys() {
-	return new String[] { YoutubeConnector.CONFIG_USERNAME,
-		YoutubeConnector.CONFIG_PASSWORD };
+	return ConfigUtils.getPropertyNames(YoutubeConnectorConfig.class);
     }
 
-    public Connector createConnector(String id, Model model, Properties config) {
+    public Connector createConnector(String id, Model model,
+	    Map<String, Object> config) {
 	return new YoutubeConnector(id, model, config);
     }
 

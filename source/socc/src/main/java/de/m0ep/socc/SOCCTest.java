@@ -23,8 +23,8 @@ import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 
 import de.m0ep.socc.connectors.Connector;
-import de.m0ep.socc.connectors.facebook.FacebookConnectorConfig;
-import de.m0ep.socc.utils.ConfigUtils;
+import de.m0ep.socc.connectors.moodle.MoodleConnector;
+import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
 
 public class SOCCTest {
 
@@ -39,17 +39,17 @@ public class SOCCTest {
 	Model model = RDF2Go.getModelFactory().createModel();
 	model.open();
 
-	Map<String, Object> config = new HashMap<String, Object>();
-	config.put(
-		FacebookConnectorConfig.ACCESS_TOKEN,
-		"AAACEdEose0cBAKtwLtIOX4cNO9wCaOkKndCmgERoWZBMievDgqsL9GGPKv2ZBa3Tjtj8l1ZB5j2qKZAePnmZBk29wMo0APEV2JB7Bjc80wtWGLGk960iu");
-	config.put(FacebookConnectorConfig.CLIENT_ID, "218182098322396");
-	config.put(FacebookConnectorConfig.CLIENT_SECRET,
-		"7b80b9d7265c719e1d9efe112e4dbada");
-	// config.put(MoodleConnector.CONFIG_MOODLE_URL,
-	// "http://localhost/florian/moodle24/");
-	// config.put(MoodleConnector.CONFIG_USERNAME, "admin");
-	// config.put(MoodleConnector.CONFIG_PASSWORD, "admin");
+	Map<String, Object> parameter = new HashMap<String, Object>();
+	// config.put(
+	// FacebookConnectorConfig.ACCESS_TOKEN,
+	// "AAACEdEose0cBAKtwLtIOX4cNO9wCaOkKndCmgERoWZBMievDgqsL9GGPKv2ZBa3Tjtj8l1ZB5j2qKZAePnmZBk29wMo0APEV2JB7Bjc80wtWGLGk960iu");
+	// config.put(FacebookConnectorConfig.CLIENT_ID, "218182098322396");
+	// config.put(FacebookConnectorConfig.CLIENT_SECRET,
+	// "7b80b9d7265c719e1d9efe112e4dbada");
+	parameter.put(MoodleConnectorConfig.URL,
+		"http://localhost/florian/moodle24/");
+	parameter.put(MoodleConnectorConfig.USERNAME, "admin");
+	parameter.put(MoodleConnectorConfig.PASSWORD, "admin");
 	//
 	// config.put(GooglePlusConnector.CONFIG_CLIENT_SECRETS_FILE,
 	// "client_secrets.json");
@@ -57,14 +57,9 @@ public class SOCCTest {
 
 	Connector[] connectors = {
 	// new FacebookConnector("facebook", model,config),
-	// new MoodleConnector("Moodle", model, config)
+	new MoodleConnector("Moodle", model, parameter)
 	// new GooglePlusConnector("google+", model, config)
 	};
-
-	for (String property : ConfigUtils
-		.getPropertyNames(FacebookConnectorConfig.class)) {
-	    System.out.println(property);
-	}
 
 	for (Connector connector : connectors) {
 	    printConnector(connector);

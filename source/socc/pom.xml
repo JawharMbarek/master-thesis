@@ -102,24 +102,25 @@
 			<version>2.2.2</version>
 		</dependency>
 		<dependency>
-			<groupId>com.google.apis</groupId>
-			<artifactId>google-api-services-plus</artifactId>
-			<version>v1-rev40-1.12.0-beta</version>
-		</dependency>
-		<dependency>
 			<groupId>com.google.http-client</groupId>
 			<artifactId>google-http-client-jackson2</artifactId>
 			<version>1.13.1-beta</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>google-http-client</artifactId>
+					<groupId>com.google.http-client</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-		<dependency>
-        <groupId>com.google.oauth-client</groupId>
-        <artifactId>google-oauth-client-jetty</artifactId>
-        <version>1.11.0-beta</version>
-    </dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>20030211.134440</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-plus</artifactId>
+			<version>v1-rev40-1.12.0-beta</version>
 		</dependency>
 	</dependencies>
 </project>

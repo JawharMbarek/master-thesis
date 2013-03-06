@@ -23,7 +23,8 @@ import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 
 import de.m0ep.socc.connectors.Connector;
-import de.m0ep.socc.connectors.moodle.MoodleConnector;
+import de.m0ep.socc.connectors.google.plus.GooglePlusConnector;
+import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorConfig;
 import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
 
 public class SOCCTest {
@@ -54,11 +55,19 @@ public class SOCCTest {
 	// config.put(GooglePlusConnector.CONFIG_CLIENT_SECRETS_FILE,
 	// "client_secrets.json");
 	// config.put(GooglePlusConnector.CONFIG_USER_ID, "me");
+	parameter.put(GooglePlusConnectorConfig.CLIENT_ID,
+			"733024832603-patciplam4cqq0dnv7a5qdhuq262n6ia.apps.googleusercontent.com");
+	parameter.put(GooglePlusConnectorConfig.CLIENT_SECRET,
+		"LckucP4MA1jJsZQKjk9okhAu");
+	parameter.put(GooglePlusConnectorConfig.ACCESS_TOKEN,
+		"ya29.AHES6ZSCX94Qwhg7_Zzf3Nuyk2DTd76HBGxXB4OcG695Qcg");
+	parameter.put(GooglePlusConnectorConfig.REFRESH_TOKEN,
+		"1/9dxT-o_8JnA4gUxm1q0XwCgjA6oz4kcFfZxN1pyJCVc");
 
 	Connector[] connectors = {
 	// new FacebookConnector("facebook", model,config),
-	new MoodleConnector("Moodle", model, parameter)
-	// new GooglePlusConnector("google+", model, config)
+	// new MoodleConnector("Moodle", model, parameter)
+	new GooglePlusConnector("google+", model, parameter)
 	};
 
 	for (Connector connector : connectors) {

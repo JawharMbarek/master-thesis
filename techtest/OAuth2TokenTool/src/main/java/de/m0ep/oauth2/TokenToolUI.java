@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.MemoryCredentialStore;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -28,7 +29,6 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.plus.PlusScopes;
 
 public class TokenToolUI extends JFrame {
     private static final long serialVersionUID = 8733990698950061930L;
@@ -47,6 +47,7 @@ public class TokenToolUI extends JFrame {
     private JTextField textExpires;
 
     private Credential credential;
+    private GoogleCredentials credentialsLocal;
     private JButton btnRefreshToken;
     private JButton btnGetAccessToken;
     private JPanel panel;
@@ -179,7 +180,9 @@ public class TokenToolUI extends JFrame {
 	// set up authorization code flow
 	GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
 		HTTP_TRANSPORT, JSON_FACTORY, id, secret,
-		Collections.singleton(PlusScopes.PLUS_ME)).setCredentialStore(
+		Collections
+			.singleton("https://www.googleapis.com/auth/plus.login"))
+		.setCredentialStore(
 		credentialStore).build();
 	// authorize
 	return new AuthorizationCodeInstalledApp(flow,
@@ -192,5 +195,7 @@ public class TokenToolUI extends JFrame {
 	textRefreshToken.setText(credential.getRefreshToken());
 	textExpires.setText(new Date(credential.getExpiresInSeconds() * 1000L
 		+ System.currentTimeMillis()).toString());
+
+	new Credential.Builder(BearerToken.queryParameterAccessMethod());
     }
 }

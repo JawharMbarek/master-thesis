@@ -34,7 +34,6 @@ import org.rdfs.sioc.UserAccount;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.plus.Plus;
 import com.google.api.services.plus.model.Person;
@@ -49,7 +48,7 @@ import de.m0ep.socc.utils.RDF2GoUtils;
 public class GooglePlusConnector extends AbstractConnector {
 
     private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-    private static final JsonFactory JSON_FACTORY = new JacksonFactory();
+    private static final JacksonFactory JSON_FACTORY = new JacksonFactory();
 
     GooglePlusConnectorConfig gpConfig;
     GoogleCredential credential;
@@ -64,13 +63,16 @@ public class GooglePlusConnector extends AbstractConnector {
 	this.gpConfig = new GooglePlusConnectorConfig();
 	ConfigUtils.setProperties(gpConfig, parameters);
 
-	credential = new GoogleCredential.Builder().setClientSecrets(
-		gpConfig.getClientId(), gpConfig.getClientSecret()).build();
+	credential = new GoogleCredential.Builder()
+		.setClientSecrets(gpConfig.getClientId(),
+			gpConfig.getClientSecret())
+		.setJsonFactory(JSON_FACTORY).setTransport(HTTP_TRANSPORT)
+		.build();
 	credential.setAccessToken(gpConfig.getAccessToken());
 	credential.setRefreshToken(gpConfig.getRefreshToken());
 
 	plus = new Plus.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
-		.setApplicationName("SOCC").build();
+		.build();
 
 	try {
 	    Person me = plus.people().get("me").setFields("id").execute();

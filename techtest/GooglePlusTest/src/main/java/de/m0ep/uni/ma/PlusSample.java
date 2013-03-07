@@ -62,26 +62,21 @@ public class PlusSample {
 
     /** Authorizes the installed application to access user's protected data. */
     private static Credential authorize() throws Exception {
+
         // load client secrets
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
                 JSON_FACTORY,
-                PlusSample.class.getResourceAsStream( "/client_secrets.json" ) );
-        if( clientSecrets.getDetails().getClientId().startsWith( "Enter" )
-                || clientSecrets.getDetails().getClientSecret()
-                        .startsWith( "Enter " ) ) {
-            System.out
-                    .println( "Enter Client ID and Secret from https://code.google.com/apis/console/?api=plus "
-                            + "into plus-cmdline-sample/src/main/resources/client_secrets.json" );
-            System.exit( 1 );
-        }
+		PlusSample.class.getResourceAsStream("/client_secrets.json"));
 
+	System.out.println(clientSecrets.getDetails().getClientId());
+	System.out.println(clientSecrets.getDetails().getClientSecret());
 
         System.out.println( "hiho" );
         // set up file credential store
         MemoryCredentialStore credentialStore = new MemoryCredentialStore();
 
         FileCredentialStore credentialStore2 = new FileCredentialStore(
-                new File( ClassLoader.getSystemResource( "credentials.json" )
+		new File(PlusSample.class.getResource("/credentials.json")
                         .toURI() ),
                 JSON_FACTORY );
 
@@ -89,7 +84,7 @@ public class PlusSample {
 	GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
 		HTTP_TRANSPORT, JSON_FACTORY, clientSecrets,
 		Collections.singleton(PlusScopes.PLUS_ME)).setCredentialStore(
-		credentialStore2).build();
+		credentialStore).build();
         // authorize
         return new AuthorizationCodeInstalledApp( flow,
 		new LocalServerReceiver()).authorize("user");
@@ -108,7 +103,7 @@ public class PlusSample {
                 // run commands
 		// listActivities();
 		// getActivity();
-		// getProfile();
+		getProfile();
                 // success!
                 return;
             } catch ( IOException e ) {

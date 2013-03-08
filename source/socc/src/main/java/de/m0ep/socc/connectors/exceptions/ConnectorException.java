@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.connectors;
+package de.m0ep.socc.connectors.exceptions;
 
 public class ConnectorException extends RuntimeException {
     private static final long serialVersionUID = -4779338022009814217L;

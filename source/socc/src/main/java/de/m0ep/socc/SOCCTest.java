@@ -22,9 +22,9 @@ import org.rdfs.sioc.SIOCThing;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 
-import de.m0ep.socc.connectors.Connector;
-import de.m0ep.socc.connectors.google.plus.GooglePlusConnector;
+import de.m0ep.socc.connectors.IConnector;
 import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorConfig;
+import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorFactory;
 import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
 
 public class SOCCTest {
@@ -55,7 +55,8 @@ public class SOCCTest {
 	// config.put(GooglePlusConnector.CONFIG_CLIENT_SECRETS_FILE,
 	// "client_secrets.json");
 	// config.put(GooglePlusConnector.CONFIG_USER_ID, "me");
-	parameter.put(GooglePlusConnectorConfig.CLIENT_ID,
+	parameter
+		.put(GooglePlusConnectorConfig.CLIENT_ID,
 			"733024832603-patciplam4cqq0dnv7a5qdhuq262n6ia.apps.googleusercontent.com");
 	parameter.put(GooglePlusConnectorConfig.CLIENT_SECRET,
 		"LckucP4MA1jJsZQKjk9okhAu");
@@ -64,13 +65,14 @@ public class SOCCTest {
 	parameter.put(GooglePlusConnectorConfig.REFRESH_TOKEN,
 		"1/9dxT-o_8JnA4gUxm1q0XwCgjA6oz4kcFfZxN1pyJCVc");
 
-	Connector[] connectors = {
+	GooglePlusConnectorFactory gpFactory = new GooglePlusConnectorFactory();
+
+	IConnector[] connectors = {
 	// new FacebookConnector("facebook", model,config),
 	// new MoodleConnector("Moodle", model, parameter)
-	new GooglePlusConnector("google+", model, parameter)
-	};
+	gpFactory.createConnector("google+", model, parameter) };
 
-	for (Connector connector : connectors) {
+	for (IConnector connector : connectors) {
 	    printConnector(connector);
 	}
 
@@ -95,7 +97,7 @@ public class SOCCTest {
 	}
     }
 
-    private static void printConnector(Connector connector) {
+    private static void printConnector(IConnector connector) {
 	System.out.println();
 	System.out.println(connector.getURL());
 	System.out.println("=====================================");
@@ -159,7 +161,7 @@ public class SOCCTest {
 
     }
 
-    private static void listPosts(Connector connector, Container container,
+    private static void listPosts(IConnector connector, Container container,
 	    int indent) {
 	Iterator<Post> posts = connector.getPosts(container);
 
@@ -187,7 +189,7 @@ public class SOCCTest {
 		+ user.getAllAccountservicehomepage_as().firstValue(), indent);
     }
 
-    static void printPost(Connector connector, Item post, int indent) {
+    static void printPost(IConnector connector, Item post, int indent) {
 	printWithIndent("Post-----------------", indent);
 	printWithIndent("uri:       " + post, indent);
 	printWithIndent("id:        " + post.getAllId_as().firstValue(), indent);

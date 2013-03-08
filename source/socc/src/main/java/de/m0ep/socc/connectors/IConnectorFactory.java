@@ -23,17 +23,16 @@
 package de.m0ep.socc.connectors;
 
 import java.util.Map;
-import java.util.Properties;
 
 import org.ontoware.rdf2go.model.Model;
 
 /**
- * Interface of a {@link ConnectorFactory} to create new {@link Connector}s
+ * Interface of a {@link IConnectorFactory} to create new {@link IConnector}s
  * 
  * @author Florian Müller
  * 
  */
-public interface ConnectorFactory {
+public interface IConnectorFactory {
     /**
      * Returns a human readable name for this connectors
      * 
@@ -46,7 +45,7 @@ public interface ConnectorFactory {
      * 
      * @return
      */
-    public String getUniqueFactoryName();
+    public String getUniqueFactoryId();
 
     /**
      * Returns keys for configuration parameters that should be loaded/stored
@@ -56,16 +55,17 @@ public interface ConnectorFactory {
     public String[] getConfigKeys();
 
     /**
-     * Create a new {@link Connector}.
+     * Create a new {@link IConnector}.
      * 
      * @param id
      *            Id of this connector.
      * @param model
-     *            RDF2Go {@link Model} to use as sioc store.
-     * @param config
-     *            {@link Properties} object with configuration parameters for
-     *            the new {@link Connector}.
+     *            RDF2Go {@link Model} to use as SIOC store.
+     * @param parameters
+     *            {@link Map} with configuration parameters for a new
+     *            {@link IConnector}.
      * @return
      */
-    public Connector createConnector(String id, Model model, Map<String, Object> config);
+    public IConnector createConnector(String id, Model model,
+	    Map<String, Object> parameters);
 }

@@ -54,8 +54,7 @@ import de.m0ep.moodlews.soap.LoginReturn;
 import de.m0ep.moodlews.soap.Mdl_soapserverBindingStub;
 import de.m0ep.moodlews.soap.UserRecord;
 import de.m0ep.socc.connectors.AbstractConnector;
-import de.m0ep.socc.connectors.ConnectorConfig;
-import de.m0ep.socc.connectors.ConnectorException;
+import de.m0ep.socc.connectors.exceptions.ConnectorException;
 import de.m0ep.socc.utils.ConfigUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.StringUtils;
@@ -77,12 +76,13 @@ public class MoodleConnector extends AbstractConnector {
 
     private Map<Integer, CourseRecord> courses = new HashMap<Integer, CourseRecord>();
 
-    public MoodleConnector(String id, Model model,
+    @Override
+    public void initialize(String id, Model model,
 	    Map<String, Object> parameters) {
-	super(id, model, parameters);
+	super.initialize(id, model, parameters);
 
-	this.mdlConfig = new MoodleConnectorConfig();
-	ConfigUtils.setProperties(this.mdlConfig, parameters);
+	this.mdlConfig = ConfigUtils.fromMap(parameters,
+		MoodleConnectorConfig.class);
 
 	this.moodle = new Mdl_soapserverBindingStub(getURL() + MOODLEWS_PATH,
 		getURL() + "/wspp/wsdl2", false);
@@ -97,11 +97,6 @@ public class MoodleConnector extends AbstractConnector {
     @Override
     public String getURL() {
 	return StringUtils.endsWithSlash(mdlConfig.getUrl());
-    }
-
-    @Override
-    public ConnectorConfig saveConfiguration() {
-	return mdlConfig;
     }
 
     @Override
@@ -408,13 +403,12 @@ public class MoodleConnector extends AbstractConnector {
 		UserAccount result = new UserAccount(getModel(), uri, true);
 		result.setId(Integer.toString(me.getId()));
 		result.setIsPartOf(getSite());
-
+		result.setAccountservicehomepage(RDF2GoUtils
+			.createURI(getURL()));
 		result.setName(me.getFirstname() + " " + me.getLastname());
 		result.setAccountname(me.getUsername());
 		result.setEmail(RDF2GoUtils.createMailtoURI(me.getEmail()));
 		result.setEmailsha1(DigestUtils.sha1Hex(me.getEmail()));
-		result.setAccountservicehomepage(RDF2GoUtils.createURI(getURL()
-			+ "user/profile.php?id=" + me.getId()));
 		result.setDescription(RDF2GoUtils.createLiteral(me
 			.getDescription()));
 

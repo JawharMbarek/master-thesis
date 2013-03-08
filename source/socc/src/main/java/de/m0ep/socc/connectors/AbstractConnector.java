@@ -23,6 +23,7 @@
 package de.m0ep.socc.connectors;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -37,36 +38,27 @@ import org.rdfs.sioc.Usergroup;
 
 import com.google.common.base.Preconditions;
 
+import de.m0ep.socc.connectors.exceptions.ConnectorException;
+
 /**
- * Abstract connector that implements the {@link Connector} interface. It's a
+ * Abstract connector that implements the {@link IConnector} interface. It's a
  * good startingpoint for new connectors.
  * 
  * @author Florian Müller
  * 
  */
-public abstract class AbstractConnector implements Connector {
+public abstract class AbstractConnector implements IConnector {
     private String id;
     private Model model;
+    private Map<String, Object> parameter;
 
-    /**
-     * {@link AbstractConnector} constructor to create a new connector.
-     * 
-     * @param id
-     *            Id of this connector.
-     * @param model
-     *            RDF2Go {@link Model} to use.
-     * @param config
-     *            Configuration parameters for this connector.
-     * 
-     * @throws NullPointerException
-     *             Thrown if id, model or config are null.
-     * @throws IllegalArgumentException
-     *             Thrown if id is empty or mode is not open.
-     */
-    public AbstractConnector(final String id, final Model model,
-	    final Map<String, Object> parameters) {
+    @Override
+    public void initialize(String id, Model model,
+	    Map<String, Object> parameters) {
 	this.id = Preconditions.checkNotNull(id, "id can't be null");
 	this.model = Preconditions.checkNotNull(model, "model can't be null");
+	this.parameter = Preconditions.checkNotNull(parameters,
+		"parameters can't be null");
 	Preconditions.checkArgument(!id.isEmpty(), "id can't be empty");
 	Preconditions.checkArgument(model.isOpen(), "model is not open");
     }
@@ -74,7 +66,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#destroy()
+     * @see de.m0ep.socc.connectors.IConnector#destroy()
      */
     public void destroy() {
     }
@@ -82,7 +74,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getId()
+     * @see de.m0ep.socc.connectors.IConnector#getId()
      */
     public String getId() {
 	return id;
@@ -91,14 +83,14 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getURL()
+     * @see de.m0ep.socc.connectors.IConnector#getURL()
      */
     public abstract String getURL();
 
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getModel()
+     * @see de.m0ep.socc.connectors.IConnector#getModel()
      */
     public Model getModel() {
 	return model;
@@ -107,21 +99,30 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getSite()
+     * @see de.m0ep.socc.connectors.IConnector#getConfiguration()
+     */
+    public Map<String, Object> getConfiguration() {
+	return Collections.unmodifiableMap(parameter);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.connectors.IConnector#getSite()
      */
     public abstract Site getSite();
 
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getLoginUser()
+     * @see de.m0ep.socc.connectors.IConnector#getLoginUser()
      */
     public abstract UserAccount getLoginUser();
 
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getUserAccount(java.lang.String)
+     * @see de.m0ep.socc.connectors.IConnector#getUserAccount(java.lang.String)
      */
     public UserAccount getUserAccount(String id) throws ConnectorException {
 	throw new ConnectorException("There is no user with the id=" + id);
@@ -130,7 +131,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getUserAccounts()
+     * @see de.m0ep.socc.connectors.IConnector#getUserAccounts()
      */
     public Iterator<UserAccount> getUserAccounts() {
 	return new ArrayList<UserAccount>().iterator();
@@ -139,7 +140,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getForum(java.lang.String)
+     * @see de.m0ep.socc.connectors.IConnector#getForum(java.lang.String)
      */
     public Forum getForum(String id) throws ConnectorException {
 	throw new ConnectorException("There is no forum with the id=" + id);
@@ -148,7 +149,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getForums()
+     * @see de.m0ep.socc.connectors.IConnector#getForums()
      */
     public Iterator<Forum> getForums() {
 	return new ArrayList<Forum>().iterator();
@@ -157,7 +158,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getThread(java.lang.String)
+     * @see de.m0ep.socc.connectors.IConnector#getThread(java.lang.String)
      */
     public Thread getThread(String id) throws ConnectorException {
 	throw new ConnectorException("There is no thread with the id=" + id);
@@ -166,7 +167,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getThreads(org.rdfs.sioc.Forum)
+     * @see de.m0ep.socc.connectors.IConnector#getThreads(org.rdfs.sioc.Forum)
      */
     public Iterator<Thread> getThreads(Forum forum) {
 	return new ArrayList<Thread>().iterator();
@@ -175,7 +176,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getPost(java.lang.String)
+     * @see de.m0ep.socc.connectors.IConnector#getPost(java.lang.String)
      */
     public Post getPost(String id) throws ConnectorException {
 	throw new ConnectorException("There is no post with the id=" + id);
@@ -184,7 +185,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getPosts(org.rdfs.sioc.Container)
+     * @see de.m0ep.socc.connectors.IConnector#getPosts(org.rdfs.sioc.Container)
      */
     public Iterator<Post> getPosts(Container container) {
 	return new ArrayList<Post>().iterator();
@@ -193,7 +194,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getUsergroup(java.lang.String)
+     * @see de.m0ep.socc.connectors.IConnector#getUsergroup(java.lang.String)
      */
     public Usergroup getUsergroup(String id) throws ConnectorException {
 	throw new ConnectorException("There is no usergroup with the id=" + id);
@@ -202,7 +203,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#getUsergroups()
+     * @see de.m0ep.socc.connectors.IConnector#getUsergroups()
      */
     public Iterator<Usergroup> getUsergroups() {
 	return new ArrayList<Usergroup>().iterator();
@@ -211,7 +212,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#canPublishOn(org.rdfs.sioc.Container)
+     * @see de.m0ep.socc.connectors.IConnector#canPublishOn(org.rdfs.sioc.Container)
      */
     public boolean canPublishOn(Container container) {
 	return false;
@@ -220,7 +221,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#canReplyOn(org.rdfs.sioc.Post)
+     * @see de.m0ep.socc.connectors.IConnector#canReplyOn(org.rdfs.sioc.Post)
      */
     public boolean canReplyOn(Post parent) {
 	return false;
@@ -229,7 +230,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#hasPosts(org.rdfs.sioc.Container)
+     * @see de.m0ep.socc.connectors.IConnector#hasPosts(org.rdfs.sioc.Container)
      */
     public boolean hasPosts(Container container) {
 	return false;
@@ -238,7 +239,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#publishPost(org.rdfs.sioc.Post,
+     * @see de.m0ep.socc.connectors.IConnector#publishPost(org.rdfs.sioc.Post,
      *      org.rdfs.sioc.Container)
      */
     public boolean publishPost(Post post, Container container) {
@@ -248,7 +249,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#replyPost(org.rdfs.sioc.Post,
+     * @see de.m0ep.socc.connectors.IConnector#replyPost(org.rdfs.sioc.Post,
      *      org.rdfs.sioc.Post)
      */
     public boolean replyPost(Post post, Post parent) {
@@ -258,7 +259,7 @@ public abstract class AbstractConnector implements Connector {
     /**
      * (non-Javadoc)
      * 
-     * @see de.m0ep.socc.connectors.Connector#pollNewPosts(org.rdfs.sioc.Container)
+     * @see de.m0ep.socc.connectors.IConnector#pollNewPosts(org.rdfs.sioc.Container)
      */
     public Iterator<Post> pollNewPosts(Container container) {
 	return new ArrayList<Post>().iterator();

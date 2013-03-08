@@ -29,30 +29,25 @@ import org.rdfs.sioc.Site;
 import org.rdfs.sioc.UserAccount;
 
 import de.m0ep.socc.connectors.AbstractConnector;
-import de.m0ep.socc.connectors.ConnectorConfig;
 import de.m0ep.socc.utils.ConfigUtils;
 
 public class YoutubeConnector extends AbstractConnector {
 
     YoutubeConnectorConfig ytConfig;
 
-    public YoutubeConnector(String id, Model model,
+    @Override
+    public void initialize(String id, Model model,
 	    Map<String, Object> parameters) {
-	super(id, model, parameters);
+	super.initialize(id, model, parameters);
 
-	this.ytConfig = new YoutubeConnectorConfig();
-	ConfigUtils.setProperties(ytConfig, parameters);
+	this.ytConfig = ConfigUtils.fromMap(parameters,
+		YoutubeConnectorConfig.class);
     }
 
     @Override
     public String getURL() {
 	// TODO Auto-generated method stub
 	return null;
-    }
-
-    @Override
-    public ConnectorConfig saveConfiguration() {
-	return ytConfig;
     }
 
     @Override

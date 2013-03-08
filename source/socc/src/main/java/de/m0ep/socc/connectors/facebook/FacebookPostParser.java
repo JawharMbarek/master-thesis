@@ -29,7 +29,7 @@ import org.rdfs.sioc.Post;
 import com.restfb.json.JsonArray;
 import com.restfb.json.JsonObject;
 
-import de.m0ep.socc.connectors.ConnectorException;
+import de.m0ep.socc.connectors.exceptions.ConnectorException;
 import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.SIOCUtils;
 import de.m0ep.socc.utils.StringUtils;

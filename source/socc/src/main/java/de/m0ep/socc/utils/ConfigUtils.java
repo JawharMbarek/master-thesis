@@ -7,13 +7,17 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.beanutils.locale.LocaleBeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import de.m0ep.socc.connectors.AbstractConnectorConfig;
-import de.m0ep.socc.connectors.ConnectorConfig;
+import de.m0ep.socc.connectors.IConnectorConfig;
 
 public class ConfigUtils {
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(ConfigUtils.class);
+
     public static String[] getPropertyNames(
-	    Class<? extends ConnectorConfig> clazz) {
+	    Class<? extends IConnectorConfig> clazz) {
 	List<String> result = new ArrayList<String>();
 
 	PropertyDescriptor[] properties = PropertyUtils
@@ -30,24 +34,28 @@ public class ConfigUtils {
 	return result.toArray(new String[result.size()]);
     }
 
-    /**
-     * Maps a configuration {@link Map} to a {@link ConnectorConfig} bean
-     * 
-     * @param bean
-     *            The bean, where the configuration {@link Map} schould be
-     *            mapped.
-     * @param config
-     *            The configuration {@link Map}
-     */
-    public static void setProperties(AbstractConnectorConfig bean,
-	    Map<String, Object> parameters) {
-	if (null == bean || null == parameters)
-	    return;
-
+    public static <T extends IConnectorConfig> T fromMap(
+	    Map<String, Object> paramerers, Class<T> beanClass) {
 	try {
-	    LocaleBeanUtils.populate(bean, parameters);
+	    T beanConfig = beanClass.newInstance();
+	    LocaleBeanUtils.populate(beanConfig, paramerers);
+	    return beanConfig;
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    String error = "failed to convert Map to " + beanClass.getName();
+	    LOG.error(error, e);
+	    throw new RuntimeException(error, e);
+	}
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> toMap(IConnectorConfig config) {
+	try {
+	    return LocaleBeanUtils.describe(config);
+	} catch (Exception e) {
+	    String error = "failed to convert " + config.getClass().getName()
+		    + " to Map";
+	    LOG.error(error);
+	    throw new RuntimeException(error, e);
 	}
     }
 }

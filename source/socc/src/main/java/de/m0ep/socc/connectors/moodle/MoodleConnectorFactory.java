@@ -26,17 +26,17 @@ import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 
-import de.m0ep.socc.connectors.Connector;
-import de.m0ep.socc.connectors.ConnectorFactory;
+import de.m0ep.socc.connectors.IConnector;
+import de.m0ep.socc.connectors.IConnectorFactory;
 import de.m0ep.socc.utils.ConfigUtils;
 
-public class MoodleConnectorFactory implements ConnectorFactory {
+public class MoodleConnectorFactory implements IConnectorFactory {
 
     public String getConnectorName() {
 	return "Moodle";
     }
 
-    public String getUniqueFactoryName() {
+    public String getUniqueFactoryId() {
 	return "MoodleConnectorFactory_2.4";
     }
 
@@ -44,9 +44,11 @@ public class MoodleConnectorFactory implements ConnectorFactory {
 	return ConfigUtils.getPropertyNames(MoodleConnectorConfig.class);
     }
 
-    public Connector createConnector(String id, Model model,
-	    Map<String, Object> config) {
-	return new MoodleConnector(id, model, config);
+    public IConnector createConnector(String id, Model model,
+	    Map<String, Object> parameters) {
+	IConnector connector = new MoodleConnector();
+	connector.initialize(id, model, parameters);
+	return connector;
     }
 
 }

@@ -1,6 +1,7 @@
 package de.m0ep.socc.connectors;
 
-public abstract class AbstractConnectorConfig implements ConnectorConfig {
+
+public abstract class AbstractConnectorConfig implements IConnectorConfig {
     private static final long serialVersionUID = 1992138033098739047L;
 
     public static final String MAX_NEW_POSTS_ON_POLL = "maxNewPostsOnPoll";
@@ -24,5 +25,4 @@ public abstract class AbstractConnectorConfig implements ConnectorConfig {
     public void setFactoryName(String factoryName) {
 	this.factoryName = factoryName;
     }
-
 }

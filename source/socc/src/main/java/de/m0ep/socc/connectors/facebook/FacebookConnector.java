@@ -61,7 +61,6 @@ import com.restfb.types.Group;
 import com.restfb.types.User;
 
 import de.m0ep.socc.connectors.AbstractConnector;
-import de.m0ep.socc.connectors.ConnectorConfig;
 import de.m0ep.socc.utils.ConfigUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
 
@@ -77,30 +76,20 @@ public class FacebookConnector extends AbstractConnector {
     private String myId;
     private FacebookConnectorConfig fbConfig;
 
-    List<Container> postContainer;
-
-    public FacebookConnector(String id, Model model,
+    @Override
+    public void initialize(String id, Model model,
 	    Map<String, Object> parameters) {
-	super(id, model, parameters);
+	super.initialize(id, model, parameters);
 
-	fbConfig = new FacebookConnectorConfig();
-	ConfigUtils.setProperties(fbConfig, parameters);
-
+	this.fbConfig = ConfigUtils.fromMap(parameters,
+		FacebookConnectorConfig.class);
 	this.client = new DefaultFacebookClient(fbConfig.getAccessToken());
-
-	FacebookType me = client.fetchObject(SPECIAL_ID_ME, FacebookType.class,
-		Parameter.with("fields", "id"));
-	this.myId = me.getId();
-	this.postContainer = new ArrayList<Container>();
+	this.myId = client.fetchObject(SPECIAL_ID_ME, FacebookType.class,
+		Parameter.with("fields", "id")).getId();
     }
 
     public String getURL() {
 	return "http://www.facebook.com/";
-    }
-
-    @Override
-    public ConnectorConfig saveConfiguration() {
-	return fbConfig;
     }
 
     public Site getSite() {
@@ -129,6 +118,7 @@ public class FacebookConnector extends AbstractConnector {
 	    // SIOC statements
 	    result.setId(user.getId());
 	    result.setIsPartOf(getSite());
+	    result.setAccountservicehomepage(RDF2GoUtils.createURI(getURL()));
 
 	    if (null != user.getEmail() && !user.getEmail().isEmpty()) {
 		result.setEmail(RDF2GoUtils.createMailtoURI(user.getEmail()));
@@ -144,10 +134,6 @@ public class FacebookConnector extends AbstractConnector {
 	    if (null != user.getUpdatedTime())
 		result.setModified(RDFTool.dateTime2String(user
 			.getUpdatedTime()));
-
-	    if (null != user.getLink())
-		result.setAccountservicehomepage(RDF2GoUtils.createURI(user
-			.getLink()));
 
 	    return result;
 	} else {

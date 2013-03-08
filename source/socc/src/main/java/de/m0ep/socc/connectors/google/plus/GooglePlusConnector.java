@@ -41,7 +41,6 @@ import com.google.api.services.plus.model.Person.Emails;
 import com.google.common.base.Throwables;
 
 import de.m0ep.socc.connectors.AbstractConnector;
-import de.m0ep.socc.connectors.ConnectorConfig;
 import de.m0ep.socc.utils.ConfigUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
 
@@ -56,12 +55,13 @@ public class GooglePlusConnector extends AbstractConnector {
     Plus plus;
     String myId;
 
-    public GooglePlusConnector(String id, Model model,
+    @Override
+    public void initialize(String id, Model model,
 	    Map<String, Object> parameters) {
-	super(id, model, parameters);
+	super.initialize(id, model, parameters);
 
-	this.gpConfig = new GooglePlusConnectorConfig();
-	ConfigUtils.setProperties(gpConfig, parameters);
+	this.gpConfig = ConfigUtils.fromMap(parameters,
+		GooglePlusConnectorConfig.class);
 
 	credential = new GoogleCredential.Builder()
 		.setClientSecrets(gpConfig.getClientId(),
@@ -85,11 +85,6 @@ public class GooglePlusConnector extends AbstractConnector {
     @Override
     public String getURL() {
 	return "https://plus.google.com/";
-    }
-
-    @Override
-    public ConnectorConfig saveConfiguration() {
-	return gpConfig;
     }
 
     @Override
@@ -131,6 +126,7 @@ public class GooglePlusConnector extends AbstractConnector {
 
 	    result.setId(user.getId());
 	    result.setIsPartOf(getSite());
+	    result.setAccountservicehomepage(RDF2GoUtils.createURI(getURL()));
 
 	    if (null != user.getAboutMe()) {
 		result.setDescription(user.getAboutMe());
@@ -142,11 +138,6 @@ public class GooglePlusConnector extends AbstractConnector {
 
 	    if (null != user.getNickname()) {
 		result.setAccountname(user.getNickname());
-	    }
-
-	    if (null != user.getUrl()) {
-		result.setAccountservicehomepage(RDF2GoUtils.createURI(user
-			.getUrl()));
 	    }
 
 	    if (null != user.getEmails()) {

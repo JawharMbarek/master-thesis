@@ -26,17 +26,17 @@ import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 
-import de.m0ep.socc.connectors.Connector;
-import de.m0ep.socc.connectors.ConnectorFactory;
+import de.m0ep.socc.connectors.IConnector;
+import de.m0ep.socc.connectors.IConnectorFactory;
 import de.m0ep.socc.utils.ConfigUtils;
 
-public class FacebookConnectorFactory implements ConnectorFactory {
+public class FacebookConnectorFactory implements IConnectorFactory {
 
     public String getConnectorName() {
 	return "Facebook";
     }
 
-    public String getUniqueFactoryName() {
+    public String getUniqueFactoryId() {
 	return "FacebookConnectorFactory_1.0";
     }
 
@@ -44,8 +44,10 @@ public class FacebookConnectorFactory implements ConnectorFactory {
 	return ConfigUtils.getPropertyNames(FacebookConnectorConfig.class);
     }
 
-    public Connector createConnector(String id, Model model,
-	    Map<String, Object> config) {
-	return new FacebookConnector(id, model, config);
+    public IConnector createConnector(String id, Model model,
+	    Map<String, Object> parameters) {
+	IConnector connector = new FacebookConnector();
+	connector.initialize(id, model, parameters);
+	return connector;
     }
 }

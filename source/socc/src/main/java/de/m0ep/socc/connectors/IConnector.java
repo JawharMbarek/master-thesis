@@ -23,6 +23,7 @@
 package de.m0ep.socc.connectors;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 import org.rdfs.sioc.Container;
@@ -33,56 +34,71 @@ import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 import org.rdfs.sioc.Usergroup;
 
+import de.m0ep.socc.connectors.exceptions.ConnectorException;
+
 /**
  * Interface for a connector to a social online community
  * 
  * @author Florian Müller
  * 
  */
-public interface Connector {
+public interface IConnector {
 
     /**
-     * Called if the connector will be destroyed.
+     * Initialize this connector
+     * 
+     * @param id
+     *            Id of this connector.
+     * @param model
+     *            RDF2Go {@link Model} to use.
+     * @param parameters
+     *            Configuration parameters for this connector.
+     */
+    public void initialize(String id, Model model,
+	    Map<String, Object> parameters);
+
+    /**
+     * Called if the Connector will be destroyed.
      */
     public void destroy();
 
     /**
-     * Return the id of this Connector
+     * Return the Id of this Connector.
      * 
      * @return Id of Connector
      */
     public String getId();
 
     /**
-     * Return the URL of the connected social online community
+     * Return the URL of the connected social online community.
      * 
-     * @return URL of community site
+     * @return URL to the community
      */
     public String getURL();
 
     /**
-     * Returns the current {@link ConnectorConfig} to save it for later use
+     * Get the (maybe modified) configuration parameters of this connector.
      * 
-     * @return Current used {@link ConnectorConfig}
+     * @return Map with configuration parameters
      */
-    public ConnectorConfig saveConfiguration();
+    public Map<String, Object> getConfiguration();
 
     /**
-     * Get the {@link Model} used by this Connector
+     * Get the {@link Model} used by this connector
      * 
      * @return Used {@link Model}
      */
     public Model getModel();
 
     /**
-     * Returns {@link Site} object of the connected community
+     * Returns {@link Site} object of the connected community.
      * 
      * @return
      */
     public Site getSite();
 
     /**
-     * Returns the {@link UserAccount} object of the used user to connect to tge
+     * Returns the {@link UserAccount} object of the used user to connect to the
      * community.
      * 
      * @return {@link UserAccount} object of the used user.
@@ -168,7 +184,7 @@ public interface Connector {
     /**
      * Returns all {@link Post}s an their Replies (also Posts) inside the given
      * {@link Container}. The container can be a {@link Forum} or {@link Thread}
-     * where {@link Connector#hasPosts(Container)} returns true.
+     * where {@link IConnector#hasPosts(Container)} returns true.
      * 
      * @param container
      *            {@link Container} from where the {@link Post}s should be
@@ -179,7 +195,7 @@ public interface Connector {
 
     /**
      * Poll this connector to retrieve all new {@link Post}s since the last call
-     * of {@link Connector#pollNewPosts(Container)}
+     * of {@link IConnector#pollNewPosts(Container)}
      * 
      * @param container
      *            The container where should be polled to get new posts

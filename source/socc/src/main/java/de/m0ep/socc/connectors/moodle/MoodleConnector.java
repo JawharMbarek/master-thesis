@@ -33,7 +33,6 @@ import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.URI;
-import org.ontoware.rdf2go.util.RDFTool;
 import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
@@ -56,6 +55,7 @@ import de.m0ep.moodlews.soap.UserRecord;
 import de.m0ep.socc.connectors.AbstractConnector;
 import de.m0ep.socc.connectors.exceptions.ConnectorException;
 import de.m0ep.socc.utils.ConfigUtils;
+import de.m0ep.socc.utils.DateUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.StringUtils;
 
@@ -134,7 +134,7 @@ public class MoodleConnector extends AbstractConnector {
 		CourseRecord course = getCourse(forum.getCourse());
 
 		entry.setId(Integer.toString(forum.getId()));
-		entry.setModified(RDFTool.dateTime2String(makeDate(forum
+		entry.setModified(DateUtils.formatISO8601(makeDate(forum
 			.getTimemodified())));
 		entry.setDescription(forum.getIntro());
 		entry.setName(course.getFullname() + "/" + forum.getName());
@@ -173,7 +173,7 @@ public class MoodleConnector extends AbstractConnector {
 		entry.setId(Integer.toString(discussion.getId()));
 		entry.setParent(forum);
 		forum.addParentof(entry);
-		entry.setModified(RDFTool.dateTime2String(makeDate(discussion
+		entry.setModified(DateUtils.formatISO8601(makeDate(discussion
 			.getTimemodified())));
 
 		entry.setCreator(getUser(discussion.getUserid()));
@@ -228,9 +228,9 @@ public class MoodleConnector extends AbstractConnector {
 	    entry.setContentEncoded(RDF2GoUtils.createCDATASection(post
 		    .getMessage()));
 
-	    entry.setCreated(RDFTool.dateTime2String(makeDate(post.getCreated())));
+	    entry.setCreated(DateUtils.formatISO8601(makeDate(post.getCreated())));
 
-	    entry.setModified(RDFTool.dateTime2String(makeDate(post
+	    entry.setModified(DateUtils.formatISO8601(makeDate(post
 		    .getModified())));
 	} else {
 	    entry = Post.getInstance(getModel(), uri);
@@ -265,9 +265,9 @@ public class MoodleConnector extends AbstractConnector {
 	    entry.setContent(StringUtils.stripHTML(post.getMessage()));
 	    entry.setContentEncoded(post.getMessage());
 
-	    entry.setCreated(RDFTool.dateTime2String(makeDate(post.getCreated())));
+	    entry.setCreated(DateUtils.formatISO8601(makeDate(post.getCreated())));
 
-	    entry.setModified(RDFTool.dateTime2String(makeDate(post
+	    entry.setModified(DateUtils.formatISO8601(makeDate(post
 		    .getModified())));
 	} else {
 	    entry = Post.getInstance(getModel(), uri);

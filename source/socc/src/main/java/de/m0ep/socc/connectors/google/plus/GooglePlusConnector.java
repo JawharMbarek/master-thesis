@@ -70,10 +70,11 @@ import com.google.api.services.plus.model.Person.Emails;
 import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.connectors.AbstractConnector;
-import de.m0ep.socc.connectors.exceptions.AuthException;
+import de.m0ep.socc.connectors.exceptions.AuthenticationException;
 import de.m0ep.socc.connectors.exceptions.ConnectorException;
 import de.m0ep.socc.connectors.exceptions.NotFoundException;
 import de.m0ep.socc.utils.ConfigUtils;
+import de.m0ep.socc.utils.DateUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.SIOCUtils;
 import de.m0ep.socc.utils.StringUtils;
@@ -148,10 +149,11 @@ public class GooglePlusConnector extends AbstractConnector {
 			// update accesstoken
 			gpConfig.setAccessToken(tokenResponse.getAccessToken());
 		    }
-		    
+
 		    @Override
 		    public void onTokenErrorResponse(Credential credential,
-			    TokenErrorResponse tokenErrorResponse) throws IOException {
+			    TokenErrorResponse tokenErrorResponse)
+			    throws IOException {
 		    }
 		}).build();
 	credential.setAccessToken(gpConfig.getAccessToken());
@@ -360,8 +362,8 @@ public class GooglePlusConnector extends AbstractConnector {
 	    }
 
 	    for (Activity activity : feed.getItems()) {
-		Date created = new Date(trimToSeconds(activity
-			.getPublished().getValue()));
+		Date created = new Date(trimToSeconds(activity.getPublished()
+			.getValue()));
 		// TODO: check for updated posts!?
 
 		if (created.after(lastItemDate)) {
@@ -380,12 +382,12 @@ public class GooglePlusConnector extends AbstractConnector {
 				    .getId()));
 
 			if (null != activity.getPublished())
-			    post.setCreated(RDFTool.dateTime2String(new Date(
-				    activity.getPublished().getValue())));
+			    post.setCreated(DateUtils.formatISO8601(activity
+				    .getPublished().getValue()));
 
 			if (null != activity.getUpdated())
-			    post.setModified(RDFTool.dateTime2String(new Date(
-				    activity.getUpdated().getValue())));
+			    post.setModified(DateUtils.formatISO8601(activity
+				    .getUpdated().getValue()));
 
 			String content = activity.getObject().getContent();
 			post.setContent(StringUtils.stripHTML(content));
@@ -485,13 +487,13 @@ public class GooglePlusConnector extends AbstractConnector {
 					.getActor().getId()));
 
 			    if (null != comment.getPublished())
-				reply.setCreated(RDFTool
-					.dateTime2String(new Date(comment
-						.getPublished().getValue())));
+				reply.setCreated(DateUtils
+					.formatISO8601(comment.getPublished()
+						.getValue()));
 			    if (null != comment.getUpdated())
-				reply.setModified(RDFTool
-					.dateTime2String(new Date(comment
-						.getUpdated().getValue())));
+				reply.setModified(DateUtils
+					.formatISO8601(comment.getUpdated()
+						.getValue()));
 
 			    if (null != comment.getObject().getContent()) {
 				String content = comment.getObject()
@@ -536,7 +538,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	case 404:
 	    throw new NotFoundException(error.getMessage());
 	case 401:
-	    throw new AuthException(error.getMessage());
+	    throw new AuthenticationException(error.getMessage());
 	default:
 	    throw new ConnectorException(error.getMessage());
 	}

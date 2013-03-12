@@ -30,7 +30,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.QueryResultTable;
 import org.ontoware.rdf2go.model.QueryRow;
@@ -252,7 +251,7 @@ public class GooglePlusConnector extends AbstractConnector {
 		for (Emails email : user.getEmails()) {
 		    result.addEmail(RDF2GoUtils.createMailtoURI(email
 			    .getValue()));
-		    result.addEmailsha1(DigestUtils.sha1Hex(email.getValue()));
+		    result.addEmailsha1(RDFTool.sha1sum(email.getValue()));
 		}
 	    }
 

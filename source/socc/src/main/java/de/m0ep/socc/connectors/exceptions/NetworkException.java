@@ -1,6 +1,7 @@
 package de.m0ep.socc.connectors.exceptions;
 
 public class NetworkException extends ConnectorException {
+    private static final long serialVersionUID = -3990685831122120565L;
 
     public NetworkException() {
     }

@@ -32,10 +32,10 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
+import org.ontoware.rdf2go.util.RDFTool;
 import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
@@ -152,7 +152,7 @@ public class FacebookConnector extends AbstractConnector {
 
 	    if (null != user.getEmail() && !user.getEmail().isEmpty()) {
 		result.setEmail(RDF2GoUtils.createMailtoURI(user.getEmail()));
-		result.setEmailsha1(DigestUtils.sha1Hex(user.getEmail()));
+		result.setEmailsha1(RDFTool.sha1sum(user.getEmail()));
 	    }
 
 	    if (null != user.getUsername() && !user.getUsername().isEmpty())

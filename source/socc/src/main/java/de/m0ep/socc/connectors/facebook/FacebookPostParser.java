@@ -22,6 +22,8 @@
 
 package de.m0ep.socc.connectors.facebook;
 
+import java.util.Date;
+
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
@@ -30,6 +32,7 @@ import com.restfb.json.JsonArray;
 import com.restfb.json.JsonObject;
 
 import de.m0ep.socc.connectors.exceptions.ConnectorException;
+import de.m0ep.socc.utils.DateUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.SIOCUtils;
 import de.m0ep.socc.utils.StringUtils;
@@ -108,8 +111,8 @@ public class FacebookPostParser {
 	    result.setId(id);
 
 	    if (obj.has(FROM))
-		result.setCreator(connector.getUserAccount(obj.getJsonObject(FROM)
-			.getString(ID)));
+		result.setCreator(connector.getUserAccount(obj.getJsonObject(
+			FROM).getString(ID)));
 
 	    String content = "";
 	    if (obj.has(STORY))
@@ -124,11 +127,17 @@ public class FacebookPostParser {
 	    if (obj.has(LINK))
 		result.setAttachment(RDF2GoUtils.createURI(obj.getString(LINK)));
 
-	    if (obj.has(CREATED_TIME))
-		result.setCreated(obj.getString(CREATED_TIME));
+	    if (obj.has(CREATED_TIME)) {
+		Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+			.getString(CREATED_TIME));
+		result.setCreated(DateUtils.formatISO8601(date));
+	    }
 
-	    if (obj.has(UPDATED_TIME))
-		result.setModified(obj.getString(UPDATED_TIME));
+	    if (obj.has(UPDATED_TIME)) {
+		Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+			.getString(UPDATED_TIME));
+		result.setModified(DateUtils.formatISO8601(date));
+	    }
 
 	    return result;
 
@@ -147,8 +156,8 @@ public class FacebookPostParser {
 	    result.setId(id);
 
 	    if (obj.has(FROM))
-		result.setCreator(connector.getUserAccount(obj.getJsonObject(FROM)
-			.getString(ID)));
+		result.setCreator(connector.getUserAccount(obj.getJsonObject(
+			FROM).getString(ID)));
 
 	    if (obj.has(NAME))
 		result.setName(obj.getString(NAME));
@@ -171,11 +180,17 @@ public class FacebookPostParser {
 	    result.setContent(StringUtils.stripHTML(content));
 	    result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
 
-	    if (obj.has(CREATED_TIME))
-		result.setCreated(obj.getString(CREATED_TIME));
+	    if (obj.has(CREATED_TIME)) {
+		Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+			.getString(CREATED_TIME));
+		result.setCreated(DateUtils.formatISO8601(date));
+	    }
 
-	    if (obj.has(UPDATED_TIME))
-		result.setModified(obj.getString(UPDATED_TIME));
+	    if (obj.has(UPDATED_TIME)) {
+		Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+			.getString(UPDATED_TIME));
+		result.setModified(DateUtils.formatISO8601(date));
+	    }
 
 	    return result;
 
@@ -194,8 +209,8 @@ public class FacebookPostParser {
 	    result.setId(id);
 
 	    if (obj.has(FROM))
-		result.setCreator(connector.getUserAccount(obj.getJsonObject(FROM)
-			.getString(ID)));
+		result.setCreator(connector.getUserAccount(obj.getJsonObject(
+			FROM).getString(ID)));
 
 	    if (obj.has(NAME))
 		result.setName(obj.getString(NAME));
@@ -213,11 +228,17 @@ public class FacebookPostParser {
 	    result.setContent(StringUtils.stripHTML(content));
 	    result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
 
-	    if (obj.has(CREATED_TIME))
-		result.setCreated(obj.getString(CREATED_TIME));
+	    if (obj.has(CREATED_TIME)) {
+		Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+			.getString(CREATED_TIME));
+		result.setCreated(DateUtils.formatISO8601(date));
+	    }
 
-	    if (obj.has(UPDATED_TIME))
-		result.setModified(obj.getString(UPDATED_TIME));
+	    if (obj.has(UPDATED_TIME)) {
+		Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+			.getString(UPDATED_TIME));
+		result.setModified(DateUtils.formatISO8601(date));
+	    }
 
 	    return result;
 
@@ -237,8 +258,8 @@ public class FacebookPostParser {
 	    result.setId(id);
 
 	    if (obj.has(FROM))
-		result.setCreator(connector.getUserAccount(obj.getJsonObject(FROM)
-			.getString(ID)));
+		result.setCreator(connector.getUserAccount(obj.getJsonObject(
+			FROM).getString(ID)));
 
 	    if (obj.has(NAME))
 		result.setName(obj.getString(NAME));
@@ -255,11 +276,17 @@ public class FacebookPostParser {
 	    result.setContent(StringUtils.stripHTML(content));
 	    result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
 
-	    if (obj.has(CREATED_TIME))
-		result.setCreated(obj.getString(CREATED_TIME));
+	    if (obj.has(CREATED_TIME)) {
+		Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+			.getString(CREATED_TIME));
+		result.setCreated(DateUtils.formatISO8601(date));
+	    }
 
-	    if (obj.has(UPDATED_TIME))
-		result.setModified(obj.getString(UPDATED_TIME));
+	    if (obj.has(UPDATED_TIME)) {
+		Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+			.getString(UPDATED_TIME));
+		result.setModified(DateUtils.formatISO8601(date));
+	    }
 
 	    return result;
 
@@ -279,8 +306,8 @@ public class FacebookPostParser {
 	    result.setId(id);
 
 	    if (obj.has(FROM))
-		result.setCreator(connector.getUserAccount(obj.getJsonObject(FROM)
-			.getString(ID)));
+		result.setCreator(connector.getUserAccount(obj.getJsonObject(
+			FROM).getString(ID)));
 
 	    String content = "";
 	    if (obj.has(MESSAGE))
@@ -289,8 +316,17 @@ public class FacebookPostParser {
 	    result.setContent(StringUtils.stripHTML(content));
 	    result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
 
-	    if (obj.has(CREATED_TIME))
-		result.setCreated(obj.getString(CREATED_TIME));
+	    if (obj.has(CREATED_TIME)) {
+		Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+			.getString(CREATED_TIME));
+		result.setCreated(DateUtils.formatISO8601(date));
+	    }
+
+	    if (obj.has(UPDATED_TIME)) {
+		Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+			.getString(UPDATED_TIME));
+		result.setModified(DateUtils.formatISO8601(date));
+	    }
 
 	    return result;
 

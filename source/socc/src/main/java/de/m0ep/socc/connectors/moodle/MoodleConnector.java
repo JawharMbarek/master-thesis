@@ -22,17 +22,23 @@
 
 package de.m0ep.socc.connectors.moodle;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.model.node.Variable;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
@@ -42,6 +48,8 @@ import org.rdfs.sioc.SIOC;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
@@ -54,12 +62,19 @@ import de.m0ep.moodlews.soap.LoginReturn;
 import de.m0ep.moodlews.soap.Mdl_soapserverBindingStub;
 import de.m0ep.moodlews.soap.UserRecord;
 import de.m0ep.socc.connectors.AbstractConnector;
+import de.m0ep.socc.connectors.exceptions.AuthenticationException;
 import de.m0ep.socc.connectors.exceptions.ConnectorException;
+import de.m0ep.socc.connectors.exceptions.NetworkException;
 import de.m0ep.socc.utils.ConfigUtils;
+import de.m0ep.socc.utils.DateUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
+import de.m0ep.socc.utils.SIOCUtils;
 import de.m0ep.socc.utils.StringUtils;
 
 public class MoodleConnector extends AbstractConnector {
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(MoodleConnector.class);
+
     public static final String MOODLEWS_PATH = "wspp/service_pp2.php";
 
     private static final String URI_USER_PATH = "user/";
@@ -76,6 +91,73 @@ public class MoodleConnector extends AbstractConnector {
 
     private Map<Integer, CourseRecord> courses = new HashMap<Integer, CourseRecord>();
 
+    private boolean isMoodleWSRunning() {
+	if (null == moodle)
+	    return false;
+
+	try {
+	    new URL(moodle.getURL()).openConnection().connect();
+	} catch (MalformedURLException e) {
+	    throw new ConnectorException("Invalid URL to moodle", e);
+	} catch (IOException e) {
+	    LOG.warn(e.getMessage(), e);
+	    return false;
+	}
+
+	return true;
+    }
+
+    private void tryLogin() throws ConnectorException {
+	if (null != sesskey)
+	    moodle.logout(client, sesskey);
+
+	LoginReturn login = moodle.login(mdlConfig.getUsername(),
+		mdlConfig.getPassword());
+
+	if (null == login) {
+	    if (isMoodleWSRunning()) {
+		LOG.error("Login failed");
+		throw new AuthenticationException("invalid user details");
+	    }
+
+	    LOG.warn("No connection to " + moodle.getURL());
+	    throw new NetworkException("No connection to " + moodle.getURL());
+	}
+
+	this.client = login.getClient();
+	this.sesskey = login.getSessionkey();
+    }
+
+    private boolean isSessionExpired() {
+	return 0 == moodle.get_my_id(client, sesskey);
+    }
+
+    private <T> T callMethod(final Callable<T> callable)
+	    throws ConnectorException {
+	T result;
+	try {
+	    result = callable.call();
+
+	    if (null == result) {
+		if (!isMoodleWSRunning()) {
+		    LOG.error("No connection to " + moodle.getURL());
+		    throw new NetworkException("No connection to "
+			    + moodle.getURL());
+		}
+
+		if (isSessionExpired()) {
+		    LOG.debug("try relogin and call method again");
+		    tryLogin();
+		    result = callable.call();
+		}
+	    }
+	} catch (Exception e) {
+	    throw new ConnectorException(e);
+	}
+
+	return result;
+    }
+
     @Override
     public void initialize(String id, Model model,
 	    Map<String, Object> parameters) {
@@ -87,10 +169,7 @@ public class MoodleConnector extends AbstractConnector {
 	this.moodle = new Mdl_soapserverBindingStub(getURL() + MOODLEWS_PATH,
 		getURL() + "/wspp/wsdl2", false);
 
-	LoginReturn login = moodle.login(mdlConfig.getUsername(),
-		mdlConfig.getPassword());
-	this.client = login.getClient();
-	this.sesskey = login.getSessionkey();
+	tryLogin();
 	this.myId = moodle.get_my_id(client, sesskey);
     }
 
@@ -114,13 +193,19 @@ public class MoodleConnector extends AbstractConnector {
 
     @Override
     public UserAccount getLoginUser() {
-	return getUser(myId);
+	return getUserAccount(Integer.toString(myId));
     }
 
     @Override
     public Iterator<Forum> getForums() {
 	List<Forum> result = new ArrayList<Forum>();
-	ForumRecord[] forums = moodle.get_all_forums(client, sesskey, "", "");
+
+	ForumRecord[] forums = callMethod(new Callable<ForumRecord[]>() {
+	    @Override
+	    public ForumRecord[] call() throws Exception {
+		return moodle.get_all_forums(client, sesskey, "", "");
+	    }
+	});
 
 	if (null == forums)
 	    forums = new ForumRecord[0];
@@ -134,7 +219,7 @@ public class MoodleConnector extends AbstractConnector {
 		CourseRecord course = getCourse(forum.getCourse());
 
 		entry.setId(Integer.toString(forum.getId()));
-		entry.setModified(RDFTool.dateTime2String(makeDate(forum
+		entry.setModified(DateUtils.formatISO8601(createDate(forum
 			.getTimemodified())));
 		entry.setDescription(forum.getIntro());
 		entry.setName(course.getFullname() + "/" + forum.getName());
@@ -147,18 +232,22 @@ public class MoodleConnector extends AbstractConnector {
 	    }
 	}
 
-	return Collections.unmodifiableList(result).iterator();
+	return result.iterator();
     }
 
     public Iterator<Thread> getThreads(Forum forum) {
 	Preconditions.checkArgument(forum.hasHost(getSite()));
 
 	List<Thread> result = new ArrayList<Thread>();
-	int forumid = Integer.parseInt(forum.getAllId_as().firstValue());
-	ForumDiscussionRecord[] forumDiscussions = null;
+	final int forumid = Integer.parseInt(forum.getId());
 
-	forumDiscussions = moodle.get_forum_discussions(client, sesskey,
-		forumid, 999);
+	ForumDiscussionRecord[] forumDiscussions = callMethod(new Callable<ForumDiscussionRecord[]>() {
+	    @Override
+	    public ForumDiscussionRecord[] call() throws Exception {
+		return moodle.get_forum_discussions(client, sesskey, forumid,
+			Integer.MAX_VALUE);
+	    }
+	});
 
 	if (null == forumDiscussions)
 	    forumDiscussions = new ForumDiscussionRecord[0];
@@ -171,12 +260,15 @@ public class MoodleConnector extends AbstractConnector {
 		Thread entry = new Thread(getModel(), uri, true);
 
 		entry.setId(Integer.toString(discussion.getId()));
+
 		entry.setParent(forum);
 		forum.addParentof(entry);
-		entry.setModified(RDFTool.dateTime2String(makeDate(discussion
+
+		entry.setModified(DateUtils.formatISO8601(createDate(discussion
 			.getTimemodified())));
 
-		entry.setCreator(getUser(discussion.getUserid()));
+		entry.setCreator(getUserAccount(Integer.toString(discussion
+			.getUserid())));
 		entry.setName(discussion.getName());
 
 		result.add(entry);
@@ -185,97 +277,144 @@ public class MoodleConnector extends AbstractConnector {
 	    }
 	}
 
-	return Collections.unmodifiableList(result).iterator();
+	return result.iterator();
     }
 
     public Iterator<Post> getPosts(Container container) {
 	Preconditions.checkArgument(hasPosts(container));
 
 	List<Post> result = new ArrayList<Post>();
-	int discussionId = Integer.parseInt(container.getAllId_as()
-		.firstValue());
-	ForumPostRecord[] posts = moodle.get_forum_posts(client, sesskey,
-		discussionId, 999);
 
-	if (null == posts)
-	    posts = new ForumPostRecord[0];
+	ClosableIterator<Statement> stmtsIter = getModel().findStatements(
+		Variable.ANY, SIOC.has_container, container);
 
-	for (ForumPostRecord post : posts)
-	    addPostToList(result, post, container);
+	while (stmtsIter.hasNext()) {
+	    Statement statement = (Statement) stmtsIter.next();
 
-	return Collections.unmodifiableList(result).iterator();
+	    if (Post.hasInstance(getModel(), statement.getSubject())) {
+		result.add(Post.getInstance(getModel(), statement.getSubject()));
+	    }
+	}
+	stmtsIter.close();
+
+	return result.iterator();
     }
 
-    protected void addPostToList(List<Post> result, final ForumPostRecord post,
-	    final Container discussion) {
-	URI uri = RDF2GoUtils
-		.createURI(getURL() + URI_POST_PATH + post.getId());
-	Post entry = null;
+    @Override
+    public Iterator<Post> pollNewPosts(Container container) {
+	Preconditions.checkArgument(hasPosts(container));
 
-	if (!Post.hasInstance(getModel(), uri)) {
-	    entry = new Post(getModel(), uri, true);
+	List<Post> result = new ArrayList<Post>();
 
-	    entry.setId(Integer.toString(post.getId()));
+	final int discussionId = Integer.parseInt(container.getId());
+	ForumPostRecord[] posts = callMethod(new Callable<ForumPostRecord[]>() {
+	    @Override
+	    public ForumPostRecord[] call() throws Exception {
+		return moodle.get_forum_posts(client, sesskey, discussionId,
+			mdlConfig.getMaxNewPostsOnPoll());
+	    }
+	});
 
-	    entry.setContainer(discussion);
-	    discussion.addContainerof(entry);
-	    entry.setDiscussion(discussion);
+	if (null != posts) {
+	    Date lastItemDate = new Date(0);
+	    if (container.hasLastitemdate()) {
+		try {
+		    lastItemDate = RDFTool.string2DateTime(container
+			    .getLastitemdate());
+		} catch (ParseException e1) {
+		    lastItemDate = new Date(0);
+		}
+	    }
 
-	    entry.setCreator(getUser(post.getUserid()));
+	    for (ForumPostRecord postRecord : posts) {
+		Date created = createDate(postRecord.getCreated());
 
-	    entry.setSubject(post.getSubject());
-	    entry.setContent(StringUtils.stripHTML(post.getMessage()));
-	    entry.setContentEncoded(RDF2GoUtils.createCDATASection(post
-		    .getMessage()));
+		if (created.after(lastItemDate)) {
+		    URI uri = RDF2GoUtils.createURI(getURL() + URI_POST_PATH
+			    + postRecord.getId());
 
-	    entry.setCreated(RDFTool.dateTime2String(makeDate(post.getCreated())));
-
-	    entry.setModified(RDFTool.dateTime2String(makeDate(post
-		    .getModified())));
-	} else {
-	    entry = Post.getInstance(getModel(), uri);
+		    if (!Post.hasInstance(getModel(), uri)) {
+			Post post = createPost(container, null, postRecord, uri);
+			result.add(post);
+			result.addAll(getComments(container, post, postRecord));
+		    }
+		}
+	    }
 	}
 
-	if (null != entry) {
-	    for (ForumPostRecord comment : post.getChildren())
-		loadReplys(comment, entry, discussion);
+	LOG.debug(result.size() + " new posts polled");
 
-	    result.add(entry);
-	}
+	return result.iterator();
     }
 
-    protected void loadReplys(final ForumPostRecord post, final Post parent,
-	    final Container discussion) {
-	URI uri = RDF2GoUtils
-		.createURI(getURL() + URI_POST_PATH + post.getId());
-	Post entry = null;
+    private List<Post> getComments(Container container, Post parentPost,
+	    ForumPostRecord parentRecord) {
+	List<Post> result = new ArrayList<Post>();
+	Date lastReplyDate = new Date(0);
 
-	if (!Post.hasInstance(getModel(), uri)) {
-	    entry = new Post(getModel(), uri, true);
-
-	    entry.setId(Integer.toString(post.getId()));
-	    entry.setDiscussion(discussion);
-	    entry.setCreator(getUser(post.getUserid()));
-
-	    entry.setReplyof(parent);
-	    parent.addReply(entry);
-
-	    entry.setSubject(post.getSubject());
-
-	    entry.setContent(StringUtils.stripHTML(post.getMessage()));
-	    entry.setContentEncoded(post.getMessage());
-
-	    entry.setCreated(RDFTool.dateTime2String(makeDate(post.getCreated())));
-
-	    entry.setModified(RDFTool.dateTime2String(makeDate(post
-		    .getModified())));
-	} else {
-	    entry = Post.getInstance(getModel(), uri);
+	if (parentPost.hasLastreplydate()) {
+	    try {
+		lastReplyDate = RDFTool.string2DateTime(parentPost
+			.getLastreplydate());
+	    } catch (ParseException e1) {
+		lastReplyDate = new Date(0);
+	    }
 	}
 
-	if (null != entry)
-	    for (ForumPostRecord comment : post.getChildren())
-		loadReplys(comment, entry, discussion);
+	if (null != parentRecord.getChildren()) {
+	    for (ForumPostRecord commentRecord : parentRecord.getChildren()) {
+		Date created = createDate(commentRecord.getCreated());
+
+		if (created.after(lastReplyDate)) {
+		    URI uri = RDF2GoUtils.createURI(getURL() + URI_POST_PATH
+			    + commentRecord.getId());
+
+		    if (!Post.hasInstance(getModel(), uri)) {
+			Post commentPost = createPost(container, parentPost,
+				commentRecord, uri);
+			result.add(commentPost);
+			result.addAll(getComments(container, commentPost,
+				commentRecord));
+		    }
+		}
+	    }
+	}
+
+	return result;
+    }
+
+    private Post createPost(Container container, Post parentPost,
+	    ForumPostRecord postRecord, URI uri) {
+	Post post = new Post(getModel(), uri, true);
+
+	post.setId(Integer.toString(postRecord.getId()));
+	post.setCreator(getUserAccount(Integer.toString(postRecord.getUserid())));
+
+	post.setSubject(postRecord.getSubject());
+
+	String content = StringUtils.trimToEmpty(postRecord.getMessage());
+	post.setContent(StringUtils.stripHTML(content));
+	post.setContentEncoded(RDF2GoUtils.createCDATASection(content));
+
+	post.setCreated(DateUtils.formatISO8601(createDate(postRecord
+		.getCreated())));
+	post.setModified(DateUtils.formatISO8601(createDate(postRecord
+		.getModified())));
+
+	if (null != container) {
+	    post.setContainer(container);
+	    container.addContainerof(post);
+	    post.setDiscussion(container);
+	    SIOCUtils.updateLastItemDate(container, post);
+	}
+
+	if (null != parentPost) {
+	    post.setReplyof(parentPost);
+	    parentPost.setReply(post);
+	    SIOCUtils.updateLastReplyDate(parentPost, post);
+	}
+
+	return post;
     }
 
     public boolean canPublishOn(Container container) {
@@ -289,7 +428,7 @@ public class MoodleConnector extends AbstractConnector {
 	    Thread thread = Thread.getInstance(getModel(),
 		    container.getResource());
 	    if (thread.hasParent()) {
-		Container parent = thread.getAllParent_as().firstValue();
+		Container parent = thread.getParent();
 		if (getModel().contains(parent, RDF.type, SIOC.Forum)) {
 		    Forum forum = Forum.getInstance(getModel(),
 			    parent.getResource());
@@ -310,13 +449,12 @@ public class MoodleConnector extends AbstractConnector {
 	 * moodle instance
 	 */
 	if (parent.hasContainer()) {
-	    Container container = parent.getAllContainer_as().firstValue();
+	    Container container = parent.getContainer();
 	    if (getModel().contains(container, RDF.type, SIOC.Thread)) {
 		Thread thread = Thread.getInstance(getModel(),
 			container.getResource());
 		if (thread.hasParent()) {
-		    Container parentContainer = thread.getAllParent_as()
-			    .firstValue();
+		    Container parentContainer = thread.getParent();
 		    if (getModel().contains(parentContainer, RDF.type,
 			    SIOC.Forum)) {
 			Forum forum = Forum.getInstance(getModel(),
@@ -392,7 +530,7 @@ public class MoodleConnector extends AbstractConnector {
 	return null != result && 0 < result.length;
     }
 
-    protected UserAccount getUser(int id) {
+    public UserAccount getUserAccount(String id) {
 	URI uri = RDF2GoUtils.createURI(getURL() + URI_USER_PATH + id);
 
 	if (!UserAccount.hasInstance(getModel(), uri)) {
@@ -408,7 +546,7 @@ public class MoodleConnector extends AbstractConnector {
 		result.setName(me.getFirstname() + " " + me.getLastname());
 		result.setAccountname(me.getUsername());
 		result.setEmail(RDF2GoUtils.createMailtoURI(me.getEmail()));
-		result.setEmailsha1(DigestUtils.sha1Hex(me.getEmail()));
+		result.setEmailsha1(RDFTool.sha1sum(me.getEmail()));
 		result.setDescription(RDF2GoUtils.createLiteral(me
 			.getDescription()));
 
@@ -433,7 +571,7 @@ public class MoodleConnector extends AbstractConnector {
 	return course;
     }
 
-    protected Date makeDate(final int time) {
+    protected Date createDate(final int time) {
 	return new Date((long) time * 1000L);
     }
 }

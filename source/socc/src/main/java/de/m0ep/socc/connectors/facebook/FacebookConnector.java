@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
@@ -48,12 +47,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.exception.FacebookException;
+import com.restfb.exception.FacebookNetworkException;
 import com.restfb.exception.FacebookOAuthException;
 import com.restfb.json.JsonObject;
 import com.restfb.types.FacebookType;
@@ -61,7 +60,12 @@ import com.restfb.types.Group;
 import com.restfb.types.User;
 
 import de.m0ep.socc.connectors.AbstractConnector;
+import de.m0ep.socc.connectors.exceptions.AuthenticationException;
+import de.m0ep.socc.connectors.exceptions.ConnectorException;
+import de.m0ep.socc.connectors.exceptions.NetworkException;
+import de.m0ep.socc.connectors.exceptions.NotFoundException;
 import de.m0ep.socc.utils.ConfigUtils;
+import de.m0ep.socc.utils.DateUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
 
 public class FacebookConnector extends AbstractConnector {
@@ -84,8 +88,26 @@ public class FacebookConnector extends AbstractConnector {
 	this.fbConfig = ConfigUtils.fromMap(parameters,
 		FacebookConnectorConfig.class);
 	this.client = new DefaultFacebookClient(fbConfig.getAccessToken());
-	this.myId = client.fetchObject(SPECIAL_ID_ME, FacebookType.class,
-		Parameter.with("fields", "id")).getId();
+
+	try {
+	    this.myId = client.fetchObject(SPECIAL_ID_ME, FacebookType.class,
+		    Parameter.with("fields", "id")).getId();
+	} catch (FacebookException e) {
+	    throw convertToConnectorException(e);
+	} catch (Throwable t) {
+	    throw new ConnectorException("unknown error", t);
+	}
+
+	// add static forums
+	URI uri = RDF2GoUtils
+		.createURI(getURL() + myId + "/" + CONNECTION_FEED);
+	if (!Forum.hasInstance(getModel(), uri)) {
+	    Forum wall = new Forum(getModel(), uri, true);
+	    wall.setId(myId);
+	    wall.setName(getLoginUser().getAccountname() + "'s Wall");
+	    wall.setHost(getSite());
+	    getSite().addHostof(wall);
+	}
     }
 
     public String getURL() {
@@ -112,7 +134,15 @@ public class FacebookConnector extends AbstractConnector {
 	URI uri = (URI) new URIImpl(getURL() + id);
 
 	if (!UserAccount.hasInstance(getModel(), uri)) {
-	    User user = client.fetchObject(id, User.class);
+	    User user = null;
+	    try {
+		user = client.fetchObject(id, User.class);
+	    } catch (FacebookException e) {
+		throw convertToConnectorException(e);
+	    } catch (Throwable t) {
+		throw new ConnectorException("unknown error", t);
+	    }
+
 	    UserAccount result = new UserAccount(getModel(), uri, true);
 
 	    // SIOC statements
@@ -122,7 +152,7 @@ public class FacebookConnector extends AbstractConnector {
 
 	    if (null != user.getEmail() && !user.getEmail().isEmpty()) {
 		result.setEmail(RDF2GoUtils.createMailtoURI(user.getEmail()));
-		result.setEmailsha1(DigestUtils.sha1Hex(user.getEmail()));
+		result.setEmailsha1(RDFTool.sha1sum(user.getEmail()));
 	    }
 
 	    if (null != user.getUsername() && !user.getUsername().isEmpty())
@@ -132,7 +162,7 @@ public class FacebookConnector extends AbstractConnector {
 		result.setName(user.getName());
 
 	    if (null != user.getUpdatedTime())
-		result.setModified(RDFTool.dateTime2String(user
+		result.setModified(DateUtils.formatISO8601(user
 			.getUpdatedTime()));
 
 	    return result;
@@ -158,9 +188,16 @@ public class FacebookConnector extends AbstractConnector {
 	    result.add(Forum.getInstance(getModel(), uri));
 	}
 
-	Connection<Group> groupsConnections = client.fetchConnection(
-		"me/groups", Group.class,
-		Parameter.with("fields", "name,id,description,updated_time"));
+	Connection<Group> groupsConnections = null;
+	try {
+	    groupsConnections = client.fetchConnection("me/groups",
+		    Group.class, Parameter.with("fields",
+			    "name,id,description,updated_time"));
+	} catch (FacebookException e) {
+	    throw convertToConnectorException(e);
+	} catch (Throwable t) {
+	    throw new ConnectorException("unknown error", t);
+	}
 
 	for (List<Group> myGroups : groupsConnections) {
 	    for (Group group : myGroups) {
@@ -179,7 +216,7 @@ public class FacebookConnector extends AbstractConnector {
 			forum.setDescription(group.getDescription());
 
 		    if (null != group.getUpdatedTime())
-			forum.setModified(RDFTool.dateTime2String(group
+			forum.setModified(DateUtils.formatISO8601(group
 				.getUpdatedTime()));
 
 		    result.add(forum);
@@ -197,13 +234,14 @@ public class FacebookConnector extends AbstractConnector {
 	if (!canPublishOn(container))
 	    return super.getPosts(container);
 
-	Connection<JsonObject> feed;
+	Connection<JsonObject> feed = null;
 	try {
 	    feed = client.fetchConnection(container.getId() + "/"
 		    + CONNECTION_FEED, JsonObject.class);
-	} catch (Exception e) {
-	    LOG.warn(e.getMessage(), e);
-	    return super.getPosts(container);
+	} catch (FacebookException e) {
+	    throw convertToConnectorException(e);
+	} catch (Throwable t) {
+	    throw new ConnectorException("unknown error", t);
 	}
 
 	return new PostIterator(feed.iterator(), container);
@@ -268,13 +306,14 @@ public class FacebookConnector extends AbstractConnector {
 	if (post.hasName())
 	    params.add(Parameter.with("name", post.getName()));
 
-	FacebookType result;
+	FacebookType result = null;
 	try {
 	    result = client.publish(container.getId() + "/" + CONNECTION_FEED,
 		    FacebookType.class, params.toArray(new Parameter[0]));
-	} catch (Throwable e) {
-	    Throwables.propagateIfInstanceOf(e, FacebookOAuthException.class);
-	    return false;
+	} catch (FacebookException e) {
+	    throw convertToConnectorException(e);
+	} catch (Throwable t) {
+	    throw new ConnectorException("unknown error", t);
 	}
 
 	// TODO Add Post to model
@@ -290,14 +329,15 @@ public class FacebookConnector extends AbstractConnector {
 	Preconditions.checkArgument(canReplyOn(parent),
 		"can't reply on the parent post");
 
-	FacebookType result;
+	FacebookType result = null;
 	try {
 	    result = client.publish(parent.getId() + "/" + CONNECTION_COMMENTS,
 		    FacebookType.class,
 		    Parameter.with("message", post.getContent()));
-	} catch (Throwable e) {
-	    Throwables.propagateIfInstanceOf(e, FacebookOAuthException.class);
-	    return false;
+	} catch (FacebookException e) {
+	    throw convertToConnectorException(e);
+	} catch (Throwable t) {
+	    throw new ConnectorException("unknown error", t);
 	}
 
 	// TODO Add Post to model
@@ -318,7 +358,7 @@ public class FacebookConnector extends AbstractConnector {
 	    if (forum.hasLastitemdate()) {
 		try {
 		    String lastItemDate = forum.getLastitemdate();
-		    Date date = RDFTool.string2DateTime(lastItemDate);
+		    Date date = DateUtils.parseISO8601(lastItemDate);
 		    unixtime = date.getTime() / 1000L;
 		} catch (ParseException e) {
 		    // use 0 as since parameter
@@ -330,8 +370,8 @@ public class FacebookConnector extends AbstractConnector {
 		feed = client.fetchConnection(forum.getId() + "/"
 			+ CONNECTION_FEED, JsonObject.class,
 			Parameter.with("since", unixtime));
-	    } catch (FacebookException e) {
-		LOG.debug("skip container " + forum.getId(), e);
+	    } catch (Throwable t) {
+		LOG.warn("skip container " + forum.getId(), t);
 		continue;
 	    }
 
@@ -339,7 +379,7 @@ public class FacebookConnector extends AbstractConnector {
 		for (JsonObject post : posts) {
 		    try {
 			if (post.has("created_time")) {
-			    Date date = RDFTool.string2DateTime(post
+			    Date date = DateUtils.parseISO8601(post
 				    .getString("created_time"));
 
 			    if (unixtime >= date.getTime() / 1000L)
@@ -351,7 +391,7 @@ public class FacebookConnector extends AbstractConnector {
 			}
 
 		    } catch (Exception e) {
-			LOG.debug("skip message " + post.getString("id"), e);
+			LOG.warn("skip message " + post.getString("id"), e);
 		    }
 		}
 	    }
@@ -382,8 +422,10 @@ public class FacebookConnector extends AbstractConnector {
 		}
 	    }
 
+	} catch (FacebookException e) {
+	    throw convertToConnectorException(e);
 	} catch (Throwable t) {
-	    LOG.warn("something not right...", t);
+	    throw new ConnectorException("unknown error", t);
 	}
 
 	return false;
@@ -427,5 +469,40 @@ public class FacebookConnector extends AbstractConnector {
 	public void remove() {
 	    throw new UnsupportedOperationException("remove is not supported");
 	}
+    }
+
+    private ConnectorException convertToConnectorException(FacebookException e) {
+	if (e instanceof FacebookOAuthException) {
+	    FacebookOAuthException fae = (FacebookOAuthException) e;
+
+	    // error codes:
+	    // http://www.fb-developers.info/tech/fb_dev/faq/general/gen_10.html
+	    switch (fae.getErrorCode()) {
+	    case 101: // Invalid API key
+	    case 190: // Invalid Access Token
+	    case 400: // Invalid email address
+	    case 401: // Invalid username or password
+	    case 402: // Invalid application auth sig
+	    case 403: // Invalid timestamp for authentication
+	    case 450: // Session key specified has passed its expiration time
+	    case 451: // Session key specified cannot be used to call this
+		      // method
+	    case 452: // Session key invalid. This could be because the session
+		      // key has an incorrect format, or because the user has
+	    case 453: // revoked this session
+	    case 454: // A session key is required for calling this method
+	    case 455: // A session key must be specified when request is signed
+		      // with a session secret
+		return new AuthenticationException(fae.getErrorMessage(), fae);
+	    case 803: // Specified object cannot be found
+		return new NotFoundException("Not found", fae);
+	    }
+	} else if (e instanceof FacebookNetworkException) {
+	    FacebookNetworkException fne = (FacebookNetworkException) e;
+	    return new NetworkException("Network error: "
+		    + fne.getHttpStatusCode() + " " + fne.getMessage(), fne);
+	}
+
+	return new ConnectorException(e.getMessage(), e);
     }
 }

@@ -25,8 +25,8 @@ import org.rdfs.sioc.UserAccount;
 
 import de.m0ep.socc.connectors.IConnector;
 import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorConfig;
-import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorFactory;
 import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
+import de.m0ep.socc.connectors.moodle.MoodleConnectorFactory;
 
 public class SOCCTest {
 
@@ -81,12 +81,16 @@ public class SOCCTest {
 	parameter.put(GooglePlusConnectorConfig.REFRESH_TOKEN,
 		"1/9dxT-o_8JnA4gUxm1q0XwCgjA6oz4kcFfZxN1pyJCVc");
 
-	GooglePlusConnectorFactory gpFactory = new GooglePlusConnectorFactory();
+	// FacebookConnectorFactory fbFactory = new FacebookConnectorFactory();
+	// GooglePlusConnectorFactory gpFactory = new
+	// GooglePlusConnectorFactory();
+	MoodleConnectorFactory mdlFactory = new MoodleConnectorFactory();
 
 	IConnector[] connectors = {
 	// new FacebookConnector("facebook", model,config),
-	// new MoodleConnector("Moodle", model, parameter)
-	gpFactory.createConnector("google+", model, parameter) };
+	mdlFactory.createConnector("Moodle", model, parameter)
+	// gpFactory.createConnector("google+", model, parameter)
+	};
 
 	for (IConnector connector : connectors) {
 	    printConnector(connector);
@@ -158,6 +162,7 @@ public class SOCCTest {
 			+ thread.getAllCreator_as().firstValue(), 1);
 		printWithIndent(
 			"canpublish: " + connector.canPublishOn(thread), 1);
+		printWithIndent("hasPost: " + connector.hasPosts(thread), 1);
 
 		if (connector.hasPosts(thread)) {
 		    connector.pollNewPosts(thread);
@@ -179,7 +184,9 @@ public class SOCCTest {
 	int ctr = 0;
 	while (posts.hasNext()) {
 	    Post post = (Post) posts.next();
-	    printPost(connector, post, indent);
+	    if (!post.hasReply()) // print only top posts, replies are printed
+				  // later
+		printPost(connector, post, indent);
 
 	    if (5 == ctr++)
 		break;

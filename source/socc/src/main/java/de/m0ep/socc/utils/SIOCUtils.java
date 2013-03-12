@@ -25,7 +25,6 @@ package de.m0ep.socc.utils;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
 
@@ -34,8 +33,8 @@ public class SIOCUtils {
 	if (post.hasCreated()) {
 	    if (container.hasLastitemdate()) {
 		try {
-		    Date postDate = RDFTool.string2DateTime(post.getCreated());
-		    Date lastDate = RDFTool.string2DateTime(container
+		    Date postDate = DateUtils.parseISO8601(post.getCreated());
+		    Date lastDate = DateUtils.parseISO8601(container
 			    .getLastitemdate());
 
 		    // return if this post is older then the last
@@ -56,9 +55,8 @@ public class SIOCUtils {
 	if (reply.hasCreated()) {
 	    if (parent.hasLastreplydate()) {
 		try {
-		    Date replyDate = RDFTool
-			    .string2DateTime(reply.getCreated());
-		    Date parentDate = RDFTool.string2DateTime(parent
+		    Date replyDate = DateUtils.parseISO8601(reply.getCreated());
+		    Date parentDate = DateUtils.parseISO8601(parent
 			    .getLastreplydate());
 
 		    // return if this reply is older then the last

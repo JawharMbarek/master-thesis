@@ -1,9 +1,10 @@
 package de.m0ep.socc;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -30,7 +31,7 @@ import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
 public class SOCCTest {
 
     // private static Connector connector;
-    private static final boolean WRITE_DUMP = false;
+    private static final boolean WRITE_DUMP = true;
     private static final boolean WRITE_OUTPUT = true;
 
     /**
@@ -39,6 +40,21 @@ public class SOCCTest {
     public static void main(String[] args) {
 	Model model = RDF2Go.getModelFactory().createModel();
 	model.open();
+
+	File dump = new File("dump.rdf");
+
+	if (dump.exists()) {
+	    try {
+		model.readFrom(new FileReader(dump));
+	    } catch (ModelRuntimeException e) {
+		e.printStackTrace();
+	    } catch (FileNotFoundException e) {
+		e.printStackTrace();
+	    } catch (IOException e) {
+		e.printStackTrace();
+	    }
+	    model.dump();
+	}
 
 	Map<String, Object> parameter = new HashMap<String, Object>();
 	// config.put(
@@ -76,17 +92,9 @@ public class SOCCTest {
 	    printConnector(connector);
 	}
 
-	System.out.println();
-	System.out.println();
-	System.out.println("model dump===============================");
-	System.out.println();
-	model.dump();
-
 	if (WRITE_DUMP) {
-	    String filename = "fb_mdl-" + new Date().getTime() + ".rdf";
-	    System.out.println("Write model to " + filename);
 	    try {
-		model.writeTo(new FileOutputStream(filename), Syntax.RdfXml);
+		model.writeTo(new FileOutputStream(dump), Syntax.RdfXml);
 	    } catch (ModelRuntimeException e) {
 		e.printStackTrace();
 	    } catch (FileNotFoundException e) {
@@ -123,9 +131,11 @@ public class SOCCTest {
 		    + forum.getAllModified_as().firstValue(), 0);
 	    printWithIndent(
 		    "host:       " + forum.getAllHost_as().firstValue(), 0);
-	    printWithIndent("canpublish: " + connector.canPublishOn(forum), 0);
+	    printWithIndent("canPublishOn: " + connector.canPublishOn(forum), 0);
+	    printWithIndent("hasPost: " + connector.hasPosts(forum), 0);
 
 	    if (connector.hasPosts(forum)) {
+		connector.pollNewPosts(forum);
 		listPosts(connector, forum, 1);
 	    }
 
@@ -150,6 +160,7 @@ public class SOCCTest {
 			"canpublish: " + connector.canPublishOn(thread), 1);
 
 		if (connector.hasPosts(thread)) {
+		    connector.pollNewPosts(thread);
 		    listPosts(connector, thread, 2);
 		}
 	    }

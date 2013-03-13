@@ -129,9 +129,9 @@ public final class RDF2GoUtils {
      *            String with encoded data
      * @return "<![CDATA[" + value + "]]>"
      */
-    public static String createCDATASection(final String value) {
-	return "<![CDATA["
+    public static Literal createCDATASection(final String value) {
+	return new PlainLiteralImpl("<![CDATA["
 		+ StringUtils.trimToEmpty(value).replace("]]>",
-			"]]]]><![CDATA[>") + "]]>";
+			"]]]]><![CDATA[>") + "]]>");
     }
 }

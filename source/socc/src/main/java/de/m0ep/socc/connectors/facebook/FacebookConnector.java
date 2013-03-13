@@ -24,16 +24,18 @@ package de.m0ep.socc.connectors.facebook;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
+import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.Statement;
+import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.model.node.Variable;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.ontoware.rdf2go.vocabulary.RDF;
@@ -54,6 +56,7 @@ import com.restfb.Parameter;
 import com.restfb.exception.FacebookException;
 import com.restfb.exception.FacebookNetworkException;
 import com.restfb.exception.FacebookOAuthException;
+import com.restfb.json.JsonArray;
 import com.restfb.json.JsonObject;
 import com.restfb.types.FacebookType;
 import com.restfb.types.Group;
@@ -67,10 +70,31 @@ import de.m0ep.socc.connectors.exceptions.NotFoundException;
 import de.m0ep.socc.utils.ConfigUtils;
 import de.m0ep.socc.utils.DateUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
+import de.m0ep.socc.utils.SIOCUtils;
+import de.m0ep.socc.utils.StringUtils;
 
 public class FacebookConnector extends AbstractConnector {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(FacebookConnector.class);
+
+    private static final String POST_FIELDS = "id,type,story,message,"
+	    + "comments.fields(id,from,message,created_time),"
+	    + "description,caption,source,updated_time,created_time,"
+	    + "link,name,from";
+
+    private static final String FIELD_ID = "id";
+    private static final String FIELD_STORY = "story";
+    private static final String FIELD_MESSAGE = "message";
+    private static final String FIELD_COMMENTS = "comments";
+    private static final String FIELD_DATA = "data";
+    private static final String FIELD_DESCRIPTION = "description";
+    private static final String FIELD_CAPTION = "caption";
+    private static final String FIELD_SOURCE = "source";
+    private static final String FIELD_UPDATED_TIME = "updated_time";
+    private static final String FIELD_CREATED_TIME = "created_time";
+    private static final String FIELD_LINK = "link";
+    private static final String FIELD_NAME = "name";
+    private static final String FIELD_FROM = "from";
 
     private static final String CONNECTION_COMMENTS = "comments";
     private static final String CONNECTION_FEED = "feed";
@@ -93,8 +117,10 @@ public class FacebookConnector extends AbstractConnector {
 	    this.myId = client.fetchObject(SPECIAL_ID_ME, FacebookType.class,
 		    Parameter.with("fields", "id")).getId();
 	} catch (FacebookException e) {
-	    throw convertToConnectorException(e);
+	    LOG.error(e.getLocalizedMessage(), e);
+	    throw mapToConnectorException(e);
 	} catch (Throwable t) {
+	    LOG.error(t.getLocalizedMessage(), t);
 	    throw new ConnectorException("unknown error", t);
 	}
 
@@ -138,8 +164,10 @@ public class FacebookConnector extends AbstractConnector {
 	    try {
 		user = client.fetchObject(id, User.class);
 	    } catch (FacebookException e) {
-		throw convertToConnectorException(e);
+		LOG.error(e.getLocalizedMessage(), e);
+		throw mapToConnectorException(e);
 	    } catch (Throwable t) {
+		LOG.error(t.getLocalizedMessage(), t);
 		throw new ConnectorException("unknown error", t);
 	    }
 
@@ -155,15 +183,18 @@ public class FacebookConnector extends AbstractConnector {
 		result.setEmailsha1(RDFTool.sha1sum(user.getEmail()));
 	    }
 
-	    if (null != user.getUsername() && !user.getUsername().isEmpty())
+	    if (null != user.getUsername() && !user.getUsername().isEmpty()) {
 		result.setAccountname(user.getUsername());
+	    }
 
-	    if (null != user.getName() && !user.getName().isEmpty())
+	    if (null != user.getName() && !user.getName().isEmpty()) {
 		result.setName(user.getName());
+	    }
 
-	    if (null != user.getUpdatedTime())
+	    if (null != user.getUpdatedTime()) {
 		result.setModified(DateUtils.formatISO8601(user
 			.getUpdatedTime()));
+	    }
 
 	    return result;
 	} else {
@@ -174,19 +205,18 @@ public class FacebookConnector extends AbstractConnector {
     public Iterator<Forum> getForums() {
 	List<Forum> result = new ArrayList<Forum>();
 
-	URI uri = RDF2GoUtils
-		.createURI(getURL() + myId + "/" + CONNECTION_FEED);
-	if (!Forum.hasInstance(getModel(), uri)) {
-	    Forum wall = new Forum(getModel(), uri, true);
-	    wall.setId(myId);
-	    wall.setName(getLoginUser().getAccountname() + "'s Wall");
-	    wall.setHost(getSite());
-	    getSite().addHostof(wall);
+	// add all known forums
+	ClosableIterator<Statement> stmtIter = getModel().findStatements(
+		Variable.ANY, SIOC.has_host, getSite());
+	while (stmtIter.hasNext()) {
+	    Statement statement = (Statement) stmtIter.next();
+	    Resource subject = statement.getSubject();
 
-	    result.add(wall);
-	} else {
-	    result.add(Forum.getInstance(getModel(), uri));
+	    if (getModel().contains(subject, RDF.type, SIOC.Forum)) {
+		result.add(Forum.getInstance(getModel(), subject));
+	    }
 	}
+	stmtIter.close();
 
 	Connection<Group> groupsConnections = null;
 	try {
@@ -194,14 +224,16 @@ public class FacebookConnector extends AbstractConnector {
 		    Group.class, Parameter.with("fields",
 			    "name,id,description,updated_time"));
 	} catch (FacebookException e) {
-	    throw convertToConnectorException(e);
+	    LOG.error(e.getLocalizedMessage(), e);
+	    throw mapToConnectorException(e);
 	} catch (Throwable t) {
+	    LOG.error(t.getLocalizedMessage(), t);
 	    throw new ConnectorException("unknown error", t);
 	}
 
 	for (List<Group> myGroups : groupsConnections) {
 	    for (Group group : myGroups) {
-		uri = RDF2GoUtils.createURI(getURL() + group.getId() + "/"
+		URI uri = RDF2GoUtils.createURI(getURL() + group.getId() + "/"
 			+ CONNECTION_FEED);
 
 		if (!Forum.hasInstance(getModel(), uri)) {
@@ -211,40 +243,44 @@ public class FacebookConnector extends AbstractConnector {
 		    forum.setHost(getSite());
 		    getSite().addHostof(forum);
 
-		    if (null != group.getDescription()
-			    && !group.getDescription().isEmpty())
+		    if (null != group.getDescription()) {
 			forum.setDescription(group.getDescription());
+		    }
 
-		    if (null != group.getUpdatedTime())
+		    if (null != group.getUpdatedTime()) {
 			forum.setModified(DateUtils.formatISO8601(group
 				.getUpdatedTime()));
+		    }
 
+		    LOG.debug("Add new forum " + uri.toString());
 		    result.add(forum);
-		} else {
-		    result.add(Forum.getInstance(getModel(), uri));
 		}
 	    }
 	}
 
-	return Collections.unmodifiableList(result).iterator();
+	return result.iterator();
     }
 
     @Override
     public Iterator<Post> getPosts(Container container) {
-	if (!canPublishOn(container))
-	    return super.getPosts(container);
+	Preconditions.checkNotNull(container, "container can not be null");
+	Preconditions.checkArgument(hasPosts(container), "container "
+		+ container + " has no post on this site");
 
-	Connection<JsonObject> feed = null;
-	try {
-	    feed = client.fetchConnection(container.getId() + "/"
-		    + CONNECTION_FEED, JsonObject.class);
-	} catch (FacebookException e) {
-	    throw convertToConnectorException(e);
-	} catch (Throwable t) {
-	    throw new ConnectorException("unknown error", t);
+	List<Post> result = new ArrayList<Post>();
+	ClosableIterator<Statement> stmtsIter = getModel().findStatements(
+		Variable.ANY, SIOC.has_container, container);
+
+	while (stmtsIter.hasNext()) {
+	    Statement statement = (Statement) stmtsIter.next();
+
+	    if (Post.hasInstance(getModel(), statement.getSubject())) {
+		result.add(Post.getInstance(getModel(), statement.getSubject()));
+	    }
 	}
+	stmtsIter.close();
 
-	return new PostIterator(feed.iterator(), container);
+	return result.iterator();
     }
 
     @Override
@@ -291,28 +327,37 @@ public class FacebookConnector extends AbstractConnector {
 
 	List<Parameter> params = new ArrayList<Parameter>();
 
-	if (post.hasContent())
+	if (post.hasContent()) {
 	    params.add(Parameter.with("message", post.getContent()));
+	}
 
-	if (post.hasAttachment())
+	if (post.hasAttachment()) {
 	    params.add(Parameter.with("link", post.getAttachment()));
+	}
 
-	if (post.hasTitle())
+	if (post.hasTitle()) {
 	    params.add(Parameter.with("caption", post.getTitle()));
+	} else if (post.hasSubject()) {
+	    params.add(Parameter.with("caption", post.getSubject()));
+	}
 
-	if (post.hasDescription())
+	if (post.hasDescription()) {
 	    params.add(Parameter.with("description", post.getDescription()));
+	}
 
-	if (post.hasName())
+	if (post.hasName()) {
 	    params.add(Parameter.with("name", post.getName()));
+	}
 
 	FacebookType result = null;
 	try {
 	    result = client.publish(container.getId() + "/" + CONNECTION_FEED,
 		    FacebookType.class, params.toArray(new Parameter[0]));
 	} catch (FacebookException e) {
-	    throw convertToConnectorException(e);
+	    LOG.error(e.getLocalizedMessage(), e);
+	    throw mapToConnectorException(e);
 	} catch (Throwable t) {
+	    LOG.error(t.getLocalizedMessage(), t);
 	    throw new ConnectorException("unknown error", t);
 	}
 
@@ -335,8 +380,10 @@ public class FacebookConnector extends AbstractConnector {
 		    FacebookType.class,
 		    Parameter.with("message", post.getContent()));
 	} catch (FacebookException e) {
-	    throw convertToConnectorException(e);
+	    LOG.error(e.getLocalizedMessage(), e);
+	    throw mapToConnectorException(e);
 	} catch (Throwable t) {
+	    LOG.error(t.getLocalizedMessage(), t);
 	    throw new ConnectorException("unknown error", t);
 	}
 
@@ -347,57 +394,207 @@ public class FacebookConnector extends AbstractConnector {
     };
 
     public java.util.Iterator<Post> pollNewPosts(Container container) {
+	LOG.debug("pollNewPosts");
 	List<Post> result = new ArrayList<Post>();
+	Date lastItemDate = new Date(0);
+	int numLoadedPosts = fbConfig.getMaxNewPostsOnPoll();
 
-	Iterator<Forum> forums = getForums();
-
-	while (forums.hasNext()) {
-	    Forum forum = forums.next();
-	    long unixtime = 0;
-
-	    if (forum.hasLastitemdate()) {
-		try {
-		    String lastItemDate = forum.getLastitemdate();
-		    Date date = DateUtils.parseISO8601(lastItemDate);
-		    unixtime = date.getTime() / 1000L;
-		} catch (ParseException e) {
-		    // use 0 as since parameter
-		}
-	    }
-
-	    Connection<JsonObject> feed = null;
+	if (container.hasLastitemdate()) {
 	    try {
-		feed = client.fetchConnection(forum.getId() + "/"
-			+ CONNECTION_FEED, JsonObject.class,
-			Parameter.with("since", unixtime));
-	    } catch (Throwable t) {
-		LOG.warn("skip container " + forum.getId(), t);
-		continue;
+		lastItemDate = RDFTool.string2DateTime(container
+			.getLastitemdate());
+	    } catch (ParseException e) {
+		LOG.warn(e.getLocalizedMessage());
+		lastItemDate = new Date(0);
 	    }
+	}
 
+	Connection<JsonObject> feed = null;
+	try {
+	    feed = client.fetchConnection(
+		    container.getId() + "/" + CONNECTION_FEED,
+		    JsonObject.class,
+		    Parameter.with("since", lastItemDate.getTime() / 1000L),
+		    Parameter.with("fields", POST_FIELDS),
+		    Parameter.with("limit",
+			    Math.min(20, fbConfig.getMaxNewPostsOnPoll())));
+	} catch (FacebookException e) {
+	    LOG.error(e.getLocalizedMessage(), e);
+	    throw mapToConnectorException(e);
+	} catch (Throwable t) {
+	    LOG.error(t.getLocalizedMessage(), t);
+	    throw new ConnectorException("unknown error", t);
+	}
+
+	if (null != feed) {
 	    for (List<JsonObject> posts : feed) {
-		for (JsonObject post : posts) {
-		    try {
-			if (post.has("created_time")) {
-			    Date date = DateUtils.parseISO8601(post
-				    .getString("created_time"));
+		for (JsonObject obj : posts) {
+		    URI uri = RDF2GoUtils.createURI(getURL()
+			    + obj.getString(FIELD_ID));
+		    Date created = com.restfb.util.DateUtils
+			    .toDateFromLongFormat(obj
+				    .getString(FIELD_CREATED_TIME));
 
-			    if (unixtime >= date.getTime() / 1000L)
-				return Collections.unmodifiableList(result)
-					.iterator();
-
-			    result.add(FacebookPostParser.parse(this, post,
-				    forum));
+		    if (created.after(lastItemDate)) {
+			if (!Post.hasInstance(getModel(), uri)) {
+			    LOG.debug("Add new post " + uri.toString());
+			    result.add(parsePost(container, obj, uri));
 			}
+		    }
 
-		    } catch (Exception e) {
-			LOG.warn("skip message " + post.getString("id"), e);
+		    if (Post.hasInstance(getModel(), uri)
+			    && obj.has(FIELD_COMMENTS)) {
+			JsonObject comments = obj.getJsonObject(FIELD_COMMENTS);
+
+			if (comments.has(FIELD_DATA)) {
+			    JsonArray data = comments.getJsonArray(FIELD_DATA);
+
+			    result.addAll(pollNewReplies(
+				    Post.getInstance(getModel(), uri), data));
+			}
+		    }
+
+		    if (0 == --numLoadedPosts) {
+			return result.iterator();
 		    }
 		}
 	    }
 	}
 
-	return Collections.unmodifiableList(result).iterator();
+	return result.iterator();
+    }
+
+    private Post parsePost(final Container container, final JsonObject obj,
+	    final URI uri) {
+	Post result = new Post(getModel(), uri, true);
+	result.setId(obj.getString(FIELD_ID));
+
+	if (obj.has(FIELD_FROM)) {
+	    result.setCreator(getUserAccount(obj.getJsonObject(FIELD_FROM)
+		    .getString(FIELD_ID)));
+	}
+
+	String content = "";
+	if (obj.has(FIELD_STORY)) {
+	    content = obj.getString(FIELD_STORY);
+	} else if (obj.has(FIELD_MESSAGE)) {
+	    content = obj.getString(FIELD_MESSAGE);
+	}
+
+	result.setContent(StringUtils.stripHTML(content));
+	result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
+
+	if (obj.has(FIELD_NAME)) {
+	    result.setName(obj.getString(FIELD_NAME));
+	}
+
+	if (obj.has(FIELD_CAPTION)) {
+	    result.setTitle(FIELD_CAPTION);
+	}
+
+	if (obj.has(FIELD_DESCRIPTION)) {
+	    result.setDescription(obj.getString(FIELD_DESCRIPTION));
+	}
+
+	if (obj.has(FIELD_LINK)) {
+	    result.setAttachment(RDF2GoUtils.createURI(obj
+		    .getString(FIELD_LINK)));
+	} else if (obj.has(FIELD_SOURCE)) {
+	    result.setAttachment(RDF2GoUtils.createURI(obj
+		    .getString(FIELD_SOURCE)));
+	}
+
+	if (obj.has(FIELD_CREATED_TIME)) {
+	    Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+		    .getString(FIELD_CREATED_TIME));
+	    result.setCreated(DateUtils.formatISO8601(date));
+	}
+
+	if (obj.has(FIELD_UPDATED_TIME)) {
+	    Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+		    .getString(FIELD_UPDATED_TIME));
+	    result.setModified(DateUtils.formatISO8601(date));
+	}
+
+	if (null != container) {
+	    result.setContainer(container);
+	    container.addContainerof(result);
+	    SIOCUtils.updateLastItemDate(container, result);
+	}
+
+	return result;
+    }
+
+    private List<Post> pollNewReplies(final Post parentPost,
+	    final JsonArray commentsArray) {
+	List<Post> result = new ArrayList<Post>();
+	Date lastReplyDate = new Date(0);
+
+	if (parentPost.hasLastreplydate()) {
+	    try {
+		lastReplyDate = RDFTool.string2DateTime(parentPost
+			.getLastreplydate());
+	    } catch (ParseException e1) {
+		lastReplyDate = new Date(0);
+	    }
+	}
+
+	for (int i = 0; i < commentsArray.length(); i++) {
+	    JsonObject obj = commentsArray.getJsonObject(i);
+	    Date created = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+		    .getString(FIELD_CREATED_TIME));
+
+	    if (created.after(lastReplyDate)) {
+		String id = obj.getString(FIELD_ID);
+		URI uri = RDF2GoUtils.createURI(getURL() + id);
+
+		if (!Post.hasInstance(getModel(), uri)) {
+		    result.add(parseComment(parentPost, obj, uri));
+		}
+	    }
+	}
+
+	return result;
+    }
+
+    private Post parseComment(final Post parentPost, final JsonObject obj,
+	    final URI uri) {
+	Post result = new Post(getModel(), uri, true);
+	result.setId(obj.getString(FIELD_ID));
+
+	if (obj.has(FIELD_FROM)) {
+	    result.setCreator(getUserAccount(obj.getJsonObject(FIELD_FROM)
+		    .getString(FIELD_ID)));
+	}
+
+	String content = "";
+	if (obj.has(FIELD_MESSAGE)) {
+	    content = obj.getString(FIELD_MESSAGE);
+	}
+
+	result.setContent(StringUtils.stripHTML(content));
+	result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
+
+	if (obj.has(FIELD_CREATED_TIME)) {
+	    Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+		    .getString(FIELD_CREATED_TIME));
+	    result.setCreated(DateUtils.formatISO8601(date));
+	}
+
+	if (parentPost.hasContainer()) {
+	    Container container = parentPost.getContainer();
+	    result.setContainer(container);
+	    container.addContainerof(result);
+	    SIOCUtils.updateLastItemDate(container, result);
+	}
+
+	if (null != parentPost) {
+	    result.setReplyof(parentPost);
+	    parentPost.setReply(result);
+	    SIOCUtils.updateLastReplyDate(parentPost, result);
+	}
+
+	return result;
     }
 
     /* package */FacebookClient getFacebookClient() {
@@ -423,7 +620,7 @@ public class FacebookConnector extends AbstractConnector {
 	    }
 
 	} catch (FacebookException e) {
-	    throw convertToConnectorException(e);
+	    throw mapToConnectorException(e);
 	} catch (Throwable t) {
 	    throw new ConnectorException("unknown error", t);
 	}
@@ -431,47 +628,7 @@ public class FacebookConnector extends AbstractConnector {
 	return false;
     }
 
-    private class PostIterator implements Iterator<Post> {
-	private final Iterator<List<JsonObject>> feed;
-	private final Container container;
-	private Iterator<JsonObject> page;
-
-	public PostIterator(final Iterator<List<JsonObject>> feed,
-		final Container container) {
-	    this.feed = feed;
-	    this.page = feed.next().iterator();
-	    this.container = container;
-	}
-
-	public boolean hasNext() {
-	    return null != feed && null != page
-		    && (feed.hasNext() || page.hasNext());
-	}
-
-	public Post next() {
-	    if (!hasNext())
-		throw new NoSuchElementException("nothing here");
-	    // page is empty, fetch next
-	    if (feed.hasNext() && !page.hasNext()) {
-		page = feed.next().iterator();
-	    }
-
-	    if (page.hasNext()) {
-		JsonObject next = page.next();
-		Post result = FacebookPostParser.parse(FacebookConnector.this,
-			next, container);
-		return result;
-	    }
-
-	    return null;
-	}
-
-	public void remove() {
-	    throw new UnsupportedOperationException("remove is not supported");
-	}
-    }
-
-    private ConnectorException convertToConnectorException(FacebookException e) {
+    private ConnectorException mapToConnectorException(FacebookException e) {
 	if (e instanceof FacebookOAuthException) {
 	    FacebookOAuthException fae = (FacebookOAuthException) e;
 

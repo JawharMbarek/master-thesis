@@ -281,10 +281,11 @@ public class MoodleConnector extends AbstractConnector {
     }
 
     public Iterator<Post> getPosts(Container container) {
-	Preconditions.checkArgument(hasPosts(container));
+	Preconditions.checkNotNull(container, "container can not be null");
+	Preconditions.checkArgument(hasPosts(container), "container "
+		+ container + " has no post on this site");
 
 	List<Post> result = new ArrayList<Post>();
-
 	ClosableIterator<Statement> stmtsIter = getModel().findStatements(
 		Variable.ANY, SIOC.has_container, container);
 
@@ -327,18 +328,23 @@ public class MoodleConnector extends AbstractConnector {
 	    }
 
 	    for (ForumPostRecord postRecord : posts) {
+		URI uri = RDF2GoUtils.createURI(getURL() + URI_POST_PATH
+			+ postRecord.getId());
 		Date created = createDate(postRecord.getCreated());
 
 		if (created.after(lastItemDate)) {
-		    URI uri = RDF2GoUtils.createURI(getURL() + URI_POST_PATH
-			    + postRecord.getId());
 
 		    if (!Post.hasInstance(getModel(), uri)) {
 			Post post = createPost(container, null, postRecord, uri);
 			result.add(post);
-			result.addAll(getComments(container, post, postRecord));
+
 		    }
 		}
+
+		if (Post.hasInstance(getModel(), uri)
+			&& null != postRecord.getChildren())
+		    result.addAll(pollNewReplies(
+			    Post.getInstance(getModel(), uri), postRecord));
 	    }
 	}
 
@@ -347,7 +353,7 @@ public class MoodleConnector extends AbstractConnector {
 	return result.iterator();
     }
 
-    private List<Post> getComments(Container container, Post parentPost,
+    private List<Post> pollNewReplies(Post parentPost,
 	    ForumPostRecord parentRecord) {
 	List<Post> result = new ArrayList<Post>();
 	Date lastReplyDate = new Date(0);
@@ -362,21 +368,24 @@ public class MoodleConnector extends AbstractConnector {
 	}
 
 	if (null != parentRecord.getChildren()) {
-	    for (ForumPostRecord commentRecord : parentRecord.getChildren()) {
-		Date created = createDate(commentRecord.getCreated());
+	    for (ForumPostRecord replyRecord : parentRecord.getChildren()) {
+		URI uri = RDF2GoUtils.createURI(getURL() + URI_POST_PATH
+			+ replyRecord.getId());
+		Date created = createDate(replyRecord.getCreated());
 
 		if (created.after(lastReplyDate)) {
-		    URI uri = RDF2GoUtils.createURI(getURL() + URI_POST_PATH
-			    + commentRecord.getId());
 
 		    if (!Post.hasInstance(getModel(), uri)) {
-			Post commentPost = createPost(container, parentPost,
-				commentRecord, uri);
-			result.add(commentPost);
-			result.addAll(getComments(container, commentPost,
-				commentRecord));
+			Post replyPost = createPost(parentPost.getContainer(),
+				parentPost, replyRecord, uri);
+			result.add(replyPost);
 		    }
 		}
+
+		if (Post.hasInstance(getModel(), uri)
+			&& null != replyRecord.getChildren())
+		    result.addAll(pollNewReplies(
+			    Post.getInstance(getModel(), uri), replyRecord));
 	    }
 	}
 

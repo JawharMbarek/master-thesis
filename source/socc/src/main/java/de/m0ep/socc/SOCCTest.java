@@ -23,8 +23,12 @@ import org.rdfs.sioc.SIOCThing;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 
+import de.m0ep.socc.connectors.AbstractConnectorConfig;
 import de.m0ep.socc.connectors.IConnector;
+import de.m0ep.socc.connectors.facebook.FacebookConnectorConfig;
+import de.m0ep.socc.connectors.facebook.FacebookConnectorFactory;
 import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorConfig;
+import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorFactory;
 import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
 import de.m0ep.socc.connectors.moodle.MoodleConnectorFactory;
 
@@ -33,6 +37,7 @@ public class SOCCTest {
     // private static Connector connector;
     private static final boolean WRITE_DUMP = true;
     private static final boolean WRITE_OUTPUT = true;
+    private static final int MAX_NEW_POSTS_ON_POLL = 30;
 
     /**
      * @param args
@@ -53,44 +58,47 @@ public class SOCCTest {
 	    } catch (IOException e) {
 		e.printStackTrace();
 	    }
-	    model.dump();
+	    // model.dump();
 	}
 
-	Map<String, Object> parameter = new HashMap<String, Object>();
-	// config.put(
-	// FacebookConnectorConfig.ACCESS_TOKEN,
-	// "AAACEdEose0cBAKtwLtIOX4cNO9wCaOkKndCmgERoWZBMievDgqsL9GGPKv2ZBa3Tjtj8l1ZB5j2qKZAePnmZBk29wMo0APEV2JB7Bjc80wtWGLGk960iu");
-	// config.put(FacebookConnectorConfig.CLIENT_ID, "218182098322396");
-	// config.put(FacebookConnectorConfig.CLIENT_SECRET,
-	// "7b80b9d7265c719e1d9efe112e4dbada");
-	parameter.put(MoodleConnectorConfig.URL,
+	Map<String, Object> fbParams = new HashMap<String, Object>();
+	fbParams.put(AbstractConnectorConfig.MAX_NEW_POSTS_ON_POLL,
+		MAX_NEW_POSTS_ON_POLL);
+	fbParams.put(
+		FacebookConnectorConfig.ACCESS_TOKEN,
+		"AAACEdEose0cBAOM7W9bMuGUOwD3u4yml1t8THNKEZBB20FwwmoWegdg6ew4CAdrIanZCdQCFSDCFltiL9oSZBEwl1F0ZBQXhjxFsZCCFThfNliA46vWNA");
+	fbParams.put(FacebookConnectorConfig.CLIENT_ID, "218182098322396");
+	fbParams.put(FacebookConnectorConfig.CLIENT_SECRET,
+		"7b80b9d7265c719e1d9efe112e4dbada");
+
+	Map<String, Object> mdlParams = new HashMap<String, Object>();
+	fbParams.put(AbstractConnectorConfig.MAX_NEW_POSTS_ON_POLL,
+		MAX_NEW_POSTS_ON_POLL);
+	mdlParams.put(MoodleConnectorConfig.URL,
 		"http://localhost/florian/moodle24/");
-	parameter.put(MoodleConnectorConfig.USERNAME, "admin");
-	parameter.put(MoodleConnectorConfig.PASSWORD, "admin");
-	//
-	// config.put(GooglePlusConnector.CONFIG_CLIENT_SECRETS_FILE,
-	// "client_secrets.json");
-	// config.put(GooglePlusConnector.CONFIG_USER_ID, "me");
-	parameter
-		.put(GooglePlusConnectorConfig.CLIENT_ID,
-			"733024832603-patciplam4cqq0dnv7a5qdhuq262n6ia.apps.googleusercontent.com");
-	parameter.put(GooglePlusConnectorConfig.CLIENT_SECRET,
+	mdlParams.put(MoodleConnectorConfig.USERNAME, "admin");
+	mdlParams.put(MoodleConnectorConfig.PASSWORD, "admin");
+
+	Map<String, Object> gpParams = new HashMap<String, Object>();
+	gpParams.put(AbstractConnectorConfig.MAX_NEW_POSTS_ON_POLL,
+		MAX_NEW_POSTS_ON_POLL);
+	gpParams.put(GooglePlusConnectorConfig.CLIENT_ID,
+		"733024832603-patciplam4cqq0dnv7a5qdhuq262n6ia.apps.googleusercontent.com");
+	gpParams.put(GooglePlusConnectorConfig.CLIENT_SECRET,
 		"LckucP4MA1jJsZQKjk9okhAu");
-	parameter.put(GooglePlusConnectorConfig.ACCESS_TOKEN,
+	gpParams.put(GooglePlusConnectorConfig.ACCESS_TOKEN,
 		"ya29.AHES6ZSCX94Qwhg7_Zzf3Nuyk2DTd76HBGxXB4OcG695Qcg");
-	parameter.put(GooglePlusConnectorConfig.REFRESH_TOKEN,
+	gpParams.put(GooglePlusConnectorConfig.REFRESH_TOKEN,
 		"1/9dxT-o_8JnA4gUxm1q0XwCgjA6oz4kcFfZxN1pyJCVc");
 
-	// FacebookConnectorFactory fbFactory = new FacebookConnectorFactory();
-	// GooglePlusConnectorFactory gpFactory = new
-	// GooglePlusConnectorFactory();
+	FacebookConnectorFactory fbFactory = new FacebookConnectorFactory();
+	GooglePlusConnectorFactory gpFactory = new GooglePlusConnectorFactory();
 	MoodleConnectorFactory mdlFactory = new MoodleConnectorFactory();
 
 	IConnector[] connectors = {
-	// new FacebookConnector("facebook", model,config),
-	mdlFactory.createConnector("Moodle", model, parameter)
-	// gpFactory.createConnector("google+", model, parameter)
-	};
+		fbFactory.createConnector("facebook", model, fbParams),
+		mdlFactory.createConnector("moodle", model, mdlParams),
+		gpFactory.createConnector("google+", model, gpParams) };
 
 	for (IConnector connector : connectors) {
 	    printConnector(connector);

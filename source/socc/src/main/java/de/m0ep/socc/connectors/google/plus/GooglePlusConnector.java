@@ -30,10 +30,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.QueryResultTable;
 import org.ontoware.rdf2go.model.QueryRow;
+import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.model.node.Variable;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.ontoware.rdf2go.util.SparqlUtil;
 import org.ontoware.rdf2go.vocabulary.RDF;
@@ -109,16 +112,6 @@ public class GooglePlusConnector extends AbstractConnector {
     private static final String SPARQL_ASK_IS_FORUM_OF_SITE = "ASK { %s "
 	    + RDF.type.toSPARQL() + " " + SIOC.Forum.toSPARQL() + " ; \n"
 	    + SIOC.has_host.toSPARQL() + " %s . }";
-    private static final String SPARQL_SELECT_POST_NO_COMMENTS = "SELECT ?post WHERE { ?post "
-	    + RDF.type.toSPARQL()
-	    + " "
-	    + SIOC.Post.toSPARQL()
-	    + " ; "
-	    + SIOC.has_container.toSPARQL()
-	    + " %s . OPTIONAL { ?y "
-	    + SIOC.reply_of.toSPARQL()
-	    + " ?z . FILTER (?post = ?y) . } "
-	    + " FILTER ( !BOUND(?y) ) }";
 
     /*
      * Member variables
@@ -130,8 +123,8 @@ public class GooglePlusConnector extends AbstractConnector {
     private String myId;
 
     @Override
-    public void initialize(String id, Model model,
-	    Map<String, Object> parameters) {
+    public void initialize(final String id, final Model model,
+	    final Map<String, Object> parameters) {
 	super.initialize(id, model, parameters);
 
 	this.gpConfig = ConfigUtils.fromMap(parameters,
@@ -165,9 +158,11 @@ public class GooglePlusConnector extends AbstractConnector {
 	    Person me = plus.people().get("me").setFields("id").execute();
 	    myId = me.getId();
 	} catch (GoogleJsonResponseException e) {
-	    handleGoogleError(e);
-	} catch (Exception e) {
-	    throw new ConnectorException("Unknown error", e);
+	    LOG.error(e.getLocalizedMessage(), e);
+	    throw mapToConnectorException(e);
+	} catch (Throwable t) {
+	    LOG.error(t.getLocalizedMessage(), t);
+	    throw new ConnectorException("Unknown error", t);
 	}
 
 	// set all static forums
@@ -210,7 +205,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	return ConfigUtils.toMap(gpConfig);
     }
 
-    public UserAccount getUserAccount(String id) {
+    public UserAccount getUserAccount(final String id) {
 	URI uri = RDF2GoUtils.createURI(getURL() + PATH_USER + id);
 
 	if (!UserAccount.hasInstance(getModel(), uri)) {
@@ -224,9 +219,11 @@ public class GooglePlusConnector extends AbstractConnector {
 					+ "nickname,url").execute();
 
 	    } catch (GoogleJsonResponseException e) {
-		handleGoogleError(e);
-	    } catch (Exception e) {
-		throw new ConnectorException("Unknown error", e);
+		LOG.error(e.getLocalizedMessage(), e);
+		throw mapToConnectorException(e);
+	    } catch (Throwable t) {
+		LOG.error(t.getLocalizedMessage(), t);
+		throw new ConnectorException("Unknown error", t);
 	    }
 
 	    UserAccount result = new UserAccount(getModel(), uri, true);
@@ -267,7 +264,7 @@ public class GooglePlusConnector extends AbstractConnector {
     }
 
     @Override
-    public Forum getForum(String id) throws ConnectorException {
+    public Forum getForum(final String id) throws ConnectorException {
 	// atm. only public circle is available
 	// TODO: later check for other circles
 
@@ -299,26 +296,29 @@ public class GooglePlusConnector extends AbstractConnector {
     }
 
     @Override
-    public Iterator<Post> getPosts(Container container) {
+    public Iterator<Post> getPosts(final Container container) {
 	Preconditions.checkNotNull(container, "container can not be null");
-	Preconditions.checkArgument(hasPosts(container),
-		"this container has no post on " + getSite().getName());
+	Preconditions.checkArgument(hasPosts(container), "container "
+		+ container + " has no post on this site");
 
 	List<Post> result = new ArrayList<Post>();
-	QueryResultTable table = getModel().sparqlSelect(
-		SparqlUtil.formatQuery(SPARQL_SELECT_POST_NO_COMMENTS,
-			container));
+	ClosableIterator<Statement> stmtsIter = getModel().findStatements(
+		Variable.ANY, SIOC.has_container, container);
 
-	for (QueryRow row : table) {
-	    result.add(Post.getInstance(getModel(), row.getValue("post")
-		    .asURI()));
+	while (stmtsIter.hasNext()) {
+	    Statement statement = (Statement) stmtsIter.next();
+
+	    if (Post.hasInstance(getModel(), statement.getSubject())) {
+		result.add(Post.getInstance(getModel(), statement.getSubject()));
+	    }
 	}
+	stmtsIter.close();
 
 	return result.iterator();
     }
 
     @Override
-    public Iterator<Post> pollNewPosts(Container container) {
+    public Iterator<Post> pollNewPosts(final Container container) {
 	Preconditions.checkNotNull(container, "container can not be null");
 	Preconditions.checkArgument(hasPosts(container),
 		"this container has no post on " + getSite().getName());
@@ -355,21 +355,21 @@ public class GooglePlusConnector extends AbstractConnector {
 
 		feed = activityListRequest.execute();
 	    } catch (GoogleJsonResponseException e) {
-		handleGoogleError(e);
-	    } catch (Exception e) {
-		throw new ConnectorException("Unknown error", e);
+		LOG.error(e.getLocalizedMessage(), e);
+		throw mapToConnectorException(e);
+	    } catch (Throwable t) {
+		LOG.error(t.getLocalizedMessage(), t);
+		throw new ConnectorException("Unknown error", t);
 	    }
 
 	    for (Activity activity : feed.getItems()) {
-		Date created = new Date(trimToSeconds(activity.getPublished()
-			.getValue()));
+		URI uri = RDF2GoUtils.createURI(getURL() + PATH_ACTIVITY
+			+ activity.getId());
+		Date created = new Date(activity.getPublished().getValue());
 		// TODO: check for updated posts!?
 
 		if (created.after(lastItemDate)) {
-		    URI uri = RDF2GoUtils.createURI(getURL() + PATH_ACTIVITY
-			    + activity.getId());
-
-		    if (Post.hasInstance(getModel(), uri)) {
+		    if (!Post.hasInstance(getModel(), uri)) {
 			Post post = new Post(getModel(), uri, true);
 			post.setId(activity.getId());
 
@@ -400,14 +400,6 @@ public class GooglePlusConnector extends AbstractConnector {
 			    }
 			}
 
-			if (0 < activity.getObject().getReplies()
-				.getTotalItems()) {
-			    List<Post> comments = updateComments(container,
-				    post, activity);
-
-			    result.addAll(comments);
-			}
-
 			// set sioc connections
 			post.setContainer(container);
 			container.setContainerof(post);
@@ -416,9 +408,15 @@ public class GooglePlusConnector extends AbstractConnector {
 			result.add(post);
 			LOG.debug("add new post " + post.toString());
 		    }
-		} else {
-		    // first old post -> return;
-		    return result.iterator();
+		}
+
+		Long numReplies = activity.getObject().getReplies()
+			.getTotalItems();
+		if (Post.hasInstance(getModel(), uri) && 0 < numReplies) {
+		    List<Post> comments = pollNewReplies(
+			    Post.getInstance(getModel(), uri), activity);
+
+		    result.addAll(comments);
 		}
 	    }
 	} while (null != pageToken);
@@ -426,15 +424,15 @@ public class GooglePlusConnector extends AbstractConnector {
 	return result.iterator();
     }
 
-    private List<Post> updateComments(Container container, Post parent,
-	    Activity activity) throws ConnectorException {
+    private List<Post> pollNewReplies(final Post parentPost,
+	    final Activity activity) throws ConnectorException {
 	List<Post> result = new ArrayList<Post>();
 	String pageToken = null;
 	Date lastReplyDate = new Date(0);
 
-	if (parent.hasLastreplydate()) {
+	if (parentPost.hasLastreplydate()) {
 	    try {
-		lastReplyDate = RDFTool.string2DateTime(parent
+		lastReplyDate = RDFTool.string2DateTime(parentPost
 			.getLastreplydate());
 	    } catch (ParseException e1) {
 		lastReplyDate = new Date(0);
@@ -458,9 +456,11 @@ public class GooglePlusConnector extends AbstractConnector {
 
 		feed = commentListRequest.execute();
 	    } catch (GoogleJsonResponseException e) {
-		handleGoogleError(e);
-	    } catch (Exception e) {
-		throw new ConnectorException("Unknown error", e);
+		LOG.error(e.getLocalizedMessage(), e);
+		throw mapToConnectorException(e);
+	    } catch (Throwable t) {
+		LOG.error(t.getLocalizedMessage(), t);
+		throw new ConnectorException("Unknown error", t);
 	    }
 
 	    if (feed != null) {
@@ -468,8 +468,7 @@ public class GooglePlusConnector extends AbstractConnector {
 			.getNextPageToken() : null;
 
 		for (Comment comment : feed.getItems()) {
-		    Date created = new Date(trimToSeconds(comment
-			    .getPublished().getValue()));
+		    Date created = new Date(comment.getPublished().getValue());
 
 		    if (created.after(lastReplyDate)) {
 			URI uri = RDF2GoUtils.createURI(getURL() + PATH_COMMENT
@@ -502,16 +501,17 @@ public class GooglePlusConnector extends AbstractConnector {
 			    }
 
 			    // set sioc connections
-			    reply.setReplyof(parent);
-			    parent.setReply(reply);
-			    SIOCUtils.updateLastReplyDate(parent, reply);
+			    reply.setReplyof(parentPost);
+			    parentPost.setReply(reply);
+			    SIOCUtils.updateLastReplyDate(parentPost, reply);
 
+			    Container container = parentPost.getContainer();
 			    reply.setContainer(container);
 			    container.setContainerof(reply);
 			    SIOCUtils.updateLastItemDate(container, reply);
 
 			    result.add(reply);
-			    LOG.debug("add comment " + comment.toString());
+			    LOG.debug("add comment " + reply.toString());
 			}
 		    }
 		}
@@ -522,28 +522,23 @@ public class GooglePlusConnector extends AbstractConnector {
     }
 
     @Override
-    public boolean hasPosts(Container container) {
+    public boolean hasPosts(final Container container) {
 	return getModel().sparqlAsk(
 		SparqlUtil.formatQuery(SPARQL_ASK_IS_FORUM_OF_SITE, container,
 			getSite()));
     }
 
-    /* package */void handleGoogleError(GoogleJsonResponseException e)
-	    throws ConnectorException {
+    /* package */ConnectorException mapToConnectorException(
+	    GoogleJsonResponseException e) {
 	GoogleJsonError error = e.getDetails();
-	LOG.error(error.getMessage(), e);
 
 	switch (error.getCode()) {
 	case 404:
-	    throw new NotFoundException(error.getMessage());
+	    return new NotFoundException(error.getMessage());
 	case 401:
-	    throw new AuthenticationException(error.getMessage());
+	    return new AuthenticationException(error.getMessage());
 	default:
-	    throw new ConnectorException(error.getMessage());
+	    return new ConnectorException(error.getMessage());
 	}
-    }
-
-    private Long trimToSeconds(Long millis) {
-	return (millis / 1000L) * 1000L;
     }
 }

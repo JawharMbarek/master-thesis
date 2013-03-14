@@ -179,6 +179,11 @@ public class MoodleConnector extends AbstractConnector {
     }
 
     @Override
+    public Map<String, Object> getConfiguration() {
+	return ConfigUtils.toMap(mdlConfig);
+    }
+
+    @Override
     public Site getSite() {
 	URI uri = RDF2GoUtils.createURI(getURL());
 

@@ -23,14 +23,19 @@
 package de.m0ep.socc.connectors;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.QueryResultTable;
+import org.ontoware.rdf2go.model.QueryRow;
+import org.ontoware.rdf2go.util.SparqlUtil;
+import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
+import org.rdfs.sioc.SIOC;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
@@ -48,16 +53,23 @@ import de.m0ep.socc.connectors.exceptions.ConnectorException;
  * 
  */
 public abstract class AbstractConnector implements IConnector {
+    private static final String SPARQL_SELECT_FORUMS_OF_SITE = "SELECT ?forum WHERE { ?forum "
+	    + RDF.type.toSPARQL()
+	    + " "
+	    + SIOC.Forum.toSPARQL()
+	    + " ; \n"
+	    + SIOC.has_host.toSPARQL() + " %s . }";
+
     private String id;
     private Model model;
-    private Map<String, Object> parameter;
+
 
     @Override
     public void initialize(String id, Model model,
 	    Map<String, Object> parameters) {
 	this.id = Preconditions.checkNotNull(id, "id can't be null");
 	this.model = Preconditions.checkNotNull(model, "model can't be null");
-	this.parameter = Preconditions.checkNotNull(parameters,
+	Preconditions.checkNotNull(parameters,
 		"parameters can't be null");
 	Preconditions.checkArgument(!id.isEmpty(), "id can't be empty");
 	Preconditions.checkArgument(model.isOpen(), "model is not open");
@@ -94,15 +106,6 @@ public abstract class AbstractConnector implements IConnector {
      */
     public Model getModel() {
 	return model;
-    }
-
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.connectors.IConnector#getConfiguration()
-     */
-    public Map<String, Object> getConfiguration() {
-	return Collections.unmodifiableMap(parameter);
     }
 
     /**
@@ -152,7 +155,19 @@ public abstract class AbstractConnector implements IConnector {
      * @see de.m0ep.socc.connectors.IConnector#getForums()
      */
     public Iterator<Forum> getForums() {
-	return new ArrayList<Forum>().iterator();
+	List<Forum> result = new ArrayList<Forum>();
+
+	QueryResultTable table = getModel()
+		.sparqlSelect(
+			SparqlUtil.formatQuery(SPARQL_SELECT_FORUMS_OF_SITE,
+				getSite()));
+
+	for (QueryRow row : table) {
+	    result.add(Forum.getInstance(getModel(), row.getValue("forum")
+		    .asURI()));
+	}
+
+	return result.iterator();
     }
 
     /**

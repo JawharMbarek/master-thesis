@@ -30,7 +30,7 @@ import de.m0ep.socc.connectors.IConnector;
 import de.m0ep.socc.connectors.IConnectorFactory;
 import de.m0ep.socc.utils.ConfigUtils;
 
-public class YoutubeConnectorFactory implements IConnectorFactory {
+public class YoutubeConnectorV2Factory implements IConnectorFactory {
 
     public String getConnectorName() {
 	return "Youtube";
@@ -41,12 +41,12 @@ public class YoutubeConnectorFactory implements IConnectorFactory {
     }
 
     public String[] getConfigKeys() {
-	return ConfigUtils.getPropertyNames(YoutubeConnectorConfig.class);
+	return ConfigUtils.getPropertyNames(YoutubeConnectorV2Config.class);
     }
 
     public IConnector createConnector(String id, Model model,
 	    Map<String, Object> parameters) {
-	IConnector connector = new YoutubeConnector();
+	IConnector connector = new YoutubeConnectorV2();
 	connector.initialize(id, model, parameters);
 	return connector;
     }

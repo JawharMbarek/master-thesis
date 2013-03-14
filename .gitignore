@@ -22,3 +22,4 @@ target/
 # Privates
 client_secrets.json
 local.properties
+user.properties

@@ -140,6 +140,11 @@ public class FacebookConnector extends AbstractConnector {
 	return "http://www.facebook.com/";
     }
 
+    @Override
+    public Map<String, Object> getConfiguration() {
+	return ConfigUtils.toMap(fbConfig);
+    }
+
     public Site getSite() {
 	URI uri = RDF2GoUtils.createURI(getURL());
 

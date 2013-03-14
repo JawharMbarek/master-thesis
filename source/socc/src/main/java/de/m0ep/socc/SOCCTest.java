@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.RDF2Go;
@@ -29,6 +30,8 @@ import de.m0ep.socc.connectors.facebook.FacebookConnectorConfig;
 import de.m0ep.socc.connectors.facebook.FacebookConnectorFactory;
 import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorConfig;
 import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorFactory;
+import de.m0ep.socc.connectors.google.youtube.YoutubeConnectorV2Config;
+import de.m0ep.socc.connectors.google.youtube.YoutubeConnectorV2Factory;
 import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
 import de.m0ep.socc.connectors.moodle.MoodleConnectorFactory;
 
@@ -61,44 +64,69 @@ public class SOCCTest {
 	    // model.dump();
 	}
 
+	Properties config = new Properties();
+	try {
+	    config.load(SOCCTest.class.getResourceAsStream("/user.properties"));
+	} catch (IOException e1) {
+	    e1.printStackTrace();
+	    System.exit(-1);
+	}
+
+	int maxPostPerPoll = Integer.parseInt(config.get("global.postPerPoll")
+		.toString());
+
 	Map<String, Object> fbParams = new HashMap<String, Object>();
 	fbParams.put(AbstractConnectorConfig.MAX_NEW_POSTS_ON_POLL,
-		MAX_NEW_POSTS_ON_POLL);
-	fbParams.put(
-		FacebookConnectorConfig.ACCESS_TOKEN,
-		"AAACEdEose0cBAOM7W9bMuGUOwD3u4yml1t8THNKEZBB20FwwmoWegdg6ew4CAdrIanZCdQCFSDCFltiL9oSZBEwl1F0ZBQXhjxFsZCCFThfNliA46vWNA");
-	fbParams.put(FacebookConnectorConfig.CLIENT_ID, "218182098322396");
+		maxPostPerPoll);
+	fbParams.put(FacebookConnectorConfig.ACCESS_TOKEN,
+		config.get("fb.accessToken"));
+	fbParams.put(FacebookConnectorConfig.CLIENT_ID,
+		config.get("fb.clientID"));
 	fbParams.put(FacebookConnectorConfig.CLIENT_SECRET,
-		"7b80b9d7265c719e1d9efe112e4dbada");
+		config.get("fb.clientSecret"));
 
 	Map<String, Object> mdlParams = new HashMap<String, Object>();
 	fbParams.put(AbstractConnectorConfig.MAX_NEW_POSTS_ON_POLL,
-		MAX_NEW_POSTS_ON_POLL);
-	mdlParams.put(MoodleConnectorConfig.URL,
-		"http://localhost/florian/moodle24/");
-	mdlParams.put(MoodleConnectorConfig.USERNAME, "admin");
-	mdlParams.put(MoodleConnectorConfig.PASSWORD, "admin");
+		maxPostPerPoll);
+	mdlParams.put(MoodleConnectorConfig.URL, config.get("mdl.url"));
+	mdlParams.put(MoodleConnectorConfig.USERNAME,
+		config.get("mdl.username"));
+	mdlParams.put(MoodleConnectorConfig.PASSWORD,
+		config.get("mdl.password"));
 
 	Map<String, Object> gpParams = new HashMap<String, Object>();
 	gpParams.put(AbstractConnectorConfig.MAX_NEW_POSTS_ON_POLL,
-		MAX_NEW_POSTS_ON_POLL);
+		maxPostPerPoll);
 	gpParams.put(GooglePlusConnectorConfig.CLIENT_ID,
-		"733024832603-patciplam4cqq0dnv7a5qdhuq262n6ia.apps.googleusercontent.com");
+		config.get("gp.clientId"));
 	gpParams.put(GooglePlusConnectorConfig.CLIENT_SECRET,
-		"LckucP4MA1jJsZQKjk9okhAu");
+		config.get("gp.clientSecret"));
 	gpParams.put(GooglePlusConnectorConfig.ACCESS_TOKEN,
-		"ya29.AHES6ZSCX94Qwhg7_Zzf3Nuyk2DTd76HBGxXB4OcG695Qcg");
+		config.get("gp.accessToken"));
 	gpParams.put(GooglePlusConnectorConfig.REFRESH_TOKEN,
-		"1/9dxT-o_8JnA4gUxm1q0XwCgjA6oz4kcFfZxN1pyJCVc");
+		config.get("gp.refreshToken"));
+
+	Map<String, Object> ytParams = new HashMap<String, Object>();
+	ytParams.put(AbstractConnectorConfig.MAX_NEW_POSTS_ON_POLL,
+		maxPostPerPoll);
+	ytParams.put(YoutubeConnectorV2Config.EMAIL, config.get("yt.email"));
+	ytParams.put(YoutubeConnectorV2Config.PASSWORD,
+		config.get("yt.password"));
+	ytParams.put(YoutubeConnectorV2Config.USERNAME,
+		config.get("yt.username"));
+	ytParams.put(YoutubeConnectorV2Config.DEVELOPER_KEY,
+		config.get("yt.developerKey"));
 
 	FacebookConnectorFactory fbFactory = new FacebookConnectorFactory();
 	GooglePlusConnectorFactory gpFactory = new GooglePlusConnectorFactory();
 	MoodleConnectorFactory mdlFactory = new MoodleConnectorFactory();
+	YoutubeConnectorV2Factory ytFactory = new YoutubeConnectorV2Factory();
 
 	IConnector[] connectors = {
-		fbFactory.createConnector("facebook", model, fbParams),
-		mdlFactory.createConnector("moodle", model, mdlParams),
-		gpFactory.createConnector("google+", model, gpParams) };
+	// fbFactory.createConnector("facebook", model, fbParams),
+	// mdlFactory.createConnector("moodle", model, mdlParams),
+	// gpFactory.createConnector("google+", model, gpParams),
+		ytFactory.createConnector("youtube", model, ytParams) };
 
 	for (IConnector connector : connectors) {
 	    printConnector(connector);
@@ -139,8 +167,8 @@ public class SOCCTest {
 		    "name:       " + forum.getAllName_as().firstValue(), 0);
 	    printWithIndent("desc:       "
 		    + forum.getAllDescription_as().firstValue(), 0);
-	    printWithIndent("mod:        "
-		    + forum.getAllModified_as().firstValue(), 0);
+	    printWithIndent("created:    " + forum.getCreated(), 0);
+	    printWithIndent("modified:   " + forum.getModified(), 0);
 	    printWithIndent(
 		    "host:       " + forum.getAllHost_as().firstValue(), 0);
 	    printWithIndent("canPublishOn: " + connector.canPublishOn(forum), 0);
@@ -162,7 +190,8 @@ public class SOCCTest {
 			+ thread.getAllId_as().firstValue(), 1);
 		printWithIndent("name:       "
 			+ thread.getAllName_as().firstValue(), 1);
-		printWithIndent("mod:        "
+		printWithIndent("created:    " + thread.getCreated(), 1);
+		printWithIndent("modified:   "
 			+ thread.getAllModified_as().firstValue(), 1);
 		printWithIndent("parent:     "
 			+ thread.getAllParent_as().firstValue(), 1);

@@ -72,8 +72,8 @@ public class SOCCTest {
 	    System.exit(-1);
 	}
 
-	int maxPostPerPoll = Integer.parseInt(config.get("global.postPerPoll")
-		.toString());
+	int maxPostPerPoll = Integer.parseInt(config.getProperty(
+		"global.postPerPoll", "30"));
 
 	Map<String, Object> fbParams = new HashMap<String, Object>();
 	fbParams.put(AbstractConnectorConfig.MAX_NEW_POSTS_ON_POLL,
@@ -126,7 +126,7 @@ public class SOCCTest {
 	// fbFactory.createConnector("facebook", model, fbParams),
 	// mdlFactory.createConnector("moodle", model, mdlParams),
 	// gpFactory.createConnector("google+", model, gpParams),
-		ytFactory.createConnector("youtube", model, ytParams) };
+	ytFactory.createConnector("youtube", model, ytParams) };
 
 	for (IConnector connector : connectors) {
 	    printConnector(connector);

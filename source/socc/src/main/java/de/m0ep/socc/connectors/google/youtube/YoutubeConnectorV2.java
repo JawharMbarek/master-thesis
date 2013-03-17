@@ -25,13 +25,16 @@ package de.m0ep.socc.connectors.google.youtube;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.util.RDFTool;
 import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
@@ -49,6 +52,8 @@ import com.google.gdata.data.Person;
 import com.google.gdata.data.youtube.PlaylistLinkEntry;
 import com.google.gdata.data.youtube.PlaylistLinkFeed;
 import com.google.gdata.data.youtube.UserProfileEntry;
+import com.google.gdata.data.youtube.VideoEntry;
+import com.google.gdata.data.youtube.VideoFeed;
 import com.google.gdata.util.ResourceNotFoundException;
 import com.google.gdata.util.ServiceException;
 import com.google.gdata.util.ServiceForbiddenException;
@@ -68,12 +73,10 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 	    .getLogger(YoutubeConnectorV2.class);
 
     protected static final String FEED_UPLOADS = "http://gdata.youtube.com/feeds/api/users/%s/uploads";
-    protected static final String ENTRY_USER = "http://gdata.youtube.com/feeds/api/users/%s";
     protected static final String FEED_PLAYLISTS = "http://gdata.youtube.com/feeds/api/users/%s/playlists";
     protected static final String FEED_PLAYLIST = "http://gdata.youtube.com/feeds/api/playlists/%s";
-
-    private static final String PATH_USER = "users/";
-    private static final String PATH_FORUM = "forums/";
+    protected static final String ENTRY_USER = "http://gdata.youtube.com/feeds/api/users/%s";
+    protected static final String ENTRY_VIDEO = "http://gdata.youtube.com/feeds/api/videos/%s";
 
     private static final String ID_FOURM_UPLOADS = "uploads";
     private static final String ID_FORUM_PLAYLISTS = "playlists";
@@ -248,7 +251,7 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 
 	    try {
 		linkFeed = service.getFeed(new URL(feedURL),
-		    PlaylistLinkFeed.class);
+			PlaylistLinkFeed.class);
 		feedURL = null;
 	    } catch (MalformedURLException e) {
 		LOG.error("Malformed URL", e);
@@ -287,8 +290,8 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 			}
 			if (null != linkEntry.getUpdated()) {
 			    thread.setModified(DateUtils
-				    .formatISO8601(linkEntry
-				    .getUpdated().getValue()));
+				    .formatISO8601(linkEntry.getUpdated()
+					    .getValue()));
 			}
 
 			for (Person person : linkEntry.getAuthors()) {
@@ -335,22 +338,108 @@ public class YoutubeConnectorV2 extends AbstractConnector {
     }
 
     @Override
-    public boolean hasPosts(Container container) {
-	// Is it a forum?
-	if (getModel().contains(container, RDF.type, SIOC.Forum)) {
-	    if (ID_FOURM_UPLOADS.equalsIgnoreCase(container.getId())) {
-		Forum forum = Forum.getInstance(container.getModel(),
-			container.getResource());
+    public Iterator<Post> pollNewPosts(Container container) {
+	Preconditions.checkArgument(hasPosts(container),
+		"Container has no post in this connector");
+	List<Post> result = new ArrayList<Post>();
+	String nextFeedUrl = null;
 
-		return forum.hasHost(getSite());
-	    }
-	    // Is it a thread?
-	} else if (getModel().contains(container, RDF.type, SIOC.Thread)) {
-	    // Is it a thread of 'playlists' forum?
-	    return container.hasParent(playlists);
+	if (isUploadsForum(container)) {
+	    nextFeedUrl = String.format(FEED_UPLOADS, myId);
+	} else if (isPlaylistThread(container)) {
+	    nextFeedUrl = String.format(FEED_PLAYLIST, container.getId());
+	} else {
+	    // Programm shouldn't reach this code
+	    throw new ConnectorException("Container " + container
+		    + " has no post in this connector");
 	}
 
-	return false;
+	do {
+
+	    VideoFeed videoFeed = null;
+	    try {
+		videoFeed = service.getFeed(new URL(nextFeedUrl),
+			VideoFeed.class);
+		nextFeedUrl = null;
+	    } catch (MalformedURLException e) {
+		LOG.error("Malformed URL", e);
+		throw new ConnectorException("Malformed URL", e);
+	    } catch (IOException e) {
+		LOG.error("Network error", e);
+		throw new NetworkException(e.getLocalizedMessage(), e);
+	    } catch (ServiceException e) {
+		LOG.error("Service error", e);
+		throw mapToConenctorException(e);
+	    } catch (Throwable t) {
+		LOG.error("unknown error", t);
+		throw new ConnectorException("Unknown error", t);
+	    }
+
+	    if (null != videoFeed) {
+		Date lastItemDate = new Date(0);
+		if (container.hasLastitemdate()) {
+		    try {
+			lastItemDate = RDFTool.string2DateTime(container
+				.getLastitemdate());
+		    } catch (ParseException e1) {
+			lastItemDate = new Date(0);
+		    }
+		}
+
+		System.out.println(videoFeed.getSelfLink().getHref());
+		System.out
+			.println("=============================================");
+		for (VideoEntry videoEntry : videoFeed.getEntries()) {
+		    URI uri = RDF2GoUtils.createURI(String.format(ENTRY_VIDEO,
+			    getYoutubeID(videoEntry.getId())));
+		    Date created = new Date(videoEntry.getPublished()
+			    .getValue());
+
+		    if (created.after(lastItemDate)) {
+			if (!Post.hasInstance(getModel(), uri)) {
+			    Post post = createPost(container, videoEntry, uri);
+			    result.add(post);
+			}
+		    }
+
+		    System.out.println(videoEntry.getId());
+		    System.out.println(videoEntry.getSelfLink().getHref());
+		    System.out.println(videoEntry.getTitle().getPlainText());
+		    // System.out.println(videoEntry.getSummary().getPlainText());
+		    System.out.println(videoEntry.getPublished()
+			    .toStringRfc822());
+		    System.out
+			    .println(videoEntry.getUpdated().toStringRfc822());
+		    System.out
+			    .println("---------------------------------------------");
+		}
+
+		System.out
+			.println("=============================================");
+		System.out
+			.println("=============================================");
+	    }
+
+	    if (null != videoFeed.getNextLink()) {
+		nextFeedUrl = videoFeed.getNextLink().getHref();
+	    }
+	} while (null != nextFeedUrl);
+
+	return result.iterator();
+    }
+
+    private Post createPost(final Container container,
+	    final VideoEntry videoEntry, final URI uri) {
+	Post result = new Post(getModel(), uri, true);
+
+	// TODO: fill post data
+
+	return result;
+    }
+
+    @Override
+    public boolean hasPosts(Container container) {
+	return isUploadsForum(container) || isPlaylistThread(container);
     }
 
     @Override
@@ -390,5 +479,27 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 
     private String getYoutubeID(String id) {
 	return id.substring(id.lastIndexOf(':') + 1);
+    }
+
+    private boolean isUploadsForum(Container container) {
+	if (getModel().contains(container, RDF.type, SIOC.Forum)) {
+	    Forum forum = Forum
+		    .getInstance(getModel(), container.getResource());
+
+	    return ID_FOURM_UPLOADS.equalsIgnoreCase(forum.getId())
+		    && forum.hasHost(getSite());
+	}
+
+	return false;
+    }
+
+    private boolean isPlaylistThread(Container container) {
+	if (getModel().contains(container, RDF.type, SIOC.Thread)) {
+	    Thread thread = Thread.getInstance(getModel(),
+		    container.getResource());
+	    return thread.hasParent(playlists);
+	}
+
+	return false;
     }
 }

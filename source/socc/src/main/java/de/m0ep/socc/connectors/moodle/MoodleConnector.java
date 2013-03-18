@@ -424,7 +424,7 @@ public class MoodleConnector extends AbstractConnector {
 
 	if (null != parentPost) {
 	    post.setReplyof(parentPost);
-	    parentPost.setReply(post);
+	    parentPost.addReply(post);
 	    SIOCUtils.updateLastReplyDate(parentPost, post);
 	}
 

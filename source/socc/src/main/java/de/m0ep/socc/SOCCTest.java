@@ -5,8 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -14,6 +18,7 @@ import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.exception.ModelRuntimeException;
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.Node;
 import org.rdfs.sioc.Container;
@@ -23,6 +28,8 @@ import org.rdfs.sioc.Post;
 import org.rdfs.sioc.SIOCThing;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
+
+import com.google.common.collect.Lists;
 
 import de.m0ep.socc.connectors.AbstractConnectorConfig;
 import de.m0ep.socc.connectors.IConnector;
@@ -133,8 +140,21 @@ public class SOCCTest {
 	}
 
 	if (WRITE_DUMP) {
+
+	    List<Statement> statements = Lists.newArrayList(model.iterator());
+
+	    Collections.sort(statements, new Comparator<Statement>() {
+		public int compare(Statement o1, Statement o2) {
+		    return o1.compareTo(o2);
+		};
+	    });
+
+	    Model writeModel = RDF2Go.getModelFactory().createModel();
+	    writeModel.open();
+	    writeModel.addAll(statements.iterator());
+
 	    try {
-		model.writeTo(new FileOutputStream(dump), Syntax.RdfXml);
+		writeModel.writeTo(new FileOutputStream(dump), Syntax.RdfXml);
 	    } catch (ModelRuntimeException e) {
 		e.printStackTrace();
 	    } catch (FileNotFoundException e) {
@@ -142,7 +162,11 @@ public class SOCCTest {
 	    } catch (IOException e) {
 		e.printStackTrace();
 	    }
+	    writeModel.close();
+
 	}
+
+	model.close();
     }
 
     private static void printConnector(IConnector connector) {
@@ -221,7 +245,7 @@ public class SOCCTest {
 	int ctr = 0;
 	while (posts.hasNext()) {
 	    Post post = (Post) posts.next();
-	    if (!post.hasReply()) // print only top posts, replies are printed
+	    if (!post.hasReplyof()) // print only top posts, replies are printed
 				  // later
 		printPost(connector, post, indent);
 
@@ -303,14 +327,23 @@ public class SOCCTest {
 	    }
 	    replies.close();
 	}
+
+	Post reply = new Post(post.getModel(), true);
+	reply.setContent("test post " + new Date());
+	reply.setTitle("Test post");
+	connector.replyPost(reply,
+		Post.getInstance(post.getModel(), post.getResource()));
+
+	Post.deleteAllProperties(post.getModel(), reply);
     }
 
     static void printWithIndent(String text, int val) {
 	String indent = "";
 	while (0 < val) {
-	    indent += "  ";
+	    indent += "    ";
 	    val--;
 	}
+	indent += "|";
 
 	if (WRITE_OUTPUT)
 	    System.out.println(indent + text);

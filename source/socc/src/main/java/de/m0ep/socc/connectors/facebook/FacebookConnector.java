@@ -595,7 +595,7 @@ public class FacebookConnector extends AbstractConnector {
 
 	if (null != parentPost) {
 	    result.setReplyof(parentPost);
-	    parentPost.setReply(result);
+	    parentPost.addReply(result);
 	    SIOCUtils.updateLastReplyDate(parentPost, result);
 	}
 

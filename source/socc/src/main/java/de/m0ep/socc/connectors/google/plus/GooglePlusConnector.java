@@ -173,7 +173,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	    pub.setId(CIRCLE_PUBLIC);
 	    pub.setName(CIRCLE_PUBLIC);
 	    pub.setHost(getSite());
-	    getSite().setHostof(pub);
+	    getSite().addHostof(pub);
 	}
     }
 
@@ -402,7 +402,7 @@ public class GooglePlusConnector extends AbstractConnector {
 
 			// set sioc connections
 			post.setContainer(container);
-			container.setContainerof(post);
+			container.addContainerof(post);
 			SIOCUtils.updateLastItemDate(container, post);
 
 			result.add(post);
@@ -502,12 +502,12 @@ public class GooglePlusConnector extends AbstractConnector {
 
 			    // set sioc connections
 			    reply.setReplyof(parentPost);
-			    parentPost.setReply(reply);
+			    parentPost.addReply(reply);
 			    SIOCUtils.updateLastReplyDate(parentPost, reply);
 
 			    Container container = parentPost.getContainer();
 			    reply.setContainer(container);
-			    container.setContainerof(reply);
+			    container.addContainerof(reply);
 			    SIOCUtils.updateLastItemDate(container, reply);
 
 			    result.add(reply);

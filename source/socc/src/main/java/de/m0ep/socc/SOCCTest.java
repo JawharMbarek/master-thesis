@@ -49,7 +49,7 @@ public class SOCCTest {
 	Model model = RDF2Go.getModelFactory().createModel();
 	model.open();
 
-	File dump = new File("dump.rdf");
+	File dump = new File("dump.xml");
 
 	if (dump.exists()) {
 	    try {
@@ -248,6 +248,17 @@ public class SOCCTest {
 	printWithIndent("Post-----------------", indent);
 	printWithIndent("uri:       " + post, indent);
 	printWithIndent("id:        " + post.getAllId_as().firstValue(), indent);
+	if (post.hasTitle()) {
+	    printWithIndent("Title:     " + post.getTitle(), indent);
+	}
+
+	if (post.hasName()) {
+	    printWithIndent("Name:      " + post.getName(), indent);
+	}
+
+	if (post.hasSubject()) {
+	    printWithIndent("Subject:   " + post.getSubject(), indent);
+	}
 	printWithIndent("content:   " + post.getAllContent_as().firstValue(),
 		indent);
 	printWithIndent("created:   " + post.getAllCreated_as().firstValue(),

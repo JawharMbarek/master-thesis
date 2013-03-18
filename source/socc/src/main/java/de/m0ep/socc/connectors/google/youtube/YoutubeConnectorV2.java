@@ -32,8 +32,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.model.node.Variable;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
@@ -48,12 +51,18 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.gdata.client.youtube.YouTubeService;
+import com.google.gdata.data.Link;
 import com.google.gdata.data.Person;
+import com.google.gdata.data.TextContent;
+import com.google.gdata.data.extensions.Comments;
+import com.google.gdata.data.youtube.CommentEntry;
+import com.google.gdata.data.youtube.CommentFeed;
 import com.google.gdata.data.youtube.PlaylistLinkEntry;
 import com.google.gdata.data.youtube.PlaylistLinkFeed;
 import com.google.gdata.data.youtube.UserProfileEntry;
 import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.VideoFeed;
+import com.google.gdata.data.youtube.YouTubeMediaGroup;
 import com.google.gdata.util.ResourceNotFoundException;
 import com.google.gdata.util.ServiceException;
 import com.google.gdata.util.ServiceForbiddenException;
@@ -66,9 +75,14 @@ import de.m0ep.socc.connectors.exceptions.NotFoundException;
 import de.m0ep.socc.utils.ConfigUtils;
 import de.m0ep.socc.utils.DateUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
+import de.m0ep.socc.utils.SIOCUtils;
 import de.m0ep.socc.utils.StringUtils;
 
 public class YoutubeConnectorV2 extends AbstractConnector {
+    private static final String SCHEMA_KIND = "http://schemas.google.com/g/2005#kind";
+
+    private static final String TERM_COMMENT = "http://gdata.youtube.com/schemas/2007#comment";
+
     private static final Logger LOG = LoggerFactory
 	    .getLogger(YoutubeConnectorV2.class);
 
@@ -77,6 +91,7 @@ public class YoutubeConnectorV2 extends AbstractConnector {
     protected static final String FEED_PLAYLIST = "http://gdata.youtube.com/feeds/api/playlists/%s";
     protected static final String ENTRY_USER = "http://gdata.youtube.com/feeds/api/users/%s";
     protected static final String ENTRY_VIDEO = "http://gdata.youtube.com/feeds/api/videos/%s";
+    protected static final String ENTRY_COMMENT = "http://gdata.youtube.com/feeds/api/videos/%s/comments/%s";
 
     private static final String ID_FOURM_UPLOADS = "uploads";
     private static final String ID_FORUM_PLAYLISTS = "playlists";
@@ -333,8 +348,24 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 
     @Override
     public Iterator<Post> getPosts(Container container) {
-	Preconditions.checkArgument(hasPosts(container));
-	return super.getPosts(container);
+	Preconditions.checkNotNull(container, "container can not be null");
+	Preconditions.checkArgument(hasPosts(container), "container "
+		+ container + " has no post on this site");
+
+	List<Post> result = new ArrayList<Post>();
+	ClosableIterator<Statement> stmtsIter = getModel().findStatements(
+		Variable.ANY, SIOC.has_container, container);
+
+	while (stmtsIter.hasNext()) {
+	    Statement statement = (Statement) stmtsIter.next();
+
+	    if (Post.hasInstance(getModel(), statement.getSubject())) {
+		result.add(Post.getInstance(getModel(), statement.getSubject()));
+	    }
+	}
+	stmtsIter.close();
+
+	return result.iterator();
     }
 
     @Override
@@ -386,9 +417,6 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 		    }
 		}
 
-		System.out.println(videoFeed.getSelfLink().getHref());
-		System.out
-			.println("=============================================");
 		for (VideoEntry videoEntry : videoFeed.getEntries()) {
 		    URI uri = RDF2GoUtils.createURI(String.format(ENTRY_VIDEO,
 			    getYoutubeID(videoEntry.getId())));
@@ -402,22 +430,13 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 			}
 		    }
 
-		    System.out.println(videoEntry.getId());
-		    System.out.println(videoEntry.getSelfLink().getHref());
-		    System.out.println(videoEntry.getTitle().getPlainText());
-		    // System.out.println(videoEntry.getSummary().getPlainText());
-		    System.out.println(videoEntry.getPublished()
-			    .toStringRfc822());
-		    System.out
-			    .println(videoEntry.getUpdated().toStringRfc822());
-		    System.out
-			    .println("---------------------------------------------");
+		    if (Post.hasInstance(getModel(), uri)
+			    && null != videoEntry.getComments()) {
+			List<Post> comments = pollNewReplies(
+				Post.getInstance(getModel(), uri), videoEntry);
+			result.addAll(comments);
+		    }
 		}
-
-		System.out
-			.println("=============================================");
-		System.out
-			.println("=============================================");
 	    }
 
 	    if (null != videoFeed.getNextLink()) {
@@ -428,11 +447,170 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 	return result.iterator();
     }
 
+    private List<Post> pollNewReplies(final Post parentPost,
+	    final VideoEntry videoEntry) throws ConnectorException {
+	Comments comments = videoEntry.getComments();
+	String nextCommentFeedUrl = comments.getFeedLink().getHref();
+	List<Post> result = new ArrayList<Post>();
+	CommentFeed commentFeed = null;
+
+	// TODO: turn it on later
+	// do {
+	// try {
+	// commentFeed = service.getFeed(new URL(nextCommentFeedUrl),
+	// CommentFeed.class);
+	// nextCommentFeedUrl = null;
+	// } catch (MalformedURLException e) {
+	// LOG.error("Malformed URL", e);
+	// throw new ConnectorException("Malformed URL", e);
+	// } catch (IOException e) {
+	// LOG.error("Network error", e);
+	// throw new NetworkException(e.getLocalizedMessage(), e);
+	// } catch (ServiceException e) {
+	// LOG.error("Service error", e);
+	// throw mapToConenctorException(e);
+	// } catch (Throwable t) {
+	// LOG.error("unknown error", t);
+	// throw new ConnectorException("Unknown error", t);
+	// }
+	//
+	// if (null != commentFeed) {
+	// Date lastReplyDate = new Date(0);
+	// if (parentPost.hasLastreplydate()) {
+	// try {
+	// lastReplyDate = RDFTool.string2DateTime(parentPost
+	// .getLastreplydate());
+	// } catch (ParseException e1) {
+	// LOG.warn("failed to parse date "
+	// + parentPost.getLastreplydate());
+	// lastReplyDate = new Date(0);
+	// }
+	// }
+	//
+	// int numCommentsLeft = ytConfig.getMaxNewPostsOnPoll();
+	// for (CommentEntry commentEntry : commentFeed.getEntries()) {
+	// Date created = new Date(commentEntry.getPublished()
+	// .getValue());
+	//
+	// if (created.after(lastReplyDate)) {
+	// URI uri = RDF2GoUtils.createURI(String.format(
+	// ENTRY_COMMENT, parentPost.getId(),
+	// getYoutubeID(commentEntry.getId())));
+	//
+	// if (!Post.hasInstance(getModel(), uri)) {
+	// Post reply = createComment(
+	// parentPost.getContainer(), parentPost,
+	// commentEntry, uri);
+	// result.add(reply);
+	//
+	// if (0 == --numCommentsLeft) {
+	// break;
+	// }
+	// }
+	// }
+	// }
+	// }
+	//
+	// } while (null != nextCommentFeedUrl);
+
+	return result;
+    }
+
     private Post createPost(final Container container,
 	    final VideoEntry videoEntry, final URI uri) {
-	Post result = new Post(getModel(), uri, true);
 
-	// TODO: fill post data
+	Post result = new Post(getModel(), uri, true);
+	result.setId(getYoutubeID(videoEntry.getId()));
+
+	for (Person person : videoEntry.getAuthors()) {
+	    String personUri = person.getUri();
+	    result.addCreator(getUserAccount(personUri.substring(personUri
+		    .lastIndexOf('/') + 1)));
+	}
+
+	YouTubeMediaGroup mediaGroup = videoEntry.getMediaGroup();
+
+	if (null != mediaGroup.getTitle()) {
+	    result.setTitle(mediaGroup.getTitle().getPlainTextContent());
+	}
+
+	String content = "";
+	if (null != videoEntry.getContent()
+		&& videoEntry.getContent() instanceof TextContent) {
+	    content = ((TextContent) videoEntry.getContent()).getContent()
+		    .getPlainText();
+	} else if (null != mediaGroup.getDescription()) {
+	    content = mediaGroup.getDescription().getPlainTextContent();
+	}
+	result.setContent(StringUtils.stripHTML(content));
+	result.setContentEncoded(content);
+
+
+	    Link videoLink = videoEntry.getLink("alternate", "text/html");
+	    if (null != videoLink) {
+		result.addAttachment(RDF2GoUtils.createURI(videoLink.getHref()));
+	    }
+
+	if (null != videoEntry.getPublished()) {
+	    result.setCreated(DateUtils.formatISO8601(videoEntry.getPublished()
+		    .getValue()));
+	}
+
+	if (null != videoEntry.getUpdated()) {
+	    result.setModified(DateUtils.formatISO8601(videoEntry.getUpdated()
+		    .getValue()));
+	}
+
+	result.setContainer(container);
+	container.setContainerof(result);
+	SIOCUtils.updateLastItemDate(container, result);
+
+	return result;
+    }
+
+    private Post createComment(final Container container,
+	    final Post parentPost, final CommentEntry commentEntry, final URI uri) {
+
+	Post result = new Post(getModel(), uri, true);
+	result.setId(getYoutubeID(commentEntry.getId()));
+
+	for (Person person : commentEntry.getAuthors()) {
+	    String personUri = person.getUri();
+	    result.addCreator(getUserAccount(personUri.substring(personUri
+		    .lastIndexOf('/') + 1)));
+	}
+
+	if (null != commentEntry.getTitle()) {
+	    result.setTitle(commentEntry.getTitle().getPlainText());
+	}
+
+	String content = "";
+	if (null != commentEntry.getContent()
+		&& commentEntry.getContent() instanceof TextContent) {
+	    content = ((TextContent) commentEntry.getContent()).getContent()
+		    .getPlainText();
+	} 
+	
+	result.setContent(StringUtils.stripHTML(content));
+	result.setContentEncoded(content);
+
+	if (null != commentEntry.getPublished()) {
+	    result.setCreated(DateUtils.formatISO8601(commentEntry.getPublished()
+		    .getValue()));
+	}
+
+	if (null != commentEntry.getUpdated()) {
+	    result.setModified(DateUtils.formatISO8601(commentEntry.getUpdated()
+		    .getValue()));
+	}
+
+	result.setContainer(container);
+	container.setContainerof(result);
+	SIOCUtils.updateLastItemDate(container, result);
+	
+	result.setReplyof(parentPost);
+	parentPost.setReply(result);
+	SIOCUtils.updateLastReplyDate(parentPost, result);
 
 	return result;
     }

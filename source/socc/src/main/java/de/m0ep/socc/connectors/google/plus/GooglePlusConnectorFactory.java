@@ -28,6 +28,7 @@ import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.connectors.IConnector;
 import de.m0ep.socc.connectors.IConnectorFactory;
+import de.m0ep.socc.connectors.exceptions.ConnectorException;
 import de.m0ep.socc.utils.ConfigUtils;
 
 public class GooglePlusConnectorFactory implements IConnectorFactory {
@@ -45,7 +46,7 @@ public class GooglePlusConnectorFactory implements IConnectorFactory {
     }
 
     public IConnector createConnector(String id, Model model,
-	    Map<String, Object> parameters) {
+	    Map<String, Object> parameters) throws ConnectorException {
 
 	IConnector connector = new GooglePlusConnector();
 	connector.initialize(id, model, parameters);

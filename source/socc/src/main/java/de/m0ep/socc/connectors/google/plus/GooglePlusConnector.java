@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -124,7 +123,7 @@ public class GooglePlusConnector extends AbstractConnector {
 
     @Override
     public void initialize(final String id, final Model model,
-	    final Map<String, Object> parameters) {
+	    final Map<String, Object> parameters) throws ConnectorException {
 	super.initialize(id, model, parameters);
 
 	this.gpConfig = ConfigUtils.fromMap(parameters,
@@ -196,7 +195,7 @@ public class GooglePlusConnector extends AbstractConnector {
     }
 
     @Override
-    public UserAccount getLoginUser() {
+    public UserAccount getLoginUser() throws ConnectorException {
 	return getUserAccount(myId);
     }
 
@@ -205,7 +204,8 @@ public class GooglePlusConnector extends AbstractConnector {
 	return ConfigUtils.toMap(gpConfig);
     }
 
-    public UserAccount getUserAccount(final String id) {
+    public UserAccount getUserAccount(final String id)
+	    throws ConnectorException {
 	URI uri = RDF2GoUtils.createURI(getURL() + PATH_USER + id);
 
 	if (!UserAccount.hasInstance(getModel(), uri)) {
@@ -277,7 +277,7 @@ public class GooglePlusConnector extends AbstractConnector {
     }
 
     @Override
-    public Iterator<Forum> getForums() {
+    public List<Forum> getForums() throws ConnectorException {
 	List<Forum> result = new ArrayList<Forum>();
 
 	QueryResultTable table = getModel()
@@ -292,11 +292,12 @@ public class GooglePlusConnector extends AbstractConnector {
 
 	// TODO: load dynamic circles if necessary
 
-	return result.iterator();
+	return result;
     }
 
     @Override
-    public Iterator<Post> getPosts(final Container container) {
+    public List<Post> getPosts(final Container container)
+	    throws ConnectorException {
 	Preconditions.checkNotNull(container, "container can not be null");
 	Preconditions.checkArgument(hasPosts(container), "container "
 		+ container + " has no post on this site");
@@ -314,11 +315,12 @@ public class GooglePlusConnector extends AbstractConnector {
 	}
 	stmtsIter.close();
 
-	return result.iterator();
+	return result;
     }
 
     @Override
-    public Iterator<Post> pollNewPosts(final Container container) {
+    public List<Post> pollNewPosts(final Container container)
+	    throws ConnectorException {
 	Preconditions.checkNotNull(container, "container can not be null");
 	Preconditions.checkArgument(hasPosts(container),
 		"this container has no post on " + getSite().getName());
@@ -421,7 +423,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	    }
 	} while (null != pageToken);
 
-	return result.iterator();
+	return result;
     }
 
     private List<Post> pollNewReplies(final Post parentPost,

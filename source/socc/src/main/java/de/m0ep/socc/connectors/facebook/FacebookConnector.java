@@ -25,7 +25,6 @@ package de.m0ep.socc.connectors.facebook;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -106,7 +105,7 @@ public class FacebookConnector extends AbstractConnector {
 
     @Override
     public void initialize(String id, Model model,
-	    Map<String, Object> parameters) {
+	    Map<String, Object> parameters) throws ConnectorException {
 	super.initialize(id, model, parameters);
 
 	this.fbConfig = ConfigUtils.fromMap(parameters,
@@ -145,7 +144,7 @@ public class FacebookConnector extends AbstractConnector {
 	return ConfigUtils.toMap(fbConfig);
     }
 
-    public Site getSite() {
+    public Site getSite() throws ConnectorException {
 	URI uri = RDF2GoUtils.createURI(getURL());
 
 	if (!Site.hasInstance(getModel(), uri)) {
@@ -157,11 +156,12 @@ public class FacebookConnector extends AbstractConnector {
 	}
     }
 
-    public UserAccount getLoginUser() {
+    public UserAccount getLoginUser() throws ConnectorException {
 	return getUserAccount(myId);
     }
 
-    public UserAccount getUserAccount(final String id) {
+    public UserAccount getUserAccount(final String id)
+	    throws ConnectorException {
 	URI uri = (URI) new URIImpl(getURL() + id);
 
 	if (!UserAccount.hasInstance(getModel(), uri)) {
@@ -207,7 +207,7 @@ public class FacebookConnector extends AbstractConnector {
 	}
     }
 
-    public Iterator<Forum> getForums() {
+    public List<Forum> getForums() throws ConnectorException {
 	List<Forum> result = new ArrayList<Forum>();
 
 	// add all known forums
@@ -263,11 +263,12 @@ public class FacebookConnector extends AbstractConnector {
 	    }
 	}
 
-	return result.iterator();
+	return result;
     }
 
     @Override
-    public Iterator<Post> getPosts(Container container) {
+    public List<Post> getPosts(Container container)
+	    throws ConnectorException {
 	Preconditions.checkNotNull(container, "container can not be null");
 	Preconditions.checkArgument(hasPosts(container), "container "
 		+ container + " has no post on this site");
@@ -285,7 +286,7 @@ public class FacebookConnector extends AbstractConnector {
 	}
 	stmtsIter.close();
 
-	return result.iterator();
+	return result;
     }
 
     @Override
@@ -293,8 +294,13 @@ public class FacebookConnector extends AbstractConnector {
 	if (getModel().contains(container, RDF.type, SIOC.Forum)) {
 	    Forum forum = Forum
 		    .getInstance(getModel(), container.getResource());
-	    return forum.hasHost(getSite())
+	    try {
+		return forum.hasHost(getSite())
 		    && hasConnection(container.getId(), CONNECTION_FEED);
+	    } catch (ConnectorException e) {
+		LOG.error(e.getMessage(), e);
+		return false;
+	    }
 	}
 
 	return false;
@@ -311,9 +317,14 @@ public class FacebookConnector extends AbstractConnector {
 	    Container container = parent.getContainer();
 	    String id = parent.getId();
 
-	    return canPublishOn(container)
+	    try {
+		return canPublishOn(container)
 		    && Pattern.matches("^\\d+_\\d+$", id)
 		    && hasConnection(parent.getId(), CONNECTION_COMMENTS);
+	    } catch (ConnectorException e) {
+		LOG.error(e.getMessage(), e);
+		return false;
+	    }
 	}
 
 	return false;
@@ -324,7 +335,8 @@ public class FacebookConnector extends AbstractConnector {
 	return canPublishOn(container);
     }
 
-    public boolean publishPost(final Post post, final Container container) {
+    public boolean publishPost(final Post post, final Container container)
+	    throws ConnectorException {
 	Preconditions.checkNotNull(post, "post can't be null");
 	Preconditions.checkNotNull(container, "container can't be null");
 	Preconditions.checkArgument(post.hasContent());
@@ -372,7 +384,8 @@ public class FacebookConnector extends AbstractConnector {
 		&& !result.getId().isEmpty();
     };
 
-    public boolean replyPost(final Post post, final Post parent) {
+    public boolean replyPost(final Post post, final Post parent)
+	    throws ConnectorException {
 	Preconditions.checkNotNull(post, "post can't be null");
 	Preconditions.checkNotNull(parent, "parent can't be null");
 	Preconditions.checkArgument(post.hasContent(), "post has no content");
@@ -398,7 +411,8 @@ public class FacebookConnector extends AbstractConnector {
 		&& !result.getId().isEmpty();
     };
 
-    public java.util.Iterator<Post> pollNewPosts(Container container) {
+    public List<Post> pollNewPosts(Container container)
+	    throws ConnectorException {
 	LOG.debug("pollNewPosts");
 	List<Post> result = new ArrayList<Post>();
 	Date lastItemDate = new Date(0);
@@ -460,17 +474,17 @@ public class FacebookConnector extends AbstractConnector {
 		    }
 
 		    if (0 == --numLoadedPosts) {
-			return result.iterator();
+			return result;
 		    }
 		}
 	    }
 	}
 
-	return result.iterator();
+	return result;
     }
 
     private Post parsePost(final Container container, final JsonObject obj,
-	    final URI uri) {
+	    final URI uri) throws ConnectorException {
 	Post result = new Post(getModel(), uri, true);
 	result.setId(obj.getString(FIELD_ID));
 
@@ -531,7 +545,7 @@ public class FacebookConnector extends AbstractConnector {
     }
 
     private List<Post> pollNewReplies(final Post parentPost,
-	    final JsonArray commentsArray) {
+	    final JsonArray commentsArray) throws ConnectorException {
 	List<Post> result = new ArrayList<Post>();
 	Date lastReplyDate = new Date(0);
 
@@ -563,7 +577,7 @@ public class FacebookConnector extends AbstractConnector {
     }
 
     private Post parseComment(final Post parentPost, final JsonObject obj,
-	    final URI uri) {
+	    final URI uri) throws ConnectorException {
 	Post result = new Post(getModel(), uri, true);
 	result.setId(obj.getString(FIELD_ID));
 
@@ -602,11 +616,8 @@ public class FacebookConnector extends AbstractConnector {
 	return result;
     }
 
-    /* package */FacebookClient getFacebookClient() {
-	return client;
-    }
-
-    /* package */boolean hasConnection(final String id, final String connection) {
+    /* package */boolean hasConnection(final String id, final String connection)
+	    throws ConnectorException {
 
 	try {
 	    JsonObject obj = client.fetchObject(id, JsonObject.class,

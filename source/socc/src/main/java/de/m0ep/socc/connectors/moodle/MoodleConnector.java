@@ -29,7 +29,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -91,7 +90,7 @@ public class MoodleConnector extends AbstractConnector {
 
     private Map<Integer, CourseRecord> courses = new HashMap<Integer, CourseRecord>();
 
-    private boolean isMoodleWSRunning() {
+    private boolean isMoodleWSRunning() throws ConnectorException {
 	if (null == moodle)
 	    return false;
 
@@ -160,7 +159,7 @@ public class MoodleConnector extends AbstractConnector {
 
     @Override
     public void initialize(String id, Model model,
-	    Map<String, Object> parameters) {
+	    Map<String, Object> parameters) throws ConnectorException {
 	super.initialize(id, model, parameters);
 
 	this.mdlConfig = ConfigUtils.fromMap(parameters,
@@ -197,12 +196,41 @@ public class MoodleConnector extends AbstractConnector {
     }
 
     @Override
-    public UserAccount getLoginUser() {
+    public UserAccount getLoginUser() throws ConnectorException {
 	return getUserAccount(Integer.toString(myId));
     }
 
+    public UserAccount getUserAccount(String id) throws ConnectorException {
+        URI uri = RDF2GoUtils.createURI(getURL() + URI_USER_PATH + id);
+    
+        if (!UserAccount.hasInstance(getModel(), uri)) {
+            UserRecord[] users = moodle.get_user_byid(client, sesskey, myId);
+    
+            if (null != users && 0 < users.length) {
+        	UserRecord me = users[0];
+        	UserAccount result = new UserAccount(getModel(), uri, true);
+        	result.setId(Integer.toString(me.getId()));
+        	result.setIsPartOf(getSite());
+        	result.setAccountservicehomepage(RDF2GoUtils
+        		.createURI(getURL()));
+        	result.setName(me.getFirstname() + " " + me.getLastname());
+        	result.setAccountname(me.getUsername());
+        	result.setEmail(RDF2GoUtils.createMailtoURI(me.getEmail()));
+        	result.setEmailsha1(RDFTool.sha1sum(me.getEmail()));
+        	result.setDescription(RDF2GoUtils.createLiteral(me
+        		.getDescription()));
+    
+        	return result;
+            }
+    
+            throw new ConnectorException("Can't retriev user with id=" + id);
+        }
+    
+        return UserAccount.getInstance(getModel(), uri);
+    }
+
     @Override
-    public Iterator<Forum> getForums() {
+    public List<Forum> getForums() throws ConnectorException {
 	List<Forum> result = new ArrayList<Forum>();
 
 	ForumRecord[] forums = callMethod(new Callable<ForumRecord[]>() {
@@ -237,10 +265,10 @@ public class MoodleConnector extends AbstractConnector {
 	    }
 	}
 
-	return result.iterator();
+	return result;
     }
 
-    public Iterator<Thread> getThreads(Forum forum) {
+    public List<Thread> getThreads(Forum forum) throws ConnectorException {
 	Preconditions.checkArgument(forum.hasHost(getSite()));
 
 	List<Thread> result = new ArrayList<Thread>();
@@ -282,10 +310,10 @@ public class MoodleConnector extends AbstractConnector {
 	    }
 	}
 
-	return result.iterator();
+	return result;
     }
 
-    public Iterator<Post> getPosts(Container container) {
+    public List<Post> getPosts(Container container) {
 	Preconditions.checkNotNull(container, "container can not be null");
 	Preconditions.checkArgument(hasPosts(container), "container "
 		+ container + " has no post on this site");
@@ -303,11 +331,12 @@ public class MoodleConnector extends AbstractConnector {
 	}
 	stmtsIter.close();
 
-	return result.iterator();
+	return result;
     }
 
     @Override
-    public Iterator<Post> pollNewPosts(Container container) {
+    public List<Post> pollNewPosts(Container container)
+	    throws ConnectorException {
 	Preconditions.checkArgument(hasPosts(container));
 
 	List<Post> result = new ArrayList<Post>();
@@ -355,11 +384,11 @@ public class MoodleConnector extends AbstractConnector {
 
 	LOG.debug(result.size() + " new posts polled");
 
-	return result.iterator();
+	return result;
     }
 
     private List<Post> pollNewReplies(Post parentPost,
-	    ForumPostRecord parentRecord) {
+	    ForumPostRecord parentRecord) throws ConnectorException {
 	List<Post> result = new ArrayList<Post>();
 	Date lastReplyDate = new Date(0);
 
@@ -398,7 +427,7 @@ public class MoodleConnector extends AbstractConnector {
     }
 
     private Post createPost(Container container, Post parentPost,
-	    ForumPostRecord postRecord, URI uri) {
+	    ForumPostRecord postRecord, URI uri) throws ConnectorException {
 	Post post = new Post(getModel(), uri, true);
 
 	post.setId(Integer.toString(postRecord.getId()));
@@ -542,35 +571,6 @@ public class MoodleConnector extends AbstractConnector {
 	// TODO add new post to model
 
 	return null != result && 0 < result.length;
-    }
-
-    public UserAccount getUserAccount(String id) {
-	URI uri = RDF2GoUtils.createURI(getURL() + URI_USER_PATH + id);
-
-	if (!UserAccount.hasInstance(getModel(), uri)) {
-	    UserRecord[] users = moodle.get_user_byid(client, sesskey, myId);
-
-	    if (null != users && 0 < users.length) {
-		UserRecord me = users[0];
-		UserAccount result = new UserAccount(getModel(), uri, true);
-		result.setId(Integer.toString(me.getId()));
-		result.setIsPartOf(getSite());
-		result.setAccountservicehomepage(RDF2GoUtils
-			.createURI(getURL()));
-		result.setName(me.getFirstname() + " " + me.getLastname());
-		result.setAccountname(me.getUsername());
-		result.setEmail(RDF2GoUtils.createMailtoURI(me.getEmail()));
-		result.setEmailsha1(RDFTool.sha1sum(me.getEmail()));
-		result.setDescription(RDF2GoUtils.createLiteral(me
-			.getDescription()));
-
-		return result;
-	    }
-
-	    throw new ConnectorException("Can't retriev user with id=" + id);
-	}
-
-	return UserAccount.getInstance(getModel(), uri);
     }
 
     protected CourseRecord getCourse(final int id) {

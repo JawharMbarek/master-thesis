@@ -1,8 +1,8 @@
 package de.m0ep.socc.connectors.moodle;
 
-import de.m0ep.socc.connectors.AbstractConnectorConfig;
+import de.m0ep.socc.connectors.DefaultConnectorConfig;
 
-public class MoodleConnectorConfig extends AbstractConnectorConfig {
+public class MoodleConnectorConfig extends DefaultConnectorConfig {
     private static final long serialVersionUID = 6469962267853893278L;
 
     public static final String URL = "url";

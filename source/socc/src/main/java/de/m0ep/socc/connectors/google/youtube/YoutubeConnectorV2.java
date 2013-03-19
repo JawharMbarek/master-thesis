@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -108,7 +107,7 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 
     @Override
     public void initialize(String id, Model model,
-	    Map<String, Object> parameters) {
+	    Map<String, Object> parameters) throws ConnectorException {
 	super.initialize(id, model, parameters);
 
 	this.ytConfig = ConfigUtils.fromMap(parameters,
@@ -184,7 +183,7 @@ public class YoutubeConnectorV2 extends AbstractConnector {
     }
 
     @Override
-    public UserAccount getLoginUser() {
+    public UserAccount getLoginUser() throws ConnectorException {
 	return getUserAccount(myId);
     }
 
@@ -259,7 +258,7 @@ public class YoutubeConnectorV2 extends AbstractConnector {
     }
 
     @Override
-    public Iterator<Thread> getThreads(Forum forum) {
+    public List<Thread> getThreads(Forum forum) throws ConnectorException {
 	List<Thread> result = new ArrayList<Thread>();
 	String feedURL = String.format(FEED_PLAYLISTS, myId);
 
@@ -339,7 +338,7 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 	    }
 	}
 
-	return result.iterator();
+	return result;
     }
 
     @Override
@@ -349,7 +348,8 @@ public class YoutubeConnectorV2 extends AbstractConnector {
     }
 
     @Override
-    public Iterator<Post> getPosts(Container container) {
+    public List<Post> getPosts(Container container)
+	    throws ConnectorException {
 	Preconditions.checkNotNull(container, "container can not be null");
 	Preconditions.checkArgument(hasPosts(container), "container "
 		+ container + " has no post on this site");
@@ -367,11 +367,12 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 	}
 	stmtsIter.close();
 
-	return result.iterator();
+	return result;
     }
 
     @Override
-    public Iterator<Post> pollNewPosts(Container container) {
+    public List<Post> pollNewPosts(Container container)
+	    throws ConnectorException {
 	Preconditions.checkArgument(hasPosts(container),
 		"Container has no post in this connector");
 	List<Post> result = new ArrayList<Post>();
@@ -446,7 +447,7 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 	    }
 	} while (null != nextFeedUrl);
 
-	return result.iterator();
+	return result;
     }
 
     private List<Post> pollNewReplies(final Post parentPost,
@@ -529,7 +530,8 @@ public class YoutubeConnectorV2 extends AbstractConnector {
     }
 
     private Post createPost(final Container container,
-	    final VideoEntry videoEntry, final URI uri) {
+	    final VideoEntry videoEntry, final URI uri)
+	    throws ConnectorException {
 
 	Post result = new Post(getModel(), uri, true);
 	result.setId(getYoutubeID(videoEntry.getId()));
@@ -581,7 +583,7 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 
     private Post createComment(final Container container,
 	    final Post parentPost, final CommentEntry commentEntry,
-	    final URI uri) {
+	    final URI uri) throws ConnectorException {
 	System.err.println("cu: " + uri.toString());
 	Post result = new Post(getModel(), uri, true);
 	result.setId(getYoutubeID(commentEntry.getId()));
@@ -669,7 +671,7 @@ public class YoutubeConnectorV2 extends AbstractConnector {
     }
 
     @Override
-    public boolean replyPost(Post post, Post parent) {
+    public boolean replyPost(Post post, Post parent) throws ConnectorException {
 	CommentEntry comment = new CommentEntry();
 
 	if (post.hasCreated()) {

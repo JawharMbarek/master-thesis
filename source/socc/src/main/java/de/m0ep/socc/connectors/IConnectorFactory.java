@@ -26,6 +26,8 @@ import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 
+import de.m0ep.socc.connectors.exceptions.ConnectorException;
+
 /**
  * Interface of a {@link IConnectorFactory} to create new {@link IConnector}s
  * 
@@ -67,5 +69,5 @@ public interface IConnectorFactory {
      * @return
      */
     public IConnector createConnector(String id, Model model,
-	    Map<String, Object> parameters);
+	    Map<String, Object> parameters) throws ConnectorException;
 }

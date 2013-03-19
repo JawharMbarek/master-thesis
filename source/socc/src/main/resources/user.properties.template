@@ -1,4 +1,5 @@
-global.postPerPoll = 30
+global.postPerPoll = 
+global.pollCooldown = 
 
 yt.email = 
 yt.password = 

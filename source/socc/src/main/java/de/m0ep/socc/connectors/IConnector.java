@@ -22,7 +22,7 @@
 
 package de.m0ep.socc.connectors;
 
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
@@ -55,12 +55,12 @@ public interface IConnector {
      *            Configuration parameters for this connector.
      */
     public void initialize(String id, Model model,
-	    Map<String, Object> parameters);
+	    Map<String, Object> parameters) throws ConnectorException;
 
     /**
      * Called if the Connector will be destroyed.
      */
-    public void destroy();
+    public void destroy() throws ConnectorException;
 
     /**
      * Return the Id of this Connector.
@@ -95,7 +95,7 @@ public interface IConnector {
      * 
      * @return
      */
-    public Site getSite();
+    public Site getSite() throws ConnectorException;
 
     /**
      * Returns the {@link UserAccount} object of the used user to connect to the
@@ -103,7 +103,7 @@ public interface IConnector {
      * 
      * @return {@link UserAccount} object of the used user.
      */
-    public UserAccount getLoginUser();
+    public UserAccount getLoginUser() throws ConnectorException;
 
     /**
      * Returns the {@link UserAccount} with the committed id
@@ -123,7 +123,7 @@ public interface IConnector {
      * 
      * @return Iterator of all found {@link UserAccount}s.
      */
-    public Iterator<UserAccount> getUserAccounts();
+    public List<UserAccount> getUserAccounts() throws ConnectorException;
 
     /**
      * Returns the {@link Forum} with the committed id
@@ -143,7 +143,7 @@ public interface IConnector {
      * 
      * @return Iterator of all accessible {@link Forum}s.
      */
-    public Iterator<Forum> getForums();
+    public List<Forum> getForums() throws ConnectorException;
 
     /**
      * Returns the {@link Thread} with the committed id
@@ -166,7 +166,7 @@ public interface IConnector {
      *            retrieved.
      * @return Iterator of all found {@link Thread}s.
      */
-    public Iterator<Thread> getThreads(Forum forum);
+    public List<Thread> getThreads(Forum forum) throws ConnectorException;
 
     /**
      * Returns the {@link Post} with the committed id
@@ -191,7 +191,8 @@ public interface IConnector {
      *            retrieved.
      * @return Iterator of all found {@link Post}s.
      */
-    public Iterator<Post> getPosts(Container container);
+    public List<Post> getPosts(Container container)
+	    throws ConnectorException;
 
     /**
      * Poll this connector to retrieve all new {@link Post}s since the last call
@@ -202,7 +203,8 @@ public interface IConnector {
      * 
      * @return Iterator of all new Posts
      */
-    public Iterator<Post> pollNewPosts(Container container);
+    public List<Post> pollNewPosts(Container container)
+	    throws ConnectorException;
 
     /**
      * Returns the {@link Usergroup} with the committed id
@@ -222,7 +224,7 @@ public interface IConnector {
      * 
      * @return Iterator of all found {@link Usergroup}s.
      */
-    public Iterator<Usergroup> getUsergroups();
+    public List<Usergroup> getUsergroups() throws ConnectorException;
 
     /**
      * Tests if {@link Post}s can be published on this {@link Container}
@@ -265,7 +267,8 @@ public interface IConnector {
      *            {@link Container} where to publish the {@link Post}.
      * @return Returns true if publishing was successful, false otherwise.
      */
-    public boolean publishPost(Post post, Container container);
+    public boolean publishPost(Post post, Container container)
+	    throws ConnectorException;
 
     /**
      * Reply a {@link Post} to the given parent {@link Post}.
@@ -276,5 +279,5 @@ public interface IConnector {
      *            {@link Post} where to reply on.
      * @return Returns true if replying was successful, false otherwise.
      */
-    public boolean replyPost(Post post, Post parent);
+    public boolean replyPost(Post post, Post parent) throws ConnectorException;
 }

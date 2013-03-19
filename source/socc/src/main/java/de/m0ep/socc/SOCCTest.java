@@ -31,8 +31,9 @@ import org.rdfs.sioc.UserAccount;
 
 import com.google.common.collect.Lists;
 
-import de.m0ep.socc.connectors.AbstractConnectorConfig;
+import de.m0ep.socc.connectors.DefaultConnectorConfig;
 import de.m0ep.socc.connectors.IConnector;
+import de.m0ep.socc.connectors.exceptions.ConnectorException;
 import de.m0ep.socc.connectors.facebook.FacebookConnectorConfig;
 import de.m0ep.socc.connectors.facebook.FacebookConnectorFactory;
 import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorConfig;
@@ -47,12 +48,12 @@ public class SOCCTest {
     // private static Connector connector;
     private static final boolean WRITE_DUMP = true;
     private static final boolean WRITE_OUTPUT = true;
-    private static final int MAX_NEW_POSTS_ON_POLL = 30;
 
     /**
      * @param args
+     * @throws ConnectorException
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ConnectorException {
 	Model model = RDF2Go.getModelFactory().createModel();
 	model.open();
 
@@ -82,9 +83,13 @@ public class SOCCTest {
 	int maxPostPerPoll = Integer.parseInt(config.getProperty(
 		"global.postPerPoll", "30"));
 
+	int pollCoolDown = Integer.parseInt(config.getProperty(
+		"global.pollCooldown", "300"));
+
 	Map<String, Object> fbParams = new HashMap<String, Object>();
-	fbParams.put(AbstractConnectorConfig.MAX_NEW_POSTS_ON_POLL,
+	fbParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
 		maxPostPerPoll);
+	fbParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
 	fbParams.put(FacebookConnectorConfig.ACCESS_TOKEN,
 		config.get("fb.accessToken"));
 	fbParams.put(FacebookConnectorConfig.CLIENT_ID,
@@ -93,8 +98,9 @@ public class SOCCTest {
 		config.get("fb.clientSecret"));
 
 	Map<String, Object> mdlParams = new HashMap<String, Object>();
-	fbParams.put(AbstractConnectorConfig.MAX_NEW_POSTS_ON_POLL,
+	mdlParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
 		maxPostPerPoll);
+	mdlParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
 	mdlParams.put(MoodleConnectorConfig.URL, config.get("mdl.url"));
 	mdlParams.put(MoodleConnectorConfig.USERNAME,
 		config.get("mdl.username"));
@@ -102,8 +108,9 @@ public class SOCCTest {
 		config.get("mdl.password"));
 
 	Map<String, Object> gpParams = new HashMap<String, Object>();
-	gpParams.put(AbstractConnectorConfig.MAX_NEW_POSTS_ON_POLL,
+	gpParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
 		maxPostPerPoll);
+	gpParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
 	gpParams.put(GooglePlusConnectorConfig.CLIENT_ID,
 		config.get("gp.clientId"));
 	gpParams.put(GooglePlusConnectorConfig.CLIENT_SECRET,
@@ -114,8 +121,9 @@ public class SOCCTest {
 		config.get("gp.refreshToken"));
 
 	Map<String, Object> ytParams = new HashMap<String, Object>();
-	ytParams.put(AbstractConnectorConfig.MAX_NEW_POSTS_ON_POLL,
+	ytParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
 		maxPostPerPoll);
+	ytParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
 	ytParams.put(YoutubeConnectorV2Config.EMAIL, config.get("yt.email"));
 	ytParams.put(YoutubeConnectorV2Config.PASSWORD,
 		config.get("yt.password"));
@@ -169,7 +177,8 @@ public class SOCCTest {
 	model.close();
     }
 
-    private static void printConnector(IConnector connector) {
+    private static void printConnector(IConnector connector)
+	    throws ConnectorException {
 	System.out.println();
 	System.out.println(connector.getURL());
 	System.out.println("=====================================");
@@ -178,7 +187,7 @@ public class SOCCTest {
 	UserAccount user = connector.getLoginUser();
 	printUser(user, 0);
 
-	Iterator<Forum> forums = connector.getForums();
+	Iterator<Forum> forums = connector.getForums().iterator();
 
 	while (forums.hasNext()) {
 	    Forum forum = (Forum) forums.next();
@@ -203,7 +212,7 @@ public class SOCCTest {
 		listPosts(connector, forum, 1);
 	    }
 
-	    Iterator<Thread> threads = connector.getThreads(forum);
+	    Iterator<Thread> threads = connector.getThreads(forum).iterator();
 
 	    while (threads.hasNext()) {
 		Thread thread = (Thread) threads.next();
@@ -239,8 +248,8 @@ public class SOCCTest {
     }
 
     private static void listPosts(IConnector connector, Container container,
-	    int indent) {
-	Iterator<Post> posts = connector.getPosts(container);
+	    int indent) throws ConnectorException {
+	Iterator<Post> posts = connector.getPosts(container).iterator();
 
 	int ctr = 0;
 	while (posts.hasNext()) {
@@ -268,7 +277,7 @@ public class SOCCTest {
 		+ user.getAllAccountservicehomepage_as().firstValue(), indent);
     }
 
-    static void printPost(IConnector connector, Item post, int indent) {
+    static void printPost(IConnector connector, Item post, int indent) throws ConnectorException {
 	printWithIndent("Post-----------------", indent);
 	printWithIndent("uri:       " + post, indent);
 	printWithIndent("id:        " + post.getAllId_as().firstValue(), indent);

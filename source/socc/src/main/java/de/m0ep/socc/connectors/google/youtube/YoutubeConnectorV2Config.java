@@ -1,8 +1,8 @@
 package de.m0ep.socc.connectors.google.youtube;
 
-import de.m0ep.socc.connectors.AbstractConnectorConfig;
+import de.m0ep.socc.connectors.DefaultConnectorConfig;
 
-public class YoutubeConnectorV2Config extends AbstractConnectorConfig {
+public class YoutubeConnectorV2Config extends DefaultConnectorConfig {
     private static final long serialVersionUID = -2587148753086121486L;
 
     public static final String EMAIL = "email";

@@ -23,7 +23,6 @@
 package de.m0ep.socc.connectors;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +35,7 @@ import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.SIOC;
+import org.rdfs.sioc.SIOCThing;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
@@ -53,24 +53,34 @@ import de.m0ep.socc.connectors.exceptions.ConnectorException;
  * 
  */
 public abstract class AbstractConnector implements IConnector {
-    private static final String SPARQL_SELECT_FORUMS_OF_SITE = "SELECT ?forum WHERE { ?forum "
-	    + RDF.type.toSPARQL()
-	    + " "
-	    + SIOC.Forum.toSPARQL()
-	    + " ; \n"
+    private static final String SPARQL_VAR_USER = "user";
+    private static final String SPARQL_VAR_FORUM = "forum";
+    private static final String SPARQL_VAR_THREAD = "thread";
+
+    private static final String SPARQL_SELECT_USERACCOUNTS_OF_SITE = "SELECT ?"
+	    + SPARQL_VAR_USER + " WHERE {" + "?" + SPARQL_VAR_USER + " "
+	    + RDF.type.toSPARQL() + " " + SIOC.UserAccount.toSPARQL() + " ; "
+	    + SIOCThing.ISPARTOF.toSPARQL() + " %s . }";
+
+    private static final String SPARQL_SELECT_FORUMS_OF_SITE = "SELECT ?"
+	    + SPARQL_VAR_FORUM + " WHERE { ?" + SPARQL_VAR_FORUM + " "
+	    + RDF.type.toSPARQL() + " " + SIOC.Forum.toSPARQL() + " ; "
 	    + SIOC.has_host.toSPARQL() + " %s . }";
+
+    private static final String SPARQL_SELECT_THREADS_OF_FORUM = "SELECT ?"
+	    + SPARQL_VAR_THREAD + " WHERE { ?" + SPARQL_VAR_THREAD + " "
+	    + RDF.type.toSPARQL() + " " + SIOC.Thread.toSPARQL() + " ; "
+	    + SIOC.has_parent.toSPARQL() + " %s . }";
 
     private String id;
     private Model model;
 
-
     @Override
     public void initialize(String id, Model model,
-	    Map<String, Object> parameters) {
+	    Map<String, Object> parameters) throws ConnectorException {
 	this.id = Preconditions.checkNotNull(id, "id can't be null");
 	this.model = Preconditions.checkNotNull(model, "model can't be null");
-	Preconditions.checkNotNull(parameters,
-		"parameters can't be null");
+	Preconditions.checkNotNull(parameters, "parameters can't be null");
 	Preconditions.checkArgument(!id.isEmpty(), "id can't be empty");
 	Preconditions.checkArgument(model.isOpen(), "model is not open");
     }
@@ -80,7 +90,7 @@ public abstract class AbstractConnector implements IConnector {
      * 
      * @see de.m0ep.socc.connectors.IConnector#destroy()
      */
-    public void destroy() {
+    public void destroy() throws ConnectorException {
     }
 
     /**
@@ -113,14 +123,14 @@ public abstract class AbstractConnector implements IConnector {
      * 
      * @see de.m0ep.socc.connectors.IConnector#getSite()
      */
-    public abstract Site getSite();
+    public abstract Site getSite() throws ConnectorException;
 
     /**
      * (non-Javadoc)
      * 
      * @see de.m0ep.socc.connectors.IConnector#getLoginUser()
      */
-    public abstract UserAccount getLoginUser();
+    public abstract UserAccount getLoginUser() throws ConnectorException;
 
     /**
      * (non-Javadoc)
@@ -136,8 +146,19 @@ public abstract class AbstractConnector implements IConnector {
      * 
      * @see de.m0ep.socc.connectors.IConnector#getUserAccounts()
      */
-    public Iterator<UserAccount> getUserAccounts() {
-	return new ArrayList<UserAccount>().iterator();
+    public List<UserAccount> getUserAccounts() throws ConnectorException {
+	List<UserAccount> result = new ArrayList<UserAccount>();
+
+	QueryResultTable resultTable = getModel().sparqlSelect(
+		SparqlUtil.formatQuery(SPARQL_SELECT_USERACCOUNTS_OF_SITE,
+			getSite()));
+	for (QueryRow row : resultTable) {
+	    result.add(UserAccount.getInstance(getModel(),
+		    row.getValue(SPARQL_VAR_USER)
+		    .asResource()));
+	}
+
+	return result;
     }
 
     /**
@@ -146,7 +167,7 @@ public abstract class AbstractConnector implements IConnector {
      * @see de.m0ep.socc.connectors.IConnector#getForum(java.lang.String)
      */
     public Forum getForum(String id) throws ConnectorException {
-	throw new ConnectorException("There is no forum with the id=" + id);
+	throw new ConnectorException("There is no forum with this id=" + id);
     }
 
     /**
@@ -154,7 +175,7 @@ public abstract class AbstractConnector implements IConnector {
      * 
      * @see de.m0ep.socc.connectors.IConnector#getForums()
      */
-    public Iterator<Forum> getForums() {
+    public List<Forum> getForums() throws ConnectorException {
 	List<Forum> result = new ArrayList<Forum>();
 
 	QueryResultTable table = getModel()
@@ -163,11 +184,12 @@ public abstract class AbstractConnector implements IConnector {
 				getSite()));
 
 	for (QueryRow row : table) {
-	    result.add(Forum.getInstance(getModel(), row.getValue("forum")
+	    result.add(Forum.getInstance(getModel(),
+		    row.getValue(SPARQL_VAR_FORUM)
 		    .asURI()));
 	}
 
-	return result.iterator();
+	return result;
     }
 
     /**
@@ -184,8 +206,19 @@ public abstract class AbstractConnector implements IConnector {
      * 
      * @see de.m0ep.socc.connectors.IConnector#getThreads(org.rdfs.sioc.Forum)
      */
-    public Iterator<Thread> getThreads(Forum forum) {
-	return new ArrayList<Thread>().iterator();
+    public List<Thread> getThreads(Forum forum) throws ConnectorException {
+	Preconditions.checkArgument(forum.hasHost(getSite()),
+		"forum don't belong to this site");
+	List<Thread> result = new ArrayList<Thread>();
+
+	QueryResultTable resultTable = getModel().sparqlSelect(
+		SparqlUtil.formatQuery(SPARQL_SELECT_THREADS_OF_FORUM, forum));
+	for (QueryRow row : resultTable) {
+	    result.add(Thread.getInstance(getModel(),
+		    row.getValue(SPARQL_VAR_FORUM).asResource()));
+	}
+
+	return result;
     }
 
     /**
@@ -202,8 +235,8 @@ public abstract class AbstractConnector implements IConnector {
      * 
      * @see de.m0ep.socc.connectors.IConnector#getPosts(org.rdfs.sioc.Container)
      */
-    public Iterator<Post> getPosts(Container container) {
-	return new ArrayList<Post>().iterator();
+    public List<Post> getPosts(Container container) throws ConnectorException {
+	return new ArrayList<Post>();
     }
 
     /**
@@ -220,8 +253,8 @@ public abstract class AbstractConnector implements IConnector {
      * 
      * @see de.m0ep.socc.connectors.IConnector#getUsergroups()
      */
-    public Iterator<Usergroup> getUsergroups() {
-	return new ArrayList<Usergroup>().iterator();
+    public List<Usergroup> getUsergroups() throws ConnectorException {
+	return new ArrayList<Usergroup>();
     }
 
     /**
@@ -257,7 +290,8 @@ public abstract class AbstractConnector implements IConnector {
      * @see de.m0ep.socc.connectors.IConnector#publishPost(org.rdfs.sioc.Post,
      *      org.rdfs.sioc.Container)
      */
-    public boolean publishPost(Post post, Container container) {
+    public boolean publishPost(Post post, Container container)
+	    throws ConnectorException {
 	return false;
     }
 
@@ -267,7 +301,7 @@ public abstract class AbstractConnector implements IConnector {
      * @see de.m0ep.socc.connectors.IConnector#replyPost(org.rdfs.sioc.Post,
      *      org.rdfs.sioc.Post)
      */
-    public boolean replyPost(Post post, Post parent) {
+    public boolean replyPost(Post post, Post parent) throws ConnectorException {
 	return false;
     }
 
@@ -276,7 +310,8 @@ public abstract class AbstractConnector implements IConnector {
      * 
      * @see de.m0ep.socc.connectors.IConnector#pollNewPosts(org.rdfs.sioc.Container)
      */
-    public Iterator<Post> pollNewPosts(Container container) {
-	return new ArrayList<Post>().iterator();
+    public List<Post> pollNewPosts(Container container)
+	    throws ConnectorException {
+	return new ArrayList<Post>();
     }
 }

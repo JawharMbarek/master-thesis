@@ -28,6 +28,7 @@ import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.connectors.IConnector;
 import de.m0ep.socc.connectors.IConnectorFactory;
+import de.m0ep.socc.connectors.exceptions.ConnectorException;
 import de.m0ep.socc.utils.ConfigUtils;
 
 public class YoutubeConnectorV2Factory implements IConnectorFactory {
@@ -45,7 +46,7 @@ public class YoutubeConnectorV2Factory implements IConnectorFactory {
     }
 
     public IConnector createConnector(String id, Model model,
-	    Map<String, Object> parameters) {
+	    Map<String, Object> parameters) throws ConnectorException {
 	IConnector connector = new YoutubeConnectorV2();
 	connector.initialize(id, model, parameters);
 	return connector;

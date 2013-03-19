@@ -1,6 +1,6 @@
 package de.m0ep.socc.connectors;
 
-public class OAuth2ConnectorConfig extends AbstractConnectorConfig {
+public class OAuth2ConnectorConfig extends DefaultConnectorConfig {
     private static final long serialVersionUID = 1613150078617134827L;
 
     public static final String CLIENT_ID = "clientId";

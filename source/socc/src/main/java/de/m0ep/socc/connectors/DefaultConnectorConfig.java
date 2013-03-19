@@ -1,14 +1,14 @@
 package de.m0ep.socc.connectors;
 
 
-public abstract class AbstractConnectorConfig implements IConnectorConfig {
+public abstract class DefaultConnectorConfig implements IConnectorConfig {
     private static final long serialVersionUID = 1992138033098739047L;
 
     public static final String MAX_NEW_POSTS_ON_POLL = "maxNewPostsOnPoll";
-    public static final String FACTORY_NAME = "factoryName";
+    public static final String POLL_COOLDOWN = "pollCooldown";
 
     private int maxNewPostsOnPoll;
-    private String factoryName;
+    private int pollCooldown;
 
     public int getMaxNewPostsOnPoll() {
 	return maxNewPostsOnPoll;
@@ -18,11 +18,11 @@ public abstract class AbstractConnectorConfig implements IConnectorConfig {
 	this.maxNewPostsOnPoll = maxNewPostsOnPoll;
     }
 
-    public String getFactoryName() {
-	return factoryName;
+    public int getPollCooldown() {
+	return pollCooldown;
     }
 
-    public void setFactoryName(String factoryName) {
-	this.factoryName = factoryName;
+    public void setPollCooldown(int pollCoolDown) {
+	this.pollCooldown = pollCoolDown;
     }
 }

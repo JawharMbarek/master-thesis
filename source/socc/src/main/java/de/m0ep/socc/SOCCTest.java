@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -301,8 +300,10 @@ public class SOCCTest {
 	printWithIndent("container: " + post.getAllContainer_as().firstValue(),
 		indent);
 	if (post.hasReplyof())
-	    printWithIndent("parent:    "
-		    + post.getAllReplyof_as().firstValue(), indent);
+	    printWithIndent("replyTo:   " + post.getReplyof(), indent);
+	if (post.hasDiscussion())
+	    printWithIndent("dsicussion:" + post.getDiscussion(), indent);
+
 	printWithIndent(
 		"canreply:  "
 			+ connector.canReplyOn(Post.getInstance(
@@ -337,13 +338,18 @@ public class SOCCTest {
 	    replies.close();
 	}
 
-	Post reply = new Post(post.getModel(), true);
-	reply.setContent("test post " + new Date());
-	reply.setTitle("Test post");
-	connector.replyPost(reply,
-		Post.getInstance(post.getModel(), post.getResource()));
+	// Post reply;
+	// try {
+	// reply = new Post(post.getModel(), true);
+	// reply.setContent("test post " + new Date());
+	// reply.setTitle("Test post");
+	// connector.replyPost(reply,
+	// Post.getInstance(post.getModel(), post.getResource()));
+	// Post.deleteAllProperties(post.getModel(), reply);
+	// } catch (Exception e) {
+	// // TODO Auto-generated catch block
+	// }
 
-	Post.deleteAllProperties(post.getModel(), reply);
     }
 
     static void printWithIndent(String text, int val) {

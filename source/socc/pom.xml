@@ -47,7 +47,7 @@
 			for more information -->
 		<repository>
 			<id>google-api-services</id>
-			<url>http://mavenrepo.google-api-java-client.googlecode.com/hg</url>
+			<url>http://google-api-client-libraries.appspot.com/mavenrepo</url>
 		</repository>
 	</repositories>
 
@@ -126,7 +126,7 @@
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-plus</artifactId>
-			<version>v1-rev40-1.12.0-beta</version>
+			<version>v1-rev59-1.13.2-beta</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.gdata</groupId>

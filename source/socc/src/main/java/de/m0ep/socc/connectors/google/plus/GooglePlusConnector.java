@@ -61,12 +61,9 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.plus.Plus;
 import com.google.api.services.plus.Plus.Activities;
 import com.google.api.services.plus.Plus.Comments;
-import com.google.api.services.plus.model.Activity;
+import com.google.api.services.plus.Plus.Moments;
+import com.google.api.services.plus.model.*;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments;
-import com.google.api.services.plus.model.ActivityFeed;
-import com.google.api.services.plus.model.Comment;
-import com.google.api.services.plus.model.CommentFeed;
-import com.google.api.services.plus.model.Person;
 import com.google.api.services.plus.model.Person.Emails;
 import com.google.common.base.Preconditions;
 
@@ -88,14 +85,16 @@ public class GooglePlusConnector extends AbstractConnector {
      * URI Path segments
      */
     private static final String PATH_ACTIVITY = "activity/";
-    private static final String PATH_CIRCLE = "circle/";
+    private static final String PATH_MOMENT = "moment/";
+    // private static final String PATH_CIRCLE = "circle/";
     private static final String PATH_COMMENT = "comment/";
     private static final String PATH_USER = "user/";
 
     /*
      * Connector constants
      */
-    private static final String CIRCLE_PUBLIC = "public";
+    private static final String ID_FORUM_PUBLIC = "public";
+    private static final String ID_FORUM_MOMENTS = "moments";
     private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     private static final JacksonFactory JSON_FACTORY = new JacksonFactory();
 
@@ -151,7 +150,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	credential.setRefreshToken(gpConfig.getRefreshToken());
 
 	plus = new Plus.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
-		.build();
+		.setApplicationName(getId()).build();
 
 	try {
 	    Person me = plus.people().get("me").setFields("id").execute();
@@ -165,14 +164,25 @@ public class GooglePlusConnector extends AbstractConnector {
 	}
 
 	// set all static forums
-	URI uri = RDF2GoUtils.createURI(getURL() + PATH_CIRCLE + CIRCLE_PUBLIC);
+	URI uri = RDF2GoUtils
+		.createURI(getURL() + myId + "/" + ID_FORUM_PUBLIC);
 
 	if (!Forum.hasInstance(getModel(), uri)) {
 	    Forum pub = new Forum(getModel(), uri, true);
-	    pub.setId(CIRCLE_PUBLIC);
-	    pub.setName(CIRCLE_PUBLIC);
+	    pub.setId(myId + "/" + ID_FORUM_PUBLIC);
+	    pub.setName("Public");
 	    pub.setHost(getSite());
 	    getSite().addHostof(pub);
+	}
+
+	uri = RDF2GoUtils.createURI(getURL() + myId + "/" + ID_FORUM_MOMENTS);
+
+	if (!Forum.hasInstance(getModel(), uri)) {
+	    Forum moments = new Forum(getModel(), uri, true);
+	    moments.setId(myId + "/" + ID_FORUM_MOMENTS);
+	    moments.setName("Moments");
+	    moments.setHost(getSite());
+	    getSite().setHostof(moments);
 	}
     }
 
@@ -265,15 +275,20 @@ public class GooglePlusConnector extends AbstractConnector {
 
     @Override
     public Forum getForum(final String id) throws ConnectorException {
-	// atm. only public circle is available
-	// TODO: later check for other circles
+	// atm. only public posts and moments are available
+	// TODO: later check for circles
 
-	if (CIRCLE_PUBLIC.equalsIgnoreCase(id)) {
-	    URI uri = RDF2GoUtils.createURI(getURL() + PATH_CIRCLE + id);
+	if ((myId + "/" + ID_FORUM_PUBLIC).equalsIgnoreCase(id)) {
+	    URI uri = RDF2GoUtils.createURI(getURL() + myId + "/"
+		    + ID_FORUM_PUBLIC);
+	    return Forum.getInstance(getModel(), uri);
+	} else if ((myId + "/" + ID_FORUM_MOMENTS).equalsIgnoreCase(id)) {
+	    URI uri = RDF2GoUtils.createURI(getURL() + myId + "/"
+		    + ID_FORUM_MOMENTS);
 	    return Forum.getInstance(getModel(), uri);
 	}
 
-	throw new NotFoundException("Not found");
+	throw new NotFoundException("Forum with id " + id + " not found");
     }
 
     @Override
@@ -324,7 +339,130 @@ public class GooglePlusConnector extends AbstractConnector {
 	Preconditions.checkNotNull(container, "container can not be null");
 	Preconditions.checkArgument(hasPosts(container),
 		"this container has no post on " + getSite().getName());
+	List<Post> result = new ArrayList<Post>();
 
+	if (container.getId().contains(ID_FORUM_MOMENTS)) {
+	    result.addAll(pollMoments(container));
+	} else if (container.getId().contains(ID_FORUM_PUBLIC)) {
+	    result.addAll(pollPublicActivities(container));
+	}
+
+	return result;
+    }
+
+    private List<Post> pollMoments(final Container container)
+	    throws ConnectorException {
+	String pageToken = null;
+	List<Post> result = new ArrayList<Post>();
+	Date lastItemDate = new Date(0);
+
+	if (container.hasLastitemdate()) {
+	    try {
+		lastItemDate = RDFTool.string2DateTime(container
+			.getLastitemdate());
+	    } catch (ParseException e1) {
+		lastItemDate = new Date(0);
+	    }
+	}
+
+	Moments.List momentListRequest = null;
+	do {
+	    MomentsFeed feed = null;
+	    try {
+		if (null == momentListRequest) {
+		    momentListRequest = plus.moments().list("me", "vault");
+		    // activityListRequest.setFields("id,items(actor/id,id,"
+		    // + "object(attachments/url,content,"
+		    // + "replies/totalItems),published,title,updated),"
+		    // + "nextPageToken,updated");
+
+		}
+
+		if (null != pageToken) {
+		    momentListRequest.setPageToken(pageToken);
+		}
+
+		feed = momentListRequest.execute();
+	    } catch (GoogleJsonResponseException e) {
+		LOG.error(e.getLocalizedMessage(), e);
+		throw mapToConnectorException(e);
+	    } catch (Throwable t) {
+		LOG.error(t.getLocalizedMessage(), t);
+		throw new ConnectorException("Unknown error", t);
+	    }
+
+	    if (null != feed) {
+		pageToken = feed.getNextPageToken();
+		for (Moment moment : feed.getItems()) {
+		    URI uri = RDF2GoUtils.createURI(getURL() + PATH_MOMENT
+			    + moment.getId());
+
+		    if (null != moment.getTarget()) {
+			ItemScope target = moment.getTarget();
+			if (null != target.getDateCreated()) {
+			    Date created;
+			    try {
+				created = DateUtils.parseISO8601(target
+					.getDateCreated());
+			    } catch (ParseException e) {
+				created = new Date(1);
+			    }
+			    if (created.after(lastItemDate)) {
+				if (!Post.hasInstance(getModel(), uri)) {
+				    Post post = new Post(getModel(), uri, true);
+				    post.setId(moment.getId());
+
+				    if (null != target.getName()) {
+					post.setTitle(target.getName());
+				    }
+
+				    if (null != target.getDescription()) {
+					post.setContent(target.getDescription());
+				    }
+
+				    if (null != target.getAuthor()) {
+					try {
+					    post.setCreator(getUserAccount(target
+						    .getAuthor().get(0).getId()));
+					} catch (NotFoundException e) {
+					    LOG.error(e.toString(), e);
+					}
+				    }
+
+				    if (null != target.getDateCreated()) {
+					try {
+					    post.setCreated(DateUtils.formatISO8601(DateUtils
+						    .parseISO8601(target
+							    .getDateCreated())));
+					} catch (ParseException e) {
+					    LOG.error(e.getMessage(), e);
+					}
+				    }
+
+				    if (null != target.getDateModified()) {
+					try {
+					    post.setModified(DateUtils.formatISO8601(DateUtils
+						    .parseISO8601(target
+							    .getDateModified())));
+					} catch (ParseException e) {
+					    LOG.error(e.getMessage(), e);
+					}
+				    }
+
+				    result.add(post);
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	} while (null != pageToken);
+
+	return result;
+    }
+
+    private List<Post> pollPublicActivities(final Container container)
+	    throws ConnectorException {
 	String pageToken = null;
 	List<Post> result = new ArrayList<Post>();
 	Date lastItemDate = new Date(0);
@@ -364,61 +502,66 @@ public class GooglePlusConnector extends AbstractConnector {
 		throw new ConnectorException("Unknown error", t);
 	    }
 
-	    for (Activity activity : feed.getItems()) {
-		URI uri = RDF2GoUtils.createURI(getURL() + PATH_ACTIVITY
-			+ activity.getId());
-		Date created = new Date(activity.getPublished().getValue());
-		// TODO: check for updated posts!?
+	    if (null != feed) {
+		pageToken = feed.getNextPageToken();
+		for (Activity activity : feed.getItems()) {
+		    URI uri = RDF2GoUtils.createURI(getURL() + PATH_ACTIVITY
+			    + activity.getId());
+		    Date created = new Date(activity.getPublished().getValue());
+		    // TODO: check for updated posts!?
 
-		if (created.after(lastItemDate)) {
-		    if (!Post.hasInstance(getModel(), uri)) {
-			Post post = new Post(getModel(), uri, true);
-			post.setId(activity.getId());
+		    if (created.after(lastItemDate)) {
+			if (!Post.hasInstance(getModel(), uri)) {
+			    Post post = new Post(getModel(), uri, true);
+			    post.setId(activity.getId());
 
-			if (null != activity.getTitle())
-			    post.setTitle(activity.getTitle());
+			    if (null != activity.getTitle())
+				post.setTitle(activity.getTitle());
 
-			if (null != activity.getActor())
-			    post.setCreator(getUserAccount(activity.getActor()
-				    .getId()));
+			    if (null != activity.getActor())
+				post.setCreator(getUserAccount(activity
+					.getActor().getId()));
 
-			if (null != activity.getPublished())
-			    post.setCreated(DateUtils.formatISO8601(activity
-				    .getPublished().getValue()));
+			    if (null != activity.getPublished())
+				post.setCreated(DateUtils
+					.formatISO8601(activity.getPublished()
+						.getValue()));
 
-			if (null != activity.getUpdated())
-			    post.setModified(DateUtils.formatISO8601(activity
-				    .getUpdated().getValue()));
+			    if (null != activity.getUpdated())
+				post.setModified(DateUtils
+					.formatISO8601(activity.getUpdated()
+						.getValue()));
 
-			String content = activity.getObject().getContent();
-			post.setContent(StringUtils.stripHTML(content));
-			post.setContentEncoded(content);
+			    String content = activity.getObject().getContent();
+			    post.setContent(StringUtils.stripHTML(content));
+			    post.setContentEncoded(content);
 
-			if (null != activity.getObject().getAttachments()) {
-			    for (Attachments attachments : activity.getObject()
-				    .getAttachments()) {
-				post.addAttachment(RDF2GoUtils
-					.createURI(attachments.getUrl()));
+			    if (null != activity.getObject().getAttachments()) {
+				for (Attachments attachments : activity
+					.getObject().getAttachments()) {
+				    post.addAttachment(RDF2GoUtils
+					    .createURI(attachments.getUrl()));
+				}
 			    }
+
+			    // set sioc connections
+			    post.setContainer(container);
+			    container.addContainerof(post);
+			    SIOCUtils.updateLastItemDate(container, post);
+
+			    result.add(post);
+			    LOG.debug("add new post " + post.toString());
 			}
-
-			// set sioc connections
-			post.setContainer(container);
-			container.addContainerof(post);
-			SIOCUtils.updateLastItemDate(container, post);
-
-			result.add(post);
-			LOG.debug("add new post " + post.toString());
 		    }
-		}
 
-		Long numReplies = activity.getObject().getReplies()
-			.getTotalItems();
-		if (Post.hasInstance(getModel(), uri) && 0 < numReplies) {
-		    List<Post> comments = pollNewReplies(
-			    Post.getInstance(getModel(), uri), activity);
+		    Long numReplies = activity.getObject().getReplies()
+			    .getTotalItems();
+		    if (Post.hasInstance(getModel(), uri) && 0 < numReplies) {
+			List<Post> comments = pollNewReplies(
+				Post.getInstance(getModel(), uri), activity);
 
-		    result.addAll(comments);
+			result.addAll(comments);
+		    }
 		}
 	    }
 	} while (null != pageToken);

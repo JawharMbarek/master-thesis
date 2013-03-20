@@ -139,8 +139,9 @@ public class SOCCTest {
 	IConnector[] connectors = {
 	// fbFactory.createConnector("facebook", model, fbParams),
 	// mdlFactory.createConnector("moodle", model, mdlParams),
-	// gpFactory.createConnector("google+", model, gpParams),
-	ytFactory.createConnector("youtube", model, ytParams) };
+	gpFactory.createConnector("google+", model, gpParams)
+	// ytFactory.createConnector("youtube", model, ytParams)
+	};
 
 	for (IConnector connector : connectors) {
 	    printConnector(connector);

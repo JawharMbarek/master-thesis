@@ -136,10 +136,10 @@ public class SOCCTest {
 	MoodleConnectorFactory mdlFactory = new MoodleConnectorFactory();
 	YoutubeConnectorV2Factory ytFactory = new YoutubeConnectorV2Factory();
 
-	IConnector[] connectors = {
-	// fbFactory.createConnector("facebook", model, fbParams),
+	IConnector[] connectors = { fbFactory.createConnector("facebook",
+		model, fbParams)
 	// mdlFactory.createConnector("moodle", model, mdlParams),
-	gpFactory.createConnector("google+", model, gpParams)
+	// gpFactory.createConnector("google+", model, gpParams)
 	// ytFactory.createConnector("youtube", model, ytParams)
 	};
 
@@ -183,6 +183,14 @@ public class SOCCTest {
 	System.out.println(connector.getURL());
 	System.out.println("=====================================");
 	System.out.println("=====================================");
+
+	try {
+	    System.err.println("test connector");
+	    printPost(connector,
+		    connector.getPost("100000490230885_629013553791647"), 1);
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
 
 	UserAccount user = connector.getLoginUser();
 	printUser(user, 0);
@@ -255,7 +263,7 @@ public class SOCCTest {
 	while (posts.hasNext()) {
 	    Post post = (Post) posts.next();
 	    if (!post.hasReplyof()) // print only top posts, replies are printed
-				  // later
+				    // later
 		printPost(connector, post, indent);
 
 	    if (5 == ctr++)
@@ -277,7 +285,8 @@ public class SOCCTest {
 		+ user.getAllAccountservicehomepage_as().firstValue(), indent);
     }
 
-    static void printPost(IConnector connector, Item post, int indent) throws ConnectorException {
+    static void printPost(IConnector connector, Item post, int indent)
+	    throws ConnectorException {
 	printWithIndent("Post-----------------", indent);
 	printWithIndent("uri:       " + post, indent);
 	printWithIndent("id:        " + post.getAllId_as().firstValue(), indent);

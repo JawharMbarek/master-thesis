@@ -1,21 +1,18 @@
 package de.m0ep.camel.socc;
 
-import java.util.Map.Entry;
+import java.util.Date;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.impl.ScheduledPollConsumer;
-import org.ontoware.aifbcommons.collection.ClosableIterator;
-import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
-import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.node.URI;
-import org.ontoware.rdf2go.model.node.Variable;
-import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Post;
 
-import de.m0ep.socc.utils.RDF2GoUtils;
+import de.m0ep.socc.utils.DateUtils;
 
 public class SOCCConsumer extends ScheduledPollConsumer {
 
@@ -30,40 +27,22 @@ public class SOCCConsumer extends ScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
-	System.out.println("poll");
-	URI uri = RDF2GoUtils.createURI("http://example.com/"
-		+ System.currentTimeMillis());
+	URI uri = model.newRandomUniqueURI();
 	Post post = new Post(model, uri, true);
-	post.setName("Testpost");
+	post.setTitle("Testpost");
+	post.setContent("Hallo, ich bin ein test post");
+	post.setCreated(DateUtils.formatISO8601(new Date()));
 
 	Exchange exchange = getEndpoint().createExchange();
-	exchange.getIn().setBody(serializePost(post));
+
+	Message msg = new DefaultMessage();
+	msg.setHeader(Exchange.CONTENT_TYPE, "RDFStatements");
+	msg.setHeader("SIOCType", "Post");
+
+	exchange.getIn().setBody(new RDFSClass(model, uri));
 
 	getProcessor().process(exchange);
 
 	return 1;
     }
-
-    private String serializePost(Post p) {
-	ClosableIterator<Statement> stmtsCloseableIterator = model
-		.findStatements(p, Variable.ANY, Variable.ANY);
-
-	Model sm = RDF2Go.getModelFactory().createModel();
-	sm.open();
-
-	for (Entry<String, String> ns : model.getNamespaces().entrySet())
-	    sm.setNamespace(ns.getKey(), ns.getValue());
-
-	while (stmtsCloseableIterator.hasNext()) {
-	    Statement statement = (Statement) stmtsCloseableIterator.next();
-
-	    sm.addStatement(statement);
-	}
-	String xml = RDFTool.modelToString(sm);
-	stmtsCloseableIterator.close();
-	sm.close();
-	System.out.println("test " + xml.replace('\n', ' '));
-	return xml;
-    }
-
 }

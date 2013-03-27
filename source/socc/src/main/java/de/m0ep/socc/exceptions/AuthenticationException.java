@@ -1,4 +1,4 @@
-package de.m0ep.socc.connectors.exceptions;
+package de.m0ep.socc.exceptions;
 
 public class AuthenticationException extends ConnectorException {
     private static final long serialVersionUID = -6953764319606378722L;

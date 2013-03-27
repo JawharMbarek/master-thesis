@@ -20,40 +20,29 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.connectors.moodle;
+package de.m0ep.socc.exceptions;
 
-import java.util.Map;
+public class ConnectorException extends Exception {
+    private static final long serialVersionUID = -4779338022009814217L;
 
-import org.ontoware.rdf2go.model.Model;
-
-import de.m0ep.socc.IConnector;
-import de.m0ep.socc.IConnectorFactory;
-import de.m0ep.socc.exceptions.ConnectorException;
-import de.m0ep.socc.utils.ConfigUtils;
-
-public class MoodleConnectorFactory implements IConnectorFactory {
-
-    @Override
-    public String getConnectorName() {
-	return "Moodle";
+    public ConnectorException() {
     }
 
-    @Override
-    public String getUniqueFactoryId() {
-	return "MoodleConnectorFactory_2.4";
+    public ConnectorException(String message) {
+	super(message);
     }
 
-    @Override
-    public String[] getConfigKeys() {
-	return ConfigUtils.getPropertyNames(MoodleConnectorConfig.class);
+    public ConnectorException(Throwable cause) {
+	super(cause);
     }
 
-    @Override
-    public IConnector createConnector(String id, Model model,
-	    Map<String, Object> parameters) throws ConnectorException {
-	IConnector connector = new MoodleConnector();
-	connector.initialize(id, model, parameters);
-	return connector;
+    public ConnectorException(String message, Throwable cause) {
+	super(message, cause);
+    }
+
+    public ConnectorException(String message, Throwable cause,
+	    boolean enableSuppression, boolean writableStackTrace) {
+	super(message, cause, enableSuppression, writableStackTrace);
     }
 
 }

@@ -1,9 +1,8 @@
 global.postPerPoll = 
 global.pollCooldown = 
 
-yt.email = 
-yt.password = 
 yt.username = 
+yt.password = 
 yt.developerKey = 
 
 fb.clientId = 

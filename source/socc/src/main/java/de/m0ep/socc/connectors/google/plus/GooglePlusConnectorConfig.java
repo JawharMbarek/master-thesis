@@ -1,6 +1,6 @@
 package de.m0ep.socc.connectors.google.plus;
 
-import de.m0ep.socc.connectors.OAuth2ConnectorConfig;
+import de.m0ep.socc.config.OAuth2ConnectorConfig;
 
 public class GooglePlusConnectorConfig extends OAuth2ConnectorConfig {
     private static final long serialVersionUID = 1613150078617134827L;

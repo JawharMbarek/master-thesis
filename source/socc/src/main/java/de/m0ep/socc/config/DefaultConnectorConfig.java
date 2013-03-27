@@ -20,29 +20,39 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.connectors.exceptions;
+package de.m0ep.socc.config;
 
-public class ConnectorException extends Exception {
-    private static final long serialVersionUID = -4779338022009814217L;
+import org.mortbay.jetty.Connector;
 
-    public ConnectorException() {
+/**
+ * A default configuration JavaBean with some useful properties for all
+ * {@link Connector}s.
+ * 
+ * @author Florian Müller
+ * 
+ */
+public abstract class DefaultConnectorConfig implements IConnectorConfig {
+    private static final long serialVersionUID = 1992138033098739047L;
+
+    public static final String MAX_NEW_POSTS_ON_POLL = "maxNewPostsOnPoll";
+    public static final String POLL_COOLDOWN = "pollCooldownMillis";
+
+    private int maxNewPostsOnPoll;
+    private int pollCooldownMillis;
+
+    public int getMaxNewPostsOnPoll() {
+	return maxNewPostsOnPoll;
     }
 
-    public ConnectorException(String message) {
-	super(message);
+    public void setMaxNewPostsOnPoll(int maxNewPostsOnPoll) {
+	this.maxNewPostsOnPoll = maxNewPostsOnPoll;
     }
 
-    public ConnectorException(Throwable cause) {
-	super(cause);
+    public int getPollCooldownMillis() {
+	return pollCooldownMillis;
     }
 
-    public ConnectorException(String message, Throwable cause) {
-	super(message, cause);
+    public void setPollCooldownMillis(int pollCoolDown) {
+	this.pollCooldownMillis = pollCoolDown;
     }
-
-    public ConnectorException(String message, Throwable cause,
-	    boolean enableSuppression, boolean writableStackTrace) {
-	super(message, cause, enableSuppression, writableStackTrace);
-    }
-
 }

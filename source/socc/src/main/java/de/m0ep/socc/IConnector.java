@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.connectors;
+package de.m0ep.socc;
 
 import java.util.List;
 import java.util.Map;
@@ -34,7 +34,7 @@ import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 import org.rdfs.sioc.Usergroup;
 
-import de.m0ep.socc.connectors.exceptions.ConnectorException;
+import de.m0ep.socc.exceptions.ConnectorException;
 
 /**
  * Interface for a connector to a social online community
@@ -191,8 +191,7 @@ public interface IConnector {
      *            retrieved.
      * @return Iterator of all found {@link Post}s.
      */
-    public List<Post> getPosts(Container container)
-	    throws ConnectorException;
+    public List<Post> getPosts(Container container) throws ConnectorException;
 
     /**
      * Poll this connector to retrieve all new {@link Post}s since the last call
@@ -267,7 +266,7 @@ public interface IConnector {
      *            {@link Container} where to publish the {@link Post}.
      * @return Returns true if publishing was successful, false otherwise.
      */
-    public boolean publishPost(Post post, Container container)
+    public Post publishPost(Post post, Container container)
 	    throws ConnectorException;
 
     /**
@@ -279,5 +278,5 @@ public interface IConnector {
      *            {@link Post} where to reply on.
      * @return Returns true if replying was successful, false otherwise.
      */
-    public boolean replyPost(Post post, Post parent) throws ConnectorException;
+    public Post replyPost(Post post, Post parent) throws ConnectorException;
 }

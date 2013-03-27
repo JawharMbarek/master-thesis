@@ -26,25 +26,29 @@ import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 
-import de.m0ep.socc.connectors.IConnector;
-import de.m0ep.socc.connectors.IConnectorFactory;
-import de.m0ep.socc.connectors.exceptions.ConnectorException;
+import de.m0ep.socc.IConnector;
+import de.m0ep.socc.IConnectorFactory;
+import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.utils.ConfigUtils;
 
 public class FacebookConnectorFactory implements IConnectorFactory {
 
+    @Override
     public String getConnectorName() {
 	return "Facebook";
     }
 
+    @Override
     public String getUniqueFactoryId() {
 	return "FacebookConnectorFactory_1.0";
     }
 
+    @Override
     public String[] getConfigKeys() {
 	return ConfigUtils.getPropertyNames(FacebookConnectorConfig.class);
     }
 
+    @Override
     public IConnector createConnector(String id, Model model,
 	    Map<String, Object> parameters) throws ConnectorException {
 	IConnector connector = new FacebookConnector();

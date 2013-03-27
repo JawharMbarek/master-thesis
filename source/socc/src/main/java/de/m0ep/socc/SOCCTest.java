@@ -30,17 +30,13 @@ import org.rdfs.sioc.UserAccount;
 
 import com.google.common.collect.Lists;
 
-import de.m0ep.socc.connectors.DefaultConnectorConfig;
-import de.m0ep.socc.connectors.IConnector;
-import de.m0ep.socc.connectors.exceptions.ConnectorException;
+import de.m0ep.socc.config.DefaultConnectorConfig;
 import de.m0ep.socc.connectors.facebook.FacebookConnectorConfig;
 import de.m0ep.socc.connectors.facebook.FacebookConnectorFactory;
 import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorConfig;
-import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorFactory;
 import de.m0ep.socc.connectors.google.youtube.YoutubeConnectorV2Config;
-import de.m0ep.socc.connectors.google.youtube.YoutubeConnectorV2Factory;
 import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
-import de.m0ep.socc.connectors.moodle.MoodleConnectorFactory;
+import de.m0ep.socc.exceptions.ConnectorException;
 
 public class SOCCTest {
 
@@ -123,7 +119,6 @@ public class SOCCTest {
 	ytParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
 		maxPostPerPoll);
 	ytParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
-	ytParams.put(YoutubeConnectorV2Config.EMAIL, config.get("yt.email"));
 	ytParams.put(YoutubeConnectorV2Config.PASSWORD,
 		config.get("yt.password"));
 	ytParams.put(YoutubeConnectorV2Config.USERNAME,
@@ -132,9 +127,11 @@ public class SOCCTest {
 		config.get("yt.developerKey"));
 
 	FacebookConnectorFactory fbFactory = new FacebookConnectorFactory();
-	GooglePlusConnectorFactory gpFactory = new GooglePlusConnectorFactory();
-	MoodleConnectorFactory mdlFactory = new MoodleConnectorFactory();
-	YoutubeConnectorV2Factory ytFactory = new YoutubeConnectorV2Factory();
+	// GooglePlusConnectorFactory gpFactory = new
+	// GooglePlusConnectorFactory();
+	// MoodleConnectorFactory mdlFactory = new MoodleConnectorFactory();
+	// YoutubeConnectorV2Factory ytFactory = new
+	// YoutubeConnectorV2Factory();
 
 	IConnector[] connectors = { fbFactory.createConnector("facebook",
 		model, fbParams)
@@ -152,6 +149,7 @@ public class SOCCTest {
 	    List<Statement> statements = Lists.newArrayList(model.iterator());
 
 	    Collections.sort(statements, new Comparator<Statement>() {
+		@Override
 		public int compare(Statement o1, Statement o2) {
 		    return o1.compareTo(o2);
 		};
@@ -198,7 +196,7 @@ public class SOCCTest {
 	Iterator<Forum> forums = connector.getForums().iterator();
 
 	while (forums.hasNext()) {
-	    Forum forum = (Forum) forums.next();
+	    Forum forum = forums.next();
 
 	    printWithIndent("Forum===============", 0);
 	    printWithIndent("uri:        " + forum, 0);
@@ -223,7 +221,7 @@ public class SOCCTest {
 	    Iterator<Thread> threads = connector.getThreads(forum).iterator();
 
 	    while (threads.hasNext()) {
-		Thread thread = (Thread) threads.next();
+		Thread thread = threads.next();
 
 		printWithIndent("Thread..............", 1);
 		printWithIndent("uri:        " + thread, 1);
@@ -261,7 +259,7 @@ public class SOCCTest {
 
 	int ctr = 0;
 	while (posts.hasNext()) {
-	    Post post = (Post) posts.next();
+	    Post post = posts.next();
 	    if (!post.hasReplyof()) // print only top posts, replies are printed
 				    // later
 		printPost(connector, post, indent);
@@ -329,7 +327,7 @@ public class SOCCTest {
 
 	    ClosableIterator<Node> attachments = post.getAllAttachment_asNode();
 	    while (attachments.hasNext()) {
-		Node node = (Node) attachments.next();
+		Node node = attachments.next();
 		printWithIndent(node.toString(), indent);
 
 	    }
@@ -342,7 +340,7 @@ public class SOCCTest {
 	    ClosableIterator<Item> replies = post.getAllReply();
 
 	    while (replies.hasNext()) {
-		Item item = (Item) replies.next();
+		Item item = replies.next();
 		printPost(connector, item, indent + 1);
 	    }
 	    replies.close();

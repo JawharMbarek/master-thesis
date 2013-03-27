@@ -33,11 +33,10 @@ public class RDFXMLDataformat implements DataFormat {
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream)
 	    throws Exception {
-	String xml = exchange.getContext().getTypeConverter()
-		.mandatoryConvertTo(String.class, stream);
+	// String xml = exchange.getContext().getTypeConverter()
+	// .mandatoryConvertTo(String.class, stream);
 
-	
-	//return new RDFSClass(RDFTool.stringToModel(xml, Syntax.RdfXml));
+	// return new RDFSClass(RDFTool.stringToModel(xml, Syntax.RdfXml));
 	return null;
     }
 }

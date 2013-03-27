@@ -1,4 +1,4 @@
-package de.m0ep.socc.connectors.exceptions;
+package de.m0ep.socc.exceptions;
 
 public class NotFoundException extends ConnectorException {
     private static final long serialVersionUID = -2291761551548259500L;

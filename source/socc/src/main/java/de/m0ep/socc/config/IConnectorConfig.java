@@ -20,54 +20,17 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.connectors;
+package de.m0ep.socc.config;
 
-import java.util.Map;
+import java.io.Serializable;
 
-import org.ontoware.rdf2go.model.Model;
-
-import de.m0ep.socc.connectors.exceptions.ConnectorException;
+import org.mortbay.jetty.Connector;
 
 /**
- * Interface of a {@link IConnectorFactory} to create new {@link IConnector}s
+ * An marker interface for configuration JavaBeans of {@link Connector}s.
  * 
  * @author Florian Müller
  * 
  */
-public interface IConnectorFactory {
-    /**
-     * Returns a human readable name for this connectors
-     * 
-     * @return Name for this connectors
-     */
-    public String getConnectorName();
-
-    /**
-     * Returns a unique name for this factory
-     * 
-     * @return
-     */
-    public String getUniqueFactoryId();
-
-    /**
-     * Returns keys for configuration parameters that should be loaded/stored
-     * 
-     * @return
-     */
-    public String[] getConfigKeys();
-
-    /**
-     * Create a new {@link IConnector}.
-     * 
-     * @param id
-     *            Id of this connector.
-     * @param model
-     *            RDF2Go {@link Model} to use as SIOC store.
-     * @param parameters
-     *            {@link Map} with configuration parameters for a new
-     *            {@link IConnector}.
-     * @return
-     */
-    public IConnector createConnector(String id, Model model,
-	    Map<String, Object> parameters) throws ConnectorException;
+public interface IConnectorConfig extends Serializable {
 }

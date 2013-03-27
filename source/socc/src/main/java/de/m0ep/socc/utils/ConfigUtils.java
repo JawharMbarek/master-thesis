@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.beanutils.locale.LocaleBeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.m0ep.socc.connectors.IConnectorConfig;
+import de.m0ep.socc.config.IConnectorConfig;
 
 public class ConfigUtils {
     private static final Logger LOG = LoggerFactory
@@ -38,7 +39,7 @@ public class ConfigUtils {
 	    Map<String, Object> paramerers, Class<T> beanClass) {
 	try {
 	    T beanConfig = beanClass.newInstance();
-	    LocaleBeanUtils.populate(beanConfig, paramerers);
+	    BeanUtils.populate(beanConfig, paramerers);
 	    return beanConfig;
 	} catch (Exception e) {
 	    String error = "failed to convert Map to " + beanClass.getName();

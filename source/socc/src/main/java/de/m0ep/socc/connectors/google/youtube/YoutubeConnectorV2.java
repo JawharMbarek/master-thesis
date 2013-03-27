@@ -70,11 +70,11 @@ import com.google.gdata.util.ResourceNotFoundException;
 import com.google.gdata.util.ServiceException;
 import com.google.gdata.util.ServiceForbiddenException;
 
-import de.m0ep.socc.connectors.AbstractConnector;
-import de.m0ep.socc.connectors.exceptions.AuthenticationException;
-import de.m0ep.socc.connectors.exceptions.ConnectorException;
-import de.m0ep.socc.connectors.exceptions.NetworkException;
-import de.m0ep.socc.connectors.exceptions.NotFoundException;
+import de.m0ep.socc.AbstractConnector;
+import de.m0ep.socc.exceptions.AuthenticationException;
+import de.m0ep.socc.exceptions.ConnectorException;
+import de.m0ep.socc.exceptions.NetworkException;
+import de.m0ep.socc.exceptions.NotFoundException;
 import de.m0ep.socc.utils.ConfigUtils;
 import de.m0ep.socc.utils.DateUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
@@ -125,7 +125,7 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 		this.ytConfig.getDeveloperKey());
 
 	try {
-	    service.setUserCredentials(this.ytConfig.getEmail(),
+	    service.setUserCredentials(this.ytConfig.getUsername(),
 		    this.ytConfig.getPassword());
 	} catch (com.google.gdata.util.AuthenticationException e) {
 	    throw new AuthenticationException(e.getMessage(), e);
@@ -366,7 +366,7 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 		Variable.ANY, SIOC.has_container, container);
 
 	while (stmtsIter.hasNext()) {
-	    Statement statement = (Statement) stmtsIter.next();
+	    Statement statement = stmtsIter.next();
 
 	    if (Post.hasInstance(getModel(), statement.getSubject())) {
 		result.add(Post.getInstance(getModel(), statement.getSubject()));
@@ -483,17 +483,16 @@ public class YoutubeConnectorV2 extends AbstractConnector {
     }
 
     @Override
-    public boolean canReplyOn(Post parent) {
-	if (null == parent)
-	    return false;
+    public boolean canReplyOn(Post parentPost) {
+	Preconditions.checkNotNull(parentPost, "parentPost can not be null");
 
-	return parent.hasContainer()
-		&& (parent.hasContainer(uploads) || parent.getContainer()
-			.hasParent(playlists));
+	return parentPost.hasContainer()
+		&& (parentPost.hasContainer(uploads) || parentPost
+			.getContainer().hasParent(playlists));
     }
 
     @Override
-    public boolean replyPost(Post post, Post parent) throws ConnectorException {
+    public Post replyPost(Post post, Post parent) throws ConnectorException {
 	Preconditions.checkNotNull(post, "post can not be null");
 	Preconditions.checkNotNull(parent, "parent can not be null");
 	Preconditions.checkArgument(canReplyOn(parent),
@@ -563,7 +562,26 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 	    throw new ConnectorException("Unknown error", t);
 	}
 
-	return null != result;
+	if (null != result) {
+	    Post videoPost = null;
+	    if (parent.getId().contains("/comments/")) {
+		videoPost = Post
+			.getInstance(getModel(), parent.getDiscussion());
+	    } else {
+		videoPost = parent;
+	    }
+
+	    String commentId = videoPost.getId() + "/comments/"
+		    + getYoutubeID(comment.getId());
+	    URI uri = RDF2GoUtils.createURI(String.format(ENTRY_VIDEO,
+		    commentId));
+	    Post addedPost = createComment(videoPost.getContainer(), parent,
+		    comment, uri);
+	    addedPost.setSibling(post);
+	    return addedPost;
+	}
+
+	throw new ConnectorException("Failed to reply post with unknown reason");
     }
 
     private Thread createThread(final Forum forum, final URI uri,

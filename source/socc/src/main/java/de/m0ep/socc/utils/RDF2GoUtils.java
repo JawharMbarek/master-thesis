@@ -74,7 +74,7 @@ public final class RDF2GoUtils {
 		Variable.ANY, Variable.ANY);
 
 	while (iter.hasNext()) {
-	    Statement statement = (Statement) iter.next();
+	    Statement statement = iter.next();
 	    if (null != statement)
 		result.add(statement);
 	}

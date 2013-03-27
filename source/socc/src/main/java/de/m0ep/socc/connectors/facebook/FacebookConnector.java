@@ -60,11 +60,11 @@ import com.restfb.types.FacebookType;
 import com.restfb.types.Group;
 import com.restfb.types.User;
 
-import de.m0ep.socc.connectors.AbstractConnector;
-import de.m0ep.socc.connectors.exceptions.AuthenticationException;
-import de.m0ep.socc.connectors.exceptions.ConnectorException;
-import de.m0ep.socc.connectors.exceptions.NetworkException;
-import de.m0ep.socc.connectors.exceptions.NotFoundException;
+import de.m0ep.socc.AbstractConnector;
+import de.m0ep.socc.exceptions.AuthenticationException;
+import de.m0ep.socc.exceptions.ConnectorException;
+import de.m0ep.socc.exceptions.NetworkException;
+import de.m0ep.socc.exceptions.NotFoundException;
 import de.m0ep.socc.utils.ConfigUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
 
@@ -122,6 +122,7 @@ public class FacebookConnector extends AbstractConnector {
 	}
     }
 
+    @Override
     public String getURL() {
 	return "http://www.facebook.com/";
     }
@@ -131,6 +132,7 @@ public class FacebookConnector extends AbstractConnector {
 	return ConfigUtils.toMap(fbConfig);
     }
 
+    @Override
     public Site getSite() throws ConnectorException {
 	URI uri = RDF2GoUtils.createURI(getURL());
 
@@ -143,6 +145,7 @@ public class FacebookConnector extends AbstractConnector {
 	}
     }
 
+    @Override
     public UserAccount getLoginUser() throws ConnectorException {
 	return getUserAccount(myId);
     }
@@ -175,8 +178,7 @@ public class FacebookConnector extends AbstractConnector {
 		throw new ConnectorException("unknown error", t);
 	    }
 
-	    return FacebookToSIOCConverter.createUserAccountFromUser(this,
-		    user, uri);
+	    return FacebookToSIOCConverter.createUserAccount(this, user, uri);
 
 	} else {
 	    return UserAccount.getInstance(getModel(), uri);
@@ -208,8 +210,7 @@ public class FacebookConnector extends AbstractConnector {
 		    && FacebookConstants.TYPE_GROUP.equalsIgnoreCase(group
 			    .getType())) {
 
-		return FacebookToSIOCConverter.createForumFromGroup(this,
-			group, uri);
+		return FacebookToSIOCConverter.createForum(this, group, uri);
 	    }
 
 	    throw new NotFoundException("No forum found with id " + id);
@@ -226,7 +227,7 @@ public class FacebookConnector extends AbstractConnector {
 	ClosableIterator<Statement> stmtIter = getModel().findStatements(
 		Variable.ANY, SIOC.has_host, getSite());
 	while (stmtIter.hasNext()) {
-	    Statement statement = (Statement) stmtIter.next();
+	    Statement statement = stmtIter.next();
 	    Resource subject = statement.getSubject();
 
 	    if (getModel().contains(subject, RDF.type, SIOC.Forum)) {
@@ -254,8 +255,8 @@ public class FacebookConnector extends AbstractConnector {
 			+ FacebookConstants.CONNECTION_FEED);
 
 		if (!Forum.hasInstance(getModel(), uri)) {
-		    Forum forum = FacebookToSIOCConverter.createForumFromGroup(
-			    this, group, uri);
+		    Forum forum = FacebookToSIOCConverter.createForum(this,
+			    group, uri);
 		    LOG.debug("Add new forum " + uri.toString());
 		    result.add(forum);
 		}
@@ -307,9 +308,8 @@ public class FacebookConnector extends AbstractConnector {
 			}
 
 			if (null != container) {
-			    Post result = FacebookToSIOCConverter
-				    .createPostFromJSON(this, container, obj,
-					    uri);
+			    Post result = FacebookToSIOCConverter.createPost(
+				    this, container, obj, uri);
 
 			    // read available comments
 			    if (obj.has(FacebookConstants.FIELD_COMMENTS)) {
@@ -341,8 +341,8 @@ public class FacebookConnector extends AbstractConnector {
 		}
 
 		if (null != parentPost) {
-		    return FacebookToSIOCConverter.createCommentPostFromJSON(
-			    this, parentPost, obj, uri);
+		    return FacebookToSIOCConverter.createComment(this,
+			    parentPost, obj, uri);
 		}
 
 	    }
@@ -428,7 +428,7 @@ public class FacebookConnector extends AbstractConnector {
      * @see AbstractConnector#canPublishOn(Container)
      */
     @Override
-    public boolean publishPost(final Post post, final Container container)
+    public Post publishPost(final Post post, final Container container)
 	    throws ConnectorException {
 	Preconditions.checkNotNull(post, "post can't be null");
 	Preconditions.checkNotNull(container, "container can't be null");
@@ -478,23 +478,28 @@ public class FacebookConnector extends AbstractConnector {
 	    throw new ConnectorException("unknown error", t);
 	}
 
-	// TODO Add Post to model
+	if (null != result && null != result.getId()) {
+	    Post addedPost = getPost(result.getId());
+	    addedPost.setSibling(post);
+	    return addedPost;
+	}
 
-	return null != result && null != result.getId()
-		&& !result.getId().isEmpty();
+	throw new ConnectorException(
+		"Failed to publish post with unknown reason");
     };
 
-    public boolean replyPost(final Post post, final Post parent)
+    @Override
+    public Post replyPost(final Post post, final Post parentPost)
 	    throws ConnectorException {
 	Preconditions.checkNotNull(post, "post can't be null");
-	Preconditions.checkNotNull(parent, "parent can't be null");
+	Preconditions.checkNotNull(parentPost, "parent can't be null");
 	Preconditions.checkArgument(post.hasContent(), "post has no content");
-	Preconditions.checkArgument(canReplyOn(parent),
+	Preconditions.checkArgument(canReplyOn(parentPost),
 		"can't reply on the parent post");
 
 	FacebookType result = null;
 	try {
-	    result = client.publish(parent.getId() + "/"
+	    result = client.publish(parentPost.getId() + "/"
 		    + FacebookConstants.CONNECTION_COMMENTS,
 		    FacebookType.class,
 		    Parameter.with("message", post.getContent()));
@@ -506,12 +511,16 @@ public class FacebookConnector extends AbstractConnector {
 	    throw new ConnectorException("unknown error", t);
 	}
 
-	// TODO Add Post to model
+	if (null != result && null != result.getId()) {
+	    Post addedPost = getPost(result.getId());
+	    addedPost.setSibling(post);
+	    return addedPost;
+	}
 
-	return null != result && null != result.getId()
-		&& !result.getId().isEmpty();
+	throw new ConnectorException("Failed to reply post with unknown reason");
     };
 
+    @Override
     public List<Post> pollNewPosts(Container container)
 	    throws ConnectorException {
 	LOG.debug("pollNewPosts");
@@ -562,9 +571,8 @@ public class FacebookConnector extends AbstractConnector {
 		    if (created.after(lastItemDate)) {
 			if (!Post.hasInstance(getModel(), uri)) {
 			    LOG.debug("Add new post " + uri.toString());
-			    result.add(FacebookToSIOCConverter
-				    .createPostFromJSON(this, container, obj,
-					    uri));
+			    result.add(FacebookToSIOCConverter.createPost(this,
+				    container, obj, uri));
 			}
 		    }
 
@@ -616,9 +624,8 @@ public class FacebookConnector extends AbstractConnector {
 		URI uri = RDF2GoUtils.createURI(getURL() + id);
 
 		if (!Post.hasInstance(getModel(), uri)) {
-		    result.add(FacebookToSIOCConverter
-			    .createCommentPostFromJSON(this, parentPost, obj,
-				    uri));
+		    result.add(FacebookToSIOCConverter.createComment(this,
+			    parentPost, obj, uri));
 		}
 	    }
 	}

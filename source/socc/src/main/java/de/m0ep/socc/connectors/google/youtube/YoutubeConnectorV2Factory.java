@@ -26,25 +26,29 @@ import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 
-import de.m0ep.socc.connectors.IConnector;
-import de.m0ep.socc.connectors.IConnectorFactory;
-import de.m0ep.socc.connectors.exceptions.ConnectorException;
+import de.m0ep.socc.IConnector;
+import de.m0ep.socc.IConnectorFactory;
+import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.utils.ConfigUtils;
 
 public class YoutubeConnectorV2Factory implements IConnectorFactory {
 
+    @Override
     public String getConnectorName() {
 	return "Youtube";
     }
 
+    @Override
     public String getUniqueFactoryId() {
 	return "YoutubeConnectorFactory_v2";
     }
 
+    @Override
     public String[] getConfigKeys() {
 	return ConfigUtils.getPropertyNames(YoutubeConnectorV2Config.class);
     }
 
+    @Override
     public IConnector createConnector(String id, Model model,
 	    Map<String, Object> parameters) throws ConnectorException {
 	IConnector connector = new YoutubeConnectorV2();

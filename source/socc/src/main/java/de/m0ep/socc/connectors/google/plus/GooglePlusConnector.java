@@ -62,15 +62,21 @@ import com.google.api.services.plus.Plus;
 import com.google.api.services.plus.Plus.Activities;
 import com.google.api.services.plus.Plus.Comments;
 import com.google.api.services.plus.Plus.Moments;
-import com.google.api.services.plus.model.*;
+import com.google.api.services.plus.model.Activity;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments;
+import com.google.api.services.plus.model.ActivityFeed;
+import com.google.api.services.plus.model.Comment;
+import com.google.api.services.plus.model.CommentFeed;
+import com.google.api.services.plus.model.ItemScope;
+import com.google.api.services.plus.model.Moment;
+import com.google.api.services.plus.model.MomentsFeed;
+import com.google.api.services.plus.model.Person;
 import com.google.api.services.plus.model.Person.Emails;
 import com.google.common.base.Preconditions;
 
-import de.m0ep.socc.connectors.AbstractConnector;
-import de.m0ep.socc.connectors.exceptions.AuthenticationException;
-import de.m0ep.socc.connectors.exceptions.ConnectorException;
-import de.m0ep.socc.connectors.exceptions.NotFoundException;
+import de.m0ep.socc.AbstractConnector;
+import de.m0ep.socc.exceptions.ConnectorException;
+import de.m0ep.socc.exceptions.NotFoundException;
 import de.m0ep.socc.utils.ConfigUtils;
 import de.m0ep.socc.utils.DateUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
@@ -214,6 +220,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	return ConfigUtils.toMap(gpConfig);
     }
 
+    @Override
     public UserAccount getUserAccount(final String id)
 	    throws ConnectorException {
 	URI uri = RDF2GoUtils.createURI(getURL() + PATH_USER + id);
@@ -322,7 +329,7 @@ public class GooglePlusConnector extends AbstractConnector {
 		Variable.ANY, SIOC.has_container, container);
 
 	while (stmtsIter.hasNext()) {
-	    Statement statement = (Statement) stmtsIter.next();
+	    Statement statement = stmtsIter.next();
 
 	    if (Post.hasInstance(getModel(), statement.getSubject())) {
 		result.add(Post.getInstance(getModel(), statement.getSubject()));
@@ -681,7 +688,8 @@ public class GooglePlusConnector extends AbstractConnector {
 	case 404:
 	    return new NotFoundException(error.getMessage());
 	case 401:
-	    return new AuthenticationException(error.getMessage());
+	    return new de.m0ep.socc.exceptions.AuthenticationException(
+		    error.getMessage());
 	default:
 	    return new ConnectorException(error.getMessage());
 	}

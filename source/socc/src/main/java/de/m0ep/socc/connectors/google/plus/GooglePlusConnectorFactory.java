@@ -26,25 +26,29 @@ import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 
-import de.m0ep.socc.connectors.IConnector;
-import de.m0ep.socc.connectors.IConnectorFactory;
-import de.m0ep.socc.connectors.exceptions.ConnectorException;
+import de.m0ep.socc.IConnector;
+import de.m0ep.socc.IConnectorFactory;
+import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.utils.ConfigUtils;
 
 public class GooglePlusConnectorFactory implements IConnectorFactory {
 
+    @Override
     public String getConnectorName() {
 	return "Google+";
     }
 
+    @Override
     public String getUniqueFactoryId() {
 	return "GooglePlusConnectorFactory_1.0";
     }
 
+    @Override
     public String[] getConfigKeys() {
 	return ConfigUtils.getPropertyNames(GooglePlusConnectorConfig.class);
     }
 
+    @Override
     public IConnector createConnector(String id, Model model,
 	    Map<String, Object> parameters) throws ConnectorException {
 

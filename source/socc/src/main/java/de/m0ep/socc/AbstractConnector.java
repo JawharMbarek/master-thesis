@@ -44,6 +44,7 @@ import org.rdfs.sioc.Usergroup;
 import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.exceptions.ConnectorException;
+import de.m0ep.socc.exceptions.NotFoundException;
 
 /**
  * Abstract connector that implements the {@link IConnector} interface. It's a
@@ -139,13 +140,14 @@ public abstract class AbstractConnector implements IConnector {
     public abstract UserAccount getLoginUser() throws ConnectorException;
 
     /**
-     * (non-Javadoc)
+     * @throws NotFoundException
+     *             Thrown if no {@link UserAccount} with this id was found.
      * 
      * @see de.m0ep.socc.IConnector#getUserAccount(java.lang.String)
      */
     @Override
     public UserAccount getUserAccount(String id) throws ConnectorException {
-	throw new ConnectorException("There is no user with the id=" + id);
+	throw new NotFoundException("There is no user with the id=" + id);
     }
 
     /**
@@ -169,13 +171,14 @@ public abstract class AbstractConnector implements IConnector {
     }
 
     /**
-     * (non-Javadoc)
+     * @throws NotFoundException
+     *             Thrown if no {@link Forum} with this id was found.
      * 
      * @see de.m0ep.socc.IConnector#getForum(java.lang.String)
      */
     @Override
     public Forum getForum(String id) throws ConnectorException {
-	throw new ConnectorException("There is no forum with this id=" + id);
+	throw new NotFoundException("There is no forum with this id=" + id);
     }
 
     /**
@@ -201,13 +204,14 @@ public abstract class AbstractConnector implements IConnector {
     }
 
     /**
-     * (non-Javadoc)
+     * @throws NotFoundException
+     *             Thrown if no {@link Thread} with this id was found.
      * 
      * @see de.m0ep.socc.IConnector#getThread(java.lang.String)
      */
     @Override
     public Thread getThread(String id) throws ConnectorException {
-	throw new ConnectorException("There is no thread with the id=" + id);
+	throw new NotFoundException("There is no thread with the id=" + id);
     }
 
     /**
@@ -232,13 +236,14 @@ public abstract class AbstractConnector implements IConnector {
     }
 
     /**
-     * (non-Javadoc)
+     * @throws NotFoundException
+     *             Thrown if no {@link Post} with this id was found.
      * 
      * @see de.m0ep.socc.IConnector#getPost(java.lang.String)
      */
     @Override
     public Post getPost(String id) throws ConnectorException {
-	throw new ConnectorException("There is no post with the id=" + id);
+	throw new NotFoundException("There is no post with the id=" + id);
     }
 
     /**
@@ -252,13 +257,14 @@ public abstract class AbstractConnector implements IConnector {
     }
 
     /**
-     * (non-Javadoc)
+     * @throws NotFoundException
+     *             Thrown if no {@link Usergroup} with this id was found.
      * 
      * @see de.m0ep.socc.IConnector#getUsergroup(java.lang.String)
      */
     @Override
     public Usergroup getUsergroup(String id) throws ConnectorException {
-	throw new ConnectorException("There is no usergroup with the id=" + id);
+	throw new NotFoundException("There is no usergroup with the id=" + id);
     }
 
     /**
@@ -302,7 +308,8 @@ public abstract class AbstractConnector implements IConnector {
     }
 
     /**
-     * (non-Javadoc)
+     * @throws UnsupportedOperationException
+     *             Thrown if the connector don't support post publishing.
      * 
      * @see de.m0ep.socc.IConnector#publishPost(org.rdfs.sioc.Post,
      *      org.rdfs.sioc.Container)
@@ -314,7 +321,8 @@ public abstract class AbstractConnector implements IConnector {
     }
 
     /**
-     * (non-Javadoc)
+     * @throws UnsupportedOperationException
+     *             Thrown if the connector don't support post replying.
      * 
      * @see de.m0ep.socc.IConnector#replyPost(org.rdfs.sioc.Post,
      *      org.rdfs.sioc.Post)

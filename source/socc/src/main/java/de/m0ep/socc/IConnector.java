@@ -264,7 +264,7 @@ public interface IConnector {
      *            {@link Post} object to publish.
      * @param container
      *            {@link Container} where to publish the {@link Post}.
-     * @return Returns true if publishing was successful, false otherwise.
+     * @return Returns the published post (Not the same as the given post).
      */
     public Post publishPost(Post post, Container container)
 	    throws ConnectorException;
@@ -276,7 +276,7 @@ public interface IConnector {
      *            {@link Post} object of the reply.
      * @param parent
      *            {@link Post} where to reply on.
-     * @return Returns true if replying was successful, false otherwise.
+     * @return Returns the replied post (Not the same as the given post).
      */
     public Post replyPost(Post post, Post parent) throws ConnectorException;
 }

@@ -20,40 +20,39 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.connectors.moodle;
+package de.m0ep.socc.config;
 
-import java.util.Map;
+import org.mortbay.jetty.Connector;
 
-import org.ontoware.rdf2go.model.Model;
+/**
+ * A default configuration JavaBean with some useful properties for all
+ * {@link Connector}s.
+ * 
+ * @author Florian Müller
+ * 
+ */
+public abstract class DefaultConnectorConfig implements IConnectorConfig {
+    private static final long serialVersionUID = 1992138033098739047L;
 
-import de.m0ep.socc.IConnector;
-import de.m0ep.socc.IConnectorFactory;
-import de.m0ep.socc.exceptions.ConnectorException;
-import de.m0ep.socc.utils.ConfigUtils;
+    public static final String MAX_NEW_POSTS_ON_POLL = "maxNewPostsOnPoll";
+    public static final String POLL_COOLDOWN = "pollCooldownMillis";
 
-public class MoodleConnectorFactory implements IConnectorFactory {
+    private int maxNewPostsOnPoll;
+    private int pollCooldownMillis;
 
-    @Override
-    public String getConnectorName() {
-	return "Moodle";
+    public int getMaxNewPostsOnPoll() {
+	return maxNewPostsOnPoll;
     }
 
-    @Override
-    public String getUniqueFactoryId() {
-	return "MoodleConnectorFactory_2.4";
+    public void setMaxNewPostsOnPoll(int maxNewPostsOnPoll) {
+	this.maxNewPostsOnPoll = maxNewPostsOnPoll;
     }
 
-    @Override
-    public String[] getConfigKeys() {
-	return ConfigUtils.getPropertyNames(MoodleConnectorConfig.class);
+    public int getPollCooldownMillis() {
+	return pollCooldownMillis;
     }
 
-    @Override
-    public IConnector createConnector(String id, Model model,
-	    Map<String, Object> parameters) throws ConnectorException {
-	IConnector connector = new MoodleConnector();
-	connector.initialize(id, model, parameters);
-	return connector;
+    public void setPollCooldownMillis(int pollCoolDown) {
+	this.pollCooldownMillis = pollCoolDown;
     }
-
 }

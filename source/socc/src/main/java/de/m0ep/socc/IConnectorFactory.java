@@ -20,40 +20,54 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.connectors.moodle;
+package de.m0ep.socc;
 
 import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 
-import de.m0ep.socc.IConnector;
-import de.m0ep.socc.IConnectorFactory;
 import de.m0ep.socc.exceptions.ConnectorException;
-import de.m0ep.socc.utils.ConfigUtils;
 
-public class MoodleConnectorFactory implements IConnectorFactory {
+/**
+ * Interface of a {@link IConnectorFactory} to create new {@link IConnector}s
+ * 
+ * @author Florian Müller
+ * 
+ */
+public interface IConnectorFactory {
+    /**
+     * Returns a human readable name for this connectors
+     * 
+     * @return Name for this connectors
+     */
+    public String getConnectorName();
 
-    @Override
-    public String getConnectorName() {
-	return "Moodle";
-    }
+    /**
+     * Returns a unique name for this factory
+     * 
+     * @return
+     */
+    public String getUniqueFactoryId();
 
-    @Override
-    public String getUniqueFactoryId() {
-	return "MoodleConnectorFactory_2.4";
-    }
+    /**
+     * Returns keys for configuration parameters that should be loaded/stored
+     * 
+     * @return
+     */
+    public String[] getConfigKeys();
 
-    @Override
-    public String[] getConfigKeys() {
-	return ConfigUtils.getPropertyNames(MoodleConnectorConfig.class);
-    }
-
-    @Override
+    /**
+     * Create a new {@link IConnector}.
+     * 
+     * @param id
+     *            Id of this connector.
+     * @param model
+     *            RDF2Go {@link Model} to use as SIOC store.
+     * @param parameters
+     *            {@link Map} with configuration parameters for a new
+     *            {@link IConnector}.
+     * @return
+     */
     public IConnector createConnector(String id, Model model,
-	    Map<String, Object> parameters) throws ConnectorException {
-	IConnector connector = new MoodleConnector();
-	connector.initialize(id, model, parameters);
-	return connector;
-    }
-
+	    Map<String, Object> parameters) throws ConnectorException;
 }

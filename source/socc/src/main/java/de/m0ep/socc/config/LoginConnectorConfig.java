@@ -20,40 +20,61 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.connectors.moodle;
+package de.m0ep.socc.config;
 
-import java.util.Map;
+import org.mortbay.jetty.Connector;
 
-import org.ontoware.rdf2go.model.Model;
+/**
+ * Basic configuraion JavaBean for {@link Connector}s with a username/password
+ * login scheme.
+ * 
+ * @author Florian Müller
+ * 
+ */
+public class LoginConnectorConfig extends DefaultConnectorConfig {
+    private static final long serialVersionUID = 7330276183009828815L;
 
-import de.m0ep.socc.IConnector;
-import de.m0ep.socc.IConnectorFactory;
-import de.m0ep.socc.exceptions.ConnectorException;
-import de.m0ep.socc.utils.ConfigUtils;
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
 
-public class MoodleConnectorFactory implements IConnectorFactory {
+    private String username;
+    private String password;
 
-    @Override
-    public String getConnectorName() {
-	return "Moodle";
+    /**
+     * Returns the username.
+     * 
+     * @return The username.
+     */
+    public String getUsername() {
+	return username;
     }
 
-    @Override
-    public String getUniqueFactoryId() {
-	return "MoodleConnectorFactory_2.4";
+    /**
+     * Set the username.
+     * 
+     * @param username
+     *            Username to set.
+     */
+    public void setUsername(String username) {
+	this.username = username;
     }
 
-    @Override
-    public String[] getConfigKeys() {
-	return ConfigUtils.getPropertyNames(MoodleConnectorConfig.class);
+    /**
+     * Returns the password.
+     * 
+     * @return The password.
+     */
+    public String getPassword() {
+	return password;
     }
 
-    @Override
-    public IConnector createConnector(String id, Model model,
-	    Map<String, Object> parameters) throws ConnectorException {
-	IConnector connector = new MoodleConnector();
-	connector.initialize(id, model, parameters);
-	return connector;
+    /**
+     * Sets the password.
+     * 
+     * @param password
+     *            The password to set.
+     */
+    public void setPassword(String password) {
+	this.password = password;
     }
-
 }

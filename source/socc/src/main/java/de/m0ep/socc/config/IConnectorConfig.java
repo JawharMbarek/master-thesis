@@ -20,40 +20,17 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.connectors.moodle;
+package de.m0ep.socc.config;
 
-import java.util.Map;
+import java.io.Serializable;
 
-import org.ontoware.rdf2go.model.Model;
+import org.mortbay.jetty.Connector;
 
-import de.m0ep.socc.IConnector;
-import de.m0ep.socc.IConnectorFactory;
-import de.m0ep.socc.exceptions.ConnectorException;
-import de.m0ep.socc.utils.ConfigUtils;
-
-public class MoodleConnectorFactory implements IConnectorFactory {
-
-    @Override
-    public String getConnectorName() {
-	return "Moodle";
-    }
-
-    @Override
-    public String getUniqueFactoryId() {
-	return "MoodleConnectorFactory_2.4";
-    }
-
-    @Override
-    public String[] getConfigKeys() {
-	return ConfigUtils.getPropertyNames(MoodleConnectorConfig.class);
-    }
-
-    @Override
-    public IConnector createConnector(String id, Model model,
-	    Map<String, Object> parameters) throws ConnectorException {
-	IConnector connector = new MoodleConnector();
-	connector.initialize(id, model, parameters);
-	return connector;
-    }
-
+/**
+ * An marker interface for configuration JavaBeans of {@link Connector}s.
+ * 
+ * @author Florian Müller
+ * 
+ */
+public interface IConnectorConfig extends Serializable {
 }

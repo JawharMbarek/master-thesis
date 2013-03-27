@@ -1,17 +1,40 @@
+/*
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package de.m0ep.socc.connectors.facebook;
 
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Properties;
+import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.Statement;
+import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
-import org.ontoware.rdf2go.model.node.impl.URIImpl;
+import org.ontoware.rdf2go.model.node.Variable;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
@@ -24,53 +47,93 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
-import com.restfb.FacebookClient.AccessToken;
 import com.restfb.Parameter;
+import com.restfb.exception.FacebookException;
+import com.restfb.exception.FacebookNetworkException;
 import com.restfb.exception.FacebookOAuthException;
+import com.restfb.json.JsonArray;
 import com.restfb.json.JsonObject;
 import com.restfb.types.FacebookType;
 import com.restfb.types.Group;
 import com.restfb.types.User;
 
-import de.m0ep.socc.connectors.AbstractConnector;
+import de.m0ep.socc.AbstractConnector;
+import de.m0ep.socc.exceptions.AuthenticationException;
+import de.m0ep.socc.exceptions.ConnectorException;
+import de.m0ep.socc.exceptions.NetworkException;
+import de.m0ep.socc.exceptions.NotFoundException;
+import de.m0ep.socc.utils.ConfigUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
 
+/**
+ * A SOCC Connector for Facebook using RestFb to access Facebooks GraphAPI.
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class FacebookConnector extends AbstractConnector {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(FacebookConnector.class);
 
-    public static final String CONFIG_ACCESS_TOKEN = "access_token";
-    public static final String CONFIG_CLIENT_ID = "client_id";
-    public static final String CONFIG_CLIENT_SECRET = "client_secret";
-
-    private static final String CONNECTION_COMMENTS = "comments";
-    private static final String CONNECTION_FEED = "feed";
+    private static final String POST_FIELDS = "id,type,story,message,"
+	    + "comments.fields(id,from,message,created_time),"
+	    + "description,caption,source,updated_time,created_time,"
+	    + "link,name,from";
 
     private FacebookClient client;
     private String myId;
-    private Properties config;
+    private FacebookConnectorConfig fbConfig;
 
-    public FacebookConnector(String id, Model model, Properties config) {
-	super(id, model, config);
+    @Override
+    public void initialize(String id, Model model,
+	    Map<String, Object> parameters) throws ConnectorException {
+	super.initialize(id, model, parameters);
 
-	this.config = config;
-	this.client = new DefaultFacebookClient(
-		config.getProperty(CONFIG_ACCESS_TOKEN));
+	this.fbConfig = ConfigUtils.fromMap(parameters,
+		FacebookConnectorConfig.class);
+	this.client = new DefaultFacebookClient(fbConfig.getAccessToken());
 
-	FacebookType me = client.fetchObject("me", FacebookType.class,
-		Parameter.with("fields", "id"));
-	this.myId = me.getId();
+	try {
+	    this.myId = client.fetchObject(
+		    FacebookConstants.ID_ME,
+		    FacebookType.class,
+		    Parameter.with(FacebookConstants.PARAM_FIELDS,
+			    FacebookConstants.FIELD_ID)).getId();
+	} catch (FacebookException e) {
+	    LOG.error(e.getLocalizedMessage(), e);
+	    throw mapToConnectorException(e);
+	} catch (Throwable t) {
+	    LOG.error(t.getLocalizedMessage(), t);
+	    throw new ConnectorException("unknown error", t);
+	}
+
+	// add static forums
+	URI uri = RDF2GoUtils.createURI(getURL() + myId + "/"
+		+ FacebookConstants.CONNECTION_FEED);
+	if (!Forum.hasInstance(getModel(), uri)) {
+	    Forum wall = new Forum(getModel(), uri, true);
+	    wall.setId(myId);
+	    wall.setName(getLoginUser().getAccountname() + "'s Wall");
+	    wall.setHost(getSite());
+	    getSite().addHostof(wall);
+	}
     }
 
+    @Override
     public String getURL() {
 	return "http://www.facebook.com/";
     }
 
-    public Site getSite() {
+    @Override
+    public Map<String, Object> getConfiguration() {
+	return ConfigUtils.toMap(fbConfig);
+    }
+
+    @Override
+    public Site getSite() throws ConnectorException {
 	URI uri = RDF2GoUtils.createURI(getURL());
 
 	if (!Site.hasInstance(getModel(), uri)) {
@@ -82,87 +145,235 @@ public class FacebookConnector extends AbstractConnector {
 	}
     }
 
-    public UserAccount getUser() {
-	return getUser(myId);
+    @Override
+    public UserAccount getLoginUser() throws ConnectorException {
+	return getUserAccount(myId);
     }
 
-    public Iterator<Forum> getForums() {
-	List<Forum> result = new ArrayList<Forum>();
+    /**
+     * @throws ConnectorException
+     *             Thrown if the connector reported a problem.
+     * @throws NullPointerException
+     *             Thrown if id is null.
+     * @throws IllegalArgumentException
+     *             Thrown if id is empty.
+     */
+    @Override
+    public UserAccount getUserAccount(final String id)
+	    throws ConnectorException {
+	Preconditions.checkNotNull(id, "id can not be null");
+	Preconditions.checkArgument(!id.isEmpty(), "id can not be empty");
 
-	URI uri = RDF2GoUtils
-		.createURI(getURL() + myId + "/" + CONNECTION_FEED);
-	if (!Forum.hasInstance(getModel(), uri)) {
-	    Forum wall = new Forum(getModel(), uri, true);
-	    wall.setId(myId);
-	    wall.setName(getUser().getAllAccountname_as().firstValue()
-		    + "'s Wall");
-	    wall.setHost(getSite());
-	    getSite().addHostof(wall);
+	URI uri = RDF2GoUtils.createURI(getURL() + id);
 
-	    result.add(wall);
+	if (!UserAccount.hasInstance(getModel(), uri)) {
+	    User user = null;
+	    try {
+		user = client.fetchObject(id, User.class);
+	    } catch (FacebookException e) {
+		LOG.error(e.getLocalizedMessage(), e);
+		throw mapToConnectorException(e);
+	    } catch (Throwable t) {
+		LOG.error(t.getLocalizedMessage(), t);
+		throw new ConnectorException("unknown error", t);
+	    }
+
+	    return FacebookToSIOCConverter.createUserAccount(this, user, uri);
+
 	} else {
-	    result.add(Forum.getInstance(getModel(), uri));
+	    return UserAccount.getInstance(getModel(), uri);
+	}
+    }
+
+    @Override
+    public Forum getForum(final String id) throws ConnectorException {
+	URI uri = RDF2GoUtils.createURI(getURL()
+		+ (FacebookConstants.ID_ME.equalsIgnoreCase(id) ? (myId) : (id
+			.toLowerCase())) + "/"
+		+ FacebookConstants.CONNECTION_FEED);
+
+	if (!Forum.hasInstance(getModel(), uri)) {
+	    Group group = null;
+	    try {
+		// need 'metadata=1' parameter to get 'type' value
+		group = client.fetchObject(id, Group.class,
+			Parameter.with(FacebookConstants.PARAM_METADATA, "1"));
+	    } catch (FacebookException e) {
+		LOG.error(e.getLocalizedMessage(), e);
+		throw mapToConnectorException(e);
+	    } catch (Throwable t) {
+		LOG.error(t.getLocalizedMessage(), t);
+		throw new ConnectorException("unknown error", t);
+	    }
+
+	    if (null != group.getType()
+		    && FacebookConstants.TYPE_GROUP.equalsIgnoreCase(group
+			    .getType())) {
+
+		return FacebookToSIOCConverter.createForum(this, group, uri);
+	    }
+
+	    throw new NotFoundException("No forum found with id " + id);
 	}
 
-	Connection<Group> groupsConnections = client.fetchConnection(
-		"me/groups", Group.class,
-		Parameter.with("fields", "name,id,description,updated_time"));
+	return Forum.getInstance(getModel(), uri);
+    }
+
+    @Override
+    public List<Forum> getForums() throws ConnectorException {
+	List<Forum> result = new ArrayList<Forum>();
+
+	// add all known forums
+	ClosableIterator<Statement> stmtIter = getModel().findStatements(
+		Variable.ANY, SIOC.has_host, getSite());
+	while (stmtIter.hasNext()) {
+	    Statement statement = stmtIter.next();
+	    Resource subject = statement.getSubject();
+
+	    if (getModel().contains(subject, RDF.type, SIOC.Forum)) {
+		result.add(Forum.getInstance(getModel(), subject));
+	    }
+	}
+	stmtIter.close();
+
+	Connection<Group> groupsConnections = null;
+	try {
+	    groupsConnections = client.fetchConnection("me/groups",
+		    Group.class, Parameter.with(FacebookConstants.PARAM_FIELDS,
+			    "name,id,description,updated_time"));
+	} catch (FacebookException e) {
+	    LOG.error(e.getLocalizedMessage(), e);
+	    throw mapToConnectorException(e);
+	} catch (Throwable t) {
+	    LOG.error(t.getLocalizedMessage(), t);
+	    throw new ConnectorException("unknown error", t);
+	}
 
 	for (List<Group> myGroups : groupsConnections) {
 	    for (Group group : myGroups) {
-		uri = RDF2GoUtils.createURI(getURL() + group.getId() + "/"
-			+ CONNECTION_FEED);
+		URI uri = RDF2GoUtils.createURI(getURL() + group.getId() + "/"
+			+ FacebookConstants.CONNECTION_FEED);
 
 		if (!Forum.hasInstance(getModel(), uri)) {
-		    Forum forum = new Forum(getModel(), uri, true);
-		    forum.setId(group.getId());
-		    forum.setName(group.getName() + "'s Wall");
-		    forum.setHost(getSite());
-		    getSite().addHostof(forum);
-
-		    if (null != group.getDescription()
-			    && !group.getDescription().isEmpty())
-			forum.setDescription(group.getDescription());
-
-		    if (null != group.getUpdatedTime())
-			forum.setModified(RDFTool.dateTime2String(group
-				.getUpdatedTime()));
-
+		    Forum forum = FacebookToSIOCConverter.createForum(this,
+			    group, uri);
+		    LOG.debug("Add new forum " + uri.toString());
 		    result.add(forum);
-		} else {
-		    result.add(Forum.getInstance(getModel(), uri));
 		}
 	    }
 	}
 
-	return Collections.unmodifiableList(result).iterator();
+	return result;
     }
 
     @Override
-    public Iterator<Post> getPosts(Container container) {
-	if (!canPublishOn(container))
-	    return super.getPosts(container);
+    public Post getPost(String id) throws ConnectorException {
+	URI uri = RDF2GoUtils.createURI(getURL() + id);
 
-	Connection<JsonObject> feed;
-	try {
-	    feed = client.fetchConnection(container.getAllId_as().firstValue()
-		    + "/" + CONNECTION_FEED, JsonObject.class);
-	} catch (Exception e) {
-	    LOG.warn(e.getMessage(), e);
-	    return super.getPosts(container);
+	if (!Post.hasInstance(getModel(), uri)) {
+	    JsonObject obj;
+
+	    try {
+		obj = client.fetchObject(id, JsonObject.class,
+			Parameter.with(FacebookConstants.PARAM_METADATA, "1"));
+	    } catch (FacebookException e) {
+		LOG.error(e.getLocalizedMessage(), e);
+		throw mapToConnectorException(e);
+	    } catch (Throwable t) {
+		LOG.error(t.getLocalizedMessage(), t);
+		throw new ConnectorException("unknown error", t);
+	    }
+
+	    if (Pattern.matches("^\\d+_\\d+$", id)) { // it is maybe a post
+		if (obj.has(FacebookConstants.FIELD_TYPE)) {
+		    String type = obj.getString(FacebookConstants.FIELD_TYPE);
+
+		    if (FacebookConstants.TYPE_LINK.equalsIgnoreCase(type)
+			    || FacebookConstants.TYPE_STATUS
+				    .equalsIgnoreCase(type)
+			    || FacebookConstants.TYPE_VIDEO
+				    .equalsIgnoreCase(type)
+			    || FacebookConstants.TYPE_LINK
+				    .equalsIgnoreCase(type)) {
+
+			String containerId = id.substring(0,
+				id.lastIndexOf('_'));
+			Container container = null;
+
+			try {
+			    container = getForum(containerId);
+			} catch (Exception e) {
+			    throw new NotFoundException(
+				    "ID is maybe a post, but no corresponding container was found");
+			}
+
+			if (null != container) {
+			    Post result = FacebookToSIOCConverter.createPost(
+				    this, container, obj, uri);
+
+			    // read available comments
+			    if (obj.has(FacebookConstants.FIELD_COMMENTS)) {
+				JsonObject comments = obj
+					.getJsonObject(FacebookConstants.FIELD_COMMENTS);
+
+				if (comments.has(FacebookConstants.FIELD_DATA)) {
+				    JsonArray data = comments
+					    .getJsonArray(FacebookConstants.FIELD_DATA);
+
+				    getNewReplies(result, data);
+				}
+			    }
+
+			    return result;
+			}
+		    }
+		}
+	    } else if (Pattern.matches("^\\d+_\\d+_\\d+$", id)) { // it is maybe
+								  // a comment
+		String parentId = id.substring(0, id.lastIndexOf('_'));
+
+		Post parentPost;
+		try {
+		    parentPost = getPost(parentId);
+		} catch (Exception e) {
+		    throw new NotFoundException(
+			    "Id is maybe a comment, but no corresponding parent was found");
+		}
+
+		if (null != parentPost) {
+		    return FacebookToSIOCConverter.createComment(this,
+			    parentPost, obj, uri);
+		}
+
+	    }
+
+	    throw new NotFoundException("No post found with id " + id);
 	}
 
-	return new PostIterator(feed.iterator(), container);
+	return Post.getInstance(getModel(), uri);
     }
 
     @Override
     public boolean canPublishOn(Container container) {
-	if (getModel().contains(container, RDF.type, SIOC.Forum)) {
-	    Forum forum = Forum
-		    .getInstance(getModel(), container.getResource());
-	    return forum.hasHost(getSite())
-		    && hasConnection(container.getAllId_as().firstValue(),
-			    CONNECTION_FEED);
+	// We can not publish on null by default
+	if (null != container) {
+	    // We can publish on this container if:
+	    // 1) The container is a SIOC Forum
+	    // 2) Facebook is the host of this container
+	    // 3) The container has a "feed" connection in Facebooks GraphAPI
+
+	    if (getModel().contains(container, RDF.type, SIOC.Forum)) {
+		Forum forum = Forum.getInstance(getModel(),
+			container.getResource());
+		try {
+		    return forum.hasHost(getSite())
+			    && hasConnection(container.getId(),
+				    FacebookConstants.CONNECTION_FEED);
+		} catch (ConnectorException e) {
+		    LOG.error(e.getMessage(), e);
+		    return false;
+		}
+	    }
 	}
 
 	return false;
@@ -170,19 +381,30 @@ public class FacebookConnector extends AbstractConnector {
 
     @Override
     public boolean canReplyOn(Post parent) {
-	/**
-	 * We can reply on this post if: - this post is not already a reply - we
-	 * can publish on the container of this post - the post id is like
-	 * "[0-9]+_[0-9]+" Post has a "comments" connection
-	 */
-	if (!parent.hasReplyof() && parent.hasContainer()) {
-	    Container container = parent.getAllContainer_as().firstValue();
-	    String id = parent.getAllId_as().firstValue();
+	// We can not reply on null by default.
+	if (null != parent) {
+	    // We can reply on this post if:
+	    // 1) The parent is not a reply to another post
+	    // 2) The parent was posted on a publishable container
+	    // 3) The parent id is like "[0-9]+_[0-9]+"
+	    // 4) The parent has a "comments" connection in Facebooks GraphAPI
 
-	    return canPublishOn(container)
-		    && Pattern.matches("^\\d+_\\d+$", id)
-		    && hasConnection(parent.getAllId_as().firstValue(),
-			    CONNECTION_COMMENTS);
+	    if (!parent.hasReplyof()) {
+		if (parent.hasContainer()) {
+		    Container container = parent.getContainer();
+		    String id = parent.getId();
+
+		    try {
+			return canPublishOn(container)
+				&& Pattern.matches("^\\d+_\\d+$", id)
+				&& hasConnection(parent.getId(),
+					FacebookConstants.CONNECTION_COMMENTS);
+		    } catch (ConnectorException e) {
+			LOG.error(e.getMessage(), e);
+			return false;
+		    }
+		}
+	    }
 	}
 
 	return false;
@@ -190,10 +412,24 @@ public class FacebookConnector extends AbstractConnector {
 
     @Override
     public boolean hasPosts(Container container) {
+	// A container has posts if we can publish on him
 	return canPublishOn(container);
     }
 
-    public boolean publishPost(final Post post, final Container container) {
+    /**
+     * @throws ConnectorException
+     *             Thrown if the connector reported a problem.
+     * @throws NullPointerException
+     *             Thrown if one or more parameter are null.
+     * @throws IllegalArgumentException
+     *             Thrown if the post has no content or publishing on the
+     *             container is not possible.
+     * 
+     * @see AbstractConnector#canPublishOn(Container)
+     */
+    @Override
+    public Post publishPost(final Post post, final Container container)
+	    throws ConnectorException {
 	Preconditions.checkNotNull(post, "post can't be null");
 	Preconditions.checkNotNull(container, "container can't be null");
 	Preconditions.checkArgument(post.hasContent());
@@ -201,178 +437,264 @@ public class FacebookConnector extends AbstractConnector {
 
 	List<Parameter> params = new ArrayList<Parameter>();
 
-	if (post.hasContent())
-	    params.add(Parameter.with("message", post.getAllContent_as()
-		    .firstValue()));
-
-	if (post.hasAttachment())
-	    params.add(Parameter.with("link", post.getAllAttachment_as()
-		    .firstValue()));
-
-	if (post.hasTitle())
-	    params.add(Parameter.with("caption", post.getAllTitle_as()
-		    .firstValue()));
-
-	if (post.hasDescription())
-	    params.add(Parameter.with("description", post
-		    .getAllDescription_as().firstValue()));
-
-	if (post.hasName())
-	    params.add(Parameter
-		    .with("name", post.getAllName_as().firstValue()));
-
-	FacebookType result;
-	try {
-	    result = client.publish(container.getAllId_as().firstValue() + "/"
-		    + CONNECTION_FEED, FacebookType.class,
-		    params.toArray(new Parameter[0]));
-	} catch (Throwable e) {
-	    Throwables.propagateIfInstanceOf(e, FacebookOAuthException.class);
-	    return false;
+	if (post.hasContent()) {
+	    params.add(Parameter.with(FacebookConstants.FIELD_MESSAGE,
+		    post.getContent()));
 	}
 
-	// TODO Add Post to model
+	if (post.hasAttachment()) {
+	    params.add(Parameter.with(FacebookConstants.FIELD_LINK,
+		    post.getAttachment()));
+	}
 
-	return null != result && null != result.getId()
-		&& !result.getId().isEmpty();
+	if (post.hasTitle()) {
+	    params.add(Parameter.with(FacebookConstants.FIELD_CAPTION,
+		    post.getTitle()));
+	} else if (post.hasSubject()) {
+	    params.add(Parameter.with(FacebookConstants.FIELD_CAPTION,
+		    post.getSubject()));
+	}
+
+	if (post.hasDescription()) {
+	    params.add(Parameter.with(FacebookConstants.FIELD_DESCRIPTION,
+		    post.getDescription()));
+	}
+
+	if (post.hasName()) {
+	    params.add(Parameter.with(FacebookConstants.FIELD_NAME,
+		    post.getName()));
+	}
+
+	FacebookType result = null;
+	try {
+	    result = client.publish(container.getId() + "/"
+		    + FacebookConstants.CONNECTION_FEED, FacebookType.class,
+		    params.toArray(new Parameter[0]));
+	} catch (FacebookException e) {
+	    LOG.error(e.getLocalizedMessage(), e);
+	    throw mapToConnectorException(e);
+	} catch (Throwable t) {
+	    LOG.error(t.getLocalizedMessage(), t);
+	    throw new ConnectorException("unknown error", t);
+	}
+
+	if (null != result && null != result.getId()) {
+	    Post addedPost = getPost(result.getId());
+	    addedPost.setSibling(post);
+	    return addedPost;
+	}
+
+	throw new ConnectorException(
+		"Failed to publish post with unknown reason");
     };
 
-    public boolean replyPost(final Post post, final Post parent) {
+    @Override
+    public Post replyPost(final Post post, final Post parentPost)
+	    throws ConnectorException {
 	Preconditions.checkNotNull(post, "post can't be null");
-	Preconditions.checkNotNull(parent, "parent can't be null");
+	Preconditions.checkNotNull(parentPost, "parent can't be null");
 	Preconditions.checkArgument(post.hasContent(), "post has no content");
-	Preconditions.checkArgument(canReplyOn(parent),
+	Preconditions.checkArgument(canReplyOn(parentPost),
 		"can't reply on the parent post");
 
-	FacebookType result;
+	FacebookType result = null;
 	try {
-	    result = client.publish(parent.getAllId_as().firstValue() + "/"
-		    + CONNECTION_COMMENTS, FacebookType.class, Parameter.with(
-		    "message", post.getAllContent_as().firstValue()));
-	} catch (Throwable e) {
-	    Throwables.propagateIfInstanceOf(e, FacebookOAuthException.class);
-	    return false;
+	    result = client.publish(parentPost.getId() + "/"
+		    + FacebookConstants.CONNECTION_COMMENTS,
+		    FacebookType.class,
+		    Parameter.with("message", post.getContent()));
+	} catch (FacebookException e) {
+	    LOG.error(e.getLocalizedMessage(), e);
+	    throw mapToConnectorException(e);
+	} catch (Throwable t) {
+	    LOG.error(t.getLocalizedMessage(), t);
+	    throw new ConnectorException("unknown error", t);
 	}
 
-	// TODO Add Post to model
+	if (null != result && null != result.getId()) {
+	    Post addedPost = getPost(result.getId());
+	    addedPost.setSibling(post);
+	    return addedPost;
+	}
 
-	return null != result && null != result.getId()
-		&& !result.getId().isEmpty();
+	throw new ConnectorException("Failed to reply post with unknown reason");
     };
 
-    /* package */FacebookClient getFacebookClient() {
-	return client;
-    }
+    @Override
+    public List<Post> pollNewPosts(Container container)
+	    throws ConnectorException {
+	LOG.debug("pollNewPosts");
+	List<Post> result = new ArrayList<Post>();
+	Date lastItemDate = new Date(0);
+	int numLoadedPosts = fbConfig.getMaxNewPostsOnPoll();
 
-    /* package */UserAccount getUser(final String id) {
-	URI uri = (URI) new URIImpl(getURL() + id);
-
-	if (!UserAccount.hasInstance(getModel(), uri)) {
-	    User user = client.fetchObject(id, User.class);
-	    UserAccount result = new UserAccount(getModel(), uri, true);
-
-	    // SIOC statements
-	    result.setId(user.getId());
-	    result.setIsPartOf(getSite());
-
-	    if (null != user.getEmail() && !user.getEmail().isEmpty()) {
-		result.setEmail(RDF2GoUtils.createMailtoURI(user.getEmail()));
-		result.setEmailsha1(DigestUtils.sha1Hex(user.getEmail()));
+	if (container.hasLastitemdate()) {
+	    try {
+		lastItemDate = RDFTool.string2DateTime(container
+			.getLastitemdate());
+	    } catch (ParseException e) {
+		LOG.warn(e.getLocalizedMessage());
+		lastItemDate = new Date(0);
 	    }
-
-	    if (null != user.getUsername() && !user.getUsername().isEmpty())
-		result.setAccountname(user.getUsername());
-
-	    if (null != user.getName() && !user.getName().isEmpty())
-		result.setName(user.getName());
-
-	    if (null != user.getUpdatedTime())
-		result.setModified(RDFTool.dateTime2String(user
-			.getUpdatedTime()));
-
-	    if (null != user.getLink())
-		result.setAccountservicehomepage(RDF2GoUtils.createURI(user
-			.getLink()));
-
-	    return result;
-	} else {
-	    return UserAccount.getInstance(getModel(), uri);
 	}
+
+	Connection<JsonObject> feed = null;
+	try {
+	    feed = client
+		    .fetchConnection(container.getId() + "/"
+			    + FacebookConstants.CONNECTION_FEED,
+			    JsonObject.class, Parameter.with(
+				    FacebookConstants.PARAM_LIMIT,
+				    lastItemDate.getTime() / 1000L), Parameter
+				    .with(FacebookConstants.PARAM_FIELDS,
+					    POST_FIELDS), Parameter.with(
+				    FacebookConstants.PARAM_SINCE,
+				    Math.min(20,
+					    fbConfig.getMaxNewPostsOnPoll())));
+	} catch (FacebookException e) {
+	    LOG.error(e.getLocalizedMessage(), e);
+	    throw mapToConnectorException(e);
+	} catch (Throwable t) {
+	    LOG.error(t.getLocalizedMessage(), t);
+	    throw new ConnectorException("unknown error", t);
+	}
+
+	if (null != feed) {
+	    for (List<JsonObject> posts : feed) {
+		for (JsonObject obj : posts) {
+		    URI uri = RDF2GoUtils.createURI(getURL()
+			    + obj.getString(FacebookConstants.FIELD_ID));
+		    Date created = com.restfb.util.DateUtils
+			    .toDateFromLongFormat(obj
+				    .getString(FacebookConstants.FIELD_CREATED_TIME));
+
+		    if (created.after(lastItemDate)) {
+			if (!Post.hasInstance(getModel(), uri)) {
+			    LOG.debug("Add new post " + uri.toString());
+			    result.add(FacebookToSIOCConverter.createPost(this,
+				    container, obj, uri));
+			}
+		    }
+
+		    if (Post.hasInstance(getModel(), uri)
+			    && obj.has(FacebookConstants.FIELD_COMMENTS)) {
+			JsonObject comments = obj
+				.getJsonObject(FacebookConstants.FIELD_COMMENTS);
+
+			if (comments.has(FacebookConstants.FIELD_DATA)) {
+			    JsonArray data = comments
+				    .getJsonArray(FacebookConstants.FIELD_DATA);
+
+			    result.addAll(getNewReplies(
+				    Post.getInstance(getModel(), uri), data));
+			}
+		    }
+
+		    if (0 == --numLoadedPosts) {
+			return result;
+		    }
+		}
+	    }
+	}
+
+	return result;
     }
 
-    /* package */void tryToExtendAccessToken() {
-	AccessToken token = client.obtainExtendedAccessToken(
-		config.getProperty(CONFIG_CLIENT_ID),
-		config.getProperty(CONFIG_CLIENT_SECRET),
-		config.getProperty(CONFIG_ACCESS_TOKEN));
+    private List<Post> getNewReplies(final Post parentPost,
+	    final JsonArray commentsArray) throws ConnectorException {
+	List<Post> result = new ArrayList<Post>();
+	Date lastReplyDate = new Date(0);
 
-	config.setProperty(CONFIG_ACCESS_TOKEN, token.getAccessToken());
-	client = new DefaultFacebookClient(token.getAccessToken());
-	// TODO does this really work???
+	if (parentPost.hasLastreplydate()) {
+	    try {
+		lastReplyDate = RDFTool.string2DateTime(parentPost
+			.getLastreplydate());
+	    } catch (ParseException e1) {
+		lastReplyDate = new Date(0);
+	    }
+	}
+
+	for (int i = 0; i < commentsArray.length(); i++) {
+	    JsonObject obj = commentsArray.getJsonObject(i);
+	    Date created = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+		    .getString(FacebookConstants.FIELD_CREATED_TIME));
+
+	    if (created.after(lastReplyDate)) {
+		String id = obj.getString(FacebookConstants.FIELD_ID);
+		URI uri = RDF2GoUtils.createURI(getURL() + id);
+
+		if (!Post.hasInstance(getModel(), uri)) {
+		    result.add(FacebookToSIOCConverter.createComment(this,
+			    parentPost, obj, uri));
+		}
+	    }
+	}
+
+	return result;
     }
 
-    /* package */boolean hasConnection(final String id, final String connection) {
+    private boolean hasConnection(final String id, final String connection)
+	    throws ConnectorException {
 
 	try {
-	    JsonObject obj = client.fetchObject(id, JsonObject.class,
-		    Parameter.with("fields", "id"),
-		    Parameter.with("metadata", "1"));
+	    JsonObject obj = client.fetchObject(id, JsonObject.class, Parameter
+		    .with(FacebookConstants.PARAM_FIELDS,
+			    FacebookConstants.FIELD_ID), Parameter.with(
+		    FacebookConstants.PARAM_METADATA, "1"));
 
-	    if (null != obj && obj.has("metadata")) {
-		JsonObject metadata = obj.getJsonObject("metadata");
+	    if (null != obj && obj.has(FacebookConstants.FIELD_METADATA)) {
+		JsonObject metadata = obj
+			.getJsonObject(FacebookConstants.FIELD_METADATA);
 
-		if (metadata.has("connections")) {
+		if (metadata.has(FacebookConstants.FIELD_CONNECTIONS)) {
 		    JsonObject connections = metadata
-			    .getJsonObject("connections");
+			    .getJsonObject(FacebookConstants.FIELD_CONNECTIONS);
 
 		    return connections.has(connection);
 		}
 	    }
 
+	} catch (FacebookException e) {
+	    throw mapToConnectorException(e);
 	} catch (Throwable t) {
-	    LOG.warn("something not right...", t);
+	    throw new ConnectorException("unknown error", t);
 	}
 
 	return false;
     }
 
-    private class PostIterator implements Iterator<Post> {
-	private final Iterator<List<JsonObject>> feed;
-	private final Container container;
-	private Iterator<JsonObject> page;
+    private ConnectorException mapToConnectorException(FacebookException e) {
+	if (e instanceof FacebookOAuthException) {
+	    FacebookOAuthException fae = (FacebookOAuthException) e;
 
-	public PostIterator(final Iterator<List<JsonObject>> feed,
-		final Container container) {
-	    this.feed = feed;
-	    this.page = feed.next().iterator();
-	    this.container = container;
-	}
-
-	public boolean hasNext() {
-	    return null != feed && null != page
-		    && (feed.hasNext() || page.hasNext());
-	}
-
-	public Post next() {
-	    if (!hasNext())
-		throw new NoSuchElementException("nothing here");
-	    // page is empty, fetch next
-	    if (feed.hasNext() && !page.hasNext()) {
-		page = feed.next().iterator();
+	    // error codes:
+	    // http://www.fb-developers.info/tech/fb_dev/faq/general/gen_10.html
+	    switch (fae.getErrorCode()) {
+	    case 101: // Invalid API key
+	    case 190: // Invalid Access Token
+	    case 400: // Invalid email address
+	    case 401: // Invalid username or password
+	    case 402: // Invalid application auth sig
+	    case 403: // Invalid timestamp for authentication
+	    case 450: // Session key specified has passed its expiration time
+	    case 451: // Session key specified cannot be used to call this
+		      // method
+	    case 452: // Session key invalid. This could be because the session
+		      // key has an incorrect format, or because the user has
+	    case 453: // revoked this session
+	    case 454: // A session key is required for calling this method
+	    case 455: // A session key must be specified when request is signed
+		      // with a session secret
+		return new AuthenticationException(fae.getErrorMessage(), fae);
+	    case 803: // Specified object cannot be found
+		return new NotFoundException("Not found", fae);
 	    }
-
-	    if (page.hasNext()) {
-		JsonObject next = page.next();
-		Post result = FacebookPostParser.parse(FacebookConnector.this,
-			next, container);
-		return result;
-	    }
-
-	    return null;
+	} else if (e instanceof FacebookNetworkException) {
+	    FacebookNetworkException fne = (FacebookNetworkException) e;
+	    return new NetworkException("Network error: "
+		    + fne.getHttpStatusCode() + " " + fne.getMessage(), fne);
 	}
 
-	public void remove() {
-	    throw new UnsupportedOperationException("remove is not supported");
-	}
+	return new ConnectorException(e.getMessage(), e);
     }
 }

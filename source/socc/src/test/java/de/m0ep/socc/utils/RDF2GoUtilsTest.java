@@ -1,6 +1,6 @@
 package de.m0ep.socc.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.ontoware.rdf2go.model.node.Literal;

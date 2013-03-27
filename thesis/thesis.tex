@@ -14,7 +14,7 @@
 
 \newcommand{\tkAuthor}{Florian Müller\xspace}
 \newcommand{\tkThesisType}{Masterarbeit\xspace}
-\newcommand{\tkTitle}{Interlinking Social Online Communities\xspace}
+\newcommand{\tkTitle}{Social Online Community Connector\xspace}
 \newcommand{\tkAdvisor}{Prof. Dr. Max Mühlhäuser\xspace}
 \newcommand{\tkResp}{Dipl.-Inform. Kai Höver\xspace}
 \newcommand{\tkSubmissionDate}{\today\xspace}
@@ -33,21 +33,26 @@
     pdfproducer={}%
 }
 
+%===================================================================
+
+%\setinstitutionlogo[3cm]{../resources/images/tk_logo.pdf}
+%===================================================================
+
 \begin{document}
 
 \title{\tkTitle}
-\subtitle{\tkThesisType}
+
 \subsubtitle{
-\noindent
-von \tkAuthor \\
-Betreuer: \tkAdvisor \\
-Verantwortlicher Mitarbeiter: \tkResp \\
-Darmstadt, \tkSubmissionDate
+    {\large \textbf{\tkThesisType}} \\
+    \tkAuthor \\
+    Betreuer: \tkAdvisor \\
+    Verantwortlicher Mitarbeiter: \tkResp \\
+    Darmstadt, \tkSubmissionDate
 }
 \institution{
-Fachbereich Informatik\\
-Telekooperation\\
-Prof. Dr. Max Mühlhäuser
+    Fachbereich Informatik\\
+    Telekooperation\\
+    Prof. Dr. Max Mühlhäuser
 }
 
 \pagenumbering{roman}

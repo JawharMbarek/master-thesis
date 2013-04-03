@@ -50,6 +50,7 @@ import org.rdfs.sioc.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.gdata.client.youtube.YouTubeService;
 import com.google.gdata.data.DateTime;
@@ -116,26 +117,36 @@ public class YoutubeConnectorV2 extends AbstractConnector {
     @Override
     public void initialize(String id, Model model,
 	    Map<String, Object> parameters) throws ConnectorException {
+	Preconditions.checkNotNull(id, "Id can not be null");
+	Preconditions.checkNotNull(model, "Model can not be null");
+	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty");
+	Preconditions.checkArgument(model.isOpen(), "Model must be open");
+	Preconditions.checkArgument(
+		parameters.containsKey(YoutubeConnectorV2Config.USERNAME),
+		"No username given");
+	Preconditions.checkArgument(
+		parameters.containsKey(YoutubeConnectorV2Config.PASSWORD),
+		"No password given");
 	super.initialize(id, model, parameters);
 
-	this.ytConfig = ConfigUtils.fromMap(parameters,
-		YoutubeConnectorV2Config.class);
+	this.ytConfig = new YoutubeConnectorV2Config();
+	this.ytConfig = ConfigUtils.fromMap(parameters, this.ytConfig);
 
-	service = new YouTubeService("YoutubeConnectorV2",
+	this.service = new YouTubeService("YoutubeConnectorV2",
 		this.ytConfig.getDeveloperKey());
 
 	try {
-	    service.setUserCredentials(this.ytConfig.getUsername(),
+	    this.service.setUserCredentials(this.ytConfig.getUsername(),
 		    this.ytConfig.getPassword());
 	} catch (com.google.gdata.util.AuthenticationException e) {
 	    throw new AuthenticationException(e.getMessage(), e);
 	}
 
 	try {
-	    userProfile = service.getEntry(
+	    this.userProfile = service.getEntry(
 		    new URL(String.format(ENTRY_USER, "default")),
 		    UserProfileEntry.class);
-	    myId = userProfile.getUsername();
+	    this.myId = userProfile.getUsername();
 	} catch (MalformedURLException e) {
 	    LOG.error("Malformed URL", e);
 	    throw new ConnectorException("Malformed URL", e);
@@ -872,4 +883,60 @@ public class YoutubeConnectorV2 extends AbstractConnector {
 
 	return false;
     }
+
+    /*********************************************************************************/
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = super.hashCode();
+	result = prime * result + Objects.hashCode(this.ytConfig, this.myId);
+	return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (!(obj instanceof YoutubeConnectorV2)) {
+	    return false;
+	}
+	YoutubeConnectorV2 other = (YoutubeConnectorV2) obj;
+
+	if (!Objects.equal(this.ytConfig, other.ytConfig)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.myId, other.myId)) {
+	    return false;
+	}
+
+	return super.equals(obj);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	return Objects.toStringHelper(this).add("id", getId())
+		.add("userId", myId).toString();
+    }
+
 }

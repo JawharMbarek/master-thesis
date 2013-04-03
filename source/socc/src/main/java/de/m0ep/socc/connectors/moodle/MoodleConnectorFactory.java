@@ -28,6 +28,7 @@ import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
+import de.m0ep.socc.config.ConfigParameterUse;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.utils.ConfigUtils;
 
@@ -39,13 +40,28 @@ public class MoodleConnectorFactory implements IConnectorFactory {
     }
 
     @Override
-    public String getUniqueFactoryId() {
+    public String getFactoryId() {
 	return "MoodleConnectorFactory_2.4";
     }
 
     @Override
-    public String[] getConfigKeys() {
-	return ConfigUtils.getPropertyNames(MoodleConnectorConfig.class);
+    public String[] getParameterKeys() {
+	return ConfigUtils.getParameterNames(MoodleConnectorConfig.class);
+    }
+
+    @Override
+    public ConfigParameterUse getConfigParameterUse(String key) {
+	if (MoodleConnectorConfig.USERNAME.equals(key)) {
+	    return ConfigParameterUse.REQUIRED;
+	} else if (MoodleConnectorConfig.PASSWORD.equals(key)) {
+	    return ConfigParameterUse.REQUIRED;
+	} else if (MoodleConnectorConfig.MAX_NEW_POSTS_ON_POLL.equals(key)) {
+	    return ConfigParameterUse.OPTIONAL;
+	} else if (MoodleConnectorConfig.POLL_COOLDOWN.equals(key)) {
+	    return ConfigParameterUse.OPTIONAL;
+	}
+
+	return ConfigParameterUse.NOT_USED;
     }
 
     @Override

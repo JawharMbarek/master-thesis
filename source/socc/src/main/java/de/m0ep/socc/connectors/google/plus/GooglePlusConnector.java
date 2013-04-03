@@ -72,6 +72,7 @@ import com.google.api.services.plus.model.Moment;
 import com.google.api.services.plus.model.MomentsFeed;
 import com.google.api.services.plus.model.Person;
 import com.google.api.services.plus.model.Person.Emails;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.AbstractConnector;
@@ -129,10 +130,28 @@ public class GooglePlusConnector extends AbstractConnector {
     @Override
     public void initialize(final String id, final Model model,
 	    final Map<String, Object> parameters) throws ConnectorException {
+	Preconditions.checkNotNull(id, "Id can not be null");
+	Preconditions.checkNotNull(model, "Model can not be null");
+	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty");
+	Preconditions.checkArgument(model.isOpen(), "Model must be open");
+	Preconditions.checkArgument(
+		parameters.containsKey(GooglePlusConnectorConfig.CLIENT_ID),
+		"No client-id given");
+	Preconditions
+		.checkArgument(parameters
+			.containsKey(GooglePlusConnectorConfig.CLIENT_SECRET),
+			"No client-secret given");
+	Preconditions.checkArgument(
+		parameters.containsKey(GooglePlusConnectorConfig.ACCESS_TOKEN),
+		"No accesstoken given");
+	Preconditions
+		.checkArgument(parameters
+			.containsKey(GooglePlusConnectorConfig.REFRESH_TOKEN),
+			"No refreshtoken given");
 	super.initialize(id, model, parameters);
 
-	this.gpConfig = ConfigUtils.fromMap(parameters,
-		GooglePlusConnectorConfig.class);
+	this.gpConfig = new GooglePlusConnectorConfig();
+	this.gpConfig = ConfigUtils.fromMap(parameters, this.gpConfig);
 
 	credential = new GoogleCredential.Builder()
 		.setClientSecrets(gpConfig.getClientId(),
@@ -694,4 +713,50 @@ public class GooglePlusConnector extends AbstractConnector {
 	    return new ConnectorException(error.getMessage());
 	}
     }
+
+    /*********************************************************************************/
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = super.hashCode();
+	result = prime * result
+		+ Objects.hashCode(this.credential, this.gpConfig, this.myId);
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (!(obj instanceof GooglePlusConnector)) {
+	    return false;
+	}
+	GooglePlusConnector other = (GooglePlusConnector) obj;
+
+	if (!Objects.equal(this.credential, other.credential)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.gpConfig, other.gpConfig)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.myId, other.myId)) {
+	    return false;
+	}
+
+	return super.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+	return Objects.toStringHelper(this).add("id", getId())
+		.add("userId", myId).toString();
+    }
+
 }

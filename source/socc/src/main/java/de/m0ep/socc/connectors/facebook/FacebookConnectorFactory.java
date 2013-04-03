@@ -28,6 +28,7 @@ import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
+import de.m0ep.socc.config.ConfigParameterUse;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.utils.ConfigUtils;
 
@@ -39,13 +40,32 @@ public class FacebookConnectorFactory implements IConnectorFactory {
     }
 
     @Override
-    public String getUniqueFactoryId() {
+    public String getFactoryId() {
 	return "FacebookConnectorFactory_1.0";
     }
 
     @Override
-    public String[] getConfigKeys() {
-	return ConfigUtils.getPropertyNames(FacebookConnectorConfig.class);
+    public String[] getParameterKeys() {
+	return ConfigUtils.getParameterNames(FacebookConnectorConfig.class);
+    }
+
+    @Override
+    public ConfigParameterUse getConfigParameterUse(String key) {
+	if (FacebookConnectorConfig.CLIENT_ID.equals(key)) {
+	    return ConfigParameterUse.REQUIRED;
+	} else if (FacebookConnectorConfig.CLIENT_SECRET.equals(key)) {
+	    return ConfigParameterUse.REQUIRED;
+	} else if (FacebookConnectorConfig.ACCESS_TOKEN.equals(key)) {
+	    return ConfigParameterUse.REQUIRED;
+	} else if (FacebookConnectorConfig.EXPIRES_IN_SECONDS.equals(key)) {
+	    return ConfigParameterUse.OPTIONAL;
+	} else if (FacebookConnectorConfig.MAX_NEW_POSTS_ON_POLL.equals(key)) {
+	    return ConfigParameterUse.OPTIONAL;
+	} else if (FacebookConnectorConfig.POLL_COOLDOWN.equals(key)) {
+	    return ConfigParameterUse.OPTIONAL;
+	}
+
+	return ConfigParameterUse.NOT_USED;
     }
 
     @Override

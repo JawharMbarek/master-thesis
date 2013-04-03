@@ -41,6 +41,7 @@ import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 import org.rdfs.sioc.Usergroup;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.exceptions.ConnectorException;
@@ -341,5 +342,42 @@ public abstract class AbstractConnector implements IConnector {
     public List<Post> pollNewPosts(Container container)
 	    throws ConnectorException {
 	return new ArrayList<Post>();
+    }
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + Objects.hashCode(this.id, this.model);
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (!(obj instanceof AbstractConnector)) {
+	    return false;
+	}
+	AbstractConnector other = (AbstractConnector) obj;
+
+	if (!Objects.equal(this.id, other.id)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.model, other.model)) {
+	    return false;
+	}
+
+	return super.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+	return Objects.toStringHelper(this).add("id", this.id).toString();
     }
 }

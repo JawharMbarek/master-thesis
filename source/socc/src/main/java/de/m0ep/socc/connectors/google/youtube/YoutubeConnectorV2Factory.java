@@ -28,6 +28,7 @@ import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
+import de.m0ep.socc.config.ConfigParameterUse;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.utils.ConfigUtils;
 
@@ -39,13 +40,30 @@ public class YoutubeConnectorV2Factory implements IConnectorFactory {
     }
 
     @Override
-    public String getUniqueFactoryId() {
+    public String getFactoryId() {
 	return "YoutubeConnectorFactory_v2";
     }
 
     @Override
-    public String[] getConfigKeys() {
-	return ConfigUtils.getPropertyNames(YoutubeConnectorV2Config.class);
+    public String[] getParameterKeys() {
+	return ConfigUtils.getParameterNames(YoutubeConnectorV2Config.class);
+    }
+
+    @Override
+    public ConfigParameterUse getConfigParameterUse(String key) {
+	if (YoutubeConnectorV2Config.USERNAME.equals(key)) {
+	    return ConfigParameterUse.REQUIRED;
+	} else if (YoutubeConnectorV2Config.PASSWORD.equals(key)) {
+	    return ConfigParameterUse.REQUIRED;
+	} else if (YoutubeConnectorV2Config.DEVELOPER_KEY.equals(key)) {
+	    return ConfigParameterUse.OPTIONAL;
+	} else if (YoutubeConnectorV2Config.MAX_NEW_POSTS_ON_POLL.equals(key)) {
+	    return ConfigParameterUse.OPTIONAL;
+	} else if (YoutubeConnectorV2Config.POLL_COOLDOWN.equals(key)) {
+	    return ConfigParameterUse.OPTIONAL;
+	}
+
+	return ConfigParameterUse.NOT_USED;
     }
 
     @Override

@@ -24,6 +24,8 @@ package de.m0ep.socc.config;
 
 import org.mortbay.jetty.Connector;
 
+import com.google.common.base.Objects;
+
 /**
  * Basic configuration JavaBean for OAuth2 enabled {@link Connector}s
  * 
@@ -73,5 +75,49 @@ public class OAuth2ConnectorConfig extends DefaultConnectorConfig {
 
     public void setExpiresInSeconds(long expiresInSeconds) {
 	this.expiresInSeconds = expiresInSeconds;
+    }
+
+    @Override
+    public int hashCode() {
+
+	final int prime = 31;
+	int result = super.hashCode();
+	result = prime
+		* result
+		+ Objects.hashCode(this.clientId, this.clientSecret,
+			this.accessToken, this.expiresInSeconds);
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (!(obj instanceof OAuth2ConnectorConfig)) {
+	    return false;
+	}
+	OAuth2ConnectorConfig other = (OAuth2ConnectorConfig) obj;
+
+	if (!Objects.equal(this.clientId, other.clientId)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.clientSecret, other.clientSecret)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.accessToken, other.accessToken)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.expiresInSeconds, other.expiresInSeconds)) {
+	    return false;
+	}
+
+	return super.equals(obj);
     }
 }

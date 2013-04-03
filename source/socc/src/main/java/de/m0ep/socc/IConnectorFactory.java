@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 
+import de.m0ep.socc.config.ConfigParameterUse;
 import de.m0ep.socc.exceptions.ConnectorException;
 
 /**
@@ -43,18 +44,30 @@ public interface IConnectorFactory {
     public String getConnectorName();
 
     /**
-     * Returns a unique name for this factory
+     * Returns a unique id for this factory
      * 
      * @return
      */
-    public String getUniqueFactoryId();
+    public String getFactoryId();
 
     /**
      * Returns keys for configuration parameters that should be loaded/stored
      * 
      * @return
      */
-    public String[] getConfigKeys();
+    public String[] getParameterKeys();
+
+    /**
+     * Returns the use of a parameter key.
+     * 
+     * @param key
+     *            A parameter key
+     * 
+     * @return {@link ConfigParameterUse#REQUIRED},
+     *         {@link ConfigParameterUse#OPTIONAL} or
+     *         {@link ConfigParameterUse#NOT_USED}
+     */
+    public ConfigParameterUse getConfigParameterUse(String key);
 
     /**
      * Create a new {@link IConnector}.

@@ -47,6 +47,7 @@ import org.rdfs.sioc.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import de.m0ep.moodlews.soap.CourseRecord;
@@ -70,7 +71,8 @@ public class MoodleConnector extends AbstractConnector {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(MoodleConnector.class);
 
-    public static final String MOODLEWS_PATH = "wspp/service_pp2.php";
+    private static final String MOODLEWS_PATH = "wspp/service_pp2.php";
+    private static final String MOODLE_WSDL_POSTFIX = "/wspp/wsdl2";
 
     private static final String URI_USER_PATH = "user/";
     private static final String URI_FORUM_PATH = "forum/";
@@ -88,105 +90,6 @@ public class MoodleConnector extends AbstractConnector {
     private Map<Integer, CourseRecord> courses = new HashMap<Integer, CourseRecord>();
 
     /**
-     * Check if the moodle webservice is running.
-     * 
-     * @return Returns true if MoodleWS is running, false otherwise.
-     * 
-     * @throws ConnectorException
-     *             Thrown if the url to moodle is invalid.
-     */
-    private boolean isMoodleWSRunning() throws ConnectorException {
-	if (null == moodle)
-	    return false;
-
-	try {
-	    new URL(moodle.getURL()).openConnection().connect();
-	} catch (MalformedURLException e) {
-	    throw new ConnectorException("Invalid URL to moodle", e);
-	} catch (IOException e) {
-	    LOG.warn(e.getMessage(), e);
-	    return false;
-	}
-
-	return true;
-    }
-
-    /**
-     * 
-     * @return Returns true if the webservice session in Moodle is maybe expired
-     */
-    private boolean isSessionMaybeExpired() {
-	return 0 == moodle.get_my_id(client, sesskey);
-    }
-
-    /**
-     * Tries to login to Moodle.
-     * 
-     * @throws AuthenticationException
-     *             Thrown if username and/or password are invalid.
-     * @throws NetworkException
-     *             Thrown if the login failed, because of network issues.
-     */
-    private void tryLogin() throws ConnectorException {
-	if (null != sesskey)
-	    moodle.logout(client, sesskey);
-
-	LoginReturn login = moodle.login(mdlConfig.getUsername(),
-		mdlConfig.getPassword());
-
-	if (null == login) {
-	    if (isMoodleWSRunning()) {
-		throw new AuthenticationException("invalid user details");
-	    }
-
-	    throw new NetworkException("No connection to " + moodle.getURL());
-	}
-
-	this.client = login.getClient();
-	this.sesskey = login.getSessionkey();
-    }
-
-    /**
-     * Calls a {@link Callable} with a MoodleWS function and tries to relogin if
-     * the usersession is expired.
-     * 
-     * @param callable
-     *            {@link Callable} with MoodleWS function call.
-     * @return Result of the {@link Callable}.
-     * 
-     * @throws ConnectorException
-     *             Thrown if the called failed.
-     * @throws NetworkException
-     *             Thrown if the MoodleWS service is not running.
-     */
-    private <T> T callMethod(final Callable<T> callable)
-	    throws ConnectorException {
-	Preconditions.checkNotNull(callable, "callable can not be null");
-	T result = null;
-	try {
-	    result = callable.call();
-
-	    if (null == result) {
-		if (!isMoodleWSRunning()) {
-		    throw new NetworkException("No connection to "
-			    + moodle.getURL());
-		}
-
-		if (isSessionMaybeExpired()) {
-		    LOG.debug("try relogin and call method again");
-		    tryLogin();
-		    result = callable.call();
-		}
-	    }
-	} catch (Exception e) {
-	    throw new ConnectorException(
-		    "Failed to call method on MoodleWS Server", e);
-	}
-
-	return result;
-    }
-
-    /**
      * @throws ConnectorException
      *             Thrown if there is a problem while login procedure.
      * @throws NullPointerException
@@ -197,17 +100,23 @@ public class MoodleConnector extends AbstractConnector {
     @Override
     public void initialize(String id, Model model,
 	    Map<String, Object> parameters) throws ConnectorException {
-	Preconditions.checkNotNull(id, "id can not be null");
-	Preconditions.checkNotNull(model, "model can not be null");
-	Preconditions.checkArgument(!id.isEmpty(), "id can not be empty");
-	Preconditions.checkArgument(model.isOpen(), "model must be open");
+	Preconditions.checkNotNull(id, "Id can not be null");
+	Preconditions.checkNotNull(model, "Model can not be null");
+	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty");
+	Preconditions.checkArgument(model.isOpen(), "Model must be open");
+	Preconditions.checkArgument(
+		parameters.containsKey(MoodleConnectorConfig.USERNAME),
+		"No username given");
+	Preconditions.checkArgument(
+		parameters.containsKey(MoodleConnectorConfig.PASSWORD),
+		"No password given");
 	super.initialize(id, model, parameters);
 
-	this.mdlConfig = ConfigUtils.fromMap(parameters,
-		MoodleConnectorConfig.class);
+	this.mdlConfig = new MoodleConnectorConfig();
+	this.mdlConfig = ConfigUtils.fromMap(parameters, this.mdlConfig);
 
 	this.moodle = new Mdl_soapserverBindingStub(getURL() + MOODLEWS_PATH,
-		getURL() + "/wspp/wsdl2", false);
+		getURL() + MOODLE_WSDL_POSTFIX, false);
 
 	tryLogin();
 	this.myId = moodle.get_my_id(client, sesskey);
@@ -620,4 +529,158 @@ public class MoodleConnector extends AbstractConnector {
 	throw new ConnectorException("Failed to load course info from "
 		+ getURL());
     }
+
+    /**
+     * Check if the moodle webservice is running.
+     * 
+     * @return Returns true if MoodleWS is running, false otherwise.
+     * 
+     * @throws ConnectorException
+     *             Thrown if the url to moodle is invalid.
+     */
+    private boolean isMoodleWSRunning() throws ConnectorException {
+	if (null == moodle)
+	    return false;
+
+	try {
+	    new URL(moodle.getURL()).openConnection().connect();
+	} catch (MalformedURLException e) {
+	    throw new ConnectorException("Invalid URL to moodle", e);
+	} catch (IOException e) {
+	    LOG.warn(e.getMessage(), e);
+	    return false;
+	}
+
+	return true;
+    }
+
+    /**
+     * 
+     * @return Returns true if the webservice session in Moodle is maybe expired
+     */
+    private boolean isSessionMaybeExpired() {
+	return 0 == moodle.get_my_id(client, sesskey);
+    }
+
+    /**
+     * Tries to login to Moodle.
+     * 
+     * @throws AuthenticationException
+     *             Thrown if username and/or password are invalid.
+     * @throws NetworkException
+     *             Thrown if the login failed, because of network issues.
+     */
+    private void tryLogin() throws ConnectorException {
+	if (null != sesskey)
+	    moodle.logout(client, sesskey);
+
+	LoginReturn login = moodle.login(mdlConfig.getUsername(),
+		mdlConfig.getPassword());
+
+	if (null == login) {
+	    if (isMoodleWSRunning()) {
+		throw new AuthenticationException("invalid user details");
+	    }
+
+	    throw new NetworkException("No connection to " + moodle.getURL());
+	}
+
+	this.client = login.getClient();
+	this.sesskey = login.getSessionkey();
+    }
+
+    /**
+     * Calls a {@link Callable} with a MoodleWS function and tries to relogin if
+     * the usersession is expired.
+     * 
+     * @param callable
+     *            {@link Callable} with MoodleWS function call.
+     * @return Result of the {@link Callable}.
+     * 
+     * @throws ConnectorException
+     *             Thrown if the called failed.
+     * @throws NetworkException
+     *             Thrown if the MoodleWS service is not running.
+     */
+    private <T> T callMethod(final Callable<T> callable)
+	    throws ConnectorException {
+	Preconditions.checkNotNull(callable, "callable can not be null");
+	T result = null;
+	try {
+	    result = callable.call();
+
+	    if (null == result) {
+		if (!isMoodleWSRunning()) {
+		    throw new NetworkException("No connection to "
+			    + moodle.getURL());
+		}
+
+		if (isSessionMaybeExpired()) {
+		    LOG.debug("try relogin and call method again");
+		    tryLogin();
+		    result = callable.call();
+		}
+	    }
+	} catch (Exception e) {
+	    throw new ConnectorException(
+		    "Failed to call method on MoodleWS Server", e);
+	}
+
+	return result;
+    }
+
+    /*********************************************************************************/
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = super.hashCode();
+	result = prime
+		* result
+		+ Objects.hashCode(this.client, this.sesskey, this.mdlConfig,
+			this.myId, getURL());
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (!(obj instanceof MoodleConnector)) {
+	    return false;
+	}
+	MoodleConnector other = (MoodleConnector) obj;
+
+	if (!Objects.equal(this.client, other.client)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.sesskey, other.sesskey)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.mdlConfig, other.mdlConfig)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.myId, other.myId)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.getURL(), other.getURL())) {
+	    return false;
+	}
+
+	return super.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+	return Objects.toStringHelper(this).add("id", getId())
+		.add("userId", myId).toString();
+    };
 }

@@ -24,6 +24,8 @@ package de.m0ep.socc.config;
 
 import org.mortbay.jetty.Connector;
 
+import com.google.common.base.Objects;
+
 /**
  * A default configuration JavaBean with some useful properties for all
  * {@link Connector}s.
@@ -40,6 +42,11 @@ public abstract class DefaultConnectorConfig implements IConnectorConfig {
     private int maxNewPostsOnPoll;
     private int pollCooldownMillis;
 
+    public DefaultConnectorConfig() {
+	this.maxNewPostsOnPoll = 30;
+	this.pollCooldownMillis = 100;
+    }
+
     public int getMaxNewPostsOnPoll() {
 	return maxNewPostsOnPoll;
     }
@@ -54,5 +61,45 @@ public abstract class DefaultConnectorConfig implements IConnectorConfig {
 
     public void setPollCooldownMillis(int pollCoolDown) {
 	this.pollCooldownMillis = pollCoolDown;
+    }
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = super.hashCode();
+	result = prime
+		* result
+		+ Objects.hashCode(this.maxNewPostsOnPoll,
+			this.pollCooldownMillis);
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (!(obj instanceof DefaultConnectorConfig)) {
+	    return false;
+	}
+	DefaultConnectorConfig other = (DefaultConnectorConfig) obj;
+
+	if (!Objects.equal(this.maxNewPostsOnPoll, other.maxNewPostsOnPoll)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.pollCooldownMillis, other.pollCooldownMillis)) {
+	    return false;
+	}
+
+	return true;
+    }
+
+    @Override
+    public String toString() {
+	return Objects.toStringHelper(this).toString();
     }
 }

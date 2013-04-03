@@ -205,6 +205,16 @@ public class MoodleConnector extends AbstractConnector {
     }
 
     @Override
+    public Thread getThread(String id) throws ConnectorException {
+	Preconditions.checkNotNull(id, "Id can not be null");
+	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty");
+
+	// TODO:
+
+	throw new NotFoundException("No thread found with id " + id);
+    }
+
+    @Override
     public List<Thread> getThreads(Forum forum) throws ConnectorException {
 	Preconditions.checkNotNull(forum, "forum can not be null");
 	Preconditions.checkArgument(forum.hasHost(getSite()));

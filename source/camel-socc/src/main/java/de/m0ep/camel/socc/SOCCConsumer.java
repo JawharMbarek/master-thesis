@@ -1,6 +1,6 @@
 package de.m0ep.camel.socc;
 
-import java.util.Date;
+import java.util.List;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -9,40 +9,39 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.ontoware.rdf2go.model.Model;
-import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Post;
+import org.rdfs.sioc.Thread;
 
-import de.m0ep.socc.utils.DateUtils;
+import de.m0ep.socc.IConnector;
 
 public class SOCCConsumer extends ScheduledPollConsumer {
 
     Model model;
+    Thread thread;
+    IConnector connector;
 
-    public SOCCConsumer(Endpoint endpoint, Processor processor) {
+    public SOCCConsumer(Endpoint endpoint, Processor processor,
+	    IConnector connector, Thread thread) {
 	super(endpoint, processor);
-
-	this.model = ((SOCCEndpoint) getEndpoint()).getModel();
+	this.connector = connector;
+	this.thread = thread;
 	System.out.println("consumer");
     }
 
     @Override
     protected int poll() throws Exception {
-	URI uri = model.newRandomUniqueURI();
-	Post post = new Post(model, uri, true);
-	post.setTitle("Testpost");
-	post.setContent("Hallo, ich bin ein test post");
-	post.setCreated(DateUtils.formatISO8601(new Date()));
 
-	Exchange exchange = getEndpoint().createExchange();
+	List<Post> posts = connector.pollNewPosts(thread);
 
-	Message msg = new DefaultMessage();
-	msg.setHeader(Exchange.CONTENT_TYPE, "RDFStatements");
-	msg.setHeader("SIOCType", "Post");
+	for (Post post : posts) {
+	    Exchange exchange = getEndpoint().createExchange();
+	    Message msg = new DefaultMessage();
+	    msg.setHeader(Exchange.CONTENT_TYPE, "RDFStatements");
+	    msg.setHeader("SIOCType", "Post");
+	    exchange.getIn().setBody(new RDFSClass(post.getModel(), post));
+	    getProcessor().process(exchange);
+	}
 
-	exchange.getIn().setBody(new RDFSClass(model, uri));
-
-	getProcessor().process(exchange);
-
-	return 1;
+	return posts.size();
     }
 }

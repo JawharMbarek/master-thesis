@@ -1,14 +1,51 @@
 package de.m0ep.camel.socc;
 
+import java.util.List;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.ontoware.rdf2go.model.Model;
+import org.apache.camel.component.direct.DirectEndpoint;
+import org.rdfs.sioc.Forum;
+import org.rdfs.sioc.Thread;
 
-public class SOCCEndpoint extends DefaultEndpoint {
+import com.google.common.base.Preconditions;
 
-    Model model;
+import de.m0ep.socc.IConnector;
+import de.m0ep.socc.exceptions.ConnectorException;
+
+public class SOCCEndpoint extends DirectEndpoint {
+
+    IConnector connector;
+    String uri;
+    Thread thread;
+
+    public SOCCEndpoint(String uri, IConnector connector,
+	    String destinationType, String destinationId) {
+	this.uri = Preconditions.checkNotNull(uri);
+	this.connector = Preconditions.checkNotNull(connector);
+
+	try {
+	    if ("thread".equals(destinationType)) {
+		List<Forum> forums = connector.getForums();
+
+		for (Forum forum : forums) {
+		    List<Thread> threads = connector.getThreads(forum);
+
+		    for (Thread thread : threads) {
+			if (destinationId.equals(thread.getId())) {
+			    System.err.println(thread.toSPARQL());
+			    this.thread = thread;
+			    return;
+			}
+		    }
+		}
+
+	    }
+	} catch (ConnectorException e) {
+	    e.printStackTrace();
+	}
+    }
 
     @Override
     public Producer createProducer() throws Exception {
@@ -18,24 +55,12 @@ public class SOCCEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-	return new SOCCConsumer(this, processor);
+	return new SOCCConsumer(this, processor, connector, thread);
     }
 
     @Override
-    public boolean isSingleton() {
-	return true;
-    }
-
-    public Model getModel() {
-	return model;
-    }
-
-    public void setModel(Model model) {
-	this.model = model;
-    }
-
-    @Override
-    protected String createEndpointUri() {
-	return "test";
+    public String getEndpointUri() {
+	System.err.println("getEndpoint");
+	return uri;
     }
 }

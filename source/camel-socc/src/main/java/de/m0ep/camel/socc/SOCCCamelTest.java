@@ -16,8 +16,10 @@ public class SOCCCamelTest {
 	context.addRoutes(new RouteBuilder() {
 	    @Override
 	    public void configure() throws Exception {
-		from("socc:moodle-test/thread/2").marshal(
-			new RDFXMLDataformat()).to("mock:test2");
+		from(
+			"socc:googleplus-test?forumId=115922275158052155050/public")
+		/* .marshal(new RDFXMLDataformat()) */.to(
+			"socc:moodle-test?forumId=1&threadId=2");
 	    }
 	});
 

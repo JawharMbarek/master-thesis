@@ -32,8 +32,8 @@ import com.google.common.collect.Lists;
 
 import de.m0ep.socc.config.DefaultConnectorConfig;
 import de.m0ep.socc.connectors.facebook.FacebookConnectorConfig;
-import de.m0ep.socc.connectors.facebook.FacebookConnectorFactory;
 import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorConfig;
+import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorFactory;
 import de.m0ep.socc.connectors.google.youtube.YoutubeConnectorV2Config;
 import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
 import de.m0ep.socc.exceptions.ConnectorException;
@@ -126,17 +126,16 @@ public class SOCCTest {
 	ytParams.put(YoutubeConnectorV2Config.DEVELOPER_KEY,
 		config.get("yt.developerKey"));
 
-	FacebookConnectorFactory fbFactory = new FacebookConnectorFactory();
-	// GooglePlusConnectorFactory gpFactory = new
-	// GooglePlusConnectorFactory();
+	// FacebookConnectorFactory fbFactory = new FacebookConnectorFactory();
+	GooglePlusConnectorFactory gpFactory = new GooglePlusConnectorFactory();
 	// MoodleConnectorFactory mdlFactory = new MoodleConnectorFactory();
 	// YoutubeConnectorV2Factory ytFactory = new
 	// YoutubeConnectorV2Factory();
 
-	IConnector[] connectors = { fbFactory.createConnector("facebook",
-		model, fbParams)
+	IConnector[] connectors = {
+	// fbFactory.createConnector("facebook",model, fbParams)
 	// mdlFactory.createConnector("moodle", model, mdlParams),
-	// gpFactory.createConnector("google+", model, gpParams)
+	gpFactory.createConnector("google+", model, gpParams)
 	// ytFactory.createConnector("youtube", model, ytParams)
 	};
 

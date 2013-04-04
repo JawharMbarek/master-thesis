@@ -2,36 +2,31 @@ package de.m0ep.camel.socc;
 
 import java.util.List;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.impl.ScheduledPollConsumer;
-import org.ontoware.rdf2go.model.Model;
+import org.apache.camel.impl.DefaultScheduledPollConsumer;
+import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.Thread;
 
 import de.m0ep.socc.IConnector;
 
-public class SOCCConsumer extends ScheduledPollConsumer {
-
-    Model model;
-    Thread thread;
+public class SOCCForumPollingConsumer extends DefaultScheduledPollConsumer {
     IConnector connector;
+    Forum forum;
 
-    public SOCCConsumer(Endpoint endpoint, Processor processor,
-	    IConnector connector, Thread thread) {
-	super(endpoint, processor);
+    public SOCCForumPollingConsumer(SOCCForumEndpoint soccForumEndpoint,
+	    Processor processor, IConnector connector, Forum forum) {
+	super(soccForumEndpoint, processor);
+
 	this.connector = connector;
-	this.thread = thread;
-	System.out.println("consumer");
+	this.forum = forum;
     }
 
     @Override
     protected int poll() throws Exception {
-
-	List<Post> posts = connector.pollNewPosts(thread);
+	List<Post> posts = connector.pollNewPosts(forum);
 
 	for (Post post : posts) {
 	    Exchange exchange = getEndpoint().createExchange();
@@ -44,4 +39,5 @@ public class SOCCConsumer extends ScheduledPollConsumer {
 
 	return posts.size();
     }
+
 }

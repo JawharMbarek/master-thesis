@@ -209,7 +209,13 @@ public class MoodleConnector extends AbstractConnector {
 	Preconditions.checkNotNull(id, "Id can not be null");
 	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty");
 
-	// TODO:
+	for (Forum forum : getForums()) {
+	    for (Thread thread : getThreads(forum)) {
+		if (thread.hasId(RDF2GoUtils.createLiteral(id))) {
+		    return thread;
+		}
+	    }
+	}
 
 	throw new NotFoundException("No thread found with id " + id);
     }

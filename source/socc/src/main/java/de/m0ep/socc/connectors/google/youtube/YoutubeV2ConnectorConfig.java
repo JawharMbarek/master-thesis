@@ -4,7 +4,7 @@ import com.google.common.base.Objects;
 
 import de.m0ep.socc.config.LoginConnectorConfig;
 
-public class YoutubeConnectorV2Config extends LoginConnectorConfig {
+public class YoutubeV2ConnectorConfig extends LoginConnectorConfig {
     private static final long serialVersionUID = -2587148753086121486L;
 
     public static final String DEVELOPER_KEY = "developerKey";
@@ -35,10 +35,10 @@ public class YoutubeConnectorV2Config extends LoginConnectorConfig {
 	if (!super.equals(obj)) {
 	    return false;
 	}
-	if (!(obj instanceof YoutubeConnectorV2Config)) {
+	if (!(obj instanceof YoutubeV2ConnectorConfig)) {
 	    return false;
 	}
-	YoutubeConnectorV2Config other = (YoutubeConnectorV2Config) obj;
+	YoutubeV2ConnectorConfig other = (YoutubeV2ConnectorConfig) obj;
 	if (!Objects.equal(this.developerKey, other.developerKey)) {
 	    return false;
 	}

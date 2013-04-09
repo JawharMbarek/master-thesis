@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class SOCCConfigConnectorEntry implements Serializable {
+    private static final long serialVersionUID = -1422106705758952749L;
+
     private String id;
     private String factoryId;
     private Map<String, Object> parameters;

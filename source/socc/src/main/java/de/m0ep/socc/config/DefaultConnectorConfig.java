@@ -33,7 +33,7 @@ import com.google.common.base.Objects;
  * @author Florian Müller
  * 
  */
-public abstract class DefaultConnectorConfig implements IConnectorConfig {
+public class DefaultConnectorConfig implements IConnectorConfig {
     private static final long serialVersionUID = 1992138033098739047L;
 
     public static final String MAX_NEW_POSTS_ON_POLL = "maxNewPostsOnPoll";

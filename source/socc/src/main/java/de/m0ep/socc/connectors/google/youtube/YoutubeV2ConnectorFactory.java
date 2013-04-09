@@ -32,7 +32,7 @@ import de.m0ep.socc.config.ConfigParameterUse;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.utils.ConfigUtils;
 
-public class YoutubeConnectorV2Factory implements IConnectorFactory {
+public class YoutubeV2ConnectorFactory implements IConnectorFactory {
 
     @Override
     public String getConnectorName() {
@@ -46,20 +46,20 @@ public class YoutubeConnectorV2Factory implements IConnectorFactory {
 
     @Override
     public String[] getParameterKeys() {
-	return ConfigUtils.getParameterNames(YoutubeConnectorV2Config.class);
+	return ConfigUtils.getParameterNames(YoutubeV2ConnectorConfig.class);
     }
 
     @Override
     public ConfigParameterUse getConfigParameterUse(String key) {
-	if (YoutubeConnectorV2Config.USERNAME.equals(key)) {
+	if (YoutubeV2ConnectorConfig.USERNAME.equals(key)) {
 	    return ConfigParameterUse.REQUIRED;
-	} else if (YoutubeConnectorV2Config.PASSWORD.equals(key)) {
+	} else if (YoutubeV2ConnectorConfig.PASSWORD.equals(key)) {
 	    return ConfigParameterUse.REQUIRED;
-	} else if (YoutubeConnectorV2Config.DEVELOPER_KEY.equals(key)) {
+	} else if (YoutubeV2ConnectorConfig.DEVELOPER_KEY.equals(key)) {
 	    return ConfigParameterUse.OPTIONAL;
-	} else if (YoutubeConnectorV2Config.MAX_NEW_POSTS_ON_POLL.equals(key)) {
+	} else if (YoutubeV2ConnectorConfig.MAX_NEW_POSTS_ON_POLL.equals(key)) {
 	    return ConfigParameterUse.OPTIONAL;
-	} else if (YoutubeConnectorV2Config.POLL_COOLDOWN.equals(key)) {
+	} else if (YoutubeV2ConnectorConfig.POLL_COOLDOWN.equals(key)) {
 	    return ConfigParameterUse.OPTIONAL;
 	}
 
@@ -69,7 +69,7 @@ public class YoutubeConnectorV2Factory implements IConnectorFactory {
     @Override
     public IConnector createConnector(String id, Model model,
 	    Map<String, Object> parameters) throws ConnectorException {
-	IConnector connector = new YoutubeConnectorV2();
+	IConnector connector = new YoutubeV2Connector();
 	connector.initialize(id, model, parameters);
 	return connector;
     }

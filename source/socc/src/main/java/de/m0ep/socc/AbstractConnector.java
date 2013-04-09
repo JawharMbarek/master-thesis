@@ -40,12 +40,16 @@ import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 import org.rdfs.sioc.Usergroup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import de.m0ep.socc.config.DefaultConnectorConfig;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.exceptions.NotFoundException;
+import de.m0ep.socc.utils.ConfigUtils;
 
 /**
  * Abstract connector that implements the {@link IConnector} interface. It's a
@@ -55,6 +59,9 @@ import de.m0ep.socc.exceptions.NotFoundException;
  * 
  */
 public abstract class AbstractConnector implements IConnector {
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(AbstractConnector.class);
+
     private static final String SPARQL_VAR_USER = "user";
     private static final String SPARQL_VAR_FORUM = "forum";
     private static final String SPARQL_VAR_THREAD = "thread";
@@ -74,8 +81,11 @@ public abstract class AbstractConnector implements IConnector {
 	    + RDF.type.toSPARQL() + " " + SIOC.Thread.toSPARQL() + " ; "
 	    + SIOC.has_parent.toSPARQL() + " %s . }";
 
-    private String id;
-    private Model model;
+    protected String id;
+    protected Model model;
+    protected DefaultConnectorConfig defaultConfig;
+
+    protected long lastPollTime;
 
     @Override
     public void initialize(String id, Model model,
@@ -85,6 +95,13 @@ public abstract class AbstractConnector implements IConnector {
 	Preconditions.checkNotNull(parameters, "parameters can't be null");
 	Preconditions.checkArgument(!id.isEmpty(), "id can't be empty");
 	Preconditions.checkArgument(model.isOpen(), "model is not open");
+
+	this.defaultConfig = new DefaultConnectorConfig();
+	this.defaultConfig.setMaxNewPostsOnPoll(25);
+	this.defaultConfig.setPollCooldownMillis(500);
+	ConfigUtils.fromMap(parameters, defaultConfig);
+
+	lastPollTime = System.currentTimeMillis();
     }
 
     /**
@@ -342,6 +359,22 @@ public abstract class AbstractConnector implements IConnector {
     public List<Post> pollNewPosts(Container container)
 	    throws ConnectorException {
 	return new ArrayList<Post>();
+    }
+
+    protected void doCoolDown() {
+	if (lastPollTime > System.currentTimeMillis()) {
+	    LOG.debug("colldown for  {}ms",
+		    lastPollTime - System.currentTimeMillis());
+	    try {
+		java.lang.Thread.sleep(lastPollTime
+			- System.currentTimeMillis());
+	    } catch (InterruptedException e) {
+		LOG.warn("Interrupted", e);
+	    }
+	}
+
+	lastPollTime = System.currentTimeMillis()
+		+ defaultConfig.getPollCooldownMillis();
     }
 
     @Override

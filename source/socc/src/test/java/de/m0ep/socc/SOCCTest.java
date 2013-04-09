@@ -33,8 +33,8 @@ import com.google.common.collect.Lists;
 import de.m0ep.socc.config.DefaultConnectorConfig;
 import de.m0ep.socc.connectors.facebook.FacebookConnectorConfig;
 import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorConfig;
-import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorFactory;
-import de.m0ep.socc.connectors.google.youtube.YoutubeConnectorV2Config;
+import de.m0ep.socc.connectors.google.youtube.YoutubeV2ConnectorConfig;
+import de.m0ep.socc.connectors.google.youtube.YoutubeV2ConnectorFactory;
 import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
 import de.m0ep.socc.exceptions.ConnectorException;
 
@@ -119,25 +119,24 @@ public class SOCCTest {
 	ytParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
 		maxPostPerPoll);
 	ytParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
-	ytParams.put(YoutubeConnectorV2Config.PASSWORD,
+	ytParams.put(YoutubeV2ConnectorConfig.PASSWORD,
 		config.get("yt.password"));
-	ytParams.put(YoutubeConnectorV2Config.USERNAME,
+	ytParams.put(YoutubeV2ConnectorConfig.USERNAME,
 		config.get("yt.username"));
-	ytParams.put(YoutubeConnectorV2Config.DEVELOPER_KEY,
+	ytParams.put(YoutubeV2ConnectorConfig.DEVELOPER_KEY,
 		config.get("yt.developerKey"));
 
 	// FacebookConnectorFactory fbFactory = new FacebookConnectorFactory();
-	GooglePlusConnectorFactory gpFactory = new GooglePlusConnectorFactory();
+	// GooglePlusConnectorFactory gpFactory = new
+	// GooglePlusConnectorFactory();
 	// MoodleConnectorFactory mdlFactory = new MoodleConnectorFactory();
-	// YoutubeConnectorV2Factory ytFactory = new
-	// YoutubeConnectorV2Factory();
+	YoutubeV2ConnectorFactory ytFactory = new YoutubeV2ConnectorFactory();
 
 	IConnector[] connectors = {
 	// fbFactory.createConnector("facebook",model, fbParams)
 	// mdlFactory.createConnector("moodle", model, mdlParams),
-	gpFactory.createConnector("google+", model, gpParams)
-	// ytFactory.createConnector("youtube", model, ytParams)
-	};
+	// gpFactory.createConnector("google+", model, gpParams)
+	ytFactory.createConnector("youtube", model, ytParams) };
 
 	for (IConnector connector : connectors) {
 	    printConnector(connector);
@@ -183,8 +182,8 @@ public class SOCCTest {
 
 	try {
 	    System.err.println("test connector");
-	    printPost(connector,
-		    connector.getPost("100000490230885_629013553791647"), 1);
+	    // printPost(connector,
+	    // connector.getPost("100000490230885_629013553791647"), 1);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
@@ -327,7 +326,7 @@ public class SOCCTest {
 	    ClosableIterator<Node> attachments = post.getAllAttachment_asNode();
 	    while (attachments.hasNext()) {
 		Node node = attachments.next();
-		printWithIndent(node.toString(), indent);
+		printWithIndent(node.toString(), indent + 1);
 
 	    }
 	    attachments.close();

@@ -1,7 +1,9 @@
 package de.m0ep.camel.socc;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -14,17 +16,23 @@ public class SOCCCamelTest {
 	context.addRoutes(new RouteBuilder() {
 	    @Override
 	    public void configure() throws Exception {
-		from("socc:test").marshal(new RDFXMLDataformat()).to(
-			"mock:test2");
+		from(
+			"socc:googleplus-test?forumId=115922275158052155050/public")
+		/* .marshal(new RDFXMLDataformat()) */.to(
+			"socc:moodle-test?forumId=1&threadId=2");
 	    }
 	});
 
-	ProducerTemplate producer = context.createProducerTemplate();
 	context.start();
 
-	producer.sendBody("socc:test", "");
+	String line = "";
+	BufferedReader bis = new BufferedReader(
+		new InputStreamReader(System.in));
 
-	Thread.sleep(4000);
+	do {
+	    line = bis.readLine();
+	} while (!"q".equals(line));
+
 	context.stop();
     }
 }

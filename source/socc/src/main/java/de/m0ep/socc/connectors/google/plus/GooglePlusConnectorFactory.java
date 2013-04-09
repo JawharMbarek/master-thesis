@@ -28,6 +28,7 @@ import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
+import de.m0ep.socc.config.ConfigParameterUse;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.utils.ConfigUtils;
 
@@ -39,13 +40,32 @@ public class GooglePlusConnectorFactory implements IConnectorFactory {
     }
 
     @Override
-    public String getUniqueFactoryId() {
+    public String getFactoryId() {
 	return "GooglePlusConnectorFactory_1.0";
     }
 
     @Override
-    public String[] getConfigKeys() {
-	return ConfigUtils.getPropertyNames(GooglePlusConnectorConfig.class);
+    public String[] getParameterKeys() {
+	return ConfigUtils.getParameterNames(GooglePlusConnectorConfig.class);
+    }
+
+    @Override
+    public ConfigParameterUse getConfigParameterUse(String key) {
+	if (GooglePlusConnectorConfig.CLIENT_ID.equals(key)) {
+	    return ConfigParameterUse.REQUIRED;
+	} else if (GooglePlusConnectorConfig.CLIENT_SECRET.equals(key)) {
+	    return ConfigParameterUse.REQUIRED;
+	} else if (GooglePlusConnectorConfig.ACCESS_TOKEN.equals(key)) {
+	    return ConfigParameterUse.REQUIRED;
+	} else if (GooglePlusConnectorConfig.REFRESH_TOKEN.equals(key)) {
+	    return ConfigParameterUse.REQUIRED;
+	} else if (GooglePlusConnectorConfig.MAX_NEW_POSTS_ON_POLL.equals(key)) {
+	    return ConfigParameterUse.OPTIONAL;
+	} else if (GooglePlusConnectorConfig.POLL_COOLDOWN.equals(key)) {
+	    return ConfigParameterUse.OPTIONAL;
+	}
+
+	return ConfigParameterUse.NOT_USED;
     }
 
     @Override

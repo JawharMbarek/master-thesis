@@ -24,6 +24,8 @@ package de.m0ep.socc.config;
 
 import org.mortbay.jetty.Connector;
 
+import com.google.common.base.Objects;
+
 /**
  * Basic configuraion JavaBean for {@link Connector}s with a username/password
  * login scheme.
@@ -76,5 +78,38 @@ public class LoginConnectorConfig extends DefaultConnectorConfig {
      */
     public void setPassword(String password) {
 	this.password = password;
+    }
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = super.hashCode();
+	result = prime * result
+		+ Objects.hashCode(this.username, this.password);
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj) {
+	    return true;
+	}
+	if (!super.equals(obj)) {
+	    return false;
+	}
+	if (!(obj instanceof LoginConnectorConfig)) {
+	    return false;
+	}
+	LoginConnectorConfig other = (LoginConnectorConfig) obj;
+
+	if (!Objects.equal(this.username, other.username)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.password, other.password)) {
+	    return false;
+	}
+
+	return super.equals(obj);
     }
 }

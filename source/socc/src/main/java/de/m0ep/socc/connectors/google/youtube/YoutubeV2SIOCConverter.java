@@ -22,16 +22,22 @@
 
 package de.m0ep.socc.connectors.google.youtube;
 
+import java.text.ParseException;
+
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.google.gdata.data.DateTime;
 import com.google.gdata.data.Link;
 import com.google.gdata.data.Person;
+import com.google.gdata.data.PlainTextConstruct;
 import com.google.gdata.data.TextContent;
 import com.google.gdata.data.youtube.CommentEntry;
 import com.google.gdata.data.youtube.PlaylistLinkEntry;
@@ -46,7 +52,10 @@ import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.SIOCUtils;
 import de.m0ep.socc.utils.StringUtils;
 
-public class YoutubeV2toSIOCConverter {
+public class YoutubeV2SIOCConverter {
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(YoutubeV2SIOCConverter.class);
+
     public static UserAccount createUserAccount(
 	    final YoutubeV2Connector connector,
 	    final UserProfileEntry userProfileEntry, final URI uri) {
@@ -246,6 +255,54 @@ public class YoutubeV2toSIOCConverter {
 	    videoPost.setNumreplies((videoPost.hasNumreplies()) ? (videoPost
 		    .getNumreplies() + 1) : (1));
 	    SIOCUtils.updateLastReplyDate(videoPost, result);
+	}
+
+	return result;
+    }
+
+    public static CommentEntry createCommentEntry(final Post reply,
+	    final Post parentPost) {
+	CommentEntry result = new CommentEntry();
+
+	if (reply.hasCreated()) {
+	    try {
+		result.setPublished(new DateTime(DateUtils.parseISO8601(reply
+			.getCreated())));
+	    } catch (ParseException e) {
+		LOG.warn("Failed to parse " + reply.getCreated(), e);
+	    }
+	}
+
+	if (reply.hasModified()) {
+	    try {
+		result.setPublished(new DateTime(DateUtils.parseISO8601(reply
+			.getModified())));
+	    } catch (ParseException e) {
+		LOG.warn("Failed to parse " + reply.getModified(), e);
+	    }
+	}
+
+	if (reply.hasTitle()) {
+	    result.setTitle(new PlainTextConstruct(reply.getTitle()));
+	} else if (reply.hasSubject()) {
+	    result.setTitle(new PlainTextConstruct(reply.getSubject()));
+	} else if (reply.hasName()) {
+	    result.setTitle(new PlainTextConstruct(reply.getName()));
+	}
+
+	if (reply.hasContent()) {
+	    result.setContent(new PlainTextConstruct(reply.getContent()));
+	} else if (reply.hasContentEncoded()) {
+	    result.setContent(new PlainTextConstruct(reply.getContentEncoded()));
+	}
+
+	if (parentPost.hasReplyof()) {
+	    // Add reply link
+	    result.addLink(YouTubeNamespace.IN_REPLY_TO,
+		    "application/atom+xml", String.format(
+			    YoutubeV2Constants.ENTRY_COMMENT, parentPost
+				    .getDiscussion().getId(), parentPost
+				    .getId()));
 	}
 
 	return result;

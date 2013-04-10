@@ -53,9 +53,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.gdata.client.youtube.YouTubeService;
-import com.google.gdata.data.DateTime;
 import com.google.gdata.data.Link;
-import com.google.gdata.data.PlainTextConstruct;
 import com.google.gdata.data.youtube.CommentEntry;
 import com.google.gdata.data.youtube.CommentFeed;
 import com.google.gdata.data.youtube.PlaylistLinkEntry;
@@ -63,7 +61,6 @@ import com.google.gdata.data.youtube.PlaylistLinkFeed;
 import com.google.gdata.data.youtube.UserProfileEntry;
 import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.VideoFeed;
-import com.google.gdata.data.youtube.YouTubeNamespace;
 import com.google.gdata.util.ResourceNotFoundException;
 import com.google.gdata.util.ServiceException;
 import com.google.gdata.util.ServiceForbiddenException;
@@ -74,7 +71,6 @@ import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.exceptions.NetworkException;
 import de.m0ep.socc.exceptions.NotFoundException;
 import de.m0ep.socc.utils.ConfigUtils;
-import de.m0ep.socc.utils.DateUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.StringUtils;
 
@@ -108,6 +104,9 @@ public class YoutubeV2Connector extends AbstractConnector {
 	this.ytConfig = new YoutubeV2ConnectorConfig();
 	this.ytConfig = ConfigUtils.fromMap(parameters, this.ytConfig);
 
+	if (500 > this.ytConfig.getPollCooldownMillis())
+	    this.ytConfig.setPollCooldownMillis(500);
+
 	this.service = new YouTubeService("YoutubeConnectorV2",
 		this.ytConfig.getDeveloperKey());
 
@@ -117,6 +116,8 @@ public class YoutubeV2Connector extends AbstractConnector {
 	} catch (com.google.gdata.util.AuthenticationException e) {
 	    throw new AuthenticationException(e.getMessage(), e);
 	}
+
+	startPolling();
 
 	try {
 	    this.userProfile = service.getEntry(
@@ -135,6 +136,8 @@ public class YoutubeV2Connector extends AbstractConnector {
 	} catch (Throwable t) {
 	    LOG.error("unknown error", t);
 	    throw new ConnectorException("Unknown error", t);
+	} finally {
+	    finishPolling();
 	}
 
 	URI uri = RDF2GoUtils.createURI(String.format(
@@ -192,8 +195,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 	if (!UserAccount.hasAccountname(getModel(), uri)) {
 	    UserProfileEntry profileEntry = null;
 
-	    // do cooldown if necessary
-	    doCoolDown();
+	    startPolling();
 
 	    try {
 		profileEntry = service.getEntry(
@@ -212,6 +214,8 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    } catch (Throwable t) {
 		LOG.error("unknown error", t);
 		throw new ConnectorException("Unknown error", t);
+	    } finally {
+		finishPolling();
 	    }
 
 	    if (null != profileEntry) {
@@ -261,8 +265,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    return Thread.getInstance(getModel(), uri);
 	}
 
-	// do cooldown if necessary
-	doCoolDown();
+	startPolling();
 
 	PlaylistLinkEntry playlistLinkEntry = null;
 	try {
@@ -281,10 +284,12 @@ public class YoutubeV2Connector extends AbstractConnector {
 	} catch (Throwable t) {
 	    LOG.error("unknown error", t);
 	    throw new ConnectorException("Unknown error", t);
+	} finally {
+	    finishPolling();
 	}
 
 	if (null != playlistLinkEntry) {
-	    Thread thread = YoutubeV2toSIOCConverter.createThread(this,
+	    Thread thread = YoutubeV2SIOCConverter.createThread(this,
 		    playlistLinkEntry, uri, playlists);
 	    return thread;
 	}
@@ -299,6 +304,8 @@ public class YoutubeV2Connector extends AbstractConnector {
 
 	if (forum.equals(playlists)) {
 	    PlaylistLinkFeed linkFeed = null;
+
+	    startPolling();
 
 	    try {
 		linkFeed = service.getFeed(new URL(feedURL),
@@ -316,6 +323,8 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    } catch (Throwable t) {
 		LOG.error("unknown error", t);
 		throw new ConnectorException("Unknown error", t);
+	    } finally {
+		finishPolling();
 	    }
 
 	    if (null != linkFeed) {
@@ -325,7 +334,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 			    parseYoutubeEntryID(linkEntry.getId())));
 
 		    if (!Thread.hasInstance(getModel(), uri)) {
-			Thread thread = YoutubeV2toSIOCConverter.createThread(
+			Thread thread = YoutubeV2SIOCConverter.createThread(
 				this, linkEntry, uri, playlists);
 			result.add(thread);
 
@@ -345,14 +354,67 @@ public class YoutubeV2Connector extends AbstractConnector {
 
     @Override
     public Post getPost(String id) throws ConnectorException {
-	URI uri = RDF2GoUtils.createURI(String.format(
-		YoutubeV2Constants.ENTRY_VIDEO, id));
+	if (id.contains(YoutubeV2Constants.COMMENT_ID_SEPERATOR)) {
+	    // it is maybe a comment
+	    String[] ids = id.split(YoutubeV2Constants.COMMENT_ID_SEPERATOR);
 
-	if (Post.hasInstance(getModel(), uri)) {
-	    return Post.getInstance(getModel(), uri);
+	    if (2 == ids.length && !ids[0].isEmpty() && !ids[1].isEmpty()) {
+		ids[0].trim();
+		ids[1].trim();
+
+		URI uri = RDF2GoUtils.createURI(String.format(
+			YoutubeV2Constants.ENTRY_COMMENT, ids[0], ids[2]));
+
+		if (Post.hasInstance(getModel(), uri)) {
+		    return Post.getInstance(getModel(), uri);
+		}
+
+		CommentEntry commentEntry = null;
+
+		// try to load the comment from youtube
+		try {
+		    commentEntry = service.getEntry(uri.asJavaURI().toURL(),
+			    CommentEntry.class);
+		} catch (MalformedURLException e) {
+		    LOG.error("Malformed URL", e);
+		    throw new ConnectorException("Malformed URL", e);
+		} catch (IOException e) {
+		    LOG.error("Network error", e);
+		    throw new NetworkException(e.getLocalizedMessage(), e);
+		} catch (ServiceException e) {
+		    LOG.error("Service error", e);
+		    throw mapToConenctorException(e);
+		} catch (Throwable t) {
+		    LOG.error("unknown error", t);
+		    throw new ConnectorException("Unknown error", t);
+		}
+
+		if (null != commentEntry) {
+		    Post parentPost;
+		    try {
+			parentPost = getPost(ids[0]);
+		    } catch (NotFoundException e) {
+			throw new NotFoundException(
+				"Could not find parent post of this comment", e);
+		    }
+
+		    return YoutubeV2SIOCConverter.createComment(this,
+			    commentEntry, uri, parentPost.getContainer(),
+			    parentPost);
+		}
+	    }
+	} else {
+	    // it is maybe a video post
+	    URI uri = RDF2GoUtils.createURI(String.format(
+		    YoutubeV2Constants.ENTRY_VIDEO, id));
+
+	    if (Post.hasInstance(getModel(), uri)) {
+		return Post.getInstance(getModel(), uri);
+	    }
+
+	    // TODO try to load post with this id
+	    // in wich container?
 	}
-
-	// TODO try to load post with this id
 
 	throw new NotFoundException("Post with the id " + id + " not found");
     }
@@ -401,8 +463,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 	int numPostsLeft = ytConfig.getMaxNewPostsOnPoll();
 
 	do {
-	    // do cooldown if necessary
-	    doCoolDown();
+	    startPolling();
 
 	    VideoFeed videoFeed = null;
 	    try {
@@ -421,6 +482,8 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    } catch (Throwable t) {
 		LOG.error("unknown error", t);
 		throw new ConnectorException("Unknown error", t);
+	    } finally {
+		finishPolling();
 	    }
 
 	    if (null != videoFeed) {
@@ -444,8 +507,8 @@ public class YoutubeV2Connector extends AbstractConnector {
 
 		    if (created.after(lastItemDate)) {
 			if (!Post.hasInstance(getModel(), uri)) {
-			    Post post = YoutubeV2toSIOCConverter.createPost(
-				    this, videoEntry, uri, container);
+			    Post post = YoutubeV2SIOCConverter.createPost(this,
+				    videoEntry, uri, container);
 			    result.add(post);
 			    LOG.debug("add post " + post.toString());
 			    numPostsLeft--;
@@ -459,12 +522,15 @@ public class YoutubeV2Connector extends AbstractConnector {
 			result.addAll(comments);
 		    }
 
+		    // TODO: Update post?
+
 		    if (0 == numPostsLeft) {
 			return result;
 		    }
 		}
 	    }
 
+	    // get next feed 'page', if there is one.
 	    if (null != videoFeed.getNextLink()) {
 		nextFeedUrl = videoFeed.getNextLink().getHref();
 	    }
@@ -495,68 +561,36 @@ public class YoutubeV2Connector extends AbstractConnector {
     }
 
     @Override
-    public Post replyPost(Post post, Post parentPost) throws ConnectorException {
-	Preconditions.checkNotNull(post, "post can not be null");
+    public Post publishPost(Post post, Container container)
+	    throws ConnectorException {
+	throw new UnsupportedOperationException(
+		"YoutubeV2Connector doesn't support publishing new video post");
+    }
+
+    @Override
+    public Post replyPost(Post reply, Post parentPost)
+	    throws ConnectorException {
+	Preconditions.checkNotNull(reply, "post can not be null");
 	Preconditions.checkNotNull(parentPost, "parent can not be null");
 	Preconditions.checkArgument(canReplyOn(parentPost),
 		"Can not reply on this post " + parentPost.toString());
-	CommentEntry commentEntry = new CommentEntry();
 
-	if (post.hasCreated()) {
-	    try {
-		commentEntry.setPublished(new DateTime(DateUtils
-			.parseISO8601(post.getCreated())));
-	    } catch (ParseException e) {
-		LOG.warn("Failed to parse " + post.getCreated(), e);
-	    }
-	}
+	CommentEntry commentEntry = YoutubeV2SIOCConverter.createCommentEntry(
+		reply, parentPost);
+	CommentEntry resultCommentEntry = null;
+	String commentsFeedURL = null;
 
-	if (post.hasModified()) {
-	    try {
-		commentEntry.setPublished(new DateTime(DateUtils
-			.parseISO8601(post.getModified())));
-	    } catch (ParseException e) {
-		LOG.warn("Failed to parse " + post.getModified(), e);
-	    }
-	}
-
-	if (post.hasTitle()) {
-	    commentEntry.setTitle(new PlainTextConstruct(post.getTitle()));
-
-	} else if (post.hasSubject()) {
-	    commentEntry.setTitle(new PlainTextConstruct(post.getSubject()));
-	} else if (post.hasName()) {
-	    commentEntry.setTitle(new PlainTextConstruct(post.getName()));
-	}
-
-	if (post.hasContent()) {
-	    commentEntry.setContent(new PlainTextConstruct(post.getContent()));
-	} else if (post.hasContentEncoded()) {
-	    commentEntry.setContent(new PlainTextConstruct(post
-		    .getContentEncoded()));
-	}
-
-	String parentFeedURL = null;
-
+	// get the correct url for the comments feed
 	if (parentPost.hasReplyof()) {
-	    parentFeedURL = String.format(YoutubeV2Constants.FEED_COMMENTS,
+	    commentsFeedURL = String.format(YoutubeV2Constants.FEED_COMMENTS,
 		    parentPost.getDiscussion().getId());
-
-	    // Add reply link
-	    commentEntry.addLink(YouTubeNamespace.IN_REPLY_TO,
-		    "application/atom+xml", String.format(
-			    YoutubeV2Constants.ENTRY_COMMENT, parentPost
-				    .getDiscussion().getId(), parentPost
-				    .getId()));
 	} else {
-	    parentFeedURL = String.format(YoutubeV2Constants.FEED_COMMENTS,
+	    commentsFeedURL = String.format(YoutubeV2Constants.FEED_COMMENTS,
 		    parentPost.getId());
 	}
 
-	CommentEntry resultCommentEntry = null;
-
 	try {
-	    resultCommentEntry = service.insert(new URL(parentFeedURL),
+	    resultCommentEntry = service.insert(new URL(commentsFeedURL),
 		    commentEntry);
 	} catch (MalformedURLException e) {
 	    LOG.error("Malformed URL", e);
@@ -585,10 +619,10 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    URI uri = RDF2GoUtils.createURI(String.format(
 		    YoutubeV2Constants.ENTRY_COMMENT, videoPost.getId(),
 		    commentId));
-	    Post addedPost = YoutubeV2toSIOCConverter.createComment(this,
+	    Post addedPost = YoutubeV2SIOCConverter.createComment(this,
 		    resultCommentEntry, uri, videoPost.getContainer(),
 		    videoPost);
-	    addedPost.setSibling(post);
+	    addedPost.setSibling(reply);
 	    return addedPost;
 	}
 
@@ -606,6 +640,8 @@ public class YoutubeV2Connector extends AbstractConnector {
 	int numCommentsLeft = ytConfig.getMaxNewPostsOnPoll();
 
 	do {
+	    startPolling();
+
 	    try {
 		commentFeed = service.getFeed(new URL(nextFeedUrl),
 			CommentFeed.class);
@@ -622,6 +658,8 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    } catch (Throwable t) {
 		LOG.error("unknown error", t);
 		throw new ConnectorException("Unknown error", t);
+	    } finally {
+		finishPolling();
 	    }
 
 	    if (null != commentFeed) {
@@ -659,9 +697,9 @@ public class YoutubeV2Connector extends AbstractConnector {
 				videoPost.getId(), commentId));
 
 			if (!Post.hasInstance(getModel(), uri)) {
-			    Post reply = YoutubeV2toSIOCConverter
-				    .createComment(this, commentEntry, uri,
-					    videoPost.getContainer(), videoPost);
+			    Post reply = YoutubeV2SIOCConverter.createComment(
+				    this, commentEntry, uri,
+				    videoPost.getContainer(), videoPost);
 			    result.add(reply);
 			    numCommentsLeft--;
 			}
@@ -675,13 +713,6 @@ public class YoutubeV2Connector extends AbstractConnector {
 
 	    if (null != commentFeed.getNextLink()) {
 		nextFeedUrl = commentFeed.getNextLink().getHref();
-
-		// Cooldown
-		try {
-		    java.lang.Thread.sleep(ytConfig.getPollCooldownMillis());
-		} catch (InterruptedException e) {
-		    LOG.error(e.getMessage(), e);
-		}
 	    }
 
 	} while (null != nextFeedUrl);

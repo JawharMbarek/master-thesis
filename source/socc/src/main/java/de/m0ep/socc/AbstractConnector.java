@@ -97,8 +97,10 @@ public abstract class AbstractConnector implements IConnector {
 	Preconditions.checkArgument(model.isOpen(), "model is not open");
 
 	this.defaultConfig = new DefaultConnectorConfig();
-	this.defaultConfig.setMaxNewPostsOnPoll(25);
-	this.defaultConfig.setPollCooldownMillis(500);
+	this.defaultConfig
+		.setMaxNewPostsOnPoll(SOCCConstants.POLL_MAX_NEW_POST);
+	this.defaultConfig
+		.setPollCooldownMillis(SOCCConstants.POLL_COOLDOWN_MILLIS);
 	ConfigUtils.fromMap(parameters, defaultConfig);
 
 	lastPollTime = System.currentTimeMillis();
@@ -361,10 +363,12 @@ public abstract class AbstractConnector implements IConnector {
 	return new ArrayList<Post>();
     }
 
-    protected void doCoolDown() {
+    /**
+     * Method that checks if it is time for the next poll after specific
+     * colldown. If it is not, it sends the current thread to sleep.
+     */
+    protected void startPolling() {
 	if (lastPollTime > System.currentTimeMillis()) {
-	    LOG.debug("colldown for  {}ms",
-		    lastPollTime - System.currentTimeMillis());
 	    try {
 		java.lang.Thread.sleep(lastPollTime
 			- System.currentTimeMillis());
@@ -372,7 +376,13 @@ public abstract class AbstractConnector implements IConnector {
 		LOG.warn("Interrupted", e);
 	    }
 	}
+    }
 
+    /**
+     * Should be called if the polling has finished. The colldown timer will be
+     * reseted.
+     */
+    protected void finishPolling() {
 	lastPollTime = System.currentTimeMillis()
 		+ defaultConfig.getPollCooldownMillis();
     }

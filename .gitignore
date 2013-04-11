@@ -1,0 +1,25 @@
+# Eclipse
+.project
+.metadata
+bin/
+tmp/
+.settings/
+.classpath
+.loadpath
+
+# Apache Maven
+target/
+
+# temporarly files
+*.tmp
+*.class
+*.bak
+*.swp
+*~.nib
+*.log
+*.log.1
+
+# Privates
+client_secrets.json
+local.properties
+user.properties

@@ -2,27 +2,28 @@ package de.m0ep.camel.socc;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
-import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.util.RDFTool;
-import org.rdfs.sioc.SIOC;
+
+import com.google.common.collect.Lists;
+
+import de.m0ep.socc.utils.SIOCUtils;
 
 public class RDFXMLDataformat implements DataFormat {
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream)
 	    throws Exception {
-	RDFSClass stmts = exchange.getContext().getTypeConverter()
-		.mandatoryConvertTo(RDFSClass.class, graph);
+	@SuppressWarnings("unchecked")
+	List<Statement> stmts = exchange.getContext().getTypeConverter()
+		.mandatoryConvertTo(List.class, graph);
 
-	Model model = RDF2Go.getModelFactory().createModel();
-	model.open();
-	model.setNamespace("sioc", SIOC.NS_SIOC.toString());
-	model.setNamespace("dcterms", "http://purl.org/dc/terms/");
-
+	Model model = SIOCUtils.createDefaultMemoryModel();
 	model.addAll(stmts.iterator());
 	String xml = RDFTool.modelToString(model, Syntax.RdfXml);
 	stream.write(xml.getBytes());
@@ -33,10 +34,14 @@ public class RDFXMLDataformat implements DataFormat {
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream)
 	    throws Exception {
-	// String xml = exchange.getContext().getTypeConverter()
-	// .mandatoryConvertTo(String.class, stream);
+	String xml = exchange.getContext().getTypeConverter()
+		.mandatoryConvertTo(String.class, stream);
+	Model model = RDFTool.stringToModel(xml);
 
-	// return new RDFSClass(RDFTool.stringToModel(xml, Syntax.RdfXml));
-	return null;
+	try {
+	    return Lists.newArrayList(model.iterator());
+	} finally {
+	    model.close();
+	}
     }
 }

@@ -88,6 +88,7 @@ public class MoodleConnector extends AbstractConnector {
 
     // Map to save retrieved courses, so no need to call the server twice.
     private Map<Integer, CourseRecord> courses = new HashMap<Integer, CourseRecord>();
+    private Map<Integer, Integer> firstPostIds = new HashMap<Integer, Integer>();
 
     /**
      * @throws ConnectorException
@@ -431,29 +432,43 @@ public class MoodleConnector extends AbstractConnector {
 	    datum.setSubject("");
 	}
 
-	// get first post of the discussion to post a reply
-	ForumPostRecord[] firstPostRecordArray = callMethod(new Callable<ForumPostRecord[]>() {
-	    @Override
-	    public ForumPostRecord[] call() throws Exception {
-		return moodle.get_forum_posts(client, sesskey,
-			Integer.parseInt(container.getId()), 1);
+	final int discussionId = Integer.parseInt(container.getId());
+	final int firstPostId;
+
+	if (firstPostIds.containsKey(discussionId)) {
+	    firstPostId = firstPostIds.get(discussionId);
+	} else {
+	    // get first post of the discussion to post a reply
+	    ForumPostRecord[] firstPostRecordArray = callMethod(new Callable<ForumPostRecord[]>() {
+		@Override
+		public ForumPostRecord[] call() throws Exception {
+		    return moodle.get_forum_posts(client, sesskey,
+			    discussionId, 1);
+		}
+	    });
+
+	    if (null != firstPostRecordArray && 0 < firstPostRecordArray.length) {
+		firstPostId = firstPostRecordArray[0].getId();
+	    } else {
+		firstPostId = -1;
 	    }
-	});
+	}
 
-	if (null != firstPostRecordArray && 0 < firstPostRecordArray.length) {
-	    final ForumPostRecord firstPostRecord = firstPostRecordArray[0];
-
+	if (-1 != firstPostId) {
 	    // add post to moodle
 	    ForumPostRecord[] postRecordArray = callMethod(new Callable<ForumPostRecord[]>() {
 		@Override
 		public ForumPostRecord[] call() throws Exception {
-		    return moodle.forum_add_reply(client, sesskey,
-			    firstPostRecord.getId(), datum);
+		    return moodle.forum_add_reply(client, sesskey, firstPostId,
+			    datum);
 		}
 	    });
 
 	    if (null != postRecordArray && 0 < postRecordArray.length) {
-		ForumPostRecord postRecord = postRecordArray[0];
+
+		int numChildren = postRecordArray[0].getChildren().length;
+
+		ForumPostRecord postRecord = postRecordArray[0].getChildren()[numChildren - 1];
 		URI uri = RDF2GoUtils.createURI(getURL() + URI_POST_PATH
 			+ postRecord.getId());
 
@@ -465,8 +480,7 @@ public class MoodleConnector extends AbstractConnector {
 		    return addedPost;
 		}
 
-		throw new ConnectorException(
-			"Problem while adding the published post: Post already exists");
+		throw new ConnectorException("Post already exists: " + uri);
 	    }
 
 	    throw new ConnectorException(

@@ -11,6 +11,7 @@ import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
 
 import de.m0ep.socc.IConnector;
+import de.m0ep.socc.utils.RDF2GoUtils;
 
 public class SOCCForumPollingConsumer extends DefaultScheduledPollConsumer {
     IConnector connector;
@@ -26,18 +27,34 @@ public class SOCCForumPollingConsumer extends DefaultScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
-	List<Post> posts = connector.pollNewPosts(forum);
+	List<Post> posts = getConnector().pollNewPosts(getForum());
 
 	for (Post post : posts) {
 	    Exchange exchange = getEndpoint().createExchange();
 	    Message msg = new DefaultMessage();
 	    msg.setHeader(Exchange.CONTENT_TYPE, "RDFStatements");
 	    msg.setHeader("SIOCType", "Post");
-	    exchange.getIn().setBody(new RDFSClass(post.getModel(), post));
+	    exchange.getIn().setBody(
+		    RDF2GoUtils.getAllStatements(post.getModel(), post));
 	    getProcessor().process(exchange);
 	}
 
 	return posts.size();
     }
 
+    public IConnector getConnector() {
+	return this.connector;
+    }
+
+    public void setConnector(IConnector connector) {
+	this.connector = connector;
+    }
+
+    public Forum getForum() {
+	return this.forum;
+    }
+
+    public void setForum(Forum forum) {
+	this.forum = forum;
+    }
 }

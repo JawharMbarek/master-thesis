@@ -6,18 +6,23 @@ import java.io.InputStreamReader;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.ontoware.rdf2go.model.Model;
+
+import de.m0ep.socc.utils.SIOCUtils;
 
 public class SOCCCamelTest {
     public static void main(String[] args) throws Exception {
 	CamelContext context = new DefaultCamelContext();
+	Model model = SIOCUtils.createDefaultMemoryModel();
 
-	context.addComponent("socc", new SOCCComponent());
+	SOCCComponent soccComponent = new SOCCComponent();
+	soccComponent.setModel(model);
+	context.addComponent("socc", soccComponent);
 
 	context.addRoutes(new RouteBuilder() {
 	    @Override
 	    public void configure() throws Exception {
-		from(
-			"socc:googleplus-test?forumId=115922275158052155050/public")
+		from("socc:facebook-test?forumId=100000490230885&delay=5000")
 		/* .marshal(new RDFXMLDataformat()) */.to(
 			"socc:moodle-test?forumId=1&threadId=2");
 	    }

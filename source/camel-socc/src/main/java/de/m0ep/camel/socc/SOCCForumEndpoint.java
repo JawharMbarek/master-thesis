@@ -4,6 +4,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.direct.DirectEndpoint;
+import org.apache.camel.impl.ScheduledPollConsumer;
 import org.rdfs.sioc.Forum;
 
 import de.m0ep.socc.IConnector;
@@ -14,18 +15,22 @@ public class SOCCForumEndpoint extends DirectEndpoint {
     String uri;
     IConnector connector;
     Forum forum;
+    SOCCComponentConfiguration configuration;
 
-    public SOCCForumEndpoint(String uri, IConnector connector, String forumId)
-	    throws ConnectorException {
+    public SOCCForumEndpoint(String uri, IConnector connector,
+	    SOCCComponentConfiguration configuration) throws ConnectorException {
 	this.uri = uri;
 	this.connector = connector;
-	this.forum = connector.getForum(forumId);
+	this.forum = connector.getForum(configuration.getForumId());
+	this.configuration = configuration;
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-	// TODO Auto-generated method stub
-	return new SOCCForumPollingConsumer(this, processor, connector, forum);
+	ScheduledPollConsumer consumer = new SOCCForumPollingConsumer(this,
+		processor, connector, forum);
+	consumer.setDelay(configuration.getDelay());
+	return consumer;
     }
 
     @Override

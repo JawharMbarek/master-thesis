@@ -14,12 +14,14 @@ public class SOCCThreadEndpoint extends DirectEndpoint {
     String uri;
     IConnector connector;
     Thread thread;
+    SOCCComponentConfiguration configuration;
 
-    public SOCCThreadEndpoint(String uri, IConnector connector, String forumId,
-	    String threadId) throws ConnectorException {
+    public SOCCThreadEndpoint(String uri, IConnector connector,
+	    SOCCComponentConfiguration configuration) throws ConnectorException {
 	this.uri = uri;
 	this.connector = connector;
-	this.thread = connector.getThread(threadId);
+	this.thread = connector.getThread(configuration.getThreadId());
+	this.configuration = configuration;
     }
 
     @Override

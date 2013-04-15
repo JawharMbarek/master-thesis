@@ -14,23 +14,23 @@ public class SOCCPostEndpoint extends DirectEndpoint {
     String uri;
     IConnector connector;
     Post post;
+    SOCCComponentConfiguration configuration;
 
-    public SOCCPostEndpoint(String uri, IConnector connector, String postId)
-	    throws ConnectorException {
+    public SOCCPostEndpoint(String uri, IConnector connector,
+	    SOCCComponentConfiguration configuration) throws ConnectorException {
 	this.uri = uri;
 	this.connector = connector;
-	this.post = connector.getPost(postId);
+	this.post = connector.getPost(configuration.getPostId());
+	this.configuration = configuration;
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-	// TODO Auto-generated method stub
 	return super.createConsumer(processor);
     }
 
     @Override
     public Producer createProducer() throws Exception {
-	// TODO Auto-generated method stub
 	return super.createProducer();
     }
 

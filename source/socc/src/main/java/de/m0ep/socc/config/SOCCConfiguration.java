@@ -8,19 +8,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SOCCConfig implements Serializable {
+public class SOCCConfiguration implements Serializable {
     private static final long serialVersionUID = -4200515066656834230L;
     private List<SOCCConfigConnectorEntry> connectors;
 
-    public SOCCConfig() {
+    public SOCCConfiguration() {
 	// TODO Auto-generated constructor stub
     }
 
-    public SOCCConfig(final InputStream stream) {
+    public SOCCConfiguration(final InputStream stream) {
 
     }
 
-    public SOCCConfig(final String configFileName) throws FileNotFoundException {
+    public SOCCConfiguration(final String configFileName) throws FileNotFoundException {
 	this(new FileInputStream(configFileName));
     }
 

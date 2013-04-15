@@ -48,7 +48,7 @@ public interface IConnectorFactory {
      * 
      * @return
      */
-    public String getFactoryId();
+    public String getId();
 
     /**
      * Returns keys for configuration parameters that should be loaded/stored

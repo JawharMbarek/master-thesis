@@ -40,7 +40,7 @@ public class YoutubeV2ConnectorFactory implements IConnectorFactory {
     }
 
     @Override
-    public String getFactoryId() {
+    public String getId() {
 	return "YoutubeConnectorFactory_v2";
     }
 

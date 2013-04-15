@@ -40,7 +40,7 @@ public class MoodleConnectorFactory implements IConnectorFactory {
     }
 
     @Override
-    public String getFactoryId() {
+    public String getId() {
 	return "MoodleConnectorFactory_2.4";
     }
 

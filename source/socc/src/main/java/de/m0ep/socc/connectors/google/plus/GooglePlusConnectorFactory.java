@@ -40,7 +40,7 @@ public class GooglePlusConnectorFactory implements IConnectorFactory {
     }
 
     @Override
-    public String getFactoryId() {
+    public String getId() {
 	return "GooglePlusConnectorFactory_1.0";
     }
 

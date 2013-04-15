@@ -59,6 +59,7 @@ import de.m0ep.moodlews.soap.LoginReturn;
 import de.m0ep.moodlews.soap.Mdl_soapserverBindingStub;
 import de.m0ep.moodlews.soap.UserRecord;
 import de.m0ep.socc.AbstractConnector;
+import de.m0ep.socc.exceptions.AlreadyExistsException;
 import de.m0ep.socc.exceptions.AuthenticationException;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.exceptions.NetworkException;
@@ -480,7 +481,7 @@ public class MoodleConnector extends AbstractConnector {
 		    return addedPost;
 		}
 
-		throw new ConnectorException("Post already exists: " + uri);
+		throw new AlreadyExistsException("Post already exists: " + uri);
 	    }
 
 	    throw new ConnectorException(

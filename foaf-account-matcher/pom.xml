@@ -13,11 +13,22 @@
   		<groupId>de.m0ep.rdf2go</groupId>
   		<artifactId>sioc-foaf</artifactId>
   		<version>0.4</version>
+  		<exclusions>
+  			<exclusion>
+  				<artifactId>rdf2go.impl.sesame23</artifactId>
+  				<groupId>org.semweb4j</groupId>
+  			</exclusion>
+  		</exclusions>
   	</dependency>
   	<dependency>
   		<groupId>junit</groupId>
   		<artifactId>junit</artifactId>
   		<version>4.11</version>
+  	</dependency>
+  	<dependency>
+  	 <groupId>org.semweb4j</groupId>
+  	 <artifactId>rdf2go.impl.jena</artifactId>
+  	 <version>4.8.2</version>
   	</dependency>
   </dependencies>
 </project>

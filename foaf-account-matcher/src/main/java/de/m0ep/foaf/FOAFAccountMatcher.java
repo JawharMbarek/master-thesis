@@ -1,12 +1,12 @@
 package de.m0ep.foaf;
 
 import java.io.IOException;
-import java.io.StringReader;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
-import org.ontoware.rdf2go.exception.ModelRuntimeException;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.QueryResultTable;
 import org.ontoware.rdf2go.model.QueryRow;
@@ -16,7 +16,6 @@ import org.ontoware.rdf2go.model.node.Variable;
 import org.ontoware.rdf2go.util.SparqlUtil;
 
 import com.google.common.base.Preconditions;
-import com.xmlns.foaf.FOAF;
 import com.xmlns.foaf.Person;
 
 public class FOAFAccountMatcher implements IFOAFAccountMatcher {
@@ -32,10 +31,14 @@ public class FOAFAccountMatcher implements IFOAFAccountMatcher {
      * 
      * @see de.m0ep.foaf.IFOAFAccountMatcher#addPerson(java.lang.String)
      */
-    public void addPerson(final String foafXML) throws ModelRuntimeException,
-	    IOException {
-	Preconditions.checkNotNull(foafXML, "FoafXML can not be null");
-	model.readFrom(new StringReader(foafXML));
+    public void readFOAFXML(final Reader reader) throws IOException {
+	Preconditions.checkNotNull(reader, "Reader can not be null");
+	model.readFrom(reader);
+    }
+
+    public void readFOAFXML(InputStream stream) throws IOException {
+	Preconditions.checkNotNull(stream, "Stream can not be null");
+	model.readFrom(stream);
     }
 
     /*
@@ -63,10 +66,16 @@ public class FOAFAccountMatcher implements IFOAFAccountMatcher {
 	Preconditions.checkNotNull(accountName, "AccountName can not be null");
 	Preconditions.checkArgument(!accountName.isEmpty(),
 		"AccountName can not be empty");
-	String query = "SELECT ?person WHERE {" + "?person " + FOAF.account
-		+ " ?acc . " + "?acc " + FOAF.accountName + " %s ."
-		+ " OPTIONAL {" + "?acc " + FOAF.accountServiceHomepage
-		+ " %s ." + "}}";
+
+	String query = "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" //
+		+ "SELECT ?person\n" //
+		+ "WHERE {\n" //
+		+ "    ?person foaf:account ?acc .\n" //
+		+ "    ?acc foaf:accountName '%s' .\n" //
+		+ "    OPTIONAL {\n" //
+		+ "        ?acc foaf:accountServiceHomepage \"null\" .\n" //
+		+ "    }\n" //
+		+ "}";
 
 	QueryResultTable qrt = model.sparqlSelect(SparqlUtil.formatQuery(query,
 		accountName, serviceHomepage));

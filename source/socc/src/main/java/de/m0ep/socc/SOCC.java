@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -46,6 +47,15 @@ public class SOCC {
 	    String factoryId = connectorEntry.getFactoryId();
 	    if (factories.containsKey(factoryId)) {
 		try {
+
+		    System.err.println(connectorEntry.getId());
+		    for (Entry<String, Object> entry : connectorEntry
+			    .getParameters().entrySet()) {
+			System.err.println(entry.getKey() + " - "
+				+ entry.getValue());
+		    }
+		    System.err.println("-------");
+
 		    IConnectorFactory factory = factories.get(factoryId);
 		    IConnector connector = factory.createConnector(
 			    connectorEntry.getId(), getModel(),

@@ -1,28 +1,21 @@
 package de.m0ep.socc.config;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+
+import com.google.common.base.Preconditions;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class SOCCConfiguration implements Serializable {
     private static final long serialVersionUID = -4200515066656834230L;
     private List<SOCCConfigConnectorEntry> connectors;
-
-    public SOCCConfiguration() {
-	// TODO Auto-generated constructor stub
-    }
-
-    public SOCCConfiguration(final InputStream stream) {
-
-    }
-
-    public SOCCConfiguration(final String configFileName) throws FileNotFoundException {
-	this(new FileInputStream(configFileName));
-    }
 
     public List<SOCCConfigConnectorEntry> getConnectors() {
 	return Collections.unmodifiableList(this.connectors);
@@ -30,5 +23,24 @@ public class SOCCConfiguration implements Serializable {
 
     public void setConnectors(List<SOCCConfigConnectorEntry> connectors) {
 	this.connectors = new ArrayList<SOCCConfigConnectorEntry>(connectors);
+    }
+
+    public static SOCCConfiguration load(File file) throws IOException {
+	Preconditions.checkNotNull(file, "File can not be null");
+	Preconditions.checkArgument(file.exists(), "File must exist");
+
+	String json = FileUtils.readFileToString(file, "UTF-8");
+	Gson gson = new Gson();
+	return gson.fromJson(json, SOCCConfiguration.class);
+    }
+
+    public void save(final File file) throws IOException {
+	Preconditions.checkNotNull(file, "File can not be null");
+
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	String json = gson.toJson(this);
+
+	FileUtils.writeStringToFile(file, json, "UTF-8");
+
     }
 }

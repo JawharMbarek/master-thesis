@@ -1,0 +1,51 @@
+{
+  "connectors": [
+    {
+      "id": "facebook-test",
+      "factoryId": "FacebookConnectorFactory_1.0",
+      "parameters": {
+        "expiresInSeconds": "0",
+        "accessToken": "AAACEdEose0cBABYqJgiunjVCPfzCYTZC2itiyhP2qzs1ZCCXKOZBhdRSOtZAisiFvTIiNoCdrED7HxybBxBNVXTanLsUiEaQisf7jvQ4dsanZAWF5ZA0kV",
+        "pollCooldownMillis": "100",
+        "maxNewPostsOnPoll": "2",
+        "clientSecret": "7b80b9d7265c719e1d9efe112e4dbada",
+        "clientId": "218182098322396"
+      }
+    },
+    {
+      "id": "youtube-test",
+      "factoryId": "YoutubeConnectorFactory_v2",
+      "parameters": {
+        "username": "email.mufl",
+        "pollCooldownMillis": "500",
+        "maxNewPostsOnPoll": "2",
+        "developerKey": "AI39si48dEjhAE9RrY6w1HnlmyrUUTDt-xssOKkEEcpOIMD1gFcQ-0Xv40YNl-H1MxFzGzbHih4ootWo1cRrPH9gV-5UdazEbQ",
+        "password": "email.mufl.net"
+      }
+    },
+    {
+      "id": "moodle-test",
+      "factoryId": "MoodleConnectorFactory_2.4",
+      "parameters": {
+        "username": "admin",
+        "pollCooldownMillis": "100",
+        "maxNewPostsOnPoll": "2",
+        "password": "admin",
+        "url": "http://localhost/florian/moodle24/"
+      }
+    },
+    {
+      "id": "googleplus-test",
+      "factoryId": "GooglePlusConnectorFactory_1.0",
+      "parameters": {
+        "expiresInSeconds": "0",
+        "accessToken": "ya29.AHES6ZTQADJwz1jLzgACCny1r9A9u9SqjbeOm9JLm_RzvgEPER0",
+        "pollCooldownMillis": "100",
+        "maxNewPostsOnPoll": "2",
+        "refreshToken": "1/Qsc2kHvKM5g-t_GyrFIF54RvXmCMU5AM3ezxrHdRjBI",
+        "clientSecret": "LckucP4MA1jJsZQKjk9okhAu",
+        "clientId": "733024832603-patciplam4cqq0dnv7a5qdhuq262n6ia.apps.googleusercontent.com"
+      }
+    }
+  ]
+}

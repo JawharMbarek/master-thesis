@@ -5,13 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.RDF2Go;
@@ -30,12 +28,7 @@ import org.rdfs.sioc.UserAccount;
 
 import com.google.common.collect.Lists;
 
-import de.m0ep.socc.config.DefaultConnectorConfig;
-import de.m0ep.socc.connectors.facebook.FacebookConnectorConfig;
-import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorConfig;
-import de.m0ep.socc.connectors.google.youtube.YoutubeV2ConnectorConfig;
-import de.m0ep.socc.connectors.google.youtube.YoutubeV2ConnectorFactory;
-import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
+import de.m0ep.socc.config.SOCCConfiguration;
 import de.m0ep.socc.exceptions.ConnectorException;
 
 public class SOCCTest {
@@ -47,8 +40,11 @@ public class SOCCTest {
     /**
      * @param args
      * @throws ConnectorException
+     * @throws IOException
+     * @throws URISyntaxException
      */
-    public static void main(String[] args) throws ConnectorException {
+    public static void main(String[] args) throws ConnectorException,
+	    IOException, URISyntaxException {
 	Model model = RDF2Go.getModelFactory().createModel();
 	model.open();
 
@@ -67,80 +63,99 @@ public class SOCCTest {
 	    // model.dump();
 	}
 
-	Properties config = new Properties();
-	try {
-	    config.load(SOCCTest.class.getResourceAsStream("/user.properties"));
-	} catch (IOException e1) {
-	    e1.printStackTrace();
-	    System.exit(-1);
+	// Properties config = new Properties();
+	// try {
+	// config.load(SOCCTest.class.getResourceAsStream("/user.properties"));
+	// } catch (IOException e1) {
+	// e1.printStackTrace();
+	// System.exit(-1);
+	// }
+	//
+	// int maxPostPerPoll = Integer.parseInt(config.getProperty(
+	// "global.postPerPoll", "30"));
+	//
+	// int pollCoolDown = Integer.parseInt(config.getProperty(
+	// "global.pollCooldown", "300"));
+	//
+	// Map<String, Object> fbParams = new HashMap<String, Object>();
+	// fbParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
+	// maxPostPerPoll);
+	// fbParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
+	// fbParams.put(FacebookConnectorConfig.ACCESS_TOKEN,
+	// config.get("fb.accessToken"));
+	// fbParams.put(FacebookConnectorConfig.CLIENT_ID,
+	// config.get("fb.clientID"));
+	// fbParams.put(FacebookConnectorConfig.CLIENT_SECRET,
+	// config.get("fb.clientSecret"));
+	//
+	// Map<String, Object> mdlParams = new HashMap<String, Object>();
+	// mdlParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
+	// maxPostPerPoll);
+	// mdlParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
+	// mdlParams.put(MoodleConnectorConfig.URL, config.get("mdl.url"));
+	// mdlParams.put(MoodleConnectorConfig.USERNAME,
+	// config.get("mdl.username"));
+	// mdlParams.put(MoodleConnectorConfig.PASSWORD,
+	// config.get("mdl.password"));
+	//
+	// Map<String, Object> gpParams = new HashMap<String, Object>();
+	// gpParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
+	// maxPostPerPoll);
+	// gpParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
+	// gpParams.put(GooglePlusConnectorConfig.CLIENT_ID,
+	// config.get("gp.clientId"));
+	// gpParams.put(GooglePlusConnectorConfig.CLIENT_SECRET,
+	// config.get("gp.clientSecret"));
+	// gpParams.put(GooglePlusConnectorConfig.ACCESS_TOKEN,
+	// config.get("gp.accessToken"));
+	// gpParams.put(GooglePlusConnectorConfig.REFRESH_TOKEN,
+	// config.get("gp.refreshToken"));
+	//
+	// Map<String, Object> ytParams = new HashMap<String, Object>();
+	// ytParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
+	// maxPostPerPoll);
+	// ytParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
+	// ytParams.put(YoutubeV2ConnectorConfig.PASSWORD,
+	// config.get("yt.password"));
+	// ytParams.put(YoutubeV2ConnectorConfig.USERNAME,
+	// config.get("yt.username"));
+	// ytParams.put(YoutubeV2ConnectorConfig.DEVELOPER_KEY,
+	// config.get("yt.developerKey"));
+	//
+	//
+	//
+	// IConnector[] connectors = {
+	// socc.createConnector("YoutubeConnectorFactory_v2",
+	// "youtube-test", ytParams),
+	// socc.createConnector("GooglePlusConnectorFactory_1.0",
+	// "googleplus-test", gpParams),
+	// socc.createConnector("MoodleConnectorFactory_2.4",
+	// "moodle-test", mdlParams),
+	// socc.createConnector("FacebookConnectorFactory_1.0",
+	// "facebook-test", fbParams) };
+
+	SOCC socc = null;
+	File soccConfigFile = new File(SOCCTest.class.getResource(
+		"/soccConfiguration.json").toURI());
+
+	if (soccConfigFile.exists()) {
+	    SOCCConfiguration soccConfiguration = SOCCConfiguration
+		    .load(soccConfigFile);
+	    socc = new SOCC(model, soccConfiguration);
+	} else {
+	    socc = new SOCC(model);
 	}
 
-	int maxPostPerPoll = Integer.parseInt(config.getProperty(
-		"global.postPerPoll", "30"));
-
-	int pollCoolDown = Integer.parseInt(config.getProperty(
-		"global.pollCooldown", "300"));
-
-	Map<String, Object> fbParams = new HashMap<String, Object>();
-	fbParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
-		maxPostPerPoll);
-	fbParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
-	fbParams.put(FacebookConnectorConfig.ACCESS_TOKEN,
-		config.get("fb.accessToken"));
-	fbParams.put(FacebookConnectorConfig.CLIENT_ID,
-		config.get("fb.clientID"));
-	fbParams.put(FacebookConnectorConfig.CLIENT_SECRET,
-		config.get("fb.clientSecret"));
-
-	Map<String, Object> mdlParams = new HashMap<String, Object>();
-	mdlParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
-		maxPostPerPoll);
-	mdlParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
-	mdlParams.put(MoodleConnectorConfig.URL, config.get("mdl.url"));
-	mdlParams.put(MoodleConnectorConfig.USERNAME,
-		config.get("mdl.username"));
-	mdlParams.put(MoodleConnectorConfig.PASSWORD,
-		config.get("mdl.password"));
-
-	Map<String, Object> gpParams = new HashMap<String, Object>();
-	gpParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
-		maxPostPerPoll);
-	gpParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
-	gpParams.put(GooglePlusConnectorConfig.CLIENT_ID,
-		config.get("gp.clientId"));
-	gpParams.put(GooglePlusConnectorConfig.CLIENT_SECRET,
-		config.get("gp.clientSecret"));
-	gpParams.put(GooglePlusConnectorConfig.ACCESS_TOKEN,
-		config.get("gp.accessToken"));
-	gpParams.put(GooglePlusConnectorConfig.REFRESH_TOKEN,
-		config.get("gp.refreshToken"));
-
-	Map<String, Object> ytParams = new HashMap<String, Object>();
-	ytParams.put(DefaultConnectorConfig.MAX_NEW_POSTS_ON_POLL,
-		maxPostPerPoll);
-	ytParams.put(DefaultConnectorConfig.POLL_COOLDOWN, pollCoolDown);
-	ytParams.put(YoutubeV2ConnectorConfig.PASSWORD,
-		config.get("yt.password"));
-	ytParams.put(YoutubeV2ConnectorConfig.USERNAME,
-		config.get("yt.username"));
-	ytParams.put(YoutubeV2ConnectorConfig.DEVELOPER_KEY,
-		config.get("yt.developerKey"));
-
-	// FacebookConnectorFactory fbFactory = new FacebookConnectorFactory();
-	// GooglePlusConnectorFactory gpFactory = new
-	// GooglePlusConnectorFactory();
-	// MoodleConnectorFactory mdlFactory = new MoodleConnectorFactory();
-	YoutubeV2ConnectorFactory ytFactory = new YoutubeV2ConnectorFactory();
-
-	IConnector[] connectors = {
-	// fbFactory.createConnector("facebook",model, fbParams)
-	// mdlFactory.createConnector("moodle", model, mdlParams),
-	// gpFactory.createConnector("google+", model, gpParams)
-	ytFactory.createConnector("youtube", model, ytParams) };
-
-	for (IConnector connector : connectors) {
-	    printConnector(connector);
+	for (String id : socc.getConnectorIds()) {
+	    IConnector connector = socc.getConnector(id);
+	    System.err.println(connector.getId());
 	}
+
+	// socc.getConfiguration().save(soccConfigFile);
+
+	// for (IConnector connector : connectors) {
+	// printConnector(connector);
+	// }
 
 	if (WRITE_DUMP) {
 

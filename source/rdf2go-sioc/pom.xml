@@ -5,13 +5,13 @@
 	<!-- Maven Infos -->
 
 	<groupId>de.m0ep.rdf2go</groupId>
-	<artifactId>sioc-foaf</artifactId>
+	<artifactId>rdf2go-sioc</artifactId>
 	<version>0.4</version>
 
 	<!-- Project Infos -->
 
 	<name>sioc</name>
-	<description>An API for the SIOC and FOAF Format based on RDF2Go and RDFReactor</description>
+	<description>An API for the SIOC based on RDF2Go and RDFReactor</description>
 
 	<licenses>
 		<license>
@@ -69,6 +69,11 @@
 			<groupId>org.semweb4j</groupId>
 			<artifactId>rdfreactor.generator</artifactId>
 			<version>4.8.1</version>
+		</dependency>
+		<dependency>
+			<groupId>de.m0ep.rdf2go</groupId>
+			<artifactId>rdf2go-foaf</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

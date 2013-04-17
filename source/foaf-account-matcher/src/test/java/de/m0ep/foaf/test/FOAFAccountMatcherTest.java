@@ -9,9 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
-import org.purl.dc.terms.DCTerms;
 
-import com.xmlns.foaf.FOAF;
 import com.xmlns.foaf.Person;
 
 import de.m0ep.foaf.FOAFAccountMatcher;
@@ -28,8 +26,6 @@ public class FOAFAccountMatcherTest extends TestCase {
 
 	model = RDF2Go.getModelFactory().createModel();
 	model.open();
-	model.setNamespace("foaf", FOAF.NS_FOAF.toString());
-	model.setNamespace("dcterms", DCTerms.NS_DCTerms.toString());
 
 	matcher = new FOAFAccountMatcher(model);
 	matcher.readFOAFXML(FOAFAccountMatcherTest.class

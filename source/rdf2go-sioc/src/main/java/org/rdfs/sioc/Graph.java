@@ -10,7 +10,6 @@ import org.ontoware.rdf2go.model.node.BlankNode;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
 import org.ontoware.rdfreactor.runtime.Base;
-import org.ontoware.rdfreactor.runtime.ReactorResult;
 
 /**
  * This class manages access to these properties:
@@ -204,18 +203,6 @@ public class Graph extends SIOCThing {
     }
 
     /**
-     * @param model
-     *            an RDF2Go model
-     * @return all instances of this class in Model 'model' as a ReactorResult,
-     *         which can conveniently be converted to iterator, list or array.
-     * 
-     *         [Generated from RDFReactor template rule #class3-as]
-     */
-    public static ReactorResult<? extends Graph> getAllInstances_as(Model model) {
-	return Base.getAllInstances_as(model, RDFS_CLASS, Graph.class);
-    }
-
-    /**
      * Remove rdf:type Graph from this instance. Other triples are not affected.
      * To delete more, use deleteAllProperties
      * 
@@ -269,21 +256,5 @@ public class Graph extends SIOCThing {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSIOCEmbedsknowledge_Inverse() {
 	return Base.getAll_Inverse(this.model, Item.EMBEDSKNOWLEDGE,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation
-     *         'Embedsknowledge' to this Graph instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllSIOCEmbedsknowledge_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Item.EMBEDSKNOWLEDGE, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 }

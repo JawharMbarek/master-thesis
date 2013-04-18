@@ -37,11 +37,11 @@ import com.xmlns.foaf.FOAF;
 public class SIOCUtils {
     public static void updateLastItemDate(Container container, Post post) {
 	if (post.hasCreated()) {
-	    if (container.hasLastitemdate()) {
+	    if (container.hasLastItemDate()) {
 		try {
 		    Date postDate = DateUtils.parseISO8601(post.getCreated());
 		    Date lastDate = DateUtils.parseISO8601(container
-			    .getLastitemdate());
+			    .getLastItemDate());
 
 		    // return if this post is older then the last
 		    if (!postDate.after(lastDate))
@@ -53,17 +53,17 @@ public class SIOCUtils {
 		}
 	    }
 
-	    container.setLastitemdate(post.getCreated());
+	    container.setLastItemDate(post.getCreated());
 	}
     }
 
     public static void updateLastReplyDate(Post parent, Post reply) {
 	if (reply.hasCreated()) {
-	    if (parent.hasLastreplydate()) {
+	    if (parent.hasLastReplyDate()) {
 		try {
 		    Date replyDate = DateUtils.parseISO8601(reply.getCreated());
 		    Date parentDate = DateUtils.parseISO8601(parent
-			    .getLastreplydate());
+			    .getLastReplyDate());
 
 		    // return if this reply is older then the last
 		    if (!replyDate.after(parentDate))
@@ -75,7 +75,7 @@ public class SIOCUtils {
 		}
 	    }
 
-	    parent.setLastreplydate(reply.getCreated());
+	    parent.setLastReplyDate(reply.getCreated());
 	}
     }
 

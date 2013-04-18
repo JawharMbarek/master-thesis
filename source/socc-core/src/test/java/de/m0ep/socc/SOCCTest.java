@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -22,7 +23,6 @@ import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Item;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOCThing;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 
@@ -146,19 +146,20 @@ public class SOCCTest {
 	    socc = new SOCC(model);
 	}
 
+	List<IConnector> connectors = new ArrayList<IConnector>();
 	for (String id : socc.getConnectorIds()) {
 	    IConnector connector = socc.getConnector(id);
+	    connectors.add(connector);
 	    System.err.println(connector.getId());
 	}
 
-	// socc.getConfiguration().save(soccConfigFile);
+	socc.getConfiguration().save(soccConfigFile);
 
-	// for (IConnector connector : connectors) {
-	// printConnector(connector);
-	// }
+	for (IConnector connector : connectors) {
+	    printConnector(connector);
+	}
 
 	if (WRITE_DUMP) {
-
 	    List<Statement> statements = Lists.newArrayList(model.iterator());
 
 	    Collections.sort(statements, new Comparator<Statement>() {
@@ -195,14 +196,6 @@ public class SOCCTest {
 	System.out.println("=====================================");
 	System.out.println("=====================================");
 
-	try {
-	    System.err.println("test connector");
-	    // printPost(connector,
-	    // connector.getPost("100000490230885_629013553791647"), 1);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-
 	UserAccount user = connector.getLoginUser();
 	printUser(user, 0);
 
@@ -213,16 +206,12 @@ public class SOCCTest {
 
 	    printWithIndent("Forum===============", 0);
 	    printWithIndent("uri:        " + forum, 0);
-	    printWithIndent("id:         " + forum.getAllId_as().firstValue(),
-		    0);
-	    printWithIndent(
-		    "name:       " + forum.getAllName_as().firstValue(), 0);
-	    printWithIndent("desc:       "
-		    + forum.getAllDescription_as().firstValue(), 0);
+	    printWithIndent("id:         " + forum.getId(), 0);
+	    printWithIndent("name:       " + forum.getName(), 0);
+	    printWithIndent("desc:       " + forum.getDescription(), 0);
 	    printWithIndent("created:    " + forum.getCreated(), 0);
 	    printWithIndent("modified:   " + forum.getModified(), 0);
-	    printWithIndent(
-		    "host:       " + forum.getAllHost_as().firstValue(), 0);
+	    printWithIndent("host:       " + forum.getHost(), 0);
 	    printWithIndent("canPublishOn: " + connector.canPublishOn(forum), 0);
 	    printWithIndent("hasPost: " + connector.hasPosts(forum), 0);
 
@@ -238,17 +227,12 @@ public class SOCCTest {
 
 		printWithIndent("Thread..............", 1);
 		printWithIndent("uri:        " + thread, 1);
-		printWithIndent("id:         "
-			+ thread.getAllId_as().firstValue(), 1);
-		printWithIndent("name:       "
-			+ thread.getAllName_as().firstValue(), 1);
+		printWithIndent("id:         " + thread.getId(), 1);
+		printWithIndent("name:       " + thread.getName(), 1);
 		printWithIndent("created:    " + thread.getCreated(), 1);
-		printWithIndent("modified:   "
-			+ thread.getAllModified_as().firstValue(), 1);
-		printWithIndent("parent:     "
-			+ thread.getAllParent_as().firstValue(), 1);
-		printWithIndent("creator:    "
-			+ thread.getAllCreator_as().firstValue(), 1);
+		printWithIndent("modified:   " + thread.getModified(), 1);
+		printWithIndent("parent:     " + thread.getParent(), 1);
+		printWithIndent("creator:    " + thread.getCreator(), 1);
 		printWithIndent(
 			"canpublish: " + connector.canPublishOn(thread), 1);
 		printWithIndent("hasPost: " + connector.hasPosts(thread), 1);
@@ -273,7 +257,7 @@ public class SOCCTest {
 	int ctr = 0;
 	while (posts.hasNext()) {
 	    Post post = posts.next();
-	    if (!post.hasReplyof()) // print only top posts, replies are printed
+	    if (!post.hasReplyOf()) // print only top posts, replies are printed
 				    // later
 		printPost(connector, post, indent);
 
@@ -284,23 +268,17 @@ public class SOCCTest {
 
     static void printUser(UserAccount user, int indent) {
 	printWithIndent("uri:      " + user, indent);
-	printWithIndent(
-		"id:       "
-			+ SIOCThing.getAllId_as(user.getModel(), user)
-				.firstValue(), indent);
-	printWithIndent("name:     " + user.getAllName_as().firstValue(),
-		indent);
-	printWithIndent(
-		"username: " + user.getAllAccountname_as().firstValue(), indent);
-	printWithIndent("profile:  "
-		+ user.getAllAccountservicehomepage_as().firstValue(), indent);
+	printWithIndent("id:       " + user.getId(), indent);
+	printWithIndent("name:     " + user.getName(), indent);
+	printWithIndent("username: " + user.getAccountName(), indent);
+	printWithIndent("profile:  " + user.getAccountServiceHomepage(), indent);
     }
 
     static void printPost(IConnector connector, Item post, int indent)
 	    throws ConnectorException {
 	printWithIndent("Post-----------------", indent);
 	printWithIndent("uri:       " + post, indent);
-	printWithIndent("id:        " + post.getAllId_as().firstValue(), indent);
+	printWithIndent("id:        " + post.getId(), indent);
 	if (post.hasTitle()) {
 	    printWithIndent("Title:     " + post.getTitle(), indent);
 	}
@@ -312,17 +290,13 @@ public class SOCCTest {
 	if (post.hasSubject()) {
 	    printWithIndent("Subject:   " + post.getSubject(), indent);
 	}
-	printWithIndent("content:   " + post.getAllContent_as().firstValue(),
-		indent);
-	printWithIndent("created:   " + post.getAllCreated_as().firstValue(),
-		indent);
-	printWithIndent("mod:       " + post.getAllModified_as().firstValue(),
-		indent);
-	printWithIndent("container: " + post.getAllContainer_as().firstValue(),
-		indent);
-	if (post.hasReplyof())
-	    printWithIndent("replyTo:   " + post.getReplyof(), indent);
-	if (post.hasDiscussion())
+	printWithIndent("content:   " + post.getContent(), indent);
+	printWithIndent("created:   " + post.getCreated(), indent);
+	printWithIndent("mod:       " + post.getModified(), indent);
+	printWithIndent("container: " + post.getContainer(), indent);
+	if (post.hasReplyOf())
+	    printWithIndent("replyTo:   " + post.getReplyOf(), indent);
+	if (post.hasDiscussions())
 	    printWithIndent("dsicussion:" + post.getDiscussion(), indent);
 
 	printWithIndent(
@@ -330,15 +304,16 @@ public class SOCCTest {
 			+ connector.canReplyOn(Post.getInstance(
 				post.getModel(), post.getResource())), indent);
 
-	if (post.hasCreator()) {
+	if (post.hasCreators()) {
 	    printWithIndent("Post.From----------------", indent);
-	    printUser(post.getAllCreator_as().firstValue(), indent + 1);
+	    printUser(post.getCreator(), indent + 1);
 	}
 
-	if (post.hasAttachment()) {
+	if (post.hasAttachments()) {
 	    printWithIndent("Post.Attachments---------", indent);
 
-	    ClosableIterator<Node> attachments = post.getAllAttachment_asNode();
+	    ClosableIterator<Node> attachments = post
+		    .getAllAttachments_asNode();
 	    while (attachments.hasNext()) {
 		Node node = attachments.next();
 		printWithIndent(node.toString(), indent + 1);
@@ -347,10 +322,10 @@ public class SOCCTest {
 	    attachments.close();
 	}
 
-	if (post.hasReply()) {
+	if (post.hasReplies()) {
 	    printWithIndent("Post.Replies-------------", indent);
 
-	    ClosableIterator<Item> replies = post.getAllReply();
+	    ClosableIterator<Item> replies = post.getAllReplies();
 
 	    while (replies.hasNext()) {
 		Item item = replies.next();
@@ -358,19 +333,6 @@ public class SOCCTest {
 	    }
 	    replies.close();
 	}
-
-	// Post reply;
-	// try {
-	// reply = new Post(post.getModel(), true);
-	// reply.setContent("test post " + new Date());
-	// reply.setTitle("Test post");
-	// connector.replyPost(reply,
-	// Post.getInstance(post.getModel(), post.getResource()));
-	// Post.deleteAllProperties(post.getModel(), reply);
-	// } catch (Exception e) {
-	// // TODO Auto-generated catch block
-	// }
-
     }
 
     static void printWithIndent(String text, int val) {

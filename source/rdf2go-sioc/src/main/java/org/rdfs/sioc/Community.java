@@ -256,7 +256,7 @@ public class Community extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSIOCEmbedsknowledge_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllEmbedsknowledge_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, Item.EMBEDSKNOWLEDGE, objectValue);
     }
@@ -267,7 +267,7 @@ public class Community extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSIOCEmbedsknowledge_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllEmbedsknowledge_Inverse() {
 	return Base.getAll_Inverse(this.model, Item.EMBEDSKNOWLEDGE,
 		this.getResource());
     }
@@ -282,7 +282,7 @@ public class Community extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #getallinverse-as1static]
      */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllSIOCEmbedsknowledge_Inverse_as(
+    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllEmbedsknowledge_Inverse_as(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse_as(model, Item.EMBEDSKNOWLEDGE, objectValue,
 		org.ontoware.rdf2go.model.node.Resource.class);

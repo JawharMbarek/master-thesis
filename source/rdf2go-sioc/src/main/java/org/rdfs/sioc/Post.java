@@ -10,7 +10,6 @@ import org.ontoware.rdf2go.model.node.BlankNode;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
 import org.ontoware.rdfreactor.runtime.Base;
-import org.ontoware.rdfreactor.runtime.ReactorResult;
 
 /**
  * This class manages access to these properties:
@@ -200,18 +199,6 @@ public class Post extends Item {
 	    Model model) {
 	return Base.getAllInstances(model, RDFS_CLASS,
 		org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @return all instances of this class in Model 'model' as a ReactorResult,
-     *         which can conveniently be converted to iterator, list or array.
-     * 
-     *         [Generated from RDFReactor template rule #class3-as]
-     */
-    public static ReactorResult<? extends Post> getAllInstances_as(Model model) {
-	return Base.getAllInstances_as(model, RDFS_CLASS, Post.class);
     }
 
     /**

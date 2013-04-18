@@ -10,7 +10,6 @@ import org.ontoware.rdf2go.model.node.BlankNode;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
 import org.ontoware.rdfreactor.runtime.Base;
-import org.ontoware.rdfreactor.runtime.ReactorResult;
 
 import com.xmlns.foaf.Agent;
 import com.xmlns.foaf.Document;
@@ -18,18 +17,18 @@ import com.xmlns.foaf.Document;
 /**
  * This class manages access to these properties:
  * <ul>
- * <li>Accountof</li>
- * <li>Administratorof</li>
+ * <li>AccountOf</li>
+ * <li>AdministratorOf</li>
  * <li>Avatar</li>
- * <li>Creatorof</li>
+ * <li>CreatorOf</li>
  * <li>Email</li>
- * <li>Emailsha1</li>
+ * <li>EmailSha1</li>
  * <li>Follows</li>
- * <li>Memberof</li>
- * <li>Moderatorof</li>
- * <li>Modifierof</li>
- * <li>Ownerof</li>
- * <li>Subscriberof</li>
+ * <li>MemberOf</li>
+ * <li>ModeratorOf</li>
+ * <li>ModifierOf</li>
+ * <li>OwnerOf</li>
+ * <li>SubscriberOf</li>
  * <li>accountName</li>
  * <li>accountServiceHomepage</li>
  * </ul>
@@ -292,19 +291,6 @@ public class UserAccount extends SIOCThing {
     }
 
     /**
-     * @param model
-     *            an RDF2Go model
-     * @return all instances of this class in Model 'model' as a ReactorResult,
-     *         which can conveniently be converted to iterator, list or array.
-     * 
-     *         [Generated from RDFReactor template rule #class3-as]
-     */
-    public static ReactorResult<? extends UserAccount> getAllInstances_as(
-	    Model model) {
-	return Base.getAllInstances_as(model, RDFS_CLASS, UserAccount.class);
-    }
-
-    /**
      * Remove rdf:type UserAccount from this instance. Other triples are not
      * affected. To delete more, use deleteAllProperties
      * 
@@ -364,22 +350,6 @@ public class UserAccount extends SIOCThing {
      * @param model
      *            an RDF2Go model
      * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Creator' to
-     *         this UserAccount instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllCreator_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.CREATOR, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
      * @return all A's as RDF resources, that have a relation 'Owner' to this
      *         UserAccount instance
      * 
@@ -399,22 +369,6 @@ public class UserAccount extends SIOCThing {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllOwner_Inverse() {
 	return Base.getAll_Inverse(this.model, SIOCThing.OWNER,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Owner' to this
-     *         UserAccount instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllOwner_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.OWNER, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -446,22 +400,6 @@ public class UserAccount extends SIOCThing {
      * @param model
      *            an RDF2Go model
      * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Subscriber' to
-     *         this UserAccount instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllSubscriber_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Container.SUBSCRIBER, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
      * @return all A's as RDF resources, that have a relation 'Member' to this
      *         UserAccount instance
      * 
@@ -481,22 +419,6 @@ public class UserAccount extends SIOCThing {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllMember_Inverse() {
 	return Base.getAll_Inverse(this.model, Usergroup.MEMBER,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Member' to this
-     *         UserAccount instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllMember_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Usergroup.MEMBER, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -528,22 +450,6 @@ public class UserAccount extends SIOCThing {
      * @param model
      *            an RDF2Go model
      * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Administrator'
-     *         to this UserAccount instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllAdministrator_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Site.ADMINISTRATOR, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
      * @return all A's as RDF resources, that have a relation 'Moderator' to
      *         this UserAccount instance
      * 
@@ -563,22 +469,6 @@ public class UserAccount extends SIOCThing {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllModerator_Inverse() {
 	return Base.getAll_Inverse(this.model, Forum.MODERATOR,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Moderator' to
-     *         this UserAccount instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllModerator_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Forum.MODERATOR, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -610,22 +500,6 @@ public class UserAccount extends SIOCThing {
      * @param model
      *            an RDF2Go model
      * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Modifier' to
-     *         this UserAccount instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllModifier_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Item.MODIFIER, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
      * @return all A's as RDF resources, that have a relation 'Follows' to this
      *         UserAccount instance
      * 
@@ -648,22 +522,6 @@ public class UserAccount extends SIOCThing {
     }
 
     /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Follows' to
-     *         this UserAccount instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllFollows_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, UserAccount.FOLLOWS, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
      * Check if org.ontoware.rdfreactor.generator.java.JProperty@60b964af has at
      * least one value set
      * 
@@ -675,7 +533,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasAccountof(Model model,
+    public static boolean hasAccountOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, ACCOUNTOF);
     }
@@ -688,7 +546,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasAccountof() {
+    public boolean hasAccountOf() {
 	return Base.has(this.model, this.getResource(), ACCOUNTOF);
     }
 
@@ -707,7 +565,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasAccountof(Model model,
+    public static boolean hasAccountOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, ACCOUNTOF, value);
@@ -724,12 +582,12 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasAccountof(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasAccountOf(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), ACCOUNTOF, value);
     }
 
     /**
-     * Get all values of property Accountof as an Iterator over RDF2Go nodes
+     * Get all values of property AccountOf as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -739,57 +597,25 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAccountof_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAccountOf_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, ACCOUNTOF);
     }
 
     /**
-     * Get all values of property Accountof as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAccountof_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ACCOUNTOF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Accountof as an Iterator over RDF2Go nodes
+     * Get all values of property AccountOf as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAccountof_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAccountOf_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), ACCOUNTOF);
     }
 
     /**
-     * Get all values of property Accountof as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAccountof_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), ACCOUNTOF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Accountof * @param model an RDF2Go model
+     * Get all values of property AccountOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -797,42 +623,24 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Agent> getAllAccountof(Model model,
+    public static ClosableIterator<Agent> getAllAccountOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, ACCOUNTOF, Agent.class);
     }
 
     /**
-     * Get all values of property Accountof as a ReactorResult of Agent
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Agent> getAllAccountof_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ACCOUNTOF, Agent.class);
-    }
-
-    /**
-     * Get all values of property Accountof * @return a ClosableIterator of
+     * Get all values of property AccountOf * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Agent> getAllAccountof() {
+    public ClosableIterator<Agent> getAllAccountOf() {
 	return Base.getAll(this.model, this.getResource(), ACCOUNTOF,
 		Agent.class);
     }
 
     /**
-     * Get all values of property Accountof as a ReactorResult of Agent
+     * Get all values of property AccountOf as a ReactorResult of Agent
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
      *         iterator, list or array
@@ -840,27 +648,13 @@ public class UserAccount extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Agent> getAllAccountof_as() {
-	return Base.getAll_as(this.model, this.getResource(), ACCOUNTOF,
-		Agent.class);
-    }
-
-    /**
-     * Get all values of property Accountof as a ReactorResult of Agent
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public Agent getAccountof() {
+    public Agent getAccountOf() {
 	return Base.getAll_as(this.model, this.getResource(), ACCOUNTOF,
 		Agent.class).firstValue();
     }
 
     /**
-     * Adds a value to property Accountof as an RDF2Go node
+     * Adds a value to property AccountOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -871,26 +665,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addAccountof(Model model,
+    public static void addAccountOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, ACCOUNTOF, value);
     }
 
     /**
-     * Adds a value to property Accountof as an RDF2Go node
+     * Adds a value to property AccountOf as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addAccountof(org.ontoware.rdf2go.model.node.Node value) {
+    public void addAccountOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), ACCOUNTOF, value);
     }
 
     /**
-     * Adds a value to property Accountof from an instance of Agent
+     * Adds a value to property AccountOf from an instance of Agent
      * 
      * @param model
      *            an RDF2Go model
@@ -899,23 +693,23 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addAccountof(Model model,
+    public static void addAccountOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Agent value) {
 	Base.add(model, instanceResource, ACCOUNTOF, value);
     }
 
     /**
-     * Adds a value to property Accountof from an instance of Agent
+     * Adds a value to property AccountOf from an instance of Agent
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addAccountof(Agent value) {
+    public void addAccountOf(Agent value) {
 	Base.add(this.model, this.getResource(), ACCOUNTOF, value);
     }
 
     /**
-     * Sets a value of property Accountof from an RDF2Go node. First, all
+     * Sets a value of property AccountOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -929,14 +723,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setAccountof(Model model,
+    public static void setAccountOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, ACCOUNTOF, value);
     }
 
     /**
-     * Sets a value of property Accountof from an RDF2Go node. First, all
+     * Sets a value of property AccountOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -946,12 +740,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setAccountof(org.ontoware.rdf2go.model.node.Node value) {
+    public void setAccountOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), ACCOUNTOF, value);
     }
 
     /**
-     * Sets a value of property Accountof from an instance of Agent First, all
+     * Sets a value of property AccountOf from an instance of Agent First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -965,14 +759,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setAccountof(Model model,
+    public static void setAccountOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Agent value) {
 	Base.set(model, instanceResource, ACCOUNTOF, value);
     }
 
     /**
-     * Sets a value of property Accountof from an instance of Agent First, all
+     * Sets a value of property AccountOf from an instance of Agent First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -982,12 +776,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setAccountof(Agent value) {
+    public void setAccountOf(Agent value) {
 	Base.set(this.model, this.getResource(), ACCOUNTOF, value);
     }
 
     /**
-     * Removes a value of property Accountof as an RDF2Go node
+     * Removes a value of property AccountOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -998,26 +792,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeAccountof(Model model,
+    public static void removeAccountOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, ACCOUNTOF, value);
     }
 
     /**
-     * Removes a value of property Accountof as an RDF2Go node
+     * Removes a value of property AccountOf as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeAccountof(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeAccountOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), ACCOUNTOF, value);
     }
 
     /**
-     * Removes a value of property Accountof given as an instance of Agent
+     * Removes a value of property AccountOf given as an instance of Agent
      * 
      * @param model
      *            an RDF2Go model
@@ -1028,42 +822,42 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeAccountof(Model model,
+    public static void removeAccountOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Agent value) {
 	Base.remove(model, instanceResource, ACCOUNTOF, value);
     }
 
     /**
-     * Removes a value of property Accountof given as an instance of Agent
+     * Removes a value of property AccountOf given as an instance of Agent
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeAccountof(Agent value) {
+    public void removeAccountOf(Agent value) {
 	Base.remove(this.model, this.getResource(), ACCOUNTOF, value);
     }
 
     /**
-     * Removes all values of property Accountof * @param model an RDF2Go model
+     * Removes all values of property AccountOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllAccountof(Model model,
+    public static void removeAllAccountOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, ACCOUNTOF);
     }
 
     /**
-     * Removes all values of property Accountof * [Generated from RDFReactor
+     * Removes all values of property AccountOf * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllAccountof() {
+    public void removeAllAccountOf() {
 	Base.removeAll(this.model, this.getResource(), ACCOUNTOF);
     }
 
@@ -1079,7 +873,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasAdministratorof(Model model,
+    public static boolean hasAdministratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, ADMINISTRATOROF);
     }
@@ -1092,7 +886,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasAdministratorof() {
+    public boolean hasAdministratorOf() {
 	return Base.has(this.model, this.getResource(), ADMINISTRATOROF);
     }
 
@@ -1111,7 +905,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasAdministratorof(Model model,
+    public static boolean hasAdministratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, ADMINISTRATOROF, value);
@@ -1128,13 +922,13 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasAdministratorof(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasAdministratorOf(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), ADMINISTRATOROF,
 		value);
     }
 
     /**
-     * Get all values of property Administratorof as an Iterator over RDF2Go
+     * Get all values of property AdministratorOf as an Iterator over RDF2Go
      * nodes
      * 
      * @param model
@@ -1145,61 +939,27 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAdministratorof_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAdministratorOf_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, ADMINISTRATOROF);
     }
 
     /**
-     * Get all values of property Administratorof as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAdministratorof_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ADMINISTRATOROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Administratorof as an Iterator over RDF2Go
+     * Get all values of property AdministratorOf as an Iterator over RDF2Go
      * nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAdministratorof_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAdministratorOf_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		ADMINISTRATOROF);
     }
 
     /**
-     * Get all values of property Administratorof as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAdministratorof_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), ADMINISTRATOROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Administratorof * @param model an RDF2Go model
+     * Get all values of property AdministratorOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -1207,44 +967,25 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Site> getAllAdministratorof(Model model,
+    public static ClosableIterator<Site> getAllAdministratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base
 		.getAll(model, instanceResource, ADMINISTRATOROF, Site.class);
     }
 
     /**
-     * Get all values of property Administratorof as a ReactorResult of Site
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Site> getAllAdministratorof_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ADMINISTRATOROF,
-		Site.class);
-    }
-
-    /**
-     * Get all values of property Administratorof * @return a ClosableIterator
+     * Get all values of property AdministratorOf * @return a ClosableIterator
      * of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Site> getAllAdministratorof() {
+    public ClosableIterator<Site> getAllAdministratorOf() {
 	return Base.getAll(this.model, this.getResource(), ADMINISTRATOROF,
 		Site.class);
     }
 
     /**
-     * Get all values of property Administratorof as a ReactorResult of Site
+     * Get all values of property AdministratorOf as a ReactorResult of Site
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
      *         iterator, list or array
@@ -1252,27 +993,13 @@ public class UserAccount extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Site> getAllAdministratorof_as() {
-	return Base.getAll_as(this.model, this.getResource(), ADMINISTRATOROF,
-		Site.class);
-    }
-
-    /**
-     * Get all values of property Administratorof as a ReactorResult of Site
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public Site getAdministratorof() {
+    public Site getAdministratorOf() {
 	return Base.getAll_as(this.model, this.getResource(), ADMINISTRATOROF,
 		Site.class).firstValue();
     }
 
     /**
-     * Adds a value to property Administratorof as an RDF2Go node
+     * Adds a value to property AdministratorOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -1283,26 +1010,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addAdministratorof(Model model,
+    public static void addAdministratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, ADMINISTRATOROF, value);
     }
 
     /**
-     * Adds a value to property Administratorof as an RDF2Go node
+     * Adds a value to property AdministratorOf as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addAdministratorof(org.ontoware.rdf2go.model.node.Node value) {
+    public void addAdministratorOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), ADMINISTRATOROF, value);
     }
 
     /**
-     * Adds a value to property Administratorof from an instance of Site
+     * Adds a value to property AdministratorOf from an instance of Site
      * 
      * @param model
      *            an RDF2Go model
@@ -1311,22 +1038,22 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addAdministratorof(Model model,
+    public static void addAdministratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource, Site value) {
 	Base.add(model, instanceResource, ADMINISTRATOROF, value);
     }
 
     /**
-     * Adds a value to property Administratorof from an instance of Site
+     * Adds a value to property AdministratorOf from an instance of Site
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addAdministratorof(Site value) {
+    public void addAdministratorOf(Site value) {
 	Base.add(this.model, this.getResource(), ADMINISTRATOROF, value);
     }
 
     /**
-     * Sets a value of property Administratorof from an RDF2Go node. First, all
+     * Sets a value of property AdministratorOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -1340,14 +1067,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setAdministratorof(Model model,
+    public static void setAdministratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, ADMINISTRATOROF, value);
     }
 
     /**
-     * Sets a value of property Administratorof from an RDF2Go node. First, all
+     * Sets a value of property AdministratorOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -1357,12 +1084,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setAdministratorof(org.ontoware.rdf2go.model.node.Node value) {
+    public void setAdministratorOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), ADMINISTRATOROF, value);
     }
 
     /**
-     * Sets a value of property Administratorof from an instance of Site First,
+     * Sets a value of property AdministratorOf from an instance of Site First,
      * all existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -1376,13 +1103,13 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setAdministratorof(Model model,
+    public static void setAdministratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource, Site value) {
 	Base.set(model, instanceResource, ADMINISTRATOROF, value);
     }
 
     /**
-     * Sets a value of property Administratorof from an instance of Site First,
+     * Sets a value of property AdministratorOf from an instance of Site First,
      * all existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -1392,12 +1119,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setAdministratorof(Site value) {
+    public void setAdministratorOf(Site value) {
 	Base.set(this.model, this.getResource(), ADMINISTRATOROF, value);
     }
 
     /**
-     * Removes a value of property Administratorof as an RDF2Go node
+     * Removes a value of property AdministratorOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -1408,26 +1135,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeAdministratorof(Model model,
+    public static void removeAdministratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, ADMINISTRATOROF, value);
     }
 
     /**
-     * Removes a value of property Administratorof as an RDF2Go node
+     * Removes a value of property AdministratorOf as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeAdministratorof(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeAdministratorOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), ADMINISTRATOROF, value);
     }
 
     /**
-     * Removes a value of property Administratorof given as an instance of Site
+     * Removes a value of property AdministratorOf given as an instance of Site
      * 
      * @param model
      *            an RDF2Go model
@@ -1438,25 +1165,25 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeAdministratorof(Model model,
+    public static void removeAdministratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource, Site value) {
 	Base.remove(model, instanceResource, ADMINISTRATOROF, value);
     }
 
     /**
-     * Removes a value of property Administratorof given as an instance of Site
+     * Removes a value of property AdministratorOf given as an instance of Site
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeAdministratorof(Site value) {
+    public void removeAdministratorOf(Site value) {
 	Base.remove(this.model, this.getResource(), ADMINISTRATOROF, value);
     }
 
     /**
-     * Removes all values of property Administratorof * @param model an RDF2Go
+     * Removes all values of property AdministratorOf * @param model an RDF2Go
      * model
      * 
      * @param resource
@@ -1464,16 +1191,16 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllAdministratorof(Model model,
+    public static void removeAllAdministratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, ADMINISTRATOROF);
     }
 
     /**
-     * Removes all values of property Administratorof * [Generated from
+     * Removes all values of property AdministratorOf * [Generated from
      * RDFReactor template rule #removeall1dynamic]
      */
-    public void removeAllAdministratorof() {
+    public void removeAllAdministratorOf() {
 	Base.removeAll(this.model, this.getResource(), ADMINISTRATOROF);
     }
 
@@ -1560,25 +1287,6 @@ public class UserAccount extends SIOCThing {
     }
 
     /**
-     * Get all values of property Avatar as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAvatar_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, AVATAR,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Avatar as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -1587,19 +1295,6 @@ public class UserAccount extends SIOCThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAvatar_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), AVATAR);
-    }
-
-    /**
-     * Get all values of property Avatar as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAvatar_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), AVATAR,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -1617,44 +1312,12 @@ public class UserAccount extends SIOCThing {
     }
 
     /**
-     * Get all values of property Avatar as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<SIOCThing> getAllAvatar_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, AVATAR, SIOCThing.class);
-    }
-
-    /**
      * Get all values of property Avatar * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<SIOCThing> getAllAvatar() {
 	return Base.getAll(this.model, this.getResource(), AVATAR,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Avatar as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<SIOCThing> getAllAvatar_as() {
-	return Base.getAll_as(this.model, this.getResource(), AVATAR,
 		SIOCThing.class);
     }
 
@@ -1892,7 +1555,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasCreatorof(Model model,
+    public static boolean hasCreatorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, CREATOROF);
     }
@@ -1905,7 +1568,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasCreatorof() {
+    public boolean hasCreatorOf() {
 	return Base.has(this.model, this.getResource(), CREATOROF);
     }
 
@@ -1924,7 +1587,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasCreatorof(Model model,
+    public static boolean hasCreatorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, CREATOROF, value);
@@ -1941,12 +1604,12 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasCreatorof(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasCreatorOf(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), CREATOROF, value);
     }
 
     /**
-     * Get all values of property Creatorof as an Iterator over RDF2Go nodes
+     * Get all values of property CreatorOf as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -1956,57 +1619,25 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCreatorof_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCreatorOf_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, CREATOROF);
     }
 
     /**
-     * Get all values of property Creatorof as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllCreatorof_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, CREATOROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Creatorof as an Iterator over RDF2Go nodes
+     * Get all values of property CreatorOf as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCreatorof_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCreatorOf_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), CREATOROF);
     }
 
     /**
-     * Get all values of property Creatorof as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllCreatorof_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), CREATOROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Creatorof * @param model an RDF2Go model
+     * Get all values of property CreatorOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -2014,43 +1645,24 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<SIOCThing> getAllCreatorof(Model model,
+    public static ClosableIterator<SIOCThing> getAllCreatorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, CREATOROF, SIOCThing.class);
     }
 
     /**
-     * Get all values of property Creatorof as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<SIOCThing> getAllCreatorof_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, CREATOROF,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Creatorof * @return a ClosableIterator of
+     * Get all values of property CreatorOf * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<SIOCThing> getAllCreatorof() {
+    public ClosableIterator<SIOCThing> getAllCreatorOf() {
 	return Base.getAll(this.model, this.getResource(), CREATOROF,
 		SIOCThing.class);
     }
 
     /**
-     * Get all values of property Creatorof as a ReactorResult of Thing
+     * Get all values of property CreatorOf as a ReactorResult of Thing
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
      *         iterator, list or array
@@ -2058,27 +1670,13 @@ public class UserAccount extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<SIOCThing> getAllCreatorof_as() {
-	return Base.getAll_as(this.model, this.getResource(), CREATOROF,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Creatorof as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public SIOCThing getCreatorof() {
+    public SIOCThing getCreatorOf() {
 	return Base.getAll_as(this.model, this.getResource(), CREATOROF,
 		SIOCThing.class).firstValue();
     }
 
     /**
-     * Adds a value to property Creatorof as an RDF2Go node
+     * Adds a value to property CreatorOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -2089,26 +1687,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addCreatorof(Model model,
+    public static void addCreatorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, CREATOROF, value);
     }
 
     /**
-     * Adds a value to property Creatorof as an RDF2Go node
+     * Adds a value to property CreatorOf as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addCreatorof(org.ontoware.rdf2go.model.node.Node value) {
+    public void addCreatorOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), CREATOROF, value);
     }
 
     /**
-     * Adds a value to property Creatorof from an instance of Thing
+     * Adds a value to property CreatorOf from an instance of Thing
      * 
      * @param model
      *            an RDF2Go model
@@ -2117,23 +1715,23 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addCreatorof(Model model,
+    public static void addCreatorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.add(model, instanceResource, CREATOROF, value);
     }
 
     /**
-     * Adds a value to property Creatorof from an instance of Thing
+     * Adds a value to property CreatorOf from an instance of Thing
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addCreatorof(SIOCThing value) {
+    public void addCreatorOf(SIOCThing value) {
 	Base.add(this.model, this.getResource(), CREATOROF, value);
     }
 
     /**
-     * Sets a value of property Creatorof from an RDF2Go node. First, all
+     * Sets a value of property CreatorOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -2147,14 +1745,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setCreatorof(Model model,
+    public static void setCreatorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, CREATOROF, value);
     }
 
     /**
-     * Sets a value of property Creatorof from an RDF2Go node. First, all
+     * Sets a value of property CreatorOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -2164,12 +1762,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setCreatorof(org.ontoware.rdf2go.model.node.Node value) {
+    public void setCreatorOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), CREATOROF, value);
     }
 
     /**
-     * Sets a value of property Creatorof from an instance of Thing First, all
+     * Sets a value of property CreatorOf from an instance of Thing First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -2183,14 +1781,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setCreatorof(Model model,
+    public static void setCreatorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.set(model, instanceResource, CREATOROF, value);
     }
 
     /**
-     * Sets a value of property Creatorof from an instance of Thing First, all
+     * Sets a value of property CreatorOf from an instance of Thing First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -2200,12 +1798,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setCreatorof(SIOCThing value) {
+    public void setCreatorOf(SIOCThing value) {
 	Base.set(this.model, this.getResource(), CREATOROF, value);
     }
 
     /**
-     * Removes a value of property Creatorof as an RDF2Go node
+     * Removes a value of property CreatorOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -2216,26 +1814,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeCreatorof(Model model,
+    public static void removeCreatorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, CREATOROF, value);
     }
 
     /**
-     * Removes a value of property Creatorof as an RDF2Go node
+     * Removes a value of property CreatorOf as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeCreatorof(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeCreatorOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), CREATOROF, value);
     }
 
     /**
-     * Removes a value of property Creatorof given as an instance of Thing
+     * Removes a value of property CreatorOf given as an instance of Thing
      * 
      * @param model
      *            an RDF2Go model
@@ -2246,42 +1844,42 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeCreatorof(Model model,
+    public static void removeCreatorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.remove(model, instanceResource, CREATOROF, value);
     }
 
     /**
-     * Removes a value of property Creatorof given as an instance of Thing
+     * Removes a value of property CreatorOf given as an instance of Thing
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeCreatorof(SIOCThing value) {
+    public void removeCreatorOf(SIOCThing value) {
 	Base.remove(this.model, this.getResource(), CREATOROF, value);
     }
 
     /**
-     * Removes all values of property Creatorof * @param model an RDF2Go model
+     * Removes all values of property CreatorOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllCreatorof(Model model,
+    public static void removeAllCreatorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, CREATOROF);
     }
 
     /**
-     * Removes all values of property Creatorof * [Generated from RDFReactor
+     * Removes all values of property CreatorOf * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllCreatorof() {
+    public void removeAllCreatorOf() {
 	Base.removeAll(this.model, this.getResource(), CREATOROF);
     }
 
@@ -2368,25 +1966,6 @@ public class UserAccount extends SIOCThing {
     }
 
     /**
-     * Get all values of property Email as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllEmail_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, EMAIL,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Email as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -2395,19 +1974,6 @@ public class UserAccount extends SIOCThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllEmail_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), EMAIL);
-    }
-
-    /**
-     * Get all values of property Email as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllEmail_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), EMAIL,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2425,44 +1991,12 @@ public class UserAccount extends SIOCThing {
     }
 
     /**
-     * Get all values of property Email as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<SIOCThing> getAllEmail_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, EMAIL, SIOCThing.class);
-    }
-
-    /**
      * Get all values of property Email * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<SIOCThing> getAllEmail() {
 	return Base.getAll(this.model, this.getResource(), EMAIL,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Email as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<SIOCThing> getAllEmail_as() {
-	return Base.getAll_as(this.model, this.getResource(), EMAIL,
 		SIOCThing.class);
     }
 
@@ -2700,7 +2234,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasEmailsha1(Model model,
+    public static boolean hasEmailSha1(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, EMAILSHA1);
     }
@@ -2713,7 +2247,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasEmailsha1() {
+    public boolean hasEmailSha1() {
 	return Base.has(this.model, this.getResource(), EMAILSHA1);
     }
 
@@ -2732,7 +2266,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasEmailsha1(Model model,
+    public static boolean hasEmailSha1(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, EMAILSHA1, value);
@@ -2749,12 +2283,12 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasEmailsha1(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasEmailSha1(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), EMAILSHA1, value);
     }
 
     /**
-     * Get all values of property Emailsha1 as an Iterator over RDF2Go nodes
+     * Get all values of property EmailSha1 as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -2764,57 +2298,25 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllEmailsha1_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllEmailSha1_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, EMAILSHA1);
     }
 
     /**
-     * Get all values of property Emailsha1 as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllEmailsha1_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, EMAILSHA1,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Emailsha1 as an Iterator over RDF2Go nodes
+     * Get all values of property EmailSha1 as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllEmailsha1_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllEmailSha1_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), EMAILSHA1);
     }
 
     /**
-     * Get all values of property Emailsha1 as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllEmailsha1_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), EMAILSHA1,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Emailsha1 * @param model an RDF2Go model
+     * Get all values of property EmailSha1 * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -2822,7 +2324,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllEmailsha1(
+    public static ClosableIterator<java.lang.String> getAllEmailSha1(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, EMAILSHA1,
@@ -2830,39 +2332,18 @@ public class UserAccount extends SIOCThing {
     }
 
     /**
-     * Get all values of property Emailsha1 as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllEmailsha1_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, EMAILSHA1,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Emailsha1 * @return a ClosableIterator of
+     * Get all values of property EmailSha1 * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.String> getAllEmailsha1() {
+    public ClosableIterator<java.lang.String> getAllEmailSha1() {
 	return Base.getAll(this.model, this.getResource(), EMAILSHA1,
 		java.lang.String.class);
     }
 
     /**
-     * Get all values of property Emailsha1 as a ReactorResult of
+     * Get all values of property EmailSha1 as a ReactorResult of
      * java.lang.String
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
@@ -2871,28 +2352,13 @@ public class UserAccount extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<java.lang.String> getAllEmailsha1_as() {
-	return Base.getAll_as(this.model, this.getResource(), EMAILSHA1,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Emailsha1 as a ReactorResult of
-     * java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public String getEmailsha1() {
+    public String getEmailSha1() {
 	return Base.getAll_as(this.model, this.getResource(), EMAILSHA1,
 		java.lang.String.class).firstValue();
     }
 
     /**
-     * Adds a value to property Emailsha1 as an RDF2Go node
+     * Adds a value to property EmailSha1 as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -2903,26 +2369,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addEmailsha1(Model model,
+    public static void addEmailSha1(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, EMAILSHA1, value);
     }
 
     /**
-     * Adds a value to property Emailsha1 as an RDF2Go node
+     * Adds a value to property EmailSha1 as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addEmailsha1(org.ontoware.rdf2go.model.node.Node value) {
+    public void addEmailSha1(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), EMAILSHA1, value);
     }
 
     /**
-     * Adds a value to property Emailsha1 from an instance of java.lang.String
+     * Adds a value to property EmailSha1 from an instance of java.lang.String
      * 
      * @param model
      *            an RDF2Go model
@@ -2931,23 +2397,23 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addEmailsha1(Model model,
+    public static void addEmailSha1(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
 	Base.add(model, instanceResource, EMAILSHA1, value);
     }
 
     /**
-     * Adds a value to property Emailsha1 from an instance of java.lang.String
+     * Adds a value to property EmailSha1 from an instance of java.lang.String
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addEmailsha1(java.lang.String value) {
+    public void addEmailSha1(java.lang.String value) {
 	Base.add(this.model, this.getResource(), EMAILSHA1, value);
     }
 
     /**
-     * Sets a value of property Emailsha1 from an RDF2Go node. First, all
+     * Sets a value of property EmailSha1 from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -2961,14 +2427,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setEmailsha1(Model model,
+    public static void setEmailSha1(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, EMAILSHA1, value);
     }
 
     /**
-     * Sets a value of property Emailsha1 from an RDF2Go node. First, all
+     * Sets a value of property EmailSha1 from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -2978,12 +2444,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setEmailsha1(org.ontoware.rdf2go.model.node.Node value) {
+    public void setEmailSha1(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), EMAILSHA1, value);
     }
 
     /**
-     * Sets a value of property Emailsha1 from an instance of java.lang.String
+     * Sets a value of property EmailSha1 from an instance of java.lang.String
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -2997,14 +2463,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setEmailsha1(Model model,
+    public static void setEmailSha1(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
 	Base.set(model, instanceResource, EMAILSHA1, value);
     }
 
     /**
-     * Sets a value of property Emailsha1 from an instance of java.lang.String
+     * Sets a value of property EmailSha1 from an instance of java.lang.String
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -3014,12 +2480,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setEmailsha1(java.lang.String value) {
+    public void setEmailSha1(java.lang.String value) {
 	Base.set(this.model, this.getResource(), EMAILSHA1, value);
     }
 
     /**
-     * Removes a value of property Emailsha1 as an RDF2Go node
+     * Removes a value of property EmailSha1 as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -3030,26 +2496,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeEmailsha1(Model model,
+    public static void removeEmailSha1(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, EMAILSHA1, value);
     }
 
     /**
-     * Removes a value of property Emailsha1 as an RDF2Go node
+     * Removes a value of property EmailSha1 as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeEmailsha1(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeEmailSha1(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), EMAILSHA1, value);
     }
 
     /**
-     * Removes a value of property Emailsha1 given as an instance of
+     * Removes a value of property EmailSha1 given as an instance of
      * java.lang.String
      * 
      * @param model
@@ -3061,14 +2527,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeEmailsha1(Model model,
+    public static void removeEmailSha1(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
 	Base.remove(model, instanceResource, EMAILSHA1, value);
     }
 
     /**
-     * Removes a value of property Emailsha1 given as an instance of
+     * Removes a value of property EmailSha1 given as an instance of
      * java.lang.String
      * 
      * @param value
@@ -3076,28 +2542,28 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeEmailsha1(java.lang.String value) {
+    public void removeEmailSha1(java.lang.String value) {
 	Base.remove(this.model, this.getResource(), EMAILSHA1, value);
     }
 
     /**
-     * Removes all values of property Emailsha1 * @param model an RDF2Go model
+     * Removes all values of property EmailSha1 * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllEmailsha1(Model model,
+    public static void removeAllEmailSha1(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, EMAILSHA1);
     }
 
     /**
-     * Removes all values of property Emailsha1 * [Generated from RDFReactor
+     * Removes all values of property EmailSha1 * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllEmailsha1() {
+    public void removeAllEmailSha1() {
 	Base.removeAll(this.model, this.getResource(), EMAILSHA1);
     }
 
@@ -3184,25 +2650,6 @@ public class UserAccount extends SIOCThing {
     }
 
     /**
-     * Get all values of property Follows as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllFollows_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, FOLLOWS,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Follows as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -3211,19 +2658,6 @@ public class UserAccount extends SIOCThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFollows_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), FOLLOWS);
-    }
-
-    /**
-     * Get all values of property Follows as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllFollows_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), FOLLOWS,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -3241,45 +2675,12 @@ public class UserAccount extends SIOCThing {
     }
 
     /**
-     * Get all values of property Follows as a ReactorResult of UserAccount
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<UserAccount> getAllFollows_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, FOLLOWS,
-		UserAccount.class);
-    }
-
-    /**
      * Get all values of property Follows * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<UserAccount> getAllFollows() {
 	return Base.getAll(this.model, this.getResource(), FOLLOWS,
-		UserAccount.class);
-    }
-
-    /**
-     * Get all values of property Follows as a ReactorResult of UserAccount
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<UserAccount> getAllFollows_as() {
-	return Base.getAll_as(this.model, this.getResource(), FOLLOWS,
 		UserAccount.class);
     }
 
@@ -3517,7 +2918,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasMemberof(Model model,
+    public static boolean hasMemberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, MEMBEROF);
     }
@@ -3530,7 +2931,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasMemberof() {
+    public boolean hasMemberOf() {
 	return Base.has(this.model, this.getResource(), MEMBEROF);
     }
 
@@ -3549,7 +2950,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasMemberof(Model model,
+    public static boolean hasMemberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, MEMBEROF, value);
@@ -3566,12 +2967,12 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasMemberof(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasMemberOf(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), MEMBEROF, value);
     }
 
     /**
-     * Get all values of property Memberof as an Iterator over RDF2Go nodes
+     * Get all values of property MemberOf as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -3581,57 +2982,25 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllMemberof_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllMemberOf_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, MEMBEROF);
     }
 
     /**
-     * Get all values of property Memberof as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllMemberof_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, MEMBEROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Memberof as an Iterator over RDF2Go nodes
+     * Get all values of property MemberOf as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllMemberof_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllMemberOf_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), MEMBEROF);
     }
 
     /**
-     * Get all values of property Memberof as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllMemberof_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), MEMBEROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Memberof * @param model an RDF2Go model
+     * Get all values of property MemberOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -3639,42 +3008,23 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Usergroup> getAllMemberof(Model model,
+    public static ClosableIterator<Usergroup> getAllMemberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, MEMBEROF, Usergroup.class);
     }
 
     /**
-     * Get all values of property Memberof as a ReactorResult of Usergroup
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Usergroup> getAllMemberof_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, MEMBEROF,
-		Usergroup.class);
-    }
-
-    /**
-     * Get all values of property Memberof * @return a ClosableIterator of $type
+     * Get all values of property MemberOf * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Usergroup> getAllMemberof() {
+    public ClosableIterator<Usergroup> getAllMemberOf() {
 	return Base.getAll(this.model, this.getResource(), MEMBEROF,
 		Usergroup.class);
     }
 
     /**
-     * Get all values of property Memberof as a ReactorResult of Usergroup
+     * Get all values of property MemberOf as a ReactorResult of Usergroup
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
      *         iterator, list or array
@@ -3682,27 +3032,13 @@ public class UserAccount extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Usergroup> getAllMemberof_as() {
-	return Base.getAll_as(this.model, this.getResource(), MEMBEROF,
-		Usergroup.class);
-    }
-
-    /**
-     * Get all values of property Memberof as a ReactorResult of Usergroup
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public Usergroup getMemberof() {
+    public Usergroup getMemberOf() {
 	return Base.getAll_as(this.model, this.getResource(), MEMBEROF,
 		Usergroup.class).firstValue();
     }
 
     /**
-     * Adds a value to property Memberof as an RDF2Go node
+     * Adds a value to property MemberOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -3713,26 +3049,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addMemberof(Model model,
+    public static void addMemberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, MEMBEROF, value);
     }
 
     /**
-     * Adds a value to property Memberof as an RDF2Go node
+     * Adds a value to property MemberOf as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addMemberof(org.ontoware.rdf2go.model.node.Node value) {
+    public void addMemberOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), MEMBEROF, value);
     }
 
     /**
-     * Adds a value to property Memberof from an instance of Usergroup
+     * Adds a value to property MemberOf from an instance of Usergroup
      * 
      * @param model
      *            an RDF2Go model
@@ -3741,23 +3077,23 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addMemberof(Model model,
+    public static void addMemberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Usergroup value) {
 	Base.add(model, instanceResource, MEMBEROF, value);
     }
 
     /**
-     * Adds a value to property Memberof from an instance of Usergroup
+     * Adds a value to property MemberOf from an instance of Usergroup
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addMemberof(Usergroup value) {
+    public void addMemberOf(Usergroup value) {
 	Base.add(this.model, this.getResource(), MEMBEROF, value);
     }
 
     /**
-     * Sets a value of property Memberof from an RDF2Go node. First, all
+     * Sets a value of property MemberOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -3771,14 +3107,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setMemberof(Model model,
+    public static void setMemberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, MEMBEROF, value);
     }
 
     /**
-     * Sets a value of property Memberof from an RDF2Go node. First, all
+     * Sets a value of property MemberOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -3788,12 +3124,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setMemberof(org.ontoware.rdf2go.model.node.Node value) {
+    public void setMemberOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), MEMBEROF, value);
     }
 
     /**
-     * Sets a value of property Memberof from an instance of Usergroup First,
+     * Sets a value of property MemberOf from an instance of Usergroup First,
      * all existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -3807,14 +3143,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setMemberof(Model model,
+    public static void setMemberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Usergroup value) {
 	Base.set(model, instanceResource, MEMBEROF, value);
     }
 
     /**
-     * Sets a value of property Memberof from an instance of Usergroup First,
+     * Sets a value of property MemberOf from an instance of Usergroup First,
      * all existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -3824,12 +3160,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setMemberof(Usergroup value) {
+    public void setMemberOf(Usergroup value) {
 	Base.set(this.model, this.getResource(), MEMBEROF, value);
     }
 
     /**
-     * Removes a value of property Memberof as an RDF2Go node
+     * Removes a value of property MemberOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -3840,26 +3176,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeMemberof(Model model,
+    public static void removeMemberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, MEMBEROF, value);
     }
 
     /**
-     * Removes a value of property Memberof as an RDF2Go node
+     * Removes a value of property MemberOf as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeMemberof(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeMemberOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), MEMBEROF, value);
     }
 
     /**
-     * Removes a value of property Memberof given as an instance of Usergroup
+     * Removes a value of property MemberOf given as an instance of Usergroup
      * 
      * @param model
      *            an RDF2Go model
@@ -3870,42 +3206,42 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeMemberof(Model model,
+    public static void removeMemberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Usergroup value) {
 	Base.remove(model, instanceResource, MEMBEROF, value);
     }
 
     /**
-     * Removes a value of property Memberof given as an instance of Usergroup
+     * Removes a value of property MemberOf given as an instance of Usergroup
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeMemberof(Usergroup value) {
+    public void removeMemberOf(Usergroup value) {
 	Base.remove(this.model, this.getResource(), MEMBEROF, value);
     }
 
     /**
-     * Removes all values of property Memberof * @param model an RDF2Go model
+     * Removes all values of property MemberOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllMemberof(Model model,
+    public static void removeAllMemberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, MEMBEROF);
     }
 
     /**
-     * Removes all values of property Memberof * [Generated from RDFReactor
+     * Removes all values of property MemberOf * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllMemberof() {
+    public void removeAllMemberOf() {
 	Base.removeAll(this.model, this.getResource(), MEMBEROF);
     }
 
@@ -3921,7 +3257,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasModeratorof(Model model,
+    public static boolean hasModeratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, MODERATOROF);
     }
@@ -3934,7 +3270,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasModeratorof() {
+    public boolean hasModeratorOf() {
 	return Base.has(this.model, this.getResource(), MODERATOROF);
     }
 
@@ -3953,7 +3289,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasModeratorof(Model model,
+    public static boolean hasModeratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, MODERATOROF, value);
@@ -3970,13 +3306,13 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasModeratorof(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasModeratorOf(org.ontoware.rdf2go.model.node.Node value) {
 	return Base
 		.hasValue(this.model, this.getResource(), MODERATOROF, value);
     }
 
     /**
-     * Get all values of property Moderatorof as an Iterator over RDF2Go nodes
+     * Get all values of property ModeratorOf as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -3986,57 +3322,25 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllModeratorof_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllModeratorOf_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, MODERATOROF);
     }
 
     /**
-     * Get all values of property Moderatorof as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllModeratorof_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, MODERATOROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Moderatorof as an Iterator over RDF2Go nodes
+     * Get all values of property ModeratorOf as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllModeratorof_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllModeratorOf_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), MODERATOROF);
     }
 
     /**
-     * Get all values of property Moderatorof as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllModeratorof_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), MODERATOROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Moderatorof * @param model an RDF2Go model
+     * Get all values of property ModeratorOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -4044,43 +3348,24 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Forum> getAllModeratorof(Model model,
+    public static ClosableIterator<Forum> getAllModeratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, MODERATOROF, Forum.class);
     }
 
     /**
-     * Get all values of property Moderatorof as a ReactorResult of Forum
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Forum> getAllModeratorof_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base
-		.getAll_as(model, instanceResource, MODERATOROF, Forum.class);
-    }
-
-    /**
-     * Get all values of property Moderatorof * @return a ClosableIterator of
+     * Get all values of property ModeratorOf * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Forum> getAllModeratorof() {
+    public ClosableIterator<Forum> getAllModeratorOf() {
 	return Base.getAll(this.model, this.getResource(), MODERATOROF,
 		Forum.class);
     }
 
     /**
-     * Get all values of property Moderatorof as a ReactorResult of Forum
+     * Get all values of property ModeratorOf as a ReactorResult of Forum
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
      *         iterator, list or array
@@ -4088,27 +3373,13 @@ public class UserAccount extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Forum> getAllModeratorof_as() {
-	return Base.getAll_as(this.model, this.getResource(), MODERATOROF,
-		Forum.class);
-    }
-
-    /**
-     * Get all values of property Moderatorof as a ReactorResult of Forum
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public Forum getModeratorof() {
+    public Forum getModeratorOf() {
 	return Base.getAll_as(this.model, this.getResource(), MODERATOROF,
 		Forum.class).firstValue();
     }
 
     /**
-     * Adds a value to property Moderatorof as an RDF2Go node
+     * Adds a value to property ModeratorOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -4119,26 +3390,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addModeratorof(Model model,
+    public static void addModeratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, MODERATOROF, value);
     }
 
     /**
-     * Adds a value to property Moderatorof as an RDF2Go node
+     * Adds a value to property ModeratorOf as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addModeratorof(org.ontoware.rdf2go.model.node.Node value) {
+    public void addModeratorOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), MODERATOROF, value);
     }
 
     /**
-     * Adds a value to property Moderatorof from an instance of Forum
+     * Adds a value to property ModeratorOf from an instance of Forum
      * 
      * @param model
      *            an RDF2Go model
@@ -4147,23 +3418,23 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addModeratorof(Model model,
+    public static void addModeratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Forum value) {
 	Base.add(model, instanceResource, MODERATOROF, value);
     }
 
     /**
-     * Adds a value to property Moderatorof from an instance of Forum
+     * Adds a value to property ModeratorOf from an instance of Forum
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addModeratorof(Forum value) {
+    public void addModeratorOf(Forum value) {
 	Base.add(this.model, this.getResource(), MODERATOROF, value);
     }
 
     /**
-     * Sets a value of property Moderatorof from an RDF2Go node. First, all
+     * Sets a value of property ModeratorOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -4177,14 +3448,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setModeratorof(Model model,
+    public static void setModeratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, MODERATOROF, value);
     }
 
     /**
-     * Sets a value of property Moderatorof from an RDF2Go node. First, all
+     * Sets a value of property ModeratorOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -4194,12 +3465,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setModeratorof(org.ontoware.rdf2go.model.node.Node value) {
+    public void setModeratorOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), MODERATOROF, value);
     }
 
     /**
-     * Sets a value of property Moderatorof from an instance of Forum First, all
+     * Sets a value of property ModeratorOf from an instance of Forum First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -4213,14 +3484,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setModeratorof(Model model,
+    public static void setModeratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Forum value) {
 	Base.set(model, instanceResource, MODERATOROF, value);
     }
 
     /**
-     * Sets a value of property Moderatorof from an instance of Forum First, all
+     * Sets a value of property ModeratorOf from an instance of Forum First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -4230,12 +3501,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setModeratorof(Forum value) {
+    public void setModeratorOf(Forum value) {
 	Base.set(this.model, this.getResource(), MODERATOROF, value);
     }
 
     /**
-     * Removes a value of property Moderatorof as an RDF2Go node
+     * Removes a value of property ModeratorOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -4246,26 +3517,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeModeratorof(Model model,
+    public static void removeModeratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, MODERATOROF, value);
     }
 
     /**
-     * Removes a value of property Moderatorof as an RDF2Go node
+     * Removes a value of property ModeratorOf as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeModeratorof(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeModeratorOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), MODERATOROF, value);
     }
 
     /**
-     * Removes a value of property Moderatorof given as an instance of Forum
+     * Removes a value of property ModeratorOf given as an instance of Forum
      * 
      * @param model
      *            an RDF2Go model
@@ -4276,42 +3547,42 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeModeratorof(Model model,
+    public static void removeModeratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Forum value) {
 	Base.remove(model, instanceResource, MODERATOROF, value);
     }
 
     /**
-     * Removes a value of property Moderatorof given as an instance of Forum
+     * Removes a value of property ModeratorOf given as an instance of Forum
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeModeratorof(Forum value) {
+    public void removeModeratorOf(Forum value) {
 	Base.remove(this.model, this.getResource(), MODERATOROF, value);
     }
 
     /**
-     * Removes all values of property Moderatorof * @param model an RDF2Go model
+     * Removes all values of property ModeratorOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllModeratorof(Model model,
+    public static void removeAllModeratorOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, MODERATOROF);
     }
 
     /**
-     * Removes all values of property Moderatorof * [Generated from RDFReactor
+     * Removes all values of property ModeratorOf * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllModeratorof() {
+    public void removeAllModeratorOf() {
 	Base.removeAll(this.model, this.getResource(), MODERATOROF);
     }
 
@@ -4327,7 +3598,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasModifierof(Model model,
+    public static boolean hasModifierOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, MODIFIEROF);
     }
@@ -4340,7 +3611,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasModifierof() {
+    public boolean hasModifierOf() {
 	return Base.has(this.model, this.getResource(), MODIFIEROF);
     }
 
@@ -4359,7 +3630,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasModifierof(Model model,
+    public static boolean hasModifierOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, MODIFIEROF, value);
@@ -4376,12 +3647,12 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasModifierof(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasModifierOf(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), MODIFIEROF, value);
     }
 
     /**
-     * Get all values of property Modifierof as an Iterator over RDF2Go nodes
+     * Get all values of property ModifierOf as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -4391,57 +3662,25 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllModifierof_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllModifierOf_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, MODIFIEROF);
     }
 
     /**
-     * Get all values of property Modifierof as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllModifierof_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, MODIFIEROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Modifierof as an Iterator over RDF2Go nodes
+     * Get all values of property ModifierOf as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllModifierof_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllModifierOf_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), MODIFIEROF);
     }
 
     /**
-     * Get all values of property Modifierof as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllModifierof_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), MODIFIEROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Modifierof * @param model an RDF2Go model
+     * Get all values of property ModifierOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -4449,42 +3688,24 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Item> getAllModifierof(Model model,
+    public static ClosableIterator<Item> getAllModifierOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, MODIFIEROF, Item.class);
     }
 
     /**
-     * Get all values of property Modifierof as a ReactorResult of Item
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Item> getAllModifierof_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, MODIFIEROF, Item.class);
-    }
-
-    /**
-     * Get all values of property Modifierof * @return a ClosableIterator of
+     * Get all values of property ModifierOf * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Item> getAllModifierof() {
+    public ClosableIterator<Item> getAllModifierOf() {
 	return Base.getAll(this.model, this.getResource(), MODIFIEROF,
 		Item.class);
     }
 
     /**
-     * Get all values of property Modifierof as a ReactorResult of Item
+     * Get all values of property ModifierOf as a ReactorResult of Item
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
      *         iterator, list or array
@@ -4492,27 +3713,13 @@ public class UserAccount extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Item> getAllModifierof_as() {
-	return Base.getAll_as(this.model, this.getResource(), MODIFIEROF,
-		Item.class);
-    }
-
-    /**
-     * Get all values of property Modifierof as a ReactorResult of Item
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public Item getModifierof() {
+    public Item getModifierOf() {
 	return Base.getAll_as(this.model, this.getResource(), MODIFIEROF,
 		Item.class).firstValue();
     }
 
     /**
-     * Adds a value to property Modifierof as an RDF2Go node
+     * Adds a value to property ModifierOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -4523,26 +3730,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addModifierof(Model model,
+    public static void addModifierOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, MODIFIEROF, value);
     }
 
     /**
-     * Adds a value to property Modifierof as an RDF2Go node
+     * Adds a value to property ModifierOf as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addModifierof(org.ontoware.rdf2go.model.node.Node value) {
+    public void addModifierOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), MODIFIEROF, value);
     }
 
     /**
-     * Adds a value to property Modifierof from an instance of Item
+     * Adds a value to property ModifierOf from an instance of Item
      * 
      * @param model
      *            an RDF2Go model
@@ -4551,22 +3758,22 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addModifierof(Model model,
+    public static void addModifierOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource, Item value) {
 	Base.add(model, instanceResource, MODIFIEROF, value);
     }
 
     /**
-     * Adds a value to property Modifierof from an instance of Item
+     * Adds a value to property ModifierOf from an instance of Item
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addModifierof(Item value) {
+    public void addModifierOf(Item value) {
 	Base.add(this.model, this.getResource(), MODIFIEROF, value);
     }
 
     /**
-     * Sets a value of property Modifierof from an RDF2Go node. First, all
+     * Sets a value of property ModifierOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -4580,14 +3787,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setModifierof(Model model,
+    public static void setModifierOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, MODIFIEROF, value);
     }
 
     /**
-     * Sets a value of property Modifierof from an RDF2Go node. First, all
+     * Sets a value of property ModifierOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -4597,12 +3804,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setModifierof(org.ontoware.rdf2go.model.node.Node value) {
+    public void setModifierOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), MODIFIEROF, value);
     }
 
     /**
-     * Sets a value of property Modifierof from an instance of Item First, all
+     * Sets a value of property ModifierOf from an instance of Item First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -4616,13 +3823,13 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setModifierof(Model model,
+    public static void setModifierOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource, Item value) {
 	Base.set(model, instanceResource, MODIFIEROF, value);
     }
 
     /**
-     * Sets a value of property Modifierof from an instance of Item First, all
+     * Sets a value of property ModifierOf from an instance of Item First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -4632,12 +3839,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setModifierof(Item value) {
+    public void setModifierOf(Item value) {
 	Base.set(this.model, this.getResource(), MODIFIEROF, value);
     }
 
     /**
-     * Removes a value of property Modifierof as an RDF2Go node
+     * Removes a value of property ModifierOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -4648,26 +3855,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeModifierof(Model model,
+    public static void removeModifierOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, MODIFIEROF, value);
     }
 
     /**
-     * Removes a value of property Modifierof as an RDF2Go node
+     * Removes a value of property ModifierOf as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeModifierof(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeModifierOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), MODIFIEROF, value);
     }
 
     /**
-     * Removes a value of property Modifierof given as an instance of Item
+     * Removes a value of property ModifierOf given as an instance of Item
      * 
      * @param model
      *            an RDF2Go model
@@ -4678,41 +3885,41 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeModifierof(Model model,
+    public static void removeModifierOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource, Item value) {
 	Base.remove(model, instanceResource, MODIFIEROF, value);
     }
 
     /**
-     * Removes a value of property Modifierof given as an instance of Item
+     * Removes a value of property ModifierOf given as an instance of Item
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeModifierof(Item value) {
+    public void removeModifierOf(Item value) {
 	Base.remove(this.model, this.getResource(), MODIFIEROF, value);
     }
 
     /**
-     * Removes all values of property Modifierof * @param model an RDF2Go model
+     * Removes all values of property ModifierOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllModifierof(Model model,
+    public static void removeAllModifierOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, MODIFIEROF);
     }
 
     /**
-     * Removes all values of property Modifierof * [Generated from RDFReactor
+     * Removes all values of property ModifierOf * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllModifierof() {
+    public void removeAllModifierOf() {
 	Base.removeAll(this.model, this.getResource(), MODIFIEROF);
     }
 
@@ -4728,7 +3935,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasOwnerof(Model model,
+    public static boolean hasOwnerOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, OWNEROF);
     }
@@ -4741,7 +3948,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasOwnerof() {
+    public boolean hasOwnerOf() {
 	return Base.has(this.model, this.getResource(), OWNEROF);
     }
 
@@ -4760,7 +3967,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasOwnerof(Model model,
+    public static boolean hasOwnerOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, OWNEROF, value);
@@ -4777,12 +3984,12 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasOwnerof(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasOwnerOf(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), OWNEROF, value);
     }
 
     /**
-     * Get all values of property Ownerof as an Iterator over RDF2Go nodes
+     * Get all values of property OwnerOf as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -4792,57 +3999,25 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllOwnerof_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllOwnerOf_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, OWNEROF);
     }
 
     /**
-     * Get all values of property Ownerof as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllOwnerof_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, OWNEROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Ownerof as an Iterator over RDF2Go nodes
+     * Get all values of property OwnerOf as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllOwnerof_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllOwnerOf_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), OWNEROF);
     }
 
     /**
-     * Get all values of property Ownerof as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllOwnerof_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), OWNEROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Ownerof * @param model an RDF2Go model
+     * Get all values of property OwnerOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -4850,42 +4025,23 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<SIOCThing> getAllOwnerof(Model model,
+    public static ClosableIterator<SIOCThing> getAllOwnerOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, OWNEROF, SIOCThing.class);
     }
 
     /**
-     * Get all values of property Ownerof as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<SIOCThing> getAllOwnerof_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base
-		.getAll_as(model, instanceResource, OWNEROF, SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Ownerof * @return a ClosableIterator of $type
+     * Get all values of property OwnerOf * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<SIOCThing> getAllOwnerof() {
+    public ClosableIterator<SIOCThing> getAllOwnerOf() {
 	return Base.getAll(this.model, this.getResource(), OWNEROF,
 		SIOCThing.class);
     }
 
     /**
-     * Get all values of property Ownerof as a ReactorResult of Thing
+     * Get all values of property OwnerOf as a ReactorResult of Thing
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
      *         iterator, list or array
@@ -4893,27 +4049,13 @@ public class UserAccount extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<SIOCThing> getAllOwnerof_as() {
-	return Base.getAll_as(this.model, this.getResource(), OWNEROF,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Ownerof as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public SIOCThing getOwnerof() {
+    public SIOCThing getOwnerOf() {
 	return Base.getAll_as(this.model, this.getResource(), OWNEROF,
 		SIOCThing.class).firstValue();
     }
 
     /**
-     * Adds a value to property Ownerof as an RDF2Go node
+     * Adds a value to property OwnerOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -4924,26 +4066,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addOwnerof(Model model,
+    public static void addOwnerOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, OWNEROF, value);
     }
 
     /**
-     * Adds a value to property Ownerof as an RDF2Go node
+     * Adds a value to property OwnerOf as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addOwnerof(org.ontoware.rdf2go.model.node.Node value) {
+    public void addOwnerOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), OWNEROF, value);
     }
 
     /**
-     * Adds a value to property Ownerof from an instance of Thing
+     * Adds a value to property OwnerOf from an instance of Thing
      * 
      * @param model
      *            an RDF2Go model
@@ -4952,23 +4094,23 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addOwnerof(Model model,
+    public static void addOwnerOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.add(model, instanceResource, OWNEROF, value);
     }
 
     /**
-     * Adds a value to property Ownerof from an instance of Thing
+     * Adds a value to property OwnerOf from an instance of Thing
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addOwnerof(SIOCThing value) {
+    public void addOwnerOf(SIOCThing value) {
 	Base.add(this.model, this.getResource(), OWNEROF, value);
     }
 
     /**
-     * Sets a value of property Ownerof from an RDF2Go node. First, all existing
+     * Sets a value of property OwnerOf from an RDF2Go node. First, all existing
      * values are removed, then this value is added. Cardinality constraints are
      * not checked, but this method exists only for properties with no
      * minCardinality or minCardinality == 1.
@@ -4982,14 +4124,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setOwnerof(Model model,
+    public static void setOwnerOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, OWNEROF, value);
     }
 
     /**
-     * Sets a value of property Ownerof from an RDF2Go node. First, all existing
+     * Sets a value of property OwnerOf from an RDF2Go node. First, all existing
      * values are removed, then this value is added. Cardinality constraints are
      * not checked, but this method exists only for properties with no
      * minCardinality or minCardinality == 1.
@@ -4999,12 +4141,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setOwnerof(org.ontoware.rdf2go.model.node.Node value) {
+    public void setOwnerOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), OWNEROF, value);
     }
 
     /**
-     * Sets a value of property Ownerof from an instance of Thing First, all
+     * Sets a value of property OwnerOf from an instance of Thing First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -5018,14 +4160,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setOwnerof(Model model,
+    public static void setOwnerOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.set(model, instanceResource, OWNEROF, value);
     }
 
     /**
-     * Sets a value of property Ownerof from an instance of Thing First, all
+     * Sets a value of property OwnerOf from an instance of Thing First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -5035,12 +4177,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setOwnerof(SIOCThing value) {
+    public void setOwnerOf(SIOCThing value) {
 	Base.set(this.model, this.getResource(), OWNEROF, value);
     }
 
     /**
-     * Removes a value of property Ownerof as an RDF2Go node
+     * Removes a value of property OwnerOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -5051,26 +4193,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeOwnerof(Model model,
+    public static void removeOwnerOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, OWNEROF, value);
     }
 
     /**
-     * Removes a value of property Ownerof as an RDF2Go node
+     * Removes a value of property OwnerOf as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeOwnerof(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeOwnerOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), OWNEROF, value);
     }
 
     /**
-     * Removes a value of property Ownerof given as an instance of Thing
+     * Removes a value of property OwnerOf given as an instance of Thing
      * 
      * @param model
      *            an RDF2Go model
@@ -5081,42 +4223,42 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeOwnerof(Model model,
+    public static void removeOwnerOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.remove(model, instanceResource, OWNEROF, value);
     }
 
     /**
-     * Removes a value of property Ownerof given as an instance of Thing
+     * Removes a value of property OwnerOf given as an instance of Thing
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeOwnerof(SIOCThing value) {
+    public void removeOwnerOf(SIOCThing value) {
 	Base.remove(this.model, this.getResource(), OWNEROF, value);
     }
 
     /**
-     * Removes all values of property Ownerof * @param model an RDF2Go model
+     * Removes all values of property OwnerOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllOwnerof(Model model,
+    public static void removeAllOwnerOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, OWNEROF);
     }
 
     /**
-     * Removes all values of property Ownerof * [Generated from RDFReactor
+     * Removes all values of property OwnerOf * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllOwnerof() {
+    public void removeAllOwnerOf() {
 	Base.removeAll(this.model, this.getResource(), OWNEROF);
     }
 
@@ -5132,7 +4274,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasSubscriberof(Model model,
+    public static boolean hasSubscriberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, SUBSCRIBEROF);
     }
@@ -5145,7 +4287,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasSubscriberof() {
+    public boolean hasSubscriberOf() {
 	return Base.has(this.model, this.getResource(), SUBSCRIBEROF);
     }
 
@@ -5164,7 +4306,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasSubscriberof(Model model,
+    public static boolean hasSubscriberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, SUBSCRIBEROF, value);
@@ -5181,13 +4323,13 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasSubscriberof(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasSubscriberOf(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), SUBSCRIBEROF,
 		value);
     }
 
     /**
-     * Get all values of property Subscriberof as an Iterator over RDF2Go nodes
+     * Get all values of property SubscriberOf as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -5197,59 +4339,25 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSubscriberof_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSubscriberOf_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, SUBSCRIBEROF);
     }
 
     /**
-     * Get all values of property Subscriberof as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllSubscriberof_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SUBSCRIBEROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Subscriberof as an Iterator over RDF2Go nodes
+     * Get all values of property SubscriberOf as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSubscriberof_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSubscriberOf_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), SUBSCRIBEROF);
     }
 
     /**
-     * Get all values of property Subscriberof as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllSubscriberof_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), SUBSCRIBEROF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Subscriberof * @param model an RDF2Go model
+     * Get all values of property SubscriberOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -5257,44 +4365,25 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Container> getAllSubscriberof(Model model,
+    public static ClosableIterator<Container> getAllSubscriberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, SUBSCRIBEROF,
 		Container.class);
     }
 
     /**
-     * Get all values of property Subscriberof as a ReactorResult of Container
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Container> getAllSubscriberof_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SUBSCRIBEROF,
-		Container.class);
-    }
-
-    /**
-     * Get all values of property Subscriberof * @return a ClosableIterator of
+     * Get all values of property SubscriberOf * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Container> getAllSubscriberof() {
+    public ClosableIterator<Container> getAllSubscriberOf() {
 	return Base.getAll(this.model, this.getResource(), SUBSCRIBEROF,
 		Container.class);
     }
 
     /**
-     * Get all values of property Subscriberof as a ReactorResult of Container
+     * Get all values of property SubscriberOf as a ReactorResult of Container
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
      *         iterator, list or array
@@ -5302,27 +4391,13 @@ public class UserAccount extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Container> getAllSubscriberof_as() {
-	return Base.getAll_as(this.model, this.getResource(), SUBSCRIBEROF,
-		Container.class);
-    }
-
-    /**
-     * Get all values of property Subscriberof as a ReactorResult of Container
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public Container getSubscriberof() {
+    public Container getSubscriberOf() {
 	return Base.getAll_as(this.model, this.getResource(), SUBSCRIBEROF,
 		Container.class).firstValue();
     }
 
     /**
-     * Adds a value to property Subscriberof as an RDF2Go node
+     * Adds a value to property SubscriberOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -5333,26 +4408,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addSubscriberof(Model model,
+    public static void addSubscriberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, SUBSCRIBEROF, value);
     }
 
     /**
-     * Adds a value to property Subscriberof as an RDF2Go node
+     * Adds a value to property SubscriberOf as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addSubscriberof(org.ontoware.rdf2go.model.node.Node value) {
+    public void addSubscriberOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), SUBSCRIBEROF, value);
     }
 
     /**
-     * Adds a value to property Subscriberof from an instance of Container
+     * Adds a value to property SubscriberOf from an instance of Container
      * 
      * @param model
      *            an RDF2Go model
@@ -5361,23 +4436,23 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addSubscriberof(Model model,
+    public static void addSubscriberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Container value) {
 	Base.add(model, instanceResource, SUBSCRIBEROF, value);
     }
 
     /**
-     * Adds a value to property Subscriberof from an instance of Container
+     * Adds a value to property SubscriberOf from an instance of Container
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addSubscriberof(Container value) {
+    public void addSubscriberOf(Container value) {
 	Base.add(this.model, this.getResource(), SUBSCRIBEROF, value);
     }
 
     /**
-     * Sets a value of property Subscriberof from an RDF2Go node. First, all
+     * Sets a value of property SubscriberOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -5391,14 +4466,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setSubscriberof(Model model,
+    public static void setSubscriberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, SUBSCRIBEROF, value);
     }
 
     /**
-     * Sets a value of property Subscriberof from an RDF2Go node. First, all
+     * Sets a value of property SubscriberOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -5408,12 +4483,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setSubscriberof(org.ontoware.rdf2go.model.node.Node value) {
+    public void setSubscriberOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), SUBSCRIBEROF, value);
     }
 
     /**
-     * Sets a value of property Subscriberof from an instance of Container
+     * Sets a value of property SubscriberOf from an instance of Container
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -5427,14 +4502,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setSubscriberof(Model model,
+    public static void setSubscriberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Container value) {
 	Base.set(model, instanceResource, SUBSCRIBEROF, value);
     }
 
     /**
-     * Sets a value of property Subscriberof from an instance of Container
+     * Sets a value of property SubscriberOf from an instance of Container
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -5444,12 +4519,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setSubscriberof(Container value) {
+    public void setSubscriberOf(Container value) {
 	Base.set(this.model, this.getResource(), SUBSCRIBEROF, value);
     }
 
     /**
-     * Removes a value of property Subscriberof as an RDF2Go node
+     * Removes a value of property SubscriberOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -5460,26 +4535,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeSubscriberof(Model model,
+    public static void removeSubscriberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, SUBSCRIBEROF, value);
     }
 
     /**
-     * Removes a value of property Subscriberof as an RDF2Go node
+     * Removes a value of property SubscriberOf as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeSubscriberof(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeSubscriberOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), SUBSCRIBEROF, value);
     }
 
     /**
-     * Removes a value of property Subscriberof given as an instance of
+     * Removes a value of property SubscriberOf given as an instance of
      * Container
      * 
      * @param model
@@ -5491,14 +4566,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeSubscriberof(Model model,
+    public static void removeSubscriberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Container value) {
 	Base.remove(model, instanceResource, SUBSCRIBEROF, value);
     }
 
     /**
-     * Removes a value of property Subscriberof given as an instance of
+     * Removes a value of property SubscriberOf given as an instance of
      * Container
      * 
      * @param value
@@ -5506,12 +4581,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeSubscriberof(Container value) {
+    public void removeSubscriberOf(Container value) {
 	Base.remove(this.model, this.getResource(), SUBSCRIBEROF, value);
     }
 
     /**
-     * Removes all values of property Subscriberof * @param model an RDF2Go
+     * Removes all values of property SubscriberOf * @param model an RDF2Go
      * model
      * 
      * @param resource
@@ -5519,16 +4594,16 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllSubscriberof(Model model,
+    public static void removeAllSubscriberOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, SUBSCRIBEROF);
     }
 
     /**
-     * Removes all values of property Subscriberof * [Generated from RDFReactor
+     * Removes all values of property SubscriberOf * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllSubscriberof() {
+    public void removeAllSubscriberOf() {
 	Base.removeAll(this.model, this.getResource(), SUBSCRIBEROF);
     }
 
@@ -5544,7 +4619,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasAccountname(Model model,
+    public static boolean hasAccountName(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, ACCOUNTNAME);
     }
@@ -5557,7 +4632,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasAccountname() {
+    public boolean hasAccountName() {
 	return Base.has(this.model, this.getResource(), ACCOUNTNAME);
     }
 
@@ -5576,7 +4651,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasAccountname(Model model,
+    public static boolean hasAccountName(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, ACCOUNTNAME, value);
@@ -5593,13 +4668,13 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasAccountname(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasAccountName(org.ontoware.rdf2go.model.node.Node value) {
 	return Base
 		.hasValue(this.model, this.getResource(), ACCOUNTNAME, value);
     }
 
     /**
-     * Get all values of property Accountname as an Iterator over RDF2Go nodes
+     * Get all values of property AccountName as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -5609,57 +4684,25 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAccountname_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAccountName_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, ACCOUNTNAME);
     }
 
     /**
-     * Get all values of property Accountname as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAccountname_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ACCOUNTNAME,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Accountname as an Iterator over RDF2Go nodes
+     * Get all values of property AccountName as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAccountname_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAccountName_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), ACCOUNTNAME);
     }
 
     /**
-     * Get all values of property Accountname as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAccountname_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), ACCOUNTNAME,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Accountname * @param model an RDF2Go model
+     * Get all values of property AccountName * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -5667,7 +4710,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllAccountname(
+    public static ClosableIterator<java.lang.String> getAllAccountName(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, ACCOUNTNAME,
@@ -5675,39 +4718,18 @@ public class UserAccount extends SIOCThing {
     }
 
     /**
-     * Get all values of property Accountname as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllAccountname_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ACCOUNTNAME,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Accountname * @return a ClosableIterator of
+     * Get all values of property AccountName * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.String> getAllAccountname() {
+    public ClosableIterator<java.lang.String> getAllAccountName() {
 	return Base.getAll(this.model, this.getResource(), ACCOUNTNAME,
 		java.lang.String.class);
     }
 
     /**
-     * Get all values of property Accountname as a ReactorResult of
+     * Get all values of property AccountName as a ReactorResult of
      * java.lang.String
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
@@ -5716,28 +4738,13 @@ public class UserAccount extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<java.lang.String> getAllAccountname_as() {
-	return Base.getAll_as(this.model, this.getResource(), ACCOUNTNAME,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Accountname as a ReactorResult of
-     * java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public String getAccountname() {
+    public String getAccountName() {
 	return Base.getAll_as(this.model, this.getResource(), ACCOUNTNAME,
 		java.lang.String.class).firstValue();
     }
 
     /**
-     * Adds a value to property Accountname as an RDF2Go node
+     * Adds a value to property AccountName as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -5748,26 +4755,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addAccountname(Model model,
+    public static void addAccountName(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, ACCOUNTNAME, value);
     }
 
     /**
-     * Adds a value to property Accountname as an RDF2Go node
+     * Adds a value to property AccountName as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addAccountname(org.ontoware.rdf2go.model.node.Node value) {
+    public void addAccountName(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), ACCOUNTNAME, value);
     }
 
     /**
-     * Adds a value to property Accountname from an instance of java.lang.String
+     * Adds a value to property AccountName from an instance of java.lang.String
      * 
      * @param model
      *            an RDF2Go model
@@ -5776,23 +4783,23 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addAccountname(Model model,
+    public static void addAccountName(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
 	Base.add(model, instanceResource, ACCOUNTNAME, value);
     }
 
     /**
-     * Adds a value to property Accountname from an instance of java.lang.String
+     * Adds a value to property AccountName from an instance of java.lang.String
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addAccountname(java.lang.String value) {
+    public void addAccountName(java.lang.String value) {
 	Base.add(this.model, this.getResource(), ACCOUNTNAME, value);
     }
 
     /**
-     * Sets a value of property Accountname from an RDF2Go node. First, all
+     * Sets a value of property AccountName from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -5806,14 +4813,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setAccountname(Model model,
+    public static void setAccountName(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, ACCOUNTNAME, value);
     }
 
     /**
-     * Sets a value of property Accountname from an RDF2Go node. First, all
+     * Sets a value of property AccountName from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -5823,12 +4830,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setAccountname(org.ontoware.rdf2go.model.node.Node value) {
+    public void setAccountName(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), ACCOUNTNAME, value);
     }
 
     /**
-     * Sets a value of property Accountname from an instance of java.lang.String
+     * Sets a value of property AccountName from an instance of java.lang.String
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -5842,14 +4849,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setAccountname(Model model,
+    public static void setAccountName(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
 	Base.set(model, instanceResource, ACCOUNTNAME, value);
     }
 
     /**
-     * Sets a value of property Accountname from an instance of java.lang.String
+     * Sets a value of property AccountName from an instance of java.lang.String
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -5859,12 +4866,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setAccountname(java.lang.String value) {
+    public void setAccountName(java.lang.String value) {
 	Base.set(this.model, this.getResource(), ACCOUNTNAME, value);
     }
 
     /**
-     * Removes a value of property Accountname as an RDF2Go node
+     * Removes a value of property AccountName as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -5875,26 +4882,26 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeAccountname(Model model,
+    public static void removeAccountName(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, ACCOUNTNAME, value);
     }
 
     /**
-     * Removes a value of property Accountname as an RDF2Go node
+     * Removes a value of property AccountName as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeAccountname(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeAccountName(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), ACCOUNTNAME, value);
     }
 
     /**
-     * Removes a value of property Accountname given as an instance of
+     * Removes a value of property AccountName given as an instance of
      * java.lang.String
      * 
      * @param model
@@ -5906,14 +4913,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeAccountname(Model model,
+    public static void removeAccountName(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
 	Base.remove(model, instanceResource, ACCOUNTNAME, value);
     }
 
     /**
-     * Removes a value of property Accountname given as an instance of
+     * Removes a value of property AccountName given as an instance of
      * java.lang.String
      * 
      * @param value
@@ -5921,28 +4928,28 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeAccountname(java.lang.String value) {
+    public void removeAccountName(java.lang.String value) {
 	Base.remove(this.model, this.getResource(), ACCOUNTNAME, value);
     }
 
     /**
-     * Removes all values of property Accountname * @param model an RDF2Go model
+     * Removes all values of property AccountName * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllAccountname(Model model,
+    public static void removeAllAccountName(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, ACCOUNTNAME);
     }
 
     /**
-     * Removes all values of property Accountname * [Generated from RDFReactor
+     * Removes all values of property AccountName * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllAccountname() {
+    public void removeAllAccountName() {
 	Base.removeAll(this.model, this.getResource(), ACCOUNTNAME);
     }
 
@@ -5958,7 +4965,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasAccountservicehomepage(Model model,
+    public static boolean hasAccountServiceHomepage(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, ACCOUNTSERVICEHOMEPAGE);
     }
@@ -5971,7 +4978,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasAccountservicehomepage() {
+    public boolean hasAccountServiceHomepage() {
 	return Base.has(this.model, this.getResource(), ACCOUNTSERVICEHOMEPAGE);
     }
 
@@ -5990,7 +4997,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasAccountservicehomepage(Model model,
+    public static boolean hasAccountServiceHomepage(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, ACCOUNTSERVICEHOMEPAGE,
@@ -6008,14 +5015,14 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasAccountservicehomepage(
+    public boolean hasAccountServiceHomepage(
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(),
 		ACCOUNTSERVICEHOMEPAGE, value);
     }
 
     /**
-     * Get all values of property Accountservicehomepage as an Iterator over
+     * Get all values of property AccountServiceHomepage as an Iterator over
      * RDF2Go nodes
      * 
      * @param model
@@ -6026,7 +5033,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAccountservicehomepage_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAccountServiceHomepage_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource,
@@ -6034,55 +5041,20 @@ public class UserAccount extends SIOCThing {
     }
 
     /**
-     * Get all values of property Accountservicehomepage as a ReactorResult of
-     * RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAccountservicehomepage_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ACCOUNTSERVICEHOMEPAGE,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Accountservicehomepage as an Iterator over
+     * Get all values of property AccountServiceHomepage as an Iterator over
      * RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAccountservicehomepage_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAccountServiceHomepage_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		ACCOUNTSERVICEHOMEPAGE);
     }
 
     /**
-     * Get all values of property Accountservicehomepage as a ReactorResult of
-     * RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAccountservicehomepage_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(),
-		ACCOUNTSERVICEHOMEPAGE,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Accountservicehomepage * @param model an
+     * Get all values of property AccountServiceHomepage * @param model an
      * RDF2Go model
      * 
      * @param resource
@@ -6091,7 +5063,7 @@ public class UserAccount extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Document> getAllAccountservicehomepage(
+    public static ClosableIterator<Document> getAllAccountServiceHomepage(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, ACCOUNTSERVICEHOMEPAGE,
@@ -6099,39 +5071,18 @@ public class UserAccount extends SIOCThing {
     }
 
     /**
-     * Get all values of property Accountservicehomepage as a ReactorResult of
-     * Document
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Document> getAllAccountservicehomepage_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ACCOUNTSERVICEHOMEPAGE,
-		Document.class);
-    }
-
-    /**
-     * Get all values of property Accountservicehomepage * @return a
+     * Get all values of property AccountServiceHomepage * @return a
      * ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Document> getAllAccountservicehomepage() {
+    public ClosableIterator<Document> getAllAccountServiceHomepage() {
 	return Base.getAll(this.model, this.getResource(),
 		ACCOUNTSERVICEHOMEPAGE, Document.class);
     }
 
     /**
-     * Get all values of property Accountservicehomepage as a ReactorResult of
+     * Get all values of property AccountServiceHomepage as a ReactorResult of
      * Document
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
@@ -6140,28 +5091,13 @@ public class UserAccount extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Document> getAllAccountservicehomepage_as() {
-	return Base.getAll_as(this.model, this.getResource(),
-		ACCOUNTSERVICEHOMEPAGE, Document.class);
-    }
-
-    /**
-     * Get all values of property Accountservicehomepage as a ReactorResult of
-     * Document
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public Document getAccountservicehomepage() {
+    public Document getAccountServiceHomepage() {
 	return Base.getAll_as(this.model, this.getResource(),
 		ACCOUNTSERVICEHOMEPAGE, Document.class).firstValue();
     }
 
     /**
-     * Adds a value to property Accountservicehomepage as an RDF2Go node
+     * Adds a value to property AccountServiceHomepage as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -6172,27 +5108,27 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addAccountservicehomepage(Model model,
+    public static void addAccountServiceHomepage(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, ACCOUNTSERVICEHOMEPAGE, value);
     }
 
     /**
-     * Adds a value to property Accountservicehomepage as an RDF2Go node
+     * Adds a value to property AccountServiceHomepage as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addAccountservicehomepage(
+    public void addAccountServiceHomepage(
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), ACCOUNTSERVICEHOMEPAGE, value);
     }
 
     /**
-     * Adds a value to property Accountservicehomepage from an instance of
+     * Adds a value to property AccountServiceHomepage from an instance of
      * Document
      * 
      * @param model
@@ -6202,24 +5138,24 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addAccountservicehomepage(Model model,
+    public static void addAccountServiceHomepage(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Document value) {
 	Base.add(model, instanceResource, ACCOUNTSERVICEHOMEPAGE, value);
     }
 
     /**
-     * Adds a value to property Accountservicehomepage from an instance of
+     * Adds a value to property AccountServiceHomepage from an instance of
      * Document
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addAccountservicehomepage(Document value) {
+    public void addAccountServiceHomepage(Document value) {
 	Base.add(this.model, this.getResource(), ACCOUNTSERVICEHOMEPAGE, value);
     }
 
     /**
-     * Sets a value of property Accountservicehomepage from an RDF2Go node.
+     * Sets a value of property AccountServiceHomepage from an RDF2Go node.
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -6233,14 +5169,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setAccountservicehomepage(Model model,
+    public static void setAccountServiceHomepage(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, ACCOUNTSERVICEHOMEPAGE, value);
     }
 
     /**
-     * Sets a value of property Accountservicehomepage from an RDF2Go node.
+     * Sets a value of property AccountServiceHomepage from an RDF2Go node.
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -6250,13 +5186,13 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setAccountservicehomepage(
+    public void setAccountServiceHomepage(
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), ACCOUNTSERVICEHOMEPAGE, value);
     }
 
     /**
-     * Sets a value of property Accountservicehomepage from an instance of
+     * Sets a value of property AccountServiceHomepage from an instance of
      * Document First, all existing values are removed, then this value is
      * added. Cardinality constraints are not checked, but this method exists
      * only for properties with no minCardinality or minCardinality == 1.
@@ -6270,14 +5206,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setAccountservicehomepage(Model model,
+    public static void setAccountServiceHomepage(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Document value) {
 	Base.set(model, instanceResource, ACCOUNTSERVICEHOMEPAGE, value);
     }
 
     /**
-     * Sets a value of property Accountservicehomepage from an instance of
+     * Sets a value of property AccountServiceHomepage from an instance of
      * Document First, all existing values are removed, then this value is
      * added. Cardinality constraints are not checked, but this method exists
      * only for properties with no minCardinality or minCardinality == 1.
@@ -6287,12 +5223,12 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setAccountservicehomepage(Document value) {
+    public void setAccountServiceHomepage(Document value) {
 	Base.set(this.model, this.getResource(), ACCOUNTSERVICEHOMEPAGE, value);
     }
 
     /**
-     * Removes a value of property Accountservicehomepage as an RDF2Go node
+     * Removes a value of property AccountServiceHomepage as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -6303,28 +5239,28 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeAccountservicehomepage(Model model,
+    public static void removeAccountServiceHomepage(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, ACCOUNTSERVICEHOMEPAGE, value);
     }
 
     /**
-     * Removes a value of property Accountservicehomepage as an RDF2Go node
+     * Removes a value of property AccountServiceHomepage as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeAccountservicehomepage(
+    public void removeAccountServiceHomepage(
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), ACCOUNTSERVICEHOMEPAGE,
 		value);
     }
 
     /**
-     * Removes a value of property Accountservicehomepage given as an instance
+     * Removes a value of property AccountServiceHomepage given as an instance
      * of Document
      * 
      * @param model
@@ -6336,14 +5272,14 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeAccountservicehomepage(Model model,
+    public static void removeAccountServiceHomepage(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    Document value) {
 	Base.remove(model, instanceResource, ACCOUNTSERVICEHOMEPAGE, value);
     }
 
     /**
-     * Removes a value of property Accountservicehomepage given as an instance
+     * Removes a value of property AccountServiceHomepage given as an instance
      * of Document
      * 
      * @param value
@@ -6351,13 +5287,13 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeAccountservicehomepage(Document value) {
+    public void removeAccountServiceHomepage(Document value) {
 	Base.remove(this.model, this.getResource(), ACCOUNTSERVICEHOMEPAGE,
 		value);
     }
 
     /**
-     * Removes all values of property Accountservicehomepage * @param model an
+     * Removes all values of property AccountServiceHomepage * @param model an
      * RDF2Go model
      * 
      * @param resource
@@ -6365,16 +5301,16 @@ public class UserAccount extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllAccountservicehomepage(Model model,
+    public static void removeAllAccountServiceHomepage(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, ACCOUNTSERVICEHOMEPAGE);
     }
 
     /**
-     * Removes all values of property Accountservicehomepage * [Generated from
+     * Removes all values of property AccountServiceHomepage * [Generated from
      * RDFReactor template rule #removeall1dynamic]
      */
-    public void removeAllAccountservicehomepage() {
+    public void removeAllAccountServiceHomepage() {
 	Base.removeAll(this.model, this.getResource(), ACCOUNTSERVICEHOMEPAGE);
     }
 }

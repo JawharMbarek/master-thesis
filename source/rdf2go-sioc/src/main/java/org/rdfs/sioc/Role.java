@@ -10,12 +10,11 @@ import org.ontoware.rdf2go.model.node.BlankNode;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
 import org.ontoware.rdfreactor.runtime.Base;
-import org.ontoware.rdfreactor.runtime.ReactorResult;
 
 /**
  * This class manages access to these properties:
  * <ul>
- * <li>Functionof</li>
+ * <li>FunctionOf</li>
  * <li>Scope</li>
  * </ul>
  * 
@@ -215,18 +214,6 @@ public class Role extends SIOCThing {
     }
 
     /**
-     * @param model
-     *            an RDF2Go model
-     * @return all instances of this class in Model 'model' as a ReactorResult,
-     *         which can conveniently be converted to iterator, list or array.
-     * 
-     *         [Generated from RDFReactor template rule #class3-as]
-     */
-    public static ReactorResult<? extends Role> getAllInstances_as(Model model) {
-	return Base.getAllInstances_as(model, RDFS_CLASS, Role.class);
-    }
-
-    /**
      * Remove rdf:type Role from this instance. Other triples are not affected.
      * To delete more, use deleteAllProperties
      * 
@@ -286,28 +273,12 @@ public class Role extends SIOCThing {
      * @param model
      *            an RDF2Go model
      * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Function' to
-     *         this Role instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllFunction_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.FUNCTION, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
      * @return all A's as RDF resources, that have a relation 'Scopeof' to this
      *         Role instance
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllScopeof_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllScopeOf_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, SIOCThing.SCOPEOF, objectValue);
     }
@@ -318,25 +289,9 @@ public class Role extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllScopeof_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllScopeOf_Inverse() {
 	return Base.getAll_Inverse(this.model, SIOCThing.SCOPEOF,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Scopeof' to
-     *         this Role instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllScopeof_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.SCOPEOF, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -351,7 +306,7 @@ public class Role extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasFunctionof(Model model,
+    public static boolean hasFunctionOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, FUNCTIONOF);
     }
@@ -364,7 +319,7 @@ public class Role extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasFunctionof() {
+    public boolean hasFunctionOf() {
 	return Base.has(this.model, this.getResource(), FUNCTIONOF);
     }
 
@@ -383,7 +338,7 @@ public class Role extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasFunctionof(Model model,
+    public static boolean hasFunctionOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, FUNCTIONOF, value);
@@ -400,12 +355,12 @@ public class Role extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasFunctionof(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasFunctionOf(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), FUNCTIONOF, value);
     }
 
     /**
-     * Get all values of property Functionof as an Iterator over RDF2Go nodes
+     * Get all values of property FunctionOf as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -415,57 +370,25 @@ public class Role extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFunctionof_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFunctionOf_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, FUNCTIONOF);
     }
 
     /**
-     * Get all values of property Functionof as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllFunctionof_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, FUNCTIONOF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Functionof as an Iterator over RDF2Go nodes
+     * Get all values of property FunctionOf as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFunctionof_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFunctionOf_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), FUNCTIONOF);
     }
 
     /**
-     * Get all values of property Functionof as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllFunctionof_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), FUNCTIONOF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Functionof * @param model an RDF2Go model
+     * Get all values of property FunctionOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -473,44 +396,25 @@ public class Role extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<SIOCThing> getAllFunctionof(Model model,
+    public static ClosableIterator<SIOCThing> getAllFunctionOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base
 		.getAll(model, instanceResource, FUNCTIONOF, SIOCThing.class);
     }
 
     /**
-     * Get all values of property Functionof as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<SIOCThing> getAllFunctionof_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, FUNCTIONOF,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Functionof * @return a ClosableIterator of
+     * Get all values of property FunctionOf * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<SIOCThing> getAllFunctionof() {
+    public ClosableIterator<SIOCThing> getAllFunctionOf() {
 	return Base.getAll(this.model, this.getResource(), FUNCTIONOF,
 		SIOCThing.class);
     }
 
     /**
-     * Get all values of property Functionof as a ReactorResult of Thing
+     * Get all values of property FunctionOf as a ReactorResult of Thing
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
      *         iterator, list or array
@@ -518,27 +422,13 @@ public class Role extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<SIOCThing> getAllFunctionof_as() {
-	return Base.getAll_as(this.model, this.getResource(), FUNCTIONOF,
-		SIOCThing.class);
-    }
-    
-    /**
-     * Get all values of property Functionof as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public SIOCThing getFunctionof() {
+    public SIOCThing getFunctionOf() {
 	return Base.getAll_as(this.model, this.getResource(), FUNCTIONOF,
 		SIOCThing.class).firstValue();
     }
 
     /**
-     * Adds a value to property Functionof as an RDF2Go node
+     * Adds a value to property FunctionOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -549,26 +439,26 @@ public class Role extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addFunctionof(Model model,
+    public static void addFunctionOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, FUNCTIONOF, value);
     }
 
     /**
-     * Adds a value to property Functionof as an RDF2Go node
+     * Adds a value to property FunctionOf as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addFunctionof(org.ontoware.rdf2go.model.node.Node value) {
+    public void addFunctionOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), FUNCTIONOF, value);
     }
 
     /**
-     * Adds a value to property Functionof from an instance of Thing
+     * Adds a value to property FunctionOf from an instance of Thing
      * 
      * @param model
      *            an RDF2Go model
@@ -577,23 +467,23 @@ public class Role extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addFunctionof(Model model,
+    public static void addFunctionOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.add(model, instanceResource, FUNCTIONOF, value);
     }
 
     /**
-     * Adds a value to property Functionof from an instance of Thing
+     * Adds a value to property FunctionOf from an instance of Thing
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addFunctionof(SIOCThing value) {
+    public void addFunctionOf(SIOCThing value) {
 	Base.add(this.model, this.getResource(), FUNCTIONOF, value);
     }
 
     /**
-     * Sets a value of property Functionof from an RDF2Go node. First, all
+     * Sets a value of property FunctionOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -607,14 +497,14 @@ public class Role extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setFunctionof(Model model,
+    public static void setFunctionOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, FUNCTIONOF, value);
     }
 
     /**
-     * Sets a value of property Functionof from an RDF2Go node. First, all
+     * Sets a value of property FunctionOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -624,12 +514,12 @@ public class Role extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setFunctionof(org.ontoware.rdf2go.model.node.Node value) {
+    public void setFunctionOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), FUNCTIONOF, value);
     }
 
     /**
-     * Sets a value of property Functionof from an instance of Thing First, all
+     * Sets a value of property FunctionOf from an instance of Thing First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -643,14 +533,14 @@ public class Role extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setFunctionof(Model model,
+    public static void setFunctionOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.set(model, instanceResource, FUNCTIONOF, value);
     }
 
     /**
-     * Sets a value of property Functionof from an instance of Thing First, all
+     * Sets a value of property FunctionOf from an instance of Thing First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -660,12 +550,12 @@ public class Role extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setFunctionof(SIOCThing value) {
+    public void setFunctionOf(SIOCThing value) {
 	Base.set(this.model, this.getResource(), FUNCTIONOF, value);
     }
 
     /**
-     * Removes a value of property Functionof as an RDF2Go node
+     * Removes a value of property FunctionOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -676,26 +566,26 @@ public class Role extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeFunctionof(Model model,
+    public static void removeFunctionOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, FUNCTIONOF, value);
     }
 
     /**
-     * Removes a value of property Functionof as an RDF2Go node
+     * Removes a value of property FunctionOf as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeFunctionof(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeFunctionOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), FUNCTIONOF, value);
     }
 
     /**
-     * Removes a value of property Functionof given as an instance of Thing
+     * Removes a value of property FunctionOf given as an instance of Thing
      * 
      * @param model
      *            an RDF2Go model
@@ -706,42 +596,42 @@ public class Role extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeFunctionof(Model model,
+    public static void removeFunctionOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.remove(model, instanceResource, FUNCTIONOF, value);
     }
 
     /**
-     * Removes a value of property Functionof given as an instance of Thing
+     * Removes a value of property FunctionOf given as an instance of Thing
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeFunctionof(SIOCThing value) {
+    public void removeFunctionOf(SIOCThing value) {
 	Base.remove(this.model, this.getResource(), FUNCTIONOF, value);
     }
 
     /**
-     * Removes all values of property Functionof * @param model an RDF2Go model
+     * Removes all values of property FunctionOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllFunctionof(Model model,
+    public static void removeAllFunctionOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, FUNCTIONOF);
     }
 
     /**
-     * Removes all values of property Functionof * [Generated from RDFReactor
+     * Removes all values of property FunctionOf * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllFunctionof() {
+    public void removeAllFunctionOf() {
 	Base.removeAll(this.model, this.getResource(), FUNCTIONOF);
     }
 
@@ -757,7 +647,7 @@ public class Role extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasScope(Model model,
+    public static boolean hasScopes(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, SCOPE);
     }
@@ -770,7 +660,7 @@ public class Role extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasScope() {
+    public boolean hasScopes() {
 	return Base.has(this.model, this.getResource(), SCOPE);
     }
 
@@ -821,29 +711,10 @@ public class Role extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllScope_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllScopes_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, SCOPE);
-    }
-
-    /**
-     * Get all values of property Scope as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllScope_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SCOPE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -853,21 +724,8 @@ public class Role extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllScope_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllScopes_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), SCOPE);
-    }
-
-    /**
-     * Get all values of property Scope as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllScope_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), SCOPE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -879,27 +737,9 @@ public class Role extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<SIOCThing> getAllScope(Model model,
+    public static ClosableIterator<SIOCThing> getAllScopes(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, SCOPE, SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Scope as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<SIOCThing> getAllScope_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SCOPE, SIOCThing.class);
     }
 
     /**
@@ -907,22 +747,8 @@ public class Role extends SIOCThing {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<SIOCThing> getAllScope() {
+    public ClosableIterator<SIOCThing> getAllScopes() {
 	return Base.getAll(this.model, this.getResource(), SCOPE,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Scope as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<SIOCThing> getAllScope_as() {
-	return Base.getAll_as(this.model, this.getResource(), SCOPE,
 		SIOCThing.class);
     }
 
@@ -1135,7 +961,7 @@ public class Role extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllScope(Model model,
+    public static void removeAllScopes(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, SCOPE);
     }
@@ -1144,7 +970,7 @@ public class Role extends SIOCThing {
      * Removes all values of property Scope * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllScope() {
+    public void removeAllScopes() {
 	Base.removeAll(this.model, this.getResource(), SCOPE);
     }
 }

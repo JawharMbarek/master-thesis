@@ -274,10 +274,10 @@ public class MoodleConnector extends AbstractConnector {
 
 	if (null != posts) {
 	    Date lastItemDate = new Date(0);
-	    if (container.hasLastitemdate()) {
+	    if (container.hasLastItemDate()) {
 		try {
 		    lastItemDate = RDFTool.string2DateTime(container
-			    .getLastitemdate());
+			    .getLastItemDate());
 		} catch (ParseException e1) {
 		    lastItemDate = new Date(0);
 		}
@@ -319,10 +319,10 @@ public class MoodleConnector extends AbstractConnector {
 	List<Post> result = new ArrayList<Post>();
 	Date lastReplyDate = new Date(0);
 
-	if (parentPost.hasLastreplydate()) {
+	if (parentPost.hasLastReplyDate()) {
 	    try {
 		lastReplyDate = RDFTool.string2DateTime(parentPost
-			.getLastreplydate());
+			.getLastReplyDate());
 	    } catch (ParseException e1) {
 		lastReplyDate = new Date(0);
 	    }
@@ -366,7 +366,7 @@ public class MoodleConnector extends AbstractConnector {
 	if (getModel().contains(container, RDF.type, SIOC.Thread)) {
 	    Thread thread = Thread.getInstance(getModel(),
 		    container.getResource());
-	    if (thread.hasParent()) {
+	    if (thread.hasParents()) {
 		Container parent = thread.getParent();
 		if (getModel().contains(parent, RDF.type, SIOC.Forum)) {
 		    Forum forum = Forum.getInstance(getModel(),
@@ -388,12 +388,12 @@ public class MoodleConnector extends AbstractConnector {
 	// 1) It has a container that is a thread
 	// 2) This thread has a parent Forum
 	// 3) The parent forum belongs to this moodle instance
-	if (parentPost.hasContainer()) {
+	if (parentPost.hasContainers()) {
 	    Container container = parentPost.getContainer();
 	    if (getModel().contains(container, RDF.type, SIOC.Thread)) {
 		Thread thread = Thread.getInstance(getModel(),
 			container.getResource());
-		if (thread.hasParent()) {
+		if (thread.hasParents()) {
 		    Container parentContainer = thread.getParent();
 		    if (getModel().contains(parentContainer, RDF.type,
 			    SIOC.Forum)) {
@@ -424,11 +424,11 @@ public class MoodleConnector extends AbstractConnector {
 	Preconditions.checkArgument(canPublishOn(container));
 
 	final ForumPostDatum datum = new ForumPostDatum(moodle.getNAMESPACE());
-	datum.setMessage(post.getAllContent_as().firstValue());
+	datum.setMessage(post.getContent());
 	if (post.hasTitle()) {
-	    datum.setSubject(post.getAllTitle_as().firstValue());
+	    datum.setSubject(post.getTitle());
 	} else if (post.hasSubject()) {
-	    datum.setSubject(post.getAllSubject_as().firstValue());
+	    datum.setSubject(post.getSubject());
 	} else {
 	    datum.setSubject("");
 	}
@@ -501,11 +501,11 @@ public class MoodleConnector extends AbstractConnector {
 		"can not reply on parentPost");
 
 	final ForumPostDatum datum = new ForumPostDatum(moodle.getNAMESPACE());
-	datum.setMessage(post.getAllContent_as().firstValue());
+	datum.setMessage(post.getContent());
 	if (post.hasTitle()) {
-	    datum.setSubject(post.getAllTitle_as().firstValue());
+	    datum.setSubject(post.getTitle());
 	} else if (post.hasSubject()) {
-	    datum.setSubject(post.getAllSubject_as().firstValue());
+	    datum.setSubject(post.getSubject());
 	} else {
 	    datum.setSubject("");
 	}

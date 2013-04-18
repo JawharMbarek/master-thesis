@@ -197,7 +197,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	    pub.setId(myId + "/" + ID_FORUM_PUBLIC);
 	    pub.setName("Public");
 	    pub.setHost(getSite());
-	    getSite().addHostof(pub);
+	    getSite().addHostOf(pub);
 	}
 
 	uri = RDF2GoUtils.createURI(getURL() + myId + "/" + ID_FORUM_MOMENTS);
@@ -207,7 +207,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	    moments.setId(myId + "/" + ID_FORUM_MOMENTS);
 	    moments.setName("Moments");
 	    moments.setHost(getSite());
-	    getSite().setHostof(moments);
+	    getSite().addHostOf(moments);
 	}
     }
 
@@ -266,7 +266,7 @@ public class GooglePlusConnector extends AbstractConnector {
 
 	    result.setId(user.getId());
 	    result.setIsPartOf(getSite());
-	    result.setAccountservicehomepage(RDF2GoUtils.createURI(getURL()));
+	    result.setAccountServiceHomepage(RDF2GoUtils.createURI(getURL()));
 
 	    if (null != user.getAboutMe()) {
 		result.setDescription(user.getAboutMe());
@@ -277,14 +277,14 @@ public class GooglePlusConnector extends AbstractConnector {
 	    }
 
 	    if (null != user.getNickname()) {
-		result.setAccountname(user.getNickname());
+		result.setAccountName(user.getNickname());
 	    }
 
 	    if (null != user.getEmails()) {
 		for (Emails email : user.getEmails()) {
 		    result.addEmail(RDF2GoUtils.createMailtoURI(email
 			    .getValue()));
-		    result.addEmailsha1(RDFTool.sha1sum(email.getValue()));
+		    result.addEmailSha1(RDFTool.sha1sum(email.getValue()));
 		}
 	    }
 
@@ -382,10 +382,10 @@ public class GooglePlusConnector extends AbstractConnector {
 	List<Post> result = new ArrayList<Post>();
 	Date lastItemDate = new Date(0);
 
-	if (container.hasLastitemdate()) {
+	if (container.hasLastItemDate()) {
 	    try {
 		lastItemDate = RDFTool.string2DateTime(container
-			.getLastitemdate());
+			.getLastItemDate());
 	    } catch (ParseException e1) {
 		lastItemDate = new Date(0);
 	    }
@@ -493,10 +493,10 @@ public class GooglePlusConnector extends AbstractConnector {
 	List<Post> result = new ArrayList<Post>();
 	Date lastItemDate = new Date(0);
 
-	if (container.hasLastitemdate()) {
+	if (container.hasLastItemDate()) {
 	    try {
 		lastItemDate = RDFTool.string2DateTime(container
-			.getLastitemdate());
+			.getLastItemDate());
 	    } catch (ParseException e1) {
 		lastItemDate = new Date(0);
 	    }
@@ -572,7 +572,7 @@ public class GooglePlusConnector extends AbstractConnector {
 
 			    // set sioc connections
 			    post.setContainer(container);
-			    container.addContainerof(post);
+			    container.addContainerOf(post);
 			    SIOCUtils.updateLastItemDate(container, post);
 
 			    result.add(post);
@@ -601,10 +601,10 @@ public class GooglePlusConnector extends AbstractConnector {
 	String pageToken = null;
 	Date lastReplyDate = new Date(0);
 
-	if (parentPost.hasLastreplydate()) {
+	if (parentPost.hasLastReplyDate()) {
 	    try {
 		lastReplyDate = RDFTool.string2DateTime(parentPost
-			.getLastreplydate());
+			.getLastReplyDate());
 	    } catch (ParseException e1) {
 		lastReplyDate = new Date(0);
 	    }
@@ -672,13 +672,13 @@ public class GooglePlusConnector extends AbstractConnector {
 			    }
 
 			    // set sioc connections
-			    reply.setReplyof(parentPost);
+			    reply.setReplyOf(parentPost);
 			    parentPost.addReply(reply);
 			    SIOCUtils.updateLastReplyDate(parentPost, reply);
 
 			    Container container = parentPost.getContainer();
 			    reply.setContainer(container);
-			    container.addContainerof(reply);
+			    container.addContainerOf(reply);
 			    SIOCUtils.updateLastItemDate(container, reply);
 
 			    result.add(reply);

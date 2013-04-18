@@ -11,7 +11,6 @@ import org.ontoware.rdf2go.model.node.BlankNode;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
 import org.ontoware.rdfreactor.runtime.Base;
-import org.ontoware.rdfreactor.runtime.ReactorResult;
 import org.ontoware.rdfreactor.schema.owl.OwlThing;
 
 /**
@@ -26,20 +25,20 @@ import org.ontoware.rdfreactor.schema.owl.OwlThing;
  * <li>Description</li>
  * <li>Function</li>
  * <li>Id</li>
- * <li>Lastactivitydate</li>
- * <li>Lastreplydate</li>
- * <li>Linksto</li>
+ * <li>LastActivityDate</li>
+ * <li>LastReplyDate</li>
+ * <li>LinksTo</li>
  * <li>modified</li>
  * <li>Name</li>
  * <li>Note</li>
- * <li>Numauthors</li>
- * <li>Numreplies</li>
- * <li>Numviews</li>
+ * <li>NumAuthors</li>
+ * <li>NumReplies</li>
+ * <li>NumViews</li>
  * <li>Owner</li>
  * <li>part</li>
  * <li>References</li>
- * <li>Relatedto</li>
- * <li>Scopeof</li>
+ * <li>RelatedTo</li>
+ * <li>ScopeOf</li>
  * <li>Space</li>
  * <li>Title</li>
  * <li>Topic</li>
@@ -352,19 +351,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * @param model
-     *            an RDF2Go model
-     * @return all instances of this class in Model 'model' as a ReactorResult,
-     *         which can conveniently be converted to iterator, list or array.
-     * 
-     *         [Generated from RDFReactor template rule #class3-as]
-     */
-    public static ReactorResult<? extends SIOCThing> getAllInstances_as(
-	    Model model) {
-	return Base.getAllInstances_as(model, RDFS_CLASS, SIOCThing.class);
-    }
-
-    /**
      * Remove rdf:type Thing from this instance. Other triples are not affected.
      * To delete more, use deleteAllProperties
      * 
@@ -424,22 +410,6 @@ public class SIOCThing extends OwlThing {
      * @param model
      *            an RDF2Go model
      * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'HasPart' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllHasPart_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.HASPART, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
      * @return all A's as RDF resources, that have a relation 'IsPartOf' to this
      *         Thing instance
      * 
@@ -465,28 +435,12 @@ public class SIOCThing extends OwlThing {
      * @param model
      *            an RDF2Go model
      * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'IsPartOf' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllIsPartOf_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.ISPARTOF, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
      * @return all A's as RDF resources, that have a relation 'Date' to this
      *         Thing instance
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDate_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDatess_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, SIOCThing.DATE, objectValue);
     }
@@ -497,25 +451,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDate_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDatess_Inverse() {
 	return Base.getAll_Inverse(this.model, SIOCThing.DATE,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Date' to this
-     *         Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllDate_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.DATE, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -527,7 +465,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDescription_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDescriptionss_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, SIOCThing.DESCRIPTION, objectValue);
     }
@@ -538,7 +476,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDescription_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDescriptionss_Inverse() {
 	return Base.getAll_Inverse(this.model, SIOCThing.DESCRIPTION,
 		this.getResource());
     }
@@ -547,57 +485,25 @@ public class SIOCThing extends OwlThing {
      * @param model
      *            an RDF2Go model
      * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Description' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllDescription_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.DESCRIPTION,
-		objectValue, org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as RDF resources, that have a relation 'Linksto' to this
+     * @return all A's as RDF resources, that have a relation 'LinksTo' to this
      *         Thing instance
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllLinksto_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllLinksTo_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, SIOCThing.LINKSTO, objectValue);
     }
 
     /**
-     * @return all A's as RDF resources, that have a relation 'Linksto' to this
+     * @return all A's as RDF resources, that have a relation 'LinksTo' to this
      *         Thing instance
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllLinksto_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllLinksTo_Inverse() {
 	return Base.getAll_Inverse(this.model, SIOCThing.LINKSTO,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Linksto' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllLinksto_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.LINKSTO, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -629,57 +535,25 @@ public class SIOCThing extends OwlThing {
      * @param model
      *            an RDF2Go model
      * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'References' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllReferences_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.REFERENCES, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as RDF resources, that have a relation 'Relatedto' to
+     * @return all A's as RDF resources, that have a relation 'RelatedTo' to
      *         this Thing instance
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllRelatedto_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllRelatedTo_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, SIOCThing.RELATEDTO, objectValue);
     }
 
     /**
-     * @return all A's as RDF resources, that have a relation 'Relatedto' to
+     * @return all A's as RDF resources, that have a relation 'RelatedTo' to
      *         this Thing instance
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllRelatedto_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllRelatedTo_Inverse() {
 	return Base.getAll_Inverse(this.model, SIOCThing.RELATEDTO,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Relatedto' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllRelatedto_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.RELATEDTO, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -691,7 +565,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSubject_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSubjects_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, SIOCThing.SUBJECT, objectValue);
     }
@@ -702,25 +576,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSubject_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSubjects_Inverse() {
 	return Base.getAll_Inverse(this.model, SIOCThing.SUBJECT,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Subject' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllSubject_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.SUBJECT, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -732,7 +590,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllTitle_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllTitles_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, SIOCThing.TITLE, objectValue);
     }
@@ -743,25 +601,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllTitle_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllTitles_Inverse() {
 	return Base.getAll_Inverse(this.model, SIOCThing.TITLE,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Title' to this
-     *         Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllTitle_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.TITLE, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -773,7 +615,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllTopic_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllTopics_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, SIOCThing.TOPIC, objectValue);
     }
@@ -784,25 +626,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllTopic_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllTopics_Inverse() {
 	return Base.getAll_Inverse(this.model, SIOCThing.TOPIC,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Topic' to this
-     *         Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllTopic_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.TOPIC, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -814,7 +640,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllFunctionof_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllFunctionsOf_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, Role.FUNCTIONOF, objectValue);
     }
@@ -825,25 +651,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllFunctionof_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllFunctionsOf_Inverse() {
 	return Base.getAll_Inverse(this.model, Role.FUNCTIONOF,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Functionof' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllFunctionof_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Role.FUNCTIONOF, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -855,7 +665,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllScope_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllScopes_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, Role.SCOPE, objectValue);
     }
@@ -866,24 +676,8 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllScope_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllScopes_Inverse() {
 	return Base.getAll_Inverse(this.model, Role.SCOPE, this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Scope' to this
-     *         Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllScope_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Role.SCOPE, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -914,28 +708,12 @@ public class SIOCThing extends OwlThing {
      * @param model
      *            an RDF2Go model
      * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'About' to this
-     *         Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllAbout_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Item.ABOUT, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
      * @return all A's as RDF resources, that have a relation 'Addressedto' to
      *         this Thing instance
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllAddressedto_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllAddressedTo_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, Item.ADDRESSEDTO, objectValue);
     }
@@ -946,25 +724,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllAddressedto_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllAddressedTo_Inverse() {
 	return Base.getAll_Inverse(this.model, Item.ADDRESSEDTO,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Addressedto' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllAddressedto_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Item.ADDRESSEDTO, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -976,7 +738,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllAttachment_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllAttachments_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, Item.ATTACHMENT, objectValue);
     }
@@ -987,25 +749,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllAttachment_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllAttachments_Inverse() {
 	return Base.getAll_Inverse(this.model, Item.ATTACHMENT,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Attachment' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllAttachment_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Item.ATTACHMENT, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -1017,7 +763,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDiscussion_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDiscussions_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, Item.DISCUSSION, objectValue);
     }
@@ -1028,25 +774,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDiscussion_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDiscussions_Inverse() {
 	return Base.getAll_Inverse(this.model, Item.DISCUSSION,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Discussion' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllDiscussion_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Item.DISCUSSION, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -1058,7 +788,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllAvatar_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllAvatars_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, UserAccount.AVATAR, objectValue);
     }
@@ -1069,25 +799,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllAvatar_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllAvatars_Inverse() {
 	return Base.getAll_Inverse(this.model, UserAccount.AVATAR,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Avatar' to this
-     *         Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllAvatar_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, UserAccount.AVATAR, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -1099,7 +813,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllCreatorof_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllCreatorsOf_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, UserAccount.CREATOROF, objectValue);
     }
@@ -1110,25 +824,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllCreatorof_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllCreatorsOf_Inverse() {
 	return Base.getAll_Inverse(this.model, UserAccount.CREATOROF,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Creatorof' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllCreatorof_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, UserAccount.CREATOROF,
-		objectValue, org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -1140,7 +838,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllEmail_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllEmails_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, UserAccount.EMAIL, objectValue);
     }
@@ -1151,25 +849,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllEmail_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllEmails_Inverse() {
 	return Base.getAll_Inverse(this.model, UserAccount.EMAIL,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Email' to this
-     *         Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllEmail_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, UserAccount.EMAIL, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -1181,7 +863,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllOwnerof_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllOwnerOf_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, UserAccount.OWNEROF, objectValue);
     }
@@ -1192,25 +874,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllOwnerof_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllOwnerOf_Inverse() {
 	return Base.getAll_Inverse(this.model, UserAccount.OWNEROF,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Ownerof' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllOwnerof_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, UserAccount.OWNEROF, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -1222,7 +888,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSpaceof_Inverse(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSpaceOf_Inverse(
 	    Model model, Object objectValue) {
 	return Base.getAll_Inverse(model, Space.SPACEOF, objectValue);
     }
@@ -1233,25 +899,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSpaceof_Inverse() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSpaceOf_Inverse() {
 	return Base.getAll_Inverse(this.model, Space.SPACEOF,
 		this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Spaceof' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllSpaceof_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Space.SPACEOF, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -1266,7 +916,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasCreator(Model model,
+    public static boolean hasCreators(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, CREATOR);
     }
@@ -1279,7 +929,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasCreator() {
+    public boolean hasCreators() {
 	return Base.has(this.model, this.getResource(), CREATOR);
     }
 
@@ -1330,29 +980,10 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCreator_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCreators_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, CREATOR);
-    }
-
-    /**
-     * Get all values of property Creator as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllCreator_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, CREATOR,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -1362,21 +993,8 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCreator_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCreators_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), CREATOR);
-    }
-
-    /**
-     * Get all values of property Creator as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllCreator_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), CREATOR,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -1388,28 +1006,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<UserAccount> getAllCreator(Model model,
+    public static ClosableIterator<UserAccount> getAllCreators(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, CREATOR, UserAccount.class);
-    }
-
-    /**
-     * Get all values of property Creator as a ReactorResult of UserAccount
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<UserAccount> getAllCreator_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, CREATOR,
-		UserAccount.class);
     }
 
     /**
@@ -1417,22 +1016,8 @@ public class SIOCThing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<UserAccount> getAllCreator() {
+    public ClosableIterator<UserAccount> getAllCreators() {
 	return Base.getAll(this.model, this.getResource(), CREATOR,
-		UserAccount.class);
-    }
-
-    /**
-     * Get all values of property Creator as a ReactorResult of UserAccount
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<UserAccount> getAllCreator_as() {
-	return Base.getAll_as(this.model, this.getResource(), CREATOR,
 		UserAccount.class);
     }
 
@@ -1645,7 +1230,7 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllCreator(Model model,
+    public static void removeAllCreators(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, CREATOR);
     }
@@ -1654,7 +1239,7 @@ public class SIOCThing extends OwlThing {
      * Removes all values of property Creator * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllCreator() {
+    public void removeAllCreators() {
 	Base.removeAll(this.model, this.getResource(), CREATOR);
     }
 
@@ -1670,7 +1255,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasDate(Model model,
+    public static boolean hasDates(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, DATE);
     }
@@ -1683,7 +1268,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasDate() {
+    public boolean hasDates() {
 	return Base.has(this.model, this.getResource(), DATE);
     }
 
@@ -1734,29 +1319,10 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDate_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDates_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, DATE);
-    }
-
-    /**
-     * Get all values of property Date as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllDate_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, DATE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -1766,21 +1332,8 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDate_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDates_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), DATE);
-    }
-
-    /**
-     * Get all values of property Date as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllDate_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), DATE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -1792,27 +1345,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<String> getAllDate(Model model,
+    public static ClosableIterator<String> getAllDates(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, DATE, String.class);
-    }
-
-    /**
-     * Get all values of property Date as a ReactorResult of String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<String> getAllDate_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, DATE, String.class);
     }
 
     /**
@@ -1820,22 +1355,8 @@ public class SIOCThing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<String> getAllDate() {
+    public ClosableIterator<String> getAllDates() {
 	return Base.getAll(this.model, this.getResource(), DATE, String.class);
-    }
-
-    /**
-     * Get all values of property Date as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<String> getAllDate_as() {
-	return Base.getAll_as(this.model, this.getResource(), DATE,
-		String.class);
     }
 
     /**
@@ -2047,7 +1568,7 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllDate(Model model,
+    public static void removeAllDates(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, DATE);
     }
@@ -2056,7 +1577,7 @@ public class SIOCThing extends OwlThing {
      * Removes all values of property Date * [Generated from RDFReactor template
      * rule #removeall1dynamic]
      */
-    public void removeAllDate() {
+    public void removeAllDates() {
 	Base.removeAll(this.model, this.getResource(), DATE);
     }
 
@@ -2072,7 +1593,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasDescription(Model model,
+    public static boolean hasDescriptions(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, DESCRIPTION);
     }
@@ -2085,7 +1606,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasDescription() {
+    public boolean hasDescriptions() {
 	return Base.has(this.model, this.getResource(), DESCRIPTION);
     }
 
@@ -2137,29 +1658,10 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDescription_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDescriptions_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, DESCRIPTION);
-    }
-
-    /**
-     * Get all values of property Description as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllDescription_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, DESCRIPTION,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2169,21 +1671,8 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDescription_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDescriptions_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), DESCRIPTION);
-    }
-
-    /**
-     * Get all values of property Description as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllDescription_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), DESCRIPTION,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2195,28 +1684,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<String> getAllDescription(Model model,
+    public static ClosableIterator<String> getAllDescriptions(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, DESCRIPTION, String.class);
-    }
-
-    /**
-     * Get all values of property Description as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<String> getAllDescription_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, DESCRIPTION,
-		String.class);
     }
 
     /**
@@ -2225,22 +1695,8 @@ public class SIOCThing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<String> getAllDescription() {
+    public ClosableIterator<String> getAllDescriptions() {
 	return Base.getAll(this.model, this.getResource(), DESCRIPTION,
-		String.class);
-    }
-
-    /**
-     * Get all values of property Description as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<String> getAllDescription_as() {
-	return Base.getAll_as(this.model, this.getResource(), DESCRIPTION,
 		String.class);
     }
 
@@ -2450,7 +1906,7 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllDescription(Model model,
+    public static void removeAllDescriptions(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, DESCRIPTION);
     }
@@ -2459,7 +1915,7 @@ public class SIOCThing extends OwlThing {
      * Removes all values of property Description * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllDescription() {
+    public void removeAllDescriptions() {
 	Base.removeAll(this.model, this.getResource(), DESCRIPTION);
     }
 
@@ -2475,7 +1931,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasFunction(Model model,
+    public static boolean hasFunctions(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, FUNCTION);
     }
@@ -2488,7 +1944,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasFunction() {
+    public boolean hasFunctions() {
 	return Base.has(this.model, this.getResource(), FUNCTION);
     }
 
@@ -2539,29 +1995,10 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFunction_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFunctions_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, FUNCTION);
-    }
-
-    /**
-     * Get all values of property Function as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllFunction_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, FUNCTION,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2571,21 +2008,8 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFunction_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFunctions_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), FUNCTION);
-    }
-
-    /**
-     * Get all values of property Function as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllFunction_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), FUNCTION,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2597,27 +2021,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Role> getAllFunction(Model model,
+    public static ClosableIterator<Role> getAllFunctions(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, FUNCTION, Role.class);
-    }
-
-    /**
-     * Get all values of property Function as a ReactorResult of Role
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Role> getAllFunction_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, FUNCTION, Role.class);
     }
 
     /**
@@ -2625,23 +2031,9 @@ public class SIOCThing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Role> getAllFunction() {
+    public ClosableIterator<Role> getAllFunctions() {
 	return Base
 		.getAll(this.model, this.getResource(), FUNCTION, Role.class);
-    }
-
-    /**
-     * Get all values of property Function as a ReactorResult of Role
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<Role> getAllFunction_as() {
-	return Base.getAll_as(this.model, this.getResource(), FUNCTION,
-		Role.class);
     }
 
     /**
@@ -2850,7 +2242,7 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllFunction(Model model,
+    public static void removeAllFunctions(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, FUNCTION);
     }
@@ -2859,7 +2251,7 @@ public class SIOCThing extends OwlThing {
      * Removes all values of property Function * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllFunction() {
+    public void removeAllFunctions() {
 	Base.removeAll(this.model, this.getResource(), FUNCTION);
     }
 
@@ -2875,7 +2267,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasId(Model model,
+    public static boolean hasIds(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, ID);
     }
@@ -2888,7 +2280,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasId() {
+    public boolean hasIds() {
 	return Base.has(this.model, this.getResource(), ID);
     }
 
@@ -2939,29 +2331,10 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllId_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllIds_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, ID);
-    }
-
-    /**
-     * Get all values of property Id as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllId_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ID,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2971,21 +2344,8 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllId_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllIds_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), ID);
-    }
-
-    /**
-     * Get all values of property Id as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllId_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), ID,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2997,28 +2357,9 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllId(Model model,
+    public static ClosableIterator<java.lang.String> getAllIds(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, ID, java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Id as a ReactorResult of java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllId_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ID,
-		java.lang.String.class);
     }
 
     /**
@@ -3026,22 +2367,8 @@ public class SIOCThing extends OwlThing {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.String> getAllId() {
+    public ClosableIterator<java.lang.String> getAllIds() {
 	return Base.getAll(this.model, this.getResource(), ID,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Id as a ReactorResult of java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<java.lang.String> getAllId_as() {
-	return Base.getAll_as(this.model, this.getResource(), ID,
 		java.lang.String.class);
     }
 
@@ -3254,7 +2581,7 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllId(Model model,
+    public static void removeAllIds(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, ID);
     }
@@ -3263,7 +2590,7 @@ public class SIOCThing extends OwlThing {
      * Removes all values of property Id * [Generated from RDFReactor template
      * rule #removeall1dynamic]
      */
-    public void removeAllId() {
+    public void removeAllIds() {
 	Base.removeAll(this.model, this.getResource(), ID);
     }
 
@@ -3279,7 +2606,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasLastactivitydate(Model model,
+    public static boolean hasLastActivityDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, LASTACTIVITYDATE);
     }
@@ -3292,7 +2619,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasLastactivitydate() {
+    public boolean hasLastActivityDate() {
 	return Base.has(this.model, this.getResource(), LASTACTIVITYDATE);
     }
 
@@ -3311,7 +2638,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasLastactivitydate(Model model,
+    public static boolean hasLastActivityDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, LASTACTIVITYDATE, value);
@@ -3328,13 +2655,13 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasLastactivitydate(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasLastActivityDate(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), LASTACTIVITYDATE,
 		value);
     }
 
     /**
-     * Get all values of property Lastactivitydate as an Iterator over RDF2Go
+     * Get all values of property LastActivityDate as an Iterator over RDF2Go
      * nodes
      * 
      * @param model
@@ -3345,61 +2672,27 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLastactivitydate_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLastActivityDate_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, LASTACTIVITYDATE);
     }
 
     /**
-     * Get all values of property Lastactivitydate as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllLastactivitydate_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, LASTACTIVITYDATE,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Lastactivitydate as an Iterator over RDF2Go
+     * Get all values of property LastActivityDate as an Iterator over RDF2Go
      * nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLastactivitydate_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLastActivityDate_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		LASTACTIVITYDATE);
     }
 
     /**
-     * Get all values of property Lastactivitydate as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllLastactivitydate_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), LASTACTIVITYDATE,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Lastactivitydate * @param model an RDF2Go
+     * Get all values of property LastActivityDate * @param model an RDF2Go
      * model
      * 
      * @param resource
@@ -3408,7 +2701,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllLastactivitydate(
+    public static ClosableIterator<java.lang.String> getAllLastActivityDate(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, LASTACTIVITYDATE,
@@ -3416,39 +2709,18 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Lastactivitydate as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllLastactivitydate_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, LASTACTIVITYDATE,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Lastactivitydate * @return a ClosableIterator
+     * Get all values of property LastActivityDate * @return a ClosableIterator
      * of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.String> getAllLastactivitydate() {
+    public ClosableIterator<java.lang.String> getAllLastActivityDate() {
 	return Base.getAll(this.model, this.getResource(), LASTACTIVITYDATE,
 		java.lang.String.class);
     }
 
     /**
-     * Get all values of property Lastactivitydate as a ReactorResult of
+     * Get all values of property LastActivityDate as a ReactorResult of
      * java.lang.String
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
@@ -3457,28 +2729,13 @@ public class SIOCThing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<java.lang.String> getAllLastactivitydate_as() {
-	return Base.getAll_as(this.model, this.getResource(), LASTACTIVITYDATE,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Lastactivitydate as a ReactorResult of
-     * java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public String getLastactivitydate() {
+    public String getLastActivityDate() {
 	return Base.getAll_as(this.model, this.getResource(), LASTACTIVITYDATE,
 		java.lang.String.class).firstValue();
     }
 
     /**
-     * Adds a value to property Lastactivitydate as an RDF2Go node
+     * Adds a value to property LastActivityDate as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -3489,26 +2746,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addLastactivitydate(Model model,
+    public static void addLastActivityDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, LASTACTIVITYDATE, value);
     }
 
     /**
-     * Adds a value to property Lastactivitydate as an RDF2Go node
+     * Adds a value to property LastActivityDate as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addLastactivitydate(org.ontoware.rdf2go.model.node.Node value) {
+    public void addLastActivityDate(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), LASTACTIVITYDATE, value);
     }
 
     /**
-     * Adds a value to property Lastactivitydate from an instance of
+     * Adds a value to property LastActivityDate from an instance of
      * java.lang.String
      * 
      * @param model
@@ -3518,24 +2775,24 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addLastactivitydate(Model model,
+    public static void addLastActivityDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
 	Base.add(model, instanceResource, LASTACTIVITYDATE, value);
     }
 
     /**
-     * Adds a value to property Lastactivitydate from an instance of
+     * Adds a value to property LastActivityDate from an instance of
      * java.lang.String
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addLastactivitydate(java.lang.String value) {
+    public void addLastActivityDate(java.lang.String value) {
 	Base.add(this.model, this.getResource(), LASTACTIVITYDATE, value);
     }
 
     /**
-     * Sets a value of property Lastactivitydate from an RDF2Go node. First, all
+     * Sets a value of property LastActivityDate from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -3549,14 +2806,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setLastactivitydate(Model model,
+    public static void setLastActivityDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, LASTACTIVITYDATE, value);
     }
 
     /**
-     * Sets a value of property Lastactivitydate from an RDF2Go node. First, all
+     * Sets a value of property LastActivityDate from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -3566,12 +2823,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setLastactivitydate(org.ontoware.rdf2go.model.node.Node value) {
+    public void setLastActivityDate(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), LASTACTIVITYDATE, value);
     }
 
     /**
-     * Sets a value of property Lastactivitydate from an instance of
+     * Sets a value of property LastActivityDate from an instance of
      * java.lang.String First, all existing values are removed, then this value
      * is added. Cardinality constraints are not checked, but this method exists
      * only for properties with no minCardinality or minCardinality == 1.
@@ -3585,14 +2842,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setLastactivitydate(Model model,
+    public static void setLastActivityDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
 	Base.set(model, instanceResource, LASTACTIVITYDATE, value);
     }
 
     /**
-     * Sets a value of property Lastactivitydate from an instance of
+     * Sets a value of property LastActivityDate from an instance of
      * java.lang.String First, all existing values are removed, then this value
      * is added. Cardinality constraints are not checked, but this method exists
      * only for properties with no minCardinality or minCardinality == 1.
@@ -3602,12 +2859,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setLastactivitydate(java.lang.String value) {
+    public void setLastActivityDate(java.lang.String value) {
 	Base.set(this.model, this.getResource(), LASTACTIVITYDATE, value);
     }
 
     /**
-     * Removes a value of property Lastactivitydate as an RDF2Go node
+     * Removes a value of property LastActivityDate as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -3618,26 +2875,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeLastactivitydate(Model model,
+    public static void removeLastActivityDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, LASTACTIVITYDATE, value);
     }
 
     /**
-     * Removes a value of property Lastactivitydate as an RDF2Go node
+     * Removes a value of property LastActivityDate as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeLastactivitydate(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeLastActivityDate(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), LASTACTIVITYDATE, value);
     }
 
     /**
-     * Removes a value of property Lastactivitydate given as an instance of
+     * Removes a value of property LastActivityDate given as an instance of
      * java.lang.String
      * 
      * @param model
@@ -3649,14 +2906,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeLastactivitydate(Model model,
+    public static void removeLastActivityDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
 	Base.remove(model, instanceResource, LASTACTIVITYDATE, value);
     }
 
     /**
-     * Removes a value of property Lastactivitydate given as an instance of
+     * Removes a value of property LastActivityDate given as an instance of
      * java.lang.String
      * 
      * @param value
@@ -3664,12 +2921,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeLastactivitydate(java.lang.String value) {
+    public void removeLastActivityDate(java.lang.String value) {
 	Base.remove(this.model, this.getResource(), LASTACTIVITYDATE, value);
     }
 
     /**
-     * Removes all values of property Lastactivitydate * @param model an RDF2Go
+     * Removes all values of property LastActivityDate * @param model an RDF2Go
      * model
      * 
      * @param resource
@@ -3677,16 +2934,16 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllLastactivitydate(Model model,
+    public static void removeAllLastActivityDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, LASTACTIVITYDATE);
     }
 
     /**
-     * Removes all values of property Lastactivitydate * [Generated from
+     * Removes all values of property LastActivityDate * [Generated from
      * RDFReactor template rule #removeall1dynamic]
      */
-    public void removeAllLastactivitydate() {
+    public void removeAllLastActivityDate() {
 	Base.removeAll(this.model, this.getResource(), LASTACTIVITYDATE);
     }
 
@@ -3702,7 +2959,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasLastreplydate(Model model,
+    public static boolean hasLastReplyDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, LASTREPLYDATE);
     }
@@ -3715,7 +2972,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasLastreplydate() {
+    public boolean hasLastReplyDate() {
 	return Base.has(this.model, this.getResource(), LASTREPLYDATE);
     }
 
@@ -3734,7 +2991,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasLastreplydate(Model model,
+    public static boolean hasLastReplyDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, LASTREPLYDATE, value);
@@ -3751,13 +3008,13 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasLastreplydate(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasLastReplyDate(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), LASTREPLYDATE,
 		value);
     }
 
     /**
-     * Get all values of property Lastreplydate as an Iterator over RDF2Go nodes
+     * Get all values of property LastReplyDate as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -3767,60 +3024,26 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLastreplydate_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLastReplyDate_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, LASTREPLYDATE);
     }
 
     /**
-     * Get all values of property Lastreplydate as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllLastreplydate_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, LASTREPLYDATE,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Lastreplydate as an Iterator over RDF2Go nodes
+     * Get all values of property LastReplyDate as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLastreplydate_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLastReplyDate_asNode() {
 	return Base
 		.getAll_asNode(this.model, this.getResource(), LASTREPLYDATE);
     }
 
     /**
-     * Get all values of property Lastreplydate as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllLastreplydate_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), LASTREPLYDATE,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Lastreplydate * @param model an RDF2Go model
+     * Get all values of property LastReplyDate * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -3828,7 +3051,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllLastreplydate(
+    public static ClosableIterator<java.lang.String> getAllLastReplyDate(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, LASTREPLYDATE,
@@ -3836,39 +3059,18 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Lastreplydate as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllLastreplydate_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, LASTREPLYDATE,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Lastreplydate * @return a ClosableIterator of
+     * Get all values of property LastReplyDate * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.String> getAllLastreplydate() {
+    public ClosableIterator<java.lang.String> getAllLastReplyDate() {
 	return Base.getAll(this.model, this.getResource(), LASTREPLYDATE,
 		java.lang.String.class);
     }
 
     /**
-     * Get all values of property Lastreplydate as a ReactorResult of
+     * Get all values of property LastReplyDate as a ReactorResult of
      * java.lang.String
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
@@ -3877,28 +3079,13 @@ public class SIOCThing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<java.lang.String> getAllLastreplydate_as() {
-	return Base.getAll_as(this.model, this.getResource(), LASTREPLYDATE,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Lastreplydate as a ReactorResult of
-     * java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public String getLastreplydate() {
+    public String getLastReplyDate() {
 	return Base.getAll_as(this.model, this.getResource(), LASTREPLYDATE,
 		java.lang.String.class).firstValue();
     }
 
     /**
-     * Adds a value to property Lastreplydate as an RDF2Go node
+     * Adds a value to property LastReplyDate as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -3909,26 +3096,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addLastreplydate(Model model,
+    public static void addLastReplyDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, LASTREPLYDATE, value);
     }
 
     /**
-     * Adds a value to property Lastreplydate as an RDF2Go node
+     * Adds a value to property LastReplyDate as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addLastreplydate(org.ontoware.rdf2go.model.node.Node value) {
+    public void addLastReplyDate(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), LASTREPLYDATE, value);
     }
 
     /**
-     * Adds a value to property Lastreplydate from an instance of
+     * Adds a value to property LastReplyDate from an instance of
      * java.lang.String
      * 
      * @param model
@@ -3938,24 +3125,24 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addLastreplydate(Model model,
+    public static void addLastReplyDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
 	Base.add(model, instanceResource, LASTREPLYDATE, value);
     }
 
     /**
-     * Adds a value to property Lastreplydate from an instance of
+     * Adds a value to property LastReplyDate from an instance of
      * java.lang.String
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addLastreplydate(java.lang.String value) {
+    public void addLastReplyDate(java.lang.String value) {
 	Base.add(this.model, this.getResource(), LASTREPLYDATE, value);
     }
 
     /**
-     * Sets a value of property Lastreplydate from an RDF2Go node. First, all
+     * Sets a value of property LastReplyDate from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -3969,14 +3156,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setLastreplydate(Model model,
+    public static void setLastReplyDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, LASTREPLYDATE, value);
     }
 
     /**
-     * Sets a value of property Lastreplydate from an RDF2Go node. First, all
+     * Sets a value of property LastReplyDate from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -3986,12 +3173,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setLastreplydate(org.ontoware.rdf2go.model.node.Node value) {
+    public void setLastReplyDate(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), LASTREPLYDATE, value);
     }
 
     /**
-     * Sets a value of property Lastreplydate from an instance of
+     * Sets a value of property LastReplyDate from an instance of
      * java.lang.String First, all existing values are removed, then this value
      * is added. Cardinality constraints are not checked, but this method exists
      * only for properties with no minCardinality or minCardinality == 1.
@@ -4005,14 +3192,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setLastreplydate(Model model,
+    public static void setLastReplyDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
 	Base.set(model, instanceResource, LASTREPLYDATE, value);
     }
 
     /**
-     * Sets a value of property Lastreplydate from an instance of
+     * Sets a value of property LastReplyDate from an instance of
      * java.lang.String First, all existing values are removed, then this value
      * is added. Cardinality constraints are not checked, but this method exists
      * only for properties with no minCardinality or minCardinality == 1.
@@ -4022,12 +3209,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setLastreplydate(java.lang.String value) {
+    public void setLastReplyDate(java.lang.String value) {
 	Base.set(this.model, this.getResource(), LASTREPLYDATE, value);
     }
 
     /**
-     * Removes a value of property Lastreplydate as an RDF2Go node
+     * Removes a value of property LastReplyDate as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -4038,26 +3225,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeLastreplydate(Model model,
+    public static void removeLastReplyDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, LASTREPLYDATE, value);
     }
 
     /**
-     * Removes a value of property Lastreplydate as an RDF2Go node
+     * Removes a value of property LastReplyDate as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeLastreplydate(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeLastReplyDate(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), LASTREPLYDATE, value);
     }
 
     /**
-     * Removes a value of property Lastreplydate given as an instance of
+     * Removes a value of property LastReplyDate given as an instance of
      * java.lang.String
      * 
      * @param model
@@ -4069,14 +3256,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeLastreplydate(Model model,
+    public static void removeLastReplyDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
 	Base.remove(model, instanceResource, LASTREPLYDATE, value);
     }
 
     /**
-     * Removes a value of property Lastreplydate given as an instance of
+     * Removes a value of property LastReplyDate given as an instance of
      * java.lang.String
      * 
      * @param value
@@ -4084,12 +3271,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeLastreplydate(java.lang.String value) {
+    public void removeLastReplyDate(java.lang.String value) {
 	Base.remove(this.model, this.getResource(), LASTREPLYDATE, value);
     }
 
     /**
-     * Removes all values of property Lastreplydate * @param model an RDF2Go
+     * Removes all values of property LastReplyDate * @param model an RDF2Go
      * model
      * 
      * @param resource
@@ -4097,16 +3284,16 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllLastreplydate(Model model,
+    public static void removeAllLastReplyDate(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, LASTREPLYDATE);
     }
 
     /**
-     * Removes all values of property Lastreplydate * [Generated from RDFReactor
+     * Removes all values of property LastReplyDate * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllLastreplydate() {
+    public void removeAllLastReplyDate() {
 	Base.removeAll(this.model, this.getResource(), LASTREPLYDATE);
     }
 
@@ -4122,7 +3309,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasLinksto(Model model,
+    public static boolean hasLinksTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, LINKSTO);
     }
@@ -4135,7 +3322,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasLinksto() {
+    public boolean hasLinksTo() {
 	return Base.has(this.model, this.getResource(), LINKSTO);
     }
 
@@ -4154,7 +3341,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasLinksto(Model model,
+    public static boolean hasLinksTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, LINKSTO, value);
@@ -4171,12 +3358,12 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasLinksto(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasLinksTo(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), LINKSTO, value);
     }
 
     /**
-     * Get all values of property Linksto as an Iterator over RDF2Go nodes
+     * Get all values of property LinksTo as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -4186,57 +3373,25 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLinksto_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLinksTo_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, LINKSTO);
     }
 
     /**
-     * Get all values of property Linksto as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllLinksto_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, LINKSTO,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Linksto as an Iterator over RDF2Go nodes
+     * Get all values of property LinksTo as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLinksto_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLinksTo_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), LINKSTO);
     }
 
     /**
-     * Get all values of property Linksto as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllLinksto_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), LINKSTO,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Linksto * @param model an RDF2Go model
+     * Get all values of property LinksTo * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -4244,42 +3399,23 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<SIOCThing> getAllLinksto(Model model,
+    public static ClosableIterator<SIOCThing> getAllLinksTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, LINKSTO, SIOCThing.class);
     }
 
     /**
-     * Get all values of property Linksto as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<SIOCThing> getAllLinksto_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base
-		.getAll_as(model, instanceResource, LINKSTO, SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Linksto * @return a ClosableIterator of $type
+     * Get all values of property LinksTo * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<SIOCThing> getAllLinksto() {
+    public ClosableIterator<SIOCThing> getAllLinksTo() {
 	return Base.getAll(this.model, this.getResource(), LINKSTO,
 		SIOCThing.class);
     }
 
     /**
-     * Get all values of property Linksto as a ReactorResult of Thing
+     * Get all values of property LinksTo as a ReactorResult of Thing
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
      *         iterator, list or array
@@ -4287,27 +3423,13 @@ public class SIOCThing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<SIOCThing> getAllLinksto_as() {
-	return Base.getAll_as(this.model, this.getResource(), LINKSTO,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Linksto as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public SIOCThing getLinksto() {
+    public SIOCThing getLinksTo() {
 	return Base.getAll_as(this.model, this.getResource(), LINKSTO,
 		SIOCThing.class).firstValue();
     }
 
     /**
-     * Adds a value to property Linksto as an RDF2Go node
+     * Adds a value to property LinksTo as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -4318,26 +3440,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addLinksto(Model model,
+    public static void addLinksTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, LINKSTO, value);
     }
 
     /**
-     * Adds a value to property Linksto as an RDF2Go node
+     * Adds a value to property LinksTo as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addLinksto(org.ontoware.rdf2go.model.node.Node value) {
+    public void addLinksTo(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), LINKSTO, value);
     }
 
     /**
-     * Adds a value to property Linksto from an instance of Thing
+     * Adds a value to property LinksTo from an instance of Thing
      * 
      * @param model
      *            an RDF2Go model
@@ -4346,23 +3468,23 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addLinksto(Model model,
+    public static void addLinksTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.add(model, instanceResource, LINKSTO, value);
     }
 
     /**
-     * Adds a value to property Linksto from an instance of Thing
+     * Adds a value to property LinksTo from an instance of Thing
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addLinksto(SIOCThing value) {
+    public void addLinksTo(SIOCThing value) {
 	Base.add(this.model, this.getResource(), LINKSTO, value);
     }
 
     /**
-     * Sets a value of property Linksto from an RDF2Go node. First, all existing
+     * Sets a value of property LinksTo from an RDF2Go node. First, all existing
      * values are removed, then this value is added. Cardinality constraints are
      * not checked, but this method exists only for properties with no
      * minCardinality or minCardinality == 1.
@@ -4376,14 +3498,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setLinksto(Model model,
+    public static void setLinksTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, LINKSTO, value);
     }
 
     /**
-     * Sets a value of property Linksto from an RDF2Go node. First, all existing
+     * Sets a value of property LinksTo from an RDF2Go node. First, all existing
      * values are removed, then this value is added. Cardinality constraints are
      * not checked, but this method exists only for properties with no
      * minCardinality or minCardinality == 1.
@@ -4393,12 +3515,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setLinksto(org.ontoware.rdf2go.model.node.Node value) {
+    public void setLinksTo(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), LINKSTO, value);
     }
 
     /**
-     * Sets a value of property Linksto from an instance of Thing First, all
+     * Sets a value of property LinksTo from an instance of Thing First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -4412,14 +3534,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setLinksto(Model model,
+    public static void setLinksTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.set(model, instanceResource, LINKSTO, value);
     }
 
     /**
-     * Sets a value of property Linksto from an instance of Thing First, all
+     * Sets a value of property LinksTo from an instance of Thing First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -4429,12 +3551,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setLinksto(SIOCThing value) {
+    public void setLinksTo(SIOCThing value) {
 	Base.set(this.model, this.getResource(), LINKSTO, value);
     }
 
     /**
-     * Removes a value of property Linksto as an RDF2Go node
+     * Removes a value of property LinksTo as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -4445,26 +3567,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeLinksto(Model model,
+    public static void removeLinksTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, LINKSTO, value);
     }
 
     /**
-     * Removes a value of property Linksto as an RDF2Go node
+     * Removes a value of property LinksTo as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeLinksto(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeLinksTo(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), LINKSTO, value);
     }
 
     /**
-     * Removes a value of property Linksto given as an instance of Thing
+     * Removes a value of property LinksTo given as an instance of Thing
      * 
      * @param model
      *            an RDF2Go model
@@ -4475,42 +3597,42 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeLinksto(Model model,
+    public static void removeLinksTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.remove(model, instanceResource, LINKSTO, value);
     }
 
     /**
-     * Removes a value of property Linksto given as an instance of Thing
+     * Removes a value of property LinksTo given as an instance of Thing
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeLinksto(SIOCThing value) {
+    public void removeLinksTo(SIOCThing value) {
 	Base.remove(this.model, this.getResource(), LINKSTO, value);
     }
 
     /**
-     * Removes all values of property Linksto * @param model an RDF2Go model
+     * Removes all values of property LinksTo * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllLinksto(Model model,
+    public static void removeAllLinksTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, LINKSTO);
     }
 
     /**
-     * Removes all values of property Linksto * [Generated from RDFReactor
+     * Removes all values of property LinksTo * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllLinksto() {
+    public void removeAllLinksTo() {
 	Base.removeAll(this.model, this.getResource(), LINKSTO);
     }
 
@@ -4597,25 +3719,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Name as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllName_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, _NAME,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Name as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -4624,19 +3727,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllName_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), _NAME);
-    }
-
-    /**
-     * Get all values of property Name as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllName_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), _NAME,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -4655,45 +3745,12 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Name as a ReactorResult of java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllName_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, _NAME,
-		java.lang.String.class);
-    }
-
-    /**
      * Get all values of property Name * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<java.lang.String> getAllName() {
 	return Base.getAll(this.model, this.getResource(), _NAME,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Name as a ReactorResult of java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<java.lang.String> getAllName_as() {
-	return Base.getAll_as(this.model, this.getResource(), _NAME,
 		java.lang.String.class);
     }
 
@@ -5002,25 +4059,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Note as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllNote_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, NOTE,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Note as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -5029,19 +4067,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNote_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), NOTE);
-    }
-
-    /**
-     * Get all values of property Note as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllNote_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), NOTE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -5060,45 +4085,12 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Note as a ReactorResult of java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllNote_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, NOTE,
-		java.lang.String.class);
-    }
-
-    /**
      * Get all values of property Note * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<java.lang.String> getAllNote() {
 	return Base.getAll(this.model, this.getResource(), NOTE,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Note as a ReactorResult of java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<java.lang.String> getAllNote_as() {
-	return Base.getAll_as(this.model, this.getResource(), NOTE,
 		java.lang.String.class);
     }
 
@@ -5336,7 +4328,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasNumauthors(Model model,
+    public static boolean hasNumAuthors(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, NUMAUTHORS);
     }
@@ -5349,7 +4341,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasNumauthors() {
+    public boolean hasNumAuthors() {
 	return Base.has(this.model, this.getResource(), NUMAUTHORS);
     }
 
@@ -5368,7 +4360,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasNumauthors(Model model,
+    public static boolean hasNumAuthors(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, NUMAUTHORS, value);
@@ -5385,12 +4377,12 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasNumauthors(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasNumAuthors(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), NUMAUTHORS, value);
     }
 
     /**
-     * Get all values of property Numauthors as an Iterator over RDF2Go nodes
+     * Get all values of property NumAuthors as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -5400,57 +4392,25 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNumauthors_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNumAuthors_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, NUMAUTHORS);
     }
 
     /**
-     * Get all values of property Numauthors as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllNumauthors_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, NUMAUTHORS,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Numauthors as an Iterator over RDF2Go nodes
+     * Get all values of property NumAuthors as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNumauthors_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNumAuthors_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), NUMAUTHORS);
     }
 
     /**
-     * Get all values of property Numauthors as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllNumauthors_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), NUMAUTHORS,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Numauthors * @param model an RDF2Go model
+     * Get all values of property NumAuthors * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -5458,7 +4418,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.Integer> getAllNumauthors(
+    public static ClosableIterator<java.lang.Integer> getAllNumAuthors(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, NUMAUTHORS,
@@ -5466,39 +4426,18 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Numauthors as a ReactorResult of
-     * java.lang.Integer
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.Integer> getAllNumauthors_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, NUMAUTHORS,
-		java.lang.Integer.class);
-    }
-
-    /**
-     * Get all values of property Numauthors * @return a ClosableIterator of
+     * Get all values of property NumAuthors * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.Integer> getAllNumauthors() {
+    public ClosableIterator<java.lang.Integer> getAllNumAuthors() {
 	return Base.getAll(this.model, this.getResource(), NUMAUTHORS,
 		java.lang.Integer.class);
     }
 
     /**
-     * Get all values of property Numauthors as a ReactorResult of
+     * Get all values of property NumAuthors as a ReactorResult of
      * java.lang.Integer
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
@@ -5507,28 +4446,13 @@ public class SIOCThing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<java.lang.Integer> getAllNumauthors_as() {
-	return Base.getAll_as(this.model, this.getResource(), NUMAUTHORS,
-		java.lang.Integer.class);
-    }
-
-    /**
-     * Get all values of property Numauthors as a ReactorResult of
-     * java.lang.Integer
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public Integer getNumauthors() {
+    public Integer getNumAuthors() {
 	return Base.getAll_as(this.model, this.getResource(), NUMAUTHORS,
 		java.lang.Integer.class).firstValue();
     }
 
     /**
-     * Adds a value to property Numauthors as an RDF2Go node
+     * Adds a value to property NumAuthors as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -5539,26 +4463,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addNumauthors(Model model,
+    public static void addNumAuthors(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, NUMAUTHORS, value);
     }
 
     /**
-     * Adds a value to property Numauthors as an RDF2Go node
+     * Adds a value to property NumAuthors as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addNumauthors(org.ontoware.rdf2go.model.node.Node value) {
+    public void addNumAuthors(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), NUMAUTHORS, value);
     }
 
     /**
-     * Adds a value to property Numauthors from an instance of java.lang.Integer
+     * Adds a value to property NumAuthors from an instance of java.lang.Integer
      * 
      * @param model
      *            an RDF2Go model
@@ -5567,23 +4491,23 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addNumauthors(Model model,
+    public static void addNumAuthors(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.Integer value) {
 	Base.add(model, instanceResource, NUMAUTHORS, value);
     }
 
     /**
-     * Adds a value to property Numauthors from an instance of java.lang.Integer
+     * Adds a value to property NumAuthors from an instance of java.lang.Integer
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addNumauthors(java.lang.Integer value) {
+    public void addNumAuthors(java.lang.Integer value) {
 	Base.add(this.model, this.getResource(), NUMAUTHORS, value);
     }
 
     /**
-     * Sets a value of property Numauthors from an RDF2Go node. First, all
+     * Sets a value of property NumAuthors from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -5597,14 +4521,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setNumauthors(Model model,
+    public static void setNumAuthors(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, NUMAUTHORS, value);
     }
 
     /**
-     * Sets a value of property Numauthors from an RDF2Go node. First, all
+     * Sets a value of property NumAuthors from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -5614,12 +4538,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setNumauthors(org.ontoware.rdf2go.model.node.Node value) {
+    public void setNumAuthors(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), NUMAUTHORS, value);
     }
 
     /**
-     * Sets a value of property Numauthors from an instance of java.lang.Integer
+     * Sets a value of property NumAuthors from an instance of java.lang.Integer
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -5633,14 +4557,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setNumauthors(Model model,
+    public static void setNumAuthors(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.Integer value) {
 	Base.set(model, instanceResource, NUMAUTHORS, value);
     }
 
     /**
-     * Sets a value of property Numauthors from an instance of java.lang.Integer
+     * Sets a value of property NumAuthors from an instance of java.lang.Integer
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -5650,12 +4574,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setNumauthors(java.lang.Integer value) {
+    public void setNumAuthors(java.lang.Integer value) {
 	Base.set(this.model, this.getResource(), NUMAUTHORS, value);
     }
 
     /**
-     * Removes a value of property Numauthors as an RDF2Go node
+     * Removes a value of property NumAuthors as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -5666,26 +4590,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeNumauthors(Model model,
+    public static void removeNumAuthors(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, NUMAUTHORS, value);
     }
 
     /**
-     * Removes a value of property Numauthors as an RDF2Go node
+     * Removes a value of property NumAuthors as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeNumauthors(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeNumAuthors(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), NUMAUTHORS, value);
     }
 
     /**
-     * Removes a value of property Numauthors given as an instance of
+     * Removes a value of property NumAuthors given as an instance of
      * java.lang.Integer
      * 
      * @param model
@@ -5697,14 +4621,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeNumauthors(Model model,
+    public static void removeNumAuthors(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.Integer value) {
 	Base.remove(model, instanceResource, NUMAUTHORS, value);
     }
 
     /**
-     * Removes a value of property Numauthors given as an instance of
+     * Removes a value of property NumAuthors given as an instance of
      * java.lang.Integer
      * 
      * @param value
@@ -5712,28 +4636,28 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeNumauthors(java.lang.Integer value) {
+    public void removeNumAuthors(java.lang.Integer value) {
 	Base.remove(this.model, this.getResource(), NUMAUTHORS, value);
     }
 
     /**
-     * Removes all values of property Numauthors * @param model an RDF2Go model
+     * Removes all values of property NumAuthors * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllNumauthors(Model model,
+    public static void removeAllNumAuthors(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, NUMAUTHORS);
     }
 
     /**
-     * Removes all values of property Numauthors * [Generated from RDFReactor
+     * Removes all values of property NumAuthors * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllNumauthors() {
+    public void removeAllNumAuthors() {
 	Base.removeAll(this.model, this.getResource(), NUMAUTHORS);
     }
 
@@ -5749,7 +4673,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasNumreplies(Model model,
+    public static boolean hasNumReplies(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, NUMREPLIES);
     }
@@ -5762,7 +4686,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasNumreplies() {
+    public boolean hasNumReplies() {
 	return Base.has(this.model, this.getResource(), NUMREPLIES);
     }
 
@@ -5781,7 +4705,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasNumreplies(Model model,
+    public static boolean hasNumReplies(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, NUMREPLIES, value);
@@ -5798,12 +4722,12 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasNumreplies(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasNumReplies(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), NUMREPLIES, value);
     }
 
     /**
-     * Get all values of property Numreplies as an Iterator over RDF2Go nodes
+     * Get all values of property NumReplies as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -5813,57 +4737,25 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNumreplies_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNumReplies_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, NUMREPLIES);
     }
 
     /**
-     * Get all values of property Numreplies as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllNumreplies_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, NUMREPLIES,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Numreplies as an Iterator over RDF2Go nodes
+     * Get all values of property NumReplies as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNumreplies_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNumReplies_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), NUMREPLIES);
     }
 
     /**
-     * Get all values of property Numreplies as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllNumreplies_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), NUMREPLIES,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Numreplies * @param model an RDF2Go model
+     * Get all values of property NumReplies * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -5871,7 +4763,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.Integer> getAllNumreplies(
+    public static ClosableIterator<java.lang.Integer> getAllNumReplies(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, NUMREPLIES,
@@ -5879,39 +4771,18 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Numreplies as a ReactorResult of
-     * java.lang.Integer
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.Integer> getAllNumreplies_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, NUMREPLIES,
-		java.lang.Integer.class);
-    }
-
-    /**
-     * Get all values of property Numreplies * @return a ClosableIterator of
+     * Get all values of property NumReplies * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.Integer> getAllNumreplies() {
+    public ClosableIterator<java.lang.Integer> getAllNumReplies() {
 	return Base.getAll(this.model, this.getResource(), NUMREPLIES,
 		java.lang.Integer.class);
     }
 
     /**
-     * Get all values of property Numreplies as a ReactorResult of
+     * Get all values of property NumReplies as a ReactorResult of
      * java.lang.Integer
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
@@ -5920,13 +4791,13 @@ public class SIOCThing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public java.lang.Integer getNumreplies() {
+    public java.lang.Integer getNumReplies() {
 	return Base.getAll_as(this.model, this.getResource(), NUMREPLIES,
 		java.lang.Integer.class).firstValue();
     }
 
     /**
-     * Adds a value to property Numreplies as an RDF2Go node
+     * Adds a value to property NumReplies as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -5937,26 +4808,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addNumreplies(Model model,
+    public static void addNumReplies(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, NUMREPLIES, value);
     }
 
     /**
-     * Adds a value to property Numreplies as an RDF2Go node
+     * Adds a value to property NumReplies as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addNumreplies(org.ontoware.rdf2go.model.node.Node value) {
+    public void addNumReplies(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), NUMREPLIES, value);
     }
 
     /**
-     * Adds a value to property Numreplies from an instance of java.lang.Integer
+     * Adds a value to property NumReplies from an instance of java.lang.Integer
      * 
      * @param model
      *            an RDF2Go model
@@ -5965,23 +4836,23 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addNumreplies(Model model,
+    public static void addNumReplies(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.Integer value) {
 	Base.add(model, instanceResource, NUMREPLIES, value);
     }
 
     /**
-     * Adds a value to property Numreplies from an instance of java.lang.Integer
+     * Adds a value to property NumReplies from an instance of java.lang.Integer
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addNumreplies(java.lang.Integer value) {
+    public void addNumReplies(java.lang.Integer value) {
 	Base.add(this.model, this.getResource(), NUMREPLIES, value);
     }
 
     /**
-     * Sets a value of property Numreplies from an RDF2Go node. First, all
+     * Sets a value of property NumReplies from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -5995,14 +4866,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setNumreplies(Model model,
+    public static void setNumReplies(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, NUMREPLIES, value);
     }
 
     /**
-     * Sets a value of property Numreplies from an RDF2Go node. First, all
+     * Sets a value of property NumReplies from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -6012,12 +4883,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setNumreplies(org.ontoware.rdf2go.model.node.Node value) {
+    public void setNumReplies(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), NUMREPLIES, value);
     }
 
     /**
-     * Sets a value of property Numreplies from an instance of java.lang.Integer
+     * Sets a value of property NumReplies from an instance of java.lang.Integer
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -6031,14 +4902,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setNumreplies(Model model,
+    public static void setNumReplies(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.Integer value) {
 	Base.set(model, instanceResource, NUMREPLIES, value);
     }
 
     /**
-     * Sets a value of property Numreplies from an instance of java.lang.Integer
+     * Sets a value of property NumReplies from an instance of java.lang.Integer
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -6048,12 +4919,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setNumreplies(java.lang.Integer value) {
+    public void setNumReplies(java.lang.Integer value) {
 	Base.set(this.model, this.getResource(), NUMREPLIES, value);
     }
 
     /**
-     * Removes a value of property Numreplies as an RDF2Go node
+     * Removes a value of property NumReplies as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -6064,26 +4935,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeNumreplies(Model model,
+    public static void removeNumReplies(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, NUMREPLIES, value);
     }
 
     /**
-     * Removes a value of property Numreplies as an RDF2Go node
+     * Removes a value of property NumReplies as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeNumreplies(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeNumReplies(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), NUMREPLIES, value);
     }
 
     /**
-     * Removes a value of property Numreplies given as an instance of
+     * Removes a value of property NumReplies given as an instance of
      * java.lang.Integer
      * 
      * @param model
@@ -6095,14 +4966,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeNumreplies(Model model,
+    public static void removeNumReplies(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.Integer value) {
 	Base.remove(model, instanceResource, NUMREPLIES, value);
     }
 
     /**
-     * Removes a value of property Numreplies given as an instance of
+     * Removes a value of property NumReplies given as an instance of
      * java.lang.Integer
      * 
      * @param value
@@ -6110,28 +4981,28 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeNumreplies(java.lang.Integer value) {
+    public void removeNumReplies(java.lang.Integer value) {
 	Base.remove(this.model, this.getResource(), NUMREPLIES, value);
     }
 
     /**
-     * Removes all values of property Numreplies * @param model an RDF2Go model
+     * Removes all values of property NumReplies * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllNumreplies(Model model,
+    public static void removeAllNumReplies(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, NUMREPLIES);
     }
 
     /**
-     * Removes all values of property Numreplies * [Generated from RDFReactor
+     * Removes all values of property NumReplies * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllNumreplies() {
+    public void removeAllNumReplies() {
 	Base.removeAll(this.model, this.getResource(), NUMREPLIES);
     }
 
@@ -6147,7 +5018,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasNumviews(Model model,
+    public static boolean hasNumViews(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, NUMVIEWS);
     }
@@ -6160,7 +5031,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasNumviews() {
+    public boolean hasNumViews() {
 	return Base.has(this.model, this.getResource(), NUMVIEWS);
     }
 
@@ -6179,7 +5050,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasNumviews(Model model,
+    public static boolean hasNumViews(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, NUMVIEWS, value);
@@ -6196,12 +5067,12 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasNumviews(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasNumViews(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), NUMVIEWS, value);
     }
 
     /**
-     * Get all values of property Numviews as an Iterator over RDF2Go nodes
+     * Get all values of property NumViews as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -6211,57 +5082,25 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNumviews_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNumViews_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, NUMVIEWS);
     }
 
     /**
-     * Get all values of property Numviews as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllNumviews_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, NUMVIEWS,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Numviews as an Iterator over RDF2Go nodes
+     * Get all values of property NumViews as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNumviews_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNumViews_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), NUMVIEWS);
     }
 
     /**
-     * Get all values of property Numviews as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllNumviews_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), NUMVIEWS,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Numviews * @param model an RDF2Go model
+     * Get all values of property NumViews * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -6269,7 +5108,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.Integer> getAllNumviews(
+    public static ClosableIterator<java.lang.Integer> getAllNumViews(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, NUMVIEWS,
@@ -6277,38 +5116,17 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Numviews as a ReactorResult of
-     * java.lang.Integer
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.Integer> getAllNumviews_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, NUMVIEWS,
-		java.lang.Integer.class);
-    }
-
-    /**
-     * Get all values of property Numviews * @return a ClosableIterator of $type
+     * Get all values of property NumViews * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.Integer> getAllNumviews() {
+    public ClosableIterator<java.lang.Integer> getAllNumViews() {
 	return Base.getAll(this.model, this.getResource(), NUMVIEWS,
 		java.lang.Integer.class);
     }
 
     /**
-     * Get all values of property Numviews as a ReactorResult of
+     * Get all values of property NumViews as a ReactorResult of
      * java.lang.Integer
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
@@ -6317,28 +5135,13 @@ public class SIOCThing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<java.lang.Integer> getAllNumviews_as() {
-	return Base.getAll_as(this.model, this.getResource(), NUMVIEWS,
-		java.lang.Integer.class);
-    }
-
-    /**
-     * Get all values of property Numviews as a ReactorResult of
-     * java.lang.Integer
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public Integer getNumviews() {
+    public Integer getNumViews() {
 	return Base.getAll_as(this.model, this.getResource(), NUMVIEWS,
 		java.lang.Integer.class).firstValue();
     }
 
     /**
-     * Adds a value to property Numviews as an RDF2Go node
+     * Adds a value to property NumViews as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -6349,26 +5152,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addNumviews(Model model,
+    public static void addNumViews(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, NUMVIEWS, value);
     }
 
     /**
-     * Adds a value to property Numviews as an RDF2Go node
+     * Adds a value to property NumViews as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addNumviews(org.ontoware.rdf2go.model.node.Node value) {
+    public void addNumViews(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), NUMVIEWS, value);
     }
 
     /**
-     * Adds a value to property Numviews from an instance of java.lang.Integer
+     * Adds a value to property NumViews from an instance of java.lang.Integer
      * 
      * @param model
      *            an RDF2Go model
@@ -6377,23 +5180,23 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addNumviews(Model model,
+    public static void addNumViews(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.Integer value) {
 	Base.add(model, instanceResource, NUMVIEWS, value);
     }
 
     /**
-     * Adds a value to property Numviews from an instance of java.lang.Integer
+     * Adds a value to property NumViews from an instance of java.lang.Integer
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addNumviews(java.lang.Integer value) {
+    public void addNumViews(java.lang.Integer value) {
 	Base.add(this.model, this.getResource(), NUMVIEWS, value);
     }
 
     /**
-     * Sets a value of property Numviews from an RDF2Go node. First, all
+     * Sets a value of property NumViews from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -6407,14 +5210,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setNumviews(Model model,
+    public static void setNumViews(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, NUMVIEWS, value);
     }
 
     /**
-     * Sets a value of property Numviews from an RDF2Go node. First, all
+     * Sets a value of property NumViews from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -6424,12 +5227,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setNumviews(org.ontoware.rdf2go.model.node.Node value) {
+    public void setNumViews(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), NUMVIEWS, value);
     }
 
     /**
-     * Sets a value of property Numviews from an instance of java.lang.Integer
+     * Sets a value of property NumViews from an instance of java.lang.Integer
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -6443,14 +5246,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setNumviews(Model model,
+    public static void setNumViews(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.Integer value) {
 	Base.set(model, instanceResource, NUMVIEWS, value);
     }
 
     /**
-     * Sets a value of property Numviews from an instance of java.lang.Integer
+     * Sets a value of property NumViews from an instance of java.lang.Integer
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -6460,12 +5263,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setNumviews(java.lang.Integer value) {
+    public void setNumViews(java.lang.Integer value) {
 	Base.set(this.model, this.getResource(), NUMVIEWS, value);
     }
 
     /**
-     * Removes a value of property Numviews as an RDF2Go node
+     * Removes a value of property NumViews as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -6476,26 +5279,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeNumviews(Model model,
+    public static void removeNumViews(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, NUMVIEWS, value);
     }
 
     /**
-     * Removes a value of property Numviews as an RDF2Go node
+     * Removes a value of property NumViews as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeNumviews(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeNumViews(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), NUMVIEWS, value);
     }
 
     /**
-     * Removes a value of property Numviews given as an instance of
+     * Removes a value of property NumViews given as an instance of
      * java.lang.Integer
      * 
      * @param model
@@ -6507,14 +5310,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeNumviews(Model model,
+    public static void removeNumViews(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.Integer value) {
 	Base.remove(model, instanceResource, NUMVIEWS, value);
     }
 
     /**
-     * Removes a value of property Numviews given as an instance of
+     * Removes a value of property NumViews given as an instance of
      * java.lang.Integer
      * 
      * @param value
@@ -6522,28 +5325,28 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeNumviews(java.lang.Integer value) {
+    public void removeNumViews(java.lang.Integer value) {
 	Base.remove(this.model, this.getResource(), NUMVIEWS, value);
     }
 
     /**
-     * Removes all values of property Numviews * @param model an RDF2Go model
+     * Removes all values of property NumViews * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllNumviews(Model model,
+    public static void removeAllNumViews(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, NUMVIEWS);
     }
 
     /**
-     * Removes all values of property Numviews * [Generated from RDFReactor
+     * Removes all values of property NumViews * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllNumviews() {
+    public void removeAllNumViews() {
 	Base.removeAll(this.model, this.getResource(), NUMVIEWS);
     }
 
@@ -6630,25 +5433,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Owner as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllOwner_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, OWNER,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Owner as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -6657,19 +5441,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllOwner_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), OWNER);
-    }
-
-    /**
-     * Get all values of property Owner as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllOwner_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), OWNER,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -6687,45 +5458,12 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Owner as a ReactorResult of UserAccount
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<UserAccount> getAllOwner_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base
-		.getAll_as(model, instanceResource, OWNER, UserAccount.class);
-    }
-
-    /**
      * Get all values of property Owner * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<UserAccount> getAllOwner() {
 	return Base.getAll(this.model, this.getResource(), OWNER,
-		UserAccount.class);
-    }
-
-    /**
-     * Get all values of property Owner as a ReactorResult of UserAccount
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<UserAccount> getAllOwner_as() {
-	return Base.getAll_as(this.model, this.getResource(), OWNER,
 		UserAccount.class);
     }
 
@@ -7034,25 +5772,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property References as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllReferences_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, REFERENCES,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property References as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -7061,19 +5780,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllReferences_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), REFERENCES);
-    }
-
-    /**
-     * Get all values of property References as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllReferences_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), REFERENCES,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -7092,25 +5798,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property References as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<SIOCThing> getAllReferences_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, REFERENCES,
-		SIOCThing.class);
-    }
-
-    /**
      * Get all values of property References * @return a ClosableIterator of
      * $type
      * 
@@ -7118,20 +5805,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<SIOCThing> getAllReferences() {
 	return Base.getAll(this.model, this.getResource(), REFERENCES,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property References as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<SIOCThing> getAllReferences_as() {
-	return Base.getAll_as(this.model, this.getResource(), REFERENCES,
 		SIOCThing.class);
     }
 
@@ -7369,7 +6042,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasRelatedto(Model model,
+    public static boolean hasRelatedTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, RELATEDTO);
     }
@@ -7382,7 +6055,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasRelatedto() {
+    public boolean hasRelatedTo() {
 	return Base.has(this.model, this.getResource(), RELATEDTO);
     }
 
@@ -7401,7 +6074,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasRelatedto(Model model,
+    public static boolean hasRelatedTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, RELATEDTO, value);
@@ -7418,12 +6091,12 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasRelatedto(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasRelatedTo(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), RELATEDTO, value);
     }
 
     /**
-     * Get all values of property Relatedto as an Iterator over RDF2Go nodes
+     * Get all values of property RelatedTo as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -7433,57 +6106,25 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllRelatedto_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllRelatedTo_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, RELATEDTO);
     }
 
     /**
-     * Get all values of property Relatedto as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllRelatedto_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, RELATEDTO,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Relatedto as an Iterator over RDF2Go nodes
+     * Get all values of property RelatedTo as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllRelatedto_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllRelatedTo_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), RELATEDTO);
     }
 
     /**
-     * Get all values of property Relatedto as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllRelatedto_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), RELATEDTO,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Relatedto * @param model an RDF2Go model
+     * Get all values of property RelatedTo * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -7491,43 +6132,24 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<SIOCThing> getAllRelatedto(Model model,
+    public static ClosableIterator<SIOCThing> getAllRelatedTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, RELATEDTO, SIOCThing.class);
     }
 
     /**
-     * Get all values of property Relatedto as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<SIOCThing> getAllRelatedto_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, RELATEDTO,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Relatedto * @return a ClosableIterator of
+     * Get all values of property RelatedTo * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<SIOCThing> getAllRelatedto() {
+    public ClosableIterator<SIOCThing> getAllRelatedTo() {
 	return Base.getAll(this.model, this.getResource(), RELATEDTO,
 		SIOCThing.class);
     }
 
     /**
-     * Get all values of property Relatedto as a ReactorResult of Thing
+     * Get all values of property RelatedTo as a ReactorResult of Thing
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
      *         iterator, list or array
@@ -7535,27 +6157,13 @@ public class SIOCThing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<SIOCThing> getAllRelatedto_as() {
-	return Base.getAll_as(this.model, this.getResource(), RELATEDTO,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Relatedto as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public SIOCThing getRelatedto() {
+    public SIOCThing getRelatedTo() {
 	return Base.getAll_as(this.model, this.getResource(), RELATEDTO,
 		SIOCThing.class).firstValue();
     }
 
     /**
-     * Adds a value to property Relatedto as an RDF2Go node
+     * Adds a value to property RelatedTo as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -7566,26 +6174,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addRelatedto(Model model,
+    public static void addRelatedTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, RELATEDTO, value);
     }
 
     /**
-     * Adds a value to property Relatedto as an RDF2Go node
+     * Adds a value to property RelatedTo as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addRelatedto(org.ontoware.rdf2go.model.node.Node value) {
+    public void addRelatedTo(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), RELATEDTO, value);
     }
 
     /**
-     * Adds a value to property Relatedto from an instance of Thing
+     * Adds a value to property RelatedTo from an instance of Thing
      * 
      * @param model
      *            an RDF2Go model
@@ -7594,23 +6202,23 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addRelatedto(Model model,
+    public static void addRelatedTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.add(model, instanceResource, RELATEDTO, value);
     }
 
     /**
-     * Adds a value to property Relatedto from an instance of Thing
+     * Adds a value to property RelatedTo from an instance of Thing
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addRelatedto(SIOCThing value) {
+    public void addRelatedTo(SIOCThing value) {
 	Base.add(this.model, this.getResource(), RELATEDTO, value);
     }
 
     /**
-     * Sets a value of property Relatedto from an RDF2Go node. First, all
+     * Sets a value of property RelatedTo from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -7624,14 +6232,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setRelatedto(Model model,
+    public static void setRelatedTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, RELATEDTO, value);
     }
 
     /**
-     * Sets a value of property Relatedto from an RDF2Go node. First, all
+     * Sets a value of property RelatedTo from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -7641,12 +6249,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setRelatedto(org.ontoware.rdf2go.model.node.Node value) {
+    public void setRelatedTo(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), RELATEDTO, value);
     }
 
     /**
-     * Sets a value of property Relatedto from an instance of Thing First, all
+     * Sets a value of property RelatedTo from an instance of Thing First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -7660,14 +6268,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setRelatedto(Model model,
+    public static void setRelatedTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.set(model, instanceResource, RELATEDTO, value);
     }
 
     /**
-     * Sets a value of property Relatedto from an instance of Thing First, all
+     * Sets a value of property RelatedTo from an instance of Thing First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -7677,12 +6285,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setRelatedto(SIOCThing value) {
+    public void setRelatedTo(SIOCThing value) {
 	Base.set(this.model, this.getResource(), RELATEDTO, value);
     }
 
     /**
-     * Removes a value of property Relatedto as an RDF2Go node
+     * Removes a value of property RelatedTo as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -7693,26 +6301,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeRelatedto(Model model,
+    public static void removeRelatedTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, RELATEDTO, value);
     }
 
     /**
-     * Removes a value of property Relatedto as an RDF2Go node
+     * Removes a value of property RelatedTo as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeRelatedto(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeRelatedTo(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), RELATEDTO, value);
     }
 
     /**
-     * Removes a value of property Relatedto given as an instance of Thing
+     * Removes a value of property RelatedTo given as an instance of Thing
      * 
      * @param model
      *            an RDF2Go model
@@ -7723,42 +6331,42 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeRelatedto(Model model,
+    public static void removeRelatedTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.remove(model, instanceResource, RELATEDTO, value);
     }
 
     /**
-     * Removes a value of property Relatedto given as an instance of Thing
+     * Removes a value of property RelatedTo given as an instance of Thing
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeRelatedto(SIOCThing value) {
+    public void removeRelatedTo(SIOCThing value) {
 	Base.remove(this.model, this.getResource(), RELATEDTO, value);
     }
 
     /**
-     * Removes all values of property Relatedto * @param model an RDF2Go model
+     * Removes all values of property RelatedTo * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllRelatedto(Model model,
+    public static void removeAllRelatedTo(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, RELATEDTO);
     }
 
     /**
-     * Removes all values of property Relatedto * [Generated from RDFReactor
+     * Removes all values of property RelatedTo * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllRelatedto() {
+    public void removeAllRelatedTo() {
 	Base.removeAll(this.model, this.getResource(), RELATEDTO);
     }
 
@@ -7774,7 +6382,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasScopeof(Model model,
+    public static boolean hasScopeOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, SCOPEOF);
     }
@@ -7787,7 +6395,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasScopeof() {
+    public boolean hasScopeOf() {
 	return Base.has(this.model, this.getResource(), SCOPEOF);
     }
 
@@ -7806,7 +6414,7 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasScopeof(Model model,
+    public static boolean hasScopeOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, SCOPEOF, value);
@@ -7823,12 +6431,12 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasScopeof(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasScopeOf(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), SCOPEOF, value);
     }
 
     /**
-     * Get all values of property Scopeof as an Iterator over RDF2Go nodes
+     * Get all values of property ScopeOf as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -7838,57 +6446,25 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllScopeof_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllScopeOf_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, SCOPEOF);
     }
 
     /**
-     * Get all values of property Scopeof as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllScopeof_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SCOPEOF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Scopeof as an Iterator over RDF2Go nodes
+     * Get all values of property ScopeOf as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllScopeof_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllScopeOf_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), SCOPEOF);
     }
 
     /**
-     * Get all values of property Scopeof as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllScopeof_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), SCOPEOF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Scopeof * @param model an RDF2Go model
+     * Get all values of property ScopeOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -7896,40 +6472,22 @@ public class SIOCThing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Role> getAllScopeof(Model model,
+    public static ClosableIterator<Role> getAllScopeOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, SCOPEOF, Role.class);
     }
 
     /**
-     * Get all values of property Scopeof as a ReactorResult of Role
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Role> getAllScopeof_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SCOPEOF, Role.class);
-    }
-
-    /**
-     * Get all values of property Scopeof * @return a ClosableIterator of $type
+     * Get all values of property ScopeOf * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Role> getAllScopeof() {
+    public ClosableIterator<Role> getAllScopeOf() {
 	return Base.getAll(this.model, this.getResource(), SCOPEOF, Role.class);
     }
 
     /**
-     * Get all values of property Scopeof as a ReactorResult of Role
+     * Get all values of property ScopeOf as a ReactorResult of Role
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
      *         iterator, list or array
@@ -7937,27 +6495,13 @@ public class SIOCThing extends OwlThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Role> getAllScopeof_as() {
-	return Base.getAll_as(this.model, this.getResource(), SCOPEOF,
-		Role.class);
-    }
-
-    /**
-     * Get all values of property Scopeof as a ReactorResult of Role
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public Role getScopeof() {
+    public Role getScopeOf() {
 	return Base.getAll_as(this.model, this.getResource(), SCOPEOF,
 		Role.class).firstValue();
     }
 
     /**
-     * Adds a value to property Scopeof as an RDF2Go node
+     * Adds a value to property ScopeOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -7968,26 +6512,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addScopeof(Model model,
+    public static void addScopeOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, SCOPEOF, value);
     }
 
     /**
-     * Adds a value to property Scopeof as an RDF2Go node
+     * Adds a value to property ScopeOf as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addScopeof(org.ontoware.rdf2go.model.node.Node value) {
+    public void addScopeOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), SCOPEOF, value);
     }
 
     /**
-     * Adds a value to property Scopeof from an instance of Role
+     * Adds a value to property ScopeOf from an instance of Role
      * 
      * @param model
      *            an RDF2Go model
@@ -7996,22 +6540,22 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addScopeof(Model model,
+    public static void addScopeOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource, Role value) {
 	Base.add(model, instanceResource, SCOPEOF, value);
     }
 
     /**
-     * Adds a value to property Scopeof from an instance of Role
+     * Adds a value to property ScopeOf from an instance of Role
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addScopeof(Role value) {
+    public void addScopeOf(Role value) {
 	Base.add(this.model, this.getResource(), SCOPEOF, value);
     }
 
     /**
-     * Sets a value of property Scopeof from an RDF2Go node. First, all existing
+     * Sets a value of property ScopeOf from an RDF2Go node. First, all existing
      * values are removed, then this value is added. Cardinality constraints are
      * not checked, but this method exists only for properties with no
      * minCardinality or minCardinality == 1.
@@ -8025,14 +6569,14 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setScopeof(Model model,
+    public static void setScopeOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, SCOPEOF, value);
     }
 
     /**
-     * Sets a value of property Scopeof from an RDF2Go node. First, all existing
+     * Sets a value of property ScopeOf from an RDF2Go node. First, all existing
      * values are removed, then this value is added. Cardinality constraints are
      * not checked, but this method exists only for properties with no
      * minCardinality or minCardinality == 1.
@@ -8042,12 +6586,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setScopeof(org.ontoware.rdf2go.model.node.Node value) {
+    public void setScopeOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), SCOPEOF, value);
     }
 
     /**
-     * Sets a value of property Scopeof from an instance of Role First, all
+     * Sets a value of property ScopeOf from an instance of Role First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -8061,13 +6605,13 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setScopeof(Model model,
+    public static void setScopeOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource, Role value) {
 	Base.set(model, instanceResource, SCOPEOF, value);
     }
 
     /**
-     * Sets a value of property Scopeof from an instance of Role First, all
+     * Sets a value of property ScopeOf from an instance of Role First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -8077,12 +6621,12 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setScopeof(Role value) {
+    public void setScopeOf(Role value) {
 	Base.set(this.model, this.getResource(), SCOPEOF, value);
     }
 
     /**
-     * Removes a value of property Scopeof as an RDF2Go node
+     * Removes a value of property ScopeOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -8093,26 +6637,26 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeScopeof(Model model,
+    public static void removeScopeOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, SCOPEOF, value);
     }
 
     /**
-     * Removes a value of property Scopeof as an RDF2Go node
+     * Removes a value of property ScopeOf as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeScopeof(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeScopeOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), SCOPEOF, value);
     }
 
     /**
-     * Removes a value of property Scopeof given as an instance of Role
+     * Removes a value of property ScopeOf given as an instance of Role
      * 
      * @param model
      *            an RDF2Go model
@@ -8123,41 +6667,41 @@ public class SIOCThing extends OwlThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeScopeof(Model model,
+    public static void removeScopeOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource, Role value) {
 	Base.remove(model, instanceResource, SCOPEOF, value);
     }
 
     /**
-     * Removes a value of property Scopeof given as an instance of Role
+     * Removes a value of property ScopeOf given as an instance of Role
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeScopeof(Role value) {
+    public void removeScopeOf(Role value) {
 	Base.remove(this.model, this.getResource(), SCOPEOF, value);
     }
 
     /**
-     * Removes all values of property Scopeof * @param model an RDF2Go model
+     * Removes all values of property ScopeOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllScopeof(Model model,
+    public static void removeAllScopeOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, SCOPEOF);
     }
 
     /**
-     * Removes all values of property Scopeof * [Generated from RDFReactor
+     * Removes all values of property ScopeOf * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllScopeof() {
+    public void removeAlls() {
 	Base.removeAll(this.model, this.getResource(), SCOPEOF);
     }
 
@@ -8244,25 +6788,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Space as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllSpace_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SPACE,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Space as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -8271,19 +6796,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSpace_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), SPACE);
-    }
-
-    /**
-     * Get all values of property Space as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllSpace_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), SPACE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -8301,44 +6813,12 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Space as a ReactorResult of Space
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Space> getAllSpace_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SPACE, Space.class);
-    }
-
-    /**
      * Get all values of property Space * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<Space> getAllSpace() {
 	return Base.getAll(this.model, this.getResource(), SPACE, Space.class);
-    }
-
-    /**
-     * Get all values of property Space as a ReactorResult of Space
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<Space> getAllSpace_as() {
-	return Base.getAll_as(this.model, this.getResource(), SPACE,
-		Space.class);
     }
 
     /**
@@ -8646,25 +7126,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Subject as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllSubject_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SUBJECT,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Subject as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -8673,19 +7134,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSubject_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), SUBJECT);
-    }
-
-    /**
-     * Get all values of property Subject as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllSubject_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), SUBJECT,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -8703,44 +7151,12 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Subject as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<String> getAllSubject_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SUBJECT, String.class);
-    }
-
-    /**
      * Get all values of property Subject * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<String> getAllSubject() {
 	return Base.getAll(this.model, this.getResource(), SUBJECT,
-		String.class);
-    }
-
-    /**
-     * Get all values of property Subject as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<String> getAllSubject_as() {
-	return Base.getAll_as(this.model, this.getResource(), SUBJECT,
 		String.class);
     }
 
@@ -9049,25 +7465,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Title as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllTitle_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, TITLE,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Title as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -9076,19 +7473,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllTitle_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), TITLE);
-    }
-
-    /**
-     * Get all values of property Title as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllTitle_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), TITLE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -9106,44 +7490,12 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Title as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<String> getAllTitle_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, TITLE, String.class);
-    }
-
-    /**
      * Get all values of property Title * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<String> getAllTitle() {
 	return Base.getAll(this.model, this.getResource(), TITLE, String.class);
-    }
-
-    /**
-     * Get all values of property Title as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<String> getAllTitle_as() {
-	return Base.getAll_as(this.model, this.getResource(), TITLE,
-		String.class);
     }
 
     /**
@@ -9451,25 +7803,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Topic as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllTopic_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, TOPIC,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Topic as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -9478,19 +7811,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllTopic_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), TOPIC);
-    }
-
-    /**
-     * Get all values of property Topic as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllTopic_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), TOPIC,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -9508,44 +7828,12 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property Topic as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<String> getAllTopic_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, TOPIC, String.class);
-    }
-
-    /**
      * Get all values of property Topic * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<String> getAllTopic() {
 	return Base.getAll(this.model, this.getResource(), TOPIC, String.class);
-    }
-
-    /**
-     * Get all values of property Topic as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<String> getAllTopic_as() {
-	return Base.getAll_as(this.model, this.getResource(), TOPIC,
-		String.class);
     }
 
     /**
@@ -9853,26 +8141,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property DateModified as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllModified_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, MODIFIED,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property DateModified as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -9881,20 +8149,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllModified_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), MODIFIED);
-    }
-
-    /**
-     * Get all values of property DateModified as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllModified_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), MODIFIED,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -9914,27 +8168,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property DateModified as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllModified_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, MODIFIED,
-		java.lang.String.class);
-    }
-
-    /**
      * Get all values of property DateModified * @return a ClosableIterator of
      * $type
      * 
@@ -9942,21 +8175,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<java.lang.String> getAllModified() {
 	return Base.getAll(this.model, this.getResource(), MODIFIED,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property DateModified as a ReactorResult of
-     * java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<java.lang.String> getAllModified_as() {
-	return Base.getAll_as(this.model, this.getResource(), MODIFIED,
 		java.lang.String.class);
     }
 
@@ -10271,25 +8489,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property DateCreated as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllCreated_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, CREATED,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property DateCreated as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -10298,19 +8497,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCreated_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), CREATED);
-    }
-
-    /**
-     * Get all values of property DateCreated as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllCreated_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), CREATED,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -10329,26 +8515,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property DateCreated as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllCreated_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, CREATED,
-		java.lang.String.class);
-    }
-
-    /**
      * Get all values of property DateCreated * @return a ClosableIterator of
      * $type
      * 
@@ -10356,21 +8522,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<java.lang.String> getAllCreated() {
 	return Base.getAll(this.model, this.getResource(), CREATED,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property DateCreated as a ReactorResult of
-     * java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<java.lang.String> getAllCreated_as() {
-	return Base.getAll_as(this.model, this.getResource(), CREATED,
 		java.lang.String.class);
     }
 
@@ -10682,25 +8833,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property HasPart as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllHasPart_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, HASPART,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property HasPart as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -10709,19 +8841,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllHasPart_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), HASPART);
-    }
-
-    /**
-     * Get all values of property HasPart as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllHasPart_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), HASPART,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -10739,45 +8858,12 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property HasPart as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<SIOCThing> getAllHasPart_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base
-		.getAll_as(model, instanceResource, HASPART, SIOCThing.class);
-    }
-
-    /**
      * Get all values of property HasPart * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<SIOCThing> getAllHasPart() {
 	return Base.getAll(this.model, this.getResource(), HASPART,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property HasPart as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<SIOCThing> getAllHasPart_as() {
-	return Base.getAll_as(this.model, this.getResource(), HASPART,
 		SIOCThing.class);
     }
 
@@ -11086,25 +9172,6 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property IsPartOf as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllIsPartOf_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ISPARTOF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property IsPartOf as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -11113,19 +9180,6 @@ public class SIOCThing extends OwlThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllIsPartOf_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), ISPARTOF);
-    }
-
-    /**
-     * Get all values of property IsPartOf as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllIsPartOf_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), ISPARTOF,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -11143,45 +9197,12 @@ public class SIOCThing extends OwlThing {
     }
 
     /**
-     * Get all values of property IsPartOf as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<SIOCThing> getAllIsPartOf_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ISPARTOF,
-		SIOCThing.class);
-    }
-
-    /**
      * Get all values of property IsPartOf * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<SIOCThing> getAllIsPartOf() {
 	return Base.getAll(this.model, this.getResource(), ISPARTOF,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property IsPartOf as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<SIOCThing> getAllIsPartOf_as() {
-	return Base.getAll_as(this.model, this.getResource(), ISPARTOF,
 		SIOCThing.class);
     }
 

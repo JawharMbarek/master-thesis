@@ -10,12 +10,11 @@ import org.ontoware.rdf2go.model.node.BlankNode;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
 import org.ontoware.rdfreactor.runtime.Base;
-import org.ontoware.rdfreactor.runtime.ReactorResult;
 
 /**
  * This class manages access to these properties:
  * <ul>
- * <li>Spaceof</li>
+ * <li>SpaceOf</li>
  * <li>Usergroup</li>
  * </ul>
  * 
@@ -215,18 +214,6 @@ public class Space extends SIOCThing {
     }
 
     /**
-     * @param model
-     *            an RDF2Go model
-     * @return all instances of this class in Model 'model' as a ReactorResult,
-     *         which can conveniently be converted to iterator, list or array.
-     * 
-     *         [Generated from RDFReactor template rule #class3-as]
-     */
-    public static ReactorResult<? extends Space> getAllInstances_as(Model model) {
-	return Base.getAllInstances_as(model, RDFS_CLASS, Space.class);
-    }
-
-    /**
      * Remove rdf:type Space from this instance. Other triples are not affected.
      * To delete more, use deleteAllProperties
      * 
@@ -286,22 +273,6 @@ public class Space extends SIOCThing {
      * @param model
      *            an RDF2Go model
      * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Space' to this
-     *         Space instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllSpace_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, SIOCThing.SPACE, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
      * @return all A's as RDF resources, that have a relation 'Usergroupof' to
      *         this Space instance
      * 
@@ -324,22 +295,6 @@ public class Space extends SIOCThing {
     }
 
     /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Usergroupof' to
-     *         this Space instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllUsergroupof_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Usergroup.USERGROUPOF,
-		objectValue, org.ontoware.rdf2go.model.node.Resource.class);
-    }
-
-    /**
      * Check if org.ontoware.rdfreactor.generator.java.JProperty@917024b has at
      * least one value set
      * 
@@ -351,7 +306,7 @@ public class Space extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasSpaceof(Model model,
+    public static boolean hasSpaceOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, SPACEOF);
     }
@@ -364,7 +319,7 @@ public class Space extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasSpaceof() {
+    public boolean hasSpaceOf() {
 	return Base.has(this.model, this.getResource(), SPACEOF);
     }
 
@@ -383,7 +338,7 @@ public class Space extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasSpaceof(Model model,
+    public static boolean hasSpaceOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(model, instanceResource, SPACEOF, value);
@@ -400,12 +355,12 @@ public class Space extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasSpaceof(org.ontoware.rdf2go.model.node.Node value) {
+    public boolean hasSpaceOf(org.ontoware.rdf2go.model.node.Node value) {
 	return Base.hasValue(this.model, this.getResource(), SPACEOF, value);
     }
 
     /**
-     * Get all values of property Spaceof as an Iterator over RDF2Go nodes
+     * Get all values of property SpaceOf as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -415,57 +370,25 @@ public class Space extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSpaceof_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSpaceOf_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, SPACEOF);
     }
 
     /**
-     * Get all values of property Spaceof as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllSpaceof_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SPACEOF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Spaceof as an Iterator over RDF2Go nodes
+     * Get all values of property SpaceOf as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSpaceof_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSpaceOf_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), SPACEOF);
     }
 
     /**
-     * Get all values of property Spaceof as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllSpaceof_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), SPACEOF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property Spaceof * @param model an RDF2Go model
+     * Get all values of property SpaceOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -473,42 +396,23 @@ public class Space extends SIOCThing {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<SIOCThing> getAllSpaceof(Model model,
+    public static ClosableIterator<SIOCThing> getAllSpaceOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, SPACEOF, SIOCThing.class);
     }
 
     /**
-     * Get all values of property Spaceof as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<SIOCThing> getAllSpaceof_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base
-		.getAll_as(model, instanceResource, SPACEOF, SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Spaceof * @return a ClosableIterator of $type
+     * Get all values of property SpaceOf * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<SIOCThing> getAllSpaceof() {
+    public ClosableIterator<SIOCThing> getAllSpaceOf() {
 	return Base.getAll(this.model, this.getResource(), SPACEOF,
 		SIOCThing.class);
     }
 
     /**
-     * Get all values of property Spaceof as a ReactorResult of Thing
+     * Get all values of property SpaceOf as a ReactorResult of Thing
      * 
      * @return a ReactorResult of $type which can conveniently be converted to
      *         iterator, list or array
@@ -516,27 +420,13 @@ public class Space extends SIOCThing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<SIOCThing> getAllSpaceof_as() {
-	return Base.getAll_as(this.model, this.getResource(), SPACEOF,
-		SIOCThing.class);
-    }
-
-    /**
-     * Get all values of property Spaceof as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public SIOCThing getSpaceof() {
+    public SIOCThing getSpaceOf() {
 	return Base.getAll_as(this.model, this.getResource(), SPACEOF,
 		SIOCThing.class).firstValue();
     }
 
     /**
-     * Adds a value to property Spaceof as an RDF2Go node
+     * Adds a value to property SpaceOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -547,26 +437,26 @@ public class Space extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addSpaceof(Model model,
+    public static void addSpaceOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(model, instanceResource, SPACEOF, value);
     }
 
     /**
-     * Adds a value to property Spaceof as an RDF2Go node
+     * Adds a value to property SpaceOf as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addSpaceof(org.ontoware.rdf2go.model.node.Node value) {
+    public void addSpaceOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.add(this.model, this.getResource(), SPACEOF, value);
     }
 
     /**
-     * Adds a value to property Spaceof from an instance of Thing
+     * Adds a value to property SpaceOf from an instance of Thing
      * 
      * @param model
      *            an RDF2Go model
@@ -575,23 +465,23 @@ public class Space extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addSpaceof(Model model,
+    public static void addSpaceOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.add(model, instanceResource, SPACEOF, value);
     }
 
     /**
-     * Adds a value to property Spaceof from an instance of Thing
+     * Adds a value to property SpaceOf from an instance of Thing
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addSpaceof(SIOCThing value) {
+    public void addSpaceOf(SIOCThing value) {
 	Base.add(this.model, this.getResource(), SPACEOF, value);
     }
 
     /**
-     * Sets a value of property Spaceof from an RDF2Go node. First, all existing
+     * Sets a value of property SpaceOf from an RDF2Go node. First, all existing
      * values are removed, then this value is added. Cardinality constraints are
      * not checked, but this method exists only for properties with no
      * minCardinality or minCardinality == 1.
@@ -605,14 +495,14 @@ public class Space extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setSpaceof(Model model,
+    public static void setSpaceOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(model, instanceResource, SPACEOF, value);
     }
 
     /**
-     * Sets a value of property Spaceof from an RDF2Go node. First, all existing
+     * Sets a value of property SpaceOf from an RDF2Go node. First, all existing
      * values are removed, then this value is added. Cardinality constraints are
      * not checked, but this method exists only for properties with no
      * minCardinality or minCardinality == 1.
@@ -622,12 +512,12 @@ public class Space extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setSpaceof(org.ontoware.rdf2go.model.node.Node value) {
+    public void setSpaceOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.set(this.model, this.getResource(), SPACEOF, value);
     }
 
     /**
-     * Sets a value of property Spaceof from an instance of Thing First, all
+     * Sets a value of property SpaceOf from an instance of Thing First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -641,14 +531,14 @@ public class Space extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setSpaceof(Model model,
+    public static void setSpaceOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.set(model, instanceResource, SPACEOF, value);
     }
 
     /**
-     * Sets a value of property Spaceof from an instance of Thing First, all
+     * Sets a value of property SpaceOf from an instance of Thing First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -658,12 +548,12 @@ public class Space extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setSpaceof(SIOCThing value) {
+    public void setSpaceOf(SIOCThing value) {
 	Base.set(this.model, this.getResource(), SPACEOF, value);
     }
 
     /**
-     * Removes a value of property Spaceof as an RDF2Go node
+     * Removes a value of property SpaceOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -674,26 +564,26 @@ public class Space extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeSpaceof(Model model,
+    public static void removeSpaceOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(model, instanceResource, SPACEOF, value);
     }
 
     /**
-     * Removes a value of property Spaceof as an RDF2Go node
+     * Removes a value of property SpaceOf as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeSpaceof(org.ontoware.rdf2go.model.node.Node value) {
+    public void removeSpaceOf(org.ontoware.rdf2go.model.node.Node value) {
 	Base.remove(this.model, this.getResource(), SPACEOF, value);
     }
 
     /**
-     * Removes a value of property Spaceof given as an instance of Thing
+     * Removes a value of property SpaceOf given as an instance of Thing
      * 
      * @param model
      *            an RDF2Go model
@@ -704,42 +594,42 @@ public class Space extends SIOCThing {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeSpaceof(Model model,
+    public static void removeSpaceOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    SIOCThing value) {
 	Base.remove(model, instanceResource, SPACEOF, value);
     }
 
     /**
-     * Removes a value of property Spaceof given as an instance of Thing
+     * Removes a value of property SpaceOf given as an instance of Thing
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeSpaceof(SIOCThing value) {
+    public void removeSpaceOf(SIOCThing value) {
 	Base.remove(this.model, this.getResource(), SPACEOF, value);
     }
 
     /**
-     * Removes all values of property Spaceof * @param model an RDF2Go model
+     * Removes all values of property SpaceOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllSpaceof(Model model,
+    public static void removeAllSpaceOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, SPACEOF);
     }
 
     /**
-     * Removes all values of property Spaceof * [Generated from RDFReactor
+     * Removes all values of property SpaceOf * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllSpaceof() {
+    public void removeAllSpaceOf() {
 	Base.removeAll(this.model, this.getResource(), SPACEOF);
     }
 
@@ -826,25 +716,6 @@ public class Space extends SIOCThing {
     }
 
     /**
-     * Get all values of property Usergroup as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllUsergroup_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, USERGROUP,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Usergroup as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -853,19 +724,6 @@ public class Space extends SIOCThing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllUsergroup_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), USERGROUP);
-    }
-
-    /**
-     * Get all values of property Usergroup as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllUsergroup_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), USERGROUP,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -883,25 +741,6 @@ public class Space extends SIOCThing {
     }
 
     /**
-     * Get all values of property Usergroup as a ReactorResult of Usergroup
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Usergroup> getAllUsergroup_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, USERGROUP,
-		Usergroup.class);
-    }
-
-    /**
      * Get all values of property Usergroup * @return a ClosableIterator of
      * $type
      * 
@@ -909,20 +748,6 @@ public class Space extends SIOCThing {
      */
     public ClosableIterator<Usergroup> getAllUsergroup() {
 	return Base.getAll(this.model, this.getResource(), USERGROUP,
-		Usergroup.class);
-    }
-
-    /**
-     * Get all values of property Usergroup as a ReactorResult of Usergroup
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<Usergroup> getAllUsergroup_as() {
-	return Base.getAll_as(this.model, this.getResource(), USERGROUP,
 		Usergroup.class);
     }
 

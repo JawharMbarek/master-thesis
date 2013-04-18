@@ -146,16 +146,16 @@ public class YoutubeV2Connector extends AbstractConnector {
 	this.uploads.setId(YoutubeV2Constants.ID_FOURM_UPLOADS);
 	this.uploads.setName("Uploads");
 	this.uploads.setHost(getSite());
-	getSite().addHostof(this.uploads);
+	getSite().addHostOf(this.uploads);
 
 	uri = RDF2GoUtils.createURI(String.format(
 		YoutubeV2Constants.FEED_PLAYLISTS, myId));
 	this.playlists = new Forum(model, uri, true);
 	this.playlists.setId(YoutubeV2Constants.ID_FORUM_PLAYLISTS);
 	this.playlists.setName("Playlists");
-	this.playlists.setNumthreads(0);
+	this.playlists.setNumThreads(0);
 	this.playlists.setHost(getSite());
-	getSite().addHostof(this.playlists);
+	getSite().addHostOf(this.playlists);
     }
 
     @Override
@@ -192,7 +192,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 	URI uri = RDF2GoUtils.createURI(String.format(
 		YoutubeV2Constants.ENTRY_USER, id));
 
-	if (!UserAccount.hasAccountname(getModel(), uri)) {
+	if (!UserAccount.hasAccountName(getModel(), uri)) {
 	    UserProfileEntry profileEntry = null;
 
 	    startPolling();
@@ -222,8 +222,8 @@ public class YoutubeV2Connector extends AbstractConnector {
 		UserAccount result = new UserAccount(getModel(), uri, true);
 		result.setId(parseYoutubeEntryID(profileEntry.getId()));
 		result.setIsPartOf(getSite());
-		result.setAccountname(profileEntry.getUsername());
-		result.setAccountservicehomepage(RDF2GoUtils
+		result.setAccountName(profileEntry.getUsername());
+		result.setAccountServiceHomepage(RDF2GoUtils
 			.createURI(getURL()));
 
 		if (null != profileEntry.getAboutMe()) {
@@ -488,10 +488,10 @@ public class YoutubeV2Connector extends AbstractConnector {
 
 	    if (null != videoFeed) {
 		Date lastItemDate = new Date(0);
-		if (container.hasLastitemdate()) {
+		if (container.hasLastItemDate()) {
 		    try {
 			lastItemDate = RDFTool.string2DateTime(container
-				.getLastitemdate());
+				.getLastItemDate());
 		    } catch (ParseException e1) {
 			lastItemDate = new Date(0);
 		    }
@@ -555,7 +555,7 @@ public class YoutubeV2Connector extends AbstractConnector {
     public boolean canReplyOn(Post parentPost) {
 	Preconditions.checkNotNull(parentPost, "parentPost can not be null");
 
-	return parentPost.hasContainer()
+	return parentPost.hasContainers()
 		&& (parentPost.hasContainer(uploads) || parentPost
 			.getContainer().hasParent(playlists));
     }
@@ -581,7 +581,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 	String commentsFeedURL = null;
 
 	// get the correct url for the comments feed
-	if (parentPost.hasReplyof()) {
+	if (parentPost.hasReplyOf()) {
 	    commentsFeedURL = String.format(YoutubeV2Constants.FEED_COMMENTS,
 		    parentPost.getDiscussion().getId());
 	} else {
@@ -608,7 +608,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 
 	if (null != resultCommentEntry) {
 	    Post videoPost = null;
-	    if (parentPost.hasReplyof()) {
+	    if (parentPost.hasReplies()) {
 		videoPost = Post.getInstance(getModel(),
 			parentPost.getDiscussion());
 	    } else {
@@ -664,13 +664,13 @@ public class YoutubeV2Connector extends AbstractConnector {
 
 	    if (null != commentFeed) {
 		Date lastReplyDate = new Date(0);
-		if (videoPost.hasLastreplydate()) {
+		if (videoPost.hasLastReplyDate()) {
 		    try {
 			lastReplyDate = RDFTool.string2DateTime(videoPost
-				.getLastreplydate());
+				.getLastReplyDate());
 		    } catch (ParseException e1) {
 			LOG.warn("failed to parse date "
-				+ videoPost.getLastreplydate());
+				+ videoPost.getLastReplyDate());
 			lastReplyDate = new Date(0);
 		    }
 		}

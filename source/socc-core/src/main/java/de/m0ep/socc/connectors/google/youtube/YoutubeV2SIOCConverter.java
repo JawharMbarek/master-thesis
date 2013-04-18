@@ -63,8 +63,8 @@ public class YoutubeV2SIOCConverter {
 
 	result.setId(connector.parseYoutubeEntryID(userProfileEntry.getId()));
 	result.setIsPartOf(connector.getSite());
-	result.setAccountname(userProfileEntry.getUsername());
-	result.setAccountservicehomepage(RDF2GoUtils.createURI(connector
+	result.setAccountName(userProfileEntry.getUsername());
+	result.setAccountServiceHomepage(RDF2GoUtils.createURI(connector
 		.getURL()));
 
 	if (null != userProfileEntry.getAboutMe()) {
@@ -118,11 +118,11 @@ public class YoutubeV2SIOCConverter {
 	}
 
 	result.setParent(parentForum);
-	parentForum.addParentof(result);
+	parentForum.addParentOf(result);
 
 	// update statistics
-	parentForum.setNumthreads((parentForum.hasNumthreads()) ? (parentForum
-		.getNumthreads() + 1) : (1));
+	parentForum.setNumThreads((parentForum.hasNumThreads()) ? (parentForum
+		.getNumThreads() + 1) : (1));
 
 	return result;
     }
@@ -172,11 +172,11 @@ public class YoutubeV2SIOCConverter {
 	}
 
 	result.setContainer(container);
-	container.addContainerof(result);
+	container.addContainerOf(result);
 
 	// update statistics
-	container.setNumitems((container.hasNumitems()) ? (container
-		.getNumitems() + 1) : (1));
+	container.setNumItems((container.hasNumItems()) ? (container
+		.getNumItems() + 1) : (1));
 	SIOCUtils.updateLastItemDate(container, result);
 
 	return result;
@@ -221,7 +221,7 @@ public class YoutubeV2SIOCConverter {
 	}
 
 	result.setContainer(container);
-	container.addContainerof(result);
+	container.addContainerOf(result);
 	SIOCUtils.updateLastItemDate(container, result);
 	result.setDiscussion(videoPost); // comments are a discussion about the
 					 // parent video
@@ -238,22 +238,22 @@ public class YoutubeV2SIOCConverter {
 	    if (Post.hasInstance(connector.getModel(), replyToUri)) {
 		Post replyToPost = Post.getInstance(connector.getModel(),
 			replyToUri);
-		result.setReplyof(replyToPost);
+		result.setReplyOf(replyToPost);
 		replyToPost.addReply(result);
 
 		replyToPost
-			.setNumreplies((replyToPost.hasNumreplies()) ? (replyToPost
-				.getNumreplies() + 1) : (1));
+			.setNumReplies((replyToPost.hasNumReplies()) ? (replyToPost
+				.getNumReplies() + 1) : (1));
 		SIOCUtils.updateLastReplyDate(replyToPost, result);
 	    }
 	    // TODO: Load post with this replyToUri
 
 	} else { // make it a reply to the video
-	    result.setReplyof(videoPost);
+	    result.setReplyOf(videoPost);
 	    videoPost.addReply(result);
 
-	    videoPost.setNumreplies((videoPost.hasNumreplies()) ? (videoPost
-		    .getNumreplies() + 1) : (1));
+	    videoPost.setNumReplies((videoPost.hasNumReplies()) ? (videoPost
+		    .getNumReplies() + 1) : (1));
 	    SIOCUtils.updateLastReplyDate(videoPost, result);
 	}
 
@@ -296,7 +296,7 @@ public class YoutubeV2SIOCConverter {
 	    result.setContent(new PlainTextConstruct(reply.getContentEncoded()));
 	}
 
-	if (parentPost.hasReplyof()) {
+	if (parentPost.hasReplyOf()) {
 	    // Add reply link
 	    result.addLink(YouTubeNamespace.IN_REPLY_TO,
 		    "application/atom+xml", String.format(

@@ -33,7 +33,7 @@ public final class MoodleToSIOCConverter {
 	UserAccount result = new UserAccount(connector.getModel(), uri, true);
 	result.setId(Integer.toString(userRecord.getId()));
 	result.setIsPartOf(connector.getSite());
-	result.setAccountservicehomepage(RDF2GoUtils.createURI(connector
+	result.setAccountServiceHomepage(RDF2GoUtils.createURI(connector
 		.getURL()));
 
 	String firstName = Strings.emptyToNull(userRecord.getFirstname());
@@ -44,13 +44,13 @@ public final class MoodleToSIOCConverter {
 
 	String username = Strings.emptyToNull(userRecord.getUsername());
 	if (null != username) {
-	    result.setAccountname(username);
+	    result.setAccountName(username);
 	}
 
 	String email = Strings.emptyToNull(userRecord.getEmail());
 	if (null != email) {
-	    result.setEmail(RDF2GoUtils.createMailtoURI(email));
-	    result.setEmailsha1(RDFTool.sha1sum(email));
+	    result.addEmail(RDF2GoUtils.createMailtoURI(email));
+	    result.addEmailSha1(RDFTool.sha1sum(email));
 	}
 
 	String description = Strings.emptyToNull(userRecord.getDescription());
@@ -71,9 +71,9 @@ public final class MoodleToSIOCConverter {
 	Forum result = new Forum(connector.getModel(), uri, true);
 	CourseRecord course = connector.getCourse(forumRecord.getCourse());
 	result.setId(Integer.toString(forumRecord.getId()));
-	result.setNumthreads(0);
+	result.setNumThreads(0);
 	result.setHost(connector.getSite());
-	connector.getSite().addHostof(result);
+	connector.getSite().addHostOf(result);
 
 	result.setModified(DateUtils.formatISO8601(forumRecord
 		.getTimemodified() * 1000L));
@@ -101,8 +101,8 @@ public final class MoodleToSIOCConverter {
 	Thread result = new Thread(connector.getModel(), uri, true);
 	result.setId(Integer.toString(discussionRecord.getId()));
 	result.setParent(parentForum);
-	result.setNumitems(0);
-	parentForum.addParentof(result);
+	result.setNumItems(0);
+	parentForum.addParentOf(result);
 
 	result.setModified(DateUtils.formatISO8601(discussionRecord
 		.getTimemodified() * 1000L));
@@ -116,8 +116,8 @@ public final class MoodleToSIOCConverter {
 	    result.setSubject(discussionRecord.getName());
 	}
 
-	parentForum.setNumthreads((parentForum.hasNumthreads()) ? (parentForum
-		.getNumthreads() + 1) : (1));
+	parentForum.setNumThreads((parentForum.hasNumThreads()) ? (parentForum
+		.getNumThreads() + 1) : (1));
 
 	return result;
     }
@@ -143,28 +143,26 @@ public final class MoodleToSIOCConverter {
 	result.setContent(StringUtils.stripHTML(content));
 	result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
 
-	result.setCreated(DateUtils.formatISO8601(postRecord
-		.getCreated() * 1000L));
-	result.setModified(DateUtils.formatISO8601(postRecord
-		.getModified() * 1000L));
+	result.setCreated(DateUtils.formatISO8601(postRecord.getCreated() * 1000L));
+	result.setModified(DateUtils.formatISO8601(postRecord.getModified() * 1000L));
 
 	if (null != container) {
 	    result.setContainer(container);
-	    container.addContainerof(result);
+	    container.addContainerOf(result);
 	    result.setDiscussion(container);
 	    SIOCUtils.updateLastItemDate(container, result);
 
-	    container.setNumitems((container.hasNumitems()) ? (container
-		    .getNumitems() + 1) : (1));
+	    container.setNumItems((container.hasNumItems()) ? (container
+		    .getNumItems() + 1) : (1));
 	}
 
 	if (null != parentPost) {
-	    result.setReplyof(parentPost);
+	    result.setReplyOf(parentPost);
 	    parentPost.addReply(result);
 	    SIOCUtils.updateLastReplyDate(parentPost, result);
 
-	    parentPost.setNumreplies((parentPost.hasNumreplies()) ? (parentPost
-		    .getNumreplies() + 1) : (1));
+	    parentPost.setNumReplies((parentPost.hasNumReplies()) ? (parentPost
+		    .getNumReplies() + 1) : (1));
 	}
 
 	return result;

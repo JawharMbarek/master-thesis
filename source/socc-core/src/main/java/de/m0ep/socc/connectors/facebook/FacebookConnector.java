@@ -130,9 +130,9 @@ public class FacebookConnector extends AbstractConnector {
 	if (!Forum.hasInstance(getModel(), uri)) {
 	    Forum wall = new Forum(getModel(), uri, true);
 	    wall.setId(myId);
-	    wall.setName(getLoginUser().getAccountname() + "'s Wall");
+	    wall.setName(getLoginUser().getAccountName() + "'s Wall");
 	    wall.setHost(getSite());
-	    getSite().addHostof(wall);
+	    getSite().addHostOf(wall);
 	}
     }
 
@@ -403,8 +403,8 @@ public class FacebookConnector extends AbstractConnector {
 	    // 3) The parent id is like "[0-9]+_[0-9]+"
 	    // 4) The parent has a "comments" connection in Facebooks GraphAPI
 
-	    if (!parent.hasReplyof()) {
-		if (parent.hasContainer()) {
+	    if (!parent.hasReplyOf()) {
+		if (parent.hasContainers()) {
 		    Container container = parent.getContainer();
 		    String id = parent.getId();
 
@@ -456,7 +456,7 @@ public class FacebookConnector extends AbstractConnector {
 		    post.getContent()));
 	}
 
-	if (post.hasAttachment()) {
+	if (post.hasAttachments()) {
 	    params.add(Parameter.with(FacebookConstants.FIELD_LINK,
 		    post.getAttachment()));
 	}
@@ -469,7 +469,7 @@ public class FacebookConnector extends AbstractConnector {
 		    post.getSubject()));
 	}
 
-	if (post.hasDescription()) {
+	if (post.hasDescriptions()) {
 	    params.add(Parameter.with(FacebookConstants.FIELD_DESCRIPTION,
 		    post.getDescription()));
 	}
@@ -542,10 +542,10 @@ public class FacebookConnector extends AbstractConnector {
 	Date lastItemDate = new Date(0);
 	int numLoadedPosts = fbConfig.getMaxNewPostsOnPoll();
 
-	if (container.hasLastitemdate()) {
+	if (container.hasLastItemDate()) {
 	    try {
 		lastItemDate = RDFTool.string2DateTime(container
-			.getLastitemdate());
+			.getLastItemDate());
 	    } catch (ParseException e) {
 		LOG.warn(e.getLocalizedMessage());
 		lastItemDate = new Date(0);
@@ -619,10 +619,10 @@ public class FacebookConnector extends AbstractConnector {
 	List<Post> result = new ArrayList<Post>();
 	Date lastReplyDate = new Date(0);
 
-	if (parentPost.hasLastreplydate()) {
+	if (parentPost.hasLastReplyDate()) {
 	    try {
 		lastReplyDate = RDFTool.string2DateTime(parentPost
-			.getLastreplydate());
+			.getLastReplyDate());
 	    } catch (ParseException e1) {
 		lastReplyDate = new Date(0);
 	    }

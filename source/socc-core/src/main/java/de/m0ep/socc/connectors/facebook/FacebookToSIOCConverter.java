@@ -39,37 +39,37 @@ public class FacebookToSIOCConverter {
      *             Thrown if one or more parameters are null
      */
     public static UserAccount createUserAccount(
-            final FacebookConnector connector, final User user, final URI uri)
-            throws ConnectorException {
-        Preconditions.checkNotNull(connector, "connector can not be null");
-        Preconditions.checkNotNull(user, "user can not be null");
-        Preconditions.checkNotNull(uri, "uri can not be null");
-    
-        UserAccount result = new UserAccount(connector.getModel(), uri, true);
-    
-        result.setId(user.getId());
-        result.setIsPartOf(connector.getSite());
-        result.setAccountservicehomepage(RDF2GoUtils.createURI(connector
-        	.getURL()));
-    
-        if (null != user.getEmail() && !user.getEmail().isEmpty()) {
-            result.setEmail(RDF2GoUtils.createMailtoURI(user.getEmail()));
-            result.setEmailsha1(RDFTool.sha1sum(user.getEmail()));
-        }
-    
-        if (null != user.getUsername() && !user.getUsername().isEmpty()) {
-            result.setAccountname(user.getUsername());
-        }
-    
-        if (null != user.getName() && !user.getName().isEmpty()) {
-            result.setName(user.getName());
-        }
-    
-        if (null != user.getUpdatedTime()) {
-            result.setModified(DateUtils.formatISO8601(user.getUpdatedTime()));
-        }
-    
-        return result;
+	    final FacebookConnector connector, final User user, final URI uri)
+	    throws ConnectorException {
+	Preconditions.checkNotNull(connector, "connector can not be null");
+	Preconditions.checkNotNull(user, "user can not be null");
+	Preconditions.checkNotNull(uri, "uri can not be null");
+
+	UserAccount result = new UserAccount(connector.getModel(), uri, true);
+
+	result.setId(user.getId());
+	result.setIsPartOf(connector.getSite());
+	result.setAccountServiceHomepage(RDF2GoUtils.createURI(connector
+		.getURL()));
+
+	if (null != user.getEmail() && !user.getEmail().isEmpty()) {
+	    result.addEmail(RDF2GoUtils.createMailtoURI(user.getEmail()));
+	    result.addEmailSha1(RDFTool.sha1sum(user.getEmail()));
+	}
+
+	if (null != user.getUsername() && !user.getUsername().isEmpty()) {
+	    result.setAccountName(user.getUsername());
+	}
+
+	if (null != user.getName() && !user.getName().isEmpty()) {
+	    result.setName(user.getName());
+	}
+
+	if (null != user.getUpdatedTime()) {
+	    result.setModified(DateUtils.formatISO8601(user.getUpdatedTime()));
+	}
+
+	return result;
     }
 
     /**
@@ -97,7 +97,7 @@ public class FacebookToSIOCConverter {
 	Forum result = new Forum(connector.getModel(), uri, true);
 	result.setId(group.getId());
 	result.setHost(connector.getSite());
-	connector.getSite().addHostof(result);
+	connector.getSite().addHostOf(result);
 
 	if (null != group.getName()) {
 	    result.setName(group.getName());
@@ -137,73 +137,73 @@ public class FacebookToSIOCConverter {
      *             Thrown if one or more parameters are null
      */
     public static Post createPost(final FacebookConnector connector,
-            final Container container, final JsonObject obj, final URI uri)
-            throws ConnectorException {
-        Preconditions.checkNotNull(connector, "connector can not be null");
-        Preconditions.checkNotNull(container, "container can not be null");
-        Preconditions.checkNotNull(obj, "obj can not be null");
-        Preconditions.checkNotNull(uri, "uri can not be null");
-    
-        Post result = new Post(connector.getModel(), uri, true);
-    
-        if (obj.has(FacebookConstants.FIELD_ID)) {
-            result.setId(obj.getString(FacebookConstants.FIELD_ID));
-        }
-    
-        if (obj.has(FacebookConstants.FIELD_FROM)) {
-            result.setCreator(connector.getUserAccount(obj.getJsonObject(
-        	    FacebookConstants.FIELD_FROM).getString(
-        	    FacebookConstants.FIELD_ID)));
-        }
-    
-        String content = "";
-        if (obj.has(FacebookConstants.FIELD_STORY)) {
-            content = obj.getString(FacebookConstants.FIELD_STORY);
-        } else if (obj.has(FacebookConstants.FIELD_MESSAGE)) {
-            content = obj.getString(FacebookConstants.FIELD_MESSAGE);
-        }
-    
-        result.setContent(StringUtils.stripHTML(content));
-        result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
-    
-        if (obj.has(FacebookConstants.FIELD_NAME)) {
-            result.setName(obj.getString(FacebookConstants.FIELD_NAME));
-        }
-    
-        if (obj.has(FacebookConstants.FIELD_CAPTION)) {
-            result.setTitle(FacebookConstants.FIELD_CAPTION);
-        }
-    
-        if (obj.has(FacebookConstants.FIELD_DESCRIPTION)) {
-            result.setDescription(obj
-        	    .getString(FacebookConstants.FIELD_DESCRIPTION));
-        }
-    
-        if (obj.has(FacebookConstants.FIELD_LINK)) {
-            result.setAttachment(RDF2GoUtils.createURI(obj
-        	    .getString(FacebookConstants.FIELD_LINK)));
-        } else if (obj.has(FacebookConstants.FIELD_SOURCE)) {
-            result.setAttachment(RDF2GoUtils.createURI(obj
-        	    .getString(FacebookConstants.FIELD_SOURCE)));
-        }
-    
-        if (obj.has(FacebookConstants.FIELD_CREATED_TIME)) {
-            Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
-        	    .getString(FacebookConstants.FIELD_CREATED_TIME));
-            result.setCreated(DateUtils.formatISO8601(date));
-        }
-    
-        if (obj.has(FacebookConstants.FIELD_UPDATED_TIME)) {
-            Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
-        	    .getString(FacebookConstants.FIELD_UPDATED_TIME));
-            result.setModified(DateUtils.formatISO8601(date));
-        }
-    
-        result.setContainer(container);
-        container.addContainerof(result);
-        SIOCUtils.updateLastItemDate(container, result);
-    
-        return result;
+	    final Container container, final JsonObject obj, final URI uri)
+	    throws ConnectorException {
+	Preconditions.checkNotNull(connector, "connector can not be null");
+	Preconditions.checkNotNull(container, "container can not be null");
+	Preconditions.checkNotNull(obj, "obj can not be null");
+	Preconditions.checkNotNull(uri, "uri can not be null");
+
+	Post result = new Post(connector.getModel(), uri, true);
+
+	if (obj.has(FacebookConstants.FIELD_ID)) {
+	    result.setId(obj.getString(FacebookConstants.FIELD_ID));
+	}
+
+	if (obj.has(FacebookConstants.FIELD_FROM)) {
+	    result.setCreator(connector.getUserAccount(obj.getJsonObject(
+		    FacebookConstants.FIELD_FROM).getString(
+		    FacebookConstants.FIELD_ID)));
+	}
+
+	String content = "";
+	if (obj.has(FacebookConstants.FIELD_STORY)) {
+	    content = obj.getString(FacebookConstants.FIELD_STORY);
+	} else if (obj.has(FacebookConstants.FIELD_MESSAGE)) {
+	    content = obj.getString(FacebookConstants.FIELD_MESSAGE);
+	}
+
+	result.setContent(StringUtils.stripHTML(content));
+	result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
+
+	if (obj.has(FacebookConstants.FIELD_NAME)) {
+	    result.setName(obj.getString(FacebookConstants.FIELD_NAME));
+	}
+
+	if (obj.has(FacebookConstants.FIELD_CAPTION)) {
+	    result.setTitle(FacebookConstants.FIELD_CAPTION);
+	}
+
+	if (obj.has(FacebookConstants.FIELD_DESCRIPTION)) {
+	    result.setDescription(obj
+		    .getString(FacebookConstants.FIELD_DESCRIPTION));
+	}
+
+	if (obj.has(FacebookConstants.FIELD_LINK)) {
+	    result.setAttachment(RDF2GoUtils.createURI(obj
+		    .getString(FacebookConstants.FIELD_LINK)));
+	} else if (obj.has(FacebookConstants.FIELD_SOURCE)) {
+	    result.setAttachment(RDF2GoUtils.createURI(obj
+		    .getString(FacebookConstants.FIELD_SOURCE)));
+	}
+
+	if (obj.has(FacebookConstants.FIELD_CREATED_TIME)) {
+	    Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+		    .getString(FacebookConstants.FIELD_CREATED_TIME));
+	    result.setCreated(DateUtils.formatISO8601(date));
+	}
+
+	if (obj.has(FacebookConstants.FIELD_UPDATED_TIME)) {
+	    Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+		    .getString(FacebookConstants.FIELD_UPDATED_TIME));
+	    result.setModified(DateUtils.formatISO8601(date));
+	}
+
+	result.setContainer(container);
+	container.addContainerOf(result);
+	SIOCUtils.updateLastItemDate(container, result);
+
+	return result;
     }
 
     /**
@@ -226,51 +226,51 @@ public class FacebookToSIOCConverter {
      * @throws NullPointerException
      *             Thrown if one or more parameters are null
      */
-    public static Post createComment(
-            final FacebookConnector connector, final Post parentPost,
-            final JsonObject obj, final URI uri) throws ConnectorException {
-        Preconditions.checkNotNull(connector, "connector can not be null");
-        Preconditions.checkNotNull(parentPost, "parentPost can not be null");
-        Preconditions.checkNotNull(obj, "obj can not be null");
-        Preconditions.checkNotNull(uri, "uri can not be null");
-    
-        Post result = new Post(connector.getModel(), uri, true);
-    
-        if (obj.has(FacebookConstants.FIELD_ID)) {
-            result.setId(obj.getString(FacebookConstants.FIELD_ID));
-        }
-    
-        if (obj.has(FacebookConstants.FIELD_FROM)) {
-            result.setCreator(connector.getUserAccount(obj.getJsonObject(
-        	    FacebookConstants.FIELD_FROM).getString(
-        	    FacebookConstants.FIELD_ID)));
-        }
-    
-        String content = "";
-        if (obj.has(FacebookConstants.FIELD_MESSAGE)) {
-            content = obj.getString(FacebookConstants.FIELD_MESSAGE);
-        }
-    
-        result.setContent(StringUtils.stripHTML(content));
-        result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
-    
-        if (obj.has(FacebookConstants.FIELD_CREATED_TIME)) {
-            Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
-        	    .getString(FacebookConstants.FIELD_CREATED_TIME));
-            result.setCreated(DateUtils.formatISO8601(date));
-        }
-    
-        if (parentPost.hasContainer()) {
-            Container container = parentPost.getContainer();
-            result.setContainer(container);
-            container.addContainerof(result);
-            SIOCUtils.updateLastItemDate(container, result);
-        }
-    
-        result.setReplyof(parentPost);
-        parentPost.addReply(result);
-        SIOCUtils.updateLastReplyDate(parentPost, result);
-    
-        return result;
+    public static Post createComment(final FacebookConnector connector,
+	    final Post parentPost, final JsonObject obj, final URI uri)
+	    throws ConnectorException {
+	Preconditions.checkNotNull(connector, "connector can not be null");
+	Preconditions.checkNotNull(parentPost, "parentPost can not be null");
+	Preconditions.checkNotNull(obj, "obj can not be null");
+	Preconditions.checkNotNull(uri, "uri can not be null");
+
+	Post result = new Post(connector.getModel(), uri, true);
+
+	if (obj.has(FacebookConstants.FIELD_ID)) {
+	    result.setId(obj.getString(FacebookConstants.FIELD_ID));
+	}
+
+	if (obj.has(FacebookConstants.FIELD_FROM)) {
+	    result.setCreator(connector.getUserAccount(obj.getJsonObject(
+		    FacebookConstants.FIELD_FROM).getString(
+		    FacebookConstants.FIELD_ID)));
+	}
+
+	String content = "";
+	if (obj.has(FacebookConstants.FIELD_MESSAGE)) {
+	    content = obj.getString(FacebookConstants.FIELD_MESSAGE);
+	}
+
+	result.setContent(StringUtils.stripHTML(content));
+	result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
+
+	if (obj.has(FacebookConstants.FIELD_CREATED_TIME)) {
+	    Date date = com.restfb.util.DateUtils.toDateFromLongFormat(obj
+		    .getString(FacebookConstants.FIELD_CREATED_TIME));
+	    result.setCreated(DateUtils.formatISO8601(date));
+	}
+
+	if (parentPost.hasContainers()) {
+	    Container container = parentPost.getContainer();
+	    result.setContainer(container);
+	    container.addContainerOf(result);
+	    SIOCUtils.updateLastItemDate(container, result);
+	}
+
+	result.setReplyOf(parentPost);
+	parentPost.addReply(result);
+	SIOCUtils.updateLastReplyDate(parentPost, result);
+
+	return result;
     }
 }

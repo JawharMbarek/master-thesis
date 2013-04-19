@@ -32,7 +32,7 @@ import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.SIOC;
 
-import com.xmlns.foaf.FOAF;
+import com.xmlns.foaf.FOAFVocabulary;
 
 public class SIOCUtils {
     public static void updateLastItemDate(Container container, Post post) {
@@ -84,7 +84,7 @@ public class SIOCUtils {
 	model = RDF2Go.getModelFactory().createModel();
 	model.open();
 	model.setNamespace("sioc", SIOC.NS_SIOC.toString());
-	model.setNamespace("foaf", FOAF.NS_FOAF.toString());
+	model.setNamespace("foaf", FOAFVocabulary.NS_FOAF.toString());
 	model.setNamespace("dcterms", DCTerms.NS_DCTerms.toString());
 
 	return model;

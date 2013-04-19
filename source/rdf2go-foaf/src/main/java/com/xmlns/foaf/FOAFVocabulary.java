@@ -8,7 +8,7 @@ import org.ontoware.rdf2go.model.node.impl.URIImpl;
  * input file: src/main/resources/ontologies/foaf.rdf
  * namespace: http://xmlns.com/foaf/0.1/
  */
-public interface FOAF {
+public interface FOAFVocabulary {
 	public static final URI NS_FOAF = new URIImpl("http://xmlns.com/foaf/0.1/",false);
 
     /**

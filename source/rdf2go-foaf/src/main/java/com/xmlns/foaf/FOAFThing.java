@@ -11,8 +11,6 @@ import org.ontoware.rdf2go.model.node.BlankNode;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
 import org.ontoware.rdfreactor.runtime.Base;
-import org.ontoware.rdfreactor.runtime.ReactorResult;
-
 
 /**
  * This class manages access to these properties:
@@ -25,12 +23,12 @@ import org.ontoware.rdfreactor.runtime.ReactorResult;
  * <li>Name</li>
  * <li>Note</li>
  * <li>Subject</li>
- * <li>DNAchecksum</li>
+ * <li>DNAChecksum</li>
  * <li>Depiction</li>
  * <li>Description</li>
  * <li>Elements1_1Title</li>
  * <li>FoafGivenname</li>
- * <li>Fundedby</li>
+ * <li>FundedBy</li>
  * <li>Givenname</li>
  * <li>Homepage</li>
  * <li>Logo</li>
@@ -40,7 +38,7 @@ import org.ontoware.rdfreactor.runtime.ReactorResult;
  * <li>Nickname</li>
  * <li>Page</li>
  * <li>Phone</li>
- * <li>Primarytopicof</li>
+ * <li>PrimaryTopicOf</li>
  * <li>Theme</li>
  * <li>Title</li>
  * </ul>
@@ -52,155 +50,130 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
     /**
      * 
      */
-    private static final long serialVersionUID   = 9047324362517530425L;
+    private static final long serialVersionUID = 9047324362517530425L;
 
     /** http://www.w3.org/2000/01/rdf-schema#Class */
-    public static final URI   RDFS_CLASS         = new URIImpl(
-                                                         "http://www.w3.org/2000/01/rdf-schema#Class",
-                                                         false );
+    public static final URI RDFS_CLASS = new URIImpl(
+	    "http://www.w3.org/2000/01/rdf-schema#Class", false);
 
     /** http://purl.org/dc/terms/subject */
-    public static final URI   SUBJECT            = new URIImpl(
-                                                         "http://purl.org/dc/terms/subject",
-                                                         false );
+    public static final URI SUBJECT = new URIImpl(
+	    "http://purl.org/dc/terms/subject", false);
 
     /** http://purl.org/dc/terms/title */
-    public static final URI   TITLE            = new URIImpl(
-                                                         "http://purl.org/dc/terms/title",
-                                                         false );
+    public static final URI TITLE = new URIImpl(
+	    "http://purl.org/dc/terms/title", false);
 
     /** http://purl.org/dc/terms/date */
-    public static final URI   DATE               = new URIImpl(
-                                                         "http://purl.org/dc/terms/date",
-                                                         false );
+    public static final URI DATE = new URIImpl("http://purl.org/dc/terms/date",
+	    false);
 
     /** http://purl.org/dc/terms/created */
-    public static final URI   CREATED          = new URIImpl(
-                                                         "http://purl.org/dc/terms/created",
-                                                         false );
+    public static final URI CREATED = new URIImpl(
+	    "http://purl.org/dc/terms/created", false);
 
     /** http://purl.org/dc/terms/modified */
-    public static final URI   MODIFIED         = new URIImpl(
-                                                         "http://purl.org/dc/terms/modified",
-                                                         false );
+    public static final URI MODIFIED = new URIImpl(
+	    "http://purl.org/dc/terms/modified", false);
 
     /** http://purl.org/dc/terms/hasPart */
-    public static final URI   HASPART            = new URIImpl(
-                                                         "http://purl.org/dc/terms/hasPart",
-                                                         false );
+    public static final URI HASPART = new URIImpl(
+	    "http://purl.org/dc/terms/hasPart", false);
 
     /** http://purl.org/dc/terms/isPartOf */
-    public static final URI   ISPARTOF           = new URIImpl(
-                                                         "http://purl.org/dc/terms/isPartOf",
-                                                         false );
+    public static final URI ISPARTOF = new URIImpl(
+	    "http://purl.org/dc/terms/isPartOf", false);
 
     /** http://purl.org/dc/terms/description */
-    public static final URI   DESCRIPTION      = new URIImpl(
-                                                       "http://purl.org/dc/terms/description",
-                                                       false );
+    public static final URI DESCRIPTION = new URIImpl(
+	    "http://purl.org/dc/terms/description", false);
 
     /** http://purl.org/dc/terms/references */
-    public static final URI   REFERENCES         = new URIImpl(
-                                                         "http://purl.org/dc/terms/references",
-                                                         false );
+    public static final URI REFERENCES = new URIImpl(
+	    "http://purl.org/dc/terms/references", false);
 
     /** http://xmlns.com/foaf/0.1/depiction */
-    public static final URI   DEPICTION          = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/depiction",
-                                                         false );
+    public static final URI DEPICTION = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/depiction", false);
 
     /** http://xmlns.com/foaf/0.1/dnaChecksum */
-    public static final URI   DNACHECKSUM        = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/dnaChecksum",
-                                                         false );
+    public static final URI DNACHECKSUM = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/dnaChecksum", false);
 
     /** http://xmlns.com/foaf/0.1/fundedBy */
-    public static final URI   FUNDEDBY           = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/fundedBy",
-                                                         false );
+    public static final URI FUNDEDBY = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/fundedBy", false);
 
     /** http://xmlns.com/foaf/0.1/givenName */
-    public static final URI   GIVENNAME          = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/givenName",
-                                                         false );
+    public static final URI GIVENNAME = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/givenName", false);
 
     /** http://xmlns.com/foaf/0.1/homepage */
-    public static final URI   HOMEPAGE           = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/homepage",
-                                                         false );
+    public static final URI HOMEPAGE = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/homepage", false);
 
     /** http://xmlns.com/foaf/0.1/logo */
-    public static final URI   LOGO               = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/logo",
-                                                         false );
+    public static final URI LOGO = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/logo", false);
 
     /** http://xmlns.com/foaf/0.1/maker */
-    public static final URI   MAKER              = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/maker",
-                                                         false );
+    public static final URI MAKER = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/maker", false);
 
     /** http://xmlns.com/foaf/0.1/membershipClass */
-    public static final URI   MEMBERSHIPCLASS    = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/membershipClass",
-                                                         false );
+    public static final URI MEMBERSHIPCLASS = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/membershipClass", false);
 
     /** http://xmlns.com/foaf/0.1/name */
-    public static final URI   NAME               = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/name",
-                                                         false );
+    public static final URI NAME = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/name", false);
 
     /** http://xmlns.com/foaf/0.1/nick */
-    public static final URI   NICKNAME           = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/nick",
-                                                         false );
+    public static final URI NICKNAME = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/nick", false);
 
     /** http://xmlns.com/foaf/0.1/page */
-    public static final URI   PAGE               = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/page",
-                                                         false );
+    public static final URI PAGE = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/page", false);
 
     /** http://xmlns.com/foaf/0.1/phone */
-    public static final URI   PHONE              = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/phone",
-                                                         false );
+    public static final URI PHONE = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/phone", false);
 
     /** http://xmlns.com/foaf/0.1/isPrimaryTopicOf */
-    public static final URI   PRIMARYTOPICOF     = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/isPrimaryTopicOf",
-                                                         false );
+    public static final URI PRIMARYTOPICOF = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/isPrimaryTopicOf", false);
 
     /** http://xmlns.com/foaf/0.1/theme */
-    public static final URI   THEME              = new URIImpl(
-                                                         "http://xmlns.com/foaf/0.1/theme",
-                                                         false );
+    public static final URI THEME = new URIImpl(
+	    "http://xmlns.com/foaf/0.1/theme", false);
 
     /**
      * All property-URIs with this class as domain. All properties of all
      * super-classes are also available.
      */
-    public static final URI[] MANAGED_URIS       = {
-            new URIImpl( "http://purl.org/dc/terms/subject", false ),
-            new URIImpl( "http://purl.org/dc/terms/title", false ),
-            new URIImpl( "http://purl.org/dc/terms/created", false ),
-            new URIImpl( "http://purl.org/dc/terms/date", false ),
-            new URIImpl( "http://purl.org/dc/terms/description", false ),
-            new URIImpl( "http://purl.org/dc/terms/references", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/dnaChecksum", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/depiction", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/givenname", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/fundedBy", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/givenName", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/homepage", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/logo", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/maker", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/membershipClass", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/name", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/nick", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/page", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/phone", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/isPrimaryTopicOf", false ),
-            new URIImpl( "http://xmlns.com/foaf/0.1/theme", false )
- };
+    public static final URI[] MANAGED_URIS = {
+	    new URIImpl("http://purl.org/dc/terms/subject", false),
+	    new URIImpl("http://purl.org/dc/terms/title", false),
+	    new URIImpl("http://purl.org/dc/terms/created", false),
+	    new URIImpl("http://purl.org/dc/terms/date", false),
+	    new URIImpl("http://purl.org/dc/terms/description", false),
+	    new URIImpl("http://purl.org/dc/terms/references", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/dnaChecksum", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/depiction", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/givenname", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/fundedBy", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/givenName", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/homepage", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/logo", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/maker", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/membershipClass", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/name", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/nick", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/page", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/phone", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/isPrimaryTopicOf", false),
+	    new URIImpl("http://xmlns.com/foaf/0.1/theme", false) };
 
     // protected constructors needed for inheritance
 
@@ -220,10 +193,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #c1]
      */
-    protected FOAFThing( Model model, URI classURI,
-            org.ontoware.rdf2go.model.node.Resource instanceIdentifier,
-            boolean write ) {
-        super( model, classURI, instanceIdentifier, write );
+    protected FOAFThing(Model model, URI classURI,
+	    org.ontoware.rdf2go.model.node.Resource instanceIdentifier,
+	    boolean write) {
+	super(model, classURI, instanceIdentifier, write);
     }
 
     // public constructors
@@ -242,10 +215,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #c2]
      */
-    public FOAFThing( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceIdentifier,
-            boolean write ) {
-        super( model, RDFS_CLASS, instanceIdentifier, write );
+    public FOAFThing(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceIdentifier,
+	    boolean write) {
+	super(model, RDFS_CLASS, instanceIdentifier, write);
     }
 
     /**
@@ -264,9 +237,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *             [Generated from RDFReactor template rule #c7]
      */
-    public FOAFThing( Model model, String uriString, boolean write )
-            throws ModelRuntimeException {
-        super( model, RDFS_CLASS, new URIImpl( uriString, false ), write );
+    public FOAFThing(Model model, String uriString, boolean write)
+	    throws ModelRuntimeException {
+	super(model, RDFS_CLASS, new URIImpl(uriString, false), write);
     }
 
     /**
@@ -283,8 +256,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #c8]
      */
-    public FOAFThing( Model model, BlankNode bnode, boolean write ) {
-        super( model, RDFS_CLASS, bnode, write );
+    public FOAFThing(Model model, BlankNode bnode, boolean write) {
+	super(model, RDFS_CLASS, bnode, write);
     }
 
     /**
@@ -299,8 +272,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #c9]
      */
-    public FOAFThing( Model model, boolean write ) {
-        super( model, RDFS_CLASS, model.newRandomUniqueURI(), write );
+    public FOAFThing(Model model, boolean write) {
+	super(model, RDFS_CLASS, model.newRandomUniqueURI(), write);
     }
 
     // /////////////////////////////////////////////////////////////////
@@ -318,9 +291,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #class0]
      */
-    public static FOAFThing getInstance( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getInstance( model, instanceResource, FOAFThing.class );
+    public static FOAFThing getInstance(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getInstance(model, instanceResource, FOAFThing.class);
     }
 
     /**
@@ -335,9 +308,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #class1]
      */
-    public static void createInstance( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.createInstance( model, RDFS_CLASS, instanceResource );
+    public static void createInstance(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.createInstance(model, RDFS_CLASS, instanceResource);
     }
 
     /**
@@ -350,9 +323,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #class2]
      */
-    public static boolean hasInstance( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.hasInstance( model, RDFS_CLASS, instanceResource );
+    public static boolean hasInstance(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.hasInstance(model, RDFS_CLASS, instanceResource);
     }
 
     /**
@@ -363,21 +336,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      *         [Generated from RDFReactor template rule #class3]
      */
     public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllInstances(
-            Model model ) {
-        return Base.getAllInstances( model, RDFS_CLASS,
-                org.ontoware.rdf2go.model.node.Resource.class );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @return all instances of this class in Model 'model' as a ReactorResult,
-     *         which can conveniently be converted to iterator, list or array.
-     * 
-     *         [Generated from RDFReactor template rule #class3-as]
-     */
-    public static ReactorResult<? extends FOAFThing> getAllInstances_as( Model model ) {
-        return Base.getAllInstances_as( model, RDFS_CLASS, FOAFThing.class );
+	    Model model) {
+	return Base.getAllInstances(model, RDFS_CLASS,
+		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -391,9 +352,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #class4]
      */
-    public static void deleteInstance( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.deleteInstance( model, RDFS_CLASS, instanceResource );
+    public static void deleteInstance(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.deleteInstance(model, RDFS_CLASS, instanceResource);
     }
 
     /**
@@ -403,9 +364,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      *            an RDF2Go model
      * @param resource
      */
-    public static void deleteAllProperties( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.deleteAllProperties( model, instanceResource );
+    public static void deleteAllProperties(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.deleteAllProperties(model, instanceResource);
     }
 
     // /////////////////////////////////////////////////////////////////
@@ -420,10 +381,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllHasPart_Inverse(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse( model, FOAFThing.HASPART, objectValue );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllHasPart_Inverse(
+	    Model model, Object objectValue) {
+	return Base.getAll_Inverse(model, FOAFThing.HASPART, objectValue);
     }
 
     /**
@@ -432,27 +392,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllHasPart_Inverse() {
-        return Base.getAll_Inverse( this.model, FOAFThing.HASPART,
-                this.getResource() );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'HasPart' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource>
-            getAllHasPart_Inverse_as(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse_as( model, FOAFThing.HASPART, objectValue,
-                org.ontoware.rdf2go.model.node.Resource.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllHasPart_Inverse() {
+	return Base.getAll_Inverse(this.model, FOAFThing.HASPART,
+		this.getResource());
     }
 
     /**
@@ -464,10 +406,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllIsPartOf_Inverse(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse( model, FOAFThing.ISPARTOF, objectValue );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllIsPartOf_Inverse(
+	    Model model, Object objectValue) {
+	return Base.getAll_Inverse(model, FOAFThing.ISPARTOF, objectValue);
     }
 
     /**
@@ -476,27 +417,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllIsPartOf_Inverse() {
-        return Base.getAll_Inverse( this.model, FOAFThing.ISPARTOF,
-                this.getResource() );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'IsPartOf' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource>
-            getAllIsPartOf_Inverse_as(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse_as( model, FOAFThing.ISPARTOF, objectValue,
-                org.ontoware.rdf2go.model.node.Resource.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllIsPartOf_Inverse() {
+	return Base.getAll_Inverse(this.model, FOAFThing.ISPARTOF,
+		this.getResource());
     }
 
     /**
@@ -508,10 +431,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllDate_Inverse(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse( model, FOAFThing.DATE, objectValue );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDates_Inverse(
+	    Model model, Object objectValue) {
+	return Base.getAll_Inverse(model, FOAFThing.DATE, objectValue);
     }
 
     /**
@@ -520,26 +442,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllDate_Inverse() {
-        return Base.getAll_Inverse( this.model, FOAFThing.DATE, this.getResource() );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Date' to this
-     *         Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource>
-            getAllDate_Inverse_as(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse_as( model, FOAFThing.DATE, objectValue,
-                org.ontoware.rdf2go.model.node.Resource.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDates_Inverse() {
+	return Base.getAll_Inverse(this.model, FOAFThing.DATE,
+		this.getResource());
     }
 
     /**
@@ -551,10 +456,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllDescription_Inverse(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse( model, FOAFThing.DESCRIPTION, objectValue );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDescriptions_Inverse(
+	    Model model, Object objectValue) {
+	return Base.getAll_Inverse(model, FOAFThing.DESCRIPTION, objectValue);
     }
 
     /**
@@ -563,27 +467,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllDescription_Inverse() {
-        return Base.getAll_Inverse( this.model, FOAFThing.DESCRIPTION,
-                this.getResource() );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Description' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource>
-            getAllDescription_Inverse_as(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse_as( model, FOAFThing.DESCRIPTION, objectValue,
-                org.ontoware.rdf2go.model.node.Resource.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDescriptions_Inverse() {
+	return Base.getAll_Inverse(this.model, FOAFThing.DESCRIPTION,
+		this.getResource());
     }
 
     /**
@@ -595,10 +481,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllReferences_Inverse(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse( model, FOAFThing.REFERENCES, objectValue );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllReferences_Inverse(
+	    Model model, Object objectValue) {
+	return Base.getAll_Inverse(model, FOAFThing.REFERENCES, objectValue);
     }
 
     /**
@@ -607,27 +492,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllReferences_Inverse() {
-        return Base.getAll_Inverse( this.model, FOAFThing.REFERENCES,
-                this.getResource() );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'References' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource>
-            getAllReferences_Inverse_as(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse_as( model, FOAFThing.REFERENCES, objectValue,
-                org.ontoware.rdf2go.model.node.Resource.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllReferences_Inverse() {
+	return Base.getAll_Inverse(this.model, FOAFThing.REFERENCES,
+		this.getResource());
     }
 
     /**
@@ -639,10 +506,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllSubject_Inverse(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse( model, FOAFThing.SUBJECT, objectValue );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSubjects_Inverse(
+	    Model model, Object objectValue) {
+	return Base.getAll_Inverse(model, FOAFThing.SUBJECT, objectValue);
     }
 
     /**
@@ -651,27 +517,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllSubject_Inverse() {
-        return Base.getAll_Inverse( this.model, FOAFThing.SUBJECT,
-                this.getResource() );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Subject' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource>
-            getAllSubject_Inverse_as(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse_as( model, FOAFThing.SUBJECT, objectValue,
-                org.ontoware.rdf2go.model.node.Resource.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSubjects_Inverse() {
+	return Base.getAll_Inverse(this.model, FOAFThing.SUBJECT,
+		this.getResource());
     }
 
     /**
@@ -683,10 +531,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllTitle_Inverse(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse( model, FOAFThing.TITLE, objectValue );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllTitles_Inverse(
+	    Model model, Object objectValue) {
+	return Base.getAll_Inverse(model, FOAFThing.TITLE, objectValue);
     }
 
     /**
@@ -695,28 +542,135 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllTitle_Inverse() {
-        return Base
-                .getAll_Inverse( this.model, FOAFThing.TITLE,
-                this.getResource() );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllTitles_Inverse() {
+	return Base.getAll_Inverse(this.model, FOAFThing.TITLE,
+		this.getResource());
     }
 
     /**
      * @param model
      *            an RDF2Go model
      * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Title' to this
+     * @return all A's as RDF resources, that have a relation 'Givenname' to
+     *         this Thing instance
+     * 
+     *         [Generated from RDFReactor template rule #getallinverse1static]
+     */
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllGivennames_Inverse(
+	    Model model, Object objectValue) {
+	return Base.getAll_Inverse(model, FOAFThing.GIVENNAME, objectValue);
+    }
+
+    /**
+     * @return all A's as RDF resources, that have a relation 'Givenname' to
+     *         this Thing instance
+     * 
+     *         [Generated from RDFReactor template rule #getallinverse1dynamic]
+     */
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllGivennames_Inverse() {
+	return Base.getAll_Inverse(this.model, FOAFThing.GIVENNAME,
+		this.getResource());
+    }
+
+    /**
+     * @param model
+     *            an RDF2Go model
+     * @param objectValue
+     * @return all A's as RDF resources, that have a relation 'MembershipClass'
+     *         to this Thing instance
+     * 
+     *         [Generated from RDFReactor template rule #getallinverse1static]
+     */
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllMembershipClasses_Inverse(
+	    Model model, Object objectValue) {
+	return Base.getAll_Inverse(model, FOAFThing.MEMBERSHIPCLASS,
+		objectValue);
+    }
+
+    /**
+     * @return all A's as RDF resources, that have a relation 'MembershipClass'
+     *         to this Thing instance
+     * 
+     *         [Generated from RDFReactor template rule #getallinverse1dynamic]
+     */
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllMembershipClasses_Inverse() {
+	return Base.getAll_Inverse(this.model, FOAFThing.MEMBERSHIPCLASS,
+		this.getResource());
+    }
+
+    /**
+     * @param model
+     *            an RDF2Go model
+     * @param objectValue
+     * @return all A's as RDF resources, that have a relation 'Nickname' to this
      *         Thing instance
      * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
+     *         [Generated from RDFReactor template rule #getallinverse1static]
      */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource>
-            getAllTitle_Inverse_as(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse_as( model, FOAFThing.TITLE, objectValue,
-                org.ontoware.rdf2go.model.node.Resource.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllNicknames_Inverse(
+	    Model model, Object objectValue) {
+	return Base.getAll_Inverse(model, FOAFThing.NICKNAME, objectValue);
+    }
+
+    /**
+     * @return all A's as RDF resources, that have a relation 'Nickname' to this
+     *         Thing instance
+     * 
+     *         [Generated from RDFReactor template rule #getallinverse1dynamic]
+     */
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllNicknames_Inverse() {
+	return Base.getAll_Inverse(this.model, FOAFThing.NICKNAME,
+		this.getResource());
+    }
+
+    /**
+     * @param model
+     *            an RDF2Go model
+     * @param objectValue
+     * @return all A's as RDF resources, that have a relation 'Phone' to this
+     *         Thing instance
+     * 
+     *         [Generated from RDFReactor template rule #getallinverse1static]
+     */
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllPhones_Inverse(
+	    Model model, Object objectValue) {
+	return Base.getAll_Inverse(model, FOAFThing.PHONE, objectValue);
+    }
+
+    /**
+     * @return all A's as RDF resources, that have a relation 'Phone' to this
+     *         Thing instance
+     * 
+     *         [Generated from RDFReactor template rule #getallinverse1dynamic]
+     */
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllPhones_Inverse() {
+	return Base.getAll_Inverse(this.model, FOAFThing.PHONE,
+		this.getResource());
+    }
+
+    /**
+     * @param model
+     *            an RDF2Go model
+     * @param objectValue
+     * @return all A's as RDF resources, that have a relation 'Sha1sum_hex_' to
+     *         this Thing instance
+     * 
+     *         [Generated from RDFReactor template rule #getallinverse1static]
+     */
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSha1Sums_Inverse(
+	    Model model, Object objectValue) {
+	return Base.getAll_Inverse(model, Document.SHA1SUM, objectValue);
+    }
+
+    /**
+     * @return all A's as RDF resources, that have a relation 'Sha1sum_hex_' to
+     *         this Thing instance
+     * 
+     *         [Generated from RDFReactor template rule #getallinverse1dynamic]
+     */
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllSha1Sums_Inverse() {
+	return Base.getAll_Inverse(this.model, Document.SHA1SUM,
+		this.getResource());
     }
 
     /**
@@ -731,9 +685,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasDate( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, DATE );
+    public static boolean hasDates(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, DATE);
     }
 
     /**
@@ -744,8 +698,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasDate() {
-        return Base.has( this.model, this.getResource(), DATE );
+    public boolean hasDates() {
+	return Base.has(this.model, this.getResource(), DATE);
     }
 
     /**
@@ -763,10 +717,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasDate( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, DATE, value );
+    public static boolean hasDate(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, DATE, value);
     }
 
     /**
@@ -780,8 +734,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasDate( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), DATE, value );
+    public boolean hasDate(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), DATE, value);
     }
 
     /**
@@ -795,31 +749,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllDate_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, DATE );
-    }
-
-    /**
-     * Get all values of property Date as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllDate_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, DATE,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDates_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, DATE);
     }
 
     /**
@@ -829,23 +762,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllDate_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), DATE );
-    }
-
-    /**
-     * Get all values of property Date as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllDate_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), DATE,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDates_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), DATE);
     }
 
     /**
@@ -857,27 +775,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<FOAFThing> getAllDate( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, DATE, FOAFThing.class );
-    }
-
-    /**
-     * Get all values of property Date as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<FOAFThing> getAllDate_as( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, DATE, FOAFThing.class );
+    public static ClosableIterator<FOAFThing> getAllDates(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, DATE, FOAFThing.class);
     }
 
     /**
@@ -885,22 +785,19 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<FOAFThing> getAllDate() {
-        return Base.getAll( this.model, this.getResource(), DATE, FOAFThing.class );
+    public ClosableIterator<FOAFThing> getAllDates() {
+	return Base.getAll(this.model, this.getResource(), DATE,
+		FOAFThing.class);
     }
 
     /**
-     * Get all values of property Date as a ReactorResult of Thing
+     * Get first values of property Date * @return a ClosableIterator of $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<FOAFThing> getAllDate_as() {
-        return Base.getAll_as( this.model, this.getResource(), DATE,
-                FOAFThing.class );
+    public FOAFThing getDate() {
+	return Base.getAll_as(this.model, this.getResource(), DATE,
+		FOAFThing.class).firstValue();
     }
 
     /**
@@ -915,10 +812,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addDate( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, DATE, value );
+    public static void addDate(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, DATE, value);
     }
 
     /**
@@ -929,8 +826,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addDate( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), DATE, value );
+    public void addDate(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), DATE, value);
     }
 
     /**
@@ -943,10 +840,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addDate( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.add( model, instanceResource, DATE, value );
+    public static void addDate(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.add(model, instanceResource, DATE, value);
     }
 
     /**
@@ -954,8 +851,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addDate( FOAFThing value ) {
-        Base.add( this.model, this.getResource(), DATE, value );
+    public void addDate(FOAFThing value) {
+	Base.add(this.model, this.getResource(), DATE, value);
     }
 
     /**
@@ -973,10 +870,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setDate( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, DATE, value );
+    public static void setDate(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, DATE, value);
     }
 
     /**
@@ -990,8 +887,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setDate( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), DATE, value );
+    public void setDate(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), DATE, value);
     }
 
     /**
@@ -1009,10 +906,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setDate( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.set( model, instanceResource, DATE, value );
+    public static void setDate(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.set(model, instanceResource, DATE, value);
     }
 
     /**
@@ -1026,8 +923,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setDate( FOAFThing value ) {
-        Base.set( this.model, this.getResource(), DATE, value );
+    public void setDate(FOAFThing value) {
+	Base.set(this.model, this.getResource(), DATE, value);
     }
 
     /**
@@ -1042,10 +939,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeDate( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, DATE, value );
+    public static void removeDate(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, DATE, value);
     }
 
     /**
@@ -1056,8 +953,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeDate( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), DATE, value );
+    public void removeDate(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), DATE, value);
     }
 
     /**
@@ -1072,10 +969,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeDate( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.remove( model, instanceResource, DATE, value );
+    public static void removeDate(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.remove(model, instanceResource, DATE, value);
     }
 
     /**
@@ -1086,8 +983,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeDate( FOAFThing value ) {
-        Base.remove( this.model, this.getResource(), DATE, value );
+    public void removeDate(FOAFThing value) {
+	Base.remove(this.model, this.getResource(), DATE, value);
     }
 
     /**
@@ -1098,17 +995,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllDate( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, DATE );
+    public static void removeAllDates(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, DATE);
     }
 
     /**
      * Removes all values of property Date * [Generated from RDFReactor template
      * rule #removeall1dynamic]
      */
-    public void removeAllDate() {
-        Base.removeAll( this.model, this.getResource(), DATE );
+    public void removeAllDates() {
+	Base.removeAll(this.model, this.getResource(), DATE);
     }
 
     /**
@@ -1123,9 +1020,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasDescription( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, DESCRIPTION );
+    public static boolean hasDescriptions(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, DESCRIPTION);
     }
 
     /**
@@ -1136,8 +1033,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasDescription() {
-        return Base.has( this.model, this.getResource(), DESCRIPTION );
+    public boolean hasDescriptions() {
+	return Base.has(this.model, this.getResource(), DESCRIPTION);
     }
 
     /**
@@ -1155,10 +1052,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasDescription( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, DESCRIPTION, value );
+    public static boolean hasDescription(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, DESCRIPTION, value);
     }
 
     /**
@@ -1172,10 +1069,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasDescription(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), DESCRIPTION,
-                value );
+    public boolean hasDescription(org.ontoware.rdf2go.model.node.Node value) {
+	return Base
+		.hasValue(this.model, this.getResource(), DESCRIPTION, value);
     }
 
     /**
@@ -1189,31 +1085,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllDescription_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, DESCRIPTION );
-    }
-
-    /**
-     * Get all values of property Description as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllDescription_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, DESCRIPTION,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDescriptions_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, DESCRIPTION);
     }
 
     /**
@@ -1223,23 +1098,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllDescription_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), DESCRIPTION );
-    }
-
-    /**
-     * Get all values of property Description as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllDescription_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), DESCRIPTION,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDescriptions_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), DESCRIPTION);
     }
 
     /**
@@ -1251,30 +1111,20 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<FOAFThing> getAllDescription(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, DESCRIPTION, FOAFThing.class );
+    public static ClosableIterator<FOAFThing> getAllDescriptions(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, DESCRIPTION,
+		FOAFThing.class);
     }
 
     /**
-     * Get all values of property Description as a ReactorResult of Thing
+     * Get first values of property Description * @return FOAFThing
      * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public static ReactorResult<FOAFThing> getAllDescription_as(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, DESCRIPTION,
-                FOAFThing.class );
+    public FOAFThing getDescription() {
+	return Base.getAll_as(this.model, this.getResource(), DESCRIPTION,
+		FOAFThing.class).firstValue();
     }
 
     /**
@@ -1283,23 +1133,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<FOAFThing> getAllDescription() {
-        return Base.getAll( this.model, this.getResource(), DESCRIPTION,
-                FOAFThing.class );
-    }
-
-    /**
-     * Get all values of property Description as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<FOAFThing> getAllDescription_as() {
-        return Base.getAll_as( this.model, this.getResource(), DESCRIPTION,
-                FOAFThing.class );
+    public ClosableIterator<FOAFThing> getAllDescriptions() {
+	return Base.getAll(this.model, this.getResource(), DESCRIPTION,
+		FOAFThing.class);
     }
 
     /**
@@ -1314,10 +1150,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addDescription( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, DESCRIPTION, value );
+    public static void addDescription(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, DESCRIPTION, value);
     }
 
     /**
@@ -1328,8 +1164,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addDescription( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), DESCRIPTION, value );
+    public void addDescription(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), DESCRIPTION, value);
     }
 
     /**
@@ -1342,10 +1178,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addDescription( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.add( model, instanceResource, DESCRIPTION, value );
+    public static void addDescription(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.add(model, instanceResource, DESCRIPTION, value);
     }
 
     /**
@@ -1353,8 +1189,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addDescription( FOAFThing value ) {
-        Base.add( this.model, this.getResource(), DESCRIPTION, value );
+    public void addDescription(FOAFThing value) {
+	Base.add(this.model, this.getResource(), DESCRIPTION, value);
     }
 
     /**
@@ -1372,10 +1208,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setDescription( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, DESCRIPTION, value );
+    public static void setDescription(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, DESCRIPTION, value);
     }
 
     /**
@@ -1389,8 +1225,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setDescription( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), DESCRIPTION, value );
+    public void setDescription(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), DESCRIPTION, value);
     }
 
     /**
@@ -1408,10 +1244,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setDescription( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.set( model, instanceResource, DESCRIPTION, value );
+    public static void setDescription(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.set(model, instanceResource, DESCRIPTION, value);
     }
 
     /**
@@ -1425,8 +1261,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setDescription( FOAFThing value ) {
-        Base.set( this.model, this.getResource(), DESCRIPTION, value );
+    public void setDescription(FOAFThing value) {
+	Base.set(this.model, this.getResource(), DESCRIPTION, value);
     }
 
     /**
@@ -1441,10 +1277,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeDescription( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, DESCRIPTION, value );
+    public static void removeDescription(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, DESCRIPTION, value);
     }
 
     /**
@@ -1455,9 +1291,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeDescription(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), DESCRIPTION, value );
+    public void removeDescription(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), DESCRIPTION, value);
     }
 
     /**
@@ -1472,10 +1307,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeDescription( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.remove( model, instanceResource, DESCRIPTION, value );
+    public static void removeDescription(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.remove(model, instanceResource, DESCRIPTION, value);
     }
 
     /**
@@ -1486,8 +1321,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeDescription( FOAFThing value ) {
-        Base.remove( this.model, this.getResource(), DESCRIPTION, value );
+    public void removeDescription(FOAFThing value) {
+	Base.remove(this.model, this.getResource(), DESCRIPTION, value);
     }
 
     /**
@@ -1498,17 +1333,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllDescription( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, DESCRIPTION );
+    public static void removeAllDescriptions(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, DESCRIPTION);
     }
 
     /**
      * Removes all values of property Description * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllDescription() {
-        Base.removeAll( this.model, this.getResource(), DESCRIPTION );
+    public void removeAllDescriptions() {
+	Base.removeAll(this.model, this.getResource(), DESCRIPTION);
     }
 
     /**
@@ -1523,9 +1358,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasReferences( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, REFERENCES );
+    public static boolean hasReferences(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, REFERENCES);
     }
 
     /**
@@ -1537,7 +1372,7 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
     public boolean hasReferences() {
-        return Base.has( this.model, this.getResource(), REFERENCES );
+	return Base.has(this.model, this.getResource(), REFERENCES);
     }
 
     /**
@@ -1555,10 +1390,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasReferences( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, REFERENCES, value );
+    public static boolean hasReferences(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, REFERENCES, value);
     }
 
     /**
@@ -1572,10 +1407,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasReferences(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base
-                .hasValue( this.model, this.getResource(), REFERENCES, value );
+    public boolean hasReferences(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), REFERENCES, value);
     }
 
     /**
@@ -1589,31 +1422,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllReferences_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, REFERENCES );
-    }
-
-    /**
-     * Get all values of property References as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllReferences_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, REFERENCES,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllReferences_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, REFERENCES);
     }
 
     /**
@@ -1623,23 +1435,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllReferences_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), REFERENCES );
-    }
-
-    /**
-     * Get all values of property References as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllReferences_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), REFERENCES,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllReferences_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), REFERENCES);
     }
 
     /**
@@ -1651,28 +1448,21 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<FOAFThing> getAllReferences( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, REFERENCES, FOAFThing.class );
+    public static ClosableIterator<FOAFThing> getAllReferences(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base
+		.getAll(model, instanceResource, REFERENCES, FOAFThing.class);
     }
 
     /**
-     * Get all values of property References as a ReactorResult of Thing
+     * Get all values of property References * @return a ClosableIterator of
+     * $type
      * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public static ReactorResult<FOAFThing> getAllReferences_as( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base
-                .getAll_as( model, instanceResource, REFERENCES, FOAFThing.class );
+    public FOAFThing getReference() {
+	return Base.getAll_as(this.model, this.getResource(), REFERENCES,
+		FOAFThing.class).firstValue();
     }
 
     /**
@@ -1682,22 +1472,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<FOAFThing> getAllReferences() {
-        return Base.getAll( this.model, this.getResource(), REFERENCES,
-                FOAFThing.class );
-    }
-
-    /**
-     * Get all values of property References as a ReactorResult of Thing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<FOAFThing> getAllReferences_as() {
-        return Base.getAll_as( this.model, this.getResource(), REFERENCES,
-                FOAFThing.class );
+	return Base.getAll(this.model, this.getResource(), REFERENCES,
+		FOAFThing.class);
     }
 
     /**
@@ -1712,10 +1488,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addReferences( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, REFERENCES, value );
+    public static void addReferences(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, REFERENCES, value);
     }
 
     /**
@@ -1726,8 +1502,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addReferences( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), REFERENCES, value );
+    public void addReferences(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), REFERENCES, value);
     }
 
     /**
@@ -1740,10 +1516,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addReferences( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.add( model, instanceResource, REFERENCES, value );
+    public static void addReferences(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.add(model, instanceResource, REFERENCES, value);
     }
 
     /**
@@ -1751,8 +1527,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addReferences( FOAFThing value ) {
-        Base.add( this.model, this.getResource(), REFERENCES, value );
+    public void addReferences(FOAFThing value) {
+	Base.add(this.model, this.getResource(), REFERENCES, value);
     }
 
     /**
@@ -1770,10 +1546,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setReferences( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, REFERENCES, value );
+    public static void setReferences(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, REFERENCES, value);
     }
 
     /**
@@ -1787,8 +1563,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setReferences( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), REFERENCES, value );
+    public void setReferences(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), REFERENCES, value);
     }
 
     /**
@@ -1806,10 +1582,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setReferences( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.set( model, instanceResource, REFERENCES, value );
+    public static void setReferences(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.set(model, instanceResource, REFERENCES, value);
     }
 
     /**
@@ -1823,8 +1599,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setReferences( FOAFThing value ) {
-        Base.set( this.model, this.getResource(), REFERENCES, value );
+    public void setReferences(FOAFThing value) {
+	Base.set(this.model, this.getResource(), REFERENCES, value);
     }
 
     /**
@@ -1839,10 +1615,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeReferences( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, REFERENCES, value );
+    public static void removeReferences(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, REFERENCES, value);
     }
 
     /**
@@ -1853,9 +1629,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeReferences(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), REFERENCES, value );
+    public void removeReferences(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), REFERENCES, value);
     }
 
     /**
@@ -1870,10 +1645,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeReferences( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.remove( model, instanceResource, REFERENCES, value );
+    public static void removeReferences(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.remove(model, instanceResource, REFERENCES, value);
     }
 
     /**
@@ -1884,8 +1659,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeReferences( FOAFThing value ) {
-        Base.remove( this.model, this.getResource(), REFERENCES, value );
+    public void removeReferences(FOAFThing value) {
+	Base.remove(this.model, this.getResource(), REFERENCES, value);
     }
 
     /**
@@ -1896,9 +1671,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllReferences( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, REFERENCES );
+    public static void removeAllReferences(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, REFERENCES);
     }
 
     /**
@@ -1906,7 +1681,7 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * template rule #removeall1dynamic]
      */
     public void removeAllReferences() {
-        Base.removeAll( this.model, this.getResource(), REFERENCES );
+	Base.removeAll(this.model, this.getResource(), REFERENCES);
     }
 
     /**
@@ -1921,9 +1696,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasSubject( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, SUBJECT );
+    public static boolean hasSubjects(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, SUBJECT);
     }
 
     /**
@@ -1934,8 +1709,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasSubject() {
-        return Base.has( this.model, this.getResource(), SUBJECT );
+    public boolean hasSubjects() {
+	return Base.has(this.model, this.getResource(), SUBJECT);
     }
 
     /**
@@ -1953,10 +1728,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasSubject( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, SUBJECT, value );
+    public static boolean hasSubject(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, SUBJECT, value);
     }
 
     /**
@@ -1970,8 +1745,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasSubject( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), SUBJECT, value );
+    public boolean hasSubject(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), SUBJECT, value);
     }
 
     /**
@@ -1985,31 +1760,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllSubject_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, SUBJECT );
-    }
-
-    /**
-     * Get all values of property Subject as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllSubject_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, SUBJECT,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSubjects_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, SUBJECT);
     }
 
     /**
@@ -2019,23 +1773,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllSubject_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), SUBJECT );
-    }
-
-    /**
-     * Get all values of property Subject as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllSubject_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), SUBJECT,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSubjects_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), SUBJECT);
     }
 
     /**
@@ -2047,27 +1786,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<FOAFThing> getAllSubject( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, SUBJECT, FOAFThing.class );
-    }
-
-    /**
-     * Get all values of property Subject as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<FOAFThing> getAllSubject_as( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, SUBJECT, FOAFThing.class );
+    public static ClosableIterator<FOAFThing> getAllSubjects(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, SUBJECT, FOAFThing.class);
     }
 
     /**
@@ -2075,23 +1796,19 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<FOAFThing> getAllSubject() {
-        return Base.getAll( this.model, this.getResource(), SUBJECT,
-                FOAFThing.class );
+    public ClosableIterator<FOAFThing> getAllSubjects() {
+	return Base.getAll(this.model, this.getResource(), SUBJECT,
+		FOAFThing.class);
     }
 
     /**
-     * Get all values of property Subject as a ReactorResult of Thing
+     * Get all values of property Subject * @return a ClosableIterator of $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<FOAFThing> getAllSubject_as() {
-        return Base.getAll_as( this.model, this.getResource(), SUBJECT,
-                FOAFThing.class );
+    public FOAFThing getSubject() {
+	return Base.getAll_as(this.model, this.getResource(), SUBJECT,
+		FOAFThing.class).firstValue();
     }
 
     /**
@@ -2106,10 +1823,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addSubject( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, SUBJECT, value );
+    public static void addSubject(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, SUBJECT, value);
     }
 
     /**
@@ -2120,8 +1837,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addSubject( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), SUBJECT, value );
+    public void addSubject(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), SUBJECT, value);
     }
 
     /**
@@ -2134,10 +1851,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addSubject( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.add( model, instanceResource, SUBJECT, value );
+    public static void addSubject(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.add(model, instanceResource, SUBJECT, value);
     }
 
     /**
@@ -2145,8 +1862,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addSubject( FOAFThing value ) {
-        Base.add( this.model, this.getResource(), SUBJECT, value );
+    public void addSubject(FOAFThing value) {
+	Base.add(this.model, this.getResource(), SUBJECT, value);
     }
 
     /**
@@ -2164,10 +1881,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setSubject( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, SUBJECT, value );
+    public static void setSubject(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, SUBJECT, value);
     }
 
     /**
@@ -2181,8 +1898,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setSubject( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), SUBJECT, value );
+    public void setSubject(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), SUBJECT, value);
     }
 
     /**
@@ -2200,10 +1917,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setSubject( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.set( model, instanceResource, SUBJECT, value );
+    public static void setSubject(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.set(model, instanceResource, SUBJECT, value);
     }
 
     /**
@@ -2217,8 +1934,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setSubject( FOAFThing value ) {
-        Base.set( this.model, this.getResource(), SUBJECT, value );
+    public void setSubject(FOAFThing value) {
+	Base.set(this.model, this.getResource(), SUBJECT, value);
     }
 
     /**
@@ -2233,10 +1950,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeSubject( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, SUBJECT, value );
+    public static void removeSubject(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, SUBJECT, value);
     }
 
     /**
@@ -2247,8 +1964,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeSubject( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), SUBJECT, value );
+    public void removeSubject(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), SUBJECT, value);
     }
 
     /**
@@ -2263,10 +1980,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeSubject( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.remove( model, instanceResource, SUBJECT, value );
+    public static void removeSubject(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.remove(model, instanceResource, SUBJECT, value);
     }
 
     /**
@@ -2277,8 +1994,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeSubject( FOAFThing value ) {
-        Base.remove( this.model, this.getResource(), SUBJECT, value );
+    public void removeSubject(FOAFThing value) {
+	Base.remove(this.model, this.getResource(), SUBJECT, value);
     }
 
     /**
@@ -2289,17 +2006,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllSubject( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, SUBJECT );
+    public static void removeAllSubjects(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, SUBJECT);
     }
 
     /**
      * Removes all values of property Subject * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllSubject() {
-        Base.removeAll( this.model, this.getResource(), SUBJECT );
+    public void removeAllSubjects() {
+	Base.removeAll(this.model, this.getResource(), SUBJECT);
     }
 
     /**
@@ -2314,9 +2031,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasTitle( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, TITLE );
+    public static boolean hasTitles(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, TITLE);
     }
 
     /**
@@ -2327,8 +2044,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasTitle() {
-        return Base.has( this.model, this.getResource(), TITLE );
+    public boolean hasTitles() {
+	return Base.has(this.model, this.getResource(), TITLE);
     }
 
     /**
@@ -2346,10 +2063,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasTitle( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, TITLE, value );
+    public static boolean hasTitle(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, TITLE, value);
     }
 
     /**
@@ -2363,8 +2080,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasTitle( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), TITLE, value );
+    public boolean hasTitle(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), TITLE, value);
     }
 
     /**
@@ -2378,31 +2095,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllTitle_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, TITLE );
-    }
-
-    /**
-     * Get all values of property Title as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllTitle_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, TITLE,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllTitles_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, TITLE);
     }
 
     /**
@@ -2412,23 +2108,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllTitle_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), TITLE );
-    }
-
-    /**
-     * Get all values of property Title as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllTitle_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), TITLE,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllTitles_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), TITLE);
     }
 
     /**
@@ -2440,27 +2121,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<FOAFThing> getAllTitle( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, TITLE, FOAFThing.class );
-    }
-
-    /**
-     * Get all values of property Title as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<FOAFThing> getAllTitle_as( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, TITLE, FOAFThing.class );
+    public static ClosableIterator<FOAFThing> getAllTitles(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, TITLE, FOAFThing.class);
     }
 
     /**
@@ -2468,23 +2131,19 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<FOAFThing> getAllTitle() {
-        return Base.getAll( this.model, this.getResource(), TITLE,
-                FOAFThing.class );
+    public ClosableIterator<FOAFThing> getAllTitles() {
+	return Base.getAll(this.model, this.getResource(), TITLE,
+		FOAFThing.class);
     }
 
     /**
-     * Get all values of property Title as a ReactorResult of Thing
+     * Get all values of property Title * @return a ClosableIterator of $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<FOAFThing> getAllTitle_as() {
-        return Base.getAll_as( this.model, this.getResource(), TITLE,
-                FOAFThing.class );
+    public FOAFThing getTitle() {
+	return Base.getAll_as(this.model, this.getResource(), TITLE,
+		FOAFThing.class).firstValue();
     }
 
     /**
@@ -2499,10 +2158,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addTitle( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, TITLE, value );
+    public static void addTitle(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, TITLE, value);
     }
 
     /**
@@ -2513,8 +2172,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addTitle( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), TITLE, value );
+    public void addTitle(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), TITLE, value);
     }
 
     /**
@@ -2527,10 +2186,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addTitle( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.add( model, instanceResource, TITLE, value );
+    public static void addTitle(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.add(model, instanceResource, TITLE, value);
     }
 
     /**
@@ -2538,8 +2197,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addTitle( FOAFThing value ) {
-        Base.add( this.model, this.getResource(), TITLE, value );
+    public void addTitle(FOAFThing value) {
+	Base.add(this.model, this.getResource(), TITLE, value);
     }
 
     /**
@@ -2557,10 +2216,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setTitle( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, TITLE, value );
+    public static void setTitle(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, TITLE, value);
     }
 
     /**
@@ -2574,8 +2233,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setTitle( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), TITLE, value );
+    public void setTitle(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), TITLE, value);
     }
 
     /**
@@ -2593,10 +2252,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setTitle( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.set( model, instanceResource, TITLE, value );
+    public static void setTitle(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.set(model, instanceResource, TITLE, value);
     }
 
     /**
@@ -2610,8 +2269,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setTitle( FOAFThing value ) {
-        Base.set( this.model, this.getResource(), TITLE, value );
+    public void setTitle(FOAFThing value) {
+	Base.set(this.model, this.getResource(), TITLE, value);
     }
 
     /**
@@ -2626,10 +2285,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeTitle( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, TITLE, value );
+    public static void removeTitle(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, TITLE, value);
     }
 
     /**
@@ -2640,8 +2299,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeTitle( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), TITLE, value );
+    public void removeTitle(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), TITLE, value);
     }
 
     /**
@@ -2656,10 +2315,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeTitle( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.remove( model, instanceResource, TITLE, value );
+    public static void removeTitle(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.remove(model, instanceResource, TITLE, value);
     }
 
     /**
@@ -2670,8 +2329,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeTitle( FOAFThing value ) {
-        Base.remove( this.model, this.getResource(), TITLE, value );
+    public void removeTitle(FOAFThing value) {
+	Base.remove(this.model, this.getResource(), TITLE, value);
     }
 
     /**
@@ -2682,237 +2341,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllTitle( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, TITLE );
+    public static void removeAllTitles(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, TITLE);
     }
 
     /**
      * Removes all values of property Title * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllTitle() {
-        Base.removeAll( this.model, this.getResource(), TITLE );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as RDF resources, that have a relation 'Givenname' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule #getallinverse1static]
-     */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllGivenname_Inverse(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse( model, FOAFThing.GIVENNAME, objectValue );
-    }
-
-    /**
-     * @return all A's as RDF resources, that have a relation 'Givenname' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule #getallinverse1dynamic]
-     */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllGivenname_Inverse() {
-        return Base.getAll_Inverse( this.model, FOAFThing.GIVENNAME,
-                this.getResource() );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Givenname' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource>
-            getAllGivenname_Inverse_as(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse_as( model, FOAFThing.GIVENNAME, objectValue,
-                org.ontoware.rdf2go.model.node.Resource.class );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as RDF resources, that have a relation 'MembershipClass'
-     *         to this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule #getallinverse1static]
-     */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllMembershipClass_Inverse(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse( model, FOAFThing.MEMBERSHIPCLASS, objectValue );
-    }
-
-    /**
-     * @return all A's as RDF resources, that have a relation 'MembershipClass'
-     *         to this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule #getallinverse1dynamic]
-     */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllMembershipClass_Inverse() {
-        return Base.getAll_Inverse( this.model, FOAFThing.MEMBERSHIPCLASS,
-                this.getResource() );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation
-     *         'MembershipClass' to this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource>
-            getAllMembershipClass_Inverse_as(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse_as( model, FOAFThing.MEMBERSHIPCLASS,
-                objectValue, org.ontoware.rdf2go.model.node.Resource.class );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as RDF resources, that have a relation 'Nickname' to this
-     *         Thing instance
-     * 
-     *         [Generated from RDFReactor template rule #getallinverse1static]
-     */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllNickname_Inverse(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse( model, FOAFThing.NICKNAME, objectValue );
-    }
-
-    /**
-     * @return all A's as RDF resources, that have a relation 'Nickname' to this
-     *         Thing instance
-     * 
-     *         [Generated from RDFReactor template rule #getallinverse1dynamic]
-     */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllNickname_Inverse() {
-        return Base.getAll_Inverse( this.model, FOAFThing.NICKNAME,
-                this.getResource() );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Nickname' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource>
-            getAllNickname_Inverse_as(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse_as( model, FOAFThing.NICKNAME, objectValue,
-                org.ontoware.rdf2go.model.node.Resource.class );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as RDF resources, that have a relation 'Phone' to this
-     *         Thing instance
-     * 
-     *         [Generated from RDFReactor template rule #getallinverse1static]
-     */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllPhone_Inverse(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse( model, FOAFThing.PHONE, objectValue );
-    }
-
-    /**
-     * @return all A's as RDF resources, that have a relation 'Phone' to this
-     *         Thing instance
-     * 
-     *         [Generated from RDFReactor template rule #getallinverse1dynamic]
-     */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllPhone_Inverse() {
-        return Base
-                .getAll_Inverse( this.model, FOAFThing.PHONE, this.getResource() );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Phone' to this
-     *         Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource>
-            getAllPhone_Inverse_as(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse_as( model, FOAFThing.PHONE, objectValue,
-                org.ontoware.rdf2go.model.node.Resource.class );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as RDF resources, that have a relation 'Sha1sum_hex_' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule #getallinverse1static]
-     */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllSha1sum_hex__Inverse(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse( model, Document.SHA1SUM_HEX_, objectValue );
-    }
-
-    /**
-     * @return all A's as RDF resources, that have a relation 'Sha1sum_hex_' to
-     *         this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule #getallinverse1dynamic]
-     */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Resource>
-            getAllSha1sum_hex__Inverse() {
-        return Base.getAll_Inverse( this.model, Document.SHA1SUM_HEX_,
-                this.getResource() );
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Sha1sum_hex_'
-     *         to this Thing instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource>
-            getAllSha1sum_hex__Inverse_as(
-            Model model, Object objectValue ) {
-        return Base.getAll_Inverse_as( model, Document.SHA1SUM_HEX_,
-                objectValue, org.ontoware.rdf2go.model.node.Resource.class );
+    public void removeAllTitles() {
+	Base.removeAll(this.model, this.getResource(), TITLE);
     }
 
     /**
@@ -2927,9 +2366,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasDNAchecksum( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, DNACHECKSUM );
+    public static boolean hasDNAChecksums(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, DNACHECKSUM);
     }
 
     /**
@@ -2940,8 +2379,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasDNAchecksum() {
-        return Base.has( this.model, this.getResource(), DNACHECKSUM );
+    public boolean hasDNAChecksums() {
+	return Base.has(this.model, this.getResource(), DNACHECKSUM);
     }
 
     /**
@@ -2959,10 +2398,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasDNAchecksum( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, DNACHECKSUM, value );
+    public static boolean hasDNAChecksum(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, DNACHECKSUM, value);
     }
 
     /**
@@ -2976,13 +2415,13 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasDNAchecksum( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), DNACHECKSUM,
-                value );
+    public boolean hasDNAChecksum(org.ontoware.rdf2go.model.node.Node value) {
+	return Base
+		.hasValue(this.model, this.getResource(), DNACHECKSUM, value);
     }
 
     /**
-     * Get all values of property DNAchecksum as an Iterator over RDF2Go nodes
+     * Get all values of property DNAChecksum as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -2992,61 +2431,25 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllDNAchecksum_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, DNACHECKSUM );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDNAChecksums_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, DNACHECKSUM);
     }
 
     /**
-     * Get all values of property DNAchecksum as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllDNAchecksum_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, DNACHECKSUM,
-                org.ontoware.rdf2go.model.node.Node.class );
-    }
-
-    /**
-     * Get all values of property DNAchecksum as an Iterator over RDF2Go nodes
+     * Get all values of property DNAChecksum as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllDNAchecksum_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), DNACHECKSUM );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDNAChecksums_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), DNACHECKSUM);
     }
 
     /**
-     * Get all values of property DNAchecksum as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllDNAchecksum_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), DNACHECKSUM,
-                org.ontoware.rdf2go.model.node.Node.class );
-    }
-
-    /**
-     * Get all values of property DNAchecksum * @param model an RDF2Go model
+     * Get all values of property DNAChecksum * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -3054,62 +2457,37 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllDNAchecksum(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, DNACHECKSUM,
-                java.lang.String.class );
+    public static ClosableIterator<java.lang.String> getAllDNAChecksums(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, DNACHECKSUM,
+		java.lang.String.class);
     }
 
     /**
-     * Get all values of property DNAchecksum as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllDNAchecksum_as(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, DNACHECKSUM,
-                java.lang.String.class );
-    }
-
-    /**
-     * Get all values of property DNAchecksum * @return a ClosableIterator of
+     * Get all values of property DNAChecksum * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.String> getAllDNAchecksum() {
-        return Base.getAll( this.model, this.getResource(), DNACHECKSUM,
-                java.lang.String.class );
+    public ClosableIterator<java.lang.String> getAllDNAChecksums() {
+	return Base.getAll(this.model, this.getResource(), DNACHECKSUM,
+		java.lang.String.class);
     }
 
     /**
-     * Get all values of property DNAchecksum as a ReactorResult of
-     * java.lang.String
+     * Get all values of property DNAChecksum * @return a ClosableIterator of
+     * $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<java.lang.String> getAllDNAchecksum_as() {
-        return Base.getAll_as( this.model, this.getResource(), DNACHECKSUM,
-                java.lang.String.class );
+    public String getADNAChecksum() {
+	return Base.getAll_as(this.model, this.getResource(), DNACHECKSUM,
+		java.lang.String.class).firstValue();
     }
 
     /**
-     * Adds a value to property DNAchecksum as an RDF2Go node
+     * Adds a value to property DNAChecksum as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -3120,26 +2498,26 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addDNAchecksum( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, DNACHECKSUM, value );
+    public static void addDNAChecksum(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, DNACHECKSUM, value);
     }
 
     /**
-     * Adds a value to property DNAchecksum as an RDF2Go node
+     * Adds a value to property DNAChecksum as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addDNAchecksum( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), DNACHECKSUM, value );
+    public void addDNAChecksum(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), DNACHECKSUM, value);
     }
 
     /**
-     * Adds a value to property DNAchecksum from an instance of java.lang.String
+     * Adds a value to property DNAChecksum from an instance of java.lang.String
      * 
      * @param model
      *            an RDF2Go model
@@ -3148,23 +2526,23 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addDNAchecksum( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            java.lang.String value ) {
-        Base.add( model, instanceResource, DNACHECKSUM, value );
+    public static void addDNAChecksum(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    java.lang.String value) {
+	Base.add(model, instanceResource, DNACHECKSUM, value);
     }
 
     /**
-     * Adds a value to property DNAchecksum from an instance of java.lang.String
+     * Adds a value to property DNAChecksum from an instance of java.lang.String
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addDNAchecksum( java.lang.String value ) {
-        Base.add( this.model, this.getResource(), DNACHECKSUM, value );
+    public void addDNAChecksum(java.lang.String value) {
+	Base.add(this.model, this.getResource(), DNACHECKSUM, value);
     }
 
     /**
-     * Sets a value of property DNAchecksum from an RDF2Go node. First, all
+     * Sets a value of property DNAChecksum from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -3178,14 +2556,14 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setDNAchecksum( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, DNACHECKSUM, value );
+    public static void setDNAChecksum(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, DNACHECKSUM, value);
     }
 
     /**
-     * Sets a value of property DNAchecksum from an RDF2Go node. First, all
+     * Sets a value of property DNAChecksum from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -3195,12 +2573,12 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setDNAchecksum( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), DNACHECKSUM, value );
+    public void setDNAChecksum(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), DNACHECKSUM, value);
     }
 
     /**
-     * Sets a value of property DNAchecksum from an instance of java.lang.String
+     * Sets a value of property DNAChecksum from an instance of java.lang.String
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -3214,14 +2592,14 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setDNAchecksum( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            java.lang.String value ) {
-        Base.set( model, instanceResource, DNACHECKSUM, value );
+    public static void setDNAChecksum(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    java.lang.String value) {
+	Base.set(model, instanceResource, DNACHECKSUM, value);
     }
 
     /**
-     * Sets a value of property DNAchecksum from an instance of java.lang.String
+     * Sets a value of property DNAChecksum from an instance of java.lang.String
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -3231,12 +2609,12 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setDNAchecksum( java.lang.String value ) {
-        Base.set( this.model, this.getResource(), DNACHECKSUM, value );
+    public void setDNAChecksum(java.lang.String value) {
+	Base.set(this.model, this.getResource(), DNACHECKSUM, value);
     }
 
     /**
-     * Removes a value of property DNAchecksum as an RDF2Go node
+     * Removes a value of property DNAChecksum as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -3247,26 +2625,26 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeDNAchecksum( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, DNACHECKSUM, value );
+    public static void removeDNAChecksum(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, DNACHECKSUM, value);
     }
 
     /**
-     * Removes a value of property DNAchecksum as an RDF2Go node
+     * Removes a value of property DNAChecksum as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeDNAchecksum( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), DNACHECKSUM, value );
+    public void removeDNAChecksum(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), DNACHECKSUM, value);
     }
 
     /**
-     * Removes a value of property DNAchecksum given as an instance of
+     * Removes a value of property DNAChecksum given as an instance of
      * java.lang.String
      * 
      * @param model
@@ -3278,14 +2656,14 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeDNAchecksum( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            java.lang.String value ) {
-        Base.remove( model, instanceResource, DNACHECKSUM, value );
+    public static void removeDNAChecksum(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    java.lang.String value) {
+	Base.remove(model, instanceResource, DNACHECKSUM, value);
     }
 
     /**
-     * Removes a value of property DNAchecksum given as an instance of
+     * Removes a value of property DNAChecksum given as an instance of
      * java.lang.String
      * 
      * @param value
@@ -3293,29 +2671,29 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeDNAchecksum( java.lang.String value ) {
-        Base.remove( this.model, this.getResource(), DNACHECKSUM, value );
+    public void removeDNAChecksum(java.lang.String value) {
+	Base.remove(this.model, this.getResource(), DNACHECKSUM, value);
     }
 
     /**
-     * Removes all values of property DNAchecksum * @param model an RDF2Go model
+     * Removes all values of property DNAChecksum * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllDNAchecksum( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, DNACHECKSUM );
+    public static void removeAllDNAChecksums(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, DNACHECKSUM);
     }
 
     /**
-     * Removes all values of property DNAchecksum * [Generated from RDFReactor
+     * Removes all values of property DNAChecksum * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllDNAchecksum() {
-        Base.removeAll( this.model, this.getResource(), DNACHECKSUM );
+    public void removeAllDNAChecksums() {
+	Base.removeAll(this.model, this.getResource(), DNACHECKSUM);
     }
 
     /**
@@ -3330,9 +2708,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasDepiction( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, DEPICTION );
+    public static boolean hasDepictions(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, DEPICTION);
     }
 
     /**
@@ -3343,8 +2721,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasDepiction() {
-        return Base.has( this.model, this.getResource(), DEPICTION );
+    public boolean hasDepictions() {
+	return Base.has(this.model, this.getResource(), DEPICTION);
     }
 
     /**
@@ -3362,10 +2740,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasDepiction( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, DEPICTION, value );
+    public static boolean hasDepiction(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, DEPICTION, value);
     }
 
     /**
@@ -3379,8 +2757,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasDepiction( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), DEPICTION, value );
+    public boolean hasDepiction(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), DEPICTION, value);
     }
 
     /**
@@ -3394,31 +2772,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllDepiction_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, DEPICTION );
-    }
-
-    /**
-     * Get all values of property Depiction as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllDepiction_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, DEPICTION,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDepictions_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, DEPICTION);
     }
 
     /**
@@ -3428,23 +2785,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllDepiction_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), DEPICTION );
-    }
-
-    /**
-     * Get all values of property Depiction as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllDepiction_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), DEPICTION,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllDepictions_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), DEPICTION);
     }
 
     /**
@@ -3456,27 +2798,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Image> getAllDepiction( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, DEPICTION, Image.class );
-    }
-
-    /**
-     * Get all values of property Depiction as a ReactorResult of Image
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Image> getAllDepiction_as( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, DEPICTION, Image.class );
+    public static ClosableIterator<Image> getAllDepictions(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, DEPICTION, Image.class);
     }
 
     /**
@@ -3485,23 +2809,20 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Image> getAllDepiction() {
-        return Base.getAll( this.model, this.getResource(), DEPICTION,
-                Image.class );
+    public ClosableIterator<Image> getAllDepictions() {
+	return Base.getAll(this.model, this.getResource(), DEPICTION,
+		Image.class);
     }
 
     /**
-     * Get all values of property Depiction as a ReactorResult of Image
+     * Get all values of property Depiction * @return a ClosableIterator of
+     * $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<Image> getAllDepiction_as() {
-        return Base.getAll_as( this.model, this.getResource(), DEPICTION,
-                Image.class );
+    public Image getDepiction() {
+	return Base.getAll_as(this.model, this.getResource(), DEPICTION,
+		Image.class).firstValue();
     }
 
     /**
@@ -3516,10 +2837,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addDepiction( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, DEPICTION, value );
+    public static void addDepiction(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, DEPICTION, value);
     }
 
     /**
@@ -3530,8 +2851,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addDepiction( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), DEPICTION, value );
+    public void addDepiction(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), DEPICTION, value);
     }
 
     /**
@@ -3544,10 +2865,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addDepiction( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Image value ) {
-        Base.add( model, instanceResource, DEPICTION, value );
+    public static void addDepiction(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Image value) {
+	Base.add(model, instanceResource, DEPICTION, value);
     }
 
     /**
@@ -3555,8 +2876,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addDepiction( Image value ) {
-        Base.add( this.model, this.getResource(), DEPICTION, value );
+    public void addDepiction(Image value) {
+	Base.add(this.model, this.getResource(), DEPICTION, value);
     }
 
     /**
@@ -3574,10 +2895,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setDepiction( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, DEPICTION, value );
+    public static void setDepiction(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, DEPICTION, value);
     }
 
     /**
@@ -3591,8 +2912,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setDepiction( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), DEPICTION, value );
+    public void setDepiction(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), DEPICTION, value);
     }
 
     /**
@@ -3610,10 +2931,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setDepiction( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Image value ) {
-        Base.set( model, instanceResource, DEPICTION, value );
+    public static void setDepiction(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Image value) {
+	Base.set(model, instanceResource, DEPICTION, value);
     }
 
     /**
@@ -3627,8 +2948,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setDepiction( Image value ) {
-        Base.set( this.model, this.getResource(), DEPICTION, value );
+    public void setDepiction(Image value) {
+	Base.set(this.model, this.getResource(), DEPICTION, value);
     }
 
     /**
@@ -3643,10 +2964,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeDepiction( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, DEPICTION, value );
+    public static void removeDepiction(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, DEPICTION, value);
     }
 
     /**
@@ -3657,8 +2978,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeDepiction( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), DEPICTION, value );
+    public void removeDepiction(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), DEPICTION, value);
     }
 
     /**
@@ -3673,10 +2994,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeDepiction( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Image value ) {
-        Base.remove( model, instanceResource, DEPICTION, value );
+    public static void removeDepiction(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Image value) {
+	Base.remove(model, instanceResource, DEPICTION, value);
     }
 
     /**
@@ -3687,8 +3008,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeDepiction( Image value ) {
-        Base.remove( this.model, this.getResource(), DEPICTION, value );
+    public void removeDepiction(Image value) {
+	Base.remove(this.model, this.getResource(), DEPICTION, value);
     }
 
     /**
@@ -3699,17 +3020,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllDepiction( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, DEPICTION );
+    public static void removeAllDepictions(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, DEPICTION);
     }
 
     /**
      * Removes all values of property Depiction * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllDepiction() {
-        Base.removeAll( this.model, this.getResource(), DEPICTION );
+    public void removeAllDepictions() {
+	Base.removeAll(this.model, this.getResource(), DEPICTION);
     }
 
     /**
@@ -3724,9 +3045,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasFundedby( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, FUNDEDBY );
+    public static boolean hasFundedBy(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, FUNDEDBY);
     }
 
     /**
@@ -3737,8 +3058,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasFundedby() {
-        return Base.has( this.model, this.getResource(), FUNDEDBY );
+    public boolean hasFundedBy() {
+	return Base.has(this.model, this.getResource(), FUNDEDBY);
     }
 
     /**
@@ -3756,10 +3077,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasFundedby( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, FUNDEDBY, value );
+    public static boolean hasFundedBy(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, FUNDEDBY, value);
     }
 
     /**
@@ -3773,12 +3094,12 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasFundedby( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), FUNDEDBY, value );
+    public boolean hasFundedBy(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), FUNDEDBY, value);
     }
 
     /**
-     * Get all values of property Fundedby as an Iterator over RDF2Go nodes
+     * Get all values of property FundedBy as an Iterator over RDF2Go nodes
      * 
      * @param model
      *            an RDF2Go model
@@ -3788,61 +3109,25 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllFundedby_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, FUNDEDBY );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFundedBy_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, FUNDEDBY);
     }
 
     /**
-     * Get all values of property Fundedby as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllFundedby_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, FUNDEDBY,
-                org.ontoware.rdf2go.model.node.Node.class );
-    }
-
-    /**
-     * Get all values of property Fundedby as an Iterator over RDF2Go nodes
+     * Get all values of property FundedBy as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllFundedby_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), FUNDEDBY );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFundedBy_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), FUNDEDBY);
     }
 
     /**
-     * Get all values of property Fundedby as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllFundedby_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), FUNDEDBY,
-                org.ontoware.rdf2go.model.node.Node.class );
-    }
-
-    /**
-     * Get all values of property Fundedby * @param model an RDF2Go model
+     * Get all values of property FundedBy * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -3850,65 +3135,35 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing>
-            getAllFundedby(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, FUNDEDBY,
-                org.ontoware.rdfreactor.schema.owl.OwlThing.class );
+    public static ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllFundedBy(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, FUNDEDBY,
+		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
     }
 
     /**
-     * Get all values of property Fundedby as a ReactorResult of
-     * org.ontoware.rdfreactor.schema.owl.OwlThing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<org.ontoware.rdfreactor.schema.owl.OwlThing>
-            getAllFundedby_as(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, FUNDEDBY,
-                org.ontoware.rdfreactor.schema.owl.OwlThing.class );
-    }
-
-    /**
-     * Get all values of property Fundedby * @return a ClosableIterator of $type
+     * Get all values of property FundedBy * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing>
-            getAllFundedby() {
-        return Base.getAll( this.model, this.getResource(), FUNDEDBY,
-                org.ontoware.rdfreactor.schema.owl.OwlThing.class );
+    public ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllFundedBy() {
+	return Base.getAll(this.model, this.getResource(), FUNDEDBY,
+		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
     }
 
     /**
-     * Get all values of property Fundedby as a ReactorResult of
-     * org.ontoware.rdfreactor.schema.owl.OwlThing
+     * Get all values of property FundedBy * @return a ClosableIterator of $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<org.ontoware.rdfreactor.schema.owl.OwlThing>
-            getAllFundedby_as() {
-        return Base.getAll_as( this.model, this.getResource(), FUNDEDBY,
-                org.ontoware.rdfreactor.schema.owl.OwlThing.class );
+    public org.ontoware.rdfreactor.schema.owl.OwlThing getFundedBy() {
+	return Base.getAll_as(this.model, this.getResource(), FUNDEDBY,
+		org.ontoware.rdfreactor.schema.owl.OwlThing.class).firstValue();
     }
 
     /**
-     * Adds a value to property Fundedby as an RDF2Go node
+     * Adds a value to property FundedBy as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -3919,26 +3174,26 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addFundedby( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, FUNDEDBY, value );
+    public static void addFundedBy(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, FUNDEDBY, value);
     }
 
     /**
-     * Adds a value to property Fundedby as an RDF2Go node
+     * Adds a value to property FundedBy as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addFundedby( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), FUNDEDBY, value );
+    public void addFundedBy(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), FUNDEDBY, value);
     }
 
     /**
-     * Adds a value to property Fundedby from an instance of
+     * Adds a value to property FundedBy from an instance of
      * org.ontoware.rdfreactor.schema.owl.OwlThing
      * 
      * @param model
@@ -3948,25 +3203,24 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addFundedby( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.add( model, instanceResource, FUNDEDBY, value );
+    public static void addFundedBy(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.add(model, instanceResource, FUNDEDBY, value);
     }
 
     /**
-     * Adds a value to property Fundedby from an instance of
+     * Adds a value to property FundedBy from an instance of
      * org.ontoware.rdfreactor.schema.owl.OwlThing
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addFundedby(
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.add( this.model, this.getResource(), FUNDEDBY, value );
+    public void addFundedBy(org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.add(this.model, this.getResource(), FUNDEDBY, value);
     }
 
     /**
-     * Sets a value of property Fundedby from an RDF2Go node. First, all
+     * Sets a value of property FundedBy from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -3980,14 +3234,14 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setFundedby( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, FUNDEDBY, value );
+    public static void setFundedBy(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, FUNDEDBY, value);
     }
 
     /**
-     * Sets a value of property Fundedby from an RDF2Go node. First, all
+     * Sets a value of property FundedBy from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -3997,12 +3251,12 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setFundedby( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), FUNDEDBY, value );
+    public void setFundedBy(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), FUNDEDBY, value);
     }
 
     /**
-     * Sets a value of property Fundedby from an instance of
+     * Sets a value of property FundedBy from an instance of
      * org.ontoware.rdfreactor.schema.owl.OwlThing First, all existing values
      * are removed, then this value is added. Cardinality constraints are not
      * checked, but this method exists only for properties with no
@@ -4017,14 +3271,14 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setFundedby( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.set( model, instanceResource, FUNDEDBY, value );
+    public static void setFundedBy(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.set(model, instanceResource, FUNDEDBY, value);
     }
 
     /**
-     * Sets a value of property Fundedby from an instance of
+     * Sets a value of property FundedBy from an instance of
      * org.ontoware.rdfreactor.schema.owl.OwlThing First, all existing values
      * are removed, then this value is added. Cardinality constraints are not
      * checked, but this method exists only for properties with no
@@ -4035,13 +3289,12 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setFundedby(
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.set( this.model, this.getResource(), FUNDEDBY, value );
+    public void setFundedBy(org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.set(this.model, this.getResource(), FUNDEDBY, value);
     }
 
     /**
-     * Removes a value of property Fundedby as an RDF2Go node
+     * Removes a value of property FundedBy as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -4052,26 +3305,26 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeFundedby( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, FUNDEDBY, value );
+    public static void removeFundedBy(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, FUNDEDBY, value);
     }
 
     /**
-     * Removes a value of property Fundedby as an RDF2Go node
+     * Removes a value of property FundedBy as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeFundedby( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), FUNDEDBY, value );
+    public void removeFundedBy(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), FUNDEDBY, value);
     }
 
     /**
-     * Removes a value of property Fundedby given as an instance of
+     * Removes a value of property FundedBy given as an instance of
      * org.ontoware.rdfreactor.schema.owl.OwlThing
      * 
      * @param model
@@ -4083,14 +3336,14 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeFundedby( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.remove( model, instanceResource, FUNDEDBY, value );
+    public static void removeFundedBy(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.remove(model, instanceResource, FUNDEDBY, value);
     }
 
     /**
-     * Removes a value of property Fundedby given as an instance of
+     * Removes a value of property FundedBy given as an instance of
      * org.ontoware.rdfreactor.schema.owl.OwlThing
      * 
      * @param value
@@ -4098,30 +3351,29 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeFundedby(
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.remove( this.model, this.getResource(), FUNDEDBY, value );
+    public void removeFundedBy(org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.remove(this.model, this.getResource(), FUNDEDBY, value);
     }
 
     /**
-     * Removes all values of property Fundedby * @param model an RDF2Go model
+     * Removes all values of property FundedBy * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllFundedby( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, FUNDEDBY );
+    public static void removeAllFundedBy(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, FUNDEDBY);
     }
 
     /**
-     * Removes all values of property Fundedby * [Generated from RDFReactor
+     * Removes all values of property FundedBy * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllFundedby() {
-        Base.removeAll( this.model, this.getResource(), FUNDEDBY );
+    public void removeAllFundedBy() {
+	Base.removeAll(this.model, this.getResource(), FUNDEDBY);
     }
 
     /**
@@ -4136,9 +3388,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasGivenname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, GIVENNAME );
+    public static boolean hasGivennames(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, GIVENNAME);
     }
 
     /**
@@ -4149,8 +3401,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasGivenname() {
-        return Base.has( this.model, this.getResource(), GIVENNAME );
+    public boolean hasGivennames() {
+	return Base.has(this.model, this.getResource(), GIVENNAME);
     }
 
     /**
@@ -4168,10 +3420,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasGivenname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, GIVENNAME, value );
+    public static boolean hasGivenname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, GIVENNAME, value);
     }
 
     /**
@@ -4185,8 +3437,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasGivenname( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), GIVENNAME, value );
+    public boolean hasGivenname(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), GIVENNAME, value);
     }
 
     /**
@@ -4200,31 +3452,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllGivenname_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, GIVENNAME );
-    }
-
-    /**
-     * Get all values of property Givenname as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllGivenname_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, GIVENNAME,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllGivennames_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, GIVENNAME);
     }
 
     /**
@@ -4234,23 +3465,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllGivenname_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), GIVENNAME );
-    }
-
-    /**
-     * Get all values of property Givenname as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllGivenname_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), GIVENNAME,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllGivennames_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), GIVENNAME);
     }
 
     /**
@@ -4262,27 +3478,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<FOAFThing> getAllGivenname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, GIVENNAME, FOAFThing.class );
-    }
-
-    /**
-     * Get all values of property Givenname as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<FOAFThing> getAllGivenname_as( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, GIVENNAME, FOAFThing.class );
+    public static ClosableIterator<FOAFThing> getAllGivennames(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, GIVENNAME, FOAFThing.class);
     }
 
     /**
@@ -4291,23 +3489,20 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<FOAFThing> getAllGivenname() {
-        return Base.getAll( this.model, this.getResource(), GIVENNAME,
-                FOAFThing.class );
+    public ClosableIterator<FOAFThing> getAllGivennames() {
+	return Base.getAll(this.model, this.getResource(), GIVENNAME,
+		FOAFThing.class);
     }
 
     /**
-     * Get all values of property Givenname as a ReactorResult of Thing
+     * Get all values of property Givenname * @return a ClosableIterator of
+     * $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<FOAFThing> getAllGivenname_as() {
-        return Base.getAll_as( this.model, this.getResource(), GIVENNAME,
-                FOAFThing.class );
+    public FOAFThing getGivenname() {
+	return Base.getAll_as(this.model, this.getResource(), GIVENNAME,
+		FOAFThing.class).firstValue();
     }
 
     /**
@@ -4322,10 +3517,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addGivenname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, GIVENNAME, value );
+    public static void addGivenname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, GIVENNAME, value);
     }
 
     /**
@@ -4336,8 +3531,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addGivenname( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), GIVENNAME, value );
+    public void addGivenname(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), GIVENNAME, value);
     }
 
     /**
@@ -4350,10 +3545,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addGivenname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.add( model, instanceResource, GIVENNAME, value );
+    public static void addGivenname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.add(model, instanceResource, GIVENNAME, value);
     }
 
     /**
@@ -4361,8 +3556,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addGivenname( FOAFThing value ) {
-        Base.add( this.model, this.getResource(), GIVENNAME, value );
+    public void addGivenname(FOAFThing value) {
+	Base.add(this.model, this.getResource(), GIVENNAME, value);
     }
 
     /**
@@ -4380,10 +3575,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setGivenname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, GIVENNAME, value );
+    public static void setGivenname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, GIVENNAME, value);
     }
 
     /**
@@ -4397,8 +3592,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setGivenname( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), GIVENNAME, value );
+    public void setGivenname(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), GIVENNAME, value);
     }
 
     /**
@@ -4416,10 +3611,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setGivenname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.set( model, instanceResource, GIVENNAME, value );
+    public static void setGivenname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.set(model, instanceResource, GIVENNAME, value);
     }
 
     /**
@@ -4433,8 +3628,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setGivenname( FOAFThing value ) {
-        Base.set( this.model, this.getResource(), GIVENNAME, value );
+    public void setGivenname(FOAFThing value) {
+	Base.set(this.model, this.getResource(), GIVENNAME, value);
     }
 
     /**
@@ -4449,10 +3644,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeGivenname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, GIVENNAME, value );
+    public static void removeGivenname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, GIVENNAME, value);
     }
 
     /**
@@ -4463,8 +3658,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeGivenname( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), GIVENNAME, value );
+    public void removeGivenname(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), GIVENNAME, value);
     }
 
     /**
@@ -4479,10 +3674,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeGivenname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.remove( model, instanceResource, GIVENNAME, value );
+    public static void removeGivenname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.remove(model, instanceResource, GIVENNAME, value);
     }
 
     /**
@@ -4493,8 +3688,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeGivenname( FOAFThing value ) {
-        Base.remove( this.model, this.getResource(), GIVENNAME, value );
+    public void removeGivenname(FOAFThing value) {
+	Base.remove(this.model, this.getResource(), GIVENNAME, value);
     }
 
     /**
@@ -4505,17 +3700,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllGivenname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, GIVENNAME );
+    public static void removeAllGivennames(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, GIVENNAME);
     }
 
     /**
      * Removes all values of property Givenname * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllGivenname() {
-        Base.removeAll( this.model, this.getResource(), GIVENNAME );
+    public void removeAllGivennames() {
+	Base.removeAll(this.model, this.getResource(), GIVENNAME);
     }
 
     /**
@@ -4530,9 +3725,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasHomepage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, HOMEPAGE );
+    public static boolean hasHomepages(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, HOMEPAGE);
     }
 
     /**
@@ -4543,8 +3738,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasHomepage() {
-        return Base.has( this.model, this.getResource(), HOMEPAGE );
+    public boolean hasHomepages() {
+	return Base.has(this.model, this.getResource(), HOMEPAGE);
     }
 
     /**
@@ -4562,10 +3757,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasHomepage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, HOMEPAGE, value );
+    public static boolean hasHomepage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, HOMEPAGE, value);
     }
 
     /**
@@ -4579,8 +3774,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasHomepage( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), HOMEPAGE, value );
+    public boolean hasHomepage(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), HOMEPAGE, value);
     }
 
     /**
@@ -4594,31 +3789,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllHomepage_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, HOMEPAGE );
-    }
-
-    /**
-     * Get all values of property Homepage as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllHomepage_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, HOMEPAGE,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllHomepages_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, HOMEPAGE);
     }
 
     /**
@@ -4628,23 +3802,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllHomepage_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), HOMEPAGE );
-    }
-
-    /**
-     * Get all values of property Homepage as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllHomepage_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), HOMEPAGE,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllHomepages_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), HOMEPAGE);
     }
 
     /**
@@ -4656,28 +3815,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Document> getAllHomepage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, HOMEPAGE, Document.class );
-    }
-
-    /**
-     * Get all values of property Homepage as a ReactorResult of Document
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Document> getAllHomepage_as( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, HOMEPAGE,
-                Document.class );
+    public static ClosableIterator<Document> getAllHomepages(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, HOMEPAGE, Document.class);
     }
 
     /**
@@ -4685,23 +3825,19 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Document> getAllHomepage() {
-        return Base.getAll( this.model, this.getResource(), HOMEPAGE,
-                Document.class );
+    public ClosableIterator<Document> getAllHomepages() {
+	return Base.getAll(this.model, this.getResource(), HOMEPAGE,
+		Document.class);
     }
 
     /**
-     * Get all values of property Homepage as a ReactorResult of Document
+     * Get all values of property Homepage * @return a ClosableIterator of $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<Document> getAllHomepage_as() {
-        return Base.getAll_as( this.model, this.getResource(), HOMEPAGE,
-                Document.class );
+    public Document getHomepage() {
+	return Base.getAll_as(this.model, this.getResource(), HOMEPAGE,
+		Document.class).firstValue();
     }
 
     /**
@@ -4716,10 +3852,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addHomepage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, HOMEPAGE, value );
+    public static void addHomepage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, HOMEPAGE, value);
     }
 
     /**
@@ -4730,8 +3866,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addHomepage( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), HOMEPAGE, value );
+    public void addHomepage(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), HOMEPAGE, value);
     }
 
     /**
@@ -4744,10 +3880,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addHomepage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Document value ) {
-        Base.add( model, instanceResource, HOMEPAGE, value );
+    public static void addHomepage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Document value) {
+	Base.add(model, instanceResource, HOMEPAGE, value);
     }
 
     /**
@@ -4755,8 +3891,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addHomepage( Document value ) {
-        Base.add( this.model, this.getResource(), HOMEPAGE, value );
+    public void addHomepage(Document value) {
+	Base.add(this.model, this.getResource(), HOMEPAGE, value);
     }
 
     /**
@@ -4774,10 +3910,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setHomepage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, HOMEPAGE, value );
+    public static void setHomepage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, HOMEPAGE, value);
     }
 
     /**
@@ -4791,8 +3927,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setHomepage( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), HOMEPAGE, value );
+    public void setHomepage(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), HOMEPAGE, value);
     }
 
     /**
@@ -4810,10 +3946,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setHomepage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Document value ) {
-        Base.set( model, instanceResource, HOMEPAGE, value );
+    public static void setHomepage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Document value) {
+	Base.set(model, instanceResource, HOMEPAGE, value);
     }
 
     /**
@@ -4827,8 +3963,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setHomepage( Document value ) {
-        Base.set( this.model, this.getResource(), HOMEPAGE, value );
+    public void setHomepage(Document value) {
+	Base.set(this.model, this.getResource(), HOMEPAGE, value);
     }
 
     /**
@@ -4843,10 +3979,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeHomepage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, HOMEPAGE, value );
+    public static void removeHomepage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, HOMEPAGE, value);
     }
 
     /**
@@ -4857,8 +3993,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeHomepage( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), HOMEPAGE, value );
+    public void removeHomepage(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), HOMEPAGE, value);
     }
 
     /**
@@ -4873,10 +4009,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeHomepage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Document value ) {
-        Base.remove( model, instanceResource, HOMEPAGE, value );
+    public static void removeHomepage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Document value) {
+	Base.remove(model, instanceResource, HOMEPAGE, value);
     }
 
     /**
@@ -4887,8 +4023,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeHomepage( Document value ) {
-        Base.remove( this.model, this.getResource(), HOMEPAGE, value );
+    public void removeHomepage(Document value) {
+	Base.remove(this.model, this.getResource(), HOMEPAGE, value);
     }
 
     /**
@@ -4899,17 +4035,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllHomepage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, HOMEPAGE );
+    public static void removeAllHomepages(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, HOMEPAGE);
     }
 
     /**
      * Removes all values of property Homepage * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllHomepage() {
-        Base.removeAll( this.model, this.getResource(), HOMEPAGE );
+    public void removeAllHomepages() {
+	Base.removeAll(this.model, this.getResource(), HOMEPAGE);
     }
 
     /**
@@ -4924,9 +4060,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasLogo( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, LOGO );
+    public static boolean hasLogos(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, LOGO);
     }
 
     /**
@@ -4937,8 +4073,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasLogo() {
-        return Base.has( this.model, this.getResource(), LOGO );
+    public boolean hasLogos() {
+	return Base.has(this.model, this.getResource(), LOGO);
     }
 
     /**
@@ -4956,10 +4092,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasLogo( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, LOGO, value );
+    public static boolean hasLogo(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, LOGO, value);
     }
 
     /**
@@ -4973,8 +4109,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasLogo( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), LOGO, value );
+    public boolean hasLogo(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), LOGO, value);
     }
 
     /**
@@ -4988,31 +4124,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllLogo_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, LOGO );
-    }
-
-    /**
-     * Get all values of property Logo as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllLogo_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, LOGO,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLogos_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, LOGO);
     }
 
     /**
@@ -5022,23 +4137,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllLogo_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), LOGO );
-    }
-
-    /**
-     * Get all values of property Logo as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllLogo_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), LOGO,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLogos_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), LOGO);
     }
 
     /**
@@ -5050,34 +4150,11 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing>
-            getAllLogo(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, LOGO,
-                org.ontoware.rdfreactor.schema.owl.OwlThing.class );
-    }
-
-    /**
-     * Get all values of property Logo as a ReactorResult of
-     * org.ontoware.rdfreactor.schema.owl.OwlThing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<org.ontoware.rdfreactor.schema.owl.OwlThing>
-            getAllLogo_as(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, LOGO,
-                org.ontoware.rdfreactor.schema.owl.OwlThing.class );
+    public static ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllLogos(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, LOGO,
+		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
     }
 
     /**
@@ -5085,26 +4162,19 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing>
-            getAllLogo() {
-        return Base.getAll( this.model, this.getResource(), LOGO,
-                org.ontoware.rdfreactor.schema.owl.OwlThing.class );
+    public ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllLogos() {
+	return Base.getAll(this.model, this.getResource(), LOGO,
+		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
     }
 
     /**
-     * Get all values of property Logo as a ReactorResult of
-     * org.ontoware.rdfreactor.schema.owl.OwlThing
+     * Get all values of property Logo * @return a ClosableIterator of $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<org.ontoware.rdfreactor.schema.owl.OwlThing>
-            getAllLogo_as() {
-        return Base.getAll_as( this.model, this.getResource(), LOGO,
-                org.ontoware.rdfreactor.schema.owl.OwlThing.class );
+    public org.ontoware.rdfreactor.schema.owl.OwlThing getLogo() {
+	return Base.getAll_as(this.model, this.getResource(), LOGO,
+		org.ontoware.rdfreactor.schema.owl.OwlThing.class).firstValue();
     }
 
     /**
@@ -5119,10 +4189,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addLogo( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, LOGO, value );
+    public static void addLogo(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, LOGO, value);
     }
 
     /**
@@ -5133,8 +4203,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addLogo( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), LOGO, value );
+    public void addLogo(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), LOGO, value);
     }
 
     /**
@@ -5148,10 +4218,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addLogo( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.add( model, instanceResource, LOGO, value );
+    public static void addLogo(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.add(model, instanceResource, LOGO, value);
     }
 
     /**
@@ -5160,8 +4230,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addLogo( org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.add( this.model, this.getResource(), LOGO, value );
+    public void addLogo(org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.add(this.model, this.getResource(), LOGO, value);
     }
 
     /**
@@ -5179,10 +4249,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setLogo( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, LOGO, value );
+    public static void setLogo(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, LOGO, value);
     }
 
     /**
@@ -5196,8 +4266,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setLogo( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), LOGO, value );
+    public void setLogo(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), LOGO, value);
     }
 
     /**
@@ -5216,10 +4286,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setLogo( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.set( model, instanceResource, LOGO, value );
+    public static void setLogo(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.set(model, instanceResource, LOGO, value);
     }
 
     /**
@@ -5234,8 +4304,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setLogo( org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.set( this.model, this.getResource(), LOGO, value );
+    public void setLogo(org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.set(this.model, this.getResource(), LOGO, value);
     }
 
     /**
@@ -5250,10 +4320,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeLogo( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, LOGO, value );
+    public static void removeLogo(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, LOGO, value);
     }
 
     /**
@@ -5264,8 +4334,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeLogo( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), LOGO, value );
+    public void removeLogo(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), LOGO, value);
     }
 
     /**
@@ -5281,10 +4351,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeLogo( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.remove( model, instanceResource, LOGO, value );
+    public static void removeLogo(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.remove(model, instanceResource, LOGO, value);
     }
 
     /**
@@ -5296,9 +4366,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeLogo(
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.remove( this.model, this.getResource(), LOGO, value );
+    public void removeLogo(org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.remove(this.model, this.getResource(), LOGO, value);
     }
 
     /**
@@ -5309,17 +4378,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllLogo( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, LOGO );
+    public static void removeAllLogos(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, LOGO);
     }
 
     /**
      * Removes all values of property Logo * [Generated from RDFReactor template
      * rule #removeall1dynamic]
      */
-    public void removeAllLogo() {
-        Base.removeAll( this.model, this.getResource(), LOGO );
+    public void removeAllLogos() {
+	Base.removeAll(this.model, this.getResource(), LOGO);
     }
 
     /**
@@ -5334,9 +4403,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasMaker( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, MAKER );
+    public static boolean hasMakers(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, MAKER);
     }
 
     /**
@@ -5347,8 +4416,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasMaker() {
-        return Base.has( this.model, this.getResource(), MAKER );
+    public boolean hasMakers() {
+	return Base.has(this.model, this.getResource(), MAKER);
     }
 
     /**
@@ -5366,10 +4435,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasMaker( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, MAKER, value );
+    public static boolean hasMaker(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, MAKER, value);
     }
 
     /**
@@ -5383,8 +4452,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasMaker( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), MAKER, value );
+    public boolean hasMaker(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), MAKER, value);
     }
 
     /**
@@ -5398,31 +4467,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllMaker_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, MAKER );
-    }
-
-    /**
-     * Get all values of property Maker as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllMaker_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, MAKER,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllMakers_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, MAKER);
     }
 
     /**
@@ -5432,23 +4480,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllMaker_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), MAKER );
-    }
-
-    /**
-     * Get all values of property Maker as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllMaker_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), MAKER,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllMakers_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), MAKER);
     }
 
     /**
@@ -5460,27 +4493,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Agent> getAllMaker( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, MAKER, Agent.class );
-    }
-
-    /**
-     * Get all values of property Maker as a ReactorResult of Agent
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Agent> getAllMaker_as( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, MAKER, Agent.class );
+    public static ClosableIterator<Agent> getAllMakers(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, MAKER, Agent.class);
     }
 
     /**
@@ -5488,22 +4503,18 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Agent> getAllMaker() {
-        return Base.getAll( this.model, this.getResource(), MAKER, Agent.class );
+    public ClosableIterator<Agent> getAllMakers() {
+	return Base.getAll(this.model, this.getResource(), MAKER, Agent.class);
     }
 
     /**
-     * Get all values of property Maker as a ReactorResult of Agent
+     * Get all values of property Maker * @return a ClosableIterator of $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<Agent> getAllMaker_as() {
-        return Base.getAll_as( this.model, this.getResource(), MAKER,
-                Agent.class );
+    public Agent getMaker() {
+	return Base.getAll_as(this.model, this.getResource(), MAKER,
+		Agent.class).firstValue();
     }
 
     /**
@@ -5518,10 +4529,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addMaker( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, MAKER, value );
+    public static void addMaker(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, MAKER, value);
     }
 
     /**
@@ -5532,8 +4543,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addMaker( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), MAKER, value );
+    public void addMaker(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), MAKER, value);
     }
 
     /**
@@ -5546,10 +4557,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addMaker( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Agent value ) {
-        Base.add( model, instanceResource, MAKER, value );
+    public static void addMaker(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Agent value) {
+	Base.add(model, instanceResource, MAKER, value);
     }
 
     /**
@@ -5557,8 +4568,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addMaker( Agent value ) {
-        Base.add( this.model, this.getResource(), MAKER, value );
+    public void addMaker(Agent value) {
+	Base.add(this.model, this.getResource(), MAKER, value);
     }
 
     /**
@@ -5576,10 +4587,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setMaker( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, MAKER, value );
+    public static void setMaker(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, MAKER, value);
     }
 
     /**
@@ -5593,8 +4604,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setMaker( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), MAKER, value );
+    public void setMaker(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), MAKER, value);
     }
 
     /**
@@ -5612,10 +4623,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setMaker( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Agent value ) {
-        Base.set( model, instanceResource, MAKER, value );
+    public static void setMaker(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Agent value) {
+	Base.set(model, instanceResource, MAKER, value);
     }
 
     /**
@@ -5629,8 +4640,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setMaker( Agent value ) {
-        Base.set( this.model, this.getResource(), MAKER, value );
+    public void setMaker(Agent value) {
+	Base.set(this.model, this.getResource(), MAKER, value);
     }
 
     /**
@@ -5645,10 +4656,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeMaker( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, MAKER, value );
+    public static void removeMaker(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, MAKER, value);
     }
 
     /**
@@ -5659,8 +4670,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeMaker( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), MAKER, value );
+    public void removeMaker(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), MAKER, value);
     }
 
     /**
@@ -5675,10 +4686,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeMaker( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Agent value ) {
-        Base.remove( model, instanceResource, MAKER, value );
+    public static void removeMaker(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Agent value) {
+	Base.remove(model, instanceResource, MAKER, value);
     }
 
     /**
@@ -5689,8 +4700,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeMaker( Agent value ) {
-        Base.remove( this.model, this.getResource(), MAKER, value );
+    public void removeMaker(Agent value) {
+	Base.remove(this.model, this.getResource(), MAKER, value);
     }
 
     /**
@@ -5701,17 +4712,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllMaker( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, MAKER );
+    public static void removeAllMakers(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, MAKER);
     }
 
     /**
      * Removes all values of property Maker * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllMaker() {
-        Base.removeAll( this.model, this.getResource(), MAKER );
+    public void removeAllMakers() {
+	Base.removeAll(this.model, this.getResource(), MAKER);
     }
 
     /**
@@ -5726,9 +4737,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasMembershipClass( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, MEMBERSHIPCLASS );
+    public static boolean hasMembershipClass(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, MEMBERSHIPCLASS);
     }
 
     /**
@@ -5740,7 +4751,7 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
     public boolean hasMembershipClass() {
-        return Base.has( this.model, this.getResource(), MEMBERSHIPCLASS );
+	return Base.has(this.model, this.getResource(), MEMBERSHIPCLASS);
     }
 
     /**
@@ -5758,10 +4769,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasMembershipClass( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, MEMBERSHIPCLASS, value );
+    public static boolean hasMembershipClass(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, MEMBERSHIPCLASS, value);
     }
 
     /**
@@ -5775,11 +4786,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean
-            hasMembershipClass(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), MEMBERSHIPCLASS,
-                value );
+    public boolean hasMembershipClass(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), MEMBERSHIPCLASS,
+		value);
     }
 
     /**
@@ -5794,32 +4803,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllMembershipClass_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, MEMBERSHIPCLASS );
-    }
-
-    /**
-     * Get all values of property MembershipClass as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllMembershipClass_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, MEMBERSHIPCLASS,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllMembershipClass_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, MEMBERSHIPCLASS);
     }
 
     /**
@@ -5830,25 +4817,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllMembershipClass_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(),
-                MEMBERSHIPCLASS );
-    }
-
-    /**
-     * Get all values of property MembershipClass as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllMembershipClass_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), MEMBERSHIPCLASS,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllMembershipClass_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(),
+		MEMBERSHIPCLASS);
     }
 
     /**
@@ -5861,30 +4832,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      *         [Generated from RDFReactor template rule #get11static]
      */
     public static ClosableIterator<FOAFThing> getAllMembershipClass(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, MEMBERSHIPCLASS,
-                FOAFThing.class );
-    }
-
-    /**
-     * Get all values of property MembershipClass as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<FOAFThing> getAllMembershipClass_as(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, MEMBERSHIPCLASS,
-                FOAFThing.class );
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, MEMBERSHIPCLASS,
+		FOAFThing.class);
     }
 
     /**
@@ -5894,22 +4845,19 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<FOAFThing> getAllMembershipClass() {
-        return Base.getAll( this.model, this.getResource(), MEMBERSHIPCLASS,
-                FOAFThing.class );
+	return Base.getAll(this.model, this.getResource(), MEMBERSHIPCLASS,
+		FOAFThing.class);
     }
 
     /**
-     * Get all values of property MembershipClass as a ReactorResult of Thing
+     * Get all values of property MembershipClass * @return a ClosableIterator
+     * of $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<FOAFThing> getAllMembershipClass_as() {
-        return Base.getAll_as( this.model, this.getResource(), MEMBERSHIPCLASS,
-                FOAFThing.class );
+    public FOAFThing getMembershipClass() {
+	return Base.getAll_as(this.model, this.getResource(), MEMBERSHIPCLASS,
+		FOAFThing.class).firstValue();
     }
 
     /**
@@ -5924,10 +4872,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addMembershipClass( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, MEMBERSHIPCLASS, value );
+    public static void addMembershipClass(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, MEMBERSHIPCLASS, value);
     }
 
     /**
@@ -5938,9 +4886,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addMembershipClass(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), MEMBERSHIPCLASS, value );
+    public void addMembershipClass(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), MEMBERSHIPCLASS, value);
     }
 
     /**
@@ -5953,10 +4900,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addMembershipClass( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.add( model, instanceResource, MEMBERSHIPCLASS, value );
+    public static void addMembershipClass(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.add(model, instanceResource, MEMBERSHIPCLASS, value);
     }
 
     /**
@@ -5964,8 +4911,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addMembershipClass( FOAFThing value ) {
-        Base.add( this.model, this.getResource(), MEMBERSHIPCLASS, value );
+    public void addMembershipClass(FOAFThing value) {
+	Base.add(this.model, this.getResource(), MEMBERSHIPCLASS, value);
     }
 
     /**
@@ -5983,10 +4930,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setMembershipClass( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, MEMBERSHIPCLASS, value );
+    public static void setMembershipClass(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, MEMBERSHIPCLASS, value);
     }
 
     /**
@@ -6000,9 +4947,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setMembershipClass(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), MEMBERSHIPCLASS, value );
+    public void setMembershipClass(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), MEMBERSHIPCLASS, value);
     }
 
     /**
@@ -6020,10 +4966,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setMembershipClass( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.set( model, instanceResource, MEMBERSHIPCLASS, value );
+    public static void setMembershipClass(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.set(model, instanceResource, MEMBERSHIPCLASS, value);
     }
 
     /**
@@ -6037,8 +4983,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setMembershipClass( FOAFThing value ) {
-        Base.set( this.model, this.getResource(), MEMBERSHIPCLASS, value );
+    public void setMembershipClass(FOAFThing value) {
+	Base.set(this.model, this.getResource(), MEMBERSHIPCLASS, value);
     }
 
     /**
@@ -6053,10 +4999,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeMembershipClass( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, MEMBERSHIPCLASS, value );
+    public static void removeMembershipClass(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, MEMBERSHIPCLASS, value);
     }
 
     /**
@@ -6067,10 +5013,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void
-            removeMembershipClass(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), MEMBERSHIPCLASS, value );
+    public void removeMembershipClass(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), MEMBERSHIPCLASS, value);
     }
 
     /**
@@ -6085,10 +5029,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeMembershipClass( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.remove( model, instanceResource, MEMBERSHIPCLASS, value );
+    public static void removeMembershipClass(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.remove(model, instanceResource, MEMBERSHIPCLASS, value);
     }
 
     /**
@@ -6099,8 +5043,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeMembershipClass( FOAFThing value ) {
-        Base.remove( this.model, this.getResource(), MEMBERSHIPCLASS, value );
+    public void removeMembershipClass(FOAFThing value) {
+	Base.remove(this.model, this.getResource(), MEMBERSHIPCLASS, value);
     }
 
     /**
@@ -6112,9 +5056,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllMembershipClass( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, MEMBERSHIPCLASS );
+    public static void removeAllMembershipClass(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, MEMBERSHIPCLASS);
     }
 
     /**
@@ -6122,7 +5066,7 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * RDFReactor template rule #removeall1dynamic]
      */
     public void removeAllMembershipClass() {
-        Base.removeAll( this.model, this.getResource(), MEMBERSHIPCLASS );
+	Base.removeAll(this.model, this.getResource(), MEMBERSHIPCLASS);
     }
 
     /**
@@ -6137,9 +5081,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasName( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, NAME );
+    public static boolean hasNames(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, NAME);
     }
 
     /**
@@ -6150,8 +5094,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasName() {
-        return Base.has( this.model, this.getResource(), NAME );
+    public boolean hasNames() {
+	return Base.has(this.model, this.getResource(), NAME);
     }
 
     /**
@@ -6169,10 +5113,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasName( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, NAME, value );
+    public static boolean hasName(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, NAME, value);
     }
 
     /**
@@ -6186,8 +5130,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasName( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), NAME, value );
+    public boolean hasName(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), NAME, value);
     }
 
     /**
@@ -6201,31 +5145,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllName_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, NAME );
-    }
-
-    /**
-     * Get all values of property Name as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllName_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, NAME,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNames_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, NAME);
     }
 
     /**
@@ -6235,23 +5158,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllName_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), NAME );
-    }
-
-    /**
-     * Get all values of property Name as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllName_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), NAME,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNames_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), NAME);
     }
 
     /**
@@ -6263,31 +5171,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllName(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, NAME,
-                java.lang.String.class );
-    }
-
-    /**
-     * Get all values of property Name as a ReactorResult of java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllName_as(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, NAME,
-                java.lang.String.class );
+    public static ClosableIterator<java.lang.String> getAllNames(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, NAME,
+		java.lang.String.class);
     }
 
     /**
@@ -6295,23 +5182,19 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.String> getAllName() {
-        return Base.getAll( this.model, this.getResource(), NAME,
-                java.lang.String.class );
+    public ClosableIterator<java.lang.String> getAllNames() {
+	return Base.getAll(this.model, this.getResource(), NAME,
+		java.lang.String.class);
     }
 
     /**
-     * Get all values of property Name as a ReactorResult of java.lang.String
+     * Get all values of property Name * @return a ClosableIterator of $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<java.lang.String> getAllName_as() {
-        return Base.getAll_as( this.model, this.getResource(), NAME,
-                java.lang.String.class );
+    public java.lang.String getName() {
+	return Base.getAll_as(this.model, this.getResource(), NAME,
+		java.lang.String.class).firstValue();
     }
 
     /**
@@ -6326,10 +5209,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addName( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, NAME, value );
+    public static void addName(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, NAME, value);
     }
 
     /**
@@ -6340,8 +5223,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addName( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), NAME, value );
+    public void addName(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), NAME, value);
     }
 
     /**
@@ -6354,10 +5237,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addName( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            java.lang.String value ) {
-        Base.add( model, instanceResource, NAME, value );
+    public static void addName(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    java.lang.String value) {
+	Base.add(model, instanceResource, NAME, value);
     }
 
     /**
@@ -6365,8 +5248,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addName( java.lang.String value ) {
-        Base.add( this.model, this.getResource(), NAME, value );
+    public void addName(java.lang.String value) {
+	Base.add(this.model, this.getResource(), NAME, value);
     }
 
     /**
@@ -6384,10 +5267,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setName( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, NAME, value );
+    public static void setName(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, NAME, value);
     }
 
     /**
@@ -6401,8 +5284,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setName( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), NAME, value );
+    public void setName(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), NAME, value);
     }
 
     /**
@@ -6420,10 +5303,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setName( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            java.lang.String value ) {
-        Base.set( model, instanceResource, NAME, value );
+    public static void setName(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    java.lang.String value) {
+	Base.set(model, instanceResource, NAME, value);
     }
 
     /**
@@ -6437,8 +5320,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setName( java.lang.String value ) {
-        Base.set( this.model, this.getResource(), NAME, value );
+    public void setName(java.lang.String value) {
+	Base.set(this.model, this.getResource(), NAME, value);
     }
 
     /**
@@ -6453,10 +5336,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeName( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, NAME, value );
+    public static void removeName(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, NAME, value);
     }
 
     /**
@@ -6467,8 +5350,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeName( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), NAME, value );
+    public void removeName(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), NAME, value);
     }
 
     /**
@@ -6483,10 +5366,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeName( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            java.lang.String value ) {
-        Base.remove( model, instanceResource, NAME, value );
+    public static void removeName(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    java.lang.String value) {
+	Base.remove(model, instanceResource, NAME, value);
     }
 
     /**
@@ -6497,8 +5380,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeName( java.lang.String value ) {
-        Base.remove( this.model, this.getResource(), NAME, value );
+    public void removeName(java.lang.String value) {
+	Base.remove(this.model, this.getResource(), NAME, value);
     }
 
     /**
@@ -6509,17 +5392,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllName( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, NAME );
+    public static void removeAllNames(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, NAME);
     }
 
     /**
      * Removes all values of property Name * [Generated from RDFReactor template
      * rule #removeall1dynamic]
      */
-    public void removeAllName() {
-        Base.removeAll( this.model, this.getResource(), NAME );
+    public void removeAllNames() {
+	Base.removeAll(this.model, this.getResource(), NAME);
     }
 
     /**
@@ -6534,9 +5417,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasNickname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, NICKNAME );
+    public static boolean hasNicknames(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, NICKNAME);
     }
 
     /**
@@ -6547,8 +5430,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasNickname() {
-        return Base.has( this.model, this.getResource(), NICKNAME );
+    public boolean hasNicknames() {
+	return Base.has(this.model, this.getResource(), NICKNAME);
     }
 
     /**
@@ -6566,10 +5449,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasNickname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, NICKNAME, value );
+    public static boolean hasNickname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, NICKNAME, value);
     }
 
     /**
@@ -6583,8 +5466,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasNickname( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), NICKNAME, value );
+    public boolean hasNickname(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), NICKNAME, value);
     }
 
     /**
@@ -6598,31 +5481,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllNickname_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, NICKNAME );
-    }
-
-    /**
-     * Get all values of property Nickname as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllNickname_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, NICKNAME,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNicknames_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, NICKNAME);
     }
 
     /**
@@ -6632,23 +5494,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllNickname_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), NICKNAME );
-    }
-
-    /**
-     * Get all values of property Nickname as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllNickname_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), NICKNAME,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllNicknames_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), NICKNAME);
     }
 
     /**
@@ -6660,27 +5507,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<FOAFThing> getAllNickname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, NICKNAME, FOAFThing.class );
-    }
-
-    /**
-     * Get all values of property Nickname as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<FOAFThing> getAllNickname_as( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, NICKNAME, FOAFThing.class );
+    public static ClosableIterator<FOAFThing> getAllNicknames(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, NICKNAME, FOAFThing.class);
     }
 
     /**
@@ -6688,23 +5517,19 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<FOAFThing> getAllNickname() {
-        return Base.getAll( this.model, this.getResource(), NICKNAME,
-                FOAFThing.class );
+    public ClosableIterator<FOAFThing> getAllNicknames() {
+	return Base.getAll(this.model, this.getResource(), NICKNAME,
+		FOAFThing.class);
     }
 
     /**
-     * Get all values of property Nickname as a ReactorResult of Thing
+     * Get all values of property Nickname * @return a ClosableIterator of $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<FOAFThing> getAllNickname_as() {
-        return Base.getAll_as( this.model, this.getResource(), NICKNAME,
-                FOAFThing.class );
+    public FOAFThing getNickname() {
+	return Base.getAll_as(this.model, this.getResource(), NICKNAME,
+		FOAFThing.class).firstValue();
     }
 
     /**
@@ -6719,10 +5544,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addNickname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, NICKNAME, value );
+    public static void addNickname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, NICKNAME, value);
     }
 
     /**
@@ -6733,8 +5558,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addNickname( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), NICKNAME, value );
+    public void addNickname(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), NICKNAME, value);
     }
 
     /**
@@ -6747,10 +5572,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addNickname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.add( model, instanceResource, NICKNAME, value );
+    public static void addNickname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.add(model, instanceResource, NICKNAME, value);
     }
 
     /**
@@ -6758,8 +5583,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addNickname( FOAFThing value ) {
-        Base.add( this.model, this.getResource(), NICKNAME, value );
+    public void addNickname(FOAFThing value) {
+	Base.add(this.model, this.getResource(), NICKNAME, value);
     }
 
     /**
@@ -6777,10 +5602,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setNickname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, NICKNAME, value );
+    public static void setNickname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, NICKNAME, value);
     }
 
     /**
@@ -6794,8 +5619,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setNickname( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), NICKNAME, value );
+    public void setNickname(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), NICKNAME, value);
     }
 
     /**
@@ -6813,10 +5638,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setNickname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.set( model, instanceResource, NICKNAME, value );
+    public static void setNickname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.set(model, instanceResource, NICKNAME, value);
     }
 
     /**
@@ -6830,8 +5655,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setNickname( FOAFThing value ) {
-        Base.set( this.model, this.getResource(), NICKNAME, value );
+    public void setNickname(FOAFThing value) {
+	Base.set(this.model, this.getResource(), NICKNAME, value);
     }
 
     /**
@@ -6846,10 +5671,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeNickname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, NICKNAME, value );
+    public static void removeNickname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, NICKNAME, value);
     }
 
     /**
@@ -6860,8 +5685,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeNickname( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), NICKNAME, value );
+    public void removeNickname(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), NICKNAME, value);
     }
 
     /**
@@ -6876,10 +5701,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeNickname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.remove( model, instanceResource, NICKNAME, value );
+    public static void removeNickname(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.remove(model, instanceResource, NICKNAME, value);
     }
 
     /**
@@ -6890,8 +5715,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeNickname( FOAFThing value ) {
-        Base.remove( this.model, this.getResource(), NICKNAME, value );
+    public void removeNickname(FOAFThing value) {
+	Base.remove(this.model, this.getResource(), NICKNAME, value);
     }
 
     /**
@@ -6902,17 +5727,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllNickname( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, NICKNAME );
+    public static void removeAllNicknames(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, NICKNAME);
     }
 
     /**
      * Removes all values of property Nickname * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllNickname() {
-        Base.removeAll( this.model, this.getResource(), NICKNAME );
+    public void removeAllNicknames() {
+	Base.removeAll(this.model, this.getResource(), NICKNAME);
     }
 
     /**
@@ -6927,9 +5752,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasPage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, PAGE );
+    public static boolean hasPages(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, PAGE);
     }
 
     /**
@@ -6940,8 +5765,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasPage() {
-        return Base.has( this.model, this.getResource(), PAGE );
+    public boolean hasPages() {
+	return Base.has(this.model, this.getResource(), PAGE);
     }
 
     /**
@@ -6959,10 +5784,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasPage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, PAGE, value );
+    public static boolean hasPage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, PAGE, value);
     }
 
     /**
@@ -6976,8 +5801,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasPage( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), PAGE, value );
+    public boolean hasPage(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), PAGE, value);
     }
 
     /**
@@ -6991,31 +5816,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllPage_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, PAGE );
-    }
-
-    /**
-     * Get all values of property Page as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllPage_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, PAGE,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPages_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, PAGE);
     }
 
     /**
@@ -7025,23 +5829,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllPage_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), PAGE );
-    }
-
-    /**
-     * Get all values of property Page as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllPage_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), PAGE,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPages_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), PAGE);
     }
 
     /**
@@ -7053,27 +5842,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Document> getAllPage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, PAGE, Document.class );
-    }
-
-    /**
-     * Get all values of property Page as a ReactorResult of Document
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Document> getAllPage_as( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, PAGE, Document.class );
+    public static ClosableIterator<Document> getAllPages(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, PAGE, Document.class);
     }
 
     /**
@@ -7081,23 +5852,19 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Document> getAllPage() {
-        return Base.getAll( this.model, this.getResource(), PAGE,
-                Document.class );
+    public ClosableIterator<Document> getAllPages() {
+	return Base
+		.getAll(this.model, this.getResource(), PAGE, Document.class);
     }
 
     /**
-     * Get all values of property Page as a ReactorResult of Document
+     * Get all values of property Page * @return a ClosableIterator of $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<Document> getAllPage_as() {
-        return Base.getAll_as( this.model, this.getResource(), PAGE,
-                Document.class );
+    public Document getPage() {
+	return Base.getAll_as(this.model, this.getResource(), PAGE,
+		Document.class).firstValue();
     }
 
     /**
@@ -7112,10 +5879,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addPage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, PAGE, value );
+    public static void addPage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, PAGE, value);
     }
 
     /**
@@ -7126,8 +5893,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addPage( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), PAGE, value );
+    public void addPage(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), PAGE, value);
     }
 
     /**
@@ -7140,10 +5907,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addPage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Document value ) {
-        Base.add( model, instanceResource, PAGE, value );
+    public static void addPage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Document value) {
+	Base.add(model, instanceResource, PAGE, value);
     }
 
     /**
@@ -7151,8 +5918,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addPage( Document value ) {
-        Base.add( this.model, this.getResource(), PAGE, value );
+    public void addPage(Document value) {
+	Base.add(this.model, this.getResource(), PAGE, value);
     }
 
     /**
@@ -7170,10 +5937,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setPage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, PAGE, value );
+    public static void setPage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, PAGE, value);
     }
 
     /**
@@ -7187,8 +5954,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setPage( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), PAGE, value );
+    public void setPage(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), PAGE, value);
     }
 
     /**
@@ -7206,10 +5973,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setPage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Document value ) {
-        Base.set( model, instanceResource, PAGE, value );
+    public static void setPage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Document value) {
+	Base.set(model, instanceResource, PAGE, value);
     }
 
     /**
@@ -7223,8 +5990,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setPage( Document value ) {
-        Base.set( this.model, this.getResource(), PAGE, value );
+    public void setPage(Document value) {
+	Base.set(this.model, this.getResource(), PAGE, value);
     }
 
     /**
@@ -7239,10 +6006,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removePage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, PAGE, value );
+    public static void removePage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, PAGE, value);
     }
 
     /**
@@ -7253,8 +6020,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removePage( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), PAGE, value );
+    public void removePage(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), PAGE, value);
     }
 
     /**
@@ -7269,10 +6036,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removePage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Document value ) {
-        Base.remove( model, instanceResource, PAGE, value );
+    public static void removePage(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Document value) {
+	Base.remove(model, instanceResource, PAGE, value);
     }
 
     /**
@@ -7283,8 +6050,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removePage( Document value ) {
-        Base.remove( this.model, this.getResource(), PAGE, value );
+    public void removePage(Document value) {
+	Base.remove(this.model, this.getResource(), PAGE, value);
     }
 
     /**
@@ -7295,17 +6062,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllPage( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, PAGE );
+    public static void removeAllPages(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, PAGE);
     }
 
     /**
      * Removes all values of property Page * [Generated from RDFReactor template
      * rule #removeall1dynamic]
      */
-    public void removeAllPage() {
-        Base.removeAll( this.model, this.getResource(), PAGE );
+    public void removeAllPages() {
+	Base.removeAll(this.model, this.getResource(), PAGE);
     }
 
     /**
@@ -7320,9 +6087,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasPhone( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, PHONE );
+    public static boolean hasPhones(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, PHONE);
     }
 
     /**
@@ -7333,8 +6100,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasPhone() {
-        return Base.has( this.model, this.getResource(), PHONE );
+    public boolean hasPhones() {
+	return Base.has(this.model, this.getResource(), PHONE);
     }
 
     /**
@@ -7352,10 +6119,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasPhone( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, PHONE, value );
+    public static boolean hasPhone(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, PHONE, value);
     }
 
     /**
@@ -7369,8 +6136,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasPhone( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), PHONE, value );
+    public boolean hasPhone(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), PHONE, value);
     }
 
     /**
@@ -7384,31 +6151,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllPhone_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, PHONE );
-    }
-
-    /**
-     * Get all values of property Phone as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllPhone_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, PHONE,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPhones_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, PHONE);
     }
 
     /**
@@ -7418,23 +6164,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllPhone_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), PHONE );
-    }
-
-    /**
-     * Get all values of property Phone as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllPhone_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), PHONE,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPhones_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), PHONE);
     }
 
     /**
@@ -7446,27 +6177,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<FOAFThing> getAllPhone( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, PHONE, FOAFThing.class );
-    }
-
-    /**
-     * Get all values of property Phone as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<FOAFThing> getAllPhone_as( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, PHONE, FOAFThing.class );
+    public static ClosableIterator<FOAFThing> getAllPhones(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, PHONE, FOAFThing.class);
     }
 
     /**
@@ -7474,22 +6187,19 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<FOAFThing> getAllPhone() {
-        return Base.getAll( this.model, this.getResource(), PHONE, FOAFThing.class );
+    public ClosableIterator<FOAFThing> getAllPhones() {
+	return Base.getAll(this.model, this.getResource(), PHONE,
+		FOAFThing.class);
     }
 
     /**
-     * Get all values of property Phone as a ReactorResult of Thing
+     * Get all values of property Phone * @return a ClosableIterator of $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<FOAFThing> getAllPhone_as() {
-        return Base.getAll_as( this.model, this.getResource(), PHONE,
-                FOAFThing.class );
+    public FOAFThing getPhone() {
+	return Base.getAll_as(this.model, this.getResource(), PHONE,
+		FOAFThing.class).firstValue();
     }
 
     /**
@@ -7504,10 +6214,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addPhone( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, PHONE, value );
+    public static void addPhone(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, PHONE, value);
     }
 
     /**
@@ -7518,8 +6228,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addPhone( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), PHONE, value );
+    public void addPhone(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), PHONE, value);
     }
 
     /**
@@ -7532,10 +6242,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addPhone( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.add( model, instanceResource, PHONE, value );
+    public static void addPhone(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.add(model, instanceResource, PHONE, value);
     }
 
     /**
@@ -7543,8 +6253,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addPhone( FOAFThing value ) {
-        Base.add( this.model, this.getResource(), PHONE, value );
+    public void addPhone(FOAFThing value) {
+	Base.add(this.model, this.getResource(), PHONE, value);
     }
 
     /**
@@ -7562,10 +6272,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setPhone( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, PHONE, value );
+    public static void setPhone(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, PHONE, value);
     }
 
     /**
@@ -7579,8 +6289,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setPhone( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), PHONE, value );
+    public void setPhone(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), PHONE, value);
     }
 
     /**
@@ -7598,10 +6308,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setPhone( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.set( model, instanceResource, PHONE, value );
+    public static void setPhone(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.set(model, instanceResource, PHONE, value);
     }
 
     /**
@@ -7615,8 +6325,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setPhone( FOAFThing value ) {
-        Base.set( this.model, this.getResource(), PHONE, value );
+    public void setPhone(FOAFThing value) {
+	Base.set(this.model, this.getResource(), PHONE, value);
     }
 
     /**
@@ -7631,10 +6341,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removePhone( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, PHONE, value );
+    public static void removePhone(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, PHONE, value);
     }
 
     /**
@@ -7645,8 +6355,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removePhone( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), PHONE, value );
+    public void removePhone(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), PHONE, value);
     }
 
     /**
@@ -7661,10 +6371,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removePhone( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-        Base.remove( model, instanceResource, PHONE, value );
+    public static void removePhone(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.remove(model, instanceResource, PHONE, value);
     }
 
     /**
@@ -7675,8 +6385,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removePhone( FOAFThing value ) {
-        Base.remove( this.model, this.getResource(), PHONE, value );
+    public void removePhone(FOAFThing value) {
+	Base.remove(this.model, this.getResource(), PHONE, value);
     }
 
     /**
@@ -7687,17 +6397,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllPhone( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, PHONE );
+    public static void removeAllPhones(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, PHONE);
     }
 
     /**
      * Removes all values of property Phone * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllPhone() {
-        Base.removeAll( this.model, this.getResource(), PHONE );
+    public void removeAllPhones() {
+	Base.removeAll(this.model, this.getResource(), PHONE);
     }
 
     /**
@@ -7712,9 +6422,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasPrimarytopicof( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, PRIMARYTOPICOF );
+    public static boolean hasPrimaryTopicOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, PRIMARYTOPICOF);
     }
 
     /**
@@ -7725,8 +6435,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasPrimarytopicof() {
-        return Base.has( this.model, this.getResource(), PRIMARYTOPICOF );
+    public boolean hasPrimaryTopicOf() {
+	return Base.has(this.model, this.getResource(), PRIMARYTOPICOF);
     }
 
     /**
@@ -7744,10 +6454,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasPrimarytopicof( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, PRIMARYTOPICOF, value );
+    public static boolean hasPrimaryTopicOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, PRIMARYTOPICOF, value);
     }
 
     /**
@@ -7761,15 +6471,13 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean
-            hasPrimarytopicof(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), PRIMARYTOPICOF,
-                value );
+    public boolean hasPrimaryTopicOf(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), PRIMARYTOPICOF,
+		value);
     }
 
     /**
-     * Get all values of property Primarytopicof as an Iterator over RDF2Go
+     * Get all values of property PrimaryTopicOf as an Iterator over RDF2Go
      * nodes
      * 
      * @param model
@@ -7780,65 +6488,27 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllPrimarytopicof_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, PRIMARYTOPICOF );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPrimaryTopicOf_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, PRIMARYTOPICOF);
     }
 
     /**
-     * Get all values of property Primarytopicof as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllPrimarytopicof_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, PRIMARYTOPICOF,
-                org.ontoware.rdf2go.model.node.Node.class );
-    }
-
-    /**
-     * Get all values of property Primarytopicof as an Iterator over RDF2Go
+     * Get all values of property PrimaryTopicOf as an Iterator over RDF2Go
      * nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllPrimarytopicof_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(),
-                PRIMARYTOPICOF );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPrimaryTopicOf_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(),
+		PRIMARYTOPICOF);
     }
 
     /**
-     * Get all values of property Primarytopicof as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllPrimarytopicof_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), PRIMARYTOPICOF,
-                org.ontoware.rdf2go.model.node.Node.class );
-    }
-
-    /**
-     * Get all values of property Primarytopicof * @param model an RDF2Go model
+     * Get all values of property PrimaryTopicOf * @param model an RDF2Go model
      * 
      * @param resource
      *            an RDF2Go resource
@@ -7846,60 +6516,36 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Document> getAllPrimarytopicof(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, PRIMARYTOPICOF,
-                Document.class );
+    public static ClosableIterator<Document> getAllPrimaryTopicOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, PRIMARYTOPICOF,
+		Document.class);
     }
 
     /**
-     * Get all values of property Primarytopicof as a ReactorResult of Document
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Document> getAllPrimarytopicof_as(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, PRIMARYTOPICOF,
-                Document.class );
-    }
-
-    /**
-     * Get all values of property Primarytopicof * @return a ClosableIterator of
+     * Get all values of property PrimaryTopicOf * @return a ClosableIterator of
      * $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Document> getAllPrimarytopicof() {
-        return Base.getAll( this.model, this.getResource(), PRIMARYTOPICOF,
-                Document.class );
+    public ClosableIterator<Document> getAllPrimaryTopicOf() {
+	return Base.getAll(this.model, this.getResource(), PRIMARYTOPICOF,
+		Document.class);
     }
 
     /**
-     * Get all values of property Primarytopicof as a ReactorResult of Document
+     * Get all values of property PrimaryTopicOf * @return a ClosableIterator of
+     * $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<Document> getAllPrimarytopicof_as() {
-        return Base.getAll_as( this.model, this.getResource(), PRIMARYTOPICOF,
-                Document.class );
+    public Document getPrimaryTopicOf() {
+	return Base.getAll_as(this.model, this.getResource(), PRIMARYTOPICOF,
+		Document.class).firstValue();
     }
 
     /**
-     * Adds a value to property Primarytopicof as an RDF2Go node
+     * Adds a value to property PrimaryTopicOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -7910,26 +6556,26 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addPrimarytopicof( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, PRIMARYTOPICOF, value );
+    public static void addPrimaryTopicOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, PRIMARYTOPICOF, value);
     }
 
     /**
-     * Adds a value to property Primarytopicof as an RDF2Go node
+     * Adds a value to property PrimaryTopicOf as an RDF2Go node
      * 
      * @param value
      *            the value to be added
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addPrimarytopicof( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), PRIMARYTOPICOF, value );
+    public void addPrimaryTopicOf(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), PRIMARYTOPICOF, value);
     }
 
     /**
-     * Adds a value to property Primarytopicof from an instance of Document
+     * Adds a value to property PrimaryTopicOf from an instance of Document
      * 
      * @param model
      *            an RDF2Go model
@@ -7938,23 +6584,23 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addPrimarytopicof( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Document value ) {
-        Base.add( model, instanceResource, PRIMARYTOPICOF, value );
+    public static void addPrimaryTopicOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Document value) {
+	Base.add(model, instanceResource, PRIMARYTOPICOF, value);
     }
 
     /**
-     * Adds a value to property Primarytopicof from an instance of Document
+     * Adds a value to property PrimaryTopicOf from an instance of Document
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addPrimarytopicof( Document value ) {
-        Base.add( this.model, this.getResource(), PRIMARYTOPICOF, value );
+    public void addPrimaryTopicOf(Document value) {
+	Base.add(this.model, this.getResource(), PRIMARYTOPICOF, value);
     }
 
     /**
-     * Sets a value of property Primarytopicof from an RDF2Go node. First, all
+     * Sets a value of property PrimaryTopicOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -7968,14 +6614,14 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setPrimarytopicof( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, PRIMARYTOPICOF, value );
+    public static void setPrimaryTopicOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, PRIMARYTOPICOF, value);
     }
 
     /**
-     * Sets a value of property Primarytopicof from an RDF2Go node. First, all
+     * Sets a value of property PrimaryTopicOf from an RDF2Go node. First, all
      * existing values are removed, then this value is added. Cardinality
      * constraints are not checked, but this method exists only for properties
      * with no minCardinality or minCardinality == 1.
@@ -7985,12 +6631,12 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setPrimarytopicof( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), PRIMARYTOPICOF, value );
+    public void setPrimaryTopicOf(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), PRIMARYTOPICOF, value);
     }
 
     /**
-     * Sets a value of property Primarytopicof from an instance of Document
+     * Sets a value of property PrimaryTopicOf from an instance of Document
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -8004,14 +6650,14 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setPrimarytopicof( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Document value ) {
-        Base.set( model, instanceResource, PRIMARYTOPICOF, value );
+    public static void setPrimaryTopicOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Document value) {
+	Base.set(model, instanceResource, PRIMARYTOPICOF, value);
     }
 
     /**
-     * Sets a value of property Primarytopicof from an instance of Document
+     * Sets a value of property PrimaryTopicOf from an instance of Document
      * First, all existing values are removed, then this value is added.
      * Cardinality constraints are not checked, but this method exists only for
      * properties with no minCardinality or minCardinality == 1.
@@ -8021,12 +6667,12 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setPrimarytopicof( Document value ) {
-        Base.set( this.model, this.getResource(), PRIMARYTOPICOF, value );
+    public void setPrimaryTopicOf(Document value) {
+	Base.set(this.model, this.getResource(), PRIMARYTOPICOF, value);
     }
 
     /**
-     * Removes a value of property Primarytopicof as an RDF2Go node
+     * Removes a value of property PrimaryTopicOf as an RDF2Go node
      * 
      * @param model
      *            an RDF2Go model
@@ -8037,28 +6683,26 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removePrimarytopicof( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, PRIMARYTOPICOF, value );
+    public static void removePrimaryTopicOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, PRIMARYTOPICOF, value);
     }
 
     /**
-     * Removes a value of property Primarytopicof as an RDF2Go node
+     * Removes a value of property PrimaryTopicOf as an RDF2Go node
      * 
      * @param value
      *            the value to be removed
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void
-            removePrimarytopicof(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), PRIMARYTOPICOF, value );
+    public void removePrimaryTopicOf(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), PRIMARYTOPICOF, value);
     }
 
     /**
-     * Removes a value of property Primarytopicof given as an instance of
+     * Removes a value of property PrimaryTopicOf given as an instance of
      * Document
      * 
      * @param model
@@ -8070,14 +6714,14 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removePrimarytopicof( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            Document value ) {
-        Base.remove( model, instanceResource, PRIMARYTOPICOF, value );
+    public static void removePrimaryTopicOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    Document value) {
+	Base.remove(model, instanceResource, PRIMARYTOPICOF, value);
     }
 
     /**
-     * Removes a value of property Primarytopicof given as an instance of
+     * Removes a value of property PrimaryTopicOf given as an instance of
      * Document
      * 
      * @param value
@@ -8085,12 +6729,12 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removePrimarytopicof( Document value ) {
-        Base.remove( this.model, this.getResource(), PRIMARYTOPICOF, value );
+    public void removePrimaryTopicOf(Document value) {
+	Base.remove(this.model, this.getResource(), PRIMARYTOPICOF, value);
     }
 
     /**
-     * Removes all values of property Primarytopicof * @param model an RDF2Go
+     * Removes all values of property PrimaryTopicOf * @param model an RDF2Go
      * model
      * 
      * @param resource
@@ -8098,17 +6742,17 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllPrimarytopicof( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, PRIMARYTOPICOF );
+    public static void removeAllPrimaryTopicOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, PRIMARYTOPICOF);
     }
 
     /**
-     * Removes all values of property Primarytopicof * [Generated from
+     * Removes all values of property PrimaryTopicOf * [Generated from
      * RDFReactor template rule #removeall1dynamic]
      */
-    public void removeAllPrimarytopicof() {
-        Base.removeAll( this.model, this.getResource(), PRIMARYTOPICOF );
+    public void removeAllPrimaryTopicOf() {
+	Base.removeAll(this.model, this.getResource(), PRIMARYTOPICOF);
     }
 
     /**
@@ -8123,9 +6767,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasTheme( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, THEME );
+    public static boolean hasThemes(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, THEME);
     }
 
     /**
@@ -8136,8 +6780,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasTheme() {
-        return Base.has( this.model, this.getResource(), THEME );
+    public boolean hasThemes() {
+	return Base.has(this.model, this.getResource(), THEME);
     }
 
     /**
@@ -8155,10 +6799,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasTheme( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, THEME, value );
+    public static boolean hasTheme(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, THEME, value);
     }
 
     /**
@@ -8172,8 +6816,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasTheme( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), THEME, value );
+    public boolean hasTheme(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), THEME, value);
     }
 
     /**
@@ -8187,31 +6831,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllTheme_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, THEME );
-    }
-
-    /**
-     * Get all values of property Theme as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllTheme_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, THEME,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllThemes_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, THEME);
     }
 
     /**
@@ -8221,23 +6844,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllTheme_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), THEME );
-    }
-
-    /**
-     * Get all values of property Theme as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllTheme_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), THEME,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllThemes_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), THEME);
     }
 
     /**
@@ -8249,34 +6857,11 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing>
-            getAllTheme(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, THEME,
-                org.ontoware.rdfreactor.schema.owl.OwlThing.class );
-    }
-
-    /**
-     * Get all values of property Theme as a ReactorResult of
-     * org.ontoware.rdfreactor.schema.owl.OwlThing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<org.ontoware.rdfreactor.schema.owl.OwlThing>
-            getAllTheme_as(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, THEME,
-                org.ontoware.rdfreactor.schema.owl.OwlThing.class );
+    public static ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllThemes(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, THEME,
+		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
     }
 
     /**
@@ -8284,26 +6869,19 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing>
-            getAllTheme() {
-        return Base.getAll( this.model, this.getResource(), THEME,
-                org.ontoware.rdfreactor.schema.owl.OwlThing.class );
+    public ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllThemes() {
+	return Base.getAll(this.model, this.getResource(), THEME,
+		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
     }
 
     /**
-     * Get all values of property Theme as a ReactorResult of
-     * org.ontoware.rdfreactor.schema.owl.OwlThing
+     * Get all values of property Theme * @return a ClosableIterator of $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<org.ontoware.rdfreactor.schema.owl.OwlThing>
-            getAllTheme_as() {
-        return Base.getAll_as( this.model, this.getResource(), THEME,
-                org.ontoware.rdfreactor.schema.owl.OwlThing.class );
+    public org.ontoware.rdfreactor.schema.owl.OwlThing getTheme() {
+	return Base.getAll_as(this.model, this.getResource(), THEME,
+		org.ontoware.rdfreactor.schema.owl.OwlThing.class).firstValue();
     }
 
     /**
@@ -8318,10 +6896,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addTheme( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, THEME, value );
+    public static void addTheme(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, THEME, value);
     }
 
     /**
@@ -8332,8 +6910,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addTheme( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), THEME, value );
+    public void addTheme(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), THEME, value);
     }
 
     /**
@@ -8347,10 +6925,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addTheme( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.add( model, instanceResource, THEME, value );
+    public static void addTheme(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.add(model, instanceResource, THEME, value);
     }
 
     /**
@@ -8359,8 +6937,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addTheme( org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.add( this.model, this.getResource(), THEME, value );
+    public void addTheme(org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.add(this.model, this.getResource(), THEME, value);
     }
 
     /**
@@ -8378,10 +6956,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setTheme( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, THEME, value );
+    public static void setTheme(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, THEME, value);
     }
 
     /**
@@ -8395,8 +6973,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setTheme( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), THEME, value );
+    public void setTheme(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), THEME, value);
     }
 
     /**
@@ -8415,10 +6993,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setTheme( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.set( model, instanceResource, THEME, value );
+    public static void setTheme(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.set(model, instanceResource, THEME, value);
     }
 
     /**
@@ -8433,8 +7011,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setTheme( org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.set( this.model, this.getResource(), THEME, value );
+    public void setTheme(org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.set(this.model, this.getResource(), THEME, value);
     }
 
     /**
@@ -8449,10 +7027,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeTheme( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, THEME, value );
+    public static void removeTheme(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, THEME, value);
     }
 
     /**
@@ -8463,8 +7041,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeTheme( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), THEME, value );
+    public void removeTheme(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), THEME, value);
     }
 
     /**
@@ -8480,10 +7058,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeTheme( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.remove( model, instanceResource, THEME, value );
+    public static void removeTheme(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.remove(model, instanceResource, THEME, value);
     }
 
     /**
@@ -8495,9 +7073,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeTheme(
-            org.ontoware.rdfreactor.schema.owl.OwlThing value ) {
-        Base.remove( this.model, this.getResource(), THEME, value );
+    public void removeTheme(org.ontoware.rdfreactor.schema.owl.OwlThing value) {
+	Base.remove(this.model, this.getResource(), THEME, value);
     }
 
     /**
@@ -8508,19 +7085,18 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllTheme( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, THEME );
+    public static void removeAllThemes(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, THEME);
     }
 
     /**
      * Removes all values of property Theme * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllTheme() {
-        Base.removeAll( this.model, this.getResource(), THEME );
+    public void removeAllThemes() {
+	Base.removeAll(this.model, this.getResource(), THEME);
     }
-
 
     /**
      * Check if org.ontoware.rdfreactor.generator.java.JProperty@121c77b has at
@@ -8534,9 +7110,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasModified( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, MODIFIED );
+    public static boolean hasModified(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, MODIFIED);
     }
 
     /**
@@ -8548,7 +7124,7 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
     public boolean hasModified() {
-        return Base.has( this.model, this.getResource(), MODIFIED );
+	return Base.has(this.model, this.getResource(), MODIFIED);
     }
 
     /**
@@ -8566,10 +7142,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasModified( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, MODIFIED, value );
+    public static boolean hasModified(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, MODIFIED, value);
     }
 
     /**
@@ -8583,10 +7159,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasModified(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), MODIFIED,
-                value );
+    public boolean hasModified(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), MODIFIED, value);
     }
 
     /**
@@ -8600,32 +7174,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllModified_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, MODIFIED );
-    }
-
-    /**
-     * Get all values of property DateModified as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllModified_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, MODIFIED,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllModified_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, MODIFIED);
     }
 
     /**
@@ -8635,25 +7187,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllModified_asNode() {
-        return Base
-.getAll_asNode( this.model, this.getResource(), MODIFIED );
-    }
-
-    /**
-     * Get all values of property DateModified as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllModified_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), MODIFIED,
-                org.ontoware.rdf2go.model.node.Node.class );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllModified_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), MODIFIED);
     }
 
     /**
@@ -8666,31 +7201,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      *         [Generated from RDFReactor template rule #get11static]
      */
     public static ClosableIterator<java.lang.String> getAllModified(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, MODIFIED,
-                java.lang.String.class );
-    }
-
-    /**
-     * Get all values of property DateModified as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllModified_as(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, MODIFIED,
-                java.lang.String.class );
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, MODIFIED,
+		java.lang.String.class);
     }
 
     /**
@@ -8700,23 +7214,19 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<java.lang.String> getAllModified() {
-        return Base.getAll( this.model, this.getResource(), MODIFIED,
-                java.lang.String.class );
+	return Base.getAll(this.model, this.getResource(), MODIFIED,
+		java.lang.String.class);
     }
 
     /**
-     * Get all values of property DateModified as a ReactorResult of
-     * java.lang.String
+     * Get all values of property DateModified * @return a ClosableIterator of
+     * $type
      * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<java.lang.String> getAllModified_as() {
-        return Base.getAll_as( this.model, this.getResource(), MODIFIED,
-                java.lang.String.class );
+    public java.lang.String getModified() {
+	return Base.getAll_as(this.model, this.getResource(), MODIFIED,
+		java.lang.String.class).firstValue();
     }
 
     /**
@@ -8731,10 +7241,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addModified( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, MODIFIED, value );
+    public static void addModified(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, MODIFIED, value);
     }
 
     /**
@@ -8745,9 +7255,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addModified(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), MODIFIED, value );
+    public void addModified(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), MODIFIED, value);
     }
 
     /**
@@ -8761,10 +7270,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addModified( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            java.lang.String value ) {
-        Base.add( model, instanceResource, MODIFIED, value );
+    public static void addModified(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    java.lang.String value) {
+	Base.add(model, instanceResource, MODIFIED, value);
     }
 
     /**
@@ -8773,8 +7282,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addModified( java.lang.String value ) {
-        Base.add( this.model, this.getResource(), MODIFIED, value );
+    public void addModified(java.lang.String value) {
+	Base.add(this.model, this.getResource(), MODIFIED, value);
     }
 
     /**
@@ -8792,10 +7301,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setModified( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, MODIFIED, value );
+    public static void setModified(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, MODIFIED, value);
     }
 
     /**
@@ -8809,9 +7318,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setModified(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), MODIFIED, value );
+    public void setModified(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), MODIFIED, value);
     }
 
     /**
@@ -8829,10 +7337,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setModified( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            java.lang.String value ) {
-        Base.set( model, instanceResource, MODIFIED, value );
+    public static void setModified(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    java.lang.String value) {
+	Base.set(model, instanceResource, MODIFIED, value);
     }
 
     /**
@@ -8846,8 +7354,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setModified( java.lang.String value ) {
-        Base.set( this.model, this.getResource(), MODIFIED, value );
+    public void setModified(java.lang.String value) {
+	Base.set(this.model, this.getResource(), MODIFIED, value);
     }
 
     /**
@@ -8862,10 +7370,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1static]
      */
-    public static void removeModified( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, MODIFIED, value );
+    public static void removeModified(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, MODIFIED, value);
     }
 
     /**
@@ -8876,9 +7384,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public void removeModified(
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), MODIFIED, value );
+    public void removeModified(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), MODIFIED, value);
     }
 
     /**
@@ -8894,10 +7401,10 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove3static]
      */
-    public static void removeModified( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            java.lang.String value ) {
-        Base.remove( model, instanceResource, MODIFIED, value );
+    public static void removeModified(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    java.lang.String value) {
+	Base.remove(model, instanceResource, MODIFIED, value);
     }
 
     /**
@@ -8909,8 +7416,8 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public void removeModified( java.lang.String value ) {
-        Base.remove( this.model, this.getResource(), MODIFIED, value );
+    public void removeModified(java.lang.String value) {
+	Base.remove(this.model, this.getResource(), MODIFIED, value);
     }
 
     /**
@@ -8922,9 +7429,9 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllModified( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, MODIFIED );
+    public static void removeAllModified(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, MODIFIED);
     }
 
     /**
@@ -8932,964 +7439,1016 @@ public class FOAFThing extends org.ontoware.rdfreactor.schema.rdfs.Class {
      * template rule #removeall1dynamic]
      */
     public void removeAllModified() {
-        Base.removeAll( this.model, this.getResource(), MODIFIED );
+	Base.removeAll(this.model, this.getResource(), MODIFIED);
     }
 
     /**
-     * Check if org.ontoware.rdfreactor.generator.java.JProperty@6a56f0 has at least one value set 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@6a56f0 has at
+     * least one value set
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
      * @return true if this property has at least one value
-     *
-     * [Generated from RDFReactor template rule #get0has-static] 
+     * 
+     *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasCreated( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.has( model, instanceResource, CREATED );
+    public static boolean hasCreated(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, CREATED);
     }
 
     /**
-     * Check if org.ontoware.rdfreactor.generator.java.JProperty@6a56f0 has at least one value set 
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@6a56f0 has at
+     * least one value set
+     * 
      * @return true if this property has at least one value
-     *
-     * [Generated from RDFReactor template rule #get0has-dynamic] 
+     * 
+     *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
     public boolean hasCreated() {
-        return Base.has( this.model, this.getResource(), CREATED );
+	return Base.has(this.model, this.getResource(), CREATED);
     }
 
     /**
-     * Check if org.ontoware.rdfreactor.generator.java.JProperty@6a56f0 has the given value (maybe among other values).  
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be checked
-     * @return true if this property contains (maybe among other) the given value
-     *
-     * [Generated from RDFReactor template rule #get0has-value-static] 
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@6a56f0 has the
+     * given value (maybe among other values).
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be checked
+     * @return true if this property contains (maybe among other) the given
+     *         value
+     * 
+     *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasCreated( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( model, instanceResource, CREATED, value );
+    public static boolean hasCreated(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, CREATED, value);
     }
 
     /**
-     * Check if org.ontoware.rdfreactor.generator.java.JProperty@6a56f0 has the given value (maybe among other values).  
-     * @param value the value to be checked
-     * @return true if this property contains (maybe among other) the given value
-     *
-     * [Generated from RDFReactor template rule #get0has-value-dynamic] 
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@6a56f0 has the
+     * given value (maybe among other values).
+     * 
+     * @param value
+     *            the value to be checked
+     * @return true if this property contains (maybe among other) the given
+     *         value
+     * 
+     *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasCreated( org.ontoware.rdf2go.model.node.Node value ) {
-        return Base.hasValue( this.model, this.getResource(), CREATED, value );
+    public boolean hasCreated(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), CREATED, value);
     }
 
     /**
-     * Get all values of property DateCreated as an Iterator over RDF2Go nodes 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
+     * Get all values of property DateCreated as an Iterator over RDF2Go nodes
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
      * @return a ClosableIterator of RDF2Go Nodes
-     *
-     * [Generated from RDFReactor template rule #get7static] 
+     * 
+     *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllCreated_asNode(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_asNode( model, instanceResource, CREATED );
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCreated_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, CREATED);
     }
 
     /**
-     * Get all values of property DateCreated as a ReactorResult of RDF2Go nodes 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     *
-     * [Generated from RDFReactor template rule #get7static-reactor-result] 
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllCreated_asNode_(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, CREATED,
-                org.ontoware.rdf2go.model.node.Node.class );
-    }
-
-    /**
-     * Get all values of property DateCreated as an Iterator over RDF2Go nodes 
+     * Get all values of property DateCreated as an Iterator over RDF2Go nodes
+     * 
      * @return a ClosableIterator of RDF2Go Nodes
-     *
-     * [Generated from RDFReactor template rule #get8dynamic] 
+     * 
+     *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllCreated_asNode() {
-        return Base.getAll_asNode( this.model, this.getResource(), CREATED );
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCreated_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), CREATED);
     }
 
     /**
-     * Get all values of property DateCreated as a ReactorResult of RDF2Go nodes 
-     * @return a List of RDF2Go Nodes
-     *
-     * [Generated from RDFReactor template rule #get8dynamic-reactor-result] 
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllCreated_asNode_() {
-        return Base.getAll_as( this.model, this.getResource(), CREATED,
-                org.ontoware.rdf2go.model.node.Node.class );
-    }
-
-    /**
-     * Get all values of property DateCreated     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
+     * Get all values of property DateCreated * @param model an RDF2Go model
+     * 
+     * @param resource
+     *            an RDF2Go resource
      * @return a ClosableIterator of $type
-     *
-     * [Generated from RDFReactor template rule #get11static] 
+     * 
+     *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllCreated(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll( model, instanceResource, CREATED,
-                java.lang.String.class );
+    public static ClosableIterator<java.lang.String> getAllCreated(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, CREATED,
+		java.lang.String.class);
     }
 
     /**
-     * Get all values of property DateCreated as a ReactorResult of java.lang.String 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to iterator, list or array
-     *
-     * [Generated from RDFReactor template rule #get11static-reactorresult] 
-     */
-    public static ReactorResult<java.lang.String> getAllCreated_as(
-            Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        return Base.getAll_as( model, instanceResource, CREATED,
-                java.lang.String.class );
-    }
-
-    /**
-     * Get all values of property DateCreated     * @return a ClosableIterator of $type
-     *
-     * [Generated from RDFReactor template rule #get12dynamic] 
+     * Get all values of property DateCreated * @return a ClosableIterator of
+     * $type
+     * 
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<java.lang.String> getAllCreated() {
-        return Base.getAll( this.model, this.getResource(), CREATED,
-                java.lang.String.class );
+	return Base.getAll(this.model, this.getResource(), CREATED,
+		java.lang.String.class);
     }
 
     /**
-     * Get all values of property DateCreated as a ReactorResult of java.lang.String 
-     * @return a ReactorResult of $type which can conveniently be converted to iterator, list or array
-     *
-     * [Generated from RDFReactor template rule #get12dynamic-reactorresult] 
+     * Get all values of property DateCreated * @return a ClosableIterator of
+     * $type
+     * 
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<java.lang.String> getAllCreated_as() {
-        return Base.getAll_as( this.model, this.getResource(), CREATED,
-                java.lang.String.class );
+    public java.lang.String getCreated() {
+	return Base.getAll_as(this.model, this.getResource(), CREATED,
+		java.lang.String.class).firstValue();
     }
 
     /**
-     * Adds a value to property DateCreated as an RDF2Go node 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #add1static] 
+     * Adds a value to property DateCreated as an RDF2Go node
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addCreated( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( model, instanceResource, CREATED, value );
+    public static void addCreated(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, CREATED, value);
     }
 
     /**
-     * Adds a value to property DateCreated as an RDF2Go node 
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #add1dynamic] 
+     * Adds a value to property DateCreated as an RDF2Go node
+     * 
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addCreated( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.add( this.model, this.getResource(), CREATED, value );
+    public void addCreated(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), CREATED, value);
     }
 
     /**
-     * Adds a value to property DateCreated from an instance of java.lang.String 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     *
-     * [Generated from RDFReactor template rule #add3static] 
+     * Adds a value to property DateCreated from an instance of java.lang.String
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * 
+     *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addCreated( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            java.lang.String value ) {
-        Base.add( model, instanceResource, CREATED, value );
+    public static void addCreated(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    java.lang.String value) {
+	Base.add(model, instanceResource, CREATED, value);
     }
 
     /**
-     * Adds a value to property DateCreated from an instance of java.lang.String 
-     *
-     * [Generated from RDFReactor template rule #add4dynamic] 
+     * Adds a value to property DateCreated from an instance of java.lang.String
+     * 
+     * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addCreated( java.lang.String value ) {
-        Base.add( this.model, this.getResource(), CREATED, value );
+    public void addCreated(java.lang.String value) {
+	Base.add(this.model, this.getResource(), CREATED, value);
     }
 
     /**
-     * Sets a value of property DateCreated from an RDF2Go node.
+     * Sets a value of property DateCreated from an RDF2Go node. First, all
+     * existing values are removed, then this value is added. Cardinality
+     * constraints are not checked, but this method exists only for properties
+     * with no minCardinality or minCardinality == 1.
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be set
+     * 
+     *            [Generated from RDFReactor template rule #set1static]
+     */
+    public static void setCreated(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, CREATED, value);
+    }
+
+    /**
+     * Sets a value of property DateCreated from an RDF2Go node. First, all
+     * existing values are removed, then this value is added. Cardinality
+     * constraints are not checked, but this method exists only for properties
+     * with no minCardinality or minCardinality == 1.
+     * 
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #set1dynamic]
+     */
+    public void setCreated(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), CREATED, value);
+    }
+
+    /**
+     * Sets a value of property DateCreated from an instance of java.lang.String
      * First, all existing values are removed, then this value is added.
-     * Cardinality constraints are not checked, but this method exists only for properties with
-     * no minCardinality or minCardinality == 1.
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be set
-     *
-     * [Generated from RDFReactor template rule #set1static] 
+     * Cardinality constraints are not checked, but this method exists only for
+     * properties with no minCardinality or minCardinality == 1.
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setCreated( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( model, instanceResource, CREATED, value );
+    public static void setCreated(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    java.lang.String value) {
+	Base.set(model, instanceResource, CREATED, value);
     }
 
     /**
-     * Sets a value of property DateCreated from an RDF2Go node.
+     * Sets a value of property DateCreated from an instance of java.lang.String
      * First, all existing values are removed, then this value is added.
-     * Cardinality constraints are not checked, but this method exists only for properties with
-     * no minCardinality or minCardinality == 1.
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #set1dynamic] 
+     * Cardinality constraints are not checked, but this method exists only for
+     * properties with no minCardinality or minCardinality == 1.
+     * 
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setCreated( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.set( this.model, this.getResource(), CREATED, value );
-    }
-
-    /**
-     * Sets a value of property DateCreated from an instance of java.lang.String 
-     * First, all existing values are removed, then this value is added.
-     * Cardinality constraints are not checked, but this method exists only for properties with
-     * no minCardinality or minCardinality == 1.
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #set3static] 
-     */
-    public static void setCreated( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            java.lang.String value ) {
-        Base.set( model, instanceResource, CREATED, value );
-    }
-
-    /**
-     * Sets a value of property DateCreated from an instance of java.lang.String 
-     * First, all existing values are removed, then this value is added.
-     * Cardinality constraints are not checked, but this method exists only for properties with
-     * no minCardinality or minCardinality == 1.
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #set4dynamic] 
-     */
-    public void setCreated( java.lang.String value ) {
-        Base.set( this.model, this.getResource(), CREATED, value );
-    }
-
-    /**
-     * Removes a value of property DateCreated as an RDF2Go node 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be removed
-     *
-     * [Generated from RDFReactor template rule #remove1static] 
-     */
-    public static void removeCreated( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( model, instanceResource, CREATED, value );
+    public void setCreated(java.lang.String value) {
+	Base.set(this.model, this.getResource(), CREATED, value);
     }
 
     /**
      * Removes a value of property DateCreated as an RDF2Go node
-     * @param value the value to be removed
-     *
-     * [Generated from RDFReactor template rule #remove1dynamic] 
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove1static]
      */
-    public void removeCreated( org.ontoware.rdf2go.model.node.Node value ) {
-        Base.remove( this.model, this.getResource(), CREATED, value );
+    public static void removeCreated(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, CREATED, value);
     }
 
     /**
-     * Removes a value of property DateCreated given as an instance of java.lang.String 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be removed
-     *
-     * [Generated from RDFReactor template rule #remove3static] 
+     * Removes a value of property DateCreated as an RDF2Go node
+     * 
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public static void removeCreated( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            java.lang.String value ) {
-        Base.remove( model, instanceResource, CREATED, value );
+    public void removeCreated(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), CREATED, value);
     }
 
     /**
-     * Removes a value of property DateCreated given as an instance of java.lang.String 
-     * @param value the value to be removed
-     *
-     * [Generated from RDFReactor template rule #remove4dynamic] 
+     * Removes a value of property DateCreated given as an instance of
+     * java.lang.String
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove3static]
      */
-    public void removeCreated( java.lang.String value ) {
-        Base.remove( this.model, this.getResource(), CREATED, value );
+    public static void removeCreated(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    java.lang.String value) {
+	Base.remove(model, instanceResource, CREATED, value);
     }
 
     /**
-     * Removes all values of property DateCreated     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     *
-     * [Generated from RDFReactor template rule #removeall1static] 
+     * Removes a value of property DateCreated given as an instance of
+     * java.lang.String
+     * 
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public static void removeAllCreated( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-        Base.removeAll( model, instanceResource, CREATED );
+    public void removeCreated(java.lang.String value) {
+	Base.remove(this.model, this.getResource(), CREATED, value);
     }
 
     /**
-     * Removes all values of property DateCreated	 *
-     * [Generated from RDFReactor template rule #removeall1dynamic] 
+     * Removes all values of property DateCreated * @param model an RDF2Go model
+     * 
+     * @param resource
+     *            an RDF2Go resource
+     * 
+     *            [Generated from RDFReactor template rule #removeall1static]
+     */
+    public static void removeAllCreated(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, CREATED);
+    }
+
+    /**
+     * Removes all values of property DateCreated * [Generated from RDFReactor
+     * template rule #removeall1dynamic]
      */
     public void removeAllCreated() {
-        Base.removeAll( this.model, this.getResource(), CREATED );
+	Base.removeAll(this.model, this.getResource(), CREATED);
     }
 
     /**
-     * Check if org.ontoware.rdfreactor.generator.java.JProperty@10a73bc has at least one value set 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@10a73bc has at
+     * least one value set
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
      * @return true if this property has at least one value
-     *
-     * [Generated from RDFReactor template rule #get0has-static] 
+     * 
+     *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasHasPart( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-    	return Base.has(model, instanceResource, HASPART);
+    public static boolean hasHasPart(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, HASPART);
     }
 
     /**
-     * Check if org.ontoware.rdfreactor.generator.java.JProperty@10a73bc has at least one value set 
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@10a73bc has at
+     * least one value set
+     * 
      * @return true if this property has at least one value
-     *
-     * [Generated from RDFReactor template rule #get0has-dynamic] 
+     * 
+     *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
     public boolean hasHasPart() {
-    	return Base.has(this.model, this.getResource(), HASPART);
+	return Base.has(this.model, this.getResource(), HASPART);
     }
 
     /**
-     * Check if org.ontoware.rdfreactor.generator.java.JProperty@10a73bc has the given value (maybe among other values).  
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be checked
-     * @return true if this property contains (maybe among other) the given value
-     *
-     * [Generated from RDFReactor template rule #get0has-value-static] 
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@10a73bc has the
+     * given value (maybe among other values).
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be checked
+     * @return true if this property contains (maybe among other) the given
+     *         value
+     * 
+     *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasHasPart( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-    	return Base.hasValue(model, instanceResource, HASPART, value);
+    public static boolean hasHasPart(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, HASPART, value);
     }
 
     /**
-     * Check if org.ontoware.rdfreactor.generator.java.JProperty@10a73bc has the given value (maybe among other values).  
-     * @param value the value to be checked
-     * @return true if this property contains (maybe among other) the given value
-     *
-     * [Generated from RDFReactor template rule #get0has-value-dynamic] 
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@10a73bc has the
+     * given value (maybe among other values).
+     * 
+     * @param value
+     *            the value to be checked
+     * @return true if this property contains (maybe among other) the given
+     *         value
+     * 
+     *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasHasPart( org.ontoware.rdf2go.model.node.Node value ) {
-    	return Base.hasValue(this.model, this.getResource(), HASPART, value);
+    public boolean hasHasPart(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), HASPART, value);
     }
 
     /**
-     * Get all values of property HasPart as an Iterator over RDF2Go nodes 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
+     * Get all values of property HasPart as an Iterator over RDF2Go nodes
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
      * @return a ClosableIterator of RDF2Go Nodes
-     *
-     * [Generated from RDFReactor template rule #get7static] 
+     * 
+     *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllHasPart_asNode( Model model,
-                    org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-    	return Base.getAll_asNode(model, instanceResource, HASPART);
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllHasPart_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, HASPART);
     }
 
     /**
-     * Get all values of property HasPart as a ReactorResult of RDF2Go nodes 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     *
-     * [Generated from RDFReactor template rule #get7static-reactor-result] 
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllHasPart_asNode_( Model model,
-                    org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-    	return Base.getAll_as(model, instanceResource, HASPART, org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property HasPart as an Iterator over RDF2Go nodes 
+     * Get all values of property HasPart as an Iterator over RDF2Go nodes
+     * 
      * @return a ClosableIterator of RDF2Go Nodes
-     *
-     * [Generated from RDFReactor template rule #get8dynamic] 
+     * 
+     *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllHasPart_asNode() {
-    	return Base.getAll_asNode(this.model, this.getResource(), HASPART);
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllHasPart_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), HASPART);
     }
 
     /**
-     * Get all values of property HasPart as a ReactorResult of RDF2Go nodes 
-     * @return a List of RDF2Go Nodes
-     *
-     * [Generated from RDFReactor template rule #get8dynamic-reactor-result] 
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllHasPart_asNode_() {
-    	return Base.getAll_as(this.model, this.getResource(), HASPART, org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property HasPart     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
+     * Get all values of property HasPart * @param model an RDF2Go model
+     * 
+     * @param resource
+     *            an RDF2Go resource
      * @return a ClosableIterator of $type
-     *
-     * [Generated from RDFReactor template rule #get11static] 
+     * 
+     *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<FOAFThing> getAllHasPart( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-    	return Base.getAll(model, instanceResource, HASPART, FOAFThing.class);
+    public static ClosableIterator<FOAFThing> getAllHasPart(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, HASPART, FOAFThing.class);
     }
 
     /**
-     * Get all values of property HasPart as a ReactorResult of Thing 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to iterator, list or array
-     *
-     * [Generated from RDFReactor template rule #get11static-reactorresult] 
-     */
-    public static ReactorResult<FOAFThing> getAllHasPart_as( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-    	return Base.getAll_as(model, instanceResource, HASPART, FOAFThing.class);
-    }
-
-    /**
-     * Get all values of property HasPart     * @return a ClosableIterator of $type
-     *
-     * [Generated from RDFReactor template rule #get12dynamic] 
+     * Get all values of property HasPart * @return a ClosableIterator of $type
+     * 
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<FOAFThing> getAllHasPart() {
-    	return Base.getAll(this.model, this.getResource(), HASPART, FOAFThing.class);
+	return Base.getAll(this.model, this.getResource(), HASPART,
+		FOAFThing.class);
     }
 
     /**
-     * Get all values of property HasPart as a ReactorResult of Thing 
-     * @return a ReactorResult of $type which can conveniently be converted to iterator, list or array
-     *
-     * [Generated from RDFReactor template rule #get12dynamic-reactorresult] 
+     * Get all values of property HasPart * @return a ClosableIterator of $type
+     * 
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<FOAFThing> getAllHasPart_as() {
-    	return Base.getAll_as(this.model, this.getResource(), HASPART, FOAFThing.class);
+    public FOAFThing getHasPart() {
+	return Base.getAll_as(this.model, this.getResource(), HASPART,
+		FOAFThing.class).firstValue();
     }
 
     /**
-     * Adds a value to property HasPart as an RDF2Go node 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #add1static] 
+     * Adds a value to property HasPart as an RDF2Go node
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addHasPart( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-    	Base.add(model, instanceResource, HASPART, value);
+    public static void addHasPart(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, HASPART, value);
     }
 
     /**
-     * Adds a value to property HasPart as an RDF2Go node 
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #add1dynamic] 
+     * Adds a value to property HasPart as an RDF2Go node
+     * 
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addHasPart( org.ontoware.rdf2go.model.node.Node value ) {
-    	Base.add(this.model, this.getResource(), HASPART, value);
+    public void addHasPart(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), HASPART, value);
     }
 
     /**
-     * Adds a value to property HasPart from an instance of Thing 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     *
-     * [Generated from RDFReactor template rule #add3static] 
+     * Adds a value to property HasPart from an instance of Thing
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * 
+     *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addHasPart( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-    	Base.add(model, instanceResource, HASPART, value);
+    public static void addHasPart(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.add(model, instanceResource, HASPART, value);
     }
 
     /**
-     * Adds a value to property HasPart from an instance of Thing 
-     *
-     * [Generated from RDFReactor template rule #add4dynamic] 
+     * Adds a value to property HasPart from an instance of Thing
+     * 
+     * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addHasPart( FOAFThing value ) {
-    	Base.add(this.model, this.getResource(), HASPART, value);
+    public void addHasPart(FOAFThing value) {
+	Base.add(this.model, this.getResource(), HASPART, value);
     }
 
     /**
-     * Sets a value of property HasPart from an RDF2Go node.
-     * First, all existing values are removed, then this value is added.
-     * Cardinality constraints are not checked, but this method exists only for properties with
-     * no minCardinality or minCardinality == 1.
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be set
-     *
-     * [Generated from RDFReactor template rule #set1static] 
+     * Sets a value of property HasPart from an RDF2Go node. First, all existing
+     * values are removed, then this value is added. Cardinality constraints are
+     * not checked, but this method exists only for properties with no
+     * minCardinality or minCardinality == 1.
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be set
+     * 
+     *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setHasPart( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-    	Base.set(model, instanceResource, HASPART, value);
+    public static void setHasPart(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, HASPART, value);
     }
 
     /**
-     * Sets a value of property HasPart from an RDF2Go node.
-     * First, all existing values are removed, then this value is added.
-     * Cardinality constraints are not checked, but this method exists only for properties with
-     * no minCardinality or minCardinality == 1.
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #set1dynamic] 
+     * Sets a value of property HasPart from an RDF2Go node. First, all existing
+     * values are removed, then this value is added. Cardinality constraints are
+     * not checked, but this method exists only for properties with no
+     * minCardinality or minCardinality == 1.
+     * 
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setHasPart( org.ontoware.rdf2go.model.node.Node value ) {
-    	Base.set(this.model, this.getResource(), HASPART, value);
+    public void setHasPart(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), HASPART, value);
     }
 
     /**
-     * Sets a value of property HasPart from an instance of Thing 
-     * First, all existing values are removed, then this value is added.
-     * Cardinality constraints are not checked, but this method exists only for properties with
-     * no minCardinality or minCardinality == 1.
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #set3static] 
+     * Sets a value of property HasPart from an instance of Thing First, all
+     * existing values are removed, then this value is added. Cardinality
+     * constraints are not checked, but this method exists only for properties
+     * with no minCardinality or minCardinality == 1.
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setHasPart( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-    	Base.set(model, instanceResource, HASPART, value);
+    public static void setHasPart(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.set(model, instanceResource, HASPART, value);
     }
 
     /**
-     * Sets a value of property HasPart from an instance of Thing 
-     * First, all existing values are removed, then this value is added.
-     * Cardinality constraints are not checked, but this method exists only for properties with
-     * no minCardinality or minCardinality == 1.
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #set4dynamic] 
+     * Sets a value of property HasPart from an instance of Thing First, all
+     * existing values are removed, then this value is added. Cardinality
+     * constraints are not checked, but this method exists only for properties
+     * with no minCardinality or minCardinality == 1.
+     * 
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setHasPart( FOAFThing value ) {
-    	Base.set(this.model, this.getResource(), HASPART, value);
-    }
-
-    /**
-     * Removes a value of property HasPart as an RDF2Go node 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be removed
-     *
-     * [Generated from RDFReactor template rule #remove1static] 
-     */
-    public static void removeHasPart( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-    	Base.remove(model, instanceResource, HASPART, value);
+    public void setHasPart(FOAFThing value) {
+	Base.set(this.model, this.getResource(), HASPART, value);
     }
 
     /**
      * Removes a value of property HasPart as an RDF2Go node
-     * @param value the value to be removed
-     *
-     * [Generated from RDFReactor template rule #remove1dynamic] 
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove1static]
      */
-    public void removeHasPart( org.ontoware.rdf2go.model.node.Node value ) {
-    	Base.remove(this.model, this.getResource(), HASPART, value);
+    public static void removeHasPart(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, HASPART, value);
     }
 
     /**
-     * Removes a value of property HasPart given as an instance of Thing 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be removed
-     *
-     * [Generated from RDFReactor template rule #remove3static] 
+     * Removes a value of property HasPart as an RDF2Go node
+     * 
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public static void removeHasPart( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-    	Base.remove(model, instanceResource, HASPART, value);
+    public void removeHasPart(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), HASPART, value);
     }
 
     /**
-     * Removes a value of property HasPart given as an instance of Thing 
-     * @param value the value to be removed
-     *
-     * [Generated from RDFReactor template rule #remove4dynamic] 
+     * Removes a value of property HasPart given as an instance of Thing
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove3static]
      */
-    public void removeHasPart( FOAFThing value ) {
-    	Base.remove(this.model, this.getResource(), HASPART, value);
+    public static void removeHasPart(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.remove(model, instanceResource, HASPART, value);
     }
 
     /**
-     * Removes all values of property HasPart     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     *
-     * [Generated from RDFReactor template rule #removeall1static] 
+     * Removes a value of property HasPart given as an instance of Thing
+     * 
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public static void removeAllHasPart( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-    	Base.removeAll(model, instanceResource, HASPART);
+    public void removeHasPart(FOAFThing value) {
+	Base.remove(this.model, this.getResource(), HASPART, value);
     }
 
     /**
-     * Removes all values of property HasPart	 *
-     * [Generated from RDFReactor template rule #removeall1dynamic] 
+     * Removes all values of property HasPart * @param model an RDF2Go model
+     * 
+     * @param resource
+     *            an RDF2Go resource
+     * 
+     *            [Generated from RDFReactor template rule #removeall1static]
+     */
+    public static void removeAllHasPart(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, HASPART);
+    }
+
+    /**
+     * Removes all values of property HasPart * [Generated from RDFReactor
+     * template rule #removeall1dynamic]
      */
     public void removeAllHasPart() {
-    	Base.removeAll(this.model, this.getResource(), HASPART);
+	Base.removeAll(this.model, this.getResource(), HASPART);
     }
 
     /**
-     * Check if org.ontoware.rdfreactor.generator.java.JProperty@1391b1a has at least one value set 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@1391b1a has at
+     * least one value set
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
      * @return true if this property has at least one value
-     *
-     * [Generated from RDFReactor template rule #get0has-static] 
+     * 
+     *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasIsPartOf( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-    	return Base.has(model, instanceResource, ISPARTOF);
+    public static boolean hasIsPartOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.has(model, instanceResource, ISPARTOF);
     }
 
     /**
-     * Check if org.ontoware.rdfreactor.generator.java.JProperty@1391b1a has at least one value set 
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@1391b1a has at
+     * least one value set
+     * 
      * @return true if this property has at least one value
-     *
-     * [Generated from RDFReactor template rule #get0has-dynamic] 
+     * 
+     *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
     public boolean hasIsPartOf() {
-    	return Base.has(this.model, this.getResource(), ISPARTOF);
+	return Base.has(this.model, this.getResource(), ISPARTOF);
     }
 
     /**
-     * Check if org.ontoware.rdfreactor.generator.java.JProperty@1391b1a has the given value (maybe among other values).  
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be checked
-     * @return true if this property contains (maybe among other) the given value
-     *
-     * [Generated from RDFReactor template rule #get0has-value-static] 
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@1391b1a has the
+     * given value (maybe among other values).
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be checked
+     * @return true if this property contains (maybe among other) the given
+     *         value
+     * 
+     *         [Generated from RDFReactor template rule #get0has-value-static]
      */
-    public static boolean hasIsPartOf( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-    	return Base.hasValue(model, instanceResource, ISPARTOF, value);
+    public static boolean hasIsPartOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(model, instanceResource, ISPARTOF, value);
     }
 
     /**
-     * Check if org.ontoware.rdfreactor.generator.java.JProperty@1391b1a has the given value (maybe among other values).  
-     * @param value the value to be checked
-     * @return true if this property contains (maybe among other) the given value
-     *
-     * [Generated from RDFReactor template rule #get0has-value-dynamic] 
+     * Check if org.ontoware.rdfreactor.generator.java.JProperty@1391b1a has the
+     * given value (maybe among other values).
+     * 
+     * @param value
+     *            the value to be checked
+     * @return true if this property contains (maybe among other) the given
+     *         value
+     * 
+     *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
-    public boolean hasIsPartOf( org.ontoware.rdf2go.model.node.Node value ) {
-    	return Base.hasValue(this.model, this.getResource(), ISPARTOF, value);
+    public boolean hasIsPartOf(org.ontoware.rdf2go.model.node.Node value) {
+	return Base.hasValue(this.model, this.getResource(), ISPARTOF, value);
     }
 
     /**
-     * Get all values of property IsPartOf as an Iterator over RDF2Go nodes 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
+     * Get all values of property IsPartOf as an Iterator over RDF2Go nodes
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
      * @return a ClosableIterator of RDF2Go Nodes
-     *
-     * [Generated from RDFReactor template rule #get7static] 
+     * 
+     *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllIsPartOf_asNode( Model model,
-                    org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-    	return Base.getAll_asNode(model, instanceResource, ISPARTOF);
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllIsPartOf_asNode(
+	    Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll_asNode(model, instanceResource, ISPARTOF);
     }
 
     /**
-     * Get all values of property IsPartOf as a ReactorResult of RDF2Go nodes 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     *
-     * [Generated from RDFReactor template rule #get7static-reactor-result] 
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllIsPartOf_asNode_( Model model,
-                    org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-    	return Base.getAll_as(model, instanceResource, ISPARTOF, org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property IsPartOf as an Iterator over RDF2Go nodes 
+     * Get all values of property IsPartOf as an Iterator over RDF2Go nodes
+     * 
      * @return a ClosableIterator of RDF2Go Nodes
-     *
-     * [Generated from RDFReactor template rule #get8dynamic] 
+     * 
+     *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node>
-            getAllIsPartOf_asNode() {
-    	return Base.getAll_asNode(this.model, this.getResource(), ISPARTOF);
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllIsPartOf_asNode() {
+	return Base.getAll_asNode(this.model, this.getResource(), ISPARTOF);
     }
 
     /**
-     * Get all values of property IsPartOf as a ReactorResult of RDF2Go nodes 
-     * @return a List of RDF2Go Nodes
-     *
-     * [Generated from RDFReactor template rule #get8dynamic-reactor-result] 
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node>
-            getAllIsPartOf_asNode_() {
-    	return Base.getAll_as(this.model, this.getResource(), ISPARTOF, org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
-     * Get all values of property IsPartOf     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
+     * Get all values of property IsPartOf * @param model an RDF2Go model
+     * 
+     * @param resource
+     *            an RDF2Go resource
      * @return a ClosableIterator of $type
-     *
-     * [Generated from RDFReactor template rule #get11static] 
+     * 
+     *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<FOAFThing> getAllIsPartOf( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-    	return Base.getAll(model, instanceResource, ISPARTOF, FOAFThing.class);
+    public static ClosableIterator<FOAFThing> getAllIsPartOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	return Base.getAll(model, instanceResource, ISPARTOF, FOAFThing.class);
     }
 
     /**
-     * Get all values of property IsPartOf as a ReactorResult of Thing 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to iterator, list or array
-     *
-     * [Generated from RDFReactor template rule #get11static-reactorresult] 
-     */
-    public static ReactorResult<FOAFThing> getAllIsPartOf_as( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-    	return Base.getAll_as(model, instanceResource, ISPARTOF, FOAFThing.class);
-    }
-
-    /**
-     * Get all values of property IsPartOf     * @return a ClosableIterator of $type
-     *
-     * [Generated from RDFReactor template rule #get12dynamic] 
+     * Get all values of property IsPartOf * @return a ClosableIterator of $type
+     * 
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<FOAFThing> getAllIsPartOf() {
-    	return Base.getAll(this.model, this.getResource(), ISPARTOF, FOAFThing.class);
+	return Base.getAll(this.model, this.getResource(), ISPARTOF,
+		FOAFThing.class);
     }
 
     /**
-     * Get all values of property IsPartOf as a ReactorResult of Thing 
-     * @return a ReactorResult of $type which can conveniently be converted to iterator, list or array
-     *
-     * [Generated from RDFReactor template rule #get12dynamic-reactorresult] 
+     * Get all values of property IsPartOf * @return a ClosableIterator of $type
+     * 
+     * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ReactorResult<FOAFThing> getAllIsPartOf_as() {
-    	return Base.getAll_as(this.model, this.getResource(), ISPARTOF, FOAFThing.class);
+    public FOAFThing getIsPartOf() {
+	return Base.getAll_as(this.model, this.getResource(), ISPARTOF,
+		FOAFThing.class).firstValue();
     }
 
     /**
-     * Adds a value to property IsPartOf as an RDF2Go node 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #add1static] 
+     * Adds a value to property IsPartOf as an RDF2Go node
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #add1static]
      */
-    public static void addIsPartOf( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-    	Base.add(model, instanceResource, ISPARTOF, value);
+    public static void addIsPartOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(model, instanceResource, ISPARTOF, value);
     }
 
     /**
-     * Adds a value to property IsPartOf as an RDF2Go node 
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #add1dynamic] 
+     * Adds a value to property IsPartOf as an RDF2Go node
+     * 
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #add1dynamic]
      */
-    public void addIsPartOf( org.ontoware.rdf2go.model.node.Node value ) {
-    	Base.add(this.model, this.getResource(), ISPARTOF, value);
+    public void addIsPartOf(org.ontoware.rdf2go.model.node.Node value) {
+	Base.add(this.model, this.getResource(), ISPARTOF, value);
     }
 
     /**
-     * Adds a value to property IsPartOf from an instance of Thing 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     *
-     * [Generated from RDFReactor template rule #add3static] 
+     * Adds a value to property IsPartOf from an instance of Thing
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * 
+     *            [Generated from RDFReactor template rule #add3static]
      */
-    public static void addIsPartOf( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-    	Base.add(model, instanceResource, ISPARTOF, value);
+    public static void addIsPartOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.add(model, instanceResource, ISPARTOF, value);
     }
 
     /**
-     * Adds a value to property IsPartOf from an instance of Thing 
-     *
-     * [Generated from RDFReactor template rule #add4dynamic] 
+     * Adds a value to property IsPartOf from an instance of Thing
+     * 
+     * [Generated from RDFReactor template rule #add4dynamic]
      */
-    public void addIsPartOf( FOAFThing value ) {
-    	Base.add(this.model, this.getResource(), ISPARTOF, value);
+    public void addIsPartOf(FOAFThing value) {
+	Base.add(this.model, this.getResource(), ISPARTOF, value);
     }
 
     /**
-     * Sets a value of property IsPartOf from an RDF2Go node.
-     * First, all existing values are removed, then this value is added.
-     * Cardinality constraints are not checked, but this method exists only for properties with
-     * no minCardinality or minCardinality == 1.
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be set
-     *
-     * [Generated from RDFReactor template rule #set1static] 
+     * Sets a value of property IsPartOf from an RDF2Go node. First, all
+     * existing values are removed, then this value is added. Cardinality
+     * constraints are not checked, but this method exists only for properties
+     * with no minCardinality or minCardinality == 1.
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be set
+     * 
+     *            [Generated from RDFReactor template rule #set1static]
      */
-    public static void setIsPartOf( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-    	Base.set(model, instanceResource, ISPARTOF, value);
+    public static void setIsPartOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(model, instanceResource, ISPARTOF, value);
     }
 
     /**
-     * Sets a value of property IsPartOf from an RDF2Go node.
-     * First, all existing values are removed, then this value is added.
-     * Cardinality constraints are not checked, but this method exists only for properties with
-     * no minCardinality or minCardinality == 1.
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #set1dynamic] 
+     * Sets a value of property IsPartOf from an RDF2Go node. First, all
+     * existing values are removed, then this value is added. Cardinality
+     * constraints are not checked, but this method exists only for properties
+     * with no minCardinality or minCardinality == 1.
+     * 
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #set1dynamic]
      */
-    public void setIsPartOf( org.ontoware.rdf2go.model.node.Node value ) {
-    	Base.set(this.model, this.getResource(), ISPARTOF, value);
+    public void setIsPartOf(org.ontoware.rdf2go.model.node.Node value) {
+	Base.set(this.model, this.getResource(), ISPARTOF, value);
     }
 
     /**
-     * Sets a value of property IsPartOf from an instance of Thing 
-     * First, all existing values are removed, then this value is added.
-     * Cardinality constraints are not checked, but this method exists only for properties with
-     * no minCardinality or minCardinality == 1.
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #set3static] 
+     * Sets a value of property IsPartOf from an instance of Thing First, all
+     * existing values are removed, then this value is added. Cardinality
+     * constraints are not checked, but this method exists only for properties
+     * with no minCardinality or minCardinality == 1.
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #set3static]
      */
-    public static void setIsPartOf( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-    	Base.set(model, instanceResource, ISPARTOF, value);
+    public static void setIsPartOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.set(model, instanceResource, ISPARTOF, value);
     }
 
     /**
-     * Sets a value of property IsPartOf from an instance of Thing 
-     * First, all existing values are removed, then this value is added.
-     * Cardinality constraints are not checked, but this method exists only for properties with
-     * no minCardinality or minCardinality == 1.
-     * @param value the value to be added
-     *
-     * [Generated from RDFReactor template rule #set4dynamic] 
+     * Sets a value of property IsPartOf from an instance of Thing First, all
+     * existing values are removed, then this value is added. Cardinality
+     * constraints are not checked, but this method exists only for properties
+     * with no minCardinality or minCardinality == 1.
+     * 
+     * @param value
+     *            the value to be added
+     * 
+     *            [Generated from RDFReactor template rule #set4dynamic]
      */
-    public void setIsPartOf( FOAFThing value ) {
-    	Base.set(this.model, this.getResource(), ISPARTOF, value);
-    }
-
-    /**
-     * Removes a value of property IsPartOf as an RDF2Go node 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be removed
-     *
-     * [Generated from RDFReactor template rule #remove1static] 
-     */
-    public static void removeIsPartOf( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            org.ontoware.rdf2go.model.node.Node value ) {
-    	Base.remove(model, instanceResource, ISPARTOF, value);
+    public void setIsPartOf(FOAFThing value) {
+	Base.set(this.model, this.getResource(), ISPARTOF, value);
     }
 
     /**
      * Removes a value of property IsPartOf as an RDF2Go node
-     * @param value the value to be removed
-     *
-     * [Generated from RDFReactor template rule #remove1dynamic] 
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove1static]
      */
-    public void removeIsPartOf( org.ontoware.rdf2go.model.node.Node value ) {
-    	Base.remove(this.model, this.getResource(), ISPARTOF, value);
+    public static void removeIsPartOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(model, instanceResource, ISPARTOF, value);
     }
 
     /**
-     * Removes a value of property IsPartOf given as an instance of Thing 
-     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     * @param value the value to be removed
-     *
-     * [Generated from RDFReactor template rule #remove3static] 
+     * Removes a value of property IsPartOf as an RDF2Go node
+     * 
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove1dynamic]
      */
-    public static void removeIsPartOf( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource,
-            FOAFThing value ) {
-    	Base.remove(model, instanceResource, ISPARTOF, value);
+    public void removeIsPartOf(org.ontoware.rdf2go.model.node.Node value) {
+	Base.remove(this.model, this.getResource(), ISPARTOF, value);
     }
 
     /**
-     * Removes a value of property IsPartOf given as an instance of Thing 
-     * @param value the value to be removed
-     *
-     * [Generated from RDFReactor template rule #remove4dynamic] 
+     * Removes a value of property IsPartOf given as an instance of Thing
+     * 
+     * @param model
+     *            an RDF2Go model
+     * @param resource
+     *            an RDF2Go resource
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove3static]
      */
-    public void removeIsPartOf( FOAFThing value ) {
-    	Base.remove(this.model, this.getResource(), ISPARTOF, value);
+    public static void removeIsPartOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource,
+	    FOAFThing value) {
+	Base.remove(model, instanceResource, ISPARTOF, value);
     }
 
     /**
-     * Removes all values of property IsPartOf     * @param model an RDF2Go model
-     * @param resource an RDF2Go resource
-     *
-     * [Generated from RDFReactor template rule #removeall1static] 
+     * Removes a value of property IsPartOf given as an instance of Thing
+     * 
+     * @param value
+     *            the value to be removed
+     * 
+     *            [Generated from RDFReactor template rule #remove4dynamic]
      */
-    public static void removeAllIsPartOf( Model model,
-            org.ontoware.rdf2go.model.node.Resource instanceResource ) {
-    	Base.removeAll(model, instanceResource, ISPARTOF);
+    public void removeIsPartOf(FOAFThing value) {
+	Base.remove(this.model, this.getResource(), ISPARTOF, value);
     }
 
     /**
-     * Removes all values of property IsPartOf	 *
-     * [Generated from RDFReactor template rule #removeall1dynamic] 
+     * Removes all values of property IsPartOf * @param model an RDF2Go model
+     * 
+     * @param resource
+     *            an RDF2Go resource
+     * 
+     *            [Generated from RDFReactor template rule #removeall1static]
+     */
+    public static void removeAllIsPartOf(Model model,
+	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
+	Base.removeAll(model, instanceResource, ISPARTOF);
+    }
+
+    /**
+     * Removes all values of property IsPartOf * [Generated from RDFReactor
+     * template rule #removeall1dynamic]
      */
     public void removeAllIsPartOf() {
-    	Base.removeAll(this.model, this.getResource(), ISPARTOF);
+	Base.removeAll(this.model, this.getResource(), ISPARTOF);
     }
 }

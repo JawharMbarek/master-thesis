@@ -10,7 +10,6 @@ import org.ontoware.rdf2go.model.node.BlankNode;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
 import org.ontoware.rdfreactor.runtime.Base;
-import org.ontoware.rdfreactor.runtime.ReactorResult;
 
 /**
  * This class manages access to these properties:
@@ -300,18 +299,6 @@ public class Person extends Agent {
     }
 
     /**
-     * @param model
-     *            an RDF2Go model
-     * @return all instances of this class in Model 'model' as a ReactorResult,
-     *         which can conveniently be converted to iterator, list or array.
-     * 
-     *         [Generated from RDFReactor template rule #class3-as]
-     */
-    public static ReactorResult<? extends Person> getAllInstances_as(Model model) {
-	return Base.getAllInstances_as(model, RDFS_CLASS, Person.class);
-    }
-
-    /**
      * Remove rdf:type Person from this instance. Other triples are not
      * affected. To delete more, use deleteAllProperties
      * 
@@ -365,22 +352,6 @@ public class Person extends Agent {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllKnows_Inverse() {
 	return Base
 		.getAll_Inverse(this.model, Person.KNOWS, this.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Knows' to this
-     *         Person instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllKnows_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Person.KNOWS, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -466,25 +437,6 @@ public class Person extends Agent {
     }
 
     /**
-     * Get all values of property BasedNear as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllBasedNear_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, BASEDNEAR,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property BasedNear as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -493,19 +445,6 @@ public class Person extends Agent {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllBasedNear_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), BASEDNEAR);
-    }
-
-    /**
-     * Get all values of property BasedNear as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllBasedNear_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), BASEDNEAR,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -524,25 +463,6 @@ public class Person extends Agent {
     }
 
     /**
-     * Get all values of property BasedNear as a ReactorResult of SpatialThing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<SpatialThing> getAllBasedNear_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, BASEDNEAR,
-		SpatialThing.class);
-    }
-
-    /**
      * Get all values of property BasedNear * @return a ClosableIterator of
      * $type
      * 
@@ -550,20 +470,6 @@ public class Person extends Agent {
      */
     public ClosableIterator<SpatialThing> getAllBasedNear() {
 	return Base.getAll(this.model, this.getResource(), BASEDNEAR,
-		SpatialThing.class);
-    }
-
-    /**
-     * Get all values of property BasedNear as a ReactorResult of SpatialThing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<SpatialThing> getAllBasedNear_as() {
-	return Base.getAll_as(this.model, this.getResource(), BASEDNEAR,
 		SpatialThing.class);
     }
 
@@ -803,7 +709,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasCurrentProject(Model model,
+    public static boolean hasCurrentProjects(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, CURRENTPROJECT);
     }
@@ -816,7 +722,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasCurrentProject() {
+    public boolean hasCurrentProjects() {
 	return Base.has(this.model, this.getResource(), CURRENTPROJECT);
     }
 
@@ -869,30 +775,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCurrentProject_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCurrentProjects_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, CURRENTPROJECT);
-    }
-
-    /**
-     * Get all values of property CurrentProject as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllCurrentProject_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, CURRENTPROJECT,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -903,23 +789,9 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCurrentProject_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllCurrentProjects_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		CURRENTPROJECT);
-    }
-
-    /**
-     * Get all values of property CurrentProject as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllCurrentProject_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), CURRENTPROJECT,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -931,31 +803,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllCurrentProject(
+    public static ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllCurrentProjects(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, CURRENTPROJECT,
-		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
-    }
-
-    /**
-     * Get all values of property CurrentProject as a ReactorResult of
-     * org.ontoware.rdfreactor.schema.owl.OwlThing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllCurrentProject_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, CURRENTPROJECT,
 		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
     }
 
@@ -965,23 +816,8 @@ public class Person extends Agent {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllCurrentProject() {
+    public ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllCurrentProjects() {
 	return Base.getAll(this.model, this.getResource(), CURRENTPROJECT,
-		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
-    }
-
-    /**
-     * Get all values of property CurrentProject as a ReactorResult of
-     * org.ontoware.rdfreactor.schema.owl.OwlThing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllCurrentProject_as() {
-	return Base.getAll_as(this.model, this.getResource(), CURRENTPROJECT,
 		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
     }
 
@@ -1205,7 +1041,7 @@ public class Person extends Agent {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllCurrentProject(Model model,
+    public static void removeAllCurrentProjects(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, CURRENTPROJECT);
     }
@@ -1214,7 +1050,7 @@ public class Person extends Agent {
      * Removes all values of property CurrentProject * [Generated from
      * RDFReactor template rule #removeall1dynamic]
      */
-    public void removeAllCurrentProject() {
+    public void removeAllCurrentProjects() {
 	Base.removeAll(this.model, this.getResource(), CURRENTPROJECT);
     }
 
@@ -1230,7 +1066,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasFamilyName(Model model,
+    public static boolean hasFamilyNames(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, FAMILYNAME);
     }
@@ -1243,7 +1079,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasFamilyName() {
+    public boolean hasFamilyNamess() {
 	return Base.has(this.model, this.getResource(), FAMILYNAME);
     }
 
@@ -1294,29 +1130,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFamilyName_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFamilyNamess_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, FAMILYNAME);
-    }
-
-    /**
-     * Get all values of property FamilyName as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllFamilyName_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, FAMILYNAME,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -1326,21 +1143,8 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFamilyName_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFamilyNames_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), FAMILYNAME);
-    }
-
-    /**
-     * Get all values of property FamilyName as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllFamilyName_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), FAMILYNAME,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -1352,31 +1156,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllFamilyName(
+    public static ClosableIterator<java.lang.String> getAllFamilyNames(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, FAMILYNAME,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property FamilyName as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllFamilyName_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, FAMILYNAME,
 		java.lang.String.class);
     }
 
@@ -1386,23 +1169,8 @@ public class Person extends Agent {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.String> getAllFamilyName() {
+    public ClosableIterator<java.lang.String> getAllFamilyNames() {
 	return Base.getAll(this.model, this.getResource(), FAMILYNAME,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property FamilyName as a ReactorResult of
-     * java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<java.lang.String> getAllFamilyName_as() {
-	return Base.getAll_as(this.model, this.getResource(), FAMILYNAME,
 		java.lang.String.class);
     }
 
@@ -1618,7 +1386,7 @@ public class Person extends Agent {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllFamilyName(Model model,
+    public static void removeAllFamilyNames(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, FAMILYNAME);
     }
@@ -1627,7 +1395,7 @@ public class Person extends Agent {
      * Removes all values of property FamilyName * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllFamilyName() {
+    public void removeAllFamilyNames() {
 	Base.removeAll(this.model, this.getResource(), FAMILYNAME);
     }
 
@@ -1643,7 +1411,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasFirstName(Model model,
+    public static boolean hasFirstNames(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, FIRSTNAME);
     }
@@ -1656,7 +1424,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasFirstName() {
+    public boolean hasFirstNames() {
 	return Base.has(this.model, this.getResource(), FIRSTNAME);
     }
 
@@ -1707,29 +1475,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFirstName_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFirstNames_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, FIRSTNAME);
-    }
-
-    /**
-     * Get all values of property FirstName as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllFirstName_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, FIRSTNAME,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -1739,21 +1488,8 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFirstName_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllFirstNames_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), FIRSTNAME);
-    }
-
-    /**
-     * Get all values of property FirstName as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllFirstName_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), FIRSTNAME,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -1765,31 +1501,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllFirstName(
+    public static ClosableIterator<java.lang.String> getAllFirstNames(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, FIRSTNAME,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property FirstName as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllFirstName_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, FIRSTNAME,
 		java.lang.String.class);
     }
 
@@ -1799,23 +1514,8 @@ public class Person extends Agent {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.String> getAllFirstName() {
+    public ClosableIterator<java.lang.String> getAllFirstNames() {
 	return Base.getAll(this.model, this.getResource(), FIRSTNAME,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property FirstName as a ReactorResult of
-     * java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<java.lang.String> getAllFirstName_as() {
-	return Base.getAll_as(this.model, this.getResource(), FIRSTNAME,
 		java.lang.String.class);
     }
 
@@ -2031,7 +1731,7 @@ public class Person extends Agent {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllFirstName(Model model,
+    public static void removeAllFirstNamess(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, FIRSTNAME);
     }
@@ -2040,7 +1740,7 @@ public class Person extends Agent {
      * Removes all values of property FirstName * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllFirstName() {
+    public void removeAllFirstNames() {
 	Base.removeAll(this.model, this.getResource(), FIRSTNAME);
     }
 
@@ -2056,7 +1756,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasGeekCode(Model model,
+    public static boolean hasGeekCodess(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, GEEKCODE);
     }
@@ -2120,29 +1820,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllGeekCode_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllGeekCodes_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, GEEKCODE);
-    }
-
-    /**
-     * Get all values of property GeekCode as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllGeekCode_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, GEEKCODE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2152,21 +1833,8 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllGeekCode_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllGeekCodes_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), GEEKCODE);
-    }
-
-    /**
-     * Get all values of property GeekCode as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllGeekCode_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), GEEKCODE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2178,31 +1846,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllGeekCode(
+    public static ClosableIterator<java.lang.String> getAllGeekCodes(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, GEEKCODE,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property GeekCode as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllGeekCode_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, GEEKCODE,
 		java.lang.String.class);
     }
 
@@ -2211,23 +1858,8 @@ public class Person extends Agent {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.String> getAllGeekCode() {
+    public ClosableIterator<java.lang.String> getAllGeekCodes() {
 	return Base.getAll(this.model, this.getResource(), GEEKCODE,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property GeekCode as a ReactorResult of
-     * java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<java.lang.String> getAllGeekCode_as() {
-	return Base.getAll_as(this.model, this.getResource(), GEEKCODE,
 		java.lang.String.class);
     }
 
@@ -2443,7 +2075,7 @@ public class Person extends Agent {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllGeekCode(Model model,
+    public static void removeAllGeekCodes(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, GEEKCODE);
     }
@@ -2452,7 +2084,7 @@ public class Person extends Agent {
      * Removes all values of property GeekCode * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllGeekCode() {
+    public void removeAllGeekCodes() {
 	Base.removeAll(this.model, this.getResource(), GEEKCODE);
     }
 
@@ -2468,7 +2100,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasImage(Model model,
+    public static boolean hasImages(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, IMAGE);
     }
@@ -2481,7 +2113,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasImage() {
+    public boolean hasImages() {
 	return Base.has(this.model, this.getResource(), IMAGE);
     }
 
@@ -2532,29 +2164,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllImage_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllImages_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, IMAGE);
-    }
-
-    /**
-     * Get all values of property Image as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllImage_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, IMAGE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2564,21 +2177,8 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllImage_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllImages_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), IMAGE);
-    }
-
-    /**
-     * Get all values of property Image as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllImage_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), IMAGE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2590,27 +2190,9 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Image> getAllImage(Model model,
+    public static ClosableIterator<Image> getAllImages(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, IMAGE, Image.class);
-    }
-
-    /**
-     * Get all values of property Image as a ReactorResult of Image
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Image> getAllImage_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, IMAGE, Image.class);
     }
 
     /**
@@ -2618,22 +2200,8 @@ public class Person extends Agent {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Image> getAllImage() {
+    public ClosableIterator<Image> getAllImages() {
 	return Base.getAll(this.model, this.getResource(), IMAGE, Image.class);
-    }
-
-    /**
-     * Get all values of property Image as a ReactorResult of Image
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<Image> getAllImage_as() {
-	return Base.getAll_as(this.model, this.getResource(), IMAGE,
-		Image.class);
     }
 
     /**
@@ -2845,7 +2413,7 @@ public class Person extends Agent {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllImage(Model model,
+    public static void removeAllImages(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, IMAGE);
     }
@@ -2854,7 +2422,7 @@ public class Person extends Agent {
      * Removes all values of property Image * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllImage() {
+    public void removeAllImages() {
 	Base.removeAll(this.model, this.getResource(), IMAGE);
     }
 
@@ -2941,25 +2509,6 @@ public class Person extends Agent {
     }
 
     /**
-     * Get all values of property Knows as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllKnows_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, KNOWS,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Knows as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -2968,19 +2517,6 @@ public class Person extends Agent {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllKnows_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), KNOWS);
-    }
-
-    /**
-     * Get all values of property Knows as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllKnows_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), KNOWS,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2998,44 +2534,12 @@ public class Person extends Agent {
     }
 
     /**
-     * Get all values of property Knows as a ReactorResult of Person
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Person> getAllKnows_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, KNOWS, Person.class);
-    }
-
-    /**
      * Get all values of property Knows * @return a ClosableIterator of $type
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<Person> getAllKnows() {
 	return Base.getAll(this.model, this.getResource(), KNOWS, Person.class);
-    }
-
-    /**
-     * Get all values of property Knows as a ReactorResult of Person
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<Person> getAllKnows_as() {
-	return Base.getAll_as(this.model, this.getResource(), KNOWS,
-		Person.class);
     }
 
     /**
@@ -3272,7 +2776,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasLastName(Model model,
+    public static boolean hasLastNames(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, LASTNAME);
     }
@@ -3285,7 +2789,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasLastName() {
+    public boolean hasLastNames() {
 	return Base.has(this.model, this.getResource(), LASTNAME);
     }
 
@@ -3336,29 +2840,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLastName_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLastNames_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, LASTNAME);
-    }
-
-    /**
-     * Get all values of property LastName as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllLastName_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, LASTNAME,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -3368,21 +2853,8 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLastName_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllLastNames_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), LASTNAME);
-    }
-
-    /**
-     * Get all values of property LastName as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllLastName_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), LASTNAME,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -3394,31 +2866,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllLastName(
+    public static ClosableIterator<java.lang.String> getAllLastNames(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, LASTNAME,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property LastName as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllLastName_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, LASTNAME,
 		java.lang.String.class);
     }
 
@@ -3427,23 +2878,8 @@ public class Person extends Agent {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.String> getAllLastName() {
+    public ClosableIterator<java.lang.String> getAllLastNames() {
 	return Base.getAll(this.model, this.getResource(), LASTNAME,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property LastName as a ReactorResult of
-     * java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<java.lang.String> getAllLastName_as() {
-	return Base.getAll_as(this.model, this.getResource(), LASTNAME,
 		java.lang.String.class);
     }
 
@@ -3659,7 +3095,7 @@ public class Person extends Agent {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllLastName(Model model,
+    public static void removeAllLastNames(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, LASTNAME);
     }
@@ -3668,7 +3104,7 @@ public class Person extends Agent {
      * Removes all values of property LastName * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllLastName() {
+    public void removeAllLastNames() {
 	Base.removeAll(this.model, this.getResource(), LASTNAME);
     }
 
@@ -3756,25 +3192,6 @@ public class Person extends Agent {
     }
 
     /**
-     * Get all values of property MyersBriggs as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllMyersBriggs_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, MYERSBRIGGS,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property MyersBriggs as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -3783,19 +3200,6 @@ public class Person extends Agent {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllMyersBriggs_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), MYERSBRIGGS);
-    }
-
-    /**
-     * Get all values of property MyersBriggs as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllMyersBriggs_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), MYERSBRIGGS,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -3815,27 +3219,6 @@ public class Person extends Agent {
     }
 
     /**
-     * Get all values of property MyersBriggs as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllMyersBriggs_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, MYERSBRIGGS,
-		java.lang.String.class);
-    }
-
-    /**
      * Get all values of property MyersBriggs * @return a ClosableIterator of
      * $type
      * 
@@ -3843,21 +3226,6 @@ public class Person extends Agent {
      */
     public ClosableIterator<java.lang.String> getAllMyersBriggs() {
 	return Base.getAll(this.model, this.getResource(), MYERSBRIGGS,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property MyersBriggs as a ReactorResult of
-     * java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<java.lang.String> getAllMyersBriggs_as() {
-	return Base.getAll_as(this.model, this.getResource(), MYERSBRIGGS,
 		java.lang.String.class);
     }
 
@@ -4083,7 +3451,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasPastProject(Model model,
+    public static boolean hasPastProjects(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, PASTPROJECT);
     }
@@ -4096,7 +3464,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasPastProject() {
+    public boolean hasPastProjects() {
 	return Base.has(this.model, this.getResource(), PASTPROJECT);
     }
 
@@ -4148,29 +3516,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPastProject_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPastProjects_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, PASTPROJECT);
-    }
-
-    /**
-     * Get all values of property PastProject as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllPastProject_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, PASTPROJECT,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -4180,21 +3529,8 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPastProject_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPastProjects_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), PASTPROJECT);
-    }
-
-    /**
-     * Get all values of property PastProject as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllPastProject_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), PASTPROJECT,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -4206,31 +3542,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllPastProject(
+    public static ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllPastProjects(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, PASTPROJECT,
-		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
-    }
-
-    /**
-     * Get all values of property PastProject as a ReactorResult of
-     * org.ontoware.rdfreactor.schema.owl.OwlThing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllPastProject_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, PASTPROJECT,
 		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
     }
 
@@ -4240,23 +3555,8 @@ public class Person extends Agent {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllPastProject() {
+    public ClosableIterator<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllPastProjects() {
 	return Base.getAll(this.model, this.getResource(), PASTPROJECT,
-		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
-    }
-
-    /**
-     * Get all values of property PastProject as a ReactorResult of
-     * org.ontoware.rdfreactor.schema.owl.OwlThing
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<org.ontoware.rdfreactor.schema.owl.OwlThing> getAllPastProject_as() {
-	return Base.getAll_as(this.model, this.getResource(), PASTPROJECT,
 		org.ontoware.rdfreactor.schema.owl.OwlThing.class);
     }
 
@@ -4477,7 +3777,7 @@ public class Person extends Agent {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllPastProject(Model model,
+    public static void removeAllPastProjects(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, PASTPROJECT);
     }
@@ -4486,7 +3786,7 @@ public class Person extends Agent {
      * Removes all values of property PastProject * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllPastProject() {
+    public void removeAllPastProjects() {
 	Base.removeAll(this.model, this.getResource(), PASTPROJECT);
     }
 
@@ -4502,7 +3802,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasPlan(Model model,
+    public static boolean hasPlans(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, PLAN);
     }
@@ -4515,7 +3815,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasPlan() {
+    public boolean hasPlans() {
 	return Base.has(this.model, this.getResource(), PLAN);
     }
 
@@ -4566,29 +3866,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPlan_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPlans_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, PLAN);
-    }
-
-    /**
-     * Get all values of property Plan as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllPlan_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, PLAN,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -4598,21 +3879,8 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPlan_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPlans_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), PLAN);
-    }
-
-    /**
-     * Get all values of property Plan as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllPlan_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), PLAN,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -4624,28 +3892,9 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllPlan(Model model,
+    public static ClosableIterator<java.lang.String> getAllPlans(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, PLAN,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Plan as a ReactorResult of java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllPlan_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, PLAN,
 		java.lang.String.class);
     }
 
@@ -4654,22 +3903,8 @@ public class Person extends Agent {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.String> getAllPlan() {
+    public ClosableIterator<java.lang.String> getAllPlans() {
 	return Base.getAll(this.model, this.getResource(), PLAN,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Plan as a ReactorResult of java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<java.lang.String> getAllPlan_as() {
-	return Base.getAll_as(this.model, this.getResource(), PLAN,
 		java.lang.String.class);
     }
 
@@ -4882,7 +4117,7 @@ public class Person extends Agent {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllPlan(Model model,
+    public static void removeAllPlans(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, PLAN);
     }
@@ -4891,7 +4126,7 @@ public class Person extends Agent {
      * Removes all values of property Plan * [Generated from RDFReactor template
      * rule #removeall1dynamic]
      */
-    public void removeAllPlan() {
+    public void removeAllPlans() {
 	Base.removeAll(this.model, this.getResource(), PLAN);
     }
 
@@ -4979,26 +4214,6 @@ public class Person extends Agent {
     }
 
     /**
-     * Get all values of property Publications as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllPublications_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, PUBLICATIONS,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Publications as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -5007,20 +4222,6 @@ public class Person extends Agent {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllPublications_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), PUBLICATIONS);
-    }
-
-    /**
-     * Get all values of property Publications as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllPublications_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), PUBLICATIONS,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -5035,25 +4236,6 @@ public class Person extends Agent {
     public static ClosableIterator<Document> getAllPublications(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, PUBLICATIONS,
-		Document.class);
-    }
-
-    /**
-     * Get all values of property Publications as a ReactorResult of Document
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Document> getAllPublications_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, PUBLICATIONS,
 		Document.class);
     }
 
@@ -5077,21 +4259,7 @@ public class Person extends Agent {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Document> getAllPublications_as() {
-	return Base.getAll_as(this.model, this.getResource(), PUBLICATIONS,
-		Document.class);
-    }
-
-    /**
-     * Get all values of property Publications as a ReactorResult of Document
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public Document getPublications() {
+    public Document getPublication() {
 	return Base.getAll_as(this.model, this.getResource(), PUBLICATIONS,
 		Document.class).firstValue();
     }
@@ -5317,7 +4485,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasSchoolHomepage(Model model,
+    public static boolean hasSchoolHomepages(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, SCHOOLHOMEPAGE);
     }
@@ -5330,7 +4498,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasSchoolHomepage() {
+    public boolean hasSchoolHomepages() {
 	return Base.has(this.model, this.getResource(), SCHOOLHOMEPAGE);
     }
 
@@ -5383,30 +4551,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSchoolHomepage_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSchoolHomepages_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, SCHOOLHOMEPAGE);
-    }
-
-    /**
-     * Get all values of property SchoolHomepage as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllSchoolHomepage_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SCHOOLHOMEPAGE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -5417,23 +4565,9 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSchoolHomepage_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSchoolHomepages_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		SCHOOLHOMEPAGE);
-    }
-
-    /**
-     * Get all values of property SchoolHomepage as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllSchoolHomepage_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), SCHOOLHOMEPAGE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -5445,28 +4579,9 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Document> getAllSchoolHomepage(Model model,
+    public static ClosableIterator<Document> getAllSchoolHomepages(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, SCHOOLHOMEPAGE,
-		Document.class);
-    }
-
-    /**
-     * Get all values of property SchoolHomepage as a ReactorResult of Document
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Document> getAllSchoolHomepage_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SCHOOLHOMEPAGE,
 		Document.class);
     }
 
@@ -5476,22 +4591,8 @@ public class Person extends Agent {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Document> getAllSchoolHomepage() {
+    public ClosableIterator<Document> getAllSchoolHomepages() {
 	return Base.getAll(this.model, this.getResource(), SCHOOLHOMEPAGE,
-		Document.class);
-    }
-
-    /**
-     * Get all values of property SchoolHomepage as a ReactorResult of Document
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<Document> getAllSchoolHomepage_as() {
-	return Base.getAll_as(this.model, this.getResource(), SCHOOLHOMEPAGE,
 		Document.class);
     }
 
@@ -5707,7 +4808,7 @@ public class Person extends Agent {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllSchoolHomepage(Model model,
+    public static void removeAllSchoolHomepages(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, SCHOOLHOMEPAGE);
     }
@@ -5716,7 +4817,7 @@ public class Person extends Agent {
      * Removes all values of property SchoolHomepage * [Generated from
      * RDFReactor template rule #removeall1dynamic]
      */
-    public void removeAllSchoolHomepage() {
+    public void removeAllSchoolHomepages() {
 	Base.removeAll(this.model, this.getResource(), SCHOOLHOMEPAGE);
     }
 
@@ -5732,7 +4833,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasSurname(Model model,
+    public static boolean hasSurnames(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, SURNAME);
     }
@@ -5745,7 +4846,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasSurname() {
+    public boolean hasSurnames() {
 	return Base.has(this.model, this.getResource(), SURNAME);
     }
 
@@ -5796,29 +4897,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSurname_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSurnames_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, SURNAME);
-    }
-
-    /**
-     * Get all values of property Surname as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllSurname_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SURNAME,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -5828,21 +4910,8 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSurname_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllSurnames_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), SURNAME);
-    }
-
-    /**
-     * Get all values of property Surname as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllSurname_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), SURNAME,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -5854,28 +4923,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<java.lang.String> getAllSurname(Model model,
+    public static ClosableIterator<java.lang.String> getAllSurnames(
+	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, SURNAME,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Surname as a ReactorResult of java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllSurname_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SURNAME,
 		java.lang.String.class);
     }
 
@@ -5884,22 +4935,8 @@ public class Person extends Agent {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<java.lang.String> getAllSurname() {
+    public ClosableIterator<java.lang.String> getAllSurnames() {
 	return Base.getAll(this.model, this.getResource(), SURNAME,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property Surname as a ReactorResult of java.lang.String
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<java.lang.String> getAllSurname_as() {
-	return Base.getAll_as(this.model, this.getResource(), SURNAME,
 		java.lang.String.class);
     }
 
@@ -6114,7 +5151,7 @@ public class Person extends Agent {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllSurname(Model model,
+    public static void removeAllSurnames(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, SURNAME);
     }
@@ -6123,7 +5160,7 @@ public class Person extends Agent {
      * Removes all values of property Surname * [Generated from RDFReactor
      * template rule #removeall1dynamic]
      */
-    public void removeAllSurname() {
+    public void removeAllSurnames() {
 	Base.removeAll(this.model, this.getResource(), SURNAME);
     }
 
@@ -6139,7 +5176,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasWorkInfoHomepage(Model model,
+    public static boolean hasWorkInfoHomepages(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, WORKINFOHOMEPAGE);
     }
@@ -6152,7 +5189,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasWorkInfoHomepage() {
+    public boolean hasWorkInfoHomepages() {
 	return Base.has(this.model, this.getResource(), WORKINFOHOMEPAGE);
     }
 
@@ -6205,30 +5242,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllWorkInfoHomepage_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllWorkInfoHomepages_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, WORKINFOHOMEPAGE);
-    }
-
-    /**
-     * Get all values of property WorkInfoHomepage as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllWorkInfoHomepage_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, WORKINFOHOMEPAGE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -6239,23 +5256,9 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllWorkInfoHomepage_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllWorkInfoHomepages_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		WORKINFOHOMEPAGE);
-    }
-
-    /**
-     * Get all values of property WorkInfoHomepage as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllWorkInfoHomepage_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), WORKINFOHOMEPAGE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -6268,31 +5271,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Document> getAllWorkInfoHomepage(
+    public static ClosableIterator<Document> getAllWorkInfoHomepages(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, WORKINFOHOMEPAGE,
-		Document.class);
-    }
-
-    /**
-     * Get all values of property WorkInfoHomepage as a ReactorResult of
-     * Document
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Document> getAllWorkInfoHomepage_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, WORKINFOHOMEPAGE,
 		Document.class);
     }
 
@@ -6302,23 +5284,8 @@ public class Person extends Agent {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Document> getAllWorkInfoHomepage() {
+    public ClosableIterator<Document> getAllWorkInfoHomepages() {
 	return Base.getAll(this.model, this.getResource(), WORKINFOHOMEPAGE,
-		Document.class);
-    }
-
-    /**
-     * Get all values of property WorkInfoHomepage as a ReactorResult of
-     * Document
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<Document> getAllWorkInfoHomepage_as() {
-	return Base.getAll_as(this.model, this.getResource(), WORKINFOHOMEPAGE,
 		Document.class);
     }
 
@@ -6535,7 +5502,7 @@ public class Person extends Agent {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllWorkInfoHomepage(Model model,
+    public static void removeAllWorkInfoHomepages(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, WORKINFOHOMEPAGE);
     }
@@ -6544,7 +5511,7 @@ public class Person extends Agent {
      * Removes all values of property WorkInfoHomepage * [Generated from
      * RDFReactor template rule #removeall1dynamic]
      */
-    public void removeAllWorkInfoHomepage() {
+    public void removeAllWorkInfoHomepages() {
 	Base.removeAll(this.model, this.getResource(), WORKINFOHOMEPAGE);
     }
 
@@ -6560,7 +5527,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-static]
      */
-    public static boolean hasWorkplaceHomepage(Model model,
+    public static boolean hasWorkplaceHomepages(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.has(model, instanceResource, WORKPLACEHOMEPAGE);
     }
@@ -6573,7 +5540,7 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasWorkplaceHomepage() {
+    public boolean hasWorkplaceHomepages() {
 	return Base.has(this.model, this.getResource(), WORKPLACEHOMEPAGE);
     }
 
@@ -6627,30 +5594,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get7static]
      */
-    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllWorkplaceHomepage_asNode(
+    public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllWorkplaceHomepages_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll_asNode(model, instanceResource, WORKPLACEHOMEPAGE);
-    }
-
-    /**
-     * Get all values of property WorkplaceHomepage as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllWorkplaceHomepage_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, WORKPLACEHOMEPAGE,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -6661,23 +5608,9 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
-    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllWorkplaceHomepage_asNode() {
+    public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllWorkplaceHomepages_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		WORKPLACEHOMEPAGE);
-    }
-
-    /**
-     * Get all values of property WorkplaceHomepage as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllWorkplaceHomepage_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(),
-		WORKPLACEHOMEPAGE, org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -6690,31 +5623,10 @@ public class Person extends Agent {
      * 
      *         [Generated from RDFReactor template rule #get11static]
      */
-    public static ClosableIterator<Document> getAllWorkplaceHomepage(
+    public static ClosableIterator<Document> getAllWorkplaceHomepages(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, WORKPLACEHOMEPAGE,
-		Document.class);
-    }
-
-    /**
-     * Get all values of property WorkplaceHomepage as a ReactorResult of
-     * Document
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Document> getAllWorkplaceHomepage_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, WORKPLACEHOMEPAGE,
 		Document.class);
     }
 
@@ -6724,24 +5636,9 @@ public class Person extends Agent {
      * 
      * [Generated from RDFReactor template rule #get12dynamic]
      */
-    public ClosableIterator<Document> getAllWorkplaceHomepage() {
+    public ClosableIterator<Document> getAllWorkplaceHomepages() {
 	return Base.getAll(this.model, this.getResource(), WORKPLACEHOMEPAGE,
 		Document.class);
-    }
-
-    /**
-     * Get all values of property WorkplaceHomepage as a ReactorResult of
-     * Document
-     * 
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get12dynamic-reactorresult]
-     */
-    public ReactorResult<Document> getAllWorkplaceHomepage_as() {
-	return Base.getAll_as(this.model, this.getResource(),
-		WORKPLACEHOMEPAGE, Document.class);
     }
 
     /**
@@ -6958,7 +5855,7 @@ public class Person extends Agent {
      * 
      *            [Generated from RDFReactor template rule #removeall1static]
      */
-    public static void removeAllWorkplaceHomepage(Model model,
+    public static void removeAllWorkplaceHomepages(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	Base.removeAll(model, instanceResource, WORKPLACEHOMEPAGE);
     }
@@ -6967,7 +5864,7 @@ public class Person extends Agent {
      * Removes all values of property WorkplaceHomepage * [Generated from
      * RDFReactor template rule #removeall1dynamic]
      */
-    public void removeAllWorkplaceHomepage() {
+    public void removeAllWorkplaceHomepages() {
 	Base.removeAll(this.model, this.getResource(), WORKPLACEHOMEPAGE);
     }
 }

@@ -9,11 +9,15 @@ import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
+import org.purl.dc.terms.DCTerms;
+import org.rdfs.sioc.SIOC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.xmlns.foaf.FOAFVocabulary;
 
 import de.m0ep.socc.config.SOCCConfigConnectorEntry;
 import de.m0ep.socc.config.SOCCConfiguration;
@@ -151,5 +155,16 @@ public class SOCC {
 
     public Model getModel() {
 	return this.model;
+    }
+
+    public static Model createDefaultMemoryModel() {
+	Model model = RDF2Go.getModelFactory().createModel();
+	model = RDF2Go.getModelFactory().createModel();
+	model.open();
+	model.setNamespace("sioc", SIOC.NS_SIOC.toString());
+	model.setNamespace("foaf", FOAFVocabulary.NS_FOAF.toString());
+	model.setNamespace("dcterms", DCTerms.NS_DCTerms.toString());
+
+	return model;
     }
 }

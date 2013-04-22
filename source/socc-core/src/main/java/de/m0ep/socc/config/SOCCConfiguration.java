@@ -18,6 +18,10 @@ public class SOCCConfiguration implements Serializable {
     private List<SOCCConfigConnectorEntry> connectors;
 
     public List<SOCCConfigConnectorEntry> getConnectors() {
+	if (null == connectors) {
+	    this.connectors = new ArrayList<SOCCConfigConnectorEntry>();
+	}
+
 	return Collections.unmodifiableList(this.connectors);
     }
 

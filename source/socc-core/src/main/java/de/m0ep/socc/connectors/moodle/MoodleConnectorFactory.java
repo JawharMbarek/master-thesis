@@ -28,9 +28,11 @@ import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
-import de.m0ep.socc.config.ConfigParameterUse;
+import de.m0ep.socc.SOCCConstants;
+import de.m0ep.socc.config.DataField;
+import de.m0ep.socc.config.DataForm;
+import de.m0ep.socc.config.DataType;
 import de.m0ep.socc.exceptions.ConnectorException;
-import de.m0ep.socc.utils.ConfigUtils;
 
 public class MoodleConnectorFactory implements IConnectorFactory {
 
@@ -41,27 +43,38 @@ public class MoodleConnectorFactory implements IConnectorFactory {
 
     @Override
     public String getId() {
-	return "MoodleConnectorFactory_2.4";
+	return "Moodle2.4ConnectorFactory";
     }
 
     @Override
-    public String[] getParameterKeys() {
-	return ConfigUtils.getParameterNames(MoodleConnectorConfig.class);
-    }
+    public DataForm getParameterForm() {
+	DataForm dataForm = new DataForm();
 
-    @Override
-    public ConfigParameterUse getConfigParameterUse(String key) {
-	if (MoodleConnectorConfig.USERNAME.equals(key)) {
-	    return ConfigParameterUse.REQUIRED;
-	} else if (MoodleConnectorConfig.PASSWORD.equals(key)) {
-	    return ConfigParameterUse.REQUIRED;
-	} else if (MoodleConnectorConfig.MAX_NEW_POSTS_ON_POLL.equals(key)) {
-	    return ConfigParameterUse.OPTIONAL;
-	} else if (MoodleConnectorConfig.POLL_COOLDOWN.equals(key)) {
-	    return ConfigParameterUse.OPTIONAL;
-	}
+	dataForm.addField(new DataField.Builder()
+		.setName(MoodleConnectorConfig.USERNAME).setLabel("Username")
+		.setType(DataType.STRING).isRequired().create());
 
-	return ConfigParameterUse.NOT_USED;
+	dataForm.addField(new DataField.Builder()
+		.setName(MoodleConnectorConfig.PASSWORD).setLabel("Password")
+		.setType(DataType.STRING).isHidden().isRequired().create());
+
+	dataForm.addField(new DataField.Builder()
+		.setName(MoodleConnectorConfig.URL).setLabel("URL to Moodle")
+		.setType(DataType.STRING).isRequired().create());
+
+	dataForm.addField(new DataField.Builder()
+		.setName(MoodleConnectorConfig.MAX_NEW_POSTS_ON_POLL)
+		.setLabel("Max Post per Poll").setType(DataType.INTEGER)
+		.setDefaultValue(SOCCConstants.POLL_MAX_NEW_POST).isPositive()
+		.create());
+
+	dataForm.addField(new DataField.Builder()
+		.setName(MoodleConnectorConfig.POLL_COOLDOWN)
+		.setLabel("Poll Cooldown").setType(DataType.INTEGER)
+		.setDefaultValue(SOCCConstants.POLL_COOLDOWN_MILLIS)
+		.isPositive().create());
+
+	return dataForm;
     }
 
     @Override

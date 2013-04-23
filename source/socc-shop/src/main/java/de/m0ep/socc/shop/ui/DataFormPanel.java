@@ -1,85 +1,104 @@
 package de.m0ep.socc.shop.ui;
 
-import java.awt.GridLayout;
+import java.awt.Dimension;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
-
-import com.google.common.base.Preconditions;
+import javax.swing.SpringLayout;
 
 import de.m0ep.socc.config.DataField;
 import de.m0ep.socc.config.DataForm;
 import de.m0ep.socc.config.DataType;
+import de.m0ep.socc.shop.utils.SpringUtilities;
 
 public class DataFormPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    DataForm form;
-    String title;
-
+    DataForm dataForm;
     Map<String, JComponent> componentMap;
 
     /**
      * Create the panel.
      */
-    public DataFormPanel(final String title, final DataForm form) {
-	this.title = Preconditions.checkNotNull(title, "Title can not be null");
-	this.form = Preconditions.checkNotNull(form, "Form can not be null");
-
+    public DataFormPanel() {
 	this.componentMap = new HashMap<String, JComponent>();
 
-	initialize();
-    }
-
-    private void initialize() {
-	setBorder(BorderFactory.createTitledBorder(title));
-	setLayout(new GridLayout(form.getFields().size(), 2, 0, 5));
-
-	for (DataField field : form.getFields().values()) {
-	    JComponent component = getFieldComponent(field);
-	    componentMap.put(field.getName(), component);
-
-	    add(new JLabel(field.getLabel()));
-	    add(component);
-	}
-
+	setLayout(new SpringLayout());
     }
 
     private JComponent getFieldComponent(DataField field) {
+	JComponent result = null;
 
-	if (DataType.STRING == field.getType()) {
-	    return new JTextField(field.getDefaultValue().toString());
+	Object defObj = field.getDefaultValue();
+
+	if (field.isHidden()) {
+	    String def = (null != defObj) ? ((String) defObj) : ("");
+	    result = new JPasswordField(def);
+	} else if (DataType.STRING == field.getType()) {
+	    String def = (null != defObj) ? ((String) defObj) : ("");
+	    result = new JTextField(def);
 	} else if (DataType.INTEGER == field.getType()) {
-	    return new JSpinner(new SpinnerNumberModel(
-		    ((Number) field.getDefaultValue()).intValue(),
+	    Integer def = (null != defObj) ? ((Integer) defObj) : (0);
+	    result = new JSpinner(new SpinnerNumberModel(def.intValue(),
 		    (field.isPositive()) ? (0) : (Integer.MIN_VALUE),
-		    Integer.MAX_VALUE, 1));
+		    Integer.MAX_VALUE, 0));
 	} else if (DataType.FLOAT == field.getType()) {
-	    return new JSpinner(new SpinnerNumberModel(
-		    ((Number) field.getDefaultValue()).doubleValue(),
+	    Double def = (null != defObj) ? ((Double) defObj) : (0.0);
+	    result = new JSpinner(new SpinnerNumberModel(def.doubleValue(),
 		    (field.isPositive()) ? (0.0) : (Double.MIN_VALUE),
 		    Double.MAX_VALUE, 1.0));
 
 	} else if (DataType.BOOLEAN == field.getType()) {
-	    return new JComboBox<Boolean>(new Boolean[] { Boolean.TRUE,
+	    result = new JComboBox<Boolean>(new Boolean[] { Boolean.TRUE,
 		    Boolean.FALSE });
+
+	    Boolean def = (null != defObj) ? ((Boolean) defObj)
+		    : (Boolean.FALSE);
+	    ((JComboBox<?>) result).setSelectedItem(def);
 	}
 
-	throw new IllegalArgumentException("Unknown field type: "
-		+ field.getType());
+	if (null != result) {
+	    result.setPreferredSize(new Dimension(4, 24));
+	    result.setLocale(Locale.GERMANY);
+	    return result;
+	} else {
+	    throw new IllegalArgumentException("Unknown field type: "
+		    + field.getType());
+	}
+    }
+
+    public void setDataForm(final DataForm dataForm) {
+	this.dataForm = dataForm;
+	this.removeAll();
+	this.componentMap.clear();
+
+	for (DataField field : this.dataForm.getFields().values()) {
+	    JComponent component = getFieldComponent(field);
+	    componentMap.put(field.getName(), component);
+
+	    add(new JLabel(field.getLabel()
+		    + ((field.isRequired()) ? ("*") : (""))));
+	    add(component);
+	}
+
+	SpringUtilities.makeCompactGrid(this, this.dataForm.getFields().size(),
+		2, 6, 6, 6, 6);
     }
 
     @SuppressWarnings("unchecked")
     private Object getFieldData(DataField field, JComponent component) {
-	if (DataType.STRING == field.getType()) {
+	if (field.isHidden()) {
+	    return new String(((JPasswordField) component).getPassword());
+	} else if (DataType.STRING == field.getType()) {
 	    return ((JTextField) component).getText();
 	} else if (DataType.INTEGER == field.getType()) {
 	    return (Integer) ((JSpinner) component).getValue();
@@ -99,7 +118,7 @@ public class DataFormPanel extends JPanel {
 
 	for (String name : componentMap.keySet()) {
 	    JComponent component = componentMap.get(name);
-	    Object data = getFieldData(form.getField(name), component);
+	    Object data = getFieldData(dataForm.getField(name), component);
 	    result.put(name, data);
 	}
 

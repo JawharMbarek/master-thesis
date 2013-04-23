@@ -28,9 +28,12 @@ import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
-import de.m0ep.socc.config.ConfigParameterUse;
+import de.m0ep.socc.SOCCConstants;
+import de.m0ep.socc.config.DataField;
+import de.m0ep.socc.config.DataForm;
+import de.m0ep.socc.config.DataType;
+import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorConfig;
 import de.m0ep.socc.exceptions.ConnectorException;
-import de.m0ep.socc.utils.ConfigUtils;
 
 public class YoutubeV2ConnectorFactory implements IConnectorFactory {
 
@@ -41,29 +44,41 @@ public class YoutubeV2ConnectorFactory implements IConnectorFactory {
 
     @Override
     public String getId() {
-	return "YoutubeConnectorFactory_v2";
+	return "YoutubeV2ConnectorFactory";
     }
 
     @Override
-    public String[] getParameterKeys() {
-	return ConfigUtils.getParameterNames(YoutubeV2ConnectorConfig.class);
-    }
+    public DataForm getParameterForm() {
+	DataForm dataForm = new DataForm();
 
-    @Override
-    public ConfigParameterUse getConfigParameterUse(String key) {
-	if (YoutubeV2ConnectorConfig.USERNAME.equals(key)) {
-	    return ConfigParameterUse.REQUIRED;
-	} else if (YoutubeV2ConnectorConfig.PASSWORD.equals(key)) {
-	    return ConfigParameterUse.REQUIRED;
-	} else if (YoutubeV2ConnectorConfig.DEVELOPER_KEY.equals(key)) {
-	    return ConfigParameterUse.OPTIONAL;
-	} else if (YoutubeV2ConnectorConfig.MAX_NEW_POSTS_ON_POLL.equals(key)) {
-	    return ConfigParameterUse.OPTIONAL;
-	} else if (YoutubeV2ConnectorConfig.POLL_COOLDOWN.equals(key)) {
-	    return ConfigParameterUse.OPTIONAL;
-	}
+	dataForm.addField(new DataField.Builder()
+		.setName(YoutubeV2ConnectorConfig.USERNAME)
+		.setLabel("Username").setType(DataType.STRING).isRequired()
+		.create());
 
-	return ConfigParameterUse.NOT_USED;
+	dataForm.addField(new DataField.Builder()
+		.setName(YoutubeV2ConnectorConfig.PASSWORD)
+		.setLabel("Password").setType(DataType.STRING).isHidden()
+		.isRequired().create());
+
+	dataForm.addField(new DataField.Builder()
+		.setName(YoutubeV2ConnectorConfig.DEVELOPER_KEY)
+		.setLabel("Developer Key").setType(DataType.STRING).isHidden()
+		.isRequired().create());
+
+	dataForm.addField(new DataField.Builder()
+		.setName(GooglePlusConnectorConfig.MAX_NEW_POSTS_ON_POLL)
+		.setLabel("Max Post per Poll").setType(DataType.INTEGER)
+		.setDefaultValue(SOCCConstants.POLL_MAX_NEW_POST).isPositive()
+		.create());
+
+	dataForm.addField(new DataField.Builder()
+		.setName(GooglePlusConnectorConfig.POLL_COOLDOWN)
+		.setLabel("Poll Cooldown").setType(DataType.INTEGER)
+		.setDefaultValue(SOCCConstants.POLL_COOLDOWN_MILLIS)
+		.isPositive().create());
+
+	return dataForm;
     }
 
     @Override

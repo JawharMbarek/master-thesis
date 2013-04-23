@@ -28,9 +28,11 @@ import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
-import de.m0ep.socc.config.ConfigParameterUse;
+import de.m0ep.socc.SOCCConstants;
+import de.m0ep.socc.config.DataField;
+import de.m0ep.socc.config.DataForm;
+import de.m0ep.socc.config.DataType;
 import de.m0ep.socc.exceptions.ConnectorException;
-import de.m0ep.socc.utils.ConfigUtils;
 
 public class GooglePlusConnectorFactory implements IConnectorFactory {
 
@@ -41,31 +43,50 @@ public class GooglePlusConnectorFactory implements IConnectorFactory {
 
     @Override
     public String getId() {
-	return "GooglePlusConnectorFactory_1.0";
+	return "GooglePlusConnectorFactory";
     }
 
     @Override
-    public String[] getParameterKeys() {
-	return ConfigUtils.getParameterNames(GooglePlusConnectorConfig.class);
-    }
+    public DataForm getParameterForm() {
+	DataForm dataForm = new DataForm();
 
-    @Override
-    public ConfigParameterUse getConfigParameterUse(String key) {
-	if (GooglePlusConnectorConfig.CLIENT_ID.equals(key)) {
-	    return ConfigParameterUse.REQUIRED;
-	} else if (GooglePlusConnectorConfig.CLIENT_SECRET.equals(key)) {
-	    return ConfigParameterUse.REQUIRED;
-	} else if (GooglePlusConnectorConfig.ACCESS_TOKEN.equals(key)) {
-	    return ConfigParameterUse.REQUIRED;
-	} else if (GooglePlusConnectorConfig.REFRESH_TOKEN.equals(key)) {
-	    return ConfigParameterUse.REQUIRED;
-	} else if (GooglePlusConnectorConfig.MAX_NEW_POSTS_ON_POLL.equals(key)) {
-	    return ConfigParameterUse.OPTIONAL;
-	} else if (GooglePlusConnectorConfig.POLL_COOLDOWN.equals(key)) {
-	    return ConfigParameterUse.OPTIONAL;
-	}
+	dataForm.addField(new DataField.Builder()
+		.setName(GooglePlusConnectorConfig.CLIENT_ID)
+		.setLabel("Client Id").setType(DataType.STRING).isHidden()
+		.isRequired().create());
 
-	return ConfigParameterUse.NOT_USED;
+	dataForm.addField(new DataField.Builder()
+		.setName(GooglePlusConnectorConfig.CLIENT_SECRET)
+		.setLabel("Client Secret").setType(DataType.STRING).isHidden()
+		.isRequired().create());
+
+	dataForm.addField(new DataField.Builder()
+		.setName(GooglePlusConnectorConfig.ACCESS_TOKEN)
+		.setLabel("Accesstoken").setType(DataType.STRING).isHidden()
+		.isRequired().create());
+
+	dataForm.addField(new DataField.Builder()
+		.setName(GooglePlusConnectorConfig.REFRESH_TOKEN)
+		.setLabel("Refreshtoken").setType(DataType.STRING).isHidden()
+		.isRequired().create());
+
+	dataForm.addField(new DataField.Builder()
+		.setName(GooglePlusConnectorConfig.EXPIRES_IN_SECONDS)
+		.setLabel("Expires in (s)").setType(DataType.INTEGER).create());
+
+	dataForm.addField(new DataField.Builder()
+		.setName(GooglePlusConnectorConfig.MAX_NEW_POSTS_ON_POLL)
+		.setLabel("Max Post per Poll").setType(DataType.INTEGER)
+		.setDefaultValue(SOCCConstants.POLL_MAX_NEW_POST).isPositive()
+		.create());
+
+	dataForm.addField(new DataField.Builder()
+		.setName(GooglePlusConnectorConfig.POLL_COOLDOWN)
+		.setLabel("Poll Cooldown").setType(DataType.INTEGER)
+		.setDefaultValue(SOCCConstants.POLL_COOLDOWN_MILLIS)
+		.isPositive().create());
+
+	return dataForm;
     }
 
     @Override

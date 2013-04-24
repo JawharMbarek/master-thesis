@@ -43,7 +43,7 @@ import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOC;
+import org.rdfs.sioc.SIOCVocabulary;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
@@ -427,7 +427,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 
 	List<Post> result = new ArrayList<Post>();
 	ClosableIterator<Statement> stmtsIter = getModel().findStatements(
-		Variable.ANY, SIOC.has_container, container);
+		Variable.ANY, SIOCVocabulary.has_container, container);
 
 	while (stmtsIter.hasNext()) {
 	    Statement statement = stmtsIter.next();
@@ -733,7 +733,7 @@ public class YoutubeV2Connector extends AbstractConnector {
     }
 
     boolean isUploadsForum(Container container) {
-	if (getModel().contains(container, RDF.type, SIOC.Forum)) {
+	if (getModel().contains(container, RDF.type, SIOCVocabulary.Forum)) {
 	    Forum forum = Forum
 		    .getInstance(getModel(), container.getResource());
 
@@ -745,7 +745,7 @@ public class YoutubeV2Connector extends AbstractConnector {
     }
 
     boolean isPlaylistThread(Container container) {
-	if (getModel().contains(container, RDF.type, SIOC.Thread)) {
+	if (getModel().contains(container, RDF.type, SIOCVocabulary.Thread)) {
 	    Thread thread = Thread.getInstance(getModel(),
 		    container.getResource());
 	    return thread.hasParent(playlists);

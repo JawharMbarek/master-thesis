@@ -34,7 +34,7 @@ import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOC;
+import org.rdfs.sioc.SIOCVocabulary;
 import org.rdfs.sioc.SIOCThing;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
@@ -68,18 +68,18 @@ public abstract class AbstractConnector implements IConnector {
 
     private static final String SPARQL_SELECT_USERACCOUNTS_OF_SITE = "SELECT ?"
 	    + SPARQL_VAR_USER + " WHERE {" + "?" + SPARQL_VAR_USER + " "
-	    + RDF.type.toSPARQL() + " " + SIOC.UserAccount.toSPARQL() + " ; "
+	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.UserAccount.toSPARQL() + " ; "
 	    + SIOCThing.ISPARTOF.toSPARQL() + " %s . }";
 
     private static final String SPARQL_SELECT_FORUMS_OF_SITE = "SELECT ?"
 	    + SPARQL_VAR_FORUM + " WHERE { ?" + SPARQL_VAR_FORUM + " "
-	    + RDF.type.toSPARQL() + " " + SIOC.Forum.toSPARQL() + " ; "
-	    + SIOC.has_host.toSPARQL() + " %s . }";
+	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.Forum.toSPARQL() + " ; "
+	    + SIOCVocabulary.has_host.toSPARQL() + " %s . }";
 
     private static final String SPARQL_SELECT_THREADS_OF_FORUM = "SELECT ?"
 	    + SPARQL_VAR_THREAD + " WHERE { ?" + SPARQL_VAR_THREAD + " "
-	    + RDF.type.toSPARQL() + " " + SIOC.Thread.toSPARQL() + " ; "
-	    + SIOC.has_parent.toSPARQL() + " %s . }";
+	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.Thread.toSPARQL() + " ; "
+	    + SIOCVocabulary.has_parent.toSPARQL() + " %s . }";
 
     protected String id;
     protected Model model;

@@ -29,11 +29,11 @@ import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
 import de.m0ep.socc.shop.SOCCShopApplication;
 
-public class PreferencesDialog extends JDialog {
+public class ConnectorPreferencesDialog extends JDialog {
     private static final long serialVersionUID = -7285505723062512596L;
     private final JPanel contentPanel = new JPanel();
 
-    SOCCShopApplication app;
+    private SOCCShopApplication app;
 
     private JList<ConnectorItem> listConnectorList;
     private DefaultListModel<ConnectorItem> connectorListModel;
@@ -42,7 +42,7 @@ public class PreferencesDialog extends JDialog {
     /**
      * Create the dialog.
      */
-    public PreferencesDialog(final SOCCShopApplication app) {
+    public ConnectorPreferencesDialog(final SOCCShopApplication app) {
 	setTitle("Connector Preferences");
 	this.app = Preconditions.checkNotNull(app, "App can not be null");
 
@@ -113,7 +113,7 @@ public class PreferencesDialog extends JDialog {
 	    }
 	});
 	btnAdd.setSize(new Dimension(16, 16));
-	btnAdd.setIcon(new ImageIcon(PreferencesDialog.class
+	btnAdd.setIcon(new ImageIcon(ConnectorPreferencesDialog.class
 		.getResource("/images/add.png")));
 	btnAdd.setBorder(BorderFactory.createEmptyBorder());
 	panel.add(btnAdd);
@@ -126,7 +126,7 @@ public class PreferencesDialog extends JDialog {
 	    }
 	});
 	btnRemove.setBorder(new EmptyBorder(0, 0, 0, 0));
-	btnRemove.setIcon(new ImageIcon(PreferencesDialog.class
+	btnRemove.setIcon(new ImageIcon(ConnectorPreferencesDialog.class
 		.getResource("/images/delete.png")));
 	panel.add(btnRemove);
 	{
@@ -150,6 +150,18 @@ public class PreferencesDialog extends JDialog {
 		cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);
 	    }
+	}
+
+	initalize();
+    }
+
+    private void initalize() {
+	// Fill connector-list
+	for (IConnector connector : app.getSocc().getConnectors()) {
+	    IConnectorFactory factory = app.getSocc().getFactoryOfConnector(
+		    connector.getId());
+	    connectorListModel
+		    .addElement(new ConnectorItem(factory, connector));
 	}
     }
 

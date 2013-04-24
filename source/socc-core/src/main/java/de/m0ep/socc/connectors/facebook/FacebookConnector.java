@@ -40,7 +40,7 @@ import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOC;
+import org.rdfs.sioc.SIOCVocabulary;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.UserAccount;
 import org.slf4j.Logger;
@@ -109,6 +109,13 @@ public class FacebookConnector extends AbstractConnector {
 	this.fbConfig = new FacebookConnectorConfig();
 	this.fbConfig = ConfigUtils.fromMap(parameters, this.fbConfig);
 	this.client = new DefaultFacebookClient(fbConfig.getAccessToken());
+
+	// TODO: get long live token
+	// AccessToken extendedToken = this.client.obtainExtendedAccessToken(
+	// fbConfig.getClientId(), fbConfig.getClientSecret(),
+	// fbConfig.getAccessToken());
+	// System.out.println(fbConfig.getAccessToken());
+	// System.out.println(extendedToken.getAccessToken());
 
 	try {
 	    this.myId = client.fetchObject(
@@ -239,12 +246,12 @@ public class FacebookConnector extends AbstractConnector {
 
 	// add all known forums
 	ClosableIterator<Statement> stmtIter = getModel().findStatements(
-		Variable.ANY, SIOC.has_host, getSite());
+		Variable.ANY, SIOCVocabulary.has_host, getSite());
 	while (stmtIter.hasNext()) {
 	    Statement statement = stmtIter.next();
 	    Resource subject = statement.getSubject();
 
-	    if (getModel().contains(subject, RDF.type, SIOC.Forum)) {
+	    if (getModel().contains(subject, RDF.type, SIOCVocabulary.Forum)) {
 		result.add(Forum.getInstance(getModel(), subject));
 	    }
 	}
@@ -376,7 +383,7 @@ public class FacebookConnector extends AbstractConnector {
 	    // 2) Facebook is the host of this container
 	    // 3) The container has a "feed" connection in Facebooks GraphAPI
 
-	    if (getModel().contains(container, RDF.type, SIOC.Forum)) {
+	    if (getModel().contains(container, RDF.type, SIOCVocabulary.Forum)) {
 		Forum forum = Forum.getInstance(getModel(),
 			container.getResource());
 		try {

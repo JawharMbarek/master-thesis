@@ -12,7 +12,7 @@ import java.util.Set;
 import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
 import org.purl.dc.terms.DCTerms;
-import org.rdfs.sioc.SIOC;
+import org.rdfs.sioc.SIOCVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +21,6 @@ import com.xmlns.foaf.FOAFVocabulary;
 
 import de.m0ep.socc.config.SOCCConfigConnectorEntry;
 import de.m0ep.socc.config.SOCCConfiguration;
-import de.m0ep.socc.exceptions.AlreadyExistsException;
 import de.m0ep.socc.exceptions.ConnectorException;
 
 public class SOCC {
@@ -91,13 +90,17 @@ public class SOCC {
 
     public IConnector createConnector(final String factoryId, final String id,
 	    final Map<String, Object> parameters) throws ConnectorException {
+	Preconditions.checkNotNull(factoryId, "FactoryId can not be null.");
+	Preconditions.checkArgument(!factoryId.isEmpty(),
+		"FactoryId can not be empty.");
+	Preconditions.checkArgument(factories.containsKey(factoryId),
+		"No factory with this id exists.");
+	Preconditions.checkNotNull(id, "Id can not be null.");
+	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty.");
+	Preconditions.checkArgument(!connectorMap.containsKey(id),
+		"There is already a connector with this id.");
 
-	if (connectorMap.containsKey(id)) {
-	    throw new AlreadyExistsException(
-		    "There is already a connector with the id = " + id);
-	}
-
-	IConnectorFactory factory = getFactory(factoryId);
+	IConnectorFactory factory = factories.get(factoryId);
 	IConnector connector = factory.createConnector(id, getModel(),
 		parameters);
 
@@ -105,6 +108,10 @@ public class SOCC {
 	connectorFactoryMapping.put(connector.getId(), factory.getId());
 
 	return connector;
+    }
+
+    public List<IConnector> getConnectors() {
+	return new ArrayList<IConnector>(this.connectorMap.values());
     }
 
     public Set<String> getConnectorIds() {
@@ -130,6 +137,15 @@ public class SOCC {
 	}
 
 	throw new NoSuchElementException("No factory found with id = " + id);
+    }
+
+    public IConnectorFactory getFactoryOfConnector(String connectorId) {
+	Preconditions.checkNotNull(connectorId, "ConnectorId can not be null");
+	Preconditions.checkArgument(
+		connectorFactoryMapping.containsKey(connectorId),
+		"No connector with this id found");
+
+	return getFactory(connectorFactoryMapping.get(connectorId));
     }
 
     public SOCCConfiguration getConfiguration() {
@@ -161,7 +177,7 @@ public class SOCC {
 	Model model = RDF2Go.getModelFactory().createModel();
 	model = RDF2Go.getModelFactory().createModel();
 	model.open();
-	model.setNamespace("sioc", SIOC.NS_SIOC.toString());
+	model.setNamespace("sioc", SIOCVocabulary.NS_SIOC.toString());
 	model.setNamespace("foaf", FOAFVocabulary.NS_FOAF.toString());
 	model.setNamespace("dcterms", DCTerms.NS_DCTerms.toString());
 

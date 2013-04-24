@@ -30,7 +30,7 @@ import org.ontoware.rdf2go.model.Model;
 import org.purl.dc.terms.DCTerms;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOC;
+import org.rdfs.sioc.SIOCVocabulary;
 
 import com.xmlns.foaf.FOAFVocabulary;
 
@@ -83,7 +83,7 @@ public class SIOCUtils {
 	Model model = RDF2Go.getModelFactory().createModel();
 	model = RDF2Go.getModelFactory().createModel();
 	model.open();
-	model.setNamespace("sioc", SIOC.NS_SIOC.toString());
+	model.setNamespace("sioc", SIOCVocabulary.NS_SIOC.toString());
 	model.setNamespace("foaf", FOAFVocabulary.NS_FOAF.toString());
 	model.setNamespace("dcterms", DCTerms.NS_DCTerms.toString());
 

@@ -31,6 +31,7 @@ import com.google.common.base.Preconditions;
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
 import de.m0ep.socc.config.DataField;
+import de.m0ep.socc.config.DataForm;
 import de.m0ep.socc.config.DataType;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.shop.SOCCShopApplication;
@@ -91,7 +92,11 @@ public class ConnectorDialog extends JDialog {
 			FactoryItem item = (FactoryItem) e.getItem();
 
 			if (ItemEvent.SELECTED == e.getStateChange()) {
-			    dataFormPanel.setDataForm(item.getFactory()
+			    String factoryId = item.getFactoryId();
+			    IConnectorFactory factory = app.getSocc()
+				    .getFactory(factoryId);
+
+			    dataFormPanel.setDataForm(factory
 				    .getParameterForm());
 			    pack();
 			}
@@ -146,16 +151,18 @@ public class ConnectorDialog extends JDialog {
 		    public void actionPerformed(ActionEvent e) {
 			FactoryItem item = (FactoryItem) cboxFactory
 				.getSelectedItem();
-			IConnectorFactory factory = item.getFactory();
+			String factoryId = item.getFactoryId();
 			String id = textConnectorId.getText();
 			Map<String, Object> parameters = dataFormPanel
 				.getData();
 
-			if (validateInput(factory, id, parameters)) {
+			if (validateInput(factoryId, id, parameters)) {
 			    try {
-				resultConnector = factory.createConnector(
-					textConnectorId.getText(),
-					app.getModel(), parameters);
+				resultConnector = app.getSocc()
+					.createConnector(factoryId, id,
+						parameters);
+				resultFactory = app.getSocc().getFactory(
+					factoryId);
 			    } catch (ConnectorException ex) {
 				JOptionPane.showMessageDialog(
 					ConnectorDialog.this, ex.getMessage(),
@@ -163,17 +170,6 @@ public class ConnectorDialog extends JDialog {
 					JOptionPane.ERROR_MESSAGE);
 				return;
 			    }
-
-			    LOG.debug("Dataproperties:");
-			    for (String key : parameters.keySet()) {
-				LOG.debug("name={},\tvalue={},\ttype={}",
-					new Object[] {
-						key,
-						parameters.get(key),
-						parameters.get(key).getClass()
-							.getName() });
-			    }
-
 			    resultOption = SAVE_OPTION;
 			    closeDialog();
 			}
@@ -200,11 +196,14 @@ public class ConnectorDialog extends JDialog {
 	initialize();
     }
 
-    protected boolean validateInput(final IConnectorFactory factory,
-	    final String id, final Map<String, Object> parameters) {
+    protected boolean validateInput(final String factoryId, final String id,
+	    final Map<String, Object> parameters) {
 
-	if (null == factory) {
-
+	if (null == factoryId) {
+	    JOptionPane.showMessageDialog(ConnectorDialog.this,
+		    "No Factory selected.", "Input error",
+		    JOptionPane.ERROR_MESSAGE);
+	    return false;
 	}
 
 	if (id.isEmpty()) {
@@ -216,7 +215,9 @@ public class ConnectorDialog extends JDialog {
 
 	// TODO: duplicate id check
 
-	for (DataField field : factory.getParameterForm().getFields().values()) {
+	DataForm dataForm = app.getSocc().getFactory(factoryId)
+		.getParameterForm();
+	for (DataField field : dataForm.getFields()) {
 	    if (parameters.containsKey(field.getName())) {
 		Object obj = parameters.get(field.getName());
 
@@ -289,7 +290,7 @@ public class ConnectorDialog extends JDialog {
 	Set<String> factoryIds = app.getSocc().getFactoryIds();
 
 	for (String id : factoryIds) {
-	    cboxFactory.addItem(new FactoryItem(app.getSocc().getFactory(id)));
+	    cboxFactory.addItem(new FactoryItem(id));
 	}
     }
 
@@ -324,19 +325,19 @@ public class ConnectorDialog extends JDialog {
     }
 
     private static class FactoryItem {
-	private IConnectorFactory factory;
+	private String factoryId;
 
-	public FactoryItem(final IConnectorFactory factory) {
-	    this.factory = factory;
+	public FactoryItem(final String factoryId) {
+	    this.factoryId = factoryId;
 	}
 
-	public IConnectorFactory getFactory() {
-	    return this.factory;
+	public String getFactoryId() {
+	    return this.factoryId;
 	}
 
 	@Override
 	public String toString() {
-	    return factory.getConnectorName();
+	    return factoryId;
 	}
     }
 }

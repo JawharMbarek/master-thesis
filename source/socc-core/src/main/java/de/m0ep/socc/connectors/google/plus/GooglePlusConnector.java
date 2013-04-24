@@ -42,7 +42,7 @@ import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOC;
+import org.rdfs.sioc.SIOCVocabulary;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.UserAccount;
 import org.slf4j.Logger;
@@ -111,12 +111,12 @@ public class GooglePlusConnector extends AbstractConnector {
     private static final String SPARQL_SELECT_FORUMS_OF_SITE = "SELECT ?forum WHERE { ?forum "
 	    + RDF.type.toSPARQL()
 	    + " "
-	    + SIOC.Forum.toSPARQL()
+	    + SIOCVocabulary.Forum.toSPARQL()
 	    + " ; \n"
-	    + SIOC.has_host.toSPARQL() + " %s . }";
+	    + SIOCVocabulary.has_host.toSPARQL() + " %s . }";
     private static final String SPARQL_ASK_IS_FORUM_OF_SITE = "ASK { %s "
-	    + RDF.type.toSPARQL() + " " + SIOC.Forum.toSPARQL() + " ; \n"
-	    + SIOC.has_host.toSPARQL() + " %s . }";
+	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.Forum.toSPARQL() + " ; \n"
+	    + SIOCVocabulary.has_host.toSPARQL() + " %s . }";
 
     /*
      * Member variables
@@ -345,7 +345,7 @@ public class GooglePlusConnector extends AbstractConnector {
 
 	List<Post> result = new ArrayList<Post>();
 	ClosableIterator<Statement> stmtsIter = getModel().findStatements(
-		Variable.ANY, SIOC.has_container, container);
+		Variable.ANY, SIOCVocabulary.has_container, container);
 
 	while (stmtsIter.hasNext()) {
 	    Statement statement = stmtsIter.next();

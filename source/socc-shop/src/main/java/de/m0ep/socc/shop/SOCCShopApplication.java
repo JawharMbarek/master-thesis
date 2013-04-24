@@ -2,7 +2,6 @@ package de.m0ep.socc.shop;
 
 import java.awt.EventQueue;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 import org.ontoware.rdf2go.model.Model;
@@ -27,15 +26,15 @@ public class SOCCShopApplication {
     }
 
     public SOCCShopApplication() {
-	URL settingsUrl = getClass().getResource("/setings.json");
+	URL settingsUrl = SOCCShopApplication.class
+		.getResource("/connectors.cfg");
 
 	if (null != settingsUrl) {
-	    File settingsFile = new File(settingsUrl.toString());
-
 	    try {
+		File settingsFile = new File(settingsUrl.toURI());
 		this.configuration = SOCCConfiguration.load(settingsFile);
-	    } catch (IOException e) {
-		LOG.error("Failed to load settings from file.", e);
+	    } catch (Throwable t) {
+		LOG.error("Failed to load settings from file.", t);
 		shutdown(-1);
 	    }
 	} else {
@@ -63,14 +62,17 @@ public class SOCCShopApplication {
     /* Runtime */
 
     public void save() {
-
 	if (null != configuration) {
-	    URL settingsUrl = getClass().getResource("/setings.json");
-	    File settingsFile = new File(settingsUrl.toString());
-	    try {
-		this.configuration.save(settingsFile);
-	    } catch (IOException e) {
-		LOG.error("Failed to save settings.", e);
+	    URL settingsUrl = SOCCShopApplication.class
+		    .getResource("/connectors.cfg");
+
+	    if (null != settingsUrl) {
+		try {
+		    File settingsFile = new File(settingsUrl.toURI());
+		    this.configuration.save(settingsFile);
+		} catch (Throwable t) {
+		    LOG.error("Failed to save settings.", t);
+		}
 	    }
 	}
     }

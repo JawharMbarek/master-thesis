@@ -40,7 +40,7 @@ import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOC;
+import org.rdfs.sioc.SIOCVocabulary;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
@@ -363,12 +363,12 @@ public class MoodleConnector extends AbstractConnector {
 	// 2) Has a parent that is a Forum
 	// 3) The parent forum belongs to this moodle instance
 
-	if (getModel().contains(container, RDF.type, SIOC.Thread)) {
+	if (getModel().contains(container, RDF.type, SIOCVocabulary.Thread)) {
 	    Thread thread = Thread.getInstance(getModel(),
 		    container.getResource());
 	    if (thread.hasParents()) {
 		Container parent = thread.getParent();
-		if (getModel().contains(parent, RDF.type, SIOC.Forum)) {
+		if (getModel().contains(parent, RDF.type, SIOCVocabulary.Forum)) {
 		    Forum forum = Forum.getInstance(getModel(),
 			    parent.getResource());
 
@@ -390,13 +390,13 @@ public class MoodleConnector extends AbstractConnector {
 	// 3) The parent forum belongs to this moodle instance
 	if (parentPost.hasContainers()) {
 	    Container container = parentPost.getContainer();
-	    if (getModel().contains(container, RDF.type, SIOC.Thread)) {
+	    if (getModel().contains(container, RDF.type, SIOCVocabulary.Thread)) {
 		Thread thread = Thread.getInstance(getModel(),
 			container.getResource());
 		if (thread.hasParents()) {
 		    Container parentContainer = thread.getParent();
 		    if (getModel().contains(parentContainer, RDF.type,
-			    SIOC.Forum)) {
+			    SIOCVocabulary.Forum)) {
 			Forum forum = Forum.getInstance(getModel(),
 				parentContainer.getResource());
 			return forum.hasHost(getSite());

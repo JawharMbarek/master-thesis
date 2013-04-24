@@ -9,7 +9,7 @@ import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOC;
+import org.rdfs.sioc.SIOCVocabulary;
 import org.rdfs.sioc.Thread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class SOCCThreadProducer extends DefaultProducer {
 	Resource res = null;
 	for (Statement stmt : stmts) {
 	    if (stmt.getPredicate().equals(RDF.type)) {
-		if (stmt.getObject().equals(SIOC.Post)) {
+		if (stmt.getObject().equals(SIOCVocabulary.Post)) {
 		    res = stmt.getSubject();
 		    break;
 		}

@@ -81,7 +81,7 @@ public class DataFormPanel extends JPanel {
 	this.removeAll();
 	this.componentMap.clear();
 
-	for (DataField field : this.dataForm.getFields().values()) {
+	for (DataField field : this.dataForm.getFields()) {
 	    JComponent component = getFieldComponent(field);
 	    componentMap.put(field.getName(), component);
 

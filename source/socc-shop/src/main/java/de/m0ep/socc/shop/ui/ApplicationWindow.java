@@ -1,23 +1,20 @@
 package de.m0ep.socc.shop.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
+import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
+import javax.swing.JScrollPane;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 import de.m0ep.socc.shop.SOCCShopApplication;
 
@@ -25,6 +22,9 @@ public class ApplicationWindow {
 
     private JFrame frmSoccShop;
     private SOCCShopApplication app;
+
+    private ConnectorInternalFrame connectorFrame;
+    private JDesktopPane desktopPane;
 
     /**
      * Create the application.
@@ -61,56 +61,46 @@ public class ApplicationWindow {
 	JMenu mnSocc = new JMenu("SOCC");
 	menuBar.add(mnSocc);
 
-	JMenuItem mntmConnectors = new JMenuItem("Connectors");
-	mntmConnectors.setIcon(new ImageIcon(ApplicationWindow.class
-		.getResource("/images/connect.png")));
-	mnSocc.add(mntmConnectors);
-
-	JMenuItem mntmPipes = new JMenuItem("Pipes");
-	mntmPipes.setIcon(new ImageIcon(ApplicationWindow.class
-		.getResource("/images/arrow_switch.png")));
-	mnSocc.add(mntmPipes);
-
 	JMenuItem mntmClose = new JMenuItem("Close");
 	mntmClose.setIcon(new ImageIcon(ApplicationWindow.class
 		.getResource("/images/door_open.png")));
 	mnSocc.add(mntmClose);
 
-	JSplitPane splitPane = new JSplitPane();
-	frmSoccShop.getContentPane().add(splitPane, BorderLayout.CENTER);
+	JMenu mnWindow = new JMenu("Window");
+	menuBar.add(mnWindow);
 
-	JPanel panel = new JPanel();
-	panel.setMinimumSize(new Dimension(100, 10));
-	splitPane.setLeftComponent(panel);
-	SpringLayout sl_panel = new SpringLayout();
-	panel.setLayout(sl_panel);
+	JMenuItem mntmConnectors = new JMenuItem("Connectors");
+	mnWindow.add(mntmConnectors);
+	mntmConnectors.setIcon(new ImageIcon(ApplicationWindow.class
+		.getResource("/images/connect.png")));
 
-	JLabel lblSites = new JLabel("Sites");
-	lblSites.setHorizontalAlignment(SwingConstants.CENTER);
-	sl_panel.putConstraint(SpringLayout.NORTH, lblSites, 0,
-		SpringLayout.NORTH, panel);
-	sl_panel.putConstraint(SpringLayout.WEST, lblSites, 0,
-		SpringLayout.WEST, panel);
-	sl_panel.putConstraint(SpringLayout.EAST, lblSites, 0,
-		SpringLayout.EAST, panel);
-	panel.add(lblSites);
+	JMenuItem mntmPipes = new JMenuItem("Pipes");
+	mnWindow.add(mntmPipes);
+	mntmPipes.setIcon(new ImageIcon(ApplicationWindow.class
+		.getResource("/images/arrow_switch.png")));
 
-	JList list = new JList();
-	sl_panel.putConstraint(SpringLayout.NORTH, list, 6, SpringLayout.SOUTH,
-		lblSites);
-	sl_panel.putConstraint(SpringLayout.WEST, list, 0, SpringLayout.WEST,
-		panel);
-	sl_panel.putConstraint(SpringLayout.SOUTH, list, 0, SpringLayout.SOUTH,
-		panel);
-	sl_panel.putConstraint(SpringLayout.EAST, list, 0, SpringLayout.EAST,
-		panel);
-	panel.add(list);
+	JMenuItem mntmSioc = new JMenuItem("SIOC");
+	mnWindow.add(mntmSioc);
 	mntmConnectors.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
-		ConnectorPreferencesDialog dialog = new ConnectorPreferencesDialog(
-			app);
-		dialog.showDialog();
+		if (null == connectorFrame) {
+		    connectorFrame = new ConnectorInternalFrame(app);
+		    connectorFrame
+			    .addInternalFrameListener(new InternalFrameAdapter() {
+				@Override
+				public void internalFrameClosed(
+					InternalFrameEvent e) {
+				    connectorFrame = null;
+				}
+			    });
+		    connectorFrame.setVisible(true);
+		    desktopPane.add(connectorFrame);
+		}
 	    }
 	});
+
+	desktopPane = new JDesktopPane();
+	JScrollPane scrollPane = new JScrollPane(desktopPane);
+	frmSoccShop.getContentPane().add(scrollPane, BorderLayout.CENTER);
     }
 }

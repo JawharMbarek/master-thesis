@@ -127,6 +127,13 @@ public class SOCC {
 		+ id);
     }
 
+    public void removeConnector(final String id) {
+	if (connectorMap.containsKey(id)) {
+	    connectorMap.remove(id);
+	    connectorFactoryMapping.remove(id);
+	}
+    }
+
     public Set<String> getFactoryIds() {
 	return this.factories.keySet();
     }

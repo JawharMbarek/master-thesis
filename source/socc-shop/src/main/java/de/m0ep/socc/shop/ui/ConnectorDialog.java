@@ -33,7 +33,6 @@ import de.m0ep.socc.IConnectorFactory;
 import de.m0ep.socc.config.DataField;
 import de.m0ep.socc.config.DataForm;
 import de.m0ep.socc.config.DataType;
-import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.shop.SOCCShopApplication;
 
 public class ConnectorDialog extends JDialog {
@@ -49,55 +48,88 @@ public class ConnectorDialog extends JDialog {
     private DataFormPanel dataFormPanel = new DataFormPanel();
 
     private int resultOption;
+    private String resultFactoryId;
+    private String resultConnectorId;
     private Map<String, Object> resultParameters;
-    private IConnectorFactory resultFactory;
-    private IConnector resultConnector;
 
     private SOCCShopApplication app;
-    private JComboBox<FactoryItem> cboxFactory;
+    private IConnector connector;
+
+    private JComboBox<String> cboxFactory;
     private JPanel parametersPanel;
     private JTextField textConnectorId;
     private JPanel factoryPanel;
     private JPanel idPanel;
 
     /**
-     * Create the dialog.
+     * Create the dialog to create a connector.
+     * 
+     * 
+     * @wbp.parser.constructor
+     * 
+     * @param app
      */
     public ConnectorDialog(final SOCCShopApplication app) {
-	this.app = Preconditions.checkNotNull(app, "App can not be null");
+	this.app = Preconditions.checkNotNull(app, "App can not be null.");
 
+	buildGUI("Create Connector");
+	initialize();
+    }
+
+    /**
+     * Create the dialog to modify a connector.
+     * 
+     * @param app
+     * 
+     * @param connector
+     */
+    public ConnectorDialog(final SOCCShopApplication app, IConnector connector) {
+	this.app = Preconditions.checkNotNull(app, "App can not be null.");
+	this.connector = Preconditions.checkNotNull(connector,
+		"Connector can not be null.");
+
+	buildGUI("Modify Connector");
+	initialize(connector);
+    }
+
+    /**
+     * @param app
+     */
+    private void buildGUI(final String title) {
 	setBounds(100, 100, 494, 481);
 	setPreferredSize(new Dimension(400, 400));
+	setTitle(title);
 	getContentPane().setLayout(new BorderLayout());
 	contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 	getContentPane().add(contentPanel, BorderLayout.CENTER);
-	SpringLayout sl_contentPanel = new SpringLayout();
-	contentPanel.setLayout(sl_contentPanel);
+	SpringLayout contentPanelLayout = new SpringLayout();
+	contentPanel.setLayout(contentPanelLayout);
 	{
 	    factoryPanel = new JPanel();
 	    factoryPanel.setBorder(new TitledBorder(null, "Connector Factory",
 		    TitledBorder.LEADING, TitledBorder.TOP, null, null));
-	    sl_contentPanel.putConstraint(SpringLayout.WEST, factoryPanel, 0,
-		    SpringLayout.WEST, contentPanel);
-	    sl_contentPanel.putConstraint(SpringLayout.EAST, factoryPanel, 0,
-		    SpringLayout.EAST, contentPanel);
-	    contentPanel.add(factoryPanel);
 	    factoryPanel
 		    .setLayout(new BoxLayout(factoryPanel, BoxLayout.X_AXIS));
+	    contentPanelLayout.putConstraint(SpringLayout.WEST, factoryPanel,
+		    0, SpringLayout.WEST, contentPanel);
+	    contentPanelLayout.putConstraint(SpringLayout.EAST, factoryPanel,
+		    0, SpringLayout.EAST, contentPanel);
+	    contentPanel.add(factoryPanel);
 	    {
-		cboxFactory = new JComboBox<FactoryItem>();
+		cboxFactory = new JComboBox<String>();
 		factoryPanel.add(cboxFactory);
 		cboxFactory.addItemListener(new ItemListener() {
 		    public void itemStateChanged(ItemEvent e) {
-			FactoryItem item = (FactoryItem) e.getItem();
+			String factoryId = (String) e.getItem();
 
 			if (ItemEvent.SELECTED == e.getStateChange()) {
-			    String factoryId = item.getFactoryId();
 			    IConnectorFactory factory = app.getSocc()
 				    .getFactory(factoryId);
 
-			    dataFormPanel.setDataForm(factory
-				    .getParameterForm());
+			    if (null != factory) {
+				dataFormPanel.setDataForm(factory
+					.getParameterForm());
+			    }
 			    pack();
 			}
 		    }
@@ -108,14 +140,14 @@ public class ConnectorDialog extends JDialog {
 	    idPanel = new JPanel();
 	    idPanel.setBorder(new TitledBorder(null, "Connector Id",
 		    TitledBorder.LEADING, TitledBorder.TOP, null, null));
-	    sl_contentPanel.putConstraint(SpringLayout.NORTH, idPanel, 6,
+	    idPanel.setLayout(new BoxLayout(idPanel, BoxLayout.X_AXIS));
+	    contentPanelLayout.putConstraint(SpringLayout.NORTH, idPanel, 6,
 		    SpringLayout.SOUTH, factoryPanel);
-	    sl_contentPanel.putConstraint(SpringLayout.WEST, idPanel, 0,
+	    contentPanelLayout.putConstraint(SpringLayout.WEST, idPanel, 0,
 		    SpringLayout.WEST, factoryPanel);
-	    sl_contentPanel.putConstraint(SpringLayout.EAST, idPanel, 0,
+	    contentPanelLayout.putConstraint(SpringLayout.EAST, idPanel, 0,
 		    SpringLayout.EAST, factoryPanel);
 	    contentPanel.add(idPanel);
-	    idPanel.setLayout(new BoxLayout(idPanel, BoxLayout.X_AXIS));
 	    {
 		textConnectorId = new JTextField();
 		textConnectorId.setPreferredSize(new Dimension(4, 24));
@@ -125,14 +157,14 @@ public class ConnectorDialog extends JDialog {
 	}
 	{
 	    parametersPanel = new JPanel();
-	    sl_contentPanel.putConstraint(SpringLayout.NORTH, parametersPanel,
-		    6, SpringLayout.SOUTH, idPanel);
-	    sl_contentPanel.putConstraint(SpringLayout.WEST, parametersPanel,
-		    0, SpringLayout.WEST, idPanel);
-	    sl_contentPanel.putConstraint(SpringLayout.SOUTH, parametersPanel,
-		    -5, SpringLayout.SOUTH, contentPanel);
-	    sl_contentPanel.putConstraint(SpringLayout.EAST, parametersPanel,
-		    0, SpringLayout.EAST, idPanel);
+	    contentPanelLayout.putConstraint(SpringLayout.NORTH,
+		    parametersPanel, 6, SpringLayout.SOUTH, idPanel);
+	    contentPanelLayout.putConstraint(SpringLayout.WEST,
+		    parametersPanel, 0, SpringLayout.WEST, idPanel);
+	    contentPanelLayout.putConstraint(SpringLayout.SOUTH,
+		    parametersPanel, -5, SpringLayout.SOUTH, contentPanel);
+	    contentPanelLayout.putConstraint(SpringLayout.EAST,
+		    parametersPanel, 0, SpringLayout.EAST, idPanel);
 	    parametersPanel.setBorder(new TitledBorder(new LineBorder(
 		    new Color(184, 207, 229)), "Connector Parameters",
 		    TitledBorder.LEFT, TitledBorder.TOP, null, null));
@@ -142,41 +174,36 @@ public class ConnectorDialog extends JDialog {
 	    parametersPanel.add(dataFormPanel);
 	}
 	{
-	    JPanel buttonPane = new JPanel();
-	    buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-	    getContentPane().add(buttonPane, BorderLayout.SOUTH);
+	    JPanel buttonPanel = new JPanel();
+	    buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+	    getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 	    {
 		JButton okButton = new JButton("Save");
 		okButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-			FactoryItem item = (FactoryItem) cboxFactory
+			String factoryId = (String) cboxFactory
 				.getSelectedItem();
-			String factoryId = item.getFactoryId();
-			String id = textConnectorId.getText();
+			String connectorId = textConnectorId.getText();
 			Map<String, Object> parameters = dataFormPanel
 				.getData();
 
-			if (validateInput(factoryId, id, parameters)) {
-			    try {
-				resultConnector = app.getSocc()
-					.createConnector(factoryId, id,
-						parameters);
-				resultFactory = app.getSocc().getFactory(
-					factoryId);
-			    } catch (ConnectorException ex) {
-				JOptionPane.showMessageDialog(
-					ConnectorDialog.this, ex.getMessage(),
-					"Failed to create Connector!",
-					JOptionPane.ERROR_MESSAGE);
-				return;
-			    }
+			if (validateInput(factoryId, connectorId, parameters)) {
 			    resultOption = SAVE_OPTION;
+			    resultConnectorId = connectorId;
+			    resultFactoryId = factoryId;
+			    resultParameters = parameters;
+
 			    closeDialog();
+			} else {
+			    resultConnectorId = null;
+			    resultFactoryId = null;
+			    resultParameters = null;
 			}
 		    }
 		});
 		okButton.setActionCommand("Save");
-		buttonPane.add(okButton);
+		okButton.setToolTipText("Save SOCC-Connector");
+		buttonPanel.add(okButton);
 		getRootPane().setDefaultButton(okButton);
 	    }
 	    {
@@ -188,15 +215,34 @@ public class ConnectorDialog extends JDialog {
 		    }
 		});
 		cancelButton.setActionCommand("Cancel");
-		buttonPane.add(cancelButton);
+		cancelButton.setToolTipText("Discard this SOCC-Connector");
+		buttonPanel.add(cancelButton);
 	    }
 	}
 
 	pack();
-	initialize();
     }
 
-    protected boolean validateInput(final String factoryId, final String id,
+    private void initialize() {
+	Set<String> factoryIds = app.getSocc().getFactoryIds();
+
+	for (String id : factoryIds) {
+	    cboxFactory.addItem(id);
+	}
+    }
+
+    private void initialize(final IConnector connector) {
+	initialize();
+
+	IConnectorFactory factory = app.getSocc().getFactoryOfConnector(
+		connector.getId());
+
+	cboxFactory.setSelectedItem(factory.getId());
+
+	// TODO:
+    }
+
+    private boolean validateInput(final String factoryId, final String id,
 	    final Map<String, Object> parameters) {
 
 	if (null == factoryId) {
@@ -213,8 +259,18 @@ public class ConnectorDialog extends JDialog {
 	    return false;
 	}
 
-	// TODO: duplicate id check
+	// duplicate id check
+	try {
+	    app.getSocc().getConnector(id);
+	    JOptionPane.showMessageDialog(ConnectorDialog.this,
+		    "There is already a connector with this id.",
+		    "Input error", JOptionPane.ERROR_MESSAGE);
+	    return false;
+	} catch (Exception e) {
+	    // Do nothing, connector with this id doesn't exists.
+	}
 
+	// validate parameters
 	DataForm dataForm = app.getSocc().getFactory(factoryId)
 		.getParameterForm();
 	for (DataField field : dataForm.getFields()) {
@@ -286,14 +342,6 @@ public class ConnectorDialog extends JDialog {
 	return true;
     }
 
-    private void initialize() {
-	Set<String> factoryIds = app.getSocc().getFactoryIds();
-
-	for (String id : factoryIds) {
-	    cboxFactory.addItem(new FactoryItem(id));
-	}
-    }
-
     public int showDialog() {
 	setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	setModalityType(ModalityType.APPLICATION_MODAL);
@@ -312,32 +360,15 @@ public class ConnectorDialog extends JDialog {
 	return this.app;
     }
 
-    public IConnectorFactory getFactory() {
-	return this.resultFactory;
+    public String getFactoryId() {
+	return this.resultFactoryId;
     }
 
-    public IConnector getConnector() {
-	return this.resultConnector;
+    public String getConnectorId() {
+	return this.resultConnectorId;
     }
 
-    public Map<String, Object> getData() {
+    public Map<String, Object> getParameter() {
 	return resultParameters;
-    }
-
-    private static class FactoryItem {
-	private String factoryId;
-
-	public FactoryItem(final String factoryId) {
-	    this.factoryId = factoryId;
-	}
-
-	public String getFactoryId() {
-	    return this.factoryId;
-	}
-
-	@Override
-	public String toString() {
-	    return factoryId;
-	}
     }
 }

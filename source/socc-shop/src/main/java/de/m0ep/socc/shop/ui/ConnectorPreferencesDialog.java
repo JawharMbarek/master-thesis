@@ -104,11 +104,11 @@ public class ConnectorPreferencesDialog extends JDialog {
 		ConnectorDialog dlg = new ConnectorDialog(app);
 
 		if (ConnectorDialog.SAVE_OPTION == dlg.showDialog()) {
-		    IConnectorFactory factory = dlg.getFactory();
-		    IConnector connector = dlg.getConnector();
+		    // IConnectorFactory factory = dlg.getFactory();
+		    // IConnector connector = dlg.getConnector();
 
-		    connectorListModel.addElement(new ConnectorItem(factory,
-			    connector));
+		    // connectorListModel.addElement(new ConnectorItem(factory,
+		    // connector));
 		}
 	    }
 	});

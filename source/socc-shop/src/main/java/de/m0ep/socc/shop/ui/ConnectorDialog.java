@@ -23,9 +23,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.IConnector;
@@ -37,15 +34,12 @@ import de.m0ep.socc.shop.SOCCShopApplication;
 
 public class ConnectorDialog extends JDialog {
     private static final long serialVersionUID = -7606005788404878311L;
-    private static final Logger LOG = LoggerFactory
-	    .getLogger(ConnectorDialog.class);
 
-    public static final int OK_OPTION = 0;
     public static final int SAVE_OPTION = 0;
     public static final int CANCEL_OPTION = 1;
 
     private final JPanel contentPanel = new JPanel();
-    private DataFormPanel dataFormPanel = new DataFormPanel();
+    private DynamicDataFormPanel dataFormPanel = new DynamicDataFormPanel();
 
     private int resultOption;
     private String resultFactoryId;
@@ -238,6 +232,7 @@ public class ConnectorDialog extends JDialog {
 		connector.getId());
 
 	cboxFactory.setSelectedItem(factory.getId());
+	cboxFactory.setEnabled(false);
 
 	// TODO:
     }
@@ -358,6 +353,10 @@ public class ConnectorDialog extends JDialog {
 
     public SOCCShopApplication getApp() {
 	return this.app;
+    }
+
+    public IConnector getConnector() {
+	return this.connector;
     }
 
     public String getFactoryId() {

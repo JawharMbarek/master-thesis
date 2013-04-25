@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
@@ -12,6 +13,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -20,9 +22,10 @@ import com.google.common.base.Ascii;
 import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.IConnector;
+import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.shop.SOCCShopApplication;
 
-public class ConnectorInternalFrame extends JInternalFrame {
+public class ConnectorsInternalFrame extends JInternalFrame {
     private static final long serialVersionUID = -8822621555961769296L;
 
     public static final String REMOVE_CONNECTOR_ACTION_STRING = "RemoveConnector";
@@ -37,7 +40,10 @@ public class ConnectorInternalFrame extends JInternalFrame {
      * 
      * @param app
      */
-    public ConnectorInternalFrame(final SOCCShopApplication app) {
+    public ConnectorsInternalFrame(final SOCCShopApplication app) {
+	setFrameIcon(new ImageIcon(
+		ConnectorsInternalFrame.class
+			.getResource("/images/connect.png")));
 	setIconifiable(true);
 	setMinimumSize(new Dimension(250, 150));
 	setClosable(true);
@@ -88,7 +94,7 @@ public class ConnectorInternalFrame extends JInternalFrame {
 	    }
 	});
 	btnAdd.setToolTipText("Add a new Connector");
-	btnAdd.setIcon(new ImageIcon(ConnectorInternalFrame.class
+	btnAdd.setIcon(new ImageIcon(ConnectorsInternalFrame.class
 		.getResource("/images/add.png")));
 	buttonPanel.add(btnAdd);
 
@@ -100,7 +106,7 @@ public class ConnectorInternalFrame extends JInternalFrame {
 	    }
 	});
 	btnRemove.setToolTipText("Remove the selected Connector");
-	btnRemove.setIcon(new ImageIcon(ConnectorInternalFrame.class
+	btnRemove.setIcon(new ImageIcon(ConnectorsInternalFrame.class
 		.getResource("/images/delete.png")));
 	buttonPanel.add(btnRemove);
 
@@ -131,7 +137,20 @@ public class ConnectorInternalFrame extends JInternalFrame {
 	int status = connectorDlg.showDialog();
 
 	if (ConnectorDialog.SAVE_OPTION == status) {
+	    String factoryId = connectorDlg.getFactoryId();
+	    String connectorId = connectorDlg.getConnectorId();
+	    Map<String, Object> parameters = connectorDlg.getParameter();
 
+	    try {
+		IConnector connector = app.getSocc().createConnector(factoryId,
+			connectorId, parameters);
+		listConnectorsModel.addElement(connector.getId());
+	    } catch (ConnectorException e) {
+		JOptionPane.showMessageDialog(ConnectorsInternalFrame.this,
+			e.getMessage(), "Failes to create connector",
+			JOptionPane.ERROR_MESSAGE);
+		return;
+	    }
 	}
     }
 }

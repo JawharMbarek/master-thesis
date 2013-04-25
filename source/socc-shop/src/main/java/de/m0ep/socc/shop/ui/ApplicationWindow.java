@@ -23,8 +23,9 @@ public class ApplicationWindow {
     private JFrame frmSoccShop;
     private SOCCShopApplication app;
 
-    private ConnectorInternalFrame connectorFrame;
     private JDesktopPane desktopPane;
+    private ConnectorsInternalFrame connectorFrame;
+    private SIOCInternalFrame siocFrame;
 
     /**
      * Create the application.
@@ -79,12 +80,41 @@ public class ApplicationWindow {
 	mntmPipes.setIcon(new ImageIcon(ApplicationWindow.class
 		.getResource("/images/arrow_switch.png")));
 
-	JMenuItem mntmSioc = new JMenuItem("SIOC");
+	JMenuItem mntmSioc = new JMenuItem("SIOC Viewer");
+	mntmSioc.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		if (null == siocFrame) {
+		    siocFrame = new SIOCInternalFrame(app);
+		    siocFrame
+			    .addInternalFrameListener(new InternalFrameAdapter() {
+				@Override
+				public void internalFrameClosed(
+					InternalFrameEvent e) {
+				    siocFrame = null;
+				}
+			    });
+		    siocFrame.setVisible(true);
+		    desktopPane.add(siocFrame);
+		}
+
+		desktopPane.moveToFront(siocFrame);
+	    }
+	});
+	mntmSioc.setIcon(new ImageIcon(ApplicationWindow.class
+		.getResource("/images/user_comment.png")));
 	mnWindow.add(mntmSioc);
+
+	JMenu mnHelp = new JMenu("Help");
+	menuBar.add(mnHelp);
+
+	JMenuItem mntmAbout = new JMenuItem("About");
+	mntmAbout.setIcon(new ImageIcon(ApplicationWindow.class
+		.getResource("/images/help.png")));
+	mnHelp.add(mntmAbout);
 	mntmConnectors.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		if (null == connectorFrame) {
-		    connectorFrame = new ConnectorInternalFrame(app);
+		    connectorFrame = new ConnectorsInternalFrame(app);
 		    connectorFrame
 			    .addInternalFrameListener(new InternalFrameAdapter() {
 				@Override
@@ -96,6 +126,8 @@ public class ApplicationWindow {
 		    connectorFrame.setVisible(true);
 		    desktopPane.add(connectorFrame);
 		}
+
+		desktopPane.moveToFront(connectorFrame);
 	    }
 	});
 

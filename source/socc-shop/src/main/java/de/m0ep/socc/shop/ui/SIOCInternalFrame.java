@@ -143,12 +143,6 @@ public class SIOCInternalFrame extends JInternalFrame implements Runnable {
 	return this.app;
     }
 
-    private void clearTreeNode(MutableTreeNode node) {
-	while (0 < node.getChildCount()) {
-	    node.remove(0);
-	}
-    }
-
     private static class SIOCTreeItem {
 	public static final int ROOT = 0;
 	public static final int SITE = 1;
@@ -157,13 +151,14 @@ public class SIOCInternalFrame extends JInternalFrame implements Runnable {
 
 	private int type;
 	private String label;
-	private Resource resource;
+
+	// private Resource resource;
 
 	public SIOCTreeItem(int type, String label, Resource resource) {
 	    super();
 	    this.type = type;
 	    this.label = label;
-	    this.resource = resource;
+	    // this.resource = resource;
 	}
 
 	public int getType() {
@@ -174,9 +169,9 @@ public class SIOCInternalFrame extends JInternalFrame implements Runnable {
 	    return this.label;
 	}
 
-	public Resource getResource() {
-	    return this.resource;
-	}
+	// public Resource getResource() {
+	// return this.resource;
+	// }
 
 	@Override
 	public String toString() {
@@ -185,6 +180,7 @@ public class SIOCInternalFrame extends JInternalFrame implements Runnable {
     }
 
     private static class MyCellRenderer extends DefaultTreeCellRenderer {
+	private static final long serialVersionUID = 5549244961720243028L;
 
 	private ImageIcon siteIcon;
 	private ImageIcon forumIcon;

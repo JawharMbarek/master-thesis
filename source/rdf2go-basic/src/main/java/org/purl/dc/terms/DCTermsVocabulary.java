@@ -9,7 +9,7 @@ import org.ontoware.rdf2go.model.node.impl.URIImpl;
  * src/main/resources/ontologies/dcterms.rdf namespace:
  * http://purl.org/dc/terms/
  */
-public interface DCTerms {
+public interface DCTermsVocabulary {
     public static final URI NS_DCTerms = new URIImpl(
 	    "http://purl.org/dc/terms/", false);
 

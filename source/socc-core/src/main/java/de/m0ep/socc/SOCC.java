@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
-import org.purl.dc.terms.DCTerms;
+import org.purl.dc.terms.DCTermsVocabulary;
 import org.rdfs.sioc.SIOCVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,7 +186,7 @@ public class SOCC {
 	model.open();
 	model.setNamespace("sioc", SIOCVocabulary.NS_SIOC.toString());
 	model.setNamespace("foaf", FOAFVocabulary.NS_FOAF.toString());
-	model.setNamespace("dcterms", DCTerms.NS_DCTerms.toString());
+	model.setNamespace("dcterms", DCTermsVocabulary.NS_DCTerms.toString());
 
 	return model;
     }

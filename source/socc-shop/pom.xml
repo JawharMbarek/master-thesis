@@ -10,6 +10,21 @@
 			<artifactId>socc-core</artifactId>
 			<version>0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>de.m0ep</groupId>
+			<artifactId>camel-socc</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.semweb4j</groupId>
+			<artifactId>rdf2go.impl.jena</artifactId>
+			<version>4.8.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>

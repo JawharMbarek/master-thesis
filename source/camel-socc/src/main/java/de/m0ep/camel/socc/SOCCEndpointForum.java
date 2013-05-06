@@ -23,50 +23,59 @@
 package de.m0ep.camel.socc;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
-import org.rdfs.sioc.Thread;
+import org.rdfs.sioc.Forum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import de.m0ep.camel.socc.consumer.ThreadPollingConsumer;
-import de.m0ep.camel.socc.producer.ThreadProducer;
+import de.m0ep.camel.socc.consumer.SOCCPollingConsumerForum;
+import de.m0ep.camel.socc.producer.SOCCProducerForum;
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.exceptions.ConnectorException;
 
-public class ThreadEndpoint extends DirectEndpoint implements ISOCCEndpoint {
+public class SOCCEndpointForum extends DirectEndpoint implements ISOCCEndpoint {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SOCCEndpointForum.class);
 
 	private SOCCComponent soccComponent;
 	private String uri;
-	private EndpointProperties properties;
+	private SOCCEndpointProperties properties;
 	private IConnector connector;
-	private Thread thread;
+	private Forum forum;
 
-	public ThreadEndpoint(SOCCComponent soccComponent, String uri,
-			EndpointProperties properties, IConnector connector)
+	public SOCCEndpointForum(SOCCComponent soccComponent, String uri,
+			SOCCEndpointProperties properties, IConnector connector)
 			throws ConnectorException {
 		super(uri, soccComponent);
-
 		this.soccComponent = soccComponent;
 		this.uri = uri;
-		this.connector = connector;
 		this.properties = properties;
-		this.thread = connector.getThread(properties.getThreadId());
+		this.connector = connector;
+		this.forum = connector.getForum(properties.getForumId());
+
+		LOG.debug(
+				"Create SOCCEndpointForum with uri={} and connector={}",
+				uri,
+				connector.getId());
 	}
 
 	@Override
 	public Consumer createConsumer(Processor processor) throws Exception {
-		ScheduledPollConsumer pollConsumer = new ThreadPollingConsumer(
+		ScheduledPollConsumer consumer = new SOCCPollingConsumerForum(
 				this,
 				processor);
-		pollConsumer.setDelay(properties.getDelay());
-
-		return pollConsumer;
+		consumer.setDelay(properties.getDelay());
+		configureConsumer(consumer);
+		return consumer;
 	}
 
 	@Override
 	public Producer createProducer() throws Exception {
-		return new ThreadProducer(this);
+		return new SOCCProducerForum(this);
 	}
 
 	@Override
@@ -75,12 +84,17 @@ public class ThreadEndpoint extends DirectEndpoint implements ISOCCEndpoint {
 	}
 
 	@Override
+	public ExchangePattern getExchangePattern() {
+		return ExchangePattern.InOptionalOut;
+	}
+
+	@Override
 	public SOCCComponent getSOCCComponent() {
 		return soccComponent;
 	}
 
 	@Override
-	public EndpointProperties getProperties() {
+	public SOCCEndpointProperties getProperties() {
 		return properties;
 	}
 
@@ -89,7 +103,7 @@ public class ThreadEndpoint extends DirectEndpoint implements ISOCCEndpoint {
 		return connector;
 	}
 
-	public synchronized Thread getThread() {
-		return this.thread;
+	public synchronized Forum getForum() {
+		return this.forum;
 	}
 }

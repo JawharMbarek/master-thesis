@@ -33,31 +33,32 @@ import org.rdfs.sioc.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.m0ep.camel.socc.ThreadEndpoint;
+import de.m0ep.camel.socc.SOCCEndpointThread;
 import de.m0ep.camel.socc.data.SIOCPostData;
 import de.m0ep.socc.utils.RDF2GoUtils;
 
-public class ThreadPollingConsumer extends DefaultScheduledPollConsumer {
+public class SOCCPollingConsumerThread extends DefaultScheduledPollConsumer {
 	private static final Logger LOG = LoggerFactory
-			.getLogger(ThreadPollingConsumer.class);
+			.getLogger(SOCCPollingConsumerThread.class);
 
-	private ThreadEndpoint threadEndpoint;
+	private SOCCEndpointThread endpoint;
 
-	public ThreadPollingConsumer(ThreadEndpoint threadEndpoint,
+	public SOCCPollingConsumerThread(SOCCEndpointThread threadEndpoint,
 			Processor processor) {
 		super(threadEndpoint, processor);
 
-		this.threadEndpoint = threadEndpoint;
+		this.endpoint = threadEndpoint;
 
 		LOG.debug(
-				"Created new ThreadPollingConsumer for {}",
+				"Created {} for {}",
+				getClass().getSimpleName(),
 				threadEndpoint.getEndpointUri());
 	}
 
 	@Override
 	protected int poll() throws Exception {
-		List<Post> posts = threadEndpoint.getConnector().pollNewPosts(
-				threadEndpoint.getThread());
+		List<Post> posts = endpoint.getConnector().pollNewPosts(
+				endpoint.getThread());
 
 		for (Post post : posts) {
 			Message msg = new DefaultMessage();
@@ -75,7 +76,7 @@ public class ThreadPollingConsumer extends DefaultScheduledPollConsumer {
 		LOG.debug(
 				"Polled {} new posts @ {}",
 				posts.size(),
-				threadEndpoint.getEndpointUri());
+				endpoint.getEndpointUri());
 		return posts.size();
 	}
 }

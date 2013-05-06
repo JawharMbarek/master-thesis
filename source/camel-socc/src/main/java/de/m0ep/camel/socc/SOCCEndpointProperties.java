@@ -2,7 +2,7 @@ package de.m0ep.camel.socc;
 
 import java.io.Serializable;
 
-public class EndpointProperties implements Serializable {
+public class SOCCEndpointProperties implements Serializable {
     private static final long serialVersionUID = -5608053926194170370L;
 
     private String forumId;

@@ -24,7 +24,6 @@ package de.m0ep.camel.socc.data;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
@@ -33,11 +32,8 @@ import org.apache.camel.spi.DataFormat;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.util.RDFTool;
-import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOC;
 
 import de.m0ep.socc.SOCC;
-import de.m0ep.socc.utils.RDF2GoUtils;
 
 /**
  * The {@link RDFXMLDataformat} class is used by Apache camel to convert
@@ -48,45 +44,30 @@ import de.m0ep.socc.utils.RDF2GoUtils;
  * 
  */
 public class RDFXMLDataformat implements DataFormat {
-    @Override
-    public void marshal(Exchange exchange, Object graph, OutputStream stream)
-	    throws Exception {
-	TypeConverter typeConverter = exchange.getContext().getTypeConverter();
-	SIOCPostData postData = typeConverter.mandatoryConvertTo(
-		SIOCPostData.class,
-		graph);
+	@Override
+	public void marshal(Exchange exchange, Object graph, OutputStream stream)
+			throws Exception {
+		TypeConverter typeConverter = exchange.getContext().getTypeConverter();
+		SIOCPostData postData = typeConverter.mandatoryConvertTo(
+				SIOCPostData.class,
+				graph);
 
-	Model model = SOCC.createDefaultMemoryModel();
+		Model model = SOCC.createDefaultMemoryModel();
 
-	try {
-	    model.addAll(postData.getRDFStatements().iterator());
-	    String xml = RDFTool.modelToString(model, Syntax.RdfXml);
-	    stream.write(xml.getBytes());
-	} finally {
-	    model.close();
-	}
-    }
-
-    @Override
-    public Object unmarshal(Exchange exchange, InputStream stream)
-	    throws Exception {
-	TypeConverter typeConverter = exchange.getContext().getTypeConverter();
-	String xml = typeConverter.mandatoryConvertTo(String.class, stream);
-	Model model = RDFTool.stringToModel(xml);
-
-	try {
-	    List<Post> postList = SIOC.listAllPosts(model);
-
-	    if (!postList.isEmpty()) {
-		Post post = postList.get(0);
-		return new SIOCPostData(
-			post.asURI().toString(),
-			RDF2GoUtils.getAllStatements(model, post));
-	    }
-	} finally {
-	    model.close();
+		try {
+			model.addAll(postData.getRDFStatements().iterator());
+			String xml = RDFTool.modelToString(model, Syntax.RdfXml);
+			stream.write(xml.getBytes());
+		} finally {
+			model.close();
+		}
 	}
 
-	return null;
-    }
+	@Override
+	public Object unmarshal(Exchange exchange, InputStream stream)
+			throws Exception {
+		TypeConverter typeConverter = exchange.getContext().getTypeConverter();
+		String xml = typeConverter.mandatoryConvertTo(String.class, stream);
+		return new SIOCPostData(xml);
+	}
 }

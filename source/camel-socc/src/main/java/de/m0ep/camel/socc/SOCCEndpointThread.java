@@ -27,43 +27,56 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
-import org.rdfs.sioc.Forum;
+import org.rdfs.sioc.Thread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import de.m0ep.camel.socc.consumer.ForumPollingConsumer;
-import de.m0ep.camel.socc.producer.ForumProducer;
+import de.m0ep.camel.socc.consumer.SOCCPollingConsumerThread;
+import de.m0ep.camel.socc.producer.SOCCProducerThread;
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.exceptions.ConnectorException;
 
-public class ForumEndpoint extends DirectEndpoint implements ISOCCEndpoint {
+public class SOCCEndpointThread extends DirectEndpoint implements ISOCCEndpoint {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SOCCEndpointThread.class);
+
 	private SOCCComponent soccComponent;
 	private String uri;
-	private EndpointProperties properties;
+	private SOCCEndpointProperties properties;
 	private IConnector connector;
-	private Forum forum;
+	private Thread thread;
 
-	public ForumEndpoint(SOCCComponent soccComponent, String uri,
-			EndpointProperties properties, IConnector connector)
+	public SOCCEndpointThread(SOCCComponent soccComponent, String uri,
+			SOCCEndpointProperties properties, IConnector connector)
 			throws ConnectorException {
 		super(uri, soccComponent);
+
 		this.soccComponent = soccComponent;
 		this.uri = uri;
 		this.properties = properties;
 		this.connector = connector;
-		this.forum = connector.getForum(properties.getForumId());
+		this.thread = connector.getThread(properties.getThreadId());
+
+		LOG.debug(
+				"Create SOCCEndpointThread with uri={} and connector={}",
+				uri,
+				connector.getId());
 	}
 
 	@Override
 	public Consumer createConsumer(Processor processor) throws Exception {
-		ScheduledPollConsumer consumer = new ForumPollingConsumer(
+		ScheduledPollConsumer consumer = new SOCCPollingConsumerThread(
 				this,
 				processor);
 		consumer.setDelay(properties.getDelay());
+		configureConsumer(consumer);
+
 		return consumer;
 	}
 
 	@Override
 	public Producer createProducer() throws Exception {
-		return new ForumProducer(this, connector, forum);
+		return new SOCCProducerThread(this);
 	}
 
 	@Override
@@ -77,7 +90,7 @@ public class ForumEndpoint extends DirectEndpoint implements ISOCCEndpoint {
 	}
 
 	@Override
-	public EndpointProperties getProperties() {
+	public SOCCEndpointProperties getProperties() {
 		return properties;
 	}
 
@@ -86,7 +99,7 @@ public class ForumEndpoint extends DirectEndpoint implements ISOCCEndpoint {
 		return connector;
 	}
 
-	public synchronized Forum getForum() {
-		return this.forum;
+	public synchronized Thread getThread() {
+		return this.thread;
 	}
 }

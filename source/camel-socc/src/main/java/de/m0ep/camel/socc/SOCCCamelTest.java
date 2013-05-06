@@ -116,7 +116,7 @@ public class SOCCCamelTest {
 	}
 
 	SOCCComponent soccComponent = new SOCCComponent();
-	soccComponent.setSocc(socc);
+	soccComponent.setSOCC(socc);
 	context.addComponent("socc", soccComponent);
 
 	context.addRoutes(new RouteBuilder() {

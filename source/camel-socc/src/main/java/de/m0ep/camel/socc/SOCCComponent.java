@@ -15,7 +15,7 @@ import de.m0ep.socc.SOCC;
 public class SOCCComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(SOCCComponent.class);
-    SOCC socc;
+    private SOCC socc;
 
     public SOCCComponent() {
     }
@@ -28,25 +28,17 @@ public class SOCCComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining,
 	    Map<String, Object> parameters) throws Exception {
 
-	SOCCComponentConfiguration configuration = new SOCCComponentConfiguration();
+	EndpointProperties configuration = new EndpointProperties();
 	setProperties(configuration, parameters);
-
-	System.err.println(socc.getConnectorIds().size());
-	for (String con : socc.getConnectorIds()) {
-	    System.err.println(con);
-	    System.err.println(socc.getConnector(con));
-	    System.err.println();
-	}
-
 	IConnector connector = socc.getConnector(remaining);
 
 	if (null != configuration.getPostId()) {
-	    return new SOCCPostEndpoint(uri, connector, configuration);
+	    return new PostEndpoint(this, uri, configuration, connector);
 	} else if (null != configuration.getForumId()
 		&& null == configuration.getThreadId()) {
-	    return new SOCCForumEndpoint(uri, connector, configuration);
+	    return new ForumEndpoint(this, uri, configuration, connector);
 	} else if (null != configuration.getThreadId()) {
-	    return new SOCCThreadEndpoint(uri, connector, configuration);
+	    return new ThreadEndpoint(this, uri, configuration, connector);
 	}
 
 	throw new Exception("");
@@ -68,7 +60,7 @@ public class SOCCComponent extends DefaultComponent {
     /**
      * @return the socc
      */
-    public SOCC getSocc() {
+    public SOCC getSOCC() {
 	return this.socc;
     }
 
@@ -76,7 +68,7 @@ public class SOCCComponent extends DefaultComponent {
      * @param socc
      *            the socc to set
      */
-    public void setSocc(SOCC socc) {
+    public void setSOCC(SOCC socc) {
 	this.socc = socc;
     }
 }

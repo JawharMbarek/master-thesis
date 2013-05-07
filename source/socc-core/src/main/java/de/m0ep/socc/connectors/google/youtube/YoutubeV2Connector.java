@@ -38,6 +38,7 @@ import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.Variable;
+import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
@@ -71,7 +72,6 @@ import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.exceptions.NetworkException;
 import de.m0ep.socc.exceptions.NotFoundException;
 import de.m0ep.socc.utils.ConfigUtils;
-import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.StringUtils;
 
 public class YoutubeV2Connector extends AbstractConnector {
@@ -140,7 +140,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    finishPolling();
 	}
 
-	URI uri = RDF2GoUtils.createURI(String.format(
+	URI uri = Builder.createURI(String.format(
 		YoutubeV2Constants.FEED_UPLOADS, myId));
 	this.uploads = new Forum(model, uri, true);
 	this.uploads.setId(YoutubeV2Constants.ID_FOURM_UPLOADS);
@@ -148,7 +148,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 	this.uploads.setHost(getSite());
 	getSite().addHostOf(this.uploads);
 
-	uri = RDF2GoUtils.createURI(String.format(
+	uri = Builder.createURI(String.format(
 		YoutubeV2Constants.FEED_PLAYLISTS, myId));
 	this.playlists = new Forum(model, uri, true);
 	this.playlists.setId(YoutubeV2Constants.ID_FORUM_PLAYLISTS);
@@ -170,7 +170,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 
     @Override
     public Site getSite() {
-	URI uri = RDF2GoUtils.createURI(getURL());
+	URI uri = Builder.createURI(getURL());
 
 	if (!Site.hasInstance(getModel(), uri)) {
 	    Site result = new Site(getModel(), uri, true);
@@ -189,7 +189,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 
     @Override
     public UserAccount getUserAccount(String id) throws ConnectorException {
-	URI uri = RDF2GoUtils.createURI(String.format(
+	URI uri = Builder.createURI(String.format(
 		YoutubeV2Constants.ENTRY_USER, id));
 
 	if (!UserAccount.hasAccountName(getModel(), uri)) {
@@ -223,8 +223,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 		result.setId(parseYoutubeEntryID(profileEntry.getId()));
 		result.setIsPartOf(getSite());
 		result.setAccountName(profileEntry.getUsername());
-		result.setAccountServiceHomepage(RDF2GoUtils
-			.createURI(getURL()));
+		result.setAccountServiceHomepage(Builder.createURI(getURL()));
 
 		if (null != profileEntry.getAboutMe()) {
 		    result.setDescription(profileEntry.getAboutMe());
@@ -247,10 +246,10 @@ public class YoutubeV2Connector extends AbstractConnector {
     @Override
     public Forum getForum(String id) throws ConnectorException {
 	if (YoutubeV2Constants.ID_FOURM_UPLOADS.equalsIgnoreCase(id)) {
-	    return Forum.getInstance(getModel(), RDF2GoUtils.createURI(String
+	    return Forum.getInstance(getModel(), Builder.createURI(String
 		    .format(YoutubeV2Constants.FEED_UPLOADS, myId)));
 	} else if (YoutubeV2Constants.ID_FORUM_PLAYLISTS.equalsIgnoreCase(id)) {
-	    return Forum.getInstance(getModel(), RDF2GoUtils.createURI(String
+	    return Forum.getInstance(getModel(), Builder.createURI(String
 		    .format(YoutubeV2Constants.FEED_PLAYLISTS, myId)));
 	}
 
@@ -259,7 +258,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 
     @Override
     public Thread getThread(String id) throws ConnectorException {
-	URI uri = RDF2GoUtils.createURI(String.format(
+	URI uri = Builder.createURI(String.format(
 		YoutubeV2Constants.FEED_PLAYLIST, id));
 	if (Thread.hasInstance(getModel(), uri)) {
 	    return Thread.getInstance(getModel(), uri);
@@ -329,7 +328,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 
 	    if (null != linkFeed) {
 		for (PlaylistLinkEntry linkEntry : linkFeed.getEntries()) {
-		    URI uri = RDF2GoUtils.createURI(String.format(
+		    URI uri = Builder.createURI(String.format(
 			    YoutubeV2Constants.FEED_PLAYLIST,
 			    parseYoutubeEntryID(linkEntry.getId())));
 
@@ -362,7 +361,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 		ids[0].trim();
 		ids[1].trim();
 
-		URI uri = RDF2GoUtils.createURI(String.format(
+		URI uri = Builder.createURI(String.format(
 			YoutubeV2Constants.ENTRY_COMMENT, ids[0], ids[2]));
 
 		if (Post.hasInstance(getModel(), uri)) {
@@ -405,7 +404,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    }
 	} else {
 	    // it is maybe a video post
-	    URI uri = RDF2GoUtils.createURI(String.format(
+	    URI uri = Builder.createURI(String.format(
 		    YoutubeV2Constants.ENTRY_VIDEO, id));
 
 	    if (Post.hasInstance(getModel(), uri)) {
@@ -499,7 +498,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 
 		for (VideoEntry videoEntry : videoFeed.getEntries()) {
 		    String videoId = getVideoEntryId(videoEntry);
-		    URI uri = RDF2GoUtils.createURI(String.format(
+		    URI uri = Builder.createURI(String.format(
 			    YoutubeV2Constants.ENTRY_VIDEO, videoId));
 
 		    Date created = new Date(videoEntry.getPublished()
@@ -616,7 +615,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    }
 
 	    String commentId = parseYoutubeEntryID(resultCommentEntry.getId());
-	    URI uri = RDF2GoUtils.createURI(String.format(
+	    URI uri = Builder.createURI(String.format(
 		    YoutubeV2Constants.ENTRY_COMMENT, videoPost.getId(),
 		    commentId));
 	    Post addedPost = YoutubeV2SIOCConverter.createComment(this,
@@ -692,7 +691,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 		    if (created.after(lastReplyDate)) {
 			String commentId = parseYoutubeEntryID(commentEntry
 				.getId());
-			URI uri = RDF2GoUtils.createURI(String.format(
+			URI uri = Builder.createURI(String.format(
 				YoutubeV2Constants.ENTRY_COMMENT,
 				videoPost.getId(), commentId));
 

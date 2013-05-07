@@ -30,7 +30,6 @@ import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.node.Literal;
-import org.ontoware.rdf2go.model.node.PlainLiteral;
 import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.Variable;
@@ -84,21 +83,6 @@ public final class RDF2GoUtils {
     }
 
     /**
-     * Create a RDF2Go URI with the given value.
-     * 
-     * @param value
-     *            Value fro the URI
-     * @return A RDF2Go URI from value
-     * @throws NullPointerException
-     *             Thrown if value was null.
-     * @throws IllegalArgumentException
-     *             Thrown if value is no valid URI
-     */
-    public static URI createURI(final String value) {
-	return new URIImpl(Preconditions.checkNotNull(value), true);
-    }
-
-    /**
      * Create a valid "mailto" URI for email addresses.
      * 
      * @param email
@@ -109,17 +93,6 @@ public final class RDF2GoUtils {
      */
     public static URI createMailtoURI(final String email) {
 	return new URIImpl("mailto:" + Preconditions.checkNotNull(email));
-    }
-
-    /**
-     * Create a RDF {@link Literal} with the given value.
-     * 
-     * @param value
-     *            Value for the literal
-     * @return A RDF2Go {@link PlainLiteral}
-     */
-    public static Literal createLiteral(final String value) {
-	return new PlainLiteralImpl(StringUtils.trimToEmpty(value));
     }
 
     /**

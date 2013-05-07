@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.ontoware.rdf2go.model.Model;
-import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Thread;
 

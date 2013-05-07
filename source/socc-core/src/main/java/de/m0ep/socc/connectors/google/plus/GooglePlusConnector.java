@@ -36,6 +36,7 @@ import org.ontoware.rdf2go.model.QueryRow;
 import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.Variable;
+import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.ontoware.rdf2go.util.SparqlUtil;
 import org.ontoware.rdf2go.vocabulary.RDF;
@@ -189,8 +190,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	}
 
 	// set all static forums
-	URI uri = RDF2GoUtils
-		.createURI(getURL() + myId + "/" + ID_FORUM_PUBLIC);
+	URI uri = Builder.createURI(getURL() + myId + "/" + ID_FORUM_PUBLIC);
 
 	if (!Forum.hasInstance(getModel(), uri)) {
 	    Forum pub = new Forum(getModel(), uri, true);
@@ -200,7 +200,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	    getSite().addHostOf(pub);
 	}
 
-	uri = RDF2GoUtils.createURI(getURL() + myId + "/" + ID_FORUM_MOMENTS);
+	uri = Builder.createURI(getURL() + myId + "/" + ID_FORUM_MOMENTS);
 
 	if (!Forum.hasInstance(getModel(), uri)) {
 	    Forum moments = new Forum(getModel(), uri, true);
@@ -218,7 +218,7 @@ public class GooglePlusConnector extends AbstractConnector {
 
     @Override
     public Site getSite() {
-	URI uri = RDF2GoUtils.createURI(getURL());
+	URI uri = Builder.createURI(getURL());
 
 	if (!Site.hasInstance(getModel(), uri)) {
 	    Site result = new Site(getModel(), uri, true);
@@ -242,7 +242,7 @@ public class GooglePlusConnector extends AbstractConnector {
     @Override
     public UserAccount getUserAccount(final String id)
 	    throws ConnectorException {
-	URI uri = RDF2GoUtils.createURI(getURL() + PATH_USER + id);
+	URI uri = Builder.createURI(getURL() + PATH_USER + id);
 
 	if (!UserAccount.hasInstance(getModel(), uri)) {
 	    Person user = null;
@@ -266,7 +266,7 @@ public class GooglePlusConnector extends AbstractConnector {
 
 	    result.setId(user.getId());
 	    result.setIsPartOf(getSite());
-	    result.setAccountServiceHomepage(RDF2GoUtils.createURI(getURL()));
+	    result.setAccountServiceHomepage(Builder.createURI(getURL()));
 
 	    if (null != user.getAboutMe()) {
 		result.setDescription(user.getAboutMe());
@@ -289,8 +289,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	    }
 
 	    if (null != user.getImage()) {
-		result.setAvatar(RDF2GoUtils
-			.createURI(user.getImage().getUrl()));
+		result.setAvatar(Builder.createURI(user.getImage().getUrl()));
 	    }
 
 	    return result;
@@ -305,11 +304,11 @@ public class GooglePlusConnector extends AbstractConnector {
 	// TODO: later check for circles
 
 	if ((myId + "/" + ID_FORUM_PUBLIC).equalsIgnoreCase(id)) {
-	    URI uri = RDF2GoUtils.createURI(getURL() + myId + "/"
+	    URI uri = Builder.createURI(getURL() + myId + "/"
 		    + ID_FORUM_PUBLIC);
 	    return Forum.getInstance(getModel(), uri);
 	} else if ((myId + "/" + ID_FORUM_MOMENTS).equalsIgnoreCase(id)) {
-	    URI uri = RDF2GoUtils.createURI(getURL() + myId + "/"
+	    URI uri = Builder.createURI(getURL() + myId + "/"
 		    + ID_FORUM_MOMENTS);
 	    return Forum.getInstance(getModel(), uri);
 	}
@@ -420,7 +419,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	    if (null != feed) {
 		pageToken = feed.getNextPageToken();
 		for (Moment moment : feed.getItems()) {
-		    URI uri = RDF2GoUtils.createURI(getURL() + PATH_MOMENT
+		    URI uri = Builder.createURI(getURL() + PATH_MOMENT
 			    + moment.getId());
 
 		    if (null != moment.getTarget()) {
@@ -531,7 +530,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	    if (null != feed) {
 		pageToken = feed.getNextPageToken();
 		for (Activity activity : feed.getItems()) {
-		    URI uri = RDF2GoUtils.createURI(getURL() + PATH_ACTIVITY
+		    URI uri = Builder.createURI(getURL() + PATH_ACTIVITY
 			    + activity.getId());
 		    Date created = new Date(activity.getPublished().getValue());
 		    // TODO: check for updated posts!?
@@ -565,8 +564,8 @@ public class GooglePlusConnector extends AbstractConnector {
 			    if (null != activity.getObject().getAttachments()) {
 				for (Attachments attachments : activity
 					.getObject().getAttachments()) {
-				    post.addAttachment(RDF2GoUtils
-					    .createURI(attachments.getUrl()));
+				    post.addAttachment(Builder.createURI(
+					    attachments.getUrl()));
 				}
 			    }
 
@@ -642,7 +641,7 @@ public class GooglePlusConnector extends AbstractConnector {
 		    Date created = new Date(comment.getPublished().getValue());
 
 		    if (created.after(lastReplyDate)) {
-			URI uri = RDF2GoUtils.createURI(getURL() + PATH_COMMENT
+			URI uri = Builder.createURI(getURL() + PATH_COMMENT
 				+ comment.getId());
 
 			// TODO: check for updated comments!?

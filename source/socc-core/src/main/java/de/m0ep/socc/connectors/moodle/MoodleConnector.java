@@ -35,6 +35,7 @@ import java.util.concurrent.Callable;
 
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
@@ -65,7 +66,6 @@ import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.exceptions.NetworkException;
 import de.m0ep.socc.exceptions.NotFoundException;
 import de.m0ep.socc.utils.ConfigUtils;
-import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.StringUtils;
 
 public class MoodleConnector extends AbstractConnector {
@@ -136,7 +136,7 @@ public class MoodleConnector extends AbstractConnector {
 
     @Override
     public Site getSite() {
-	URI uri = RDF2GoUtils.createURI(getURL());
+	URI uri = Builder.createURI(getURL());
 
 	if (!Site.hasInstance(getModel(), uri)) {
 	    Site result = new Site(getModel(), uri, true);
@@ -161,7 +161,7 @@ public class MoodleConnector extends AbstractConnector {
 	Preconditions.checkNotNull(id, "id can not be null");
 	Preconditions.checkArgument(!id.isEmpty(), "id can not be empty");
 
-	URI uri = RDF2GoUtils.createURI(getURL() + URI_USER_PATH + id);
+	URI uri = Builder.createURI(getURL() + URI_USER_PATH + id);
 
 	if (!UserAccount.hasInstance(getModel(), uri)) {
 	    UserRecord[] users = moodle.get_user_byid(client, sesskey, myId);
@@ -192,7 +192,7 @@ public class MoodleConnector extends AbstractConnector {
 	    return result;
 
 	for (ForumRecord forumRecord : forumRecordArray) {
-	    URI uri = RDF2GoUtils.createURI(getURL() + URI_FORUM_PATH
+	    URI uri = Builder.createURI(getURL() + URI_FORUM_PATH
 		    + forumRecord.getId());
 
 	    if (!Forum.hasInstance(getModel(), uri)) {
@@ -213,7 +213,7 @@ public class MoodleConnector extends AbstractConnector {
 
 	for (Forum forum : getForums()) {
 	    for (Thread thread : getThreads(forum)) {
-		if (thread.hasId(RDF2GoUtils.createLiteral(id))) {
+		if (thread.hasId(Builder.createPlainliteral(id))) {
 		    return thread;
 		}
 	    }
@@ -242,7 +242,7 @@ public class MoodleConnector extends AbstractConnector {
 	    forumDiscussionArray = new ForumDiscussionRecord[0];
 
 	for (ForumDiscussionRecord discussionRecord : forumDiscussionArray) {
-	    URI uri = RDF2GoUtils.createURI(getURL() + URI_THREAD_PATH
+	    URI uri = Builder.createURI(getURL() + URI_THREAD_PATH
 		    + discussionRecord.getId());
 
 	    if (!Thread.hasInstance(getModel(), uri)) {
@@ -284,7 +284,7 @@ public class MoodleConnector extends AbstractConnector {
 	    }
 
 	    for (ForumPostRecord postRecord : posts) {
-		URI uri = RDF2GoUtils.createURI(getURL() + URI_POST_PATH
+		URI uri = Builder.createURI(getURL() + URI_POST_PATH
 			+ postRecord.getId());
 		Date created = new Date(postRecord.getCreated() * 1000L);
 
@@ -330,7 +330,7 @@ public class MoodleConnector extends AbstractConnector {
 
 	if (null != parentRecord.getChildren()) {
 	    for (ForumPostRecord replyRecord : parentRecord.getChildren()) {
-		URI uri = RDF2GoUtils.createURI(getURL() + URI_POST_PATH
+		URI uri = Builder.createURI(getURL() + URI_POST_PATH
 			+ replyRecord.getId());
 		Date created = new Date(replyRecord.getCreated() * 1000L);
 
@@ -470,7 +470,7 @@ public class MoodleConnector extends AbstractConnector {
 		int numChildren = postRecordArray[0].getChildren().length;
 
 		ForumPostRecord postRecord = postRecordArray[0].getChildren()[numChildren - 1];
-		URI uri = RDF2GoUtils.createURI(getURL() + URI_POST_PATH
+		URI uri = Builder.createURI(getURL() + URI_POST_PATH
 			+ postRecord.getId());
 
 		if (!Post.hasInstance(getModel(), uri)) {
@@ -520,7 +520,7 @@ public class MoodleConnector extends AbstractConnector {
 
 	if (null != postRecordArray && 0 < postRecordArray.length) {
 	    ForumPostRecord postRecord = postRecordArray[0];
-	    URI uri = RDF2GoUtils.createURI(getURL() + URI_POST_PATH
+	    URI uri = Builder.createURI(getURL() + URI_POST_PATH
 		    + postRecord.getId());
 
 	    if (!Post.hasInstance(getModel(), uri)) {

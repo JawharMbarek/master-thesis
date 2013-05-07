@@ -7,6 +7,7 @@ import org.ontoware.rdf2go.model.node.Literal;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.impl.PlainLiteralImpl;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
+import org.ontoware.rdf2go.util.Builder;
 
 public class RDF2GoUtilsTest {
 
@@ -15,7 +16,7 @@ public class RDF2GoUtilsTest {
 
     @Test
     public void testCreateURI() {
-	URI actual = RDF2GoUtils.createURI(TEST_URI_STRING);
+	URI actual = Builder.createURI(TEST_URI_STRING);
 	assertEquals(TEST_URI, actual);
 	
     }
@@ -29,7 +30,7 @@ public class RDF2GoUtilsTest {
 
     @Test
     public void testCreateLiteral() {
-	Literal actual = RDF2GoUtils.createLiteral("test");
+	Literal actual = Builder.createPlainliteral("test");
 	Literal expected = new PlainLiteralImpl("test");
 	assertEquals(expected, actual);
     }

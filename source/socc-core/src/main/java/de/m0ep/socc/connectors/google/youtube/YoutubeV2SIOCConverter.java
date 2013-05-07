@@ -25,6 +25,7 @@ package de.m0ep.socc.connectors.google.youtube;
 import java.text.ParseException;
 
 import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.util.Builder;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
@@ -48,7 +49,6 @@ import com.google.gdata.data.youtube.YouTubeNamespace;
 
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.utils.DateUtils;
-import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.SIOCUtils;
 import de.m0ep.socc.utils.StringUtils;
 
@@ -64,7 +64,7 @@ public class YoutubeV2SIOCConverter {
 	result.setId(connector.parseYoutubeEntryID(userProfileEntry.getId()));
 	result.setIsPartOf(connector.getSite());
 	result.setAccountName(userProfileEntry.getUsername());
-	result.setAccountServiceHomepage(RDF2GoUtils.createURI(connector
+	result.setAccountServiceHomepage(Builder.createURI(connector
 		.getURL()));
 
 	if (null != userProfileEntry.getAboutMe()) {
@@ -158,7 +158,7 @@ public class YoutubeV2SIOCConverter {
 
 	Link videoLink = videoEntry.getLink("alternate", "text/html");
 	if (null != videoLink) {
-	    result.addAttachment(RDF2GoUtils.createURI(videoLink.getHref()));
+	    result.addAttachment(Builder.createURI(videoLink.getHref()));
 	}
 
 	if (null != videoEntry.getPublished()) {
@@ -232,7 +232,7 @@ public class YoutubeV2SIOCConverter {
 	if (null != replyToLink) { // this comment is a reply to an other
 				   // comment
 	    String href = replyToLink.getHref();
-	    URI replyToUri = RDF2GoUtils.createURI(href.substring(0,
+	    URI replyToUri = Builder.createURI(href.substring(0,
 		    href.lastIndexOf('?')));
 
 	    if (Post.hasInstance(connector.getModel(), replyToUri)) {

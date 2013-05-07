@@ -1,6 +1,7 @@
 package de.m0ep.socc.connectors.moodle;
 
 import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
@@ -33,7 +34,7 @@ public final class MoodleToSIOCConverter {
 	UserAccount result = new UserAccount(connector.getModel(), uri, true);
 	result.setId(Integer.toString(userRecord.getId()));
 	result.setIsPartOf(connector.getSite());
-	result.setAccountServiceHomepage(RDF2GoUtils.createURI(connector
+	result.setAccountServiceHomepage(Builder.createURI(connector
 		.getURL()));
 
 	String firstName = Strings.emptyToNull(userRecord.getFirstname());

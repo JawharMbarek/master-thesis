@@ -4,6 +4,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.util.Builder;
 import org.rdfs.sioc.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import com.google.common.base.Strings;
 
 import de.m0ep.camel.socc.SOCCEndpointForum;
 import de.m0ep.camel.socc.data.SIOCPostData;
-import de.m0ep.socc.utils.RDF2GoUtils;
 
 public class SOCCProducerForum extends DefaultProducer {
 	private static final Logger LOG = LoggerFactory
@@ -44,7 +44,7 @@ public class SOCCProducerForum extends DefaultProducer {
 		}
 
 		if (null != postData) {
-			URI postUri = RDF2GoUtils.createURI(postData.getId());
+			URI postUri = Builder.createURI(postData.getId());
 			if (!Post.hasInstance(
 					endpoint.getConnector().getModel(),
 					postUri)) {

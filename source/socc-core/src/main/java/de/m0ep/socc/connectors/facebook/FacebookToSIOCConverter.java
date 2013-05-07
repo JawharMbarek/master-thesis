@@ -3,6 +3,7 @@ package de.m0ep.socc.connectors.facebook;
 import java.util.Date;
 
 import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
@@ -49,7 +50,7 @@ public class FacebookToSIOCConverter {
 
 	result.setId(user.getId());
 	result.setIsPartOf(connector.getSite());
-	result.setAccountServiceHomepage(RDF2GoUtils.createURI(connector
+	result.setAccountServiceHomepage(Builder.createURI(connector
 		.getURL()));
 
 	if (null != user.getEmail() && !user.getEmail().isEmpty()) {
@@ -180,10 +181,10 @@ public class FacebookToSIOCConverter {
 	}
 
 	if (obj.has(FacebookConstants.FIELD_LINK)) {
-	    result.setAttachment(RDF2GoUtils.createURI(obj
+	    result.setAttachment(Builder.createURI(obj
 		    .getString(FacebookConstants.FIELD_LINK)));
 	} else if (obj.has(FacebookConstants.FIELD_SOURCE)) {
-	    result.setAttachment(RDF2GoUtils.createURI(obj
+	    result.setAttachment(Builder.createURI(obj
 		    .getString(FacebookConstants.FIELD_SOURCE)));
 	}
 

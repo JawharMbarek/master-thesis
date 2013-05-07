@@ -35,6 +35,7 @@ import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.Variable;
+import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
@@ -67,7 +68,6 @@ import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.exceptions.NetworkException;
 import de.m0ep.socc.exceptions.NotFoundException;
 import de.m0ep.socc.utils.ConfigUtils;
-import de.m0ep.socc.utils.RDF2GoUtils;
 
 /**
  * A SOCC Connector for Facebook using RestFb to access Facebooks GraphAPI.
@@ -132,7 +132,7 @@ public class FacebookConnector extends AbstractConnector {
 	}
 
 	// add static forums
-	URI uri = RDF2GoUtils.createURI(getURL() + myId + "/"
+	URI uri = Builder.createURI(getURL() + myId + "/"
 		+ FacebookConstants.CONNECTION_FEED);
 	if (!Forum.hasInstance(getModel(), uri)) {
 	    Forum wall = new Forum(getModel(), uri, true);
@@ -155,7 +155,7 @@ public class FacebookConnector extends AbstractConnector {
 
     @Override
     public Site getSite() throws ConnectorException {
-	URI uri = RDF2GoUtils.createURI(getURL());
+	URI uri = Builder.createURI(getURL());
 
 	if (!Site.hasInstance(getModel(), uri)) {
 	    Site result = new Site(getModel(), uri, true);
@@ -185,7 +185,7 @@ public class FacebookConnector extends AbstractConnector {
 	Preconditions.checkNotNull(id, "id can not be null");
 	Preconditions.checkArgument(!id.isEmpty(), "id can not be empty");
 
-	URI uri = RDF2GoUtils.createURI(getURL() + id);
+	URI uri = Builder.createURI(getURL() + id);
 
 	if (!UserAccount.hasInstance(getModel(), uri)) {
 	    User user = null;
@@ -208,7 +208,7 @@ public class FacebookConnector extends AbstractConnector {
 
     @Override
     public Forum getForum(final String id) throws ConnectorException {
-	URI uri = RDF2GoUtils.createURI(getURL()
+	URI uri = Builder.createURI(getURL()
 		+ (FacebookConstants.ID_ME.equalsIgnoreCase(id) ? (myId) : (id
 			.toLowerCase())) + "/"
 		+ FacebookConstants.CONNECTION_FEED);
@@ -272,7 +272,7 @@ public class FacebookConnector extends AbstractConnector {
 
 	for (List<Group> myGroups : groupsConnections) {
 	    for (Group group : myGroups) {
-		URI uri = RDF2GoUtils.createURI(getURL() + group.getId() + "/"
+		URI uri = Builder.createURI(getURL() + group.getId() + "/"
 			+ FacebookConstants.CONNECTION_FEED);
 
 		if (!Forum.hasInstance(getModel(), uri)) {
@@ -289,7 +289,7 @@ public class FacebookConnector extends AbstractConnector {
 
     @Override
     public Post getPost(String id) throws ConnectorException {
-	URI uri = RDF2GoUtils.createURI(getURL() + id);
+	URI uri = Builder.createURI(getURL() + id);
 
 	if (!Post.hasInstance(getModel(), uri)) {
 	    JsonObject obj;
@@ -583,7 +583,7 @@ public class FacebookConnector extends AbstractConnector {
 	if (null != feed) {
 	    for (List<JsonObject> posts : feed) {
 		for (JsonObject obj : posts) {
-		    URI uri = RDF2GoUtils.createURI(getURL()
+		    URI uri = Builder.createURI(getURL()
 			    + obj.getString(FacebookConstants.FIELD_ID));
 		    Date created = com.restfb.util.DateUtils
 			    .toDateFromLongFormat(obj
@@ -642,7 +642,7 @@ public class FacebookConnector extends AbstractConnector {
 
 	    if (created.after(lastReplyDate)) {
 		String id = obj.getString(FacebookConstants.FIELD_ID);
-		URI uri = RDF2GoUtils.createURI(getURL() + id);
+		URI uri = Builder.createURI(getURL() + id);
 
 		if (!Post.hasInstance(getModel(), uri)) {
 		    result.add(FacebookToSIOCConverter.createComment(this,

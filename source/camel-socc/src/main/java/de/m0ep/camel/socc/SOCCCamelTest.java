@@ -4,13 +4,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.apache.camel.CamelContext;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.Constants;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.ontoware.rdf2go.model.Model;
 
 import com.google.gson.Gson;
@@ -26,7 +32,7 @@ import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
 
 public class SOCCCamelTest {
     public static void main(String[] args) throws Exception {
-	CamelContext context = new DefaultCamelContext();
+	DefaultCamelContext context = new DefaultCamelContext();
 	Model model = SOCC.createDefaultMemoryModel();
 
 	SOCC socc = new SOCC(model);
@@ -89,11 +95,11 @@ public class SOCCCamelTest {
 	ytParams.put(YoutubeV2ConnectorConfig.DEVELOPER_KEY,
 		configFile.get("yt.developerKey"));
 
-	socc.createConnector("YoutubeConnectorFactory_v2", "youtube-test",
+	socc.createConnector("YoutubeV2ConnectorFactory", "youtube-test",
 		ytParams);
-	socc.createConnector("GooglePlusConnectorFactory_1.0",
+	socc.createConnector("GooglePlusConnectorFactory",
 		"googleplus-test", gpParams);
-	socc.createConnector("MoodleConnectorFactory_2.4", "moodle-test",
+	socc.createConnector("Moodle2.4ConnectorFactory", "moodle-test",
 		mdlParams);
 	socc.createConnector("FacebookConnectorFactory_1.0", "facebook-test",
 		fbParams);
@@ -122,8 +128,8 @@ public class SOCCCamelTest {
 	    @Override
 	    public void configure() throws Exception {
 		from("socc:facebook-test?forumId=100000490230885&delay=5000")
-		/* .marshal(new RDFXMLDataformat()) */.to(
-			"socc:moodle-test?forumId=1&threadId=2");
+			/* .marshal(new RDFXMLDataformat()) */.to(
+				"socc:moodle-test?forumId=1&threadId=2");
 	    }
 	});
 
@@ -138,5 +144,19 @@ public class SOCCCamelTest {
 	} while (!"q".equals(line));
 
 	context.stop();
+
+	JAXBContext jaxbContext = JAXBContext.newInstance(
+		Constants.JAXB_CONTEXT_PACKAGES, SOCCCamelTest.class
+			.getClassLoader());
+	
+	Marshaller marshaller = jaxbContext.createMarshaller();
+	List<RouteDefinition> routeList = context.getRouteDefinitions();
+	RoutesDefinition routesDefinition = new RoutesDefinition();
+	for (RouteDefinition routeDefinition : routeList) {
+	    routesDefinition.getRoutes().add(routeDefinition);
+	}
+	
+	System.out.println("-----------------------");
+	marshaller.marshal(routesDefinition, System.out);
     }
 }

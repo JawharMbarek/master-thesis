@@ -114,4 +114,21 @@ public final class RDF2GoUtils {
 		+ Strings.nullToEmpty(value).replace("]]>",
 			"]]]]><![CDATA[>") + "]]>");
     }
+    
+    /**
+     * Tries to lock a RDF2Go {@link Model} or waits if its already locked-
+     * 
+     * @param model {@link Model} to lock.
+     */
+    public static void lockModelOrWait(final Model model){
+	while(model.isLocked()){	    
+	    try {
+		Thread.sleep(1);
+	    } catch (InterruptedException e) {
+		// ignore this
+	    }
+	}
+	
+	model.lock();
+    }
 }

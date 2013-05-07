@@ -5,7 +5,7 @@
       "factoryId": "FacebookConnectorFactory_1.0",
       "parameters": {
         "expiresInSeconds": "0",
-        "accessToken": "BAACEdEose0cBAEl3qqT2jpZBMOxBpsbdP1VNTPjrdWsM7AeV4OcBPFO7YMmLaYqxgEHqnVR9sK8LcZAMoE11f5N5LWj0dZC0P6Gvkq8RjlDBUC4LcPKqwBidqeBwEhTWg1gWFZBMylZAiPjnmHDgenHS7ulZCE4cp2dZABaekJmWXPBuKbfiTf42gCqtsOYZAy5DF4qZBQ9ZB5QjPN2isabybOoq2rryCjtlU18LJfVX7ZAkgZDZD",
+        "accessToken": "BAACEdEose0cBAKZB5dBz6gFFZBtSHzR771D8E3l1BnCOoUmKJXwH2G3Fhvxy2MJa37Fr6Gxe1ljaP8iY5ZAZB0i0ZAuWciv1ZCp5eJ2NKS9kUQ0gpbx5glEj6ZCCaQTaZCEbk8zsGXguhB0qG0kJy46QGoZBsvetxhAQX6sN4HFBPmg2SPL570ZBBVEKCG2uEMgwCeNwBIPJPtTN5cRBi1kLAJrphftnwyvbJziEyb2ZCpAMAZDZD",
         "pollCooldownMillis": "100",
         "maxNewPostsOnPoll": "10",
         "clientSecret": "f4ed27b621c0f6476c2741f7cf9c4dc5",

@@ -30,6 +30,8 @@ import de.m0ep.socc.config.SOCCConfiguration;
 import de.m0ep.socc.shop.ui.ApplicationWindow;
 
 public class SOCCShopApplication {
+    private static final String CONNECTOR_CFG_FILENAME = "connectors.json";
+
     private static final Logger LOG = LoggerFactory
 	    .getLogger(SOCCShopApplication.class);
 
@@ -47,9 +49,9 @@ public class SOCCShopApplication {
 
     public SOCCShopApplication() {
 	SOCCConfiguration configuration = null;
-	File settingsFile = new File("/connectors.cfg");
+	File settingsFile = getSettingsFile();
 
-	if (settingsFile.exists()) {
+	if (null != settingsFile && settingsFile.exists()) {
 	    try {
 		configuration = SOCCConfiguration.load(settingsFile);
 	    } catch (Throwable t) {
@@ -85,6 +87,29 @@ public class SOCCShopApplication {
 	}
     }
 
+    private File getSettingsFile() {
+	File result = new File("./" + CONNECTOR_CFG_FILENAME);
+
+	if (!result.exists()) {
+	    URL url = SOCCShopApplication.class.getResource(
+		    "/" + CONNECTOR_CFG_FILENAME);
+
+	    if (null != url) {
+		try {
+		    result = new File(url.toURI());
+		} catch (Throwable t) {
+		    LOG.warn("failed to load settings file from classpath",
+			    t);
+		    return null;
+		}
+	    } else {
+		return null;
+	    }
+	}
+
+	return result;
+    }
+
     public void start() {
 	LOG.info("Starting SOCC-Shop...");
 	EventQueue.invokeLater(new Runnable() {
@@ -109,7 +134,7 @@ public class SOCCShopApplication {
 
 	if (null != socc) {
 	    URL settingsUrl = SOCCShopApplication.class
-		    .getResource("/connectors.cfg");
+		    .getResource(CONNECTOR_CFG_FILENAME);
 
 	    if (null != settingsUrl) {
 		try {

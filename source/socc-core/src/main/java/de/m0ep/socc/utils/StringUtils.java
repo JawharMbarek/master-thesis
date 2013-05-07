@@ -24,44 +24,48 @@ package de.m0ep.socc.utils;
 
 import org.jsoup.Jsoup;
 
+import com.google.common.base.Strings;
+
+/**
+ * Class with utility methods for easier handling with strings. 
+ * 
+ * @author Florian Müller
+ *
+ */
 public class StringUtils {
-
-    /**
-     * Trim whitespace character form a string. If value is null, return an
-     * empty string.
-     * 
-     * @param value
-     *            String to trim
-     * @return Return trimmed or empty string.
+    /*
+     * Private constructor to avoid creating objects from this class.
      */
-    public static String trimToEmpty(final String value) {
-	if (null == value)
-	    return "";
-
-	return value.trim();
+    private StringUtils() {
     }
 
     /**
      * User JSoup to remove all HTML tags from a string
+     * 
+     * If value is empty, it will be converted to an empty string.
      * 
      * @param value
      *            String to strip
      * @return String without HTML tags
      */
     public static String stripHTML(final String value) {
-	return Jsoup.parse(value).text();
+	return Jsoup.parse(Strings.nullToEmpty(value)).text();
     }
 
     /**
      * Add a slash to the end of the string, if it isn't present.
      * 
+     * If value is empty, it will be converted to an empty string.
+     * 
      * @param value
      * @return value with "/" at the end
      */
     public static String endsWithSlash(final String value) {
-	if (!value.endsWith("/"))
-	    return value.concat("/");
+	String result = Strings.nullToEmpty(value);
+	
+	if (!result.endsWith("/"))
+	    return result.concat("/");
 
-	return value;
+	return result;
     }
 }

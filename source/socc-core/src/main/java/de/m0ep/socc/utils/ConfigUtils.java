@@ -33,14 +33,38 @@ import org.apache.commons.beanutils.locale.LocaleBeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import de.m0ep.socc.config.IConnectorConfig;
 
+/**
+ * Some utility methods to handle JavaBean configuration classes.
+ * 
+ * @author Florian Müller
+ */
 public class ConfigUtils {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(ConfigUtils.class);
 
-    public static String[] getParameterNames(
+    /*
+     * Private constructor to avoid creating objects from this class.
+     */
+    private ConfigUtils() {
+    }
+
+    /**
+     * Return all names of properties handled by this bean.
+     * 
+     * @param clazz
+     *            {@link Class} of the bean.
+     * @return All propertynames from <i>clazz</i>
+     * 
+     * @throws NullPointerException
+     *             Thrown if <i>clazz</i> is null.
+     */
+    public static String[] getPropertyNames(
 	    Class<? extends IConnectorConfig> clazz) {
+	Preconditions.checkNotNull(clazz, "Calzz can not be null.");
 	List<String> result = new ArrayList<String>();
 
 	PropertyDescriptor[] properties = PropertyUtils
@@ -48,8 +72,9 @@ public class ConfigUtils {
 
 	for (PropertyDescriptor pd : properties) {
 	    // irgnore getClass()
-	    if (pd.getName().equalsIgnoreCase("class"))
+	    if (pd.getName().equalsIgnoreCase("class")) {
 		continue;
+	    }
 
 	    result.add(pd.getName());
 	}
@@ -57,8 +82,29 @@ public class ConfigUtils {
 	return result.toArray(new String[result.size()]);
     }
 
+    /**
+     * Convert a {@link Map} to a {@link IConnectorConfig} using
+     * <i>configDefault</i> with provided default values.
+     * 
+     * @param paramerers
+     *            {@link Map} with values for some properties
+     * @param configDefault
+     *            {@link IConnectorConfig} with default values to fill in the
+     *            <i>parameters</i> {@link Map}, should not be null.
+     * @return <i>configDefault</i> with inserted propertyvalues from
+     *         <i>parameters</i>
+     * 
+     * @throws NullPointerException
+     *             Thrown if <i>parameters</i> and/or <i>configDefault</i> are
+     *             null.
+     */
     public static <T extends IConnectorConfig> T fromMap(
 	    Map<String, Object> paramerers, T configDefault) {
+	Preconditions.checkNotNull(paramerers, "Parameters can not be null.");
+	Preconditions.checkNotNull(
+		configDefault,
+		"ConfigDefault can not be null.");
+
 	try {
 	    BeanUtils.populate(configDefault, paramerers);
 	    return configDefault;
@@ -70,8 +116,19 @@ public class ConfigUtils {
 	}
     }
 
+    /**
+     * Convert a {@link IConnectorConfig} JavaBean to a {@link Map}
+     * 
+     * @param config
+     *            {@link IConnectorConfig} to convert
+     * @return Map of <i>config</i> bean
+     * 
+     * @throws NullPointerException
+     *             Thrown if config is null.
+     */
     @SuppressWarnings("unchecked")
     public static Map<String, Object> toMap(IConnectorConfig config) {
+	Preconditions.checkNotNull(config, "Config can not be null.");
 	try {
 	    return LocaleBeanUtils.describe(config);
 	} catch (Exception e) {

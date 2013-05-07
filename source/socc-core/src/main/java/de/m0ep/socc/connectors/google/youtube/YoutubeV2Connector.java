@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.gdata.client.youtube.YouTubeService;
 import com.google.gdata.data.Link;
 import com.google.gdata.data.youtube.CommentEntry;
@@ -72,7 +73,6 @@ import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.exceptions.NetworkException;
 import de.m0ep.socc.exceptions.NotFoundException;
 import de.m0ep.socc.utils.ConfigUtils;
-import de.m0ep.socc.utils.StringUtils;
 
 public class YoutubeV2Connector extends AbstractConnector {
     private static final Logger LOG = LoggerFactory
@@ -229,10 +229,9 @@ public class YoutubeV2Connector extends AbstractConnector {
 		    result.setDescription(profileEntry.getAboutMe());
 		}
 
-		result.setName(StringUtils.trimToEmpty(profileEntry
-			.getFirstName())
+		result.setName(Strings.nullToEmpty(profileEntry.getFirstName())
 			+ " "
-			+ StringUtils.trimToEmpty(profileEntry.getLastName()));
+			+ Strings.nullToEmpty(profileEntry.getLastName()));
 
 		return result;
 	    }

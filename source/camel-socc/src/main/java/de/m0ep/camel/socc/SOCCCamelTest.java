@@ -23,12 +23,11 @@ import de.m0ep.socc.config.SOCCConfiguration;
 import de.m0ep.socc.connectors.google.plus.GooglePlusConnectorConfig;
 import de.m0ep.socc.connectors.google.youtube.YoutubeV2ConnectorConfig;
 import de.m0ep.socc.connectors.moodle.MoodleConnectorConfig;
-import de.m0ep.socc.utils.SIOCUtils;
 
 public class SOCCCamelTest {
     public static void main(String[] args) throws Exception {
 	CamelContext context = new DefaultCamelContext();
-	Model model = SIOCUtils.createDefaultMemoryModel();
+	Model model = SOCC.createDefaultMemoryModel();
 
 	SOCC socc = new SOCC(model);
 

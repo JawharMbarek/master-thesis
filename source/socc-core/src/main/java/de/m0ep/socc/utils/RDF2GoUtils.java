@@ -37,6 +37,7 @@ import org.ontoware.rdf2go.model.node.impl.PlainLiteralImpl;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 /**
  * Some utility methods to work with RDF2Go
@@ -46,6 +47,12 @@ import com.google.common.base.Preconditions;
  */
 public final class RDF2GoUtils {
 
+    /*
+     * Private constructor to avoid creating objects from this class.
+     */
+    private RDF2GoUtils(){
+    }
+    
     /**
      * Resturn all {@link Statement}s of a {@link Resource} in a given
      * {@link Model}.
@@ -104,7 +111,7 @@ public final class RDF2GoUtils {
      */
     public static Literal createCDATASection(final String value) {
 	return new PlainLiteralImpl("<![CDATA["
-		+ StringUtils.trimToEmpty(value).replace("]]>",
+		+ Strings.nullToEmpty(value).replace("]]>",
 			"]]]]><![CDATA[>") + "]]>");
     }
 }

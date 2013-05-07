@@ -25,17 +25,40 @@ package de.m0ep.socc.utils;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.ontoware.rdf2go.RDF2Go;
-import org.ontoware.rdf2go.model.Model;
-import org.purl.dc.terms.DCTermsVocabulary;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOCVocabulary;
 
-import com.xmlns.foaf.FOAFVocabulary;
+import com.google.common.base.Preconditions;
 
+/**
+ * Some utility methods to work easier with SIOC
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class SIOCUtils {
+    /*
+     * Private constructor to avoid creating objects from this class.
+     */
+    private SIOCUtils() {
+    }
+
+    /**
+     * Update the LastItemDate property of a {@link Container}, if the creation
+     * date of the {@link Post} is newer then the old value.
+     * 
+     * @param container
+     *            {@link Container} to check the LastItemDate property.
+     * @param post
+     *            Possibly newer {@link Post}.
+     * 
+     * @throws NullPointerException
+     *             Thrown if container or post is null.
+     */
     public static void updateLastItemDate(Container container, Post post) {
+	Preconditions.checkNotNull(container, "Container can not be null.");
+	Preconditions.checkNotNull(post, "Post can not be null.");
+
 	if (post.hasCreated()) {
 	    if (container.hasLastItemDate()) {
 		try {
@@ -44,8 +67,9 @@ public class SIOCUtils {
 			    .getLastItemDate());
 
 		    // return if this post is older then the last
-		    if (!postDate.after(lastDate))
+		    if (!postDate.after(lastDate)) {
 			return;
+		    }
 
 		} catch (ParseException e) {
 		    // ignore this post
@@ -57,7 +81,22 @@ public class SIOCUtils {
 	}
     }
 
+    /**
+     * Update the LastReplyDate property of a {@link Post}, if the creation
+     * date of the reply is newer then the old value.
+     * 
+     * @param container
+     *            Parent {@link Post} to check the LastReplyDate property.
+     * @param reply
+     *            Possibly newer {@link Post} reply.
+     * 
+     * @throws NullPointerException
+     *             Thrown if parent or reply is null.
+     */
     public static void updateLastReplyDate(Post parent, Post reply) {
+	Preconditions.checkNotNull(parent, "Parent can not be null.");
+	Preconditions.checkNotNull(reply, "Reply can not be null.");
+	
 	if (reply.hasCreated()) {
 	    if (parent.hasLastReplyDate()) {
 		try {
@@ -77,16 +116,5 @@ public class SIOCUtils {
 
 	    parent.setLastReplyDate(reply.getCreated());
 	}
-    }
-
-    public static Model createDefaultMemoryModel() {
-	Model model = RDF2Go.getModelFactory().createModel();
-	model = RDF2Go.getModelFactory().createModel();
-	model.open();
-	model.setNamespace("sioc", SIOCVocabulary.NS_SIOC.toString());
-	model.setNamespace("foaf", FOAFVocabulary.NS_FOAF.toString());
-	model.setNamespace("dcterms", DCTermsVocabulary.NS_DCTerms.toString());
-
-	return model;
     }
 }

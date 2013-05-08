@@ -34,8 +34,8 @@ import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOCVocabulary;
 import org.rdfs.sioc.SIOCThing;
+import org.rdfs.sioc.SIOCVocabulary;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
@@ -68,22 +68,26 @@ public abstract class AbstractConnector implements IConnector {
 
     private static final String SPARQL_SELECT_USERACCOUNTS_OF_SITE = "SELECT ?"
 	    + SPARQL_VAR_USER + " WHERE {" + "?" + SPARQL_VAR_USER + " "
-	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.UserAccount.toSPARQL() + " ; "
+	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.UserAccount.toSPARQL()
+	    + " ; "
 	    + SIOCThing.ISPARTOF.toSPARQL() + " %s . }";
 
     private static final String SPARQL_SELECT_FORUMS_OF_SITE = "SELECT ?"
 	    + SPARQL_VAR_FORUM + " WHERE { ?" + SPARQL_VAR_FORUM + " "
-	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.Forum.toSPARQL() + " ; "
+	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.Forum.toSPARQL()
+	    + " ; "
 	    + SIOCVocabulary.has_host.toSPARQL() + " %s . }";
 
     private static final String SPARQL_SELECT_THREADS_OF_FORUM = "SELECT ?"
 	    + SPARQL_VAR_THREAD + " WHERE { ?" + SPARQL_VAR_THREAD + " "
-	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.Thread.toSPARQL() + " ; "
+	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.Thread.toSPARQL()
+	    + " ; "
 	    + SIOCVocabulary.has_parent.toSPARQL() + " %s . }";
 
     protected String id;
     protected Model model;
     protected DefaultConnectorConfig defaultConfig;
+    protected boolean isOnline;
 
     protected long lastPollTime;
 
@@ -103,8 +107,17 @@ public abstract class AbstractConnector implements IConnector {
 		.setPollCooldownMillis(SOCCConstants.POLL_COOLDOWN_MILLIS);
 	ConfigUtils.fromMap(parameters, defaultConfig);
 
-	lastPollTime = System.currentTimeMillis();
+	this.lastPollTime = System.currentTimeMillis();
+	this.isOnline = false;
     }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.IConnector#connect()
+     */
+    @Override
+    public abstract void connect() throws ConnectorException;
 
     /**
      * (non-Javadoc)
@@ -132,6 +145,34 @@ public abstract class AbstractConnector implements IConnector {
      */
     @Override
     public abstract String getURL();
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.IConnector#getConfiguration()
+     */
+    @Override
+    public abstract Map<String, Object> getConfiguration();
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see de.m0ep.socc.IConnector#isOnline()
+     */
+    @Override
+    public boolean isOnline() {
+	return isOnline;
+    }
+
+    /**
+     * Sets this connector to be online.
+     * 
+     * @param online
+     *            Online status
+     */
+    protected void setOnline(final boolean online) {
+	this.isOnline = online;
+    }
 
     /**
      * (non-Javadoc)

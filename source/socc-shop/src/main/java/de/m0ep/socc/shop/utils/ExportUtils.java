@@ -1,7 +1,6 @@
 package de.m0ep.socc.shop.utils;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -11,13 +10,12 @@ import javax.xml.bind.Marshaller;
 
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.Constants;
-import org.ontoware.rdf2go.RDF2Go;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.util.RDFTool;
-import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOC;
 
 import com.google.common.collect.Lists;
 
@@ -32,10 +30,10 @@ public final class ExportUtils {
 	String result = "";
 
 	RDF2GoUtils.lockModelOrWait(model);
-	
+
 	// get all statements from the origin model
 	List<Statement> statements = Lists.newArrayList(model.iterator());
-	
+
 	model.unlock();
 
 	// sort them by subject
@@ -53,22 +51,29 @@ public final class ExportUtils {
 
 	// write sorted model to xml string
 	result = RDFTool.modelToString(tmpModel, Syntax.RdfXml);
-	
+
 	// close sorted model
 	tmpModel.close();
 
 	return result;
     }
 
-    public static String getRoutesXML(final DefaultCamelContext camelContext)
+    public static String getRoutesXML(final DefaultCamelContext context)
 	    throws Exception {
 	JAXBContext jaxbContext = JAXBContext.newInstance(
 		Constants.JAXB_CONTEXT_PACKAGES, ExportUtils.class
 			.getClassLoader());
 
 	Marshaller marshaller = jaxbContext.createMarshaller();
+
+	// get all routes inside this context
+	RoutesDefinition routesDefinition = new RoutesDefinition();
+	for (RouteDefinition routeDefinition : context.getRouteDefinitions()) {
+	    routesDefinition.getRoutes().add(routeDefinition);
+	}
+
 	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	marshaller.marshal(camelContext, baos);
+	marshaller.marshal(routesDefinition, baos);
 
 	return new String(baos.toByteArray());
     }

@@ -67,11 +67,11 @@ public class ApplicationWindow {
 	frmSoccShop = new JFrame();
 	frmSoccShop.setTitle("SOCC Shop");
 	frmSoccShop.setBounds(200, 100, 707, 549);
-	frmSoccShop.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	frmSoccShop.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	frmSoccShop.addWindowListener(new WindowAdapter() {
 	    @Override
 	    public void windowClosed(WindowEvent e) {
-		app.stop(0);
+		app.shutdown();
 	    }
 	});
 

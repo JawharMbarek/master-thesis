@@ -1,6 +1,8 @@
 package de.m0ep.socc.shop.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -12,11 +14,16 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.ListCellRenderer;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import com.google.common.base.Ascii;
 import com.google.common.base.Preconditions;
@@ -28,12 +35,85 @@ import de.m0ep.socc.shop.SOCCShopApplication;
 public class ConnectorsInternalFrame extends JInternalFrame {
     private static final long serialVersionUID = -8822621555961769296L;
 
+    private static class ConnectorItem {
+	private IConnector connector;
+
+	public ConnectorItem(IConnector connector) {
+	    super();
+	    this.connector = connector;
+	}
+
+	public IConnector getConnector() {
+	    return connector;
+	}
+
+	@Override
+	public String toString() {
+	    return getConnector().getId();
+	}
+    }
+
+    private static class ConnectorCellItemRenderer extends JLabel implements
+	    ListCellRenderer<ConnectorItem> {
+	private static final long serialVersionUID = 1L;
+
+	private static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
+
+	@Override
+	public Component getListCellRendererComponent(
+		JList<? extends ConnectorItem> list, ConnectorItem value,
+		int index, boolean isSelected, boolean cellHasFocus) {
+
+	    setText(value.toString());
+
+	    if (isSelected) {
+		setBackground(list.getSelectionBackground());
+		setForeground(list.getSelectionForeground());
+	    } else {
+		setBackground(list.getBackground());
+		setForeground(list.getForeground());
+	    }
+
+	    if (!value.getConnector().isOnline()) {
+		setForeground(Color.red);
+		setIcon(new ImageIcon(
+			ConnectorCellItemRenderer.class
+				.getResource("/images/disconnect.png")));
+	    }
+	    else {
+		setIcon(new ImageIcon(
+			ConnectorCellItemRenderer.class
+				.getResource("/images/connect.png")));
+	    }
+
+	    setEnabled(list.isEnabled());
+	    setFont(list.getFont());
+
+	    Border border = null;
+	    if (cellHasFocus) {
+		if (isSelected) {
+		    border = UIManager
+			    .getBorder("List.focusSelectedCellHighlightBorder");
+		}
+		if (border == null) {
+		    border = UIManager
+			    .getBorder("List.focusCellHighlightBorder");
+		}
+	    } else {
+		border = noFocusBorder;
+	    }
+	    setBorder(border);
+
+	    return this;
+	}
+    }
+
     public static final String REMOVE_CONNECTOR_ACTION_STRING = "RemoveConnector";
 
     private SOCCShopApplication app;
 
-    private JList<String> listConnectors;
-    private DefaultListModel<String> listConnectorsModel;
+    private JList<ConnectorItem> listConnectors;
+    private DefaultListModel<ConnectorItem> listConnectorsModel;
 
     /**
      * Create the frame.
@@ -56,8 +136,9 @@ public class ConnectorsInternalFrame extends JInternalFrame {
 	setBounds(100, 100, 253, 150);
 	getContentPane().setLayout(new BorderLayout(0, 0));
 
-	listConnectorsModel = new DefaultListModel<String>();
-	listConnectors = new JList<String>(listConnectorsModel);
+	listConnectorsModel = new DefaultListModel<ConnectorItem>();
+	listConnectors = new JList<ConnectorItem>(listConnectorsModel);
+	listConnectors.setCellRenderer(new ConnectorCellItemRenderer());
 
 	// add 'backspace' and 'delete' keys to delete a selected connector
 	KeyStroke backSpaceKey = KeyStroke.getKeyStroke('\b');
@@ -116,7 +197,7 @@ public class ConnectorsInternalFrame extends JInternalFrame {
     private void initialize() {
 	// Fill connector-list
 	for (IConnector connector : app.getSocc().getConnectors()) {
-	    listConnectorsModel.addElement(connector.getId());
+	    listConnectorsModel.addElement(new ConnectorItem(connector));
 	}
     }
 
@@ -124,16 +205,16 @@ public class ConnectorsInternalFrame extends JInternalFrame {
 	int index = listConnectors.getSelectedIndex();
 
 	if (0 <= index) {
-	    String connectorId = listConnectors.getSelectedValue();
+	    IConnector connector = listConnectors.getSelectedValue()
+		    .getConnector();
 	    listConnectorsModel.remove(index);
-	    app.getSocc().removeConnector(connectorId);
+	    app.getSocc().removeConnector(connector.getId());
 	    app.save();
 	}
     }
 
     private void addNewConnector() {
 	ConnectorDialog connectorDlg = new ConnectorDialog(app);
-
 	int status = connectorDlg.showDialog();
 
 	if (ConnectorDialog.SAVE_OPTION == status) {
@@ -144,7 +225,7 @@ public class ConnectorsInternalFrame extends JInternalFrame {
 	    try {
 		IConnector connector = app.getSocc().createConnector(factoryId,
 			connectorId, parameters);
-		listConnectorsModel.addElement(connector.getId());
+		listConnectorsModel.addElement(new ConnectorItem(connector));
 	    } catch (ConnectorException e) {
 		JOptionPane.showMessageDialog(ConnectorsInternalFrame.this,
 			e.getMessage(), "Failes to create connector",

@@ -29,6 +29,16 @@ public class SOCCConfiguration implements Serializable {
 	this.connectors = new ArrayList<SOCCConfigConnectorEntry>(connectors);
     }
 
+    public void addConnector(SOCCConfigConnectorEntry connector) {
+	if (!connectors.contains(connector)) {
+	    connectors.add(connector);
+	}
+    }
+
+    public void removeConnector(SOCCConfigConnectorEntry connector) {
+	connectors.remove(connector);
+    }
+
     public static SOCCConfiguration load(File file) throws IOException {
 	Preconditions.checkNotNull(file, "File can not be null");
 	Preconditions.checkArgument(file.exists(), "File must exist");

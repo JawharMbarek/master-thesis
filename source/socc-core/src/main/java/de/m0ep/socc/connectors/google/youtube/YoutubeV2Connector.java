@@ -107,6 +107,34 @@ public class YoutubeV2Connector extends AbstractConnector {
 	if (500 > this.ytConfig.getPollCooldownMillis())
 	    this.ytConfig.setPollCooldownMillis(500);
 
+	URI uri = Builder.createURI(String.format(
+		YoutubeV2Constants.FEED_UPLOADS, myId));
+
+	if (!Forum.hasInstance(getModel(), uri)) {
+	    this.uploads = new Forum(model, uri, true);
+	    this.uploads.setId(YoutubeV2Constants.ID_FOURM_UPLOADS);
+	    this.uploads.setName("Uploads");
+	    this.uploads.setHost(getSite());
+	    getSite().addHostOf(this.uploads);
+	}
+
+	uri = Builder.createURI(String.format(
+		YoutubeV2Constants.FEED_PLAYLISTS, myId));
+
+	if (!Forum.hasInstance(getModel(), uri)) {
+	    this.playlists = new Forum(model, uri, true);
+	    this.playlists.setId(YoutubeV2Constants.ID_FORUM_PLAYLISTS);
+	    this.playlists.setName("Playlists");
+	    this.playlists.setNumThreads(0);
+	    this.playlists.setHost(getSite());
+	    getSite().addHostOf(this.playlists);
+	}
+    }
+
+    @Override
+    public void connect() throws ConnectorException {
+	setOnline(false);
+
 	this.service = new YouTubeService("YoutubeConnectorV2",
 		this.ytConfig.getDeveloperKey());
 
@@ -140,22 +168,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    finishPolling();
 	}
 
-	URI uri = Builder.createURI(String.format(
-		YoutubeV2Constants.FEED_UPLOADS, myId));
-	this.uploads = new Forum(model, uri, true);
-	this.uploads.setId(YoutubeV2Constants.ID_FOURM_UPLOADS);
-	this.uploads.setName("Uploads");
-	this.uploads.setHost(getSite());
-	getSite().addHostOf(this.uploads);
-
-	uri = Builder.createURI(String.format(
-		YoutubeV2Constants.FEED_PLAYLISTS, myId));
-	this.playlists = new Forum(model, uri, true);
-	this.playlists.setId(YoutubeV2Constants.ID_FORUM_PLAYLISTS);
-	this.playlists.setName("Playlists");
-	this.playlists.setNumThreads(0);
-	this.playlists.setHost(getSite());
-	getSite().addHostOf(this.playlists);
+	setOnline(true);
     }
 
     @Override

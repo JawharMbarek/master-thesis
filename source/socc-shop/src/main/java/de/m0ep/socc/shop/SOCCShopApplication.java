@@ -2,34 +2,29 @@ package de.m0ep.socc.shop;
 
 import java.awt.EventQueue;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map.Entry;
-
-import javax.swing.JOptionPane;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.ontoware.rdf2go.RDF2Go;
-import org.ontoware.rdf2go.exception.ModelRuntimeException;
+import org.apache.commons.io.FileUtils;
 import org.ontoware.rdf2go.model.Model;
-import org.ontoware.rdf2go.model.Statement;
-import org.ontoware.rdf2go.model.Syntax;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
 import com.xmlns.foaf.FOAF;
 
 import de.m0ep.socc.SOCC;
 import de.m0ep.socc.config.SOCCConfiguration;
 import de.m0ep.socc.shop.ui.ApplicationWindow;
+import de.m0ep.socc.shop.utils.ExportUtils;
 
 public class SOCCShopApplication {
+    private static final String FOAF_DATA_FILENAME = "foaf.xml";
+
+    private static final String SIOC_DATA_FILENAME = "sioc.xml";
+
+    private static final String CAMEL_ROUTES_FILENAME = "routes.xml";
+
     private static final String CONNECTOR_CFG_FILENAME = "connectors.json";
 
     private static final Logger LOG = LoggerFactory
@@ -38,6 +33,8 @@ public class SOCCShopApplication {
     private ApplicationWindow window;
 
     private SOCC socc;
+    private SOCCConfiguration soccConfiguration;
+
     private Model siocModel;
     private Model foafModel;
     private DefaultCamelContext camelContext;
@@ -56,26 +53,13 @@ public class SOCCShopApplication {
 		configuration = SOCCConfiguration.load(settingsFile);
 	    } catch (Throwable t) {
 		LOG.error("Failed to load settings from file.", t);
-		stop(1);
+		shutdown();
 	    }
-	} else {
-	    int result = JOptionPane
-		    .showConfirmDialog(
-			    null,
-			    "Can't found any connector configuration file.\nContinue anyway?",
-			    "No connector configuration!",
-			    JOptionPane.YES_NO_OPTION,
-			    JOptionPane.QUESTION_MESSAGE);
-
-	    if (JOptionPane.NO_OPTION == result) {
-		stop(2);
-	    }
-
-	    configuration = new SOCCConfiguration();
 	}
 
 	this.siocModel = SOCC.createDefaultMemoryModel();
 	this.foafModel = FOAF.createDefaultMemoryModel();
+
 	this.socc = new SOCC(siocModel, configuration);
 
 	this.camelContext = new DefaultCamelContext();
@@ -83,7 +67,7 @@ public class SOCCShopApplication {
 	    this.camelContext.start();
 	} catch (Exception e) {
 	    LOG.error("Failed to start Apache Camel", e);
-	    stop(1);
+	    shutdown();
 	}
     }
 
@@ -98,8 +82,7 @@ public class SOCCShopApplication {
 		try {
 		    result = new File(url.toURI());
 		} catch (Throwable t) {
-		    LOG.warn("failed to load settings file from classpath",
-			    t);
+		    LOG.warn("Failed to load settings file from classpath", t);
 		    return null;
 		}
 	    } else {
@@ -121,7 +104,7 @@ public class SOCCShopApplication {
 
 		} catch (Exception e) {
 		    LOG.error("Failed to start application window", e);
-		    stop(1);
+		    shutdown();
 		}
 	    }
 	});
@@ -133,63 +116,89 @@ public class SOCCShopApplication {
 	LOG.info("Saving application settings and data...");
 
 	if (null != socc) {
-	    URL settingsUrl = SOCCShopApplication.class
-		    .getResource(CONNECTOR_CFG_FILENAME);
+	    File settingsFile = getSettingsFile();
 
-	    if (null != settingsUrl) {
+	    if (null == settingsFile) {
+		settingsFile = new File("./" + CONNECTOR_CFG_FILENAME);
+	    }
+
+	    try {
+		socc.getConfiguration().save(settingsFile);
+
+		LOG.debug(
+			"{} successfuly written.",
+			CONNECTOR_CFG_FILENAME);
+	    } catch (IOException e) {
+		LOG.error("Failed to write " + CONNECTOR_CFG_FILENAME, e);
+	    }
+	}
+
+	if (null != camelContext) {
+	    String routesXML = null;
+
+	    try {
+		routesXML = ExportUtils.getRoutesXML(camelContext);
+	    } catch (Exception e) {
+		LOG.error(
+			"Failed to convert camel-routes into xml",
+			e);
+	    }
+
+	    if (null != routesXML) {
 		try {
-		    File settingsFile = new File(settingsUrl.toURI());
-		    socc.getConfiguration().save(settingsFile);
-		} catch (Throwable t) {
-		    LOG.error("Failed to save settings.", t);
+		    FileUtils.writeStringToFile(
+			    new File("./" + CAMEL_ROUTES_FILENAME),
+			    routesXML,
+			    "UTF-8");
+
+		    LOG.debug(
+			    "{} successfuly written.",
+			    CAMEL_ROUTES_FILENAME);
+		} catch (IOException e) {
+		    LOG.error("Failed to write " + CAMEL_ROUTES_FILENAME, e);
 		}
 	    }
 	}
 
 	if (null != siocModel) {
-	    writeModelToFile(new File("sioc.xml"), siocModel);
+	    String siocXML = ExportUtils.getModelXML(siocModel);
+
+	    if (null != siocXML) {
+		try {
+		    FileUtils.writeStringToFile(
+			    new File("./" + SIOC_DATA_FILENAME),
+			    siocXML,
+			    "UTF-8");
+
+		    LOG.debug(
+			    "{} successfuly written.",
+			    SIOC_DATA_FILENAME);
+		} catch (IOException e) {
+		    LOG.error("Failed to write " + SIOC_DATA_FILENAME, e);
+		}
+	    }
 	}
 
 	if (null != foafModel) {
-	    writeModelToFile(new File("foaf.xml"), foafModel);
+	    String foafXML = ExportUtils.getModelXML(foafModel);
+
+	    if (null != foafXML) {
+		try {
+		    FileUtils.writeStringToFile(
+			    new File("./" + FOAF_DATA_FILENAME),
+			    foafXML,
+			    "UTF-8");
+		    LOG.debug(
+			    "{} successfuly written.",
+			    FOAF_DATA_FILENAME);
+		} catch (IOException e) {
+		    LOG.error("Failed to write " + FOAF_DATA_FILENAME, e);
+		}
+	    }
 	}
     }
 
-    private void writeModelToFile(final File file, Model model) {
-	// get all statements and order them by the subject
-	List<Statement> statements = Lists.newArrayList(model.iterator());
-	Collections.sort(statements, new Comparator<Statement>() {
-	    @Override
-	    public int compare(Statement o1, Statement o2) {
-		return o1.compareTo(o2);
-	    };
-	});
-
-	// create a new model to write it to the file
-	Model writeModel = RDF2Go.getModelFactory().createModel();
-	writeModel.open();
-
-	// copy namespaces
-	for (Entry<String, String> ns : model.getNamespaces().entrySet()) {
-	    writeModel.setNamespace(ns.getKey(), ns.getValue());
-	}
-
-	writeModel.addAll(statements.iterator());
-
-	try {
-	    writeModel.writeTo(new FileOutputStream(file), Syntax.RdfXml);
-	} catch (ModelRuntimeException e) {
-	    LOG.error("Failed to write model", e);
-	} catch (FileNotFoundException e) {
-	    LOG.error("No file '" + file.getAbsolutePath() + "' found", e);
-	} catch (IOException e) {
-	    LOG.error("Failed to write model to file", e);
-	}
-
-	writeModel.close();
-    }
-
-    public void stop(int code) {
+    public void shutdown() {
 	LOG.info("Stopping SOCC-Shop...");
 	save();
 
@@ -208,7 +217,8 @@ public class SOCCShopApplication {
 	if (null != foafModel) {
 	    foafModel.close();
 	}
-	System.exit(code);
+
+	System.exit(0);
     }
 
     /* Getter & Setter */

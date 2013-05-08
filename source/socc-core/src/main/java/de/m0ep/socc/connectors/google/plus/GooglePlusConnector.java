@@ -116,7 +116,8 @@ public class GooglePlusConnector extends AbstractConnector {
 	    + " ; \n"
 	    + SIOCVocabulary.has_host.toSPARQL() + " %s . }";
     private static final String SPARQL_ASK_IS_FORUM_OF_SITE = "ASK { %s "
-	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.Forum.toSPARQL() + " ; \n"
+	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.Forum.toSPARQL()
+	    + " ; \n"
 	    + SIOCVocabulary.has_host.toSPARQL() + " %s . }";
 
     /*
@@ -175,6 +176,12 @@ public class GooglePlusConnector extends AbstractConnector {
 	credential.setAccessToken(gpConfig.getAccessToken());
 	credential.setRefreshToken(gpConfig.getRefreshToken());
 
+    }
+
+    @Override
+    public void connect() throws ConnectorException {
+	setOnline(false);
+
 	plus = new Plus.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
 		.setApplicationName(getId()).build();
 
@@ -209,6 +216,8 @@ public class GooglePlusConnector extends AbstractConnector {
 	    moments.setHost(getSite());
 	    getSite().addHostOf(moments);
 	}
+
+	setOnline(true);
     }
 
     @Override
@@ -242,6 +251,9 @@ public class GooglePlusConnector extends AbstractConnector {
     @Override
     public UserAccount getUserAccount(final String id)
 	    throws ConnectorException {
+	Preconditions.checkNotNull(id, "Id can not be null.");
+	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty.");
+	Preconditions.checkState(isOnline(), "Connector is not online");
 	URI uri = Builder.createURI(getURL() + PATH_USER + id);
 
 	if (!UserAccount.hasInstance(getModel(), uri)) {
@@ -300,6 +312,9 @@ public class GooglePlusConnector extends AbstractConnector {
 
     @Override
     public Forum getForum(final String id) throws ConnectorException {
+	Preconditions.checkNotNull(id, "Id can not be null.");
+	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty.");
+	Preconditions.checkState(isOnline(), "Connector is not online");
 	// atm. only public posts and moments are available
 	// TODO: later check for circles
 
@@ -318,6 +333,8 @@ public class GooglePlusConnector extends AbstractConnector {
 
     @Override
     public List<Forum> getForums() throws ConnectorException {
+	Preconditions.checkState(isOnline(), "Connector is not online");
+
 	List<Forum> result = new ArrayList<Forum>();
 
 	QueryResultTable table = getModel()
@@ -341,6 +358,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	Preconditions.checkNotNull(container, "container can not be null");
 	Preconditions.checkArgument(hasPosts(container), "container "
 		+ container + " has no post on this site");
+	Preconditions.checkState(isOnline(), "Connector is not online");
 
 	List<Post> result = new ArrayList<Post>();
 	ClosableIterator<Statement> stmtsIter = getModel().findStatements(
@@ -364,6 +382,8 @@ public class GooglePlusConnector extends AbstractConnector {
 	Preconditions.checkNotNull(container, "container can not be null");
 	Preconditions.checkArgument(hasPosts(container),
 		"this container has no post on " + getSite().getName());
+	Preconditions.checkState(isOnline(), "Connector is not online");
+
 	List<Post> result = new ArrayList<Post>();
 
 	if (container.getId().contains(ID_FORUM_MOMENTS)) {
@@ -456,9 +476,10 @@ public class GooglePlusConnector extends AbstractConnector {
 
 				    if (null != target.getDateCreated()) {
 					try {
-					    post.setCreated(DateUtils.formatISO8601(DateUtils
-						    .parseISO8601(target
-							    .getDateCreated())));
+					    post.setCreated(DateUtils
+						    .formatISO8601(DateUtils
+							    .parseISO8601(target
+								    .getDateCreated())));
 					} catch (ParseException e) {
 					    LOG.error(e.getMessage(), e);
 					}
@@ -466,9 +487,10 @@ public class GooglePlusConnector extends AbstractConnector {
 
 				    if (null != target.getDateModified()) {
 					try {
-					    post.setModified(DateUtils.formatISO8601(DateUtils
-						    .parseISO8601(target
-							    .getDateModified())));
+					    post.setModified(DateUtils
+						    .formatISO8601(DateUtils
+							    .parseISO8601(target
+								    .getDateModified())));
 					} catch (ParseException e) {
 					    LOG.error(e.getMessage(), e);
 					}
@@ -698,7 +720,7 @@ public class GooglePlusConnector extends AbstractConnector {
 			getSite()));
     }
 
-    /* package */ConnectorException mapToConnectorException(
+    protected ConnectorException mapToConnectorException(
 	    GoogleJsonResponseException e) {
 	GoogleJsonError error = e.getDetails();
 
@@ -706,6 +728,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	case 404:
 	    return new NotFoundException(error.getMessage());
 	case 401:
+	    setOnline(false);
 	    return new de.m0ep.socc.exceptions.AuthenticationException(
 		    error.getMessage());
 	default:

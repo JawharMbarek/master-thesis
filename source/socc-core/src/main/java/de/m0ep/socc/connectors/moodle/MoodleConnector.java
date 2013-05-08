@@ -116,12 +116,19 @@ public class MoodleConnector extends AbstractConnector {
 
 	this.mdlConfig = new MoodleConnectorConfig();
 	this.mdlConfig = ConfigUtils.fromMap(parameters, this.mdlConfig);
+    }
+
+    @Override
+    public void connect() throws ConnectorException {
+	setOnline(false);
 
 	this.moodle = new Mdl_soapserverBindingStub(getURL() + MOODLEWS_PATH,
 		getURL() + MOODLE_WSDL_POSTFIX, false);
 
 	tryLogin();
 	this.myId = moodle.get_my_id(client, sesskey);
+
+	setOnline(true);
     }
 
     @Override

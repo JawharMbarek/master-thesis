@@ -52,6 +52,7 @@ import com.google.common.base.Preconditions;
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
+import com.restfb.FacebookClient.AccessToken;
 import com.restfb.Parameter;
 import com.restfb.exception.FacebookException;
 import com.restfb.exception.FacebookNetworkException;
@@ -108,14 +109,24 @@ public class FacebookConnector extends AbstractConnector {
 
 	this.fbConfig = new FacebookConnectorConfig();
 	this.fbConfig = ConfigUtils.fromMap(parameters, this.fbConfig);
+
+    }
+
+    @Override
+    public void connect() throws ConnectorException {
+	setOnline(false);
+
 	this.client = new DefaultFacebookClient(fbConfig.getAccessToken());
 
-	// TODO: get long live token
-	// AccessToken extendedToken = this.client.obtainExtendedAccessToken(
-	// fbConfig.getClientId(), fbConfig.getClientSecret(),
-	// fbConfig.getAccessToken());
-	// System.out.println(fbConfig.getAccessToken());
-	// System.out.println(extendedToken.getAccessToken());
+	try {
+	    AccessToken extendedToken = this.client.obtainExtendedAccessToken(
+		    fbConfig.getClientId(), fbConfig.getClientSecret(),
+		    fbConfig.getAccessToken());
+
+	    fbConfig.setAccessToken(extendedToken.getAccessToken());
+	} catch (Exception e) {
+	    LOG.error("failed to obtain an extended accesstoken", e);
+	}
 
 	try {
 	    this.myId = client.fetchObject(
@@ -141,6 +152,8 @@ public class FacebookConnector extends AbstractConnector {
 	    wall.setHost(getSite());
 	    getSite().addHostOf(wall);
 	}
+
+	setOnline(true);
     }
 
     @Override
@@ -168,6 +181,7 @@ public class FacebookConnector extends AbstractConnector {
 
     @Override
     public UserAccount getLoginUser() throws ConnectorException {
+	Preconditions.checkState(isOnline(), "Connector is not online");
 	return getUserAccount(myId);
     }
 
@@ -184,6 +198,7 @@ public class FacebookConnector extends AbstractConnector {
 	    throws ConnectorException {
 	Preconditions.checkNotNull(id, "id can not be null");
 	Preconditions.checkArgument(!id.isEmpty(), "id can not be empty");
+	Preconditions.checkState(isOnline(), "Connector is not online");
 
 	URI uri = Builder.createURI(getURL() + id);
 
@@ -208,6 +223,10 @@ public class FacebookConnector extends AbstractConnector {
 
     @Override
     public Forum getForum(final String id) throws ConnectorException {
+	Preconditions.checkNotNull(id, "Id can not be null.");
+	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty.");
+	Preconditions.checkState(isOnline(), "Connector is not online");
+
 	URI uri = Builder.createURI(getURL()
 		+ (FacebookConstants.ID_ME.equalsIgnoreCase(id) ? (myId) : (id
 			.toLowerCase())) + "/"
@@ -242,6 +261,7 @@ public class FacebookConnector extends AbstractConnector {
 
     @Override
     public List<Forum> getForums() throws ConnectorException {
+	Preconditions.checkState(isOnline(), "Connector is not online");
 	List<Forum> result = new ArrayList<Forum>();
 
 	// add all known forums
@@ -289,6 +309,10 @@ public class FacebookConnector extends AbstractConnector {
 
     @Override
     public Post getPost(String id) throws ConnectorException {
+	Preconditions.checkNotNull(id, "Id can not be null.");
+	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty.");
+	Preconditions.checkState(isOnline(), "Connector is not online");
+
 	URI uri = Builder.createURI(getURL() + id);
 
 	if (!Post.hasInstance(getModel(), uri)) {
@@ -455,6 +479,7 @@ public class FacebookConnector extends AbstractConnector {
 	Preconditions.checkNotNull(container, "container can't be null");
 	Preconditions.checkArgument(post.hasContent());
 	Preconditions.checkArgument(canPublishOn(container));
+	Preconditions.checkState(isOnline(), "Connector is not online");
 
 	List<Parameter> params = new ArrayList<Parameter>();
 
@@ -517,6 +542,7 @@ public class FacebookConnector extends AbstractConnector {
 	Preconditions.checkArgument(post.hasContent(), "post has no content");
 	Preconditions.checkArgument(canReplyOn(parentPost),
 		"can't reply on the parent post");
+	Preconditions.checkState(isOnline(), "Connector is not online");
 
 	FacebookType result = null;
 	try {
@@ -544,6 +570,12 @@ public class FacebookConnector extends AbstractConnector {
     @Override
     public List<Post> pollNewPosts(Container container)
 	    throws ConnectorException {
+	Preconditions.checkNotNull(container, "Container can not be null.");
+	Preconditions.checkArgument(
+		hasPosts(container),
+		"This container has no posts in this connector");
+	Preconditions.checkState(isOnline(), "Connector is not online");
+
 	LOG.debug("pollNewPosts");
 	List<Post> result = new ArrayList<Post>();
 	Date lastItemDate = new Date(0);
@@ -706,12 +738,14 @@ public class FacebookConnector extends AbstractConnector {
 	    case 454: // A session key is required for calling this method
 	    case 455: // A session key must be specified when request is signed
 		      // with a session secret
+		setOnline(false);
 		return new AuthenticationException(fae.getErrorMessage(), fae);
 	    case 803: // Specified object cannot be found
 		return new NotFoundException("Not found", fae);
 	    }
 	} else if (e instanceof FacebookNetworkException) {
 	    FacebookNetworkException fne = (FacebookNetworkException) e;
+	    setOnline(false);
 	    return new NetworkException("Network error: "
 		    + fne.getHttpStatusCode() + " " + fne.getMessage(), fne);
 	}

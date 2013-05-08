@@ -58,6 +58,11 @@ public interface IConnector {
 	    Map<String, Object> parameters) throws ConnectorException;
 
     /**
+     * Connect this connector.
+     */
+    public void connect() throws ConnectorException;
+
+    /**
      * Called if the Connector will be destroyed.
      */
     public void destroy() throws ConnectorException;
@@ -82,6 +87,13 @@ public interface IConnector {
      * @return Map with configuration parameters
      */
     public Map<String, Object> getConfiguration();
+
+    /**
+     * Returns if a connector is online or not.
+     * 
+     * @return Returns true if this connector is online, false otherwise.
+     */
+    public boolean isOnline();
 
     /**
      * Get the {@link Model} used by this connector

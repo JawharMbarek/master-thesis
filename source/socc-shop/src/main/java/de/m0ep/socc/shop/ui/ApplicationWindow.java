@@ -3,6 +3,8 @@ package de.m0ep.socc.shop.ui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -21,14 +23,21 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.filechooser.FileFilter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.m0ep.socc.shop.SOCCShopApplication;
 import de.m0ep.socc.shop.utils.ExportUtils;
 
 public class ApplicationWindow {
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(ApplicationWindow.class);
 
     private JFrame frmSoccShop;
     private SOCCShopApplication app;
@@ -82,16 +91,46 @@ public class ApplicationWindow {
 	frmSoccShop.setJMenuBar(menuBar);
 
 	JMenu mnSocc = new JMenu("SOCC");
+	mnSocc.setMnemonic('s');
 	menuBar.add(mnSocc);
 
-	JMenuItem mntmClose = new JMenuItem("Close");
-	mntmClose.addActionListener(new ActionListener() {
+	JMenuItem mntmConnectors = new JMenuItem("Connectors");
+	mntmConnectors.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+		InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+	mnSocc.add(mntmConnectors);
+	mntmConnectors.setIcon(new ImageIcon(ApplicationWindow.class
+		.getResource("/images/connect.png")));
+	mntmConnectors.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent event) {
-		closeWindow();
+		if (null == connectorFrame) {
+		    connectorFrame = new ConnectorsInternalFrame(app);
+		    connectorFrame
+			    .addInternalFrameListener(new InternalFrameAdapter() {
+				@Override
+				public void internalFrameClosed(
+					InternalFrameEvent event) {
+				    connectorFrame = null;
+				}
+			    });
+		    connectorFrame.setVisible(true);
+		    desktopPane.add(connectorFrame);
+		}
+
+		desktopPane.moveToFront(connectorFrame);
 	    }
 	});
 
-	JMenuItem mntmImport = new JMenuItem("Import Data");
+	JMenuItem mntmPipes = new JMenuItem("Pipes");
+	mntmPipes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
+		InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+	mnSocc.add(mntmPipes);
+	mntmPipes.setIcon(new ImageIcon(ApplicationWindow.class
+		.getResource("/images/arrow_switch.png")));
+
+	mnSocc.add(new JSeparator());
+
+	JMenuItem mntmImport = new JMenuItem("Import...");
+	mntmImport.setEnabled(false);
 	mntmImport.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		importData();
@@ -99,7 +138,9 @@ public class ApplicationWindow {
 	});
 	mnSocc.add(mntmImport);
 
-	JMenuItem mntmExport = new JMenuItem("Export Data");
+	JMenuItem mntmExport = new JMenuItem("Export...");
+	mntmExport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
+		InputEvent.CTRL_MASK));
 	mntmExport.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		try {
@@ -109,29 +150,35 @@ public class ApplicationWindow {
 			    .showMessageDialog(
 				    frmSoccShop,
 				    "Failed to export date.\n" +
-				    "View Log for more information.",
+					    "View Log for more information.",
 				    "Export failed!", JOptionPane.ERROR_MESSAGE);
 		}
 	    }
 	});
 	mnSocc.add(mntmExport);
-	mntmClose.setIcon(new ImageIcon(ApplicationWindow.class.getResource("/images/door.png")));
+
+	mnSocc.add(new JSeparator());
+
+	JMenuItem mntmClose = new JMenuItem("Close");
+	mntmClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
+		InputEvent.CTRL_MASK));
+	mntmClose.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent event) {
+		closeWindow();
+		app.shutdown();
+	    }
+	});
+	mntmClose.setIcon(new ImageIcon(ApplicationWindow.class
+		.getResource("/images/door.png")));
 	mnSocc.add(mntmClose);
 
-	JMenu mnWindow = new JMenu("Window");
-	menuBar.add(mnWindow);
-
-	JMenuItem mntmConnectors = new JMenuItem("Connectors");
-	mnWindow.add(mntmConnectors);
-	mntmConnectors.setIcon(new ImageIcon(ApplicationWindow.class
-		.getResource("/images/connect.png")));
-
-	JMenuItem mntmPipes = new JMenuItem("Pipes");
-	mnWindow.add(mntmPipes);
-	mntmPipes.setIcon(new ImageIcon(ApplicationWindow.class
-		.getResource("/images/arrow_switch.png")));
+	JMenu mnViewer = new JMenu("Viewer");
+	mnViewer.setMnemonic('v');
+	menuBar.add(mnViewer);
 
 	JMenuItem mntmSioc = new JMenuItem("SIOC Viewer");
+	mntmSioc.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+		InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 	mntmSioc.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent event) {
 		if (null == siocFrame) {
@@ -153,9 +200,11 @@ public class ApplicationWindow {
 	});
 	mntmSioc.setIcon(new ImageIcon(ApplicationWindow.class
 		.getResource("/images/user_comment.png")));
-	mnWindow.add(mntmSioc);
+	mnViewer.add(mntmSioc);
 
 	JMenuItem mntmFoafViewer = new JMenuItem("FOAF Viewer");
+	mntmFoafViewer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
+		InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 	mntmFoafViewer.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		if (null == foafFrame) {
@@ -177,9 +226,10 @@ public class ApplicationWindow {
 	});
 	mntmFoafViewer.setIcon(new ImageIcon(ApplicationWindow.class
 		.getResource("/images/group.png")));
-	mnWindow.add(mntmFoafViewer);
+	mnViewer.add(mntmFoafViewer);
 
 	JMenu mnHelp = new JMenu("Help");
+	mnHelp.setMnemonic('h');
 	menuBar.add(mnHelp);
 
 	JMenuItem mntmAbout = new JMenuItem("About");
@@ -191,25 +241,6 @@ public class ApplicationWindow {
 	mntmAbout.setIcon(new ImageIcon(ApplicationWindow.class
 		.getResource("/images/help.png")));
 	mnHelp.add(mntmAbout);
-	mntmConnectors.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent event) {
-		if (null == connectorFrame) {
-		    connectorFrame = new ConnectorsInternalFrame(app);
-		    connectorFrame
-			    .addInternalFrameListener(new InternalFrameAdapter() {
-				@Override
-				public void internalFrameClosed(
-					InternalFrameEvent event) {
-				    connectorFrame = null;
-				}
-			    });
-		    connectorFrame.setVisible(true);
-		    desktopPane.add(connectorFrame);
-		}
-
-		desktopPane.moveToFront(connectorFrame);
-	    }
-	});
 
 	desktopPane = new JDesktopPane();
 	JScrollPane scrollPane = new JScrollPane(desktopPane);
@@ -224,6 +255,21 @@ public class ApplicationWindow {
 
 	    if (!file.getName().endsWith(".zip")) {
 		file = new File(file.getAbsolutePath() + ".zip");
+	    }
+
+	    if (file.exists()) {
+		res = JOptionPane.showConfirmDialog(
+			frmSoccShop,
+			"Override it?",
+			file.getName() + " already exists",
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.QUESTION_MESSAGE);
+
+		if (JOptionPane.NO_OPTION == res) {
+		    return;
+		}
+
+		LOG.debug("Exporting RDF data to {}", file.getAbsoluteFile());
 	    }
 
 	    FileOutputStream fos = new FileOutputStream(file);
@@ -242,6 +288,8 @@ public class ApplicationWindow {
 		zos.putNextEntry(siocZip);
 		zos.write(siocBytes);
 		zos.closeEntry();
+
+		LOG.debug("SIOC data written to zip");
 	    }
 
 	    if (null != app.getFoafModel()) {
@@ -256,12 +304,15 @@ public class ApplicationWindow {
 		zos.putNextEntry(foafZip);
 		zos.write(foafBytes);
 		zos.closeEntry();
+
+		LOG.debug("FOAF data written to zip");
 	    }
 
 	    zos.finish();
 	    zos.close();
-	}
 
+	    LOG.debug("Finished exporting rdf data");
+	}
     }
 
     protected void importData() {

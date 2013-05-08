@@ -8,6 +8,7 @@ import java.net.URL;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.io.FileUtils;
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.util.RDFTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,6 @@ public class SOCCShopApplication {
     private ApplicationWindow window;
 
     private SOCC socc;
-    private SOCCConfiguration soccConfiguration;
 
     private Model siocModel;
     private Model foafModel;
@@ -57,12 +57,40 @@ public class SOCCShopApplication {
 	    }
 	}
 
-	this.siocModel = SOCC.createDefaultMemoryModel();
-	this.foafModel = FOAF.createDefaultMemoryModel();
+	// try to load saved sioc model
+	File siocFile = new File("./" + SIOC_DATA_FILENAME);
+	if (siocFile.exists()) {
+	    try {
+		String siocXML = FileUtils.readFileToString(siocFile, "UTF-8");
+		this.siocModel = RDFTool.stringToModel(siocXML);
+	    } catch (IOException e) {
+		LOG.error("Failed to load " + SIOC_DATA_FILENAME, e);
+	    }
+	}
+
+	if (null == this.siocModel) {
+	    this.siocModel = SOCC.createDefaultMemoryModel();
+	}
+
+	// try to load saved foaf model
+	File foafFile = new File("./" + FOAF_DATA_FILENAME);
+	if (foafFile.exists()) {
+
+	    try {
+		String foafXML = FileUtils.readFileToString(foafFile, "UTF-8");
+		this.foafModel = RDFTool.stringToModel(foafXML);
+	    } catch (IOException e) {
+		LOG.error("Failed to load " + FOAF_DATA_FILENAME, e);
+	    }
+	}
+
+	if (null == this.foafModel) {
+	    this.foafModel = FOAF.createDefaultMemoryModel();
+	}
 
 	this.socc = new SOCC(siocModel, configuration);
-
 	this.camelContext = new DefaultCamelContext();
+
 	try {
 	    this.camelContext.start();
 	} catch (Exception e) {

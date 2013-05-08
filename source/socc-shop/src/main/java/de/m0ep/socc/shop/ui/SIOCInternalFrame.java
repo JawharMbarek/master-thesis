@@ -27,6 +27,8 @@ import org.ontoware.rdf2go.model.node.Resource;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
@@ -36,6 +38,8 @@ import de.m0ep.socc.shop.SOCCShopApplication;
 
 public class SIOCInternalFrame extends JInternalFrame implements Runnable {
     private static final long serialVersionUID = 1750490537282051026L;
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(SIOCInternalFrame.class);
 
     private SOCCShopApplication app;
     private JList<String> listPosts;
@@ -88,14 +92,14 @@ public class SIOCInternalFrame extends JInternalFrame implements Runnable {
 	btnUpdate.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		SwingUtilities.invokeLater(SIOCInternalFrame.this);
+		new java.lang.Thread(SIOCInternalFrame.this).start();
 	    }
 	});
 	buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 	btnUpdate.setIcon(refreshIcon);
 	buttonPanel.add(btnUpdate);
 
-	SwingUtilities.invokeLater(this);
+	new java.lang.Thread(this).start();
     }
 
     @Override
@@ -106,6 +110,11 @@ public class SIOCInternalFrame extends JInternalFrame implements Runnable {
 	treeRoot = new DefaultMutableTreeNode(new SIOCTreeItem(
 		SIOCTreeItem.ROOT, "SIOC", null), true);
 	for (IConnector connector : connectors) {
+	    if (!connector.isOnline()) {
+		LOG.error(connector.getId() + " is not online");
+		continue;
+	    }
+
 	    try {
 		Site site = connector.getSite();
 
@@ -134,9 +143,16 @@ public class SIOCInternalFrame extends JInternalFrame implements Runnable {
 		e.printStackTrace();
 	    }
 	}
-	treeContainersModel.setRoot(treeRoot);
-	treeContainers.revalidate();
-	btnUpdate.setIcon(refreshIcon);
+
+	SwingUtilities.invokeLater(new Runnable() {
+
+	    @Override
+	    public void run() {
+		treeContainersModel.setRoot(treeRoot);
+		treeContainers.revalidate();
+		btnUpdate.setIcon(refreshIcon);
+	    }
+	});
     }
 
     public SOCCShopApplication getApp() {

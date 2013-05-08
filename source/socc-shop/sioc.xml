@@ -20,6 +20,86 @@
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Forum"/>
 </rdf:Description>
 
+<rdf:Description rdf:about="http://localhost/florian/moodle24/">
+	<sioc:host_of rdf:resource="http://localhost/florian/moodle24/forum/1"/>
+	<sioc:host_of rdf:resource="http://localhost/florian/moodle24/forum/3"/>
+	<sioc:host_of rdf:resource="http://localhost/florian/moodle24/forum/4"/>
+	<sioc:name>Moodle</sioc:name>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Site"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://localhost/florian/moodle24/forum/1">
+	<dcterms:description>General news and announcements</dcterms:description>
+	<dcterms:modified>2013-04-04T16:45:51.000+02:00</dcterms:modified>
+	<sioc:has_host rdf:resource="http://localhost/florian/moodle24/"/>
+	<sioc:id>1</sioc:id>
+	<sioc:name>TestCourse/News forum</sioc:name>
+	<sioc:num_threads rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</sioc:num_threads>
+	<sioc:parent_of rdf:resource="http://localhost/florian/moodle24/thread/1"/>
+	<sioc:parent_of rdf:resource="http://localhost/florian/moodle24/thread/2"/>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Forum"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://localhost/florian/moodle24/forum/3">
+	<dcterms:description>&lt;p&gt;bla bla bla&lt;/p&gt;</dcterms:description>
+	<dcterms:modified>2013-01-16T15:42:56.000+01:00</dcterms:modified>
+	<sioc:has_host rdf:resource="http://localhost/florian/moodle24/"/>
+	<sioc:id>3</sioc:id>
+	<sioc:name>TestCourse/pOt</sioc:name>
+	<sioc:num_threads rdf:datatype="http://www.w3.org/2001/XMLSchema#int">0</sioc:num_threads>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Forum"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://localhost/florian/moodle24/forum/4">
+	<dcterms:description>General news and announcements</dcterms:description>
+	<dcterms:modified>2013-01-16T15:46:37.000+01:00</dcterms:modified>
+	<sioc:has_host rdf:resource="http://localhost/florian/moodle24/"/>
+	<sioc:id>4</sioc:id>
+	<sioc:name>What the FUCK/News forum</sioc:name>
+	<sioc:num_threads rdf:datatype="http://www.w3.org/2001/XMLSchema#int">0</sioc:num_threads>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Forum"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://localhost/florian/moodle24/thread/1">
+	<dcterms:modified>2013-01-07T23:32:04.000+01:00</dcterms:modified>
+	<dcterms:subject>TestTopic1</dcterms:subject>
+	<dcterms:title>TestTopic1</dcterms:title>
+	<sioc:has_creator rdf:resource="http://localhost/florian/moodle24/user/2"/>
+	<sioc:has_parent rdf:resource="http://localhost/florian/moodle24/forum/1"/>
+	<sioc:id>1</sioc:id>
+	<sioc:name>TestTopic1</sioc:name>
+	<sioc:num_items rdf:datatype="http://www.w3.org/2001/XMLSchema#int">0</sioc:num_items>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Thread"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://localhost/florian/moodle24/thread/2">
+	<dcterms:modified>2013-04-15T16:20:36.000+02:00</dcterms:modified>
+	<dcterms:subject>TestTopic2</dcterms:subject>
+	<dcterms:title>TestTopic2</dcterms:title>
+	<sioc:has_creator rdf:resource="http://localhost/florian/moodle24/user/2"/>
+	<sioc:has_parent rdf:resource="http://localhost/florian/moodle24/forum/1"/>
+	<sioc:id>2</sioc:id>
+	<sioc:name>TestTopic2</sioc:name>
+	<sioc:num_items rdf:datatype="http://www.w3.org/2001/XMLSchema#int">0</sioc:num_items>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Thread"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://localhost/florian/moodle24/user/2">
+	<dcterms:isPartOf rdf:resource="http://localhost/florian/moodle24/"/>
+	<sioc:email rdf:resource="mailto:email.mufl@gmail.com"/>
+	<sioc:email_sha1>894a49d63a8fbb3d2e335feae6045e327e01c7db</sioc:email_sha1>
+	<sioc:id>2</sioc:id>
+	<sioc:name>Admin User</sioc:name>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>admin</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="http://localhost/florian/moodle24/"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.facebook.com/">
+	<sioc:name>Facebook</sioc:name>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Site"/>
+</rdf:Description>
+
 <rdf:Description rdf:about="http://www.youtube.com/">
 	<sioc:host_of rdf:resource="http://gdata.youtube.com/feeds/api/users/null/playlists"/>
 	<sioc:host_of rdf:resource="http://gdata.youtube.com/feeds/api/users/null/uploads"/>

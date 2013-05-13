@@ -1,21 +1,27 @@
-package de.m0ep.socc.config;
+package de.m0ep.socc.config.form;
 
 import java.io.Serializable;
 
-public class DataField implements Serializable {
+public class FormField implements Serializable {
     private static final long serialVersionUID = 1394551120060205230L;
 
-    private String name;
+    private Type type;
+
+    private String variable;
     private String label;
+    private String description;
+
     private Object defaultValue;
-    private DataType type;
 
     private boolean hidden;
     private boolean required;
     private boolean positive;
 
-    public DataField() {
-	this.type = DataType.STRING;
+    public FormField() {
+	this.type = Type.STRING;
+	this.variable = "";
+	this.label = "";
+	this.description = "";
 	this.defaultValue = null;
 
 	this.hidden = false;
@@ -23,12 +29,12 @@ public class DataField implements Serializable {
 	this.positive = false;
     }
 
-    public String getName() {
-	return this.name;
+    public String getVariable() {
+	return this.variable;
     }
 
-    public void setName(String name) {
-	this.name = name;
+    public void setVariable(String variable) {
+	this.variable = variable;
     }
 
     public String getLabel() {
@@ -39,6 +45,14 @@ public class DataField implements Serializable {
 	this.label = label;
     }
 
+    public String getDescription() {
+	return description;
+    }
+
+    public void setDescription(String description) {
+	this.description = description;
+    }
+
     public Object getDefaultValue() {
 	return this.defaultValue;
     }
@@ -47,11 +61,11 @@ public class DataField implements Serializable {
 	this.defaultValue = value;
     }
 
-    public DataType getType() {
+    public Type getType() {
 	return this.type;
     }
 
-    public void setType(DataType type) {
+    public void setType(Type type) {
 	this.type = type;
     }
 
@@ -79,15 +93,19 @@ public class DataField implements Serializable {
 	this.positive = positive;
     }
 
+    public static enum Type {
+	STRING, INTEGER, BOOLEAN, FLOAT
+    }
+
     public static class Builder {
-	DataField field;
+	FormField field;
 
 	public Builder() {
-	    field = new DataField();
+	    field = new FormField();
 	}
 
-	public Builder setName(String name) {
-	    this.field.setName(name);
+	public Builder setVariable(String name) {
+	    this.field.setVariable(name);
 	    return this;
 	}
 
@@ -96,12 +114,17 @@ public class DataField implements Serializable {
 	    return this;
 	}
 
+	public Builder setDescription(String desc) {
+	    this.field.setDescription(desc);
+	    return this;
+	}
+
 	public Builder setDefaultValue(Object value) {
 	    this.field.setDefaultValue(value);
 	    return this;
 	}
 
-	public Builder setType(DataType type) {
+	public Builder setType(Type type) {
 	    this.field.setType(type);
 	    return this;
 	}
@@ -121,7 +144,7 @@ public class DataField implements Serializable {
 	    return this;
 	}
 
-	public DataField create() {
+	public FormField create() {
 	    return field;
 	}
     }

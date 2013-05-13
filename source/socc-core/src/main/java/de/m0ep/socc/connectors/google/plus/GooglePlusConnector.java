@@ -377,7 +377,7 @@ public class GooglePlusConnector extends AbstractConnector {
     }
 
     @Override
-    public List<Post> pollNewPosts(final Container container)
+    public List<Post> pollPosts(final Container container)
 	    throws ConnectorException {
 	Preconditions.checkNotNull(container, "container can not be null");
 	Preconditions.checkArgument(hasPosts(container),

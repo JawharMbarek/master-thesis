@@ -26,7 +26,7 @@ import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 
-import de.m0ep.socc.config.DataForm;
+import de.m0ep.socc.config.form.DataForm;
 import de.m0ep.socc.exceptions.ConnectorException;
 
 /**

@@ -29,9 +29,8 @@ import org.ontoware.rdf2go.model.Model;
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
 import de.m0ep.socc.SOCCConstants;
-import de.m0ep.socc.config.DataField;
-import de.m0ep.socc.config.DataForm;
-import de.m0ep.socc.config.DataType;
+import de.m0ep.socc.config.form.DataForm;
+import de.m0ep.socc.config.form.FormField;
 import de.m0ep.socc.exceptions.ConnectorException;
 
 public class MoodleConnectorFactory implements IConnectorFactory {
@@ -50,27 +49,32 @@ public class MoodleConnectorFactory implements IConnectorFactory {
     public DataForm getParameterForm() {
 	DataForm dataForm = new DataForm();
 
-	dataForm.addField(new DataField.Builder()
-		.setName(MoodleConnectorConfig.USERNAME).setLabel("Username")
-		.setType(DataType.STRING).isRequired().create());
+	dataForm.addField(new FormField.Builder()
+		.setVariable(MoodleConnectorConfig.USERNAME).setLabel(
+			"Username")
+		.setType(FormField.Type.STRING).isRequired().create());
 
-	dataForm.addField(new DataField.Builder()
-		.setName(MoodleConnectorConfig.PASSWORD).setLabel("Password")
-		.setType(DataType.STRING).isHidden().isRequired().create());
+	dataForm.addField(new FormField.Builder()
+		.setVariable(MoodleConnectorConfig.PASSWORD).setLabel(
+			"Password")
+		.setType(FormField.Type.STRING).isHidden().isRequired()
+		.create());
 
-	dataForm.addField(new DataField.Builder()
-		.setName(MoodleConnectorConfig.URL).setLabel("URL to Moodle")
-		.setType(DataType.STRING).isRequired().create());
+	dataForm.addField(new FormField.Builder()
+		.setVariable(MoodleConnectorConfig.URL).setLabel(
+			"URL to Moodle")
+		.setType(FormField.Type.STRING).isRequired().create());
 
-	dataForm.addField(new DataField.Builder()
-		.setName(MoodleConnectorConfig.MAX_NEW_POSTS_ON_POLL)
-		.setLabel("Max Post per Poll").setType(DataType.INTEGER)
+	dataForm.addField(new FormField.Builder()
+		.setVariable(MoodleConnectorConfig.MAX_NEW_POSTS_ON_POLL)
+		.setLabel("Max Post per Poll").setType(
+			FormField.Type.INTEGER)
 		.setDefaultValue(SOCCConstants.POLL_MAX_NEW_POST).isPositive()
 		.create());
 
-	dataForm.addField(new DataField.Builder()
-		.setName(MoodleConnectorConfig.POLL_COOLDOWN)
-		.setLabel("Poll Cooldown").setType(DataType.INTEGER)
+	dataForm.addField(new FormField.Builder()
+		.setVariable(MoodleConnectorConfig.POLL_COOLDOWN)
+		.setLabel("Poll Cooldown").setType(FormField.Type.INTEGER)
 		.setDefaultValue(SOCCConstants.POLL_COOLDOWN_MILLIS)
 		.isPositive().create());
 

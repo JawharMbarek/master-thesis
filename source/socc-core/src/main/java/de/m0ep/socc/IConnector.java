@@ -207,15 +207,30 @@ public interface IConnector {
 
     /**
      * Poll this connector to retrieve all new {@link Post}s since the last call
-     * of {@link IConnector#pollNewPosts(Container)}
+     * of {@link IConnector#pollPosts(Container)}
      * 
      * @param container
      *            The container where should be polled to get new posts
      * 
-     * @return Iterator of all new Posts
+     * @return List of all new Posts
      */
-    public List<Post> pollNewPosts(Container container)
+    public List<Post> pollPosts(Container container)
 	    throws ConnectorException;
+
+    /**
+     * Poll this connector to retrieve all new replies as {@link Post}s since
+     * the last call of {@link IConnector#pollReplies(Post)}.
+     * 
+     * @param parent
+     *            The {@link Post} from where the replies should be polled.
+     * @return List of all replies
+     * 
+     * @throws ConnectorException
+     *             Thrown if sth. went wrong while polling. That could be an
+     *             unknown parent, network issues, problems with the underlying
+     *             API...
+     */
+    public List<Post> pollReplies(Post parent) throws ConnectorException;
 
     /**
      * Returns the {@link Usergroup} with the committed id
@@ -238,26 +253,6 @@ public interface IConnector {
     public List<Usergroup> getUsergroups() throws ConnectorException;
 
     /**
-     * Tests if {@link Post}s can be published on this {@link Container}
-     * 
-     * @param container
-     *            {@link Container} to test for publishing.
-     * 
-     * @return Returns true if it's ok to publish {@link Post}s on this
-     *         {@link Container}, false otherwise.
-     */
-    public boolean canPublishOn(Container container);
-
-    /**
-     * Tests if it's possible to post a reply on this {@link Post}
-     * 
-     * @param parent
-     *            {@link Post} to test for replying.
-     * @return Returns true if it's ok to reply on this {@link Post}.
-     */
-    public boolean canReplyOn(Post parent);
-
-    /**
      * Test if their are possible {@link Post}s inside this {@link Container}.
      * E.g. a usual Forum has no Post direct inside it, but the threads inside
      * this forum have some posts.
@@ -270,6 +265,17 @@ public interface IConnector {
     public boolean hasPosts(Container container);
 
     /**
+     * Tests if {@link Post}s can be published on this {@link Container}
+     * 
+     * @param container
+     *            {@link Container} to test for publishing.
+     * 
+     * @return Returns true if it's ok to publish {@link Post}s on this
+     *         {@link Container}, false otherwise.
+     */
+    public boolean canPublishOn(Container container);
+
+    /**
      * Publish a {@link Post} to the given {@link Container}.
      * 
      * @param post
@@ -279,7 +285,26 @@ public interface IConnector {
      * @return Returns the published post (Not the same as the given post).
      */
     public Post publishPost(Post post, Container container)
-	    throws ConnectorException;
+            throws ConnectorException;
+
+    /**
+     * Tests if this post has possible replies inside this connector.
+     * 
+     * @param parent
+     *            {@link Post} to test for containing replies
+     * @return Returns true, if this {@link Post} contains maybe replies, false
+     *         otherwise.
+     */
+    public boolean hasReplies(Post parent);
+
+    /**
+     * Tests if it's possible to post a reply on this {@link Post}
+     * 
+     * @param parent
+     *            {@link Post} to test for replying.
+     * @return Returns true if it's ok to reply on this {@link Post}.
+     */
+    public boolean canReplyOn(Post parent);
 
     /**
      * Reply a {@link Post} to the given parent {@link Post}.

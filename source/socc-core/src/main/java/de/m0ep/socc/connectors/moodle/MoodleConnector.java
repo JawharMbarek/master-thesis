@@ -264,7 +264,7 @@ public class MoodleConnector extends AbstractConnector {
     }
 
     @Override
-    public List<Post> pollNewPosts(Container container)
+    public List<Post> pollPosts(Container container)
 	    throws ConnectorException {
 	Preconditions.checkNotNull(container, "container can not be null");
 	Preconditions.checkArgument(hasPosts(container));

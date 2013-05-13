@@ -453,7 +453,7 @@ public class YoutubeV2Connector extends AbstractConnector {
     }
 
     @Override
-    public List<Post> pollNewPosts(Container container)
+    public List<Post> pollPosts(Container container)
 	    throws ConnectorException {
 	Preconditions.checkArgument(hasPosts(container),
 		"Container has no post in this connector");

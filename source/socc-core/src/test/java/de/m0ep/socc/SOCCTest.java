@@ -216,7 +216,7 @@ public class SOCCTest {
 	    printWithIndent("hasPost: " + connector.hasPosts(forum), 0);
 
 	    if (connector.hasPosts(forum)) {
-		connector.pollNewPosts(forum);
+		connector.pollPosts(forum);
 		listPosts(connector, forum, 1);
 	    }
 
@@ -238,7 +238,7 @@ public class SOCCTest {
 		printWithIndent("hasPost: " + connector.hasPosts(thread), 1);
 
 		if (connector.hasPosts(thread)) {
-		    connector.pollNewPosts(thread);
+		    connector.pollPosts(thread);
 		    listPosts(connector, thread, 2);
 		}
 	    }

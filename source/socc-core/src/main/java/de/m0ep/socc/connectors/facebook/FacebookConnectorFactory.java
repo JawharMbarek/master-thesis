@@ -29,9 +29,8 @@ import org.ontoware.rdf2go.model.Model;
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
 import de.m0ep.socc.SOCCConstants;
-import de.m0ep.socc.config.DataField;
-import de.m0ep.socc.config.DataForm;
-import de.m0ep.socc.config.DataType;
+import de.m0ep.socc.config.form.DataForm;
+import de.m0ep.socc.config.form.FormField;
 import de.m0ep.socc.exceptions.ConnectorException;
 
 public class FacebookConnectorFactory implements IConnectorFactory {
@@ -50,34 +49,39 @@ public class FacebookConnectorFactory implements IConnectorFactory {
     public DataForm getParameterForm() {
 	DataForm dataForm = new DataForm();
 
-	dataForm.addField(new DataField.Builder()
-		.setName(FacebookConnectorConfig.CLIENT_ID)
-		.setLabel("Client Id").setType(DataType.STRING).isHidden()
+	dataForm.addField(new FormField.Builder()
+		.setVariable(FacebookConnectorConfig.CLIENT_ID)
+		.setLabel("Client Id").setType(FormField.Type.STRING)
+		.isHidden()
 		.isRequired().create());
 
-	dataForm.addField(new DataField.Builder()
-		.setName(FacebookConnectorConfig.CLIENT_SECRET)
-		.setLabel("Client Secret").setType(DataType.STRING).isHidden()
+	dataForm.addField(new FormField.Builder()
+		.setVariable(FacebookConnectorConfig.CLIENT_SECRET)
+		.setLabel("Client Secret").setType(FormField.Type.STRING)
+		.isHidden()
 		.isRequired().create());
 
-	dataForm.addField(new DataField.Builder()
-		.setName(FacebookConnectorConfig.ACCESS_TOKEN)
-		.setLabel("Accesstoken").setType(DataType.STRING).isHidden()
+	dataForm.addField(new FormField.Builder()
+		.setVariable(FacebookConnectorConfig.ACCESS_TOKEN)
+		.setLabel("Accesstoken").setType(FormField.Type.STRING)
+		.isHidden()
 		.isRequired().create());
 
-	dataForm.addField(new DataField.Builder()
-		.setName(FacebookConnectorConfig.EXPIRES_IN_SECONDS)
-		.setLabel("Expires in (s)").setType(DataType.INTEGER).create());
+	dataForm.addField(new FormField.Builder()
+		.setVariable(FacebookConnectorConfig.EXPIRES_IN_SECONDS)
+		.setLabel("Expires in (s)").setType(FormField.Type.INTEGER)
+		.create());
 
-	dataForm.addField(new DataField.Builder()
-		.setName(FacebookConnectorConfig.MAX_NEW_POSTS_ON_POLL)
-		.setLabel("Max Post per Poll").setType(DataType.INTEGER)
+	dataForm.addField(new FormField.Builder()
+		.setVariable(FacebookConnectorConfig.MAX_NEW_POSTS_ON_POLL)
+		.setLabel("Max Post per Poll").setType(
+			FormField.Type.INTEGER)
 		.setDefaultValue(SOCCConstants.POLL_MAX_NEW_POST).isPositive()
 		.create());
 
-	dataForm.addField(new DataField.Builder()
-		.setName(FacebookConnectorConfig.POLL_COOLDOWN)
-		.setLabel("Poll Cooldown").setType(DataType.INTEGER)
+	dataForm.addField(new FormField.Builder()
+		.setVariable(FacebookConnectorConfig.POLL_COOLDOWN)
+		.setLabel("Poll Cooldown").setType(FormField.Type.INTEGER)
 		.setDefaultValue(SOCCConstants.POLL_COOLDOWN_MILLIS)
 		.isPositive().create());
 

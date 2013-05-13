@@ -111,61 +111,31 @@ public abstract class AbstractConnector implements IConnector {
 	this.isOnline = false;
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#connect()
-     */
     @Override
     public abstract void connect() throws ConnectorException;
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#destroy()
-     */
     @Override
     public void destroy() throws ConnectorException {
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#getId()
-     */
     @Override
     public String getId() {
 	return id;
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#getURL()
-     */
     @Override
     public abstract String getURL();
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#getConfiguration()
-     */
     @Override
     public abstract Map<String, Object> getConfiguration();
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#isOnline()
-     */
     @Override
     public boolean isOnline() {
 	return isOnline;
     }
 
     /**
-     * Sets this connector to be online.
+     * Sets this connector to be online/offline.
      * 
      * @param online
      *            Online status
@@ -174,48 +144,26 @@ public abstract class AbstractConnector implements IConnector {
 	this.isOnline = online;
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#getModel()
-     */
     @Override
     public Model getModel() {
 	return model;
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#getSite()
-     */
     @Override
     public abstract Site getSite() throws ConnectorException;
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#getLoginUser()
-     */
     @Override
     public abstract UserAccount getLoginUser() throws ConnectorException;
 
     /**
      * @throws NotFoundException
      *             Thrown if no {@link UserAccount} with this id was found.
-     * 
-     * @see de.m0ep.socc.IConnector#getUserAccount(java.lang.String)
      */
     @Override
     public UserAccount getUserAccount(String id) throws ConnectorException {
 	throw new NotFoundException("There is no user with the id=" + id);
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#getUserAccounts()
-     */
     @Override
     public List<UserAccount> getUserAccounts() throws ConnectorException {
 	List<UserAccount> result = new ArrayList<UserAccount>();
@@ -234,19 +182,12 @@ public abstract class AbstractConnector implements IConnector {
     /**
      * @throws NotFoundException
      *             Thrown if no {@link Forum} with this id was found.
-     * 
-     * @see de.m0ep.socc.IConnector#getForum(java.lang.String)
      */
     @Override
     public Forum getForum(String id) throws ConnectorException {
 	throw new NotFoundException("There is no forum with this id=" + id);
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#getForums()
-     */
     @Override
     public List<Forum> getForums() throws ConnectorException {
 	List<Forum> result = new ArrayList<Forum>();
@@ -267,19 +208,12 @@ public abstract class AbstractConnector implements IConnector {
     /**
      * @throws NotFoundException
      *             Thrown if no {@link Thread} with this id was found.
-     * 
-     * @see de.m0ep.socc.IConnector#getThread(java.lang.String)
      */
     @Override
     public Thread getThread(String id) throws ConnectorException {
 	throw new NotFoundException("There is no thread with the id=" + id);
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#getThreads(org.rdfs.sioc.Forum)
-     */
     @Override
     public List<Thread> getThreads(Forum forum) throws ConnectorException {
 	Preconditions.checkArgument(forum.hasHost(getSite()),
@@ -299,109 +233,79 @@ public abstract class AbstractConnector implements IConnector {
     /**
      * @throws NotFoundException
      *             Thrown if no {@link Post} with this id was found.
-     * 
-     * @see de.m0ep.socc.IConnector#getPost(java.lang.String)
      */
     @Override
     public Post getPost(String id) throws ConnectorException {
 	throw new NotFoundException("There is no post with the id=" + id);
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#getPosts(org.rdfs.sioc.Container)
-     */
     @Override
     public List<Post> getPosts(Container container) throws ConnectorException {
+	return new ArrayList<Post>();
+    }
+
+    @Override
+    public List<Post> pollPosts(Container container)
+	    throws ConnectorException {
+	return new ArrayList<Post>();
+    }
+
+    @Override
+    public List<Post> pollReplies(Post parent) throws ConnectorException {
 	return new ArrayList<Post>();
     }
 
     /**
      * @throws NotFoundException
      *             Thrown if no {@link Usergroup} with this id was found.
-     * 
-     * @see de.m0ep.socc.IConnector#getUsergroup(java.lang.String)
      */
     @Override
     public Usergroup getUsergroup(String id) throws ConnectorException {
 	throw new NotFoundException("There is no usergroup with the id=" + id);
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#getUsergroups()
-     */
     @Override
     public List<Usergroup> getUsergroups() throws ConnectorException {
 	return new ArrayList<Usergroup>();
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#canPublishOn(org.rdfs.sioc.Container)
-     */
+    @Override
+    public boolean hasPosts(Container container) {
+        return false;
+    }
+
     @Override
     public boolean canPublishOn(Container container) {
 	return false;
     }
 
     /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#canReplyOn(org.rdfs.sioc.Post)
+     * @throws UnsupportedOperationException
+     *             Thrown if the connector don't support post publishing.
      */
+    @Override
+    public Post publishPost(Post post, Container container)
+            throws ConnectorException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean hasReplies(Post parent) {
+        return false;
+    }
+
     @Override
     public boolean canReplyOn(Post parent) {
 	return false;
     }
 
     /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#hasPosts(org.rdfs.sioc.Container)
-     */
-    @Override
-    public boolean hasPosts(Container container) {
-	return false;
-    }
-
-    /**
-     * @throws UnsupportedOperationException
-     *             Thrown if the connector don't support post publishing.
-     * 
-     * @see de.m0ep.socc.IConnector#publishPost(org.rdfs.sioc.Post,
-     *      org.rdfs.sioc.Container)
-     */
-    @Override
-    public Post publishPost(Post post, Container container)
-	    throws ConnectorException {
-	throw new UnsupportedOperationException();
-    }
-
-    /**
      * @throws UnsupportedOperationException
      *             Thrown if the connector don't support post replying.
-     * 
-     * @see de.m0ep.socc.IConnector#replyPost(org.rdfs.sioc.Post,
-     *      org.rdfs.sioc.Post)
      */
     @Override
     public Post replyPost(Post post, Post parent) throws ConnectorException {
 	throw new UnsupportedOperationException();
-    }
-
-    /**
-     * (non-Javadoc)
-     * 
-     * @see de.m0ep.socc.IConnector#pollNewPosts(org.rdfs.sioc.Container)
-     */
-    @Override
-    public List<Post> pollNewPosts(Container container)
-	    throws ConnectorException {
-	return new ArrayList<Post>();
     }
 
     /**

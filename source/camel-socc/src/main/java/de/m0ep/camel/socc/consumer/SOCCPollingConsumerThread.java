@@ -57,7 +57,7 @@ public class SOCCPollingConsumerThread extends DefaultScheduledPollConsumer {
 
 	@Override
 	protected int poll() throws Exception {
-		List<Post> posts = endpoint.getConnector().pollNewPosts(
+		List<Post> posts = endpoint.getConnector().pollPosts(
 				endpoint.getThread());
 
 		for (Post post : posts) {

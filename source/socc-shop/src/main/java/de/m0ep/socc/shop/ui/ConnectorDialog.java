@@ -27,9 +27,8 @@ import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
-import de.m0ep.socc.config.DataField;
-import de.m0ep.socc.config.DataForm;
-import de.m0ep.socc.config.DataType;
+import de.m0ep.socc.config.form.DataForm;
+import de.m0ep.socc.config.form.FormField;
 import de.m0ep.socc.shop.SOCCShopApplication;
 
 public class ConnectorDialog extends JDialog {
@@ -268,11 +267,12 @@ public class ConnectorDialog extends JDialog {
 	// validate parameters
 	DataForm dataForm = app.getSocc().getFactory(factoryId)
 		.getParameterForm();
-	for (DataField field : dataForm.getFields()) {
-	    if (parameters.containsKey(field.getName())) {
-		Object obj = parameters.get(field.getName());
+	for (FormField field : dataForm.getFields()) {
+	    if (parameters.containsKey(field.getVariable())) {
+		Object obj = parameters.get(field.getVariable());
 
-		if (DataType.STRING == field.getType() || field.isHidden()) {
+		if (FormField.Type.STRING == field.getType()
+			|| field.isHidden()) {
 		    if (obj.toString().isEmpty()) {
 			JOptionPane.showMessageDialog(ConnectorDialog.this,
 				"Fill the '" + field.getLabel()
@@ -280,7 +280,7 @@ public class ConnectorDialog extends JDialog {
 				JOptionPane.ERROR_MESSAGE);
 			return false;
 		    }
-		} else if (DataType.INTEGER == field.getType()) {
+		} else if (FormField.Type.INTEGER == field.getType()) {
 		    Integer value = null;
 
 		    try {
@@ -300,7 +300,7 @@ public class ConnectorDialog extends JDialog {
 				"Input error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		    }
-		} else if (DataType.FLOAT == field.getType()) {
+		} else if (FormField.Type.FLOAT == field.getType()) {
 		    Double value = null;
 
 		    try {

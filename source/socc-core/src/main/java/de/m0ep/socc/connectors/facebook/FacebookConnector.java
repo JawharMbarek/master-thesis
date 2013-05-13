@@ -568,7 +568,7 @@ public class FacebookConnector extends AbstractConnector {
     };
 
     @Override
-    public List<Post> pollNewPosts(Container container)
+    public List<Post> pollPosts(Container container)
 	    throws ConnectorException {
 	Preconditions.checkNotNull(container, "Container can not be null.");
 	Preconditions.checkArgument(

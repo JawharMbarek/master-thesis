@@ -1,6 +1,7 @@
 package de.m0ep.socc.shop.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -243,6 +244,7 @@ public class ApplicationWindow {
 	mnHelp.add(mntmAbout);
 
 	desktopPane = new JDesktopPane();
+	desktopPane.setBackground(Color.LIGHT_GRAY);
 	JScrollPane scrollPane = new JScrollPane(desktopPane);
 	frmSoccShop.getContentPane().add(scrollPane, BorderLayout.CENTER);
     }

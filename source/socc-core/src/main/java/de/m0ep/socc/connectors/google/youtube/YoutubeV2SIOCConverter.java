@@ -63,7 +63,8 @@ public class YoutubeV2SIOCConverter {
 
 	result.setId(connector.parseYoutubeEntryID(userProfileEntry.getId()));
 	result.setIsPartOf(connector.getSite());
-	result.setAccountName(userProfileEntry.getUsername());
+	result.setAccountName(Strings.nullToEmpty(userProfileEntry
+		.getUsername()));
 	result.setAccountServiceHomepage(Builder.createURI(connector
 		.getURL()));
 
@@ -76,11 +77,15 @@ public class YoutubeV2SIOCConverter {
 		    .getUpdated().getValue()));
 	}
 
-	if (null != userProfileEntry.getFirstName()
-		|| null != userProfileEntry.getLastName()) {
-	    result.setName((Strings.nullToEmpty(userProfileEntry.getFirstName())
-		    + " " + Strings.nullToEmpty(userProfileEntry.getLastName()))
-		    .trim());
+	String firstname = Strings.emptyToNull(userProfileEntry.getFirstName());
+	String lastname = Strings.emptyToNull(userProfileEntry.getLastName());
+
+	if (null != firstname || null != lastname) {
+	    result.setName((
+		    Strings.nullToEmpty(firstname)
+			    + " " +
+		    Strings.nullToEmpty(lastname))
+			    .trim());
 	} else {
 	    result.setName(Strings.nullToEmpty(userProfileEntry.getUsername()));
 	}
@@ -188,9 +193,11 @@ public class YoutubeV2SIOCConverter {
 	    throws ConnectorException {
 	Post result = new Post(connector.getModel(), uri, true);
 
-	result.setId(videoPost.getId()
-		+ YoutubeV2Constants.COMMENT_ID_SEPERATOR
-		+ connector.parseYoutubeEntryID(commentEntry.getId()));
+	result.setId(
+		String.format(
+			YoutubeV2Constants.FMT_ID_COMMENT,
+			videoPost.getId(),
+			connector.parseYoutubeEntryID(commentEntry.getId())));
 
 	for (Person person : commentEntry.getAuthors()) {
 	    String personUri = person.getUri();
@@ -243,7 +250,8 @@ public class YoutubeV2SIOCConverter {
 
 		replyToPost
 			.setNumReplies((replyToPost.hasNumReplies()) ? (replyToPost
-				.getNumReplies() + 1) : (1));
+				.getNumReplies() + 1)
+				: (1));
 		SIOCUtils.updateLastReplyDate(replyToPost, result);
 	    }
 	    // TODO: Load post with this replyToUri
@@ -300,7 +308,7 @@ public class YoutubeV2SIOCConverter {
 	    // Add reply link
 	    result.addLink(YouTubeNamespace.IN_REPLY_TO,
 		    "application/atom+xml", String.format(
-			    YoutubeV2Constants.ENTRY_COMMENT, parentPost
+			    YoutubeV2Constants.FMT_ENTRY_COMMENT, parentPost
 				    .getDiscussion().getId(), parentPost
 				    .getId()));
 	}

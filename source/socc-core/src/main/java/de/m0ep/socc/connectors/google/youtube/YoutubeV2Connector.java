@@ -108,22 +108,30 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    this.ytConfig.setPollCooldownMillis(500);
 
 	URI uri = Builder.createURI(String.format(
-		YoutubeV2Constants.FEED_UPLOADS, myId));
+		YoutubeV2Constants.FMT_FEED_UPLOADS, myId));
 
-	if (!Forum.hasInstance(getModel(), uri)) {
+	if (Forum.hasInstance(getModel(), uri)) {
+	    this.uploads = Forum.getInstance(getModel(), uri);
+	} else {
 	    this.uploads = new Forum(model, uri, true);
-	    this.uploads.setId(YoutubeV2Constants.ID_FOURM_UPLOADS);
+	    this.uploads
+		    .setId(
+		    String.format(YoutubeV2Constants.FMT_ID_FORUM_UPLOADS, myId));
 	    this.uploads.setName("Uploads");
 	    this.uploads.setHost(getSite());
 	    getSite().addHostOf(this.uploads);
 	}
 
 	uri = Builder.createURI(String.format(
-		YoutubeV2Constants.FEED_PLAYLISTS, myId));
+		YoutubeV2Constants.FMT_FEED_PLAYLISTS, myId));
 
-	if (!Forum.hasInstance(getModel(), uri)) {
+	if (Forum.hasInstance(getModel(), uri)) {
+	    this.playlists = Forum.getInstance(getModel(), uri);
+	} else {
 	    this.playlists = new Forum(model, uri, true);
-	    this.playlists.setId(YoutubeV2Constants.ID_FORUM_PLAYLISTS);
+	    this.playlists.setId(
+		    String.format(YoutubeV2Constants.FMT_ID_FORUM_PLAYLISTS,
+			    myId));
 	    this.playlists.setName("Playlists");
 	    this.playlists.setNumThreads(0);
 	    this.playlists.setHost(getSite());
@@ -149,7 +157,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 
 	try {
 	    this.userProfile = service.getEntry(
-		    new URL(String.format(YoutubeV2Constants.ENTRY_USER,
+		    new URL(String.format(YoutubeV2Constants.FMT_ENTRY_USER,
 			    "default")), UserProfileEntry.class);
 	    this.myId = userProfile.getUsername();
 	} catch (MalformedURLException e) {
@@ -203,7 +211,7 @@ public class YoutubeV2Connector extends AbstractConnector {
     @Override
     public UserAccount getUserAccount(String id) throws ConnectorException {
 	URI uri = Builder.createURI(String.format(
-		YoutubeV2Constants.ENTRY_USER, id));
+		YoutubeV2Constants.FMT_ENTRY_USER, id));
 
 	if (!UserAccount.hasAccountName(getModel(), uri)) {
 	    UserProfileEntry profileEntry = null;
@@ -211,10 +219,13 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    startPolling();
 
 	    try {
-		profileEntry = service.getEntry(
-			new URL(String
-				.format(YoutubeV2Constants.ENTRY_USER, id)),
-			UserProfileEntry.class);
+		profileEntry = service
+			.getEntry(
+				new URL(
+					String
+						.format(YoutubeV2Constants.FMT_ENTRY_USER,
+							id)),
+				UserProfileEntry.class);
 	    } catch (MalformedURLException e) {
 		LOG.error("Malformed URL", e);
 		throw new ConnectorException("Malformed URL", e);
@@ -257,12 +268,13 @@ public class YoutubeV2Connector extends AbstractConnector {
 
     @Override
     public Forum getForum(String id) throws ConnectorException {
-	if (YoutubeV2Constants.ID_FOURM_UPLOADS.equalsIgnoreCase(id)) {
+	if (YoutubeV2Constants.FMT_ID_FORUM_UPLOADS.equalsIgnoreCase(id)) {
 	    return Forum.getInstance(getModel(), Builder.createURI(String
-		    .format(YoutubeV2Constants.FEED_UPLOADS, myId)));
-	} else if (YoutubeV2Constants.ID_FORUM_PLAYLISTS.equalsIgnoreCase(id)) {
+		    .format(YoutubeV2Constants.FMT_FEED_UPLOADS, myId)));
+	} else if (YoutubeV2Constants.FMT_ID_FORUM_PLAYLISTS
+		.equalsIgnoreCase(id)) {
 	    return Forum.getInstance(getModel(), Builder.createURI(String
-		    .format(YoutubeV2Constants.FEED_PLAYLISTS, myId)));
+		    .format(YoutubeV2Constants.FMT_FEED_PLAYLISTS, myId)));
 	}
 
 	throw new NotFoundException("No forum found wiht id " + id);
@@ -271,7 +283,7 @@ public class YoutubeV2Connector extends AbstractConnector {
     @Override
     public Thread getThread(String id) throws ConnectorException {
 	URI uri = Builder.createURI(String.format(
-		YoutubeV2Constants.FEED_PLAYLIST, id));
+		YoutubeV2Constants.FMT_FEED_PLAYLIST, id));
 	if (Thread.hasInstance(getModel(), uri)) {
 	    return Thread.getInstance(getModel(), uri);
 	}
@@ -281,7 +293,8 @@ public class YoutubeV2Connector extends AbstractConnector {
 	PlaylistLinkEntry playlistLinkEntry = null;
 	try {
 	    playlistLinkEntry = service.getEntry(
-		    new URL(String.format(YoutubeV2Constants.ENTRY_PLAYLIST,
+		    new URL(String.format(
+			    YoutubeV2Constants.FMT_ENTRY_PLAYLIST,
 			    myId, id)), PlaylistLinkEntry.class);
 	} catch (MalformedURLException e) {
 	    LOG.error("Malformed URL", e);
@@ -311,51 +324,56 @@ public class YoutubeV2Connector extends AbstractConnector {
     @Override
     public List<Thread> getThreads(Forum forum) throws ConnectorException {
 	List<Thread> result = new ArrayList<Thread>();
-	String feedURL = String.format(YoutubeV2Constants.FEED_PLAYLISTS, myId);
+	String feedURL = String.format(YoutubeV2Constants.FMT_FEED_PLAYLISTS,
+		myId);
 
-	if (forum.equals(playlists)) {
-	    PlaylistLinkFeed linkFeed = null;
+	if (forum.hasHost(getSite())) {
+	    if (playlists.equals(forum)) {
+		LOG.debug("load playlists from youtube");
+		PlaylistLinkFeed linkFeed = null;
 
-	    startPolling();
+		startPolling();
 
-	    try {
-		linkFeed = service.getFeed(new URL(feedURL),
-			PlaylistLinkFeed.class);
-		feedURL = null;
-	    } catch (MalformedURLException e) {
-		LOG.error("Malformed URL", e);
-		throw new ConnectorException("Malformed URL", e);
-	    } catch (IOException e) {
-		LOG.error("Network error", e);
-		throw new NetworkException(e.getLocalizedMessage(), e);
-	    } catch (ServiceException e) {
-		LOG.error("Service error", e);
-		throw mapToConenctorException(e);
-	    } catch (Throwable t) {
-		LOG.error("unknown error", t);
-		throw new ConnectorException("Unknown error", t);
-	    } finally {
-		finishPolling();
-	    }
-
-	    if (null != linkFeed) {
-		for (PlaylistLinkEntry linkEntry : linkFeed.getEntries()) {
-		    URI uri = Builder.createURI(String.format(
-			    YoutubeV2Constants.FEED_PLAYLIST,
-			    parseYoutubeEntryID(linkEntry.getId())));
-
-		    if (!Thread.hasInstance(getModel(), uri)) {
-			Thread thread = YoutubeV2SIOCConverter.createThread(
-				this, linkEntry, uri, playlists);
-			result.add(thread);
-
-		    } else {
-			result.add(Thread.getInstance(getModel(), uri));
-		    }
+		try {
+		    linkFeed = service.getFeed(new URL(feedURL),
+			    PlaylistLinkFeed.class);
+		    feedURL = null;
+		} catch (MalformedURLException e) {
+		    LOG.error("Malformed URL", e);
+		    throw new ConnectorException("Malformed URL", e);
+		} catch (IOException e) {
+		    LOG.error("Network error", e);
+		    throw new NetworkException(e.getLocalizedMessage(), e);
+		} catch (ServiceException e) {
+		    LOG.error("Service error", e);
+		    throw mapToConenctorException(e);
+		} catch (Throwable t) {
+		    LOG.error("unknown error", t);
+		    throw new ConnectorException("Unknown error", t);
+		} finally {
+		    finishPolling();
 		}
 
-		if (null != linkFeed.getNextLink()) {
-		    feedURL = linkFeed.getNextLink().getHref();
+		if (null != linkFeed) {
+		    for (PlaylistLinkEntry linkEntry : linkFeed.getEntries()) {
+			URI uri = Builder.createURI(String.format(
+				YoutubeV2Constants.FMT_FEED_PLAYLIST,
+				parseYoutubeEntryID(linkEntry.getId())));
+
+			if (!Thread.hasInstance(getModel(), uri)) {
+			    Thread thread = YoutubeV2SIOCConverter
+				    .createThread(
+					    this, linkEntry, uri, playlists);
+			    result.add(thread);
+
+			} else {
+			    result.add(Thread.getInstance(getModel(), uri));
+			}
+		    }
+
+		    if (null != linkFeed.getNextLink()) {
+			feedURL = linkFeed.getNextLink().getHref();
+		    }
 		}
 	    }
 	}
@@ -374,7 +392,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 		ids[1].trim();
 
 		URI uri = Builder.createURI(String.format(
-			YoutubeV2Constants.ENTRY_COMMENT, ids[0], ids[2]));
+			YoutubeV2Constants.FMT_ENTRY_COMMENT, ids[0], ids[2]));
 
 		if (Post.hasInstance(getModel(), uri)) {
 		    return Post.getInstance(getModel(), uri);
@@ -417,7 +435,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 	} else {
 	    // it is maybe a video post
 	    URI uri = Builder.createURI(String.format(
-		    YoutubeV2Constants.ENTRY_VIDEO, id));
+		    YoutubeV2Constants.FMT_ENTRY_VIDEO, id));
 
 	    if (Post.hasInstance(getModel(), uri)) {
 		return Post.getInstance(getModel(), uri);
@@ -461,9 +479,10 @@ public class YoutubeV2Connector extends AbstractConnector {
 	String nextFeedUrl = null;
 
 	if (isUploadsForum(container)) {
-	    nextFeedUrl = String.format(YoutubeV2Constants.FEED_UPLOADS, myId);
+	    nextFeedUrl = String.format(YoutubeV2Constants.FMT_FEED_UPLOADS,
+		    myId);
 	} else if (isPlaylistThread(container)) {
-	    nextFeedUrl = String.format(YoutubeV2Constants.FEED_PLAYLIST,
+	    nextFeedUrl = String.format(YoutubeV2Constants.FMT_FEED_PLAYLIST,
 		    container.getId());
 	} else {
 	    // Programm shouldn't reach this code
@@ -511,7 +530,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 		for (VideoEntry videoEntry : videoFeed.getEntries()) {
 		    String videoId = getVideoEntryId(videoEntry);
 		    URI uri = Builder.createURI(String.format(
-			    YoutubeV2Constants.ENTRY_VIDEO, videoId));
+			    YoutubeV2Constants.FMT_ENTRY_VIDEO, videoId));
 
 		    Date created = new Date(videoEntry.getPublished()
 			    .getValue());
@@ -593,10 +612,12 @@ public class YoutubeV2Connector extends AbstractConnector {
 
 	// get the correct url for the comments feed
 	if (parentPost.hasReplyOf()) {
-	    commentsFeedURL = String.format(YoutubeV2Constants.FEED_COMMENTS,
+	    commentsFeedURL = String.format(
+		    YoutubeV2Constants.FMT_FEED_COMMENTS,
 		    parentPost.getDiscussion().getId());
 	} else {
-	    commentsFeedURL = String.format(YoutubeV2Constants.FEED_COMMENTS,
+	    commentsFeedURL = String.format(
+		    YoutubeV2Constants.FMT_FEED_COMMENTS,
 		    parentPost.getId());
 	}
 
@@ -628,7 +649,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 
 	    String commentId = parseYoutubeEntryID(resultCommentEntry.getId());
 	    URI uri = Builder.createURI(String.format(
-		    YoutubeV2Constants.ENTRY_COMMENT, videoPost.getId(),
+		    YoutubeV2Constants.FMT_ENTRY_COMMENT, videoPost.getId(),
 		    commentId));
 	    Post addedPost = YoutubeV2SIOCConverter.createComment(this,
 		    resultCommentEntry, uri, videoPost.getContainer(),
@@ -704,7 +725,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 			String commentId = parseYoutubeEntryID(commentEntry
 				.getId());
 			URI uri = Builder.createURI(String.format(
-				YoutubeV2Constants.ENTRY_COMMENT,
+				YoutubeV2Constants.FMT_ENTRY_COMMENT,
 				videoPost.getId(), commentId));
 
 			if (!Post.hasInstance(getModel(), uri)) {
@@ -748,8 +769,10 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    Forum forum = Forum
 		    .getInstance(getModel(), container.getResource());
 
-	    return YoutubeV2Constants.ID_FOURM_UPLOADS.equalsIgnoreCase(forum
-		    .getId()) && forum.hasHost(getSite());
+	    return YoutubeV2Constants.FMT_ID_FORUM_UPLOADS
+		    .equalsIgnoreCase(forum
+			    .getId())
+		    && forum.hasHost(getSite());
 	}
 
 	return false;

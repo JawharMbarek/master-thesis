@@ -1,6 +1,8 @@
 package de.m0ep.socc;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +86,27 @@ public class SOCC {
 	}
     }
 
+    /**
+     * Create a new {@link IConnector} with <code>id</code> and
+     * <code>parameters</code> from the factory with <code>factoryId</code>.
+     * 
+     * @param factoryId
+     *            FactoryId from where the connector should be created.
+     * @param id
+     *            Id of the connector.
+     * @param parameters
+     *            Parameters for the connector.
+     * @return A new {@link IConnector}
+     * 
+     * @throws NullPointerException
+     *             Thrown if one or more parameter are null.
+     * @throws IllegalArgumentException
+     *             Thrown if <code>factoryId</code> or <code>id</code> are empty
+     *             or if there is already a connector with this id.
+     * @throws ConnectorException
+     *             Thrown if there is an error while creating the connector.
+     * 
+     */
     public IConnector createConnector(final String factoryId, final String id,
 	    final Map<String, Object> parameters) throws ConnectorException {
 	Preconditions.checkNotNull(factoryId, "FactoryId can not be null.");
@@ -106,14 +129,35 @@ public class SOCC {
 	return connector;
     }
 
-    public List<IConnector> getConnectors() {
-	return new ArrayList<IConnector>(this.connectorMap.values());
+    /**
+     * Return a {@link Collection} of all created Connectors.
+     * 
+     * @return Unmodifiable {@link Collection} of {@link IConnector}s
+     */
+    public Collection<IConnector> getConnectors() {
+	return Collections.unmodifiableCollection(this.connectorMap.values());
     }
 
+    /**
+     * Get the ids of all created connectors.
+     * 
+     * @return A {@link Set} of all connector ids.
+     */
     public Set<String> getConnectorIds() {
 	return this.connectorMap.keySet();
     }
 
+    /**
+     * Returns the {@link IConnector} with this <code>id</code>
+     * 
+     * @param id
+     *            Id of the wanted connector.
+     * 
+     * @return {@link IConnector} of the connector with this id.
+     * 
+     * @throws NoSuchElementException
+     *             Thrown if there is no connector with this <code>id</code>.
+     */
     public IConnector getConnector(final String id) {
 	if (connectorMap.containsKey(id)) {
 	    return connectorMap.get(id);
@@ -123,6 +167,12 @@ public class SOCC {
 		+ id);
     }
 
+    /**
+     * Remove the connector with the <code>id</code>.
+     * 
+     * @param id
+     *            Id of the connector that should be removed.
+     */
     public void removeConnector(final String id) {
 	if (connectorMap.containsKey(id)) {
 	    connectorMap.remove(id);
@@ -130,10 +180,36 @@ public class SOCC {
 	}
     }
 
+    /**
+     * Get a {@link Collection} of all loaded factories.
+     * 
+     * @return Unmodifiable {@link Collection} of {@link IConnectorFactory}s
+     */
+    public Collection<IConnectorFactory> getFactories() {
+	return Collections.unmodifiableCollection(factories.values());
+    }
+
+    /**
+     * Returns a {@link Set} of all factory ids.
+     * 
+     * @return {@link Set} of factory ids.
+     */
     public Set<String> getFactoryIds() {
 	return this.factories.keySet();
     }
 
+    /**
+     * Returns the {@link IConnectorFactory} from the factory with this
+     * <code>id</code>.
+     * 
+     * @param id
+     *            Id of the wanted factory.
+     * 
+     * @return {@link IConnectorFactory} of the factory with this id.
+     * 
+     * @throws NoSuchElementException
+     *             Thrown if there is no factory with this id.
+     */
     public IConnectorFactory getFactory(final String id) {
 	if (factories.containsKey(id)) {
 	    return factories.get(id);
@@ -142,6 +218,21 @@ public class SOCC {
 	throw new NoSuchElementException("No factory found with id = " + id);
     }
 
+    /**
+     * Returns the {@link IConnectorFactory} of the factory with which the
+     * connector with <code>connectorId</code> was created.
+     * 
+     * @param connectorId
+     * 
+     * @return {@link IConnectorFactory} which created <code>connectorId</code>.
+     * 
+     * @throws NullPointerException
+     *             Thrown if connectorId is null.
+     * @throws IllegalArgumentException
+     *             Thrown if there is no connector with this id.
+     * @throws NoSuchElementException
+     *             Thrown if no factory found for this connector.
+     */
     public IConnectorFactory getFactoryOfConnector(String connectorId) {
 	Preconditions.checkNotNull(connectorId, "ConnectorId can not be null");
 	Preconditions.checkArgument(
@@ -172,10 +263,28 @@ public class SOCC {
 	return result;
     }
 
+    /**
+     * REturns the {@link Model} used with this {@link SOCC} instance.
+     * 
+     * @return The used RDF2Go {@link Model}.
+     */
     public Model getModel() {
 	return this.model;
     }
 
+    /**
+     * Create a default RDF2Go {@link Model} to use with the Social Online
+     * Community Connectors.
+     * 
+     * These model contains the RDF namespaces for:
+     * <ul>
+     * <li>SIOC</li>
+     * <li>FOAF</li>
+     * <li>DCTerms</li>
+     * </ul>
+     * 
+     * @return A default {@link Model}
+     */
     public static Model createDefaultMemoryModel() {
 	Model model = RDF2Go.getModelFactory().createModel();
 	model = RDF2Go.getModelFactory().createModel();

@@ -6,21 +6,22 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -50,12 +51,13 @@ public class SIOCInternalFrame extends JInternalFrame {
 	    .getLogger(SIOCInternalFrame.class);
 
     private SOCCShopApplication app;
-    private JList<String> listPosts;
-    private DefaultListModel<String> listPostsModel;
 
     private JTree treeContainers;
     private DefaultMutableTreeNode treeRoot;
     private DefaultTreeModel treeContainersModel;
+
+    private DefaultTableModel tablePostsModel;
+    private JTable tablePosts;
 
     ImageIcon loadingIcon = new ImageIcon(
 	    SIOCInternalFrame.class.getResource("/images/imagesLoadingOLD.gif"));
@@ -93,12 +95,23 @@ public class SIOCInternalFrame extends JInternalFrame {
 	    }
 	});
 	treeContainers.setCellRenderer(new MyCellRenderer());
+
 	JScrollPane scrollPane = new JScrollPane(treeContainers);
 	splitPane.setLeftComponent(scrollPane);
 
-	listPostsModel = new DefaultListModel<String>();
-	listPosts = new JList<String>(listPostsModel);
-	scrollPane = new JScrollPane(listPosts);
+	tablePostsModel = new DefaultTableModel();
+	tablePostsModel.addColumn("Title");
+	tablePostsModel.addColumn("Subject");
+	tablePostsModel.addColumn("Content");
+	tablePostsModel.addColumn("Creator");
+	tablePostsModel.addColumn("Date Created");
+	tablePostsModel.addColumn("Container");
+	tablePostsModel.addColumn("Parent");
+
+	tablePosts = new JTable();
+	tablePosts.setModel(tablePostsModel);
+
+	scrollPane = new JScrollPane(tablePosts);
 	splitPane.setRightComponent(scrollPane);
 
 	JPanel buttonPanel = new JPanel();
@@ -133,7 +146,7 @@ public class SIOCInternalFrame extends JInternalFrame {
     }
 
     protected void updateContainer() {
-	List<IConnector> connectors = app.getSocc().getConnectors();
+	Collection<IConnector> connectors = app.getSocc().getConnectors();
 	treeRoot = new DefaultMutableTreeNode(new SIOCTreeItem(
 		SIOCTreeItem.ROOT, "SIOC", null), true);
 	for (IConnector connector : connectors) {
@@ -236,6 +249,7 @@ public class SIOCInternalFrame extends JInternalFrame {
     }
 
     protected void updatePosts(final Container container) {
+	// TODO: remove this later
 	for (IConnector connector : app.getSocc().getConnectors()) {
 	    if (connector.hasPosts(container)) {
 		try {
@@ -250,16 +264,23 @@ public class SIOCInternalFrame extends JInternalFrame {
 	SwingUtilities.invokeLater(new Runnable() {
 	    @Override
 	    public void run() {
-		listPostsModel.clear();
+		for (int i = tablePostsModel.getRowCount() - 1; i >= 0; i--) {
+		    tablePostsModel.removeRow(i);
+		}
+
 		for (Post post : posts) {
 		    if (post.hasContainer(container)) {
 			UserAccount user = post.getCreator();
-			listPostsModel.addElement(
-				user.getName() + " " +
-					post.getCreated() + " " +
-					post.getContent());
 
-			LOG.debug("add post to list");
+			tablePostsModel.addRow(new Object[] {
+				post.getTitle(),
+				post.getSubject(),
+				post.getContent(),
+				user.getName(),
+				post.getCreated(),
+				post.getContainer(),
+				post.getReplyOf()
+			});
 		    }
 		}
 

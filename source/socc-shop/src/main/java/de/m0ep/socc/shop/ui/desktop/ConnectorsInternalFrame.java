@@ -1,4 +1,4 @@
-package de.m0ep.socc.shop.ui;
+package de.m0ep.socc.shop.ui.desktop;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -30,6 +30,7 @@ import com.google.common.base.Preconditions;
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.shop.SOCCShopApplication;
+import de.m0ep.socc.shop.ui.dialogs.ConnectorDialog;
 
 public class ConnectorsInternalFrame extends JInternalFrame {
     private static final long serialVersionUID = -8822621555961769296L;

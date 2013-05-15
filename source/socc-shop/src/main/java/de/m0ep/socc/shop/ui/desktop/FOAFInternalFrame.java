@@ -1,4 +1,4 @@
-package de.m0ep.socc.shop.ui;
+package de.m0ep.socc.shop.ui.desktop;
 
 import java.awt.BorderLayout;
 import java.awt.event.KeyAdapter;
@@ -16,6 +16,7 @@ import javax.swing.border.EtchedBorder;
 import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.shop.SOCCShopApplication;
+import de.m0ep.socc.shop.ui.ApplicationWindow;
 
 public class FOAFInternalFrame extends JInternalFrame {
     private static final long serialVersionUID = -378598547966313078L;

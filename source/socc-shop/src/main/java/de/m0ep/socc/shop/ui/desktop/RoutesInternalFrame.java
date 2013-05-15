@@ -1,4 +1,4 @@
-package de.m0ep.socc.shop.ui;
+package de.m0ep.socc.shop.ui.desktop;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -38,6 +38,7 @@ import com.google.common.base.Ascii;
 import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.shop.SOCCShopApplication;
+import de.m0ep.socc.shop.ui.dialogs.RouteDialog;
 
 public class RoutesInternalFrame extends JInternalFrame {
 
@@ -132,6 +133,13 @@ public class RoutesInternalFrame extends JInternalFrame {
 	JButton btnCreate = new JButton("Create");
 	btnCreate.setIcon(new ImageIcon(RoutesInternalFrame.class
 		.getResource("/images/add.png")));
+	btnCreate.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		RouteDialog dialog = new RouteDialog();
+		dialog.showDialog();
+	    }
+	});
 	buttonPane.add(btnCreate);
 
 	listRoutesModel = new DefaultListModel<String>();

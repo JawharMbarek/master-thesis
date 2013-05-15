@@ -1,4 +1,4 @@
-package de.m0ep.socc.shop.ui;
+package de.m0ep.socc.shop.ui.desktop;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

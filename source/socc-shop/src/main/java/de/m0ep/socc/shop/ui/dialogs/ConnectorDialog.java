@@ -1,4 +1,4 @@
-package de.m0ep.socc.shop.ui;
+package de.m0ep.socc.shop.ui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -30,6 +30,7 @@ import de.m0ep.socc.IConnectorFactory;
 import de.m0ep.socc.config.form.DataForm;
 import de.m0ep.socc.config.form.FormField;
 import de.m0ep.socc.shop.SOCCShopApplication;
+import de.m0ep.socc.shop.ui.components.DynamicDataFormPanel;
 
 public class ConnectorDialog extends JDialog {
     private static final long serialVersionUID = -7606005788404878311L;

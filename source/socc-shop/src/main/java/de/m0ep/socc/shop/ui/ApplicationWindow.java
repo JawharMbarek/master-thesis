@@ -32,6 +32,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.m0ep.socc.shop.SOCCShopApplication;
+import de.m0ep.socc.shop.ui.desktop.ConnectorsInternalFrame;
+import de.m0ep.socc.shop.ui.desktop.FOAFInternalFrame;
+import de.m0ep.socc.shop.ui.desktop.RoutesInternalFrame;
+import de.m0ep.socc.shop.ui.desktop.SIOCInternalFrame;
+import de.m0ep.socc.shop.ui.dialogs.AboutDialog;
 import de.m0ep.socc.shop.utils.ExportUtils;
 
 public class ApplicationWindow {

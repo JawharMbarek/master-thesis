@@ -1,4 +1,4 @@
-package de.m0ep.socc.shop.ui;
+package de.m0ep.socc.shop.ui.components;
 
 import java.awt.Dimension;
 import java.util.HashMap;
@@ -175,7 +175,7 @@ public class DynamicDataFormPanel extends JPanel {
 		+ field.getType());
     }
 
-    Map<String, Object> getData() {
+    public Map<String, Object> getData() {
 
 	Map<String, Object> result = new HashMap<String, Object>();
 

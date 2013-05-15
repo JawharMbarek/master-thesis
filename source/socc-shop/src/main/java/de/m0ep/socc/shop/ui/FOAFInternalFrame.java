@@ -41,6 +41,7 @@ public class FOAFInternalFrame extends JInternalFrame {
 	setBounds(100, 100, 450, 300);
 	setFrameIcon(new ImageIcon(ApplicationWindow.class
 		.getResource("/images/group.png")));
+	setDefaultCloseOperation(HIDE_ON_CLOSE);
 	getContentPane().setLayout(new BorderLayout());
 
 	splitPane = new JSplitPane();

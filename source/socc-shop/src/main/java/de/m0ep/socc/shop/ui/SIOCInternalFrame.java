@@ -77,6 +77,7 @@ public class SIOCInternalFrame extends JInternalFrame {
 	setMaximizable(true);
 	setIconifiable(true);
 	setClosable(true);
+	setDefaultCloseOperation(HIDE_ON_CLOSE);
 	this.app = Preconditions.checkNotNull(app, "App can not be null.");
 
 	setBounds(100, 100, 450, 300);
@@ -110,7 +111,6 @@ public class SIOCInternalFrame extends JInternalFrame {
 
 	tablePosts = new JTable();
 	tablePosts.setModel(tablePostsModel);
-
 	scrollPane = new JScrollPane(tablePosts);
 	splitPane.setRightComponent(scrollPane);
 

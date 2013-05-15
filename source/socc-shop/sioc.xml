@@ -387,10 +387,23 @@
 	<dcterms:created>2012-12-06T00:13:48.000+01:00</dcterms:created>
 	<dcterms:description></dcterms:description>
 	<dcterms:modified>2012-12-06T00:13:49.000+01:00</dcterms:modified>
+	<sioc:container_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<sioc:container_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdgFY2qKjdy2Egw03puddRMR9wOGCM9gANE"/>
+	<sioc:container_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdgj7eU0YUInf8X8-Cg4NG8MfmwoY9FyYAA"/>
+	<sioc:container_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdh9lXudiWyhmPzP36NvDcRnhuLXLflsO64"/>
+	<sioc:container_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdhQCohwcw63tAuo3K-8SlJ1Zn-rmRLN_9Q"/>
+	<sioc:container_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdheEq7My_HQ0fj577jBTluKL5DhQIxQVvs"/>
+	<sioc:container_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdhwc0rOf2TuU8P5j9T5-Mh9aDEQo6WyLKs"/>
+	<sioc:container_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdhzjnZM2hLy5z9zZNpmp6b69kP5T2Vu6Ac"/>
+	<sioc:container_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdiL1poJMgKEc2XiXl4CVjnLpcp-6CevKW8"/>
+	<sioc:container_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdiqLz-0Y8ytXLvAp_knOAMu-Ao2Ob6mmyI"/>
+	<sioc:container_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdjHi-WrIpvM1eP1DHQSenoJRqlmE1CNojE"/>
 	<sioc:has_creator rdf:resource="http://gdata.youtube.com/feeds/api/users/m0eper"/>
 	<sioc:has_parent rdf:resource="http://gdata.youtube.com/feeds/api/users/null/playlists"/>
 	<sioc:id>PLfzY04kAPUeFuopsx2THBD72IGDdACDZN</sioc:id>
+	<sioc:last_item_date>2013-01-31T14:43:27.000+01:00</sioc:last_item_date>
 	<sioc:name>Kochen und Backen</sioc:name>
+	<sioc:num_items rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</sioc:num_items>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Thread"/>
 </rdf:Description>
 
@@ -467,7 +480,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/1aMattes">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>vGzCOuJwT0XTl1uB0qhtEA</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>1amattes</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -511,7 +523,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/AZUREromeeeeee">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>EX0xRG1V4RaFBJN46VC7lA</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>azureromeeeeee</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -520,7 +531,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/AerosolWar101">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>eiveGdZEoW1AHbyfn7UqxA</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>aerosolwar101</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -687,6 +697,14 @@
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
 </rdf:Description>
 
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/DigitalNeverland157">
+	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
+	<sioc:id>M2nSgAi847-aZS-ABQFI0Q</sioc:id>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>digitalneverland157</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
+</rdf:Description>
+
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/Dinolight2335">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>dT23EddA9w69Gx4PBRZCXQ</sioc:id>
@@ -719,6 +737,15 @@
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
 </rdf:Description>
 
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/DxGy3Y7gFK0qUKu-VZgrEg">
+	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
+	<sioc:id>DxGy3Y7gFK0qUKu-VZgrEg</sioc:id>
+	<sioc:name>Nikki Byrne</sioc:name>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>DxGy3Y7gFK0qUKu-VZgrEg</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
+</rdf:Description>
+
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/ES_5EXDRrUohPHHo0hn26g">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>ES_5EXDRrUohPHHo0hn26g</sioc:id>
@@ -739,7 +766,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/Evil581">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>V-9OTZbCC7MraidLnpPIVA</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>evil581</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -789,7 +815,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/Galley415">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>lfcedpNiZizjPZWeIv5tMg</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>galley415</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -872,7 +897,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/MadeFromCarbon">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>_E4gKbppDGopCnm3-6_iaw</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>madefromcarbon</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -889,7 +913,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/MerfiPL15">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>eWmO2YXhBvO4x69te6l-8g</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>merfipl15</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -914,7 +937,7 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/MrJonnypsycho">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>UITvOAAItWMZIqt4QNH9ew</sioc:id>
-	<sioc:name>MrJonnypsycho </sioc:name>
+	<sioc:name>MrJonnypsycho</sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>mrjonnypsycho</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -940,7 +963,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/MrsHorrorglubscher">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>SzqF4VTRkWgpBYNcYw_DMQ</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>mrshorrorglubscher</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -966,7 +988,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/Mw2M4oA3">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>9YBdDAqkOZM_xdZ5QzR-Lw</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>mw2m4oa3</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1000,7 +1021,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/O3bikes">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>ng-bvg-dJPu9wwG2HpOP7w</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>o3bikes</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1050,6 +1070,14 @@
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
 </rdf:Description>
 
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/PinkCircleO8">
+	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
+	<sioc:id>K_nkN47hfHeQHqFq9zE2lg</sioc:id>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>pinkcircleo8</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
+</rdf:Description>
+
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/PoultreeGeist">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>6n8IEqQjZS0BD-JHxGliMA</sioc:id>
@@ -1058,10 +1086,17 @@
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
 </rdf:Description>
 
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/PurplewhiteChristine">
+	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
+	<sioc:id>tdeIwDx7DziJBeQJ1IOedw</sioc:id>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>purplewhitechristine</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
+</rdf:Description>
+
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/RSSsailing">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>D0Fae2e6DhEvDXRd2ijCSA</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>rsssailing</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1086,7 +1121,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/RockShoxLoon">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>IMApiDVuCowKkQRSf_5kYw</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>rockshoxloon</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1137,7 +1171,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/SuperHenri99">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>4Ex5cUaYnC1w2pvtc6hBIw</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>superhenri99</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1170,7 +1203,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/ThatWasUndignified">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>h9lrI6VDecCs3Gq4CuhJpg</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>thatwasundignified</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1193,12 +1225,28 @@
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
 </rdf:Description>
 
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/TheGherkinJar">
+	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
+	<sioc:id>JDy8jplfAmM74v4uQEslOA</sioc:id>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>thegherkinjar</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
+</rdf:Description>
+
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/TheHengeProphet">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>M3HMaz_y_pPVEyTnTrspPA</sioc:id>
 	<sioc:name>TheHengeProphet</sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>thehengeprophet</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/TheKaan14">
+	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
+	<sioc:id>998HqDMKnxcC7ofEOuwSWQ</sioc:id>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>thekaan14</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
 </rdf:Description>
 
@@ -1229,7 +1277,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/TheZixstudio">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>hsPrEhN3pY3L8t0bDMKwFw</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>thezixstudio</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1336,6 +1383,14 @@
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
 </rdf:Description>
 
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/andithat">
+	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
+	<sioc:id>J12C5ZN4ukeB8q9ysU8Gsw</sioc:id>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>andithat</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
+</rdf:Description>
+
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/animal900">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>JOMz8fh6DHM7bIqEXrNTsg</sioc:id>
@@ -1371,7 +1426,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/bikeskills">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>NwxjcZXImGpGAJG3eJGG_g</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>bikeskills</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1406,7 +1460,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/chrismartinez992">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>dFT32sY0cmxsaSxk9e-x0w</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>chrismartinez992</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1467,7 +1520,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/dude2106">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>xhamG9tK14S8shiBLJ_qZA</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>dude2106</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1485,7 +1537,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/eldorko7">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>JnRvTNdgvT8xgiSIC0y8Dw</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>eldorko7</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1494,7 +1545,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/electrocomm">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>RV6Ao-snXE-oxgmTukgz-w</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>electrocomm</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1505,6 +1555,15 @@
 	<sioc:id>VtGZAV0WAb-Xhzx58dy1sg</sioc:id>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>encryptonz</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/essboogy">
+	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
+	<sioc:id>uWn-s1OL-v8csELFFnAZpg</sioc:id>
+	<sioc:name>essboogy</sioc:name>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>essboogy</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
 </rdf:Description>
 
@@ -1528,7 +1587,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/frischluftrowdy">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>HWcm1D16AINi8vqYRscQfg</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>frischluftrowdy</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1561,7 +1619,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/gkothi01">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>GkXYHfpnx8XtLzvJzHDoIA</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>gkothi01</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1570,7 +1627,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/greasemonger29">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>gVU6K1x9a_gdT368bB5BFg</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>greasemonger29</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1605,7 +1661,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/heavylurker">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>ixXTIPz3tZm3khW2U7uVxg</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>heavylurker</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1673,7 +1728,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/leeliben">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>C6AkMZMCF444OqinIAxYvg</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>leeliben</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1698,7 +1752,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/magicbros999">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>D9rwnJRwib9EXFYDoC_h2Q</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>magicbros999</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1749,7 +1802,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/mensab1">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>9_EEy4emiRBCelmA9uCd7w</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>mensab1</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1776,7 +1828,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/mountainbike789">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>JdBwX0GnOhaLkty6rmXUsg</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>mountainbike789</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1823,7 +1874,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/owulfo">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>8WK1k4jSYUxq9cDNQEvw_w</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>owulfo</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1832,7 +1882,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/pelge50">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>k5y_5xa7hes_UxOs_ozE5A</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>pelge50</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1858,7 +1907,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/rancherodave">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>7HErxtnm_wfo6Nnp3difbw</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>rancherodave</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1925,7 +1973,6 @@
 <rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/tsiougos">
 	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
 	<sioc:id>3E6159sQL61GGR1lUS1Cag</sioc:id>
-	<sioc:name> </sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>tsiougos</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
@@ -1995,6 +2042,14 @@
 	<sioc:id>TzlDTFsFhHExbnN3znFmYA</sioc:id>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
 	<foaf:accountName>xtoxiccandyx116</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/users/xaoife07x">
+	<dcterms:isPartOf rdf:resource="http://www.youtube.com/"/>
+	<sioc:id>utQky_MMQr3FNXlOKqhKRA</sioc:id>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>xaoife07x</foaf:accountName>
 	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com/"/>
 </rdf:Description>
 
@@ -5225,6 +5280,195 @@ http://puu.sh/1xl2x
 	<sioc:has_discussion rdf:resource="http://gdata.youtube.com/feeds/api/videos/o4Li75sVTdA"/>
 	<sioc:id>o4Li75sVTdA/comments/LNIyUdwaJoPl0ve2x4PJ1tsiIG4Lvv3aCkuGjHwOa3g</sioc:id>
 	<sioc:reply_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/o4Li75sVTdA"/>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY">
+	<dcterms:created>2012-12-06T00:13:49.000+01:00</dcterms:created>
+	<dcterms:modified>1970-01-01T01:00:00.000+01:00</dcterms:modified>
+	<dcterms:title>HOW TO MAKE NUTELLA - Nicko's Kitchen</dcterms:title>
+	<encoded xmlns="http://purl.org/rss/1.0/modules/content/">http://tinyurl.com/NickosFacebook
+
+http://tinyurl.com/NickosTwitter
+
+http://www.thenickonetwork.com -- OFFICIAL WEBSITE
+
+http://www.redbubble.com/people/nickoskitchen -- OFFICIAL MERCHANDISE 
+
+Ingredients:
+
+2 cups hazelnut meal
+1 cup dried milk powder
+1/2 cup brown sugar
+1/2 cup cocoa
+1 tbls cornstarch
+1/2 cup milk
+1 tsp vegetable oil
+
+ENJOY!
+
+~ Nicko
+
+
+'Nicko's Kitchen' theme is written and performed by TwistedTim01</encoded>
+	<sioc:attachment rdf:resource="http://www.youtube.com/watch?v=rE1WFSuddLY&amp;feature=youtube_gdata"/>
+	<sioc:content>http://tinyurl.com/NickosFacebook http://tinyurl.com/NickosTwitter http://www.thenickonetwork.com -- OFFICIAL WEBSITE http://www.redbubble.com/people/nickoskitchen -- OFFICIAL MERCHANDISE Ingredients: 2 cups hazelnut meal 1 cup dried milk powder 1/2 cup brown sugar 1/2 cup cocoa 1 tbls cornstarch 1/2 cup milk 1 tsp vegetable oil ENJOY! ~ Nicko 'Nicko's Kitchen' theme is written and performed by TwistedTim01</sioc:content>
+	<sioc:has_container rdf:resource="http://gdata.youtube.com/feeds/api/playlists/PLfzY04kAPUeFuopsx2THBD72IGDdACDZN"/>
+	<sioc:has_creator rdf:resource="http://gdata.youtube.com/feeds/api/users/m0eper"/>
+	<sioc:has_reply rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdgFY2qKjdy2Egw03puddRMR9wOGCM9gANE"/>
+	<sioc:has_reply rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdgj7eU0YUInf8X8-Cg4NG8MfmwoY9FyYAA"/>
+	<sioc:has_reply rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdh9lXudiWyhmPzP36NvDcRnhuLXLflsO64"/>
+	<sioc:has_reply rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdhQCohwcw63tAuo3K-8SlJ1Zn-rmRLN_9Q"/>
+	<sioc:has_reply rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdhzjnZM2hLy5z9zZNpmp6b69kP5T2Vu6Ac"/>
+	<sioc:has_reply rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdiL1poJMgKEc2XiXl4CVjnLpcp-6CevKW8"/>
+	<sioc:has_reply rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdiqLz-0Y8ytXLvAp_knOAMu-Ao2Ob6mmyI"/>
+	<sioc:has_reply rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdjHi-WrIpvM1eP1DHQSenoJRqlmE1CNojE"/>
+	<sioc:id>rE1WFSuddLY</sioc:id>
+	<sioc:last_reply_date>2013-01-31T14:43:27.000+01:00</sioc:last_reply_date>
+	<sioc:num_replies rdf:datatype="http://www.w3.org/2001/XMLSchema#int">8</sioc:num_replies>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdgFY2qKjdy2Egw03puddRMR9wOGCM9gANE">
+	<dcterms:created>2013-01-16T18:09:14.000+01:00</dcterms:created>
+	<dcterms:modified>2013-01-16T18:09:14.000+01:00</dcterms:modified>
+	<dcterms:title>I used to love you. ...</dcterms:title>
+	<encoded xmlns="http://purl.org/rss/1.0/modules/content/">I used to love you. NOW I﻿ WORSHIP YOU!!!k,/</encoded>
+	<sioc:content>I used to love you. NOW I﻿ WORSHIP YOU!!!k,/</sioc:content>
+	<sioc:has_container rdf:resource="http://gdata.youtube.com/feeds/api/playlists/PLfzY04kAPUeFuopsx2THBD72IGDdACDZN"/>
+	<sioc:has_creator rdf:resource="http://gdata.youtube.com/feeds/api/users/DxGy3Y7gFK0qUKu-VZgrEg"/>
+	<sioc:has_discussion rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<sioc:id>rE1WFSuddLY/comments/JiYq0AlWQdgFY2qKjdy2Egw03puddRMR9wOGCM9gANE</sioc:id>
+	<sioc:reply_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdgj7eU0YUInf8X8-Cg4NG8MfmwoY9FyYAA">
+	<dcterms:created>2013-01-16T23:05:32.000+01:00</dcterms:created>
+	<dcterms:modified>2013-01-16T23:05:32.000+01:00</dcterms:modified>
+	<dcterms:title>Your videos make me ...</dcterms:title>
+	<encoded xmlns="http://purl.org/rss/1.0/modules/content/">Your videos make me cry because i become so hungry and I have to satisfy my hunger with mediocre food instead of this﻿ dsjfbkjsdfhkhdfkjshdj</encoded>
+	<sioc:content>Your videos make me cry because i become so hungry and I have to satisfy my hunger with mediocre food instead of this﻿ dsjfbkjsdfhkhdfkjshdj</sioc:content>
+	<sioc:has_container rdf:resource="http://gdata.youtube.com/feeds/api/playlists/PLfzY04kAPUeFuopsx2THBD72IGDdACDZN"/>
+	<sioc:has_creator rdf:resource="http://gdata.youtube.com/feeds/api/users/DigitalNeverland157"/>
+	<sioc:has_discussion rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<sioc:id>rE1WFSuddLY/comments/JiYq0AlWQdgj7eU0YUInf8X8-Cg4NG8MfmwoY9FyYAA</sioc:id>
+	<sioc:reply_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdh9lXudiWyhmPzP36NvDcRnhuLXLflsO64">
+	<dcterms:created>2013-01-20T02:05:20.000+01:00</dcterms:created>
+	<dcterms:modified>2013-01-20T02:05:20.000+01:00</dcterms:modified>
+	<dcterms:title>so are this one﻿ ...</dcterms:title>
+	<encoded xmlns="http://purl.org/rss/1.0/modules/content/">so are this one﻿ lower in calories?</encoded>
+	<sioc:content>so are this one﻿ lower in calories?</sioc:content>
+	<sioc:has_container rdf:resource="http://gdata.youtube.com/feeds/api/playlists/PLfzY04kAPUeFuopsx2THBD72IGDdACDZN"/>
+	<sioc:has_creator rdf:resource="http://gdata.youtube.com/feeds/api/users/TheKaan14"/>
+	<sioc:has_discussion rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<sioc:id>rE1WFSuddLY/comments/JiYq0AlWQdh9lXudiWyhmPzP36NvDcRnhuLXLflsO64</sioc:id>
+	<sioc:reply_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdhQCohwcw63tAuo3K-8SlJ1Zn-rmRLN_9Q">
+	<dcterms:created>2013-01-25T13:27:46.000+01:00</dcterms:created>
+	<dcterms:modified>2013-01-25T13:27:46.000+01:00</dcterms:modified>
+	<dcterms:title>hes﻿ lost weight.</dcterms:title>
+	<encoded xmlns="http://purl.org/rss/1.0/modules/content/">hes﻿ lost weight.</encoded>
+	<sioc:content>hes﻿ lost weight.</sioc:content>
+	<sioc:has_container rdf:resource="http://gdata.youtube.com/feeds/api/playlists/PLfzY04kAPUeFuopsx2THBD72IGDdACDZN"/>
+	<sioc:has_creator rdf:resource="http://gdata.youtube.com/feeds/api/users/andithat"/>
+	<sioc:has_discussion rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<sioc:id>rE1WFSuddLY/comments/JiYq0AlWQdhQCohwcw63tAuo3K-8SlJ1Zn-rmRLN_9Q</sioc:id>
+	<sioc:reply_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdheEq7My_HQ0fj577jBTluKL5DhQIxQVvs">
+	<dcterms:created>2013-01-14T13:38:10.000+01:00</dcterms:created>
+	<dcterms:modified>2013-01-14T13:38:10.000+01:00</dcterms:modified>
+	<dcterms:title>Why post a comment ...</dcterms:title>
+	<encoded xmlns="http://purl.org/rss/1.0/modules/content/">Why post a comment like that? It's a cooking show, comment on the﻿ food.</encoded>
+	<sioc:content>Why post a comment like that? It's a cooking show, comment on the﻿ food.</sioc:content>
+	<sioc:has_container rdf:resource="http://gdata.youtube.com/feeds/api/playlists/PLfzY04kAPUeFuopsx2THBD72IGDdACDZN"/>
+	<sioc:has_creator rdf:resource="http://gdata.youtube.com/feeds/api/users/TheGherkinJar"/>
+	<sioc:has_discussion rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<sioc:has_reply rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdhwc0rOf2TuU8P5j9T5-Mh9aDEQo6WyLKs"/>
+	<sioc:id>rE1WFSuddLY/comments/JiYq0AlWQdheEq7My_HQ0fj577jBTluKL5DhQIxQVvs</sioc:id>
+	<sioc:last_reply_date>2013-01-20T02:04:58.000+01:00</sioc:last_reply_date>
+	<sioc:num_replies rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</sioc:num_replies>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdhwc0rOf2TuU8P5j9T5-Mh9aDEQo6WyLKs">
+	<dcterms:created>2013-01-20T02:04:58.000+01:00</dcterms:created>
+	<dcterms:modified>2013-01-20T02:04:58.000+01:00</dcterms:modified>
+	<dcterms:title>retard lol﻿</dcterms:title>
+	<encoded xmlns="http://purl.org/rss/1.0/modules/content/">retard lol﻿</encoded>
+	<sioc:content>retard lol﻿</sioc:content>
+	<sioc:has_container rdf:resource="http://gdata.youtube.com/feeds/api/playlists/PLfzY04kAPUeFuopsx2THBD72IGDdACDZN"/>
+	<sioc:has_creator rdf:resource="http://gdata.youtube.com/feeds/api/users/TheKaan14"/>
+	<sioc:has_discussion rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<sioc:id>rE1WFSuddLY/comments/JiYq0AlWQdhwc0rOf2TuU8P5j9T5-Mh9aDEQo6WyLKs</sioc:id>
+	<sioc:reply_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdheEq7My_HQ0fj577jBTluKL5DhQIxQVvs"/>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdhzjnZM2hLy5z9zZNpmp6b69kP5T2Vu6Ac">
+	<dcterms:created>2013-01-21T04:18:52.000+01:00</dcterms:created>
+	<dcterms:modified>2013-01-21T04:18:52.000+01:00</dcterms:modified>
+	<dcterms:title>Instead of milk ...</dcterms:title>
+	<encoded xmlns="http://purl.org/rss/1.0/modules/content/">Instead of milk powder, can﻿ u use reguluer milk?</encoded>
+	<sioc:content>Instead of milk powder, can﻿ u use reguluer milk?</sioc:content>
+	<sioc:has_container rdf:resource="http://gdata.youtube.com/feeds/api/playlists/PLfzY04kAPUeFuopsx2THBD72IGDdACDZN"/>
+	<sioc:has_creator rdf:resource="http://gdata.youtube.com/feeds/api/users/PurplewhiteChristine"/>
+	<sioc:has_discussion rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<sioc:id>rE1WFSuddLY/comments/JiYq0AlWQdhzjnZM2hLy5z9zZNpmp6b69kP5T2Vu6Ac</sioc:id>
+	<sioc:reply_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdiL1poJMgKEc2XiXl4CVjnLpcp-6CevKW8">
+	<dcterms:created>2013-01-31T14:43:27.000+01:00</dcterms:created>
+	<dcterms:modified>2013-01-31T14:43:27.000+01:00</dcterms:modified>
+	<dcterms:title>"Its very almost ...</dcterms:title>
+	<encoded xmlns="http://purl.org/rss/1.0/modules/content/">"Its very almost similar"
+﻿</encoded>
+	<sioc:content>"Its very almost similar" ﻿</sioc:content>
+	<sioc:has_container rdf:resource="http://gdata.youtube.com/feeds/api/playlists/PLfzY04kAPUeFuopsx2THBD72IGDdACDZN"/>
+	<sioc:has_creator rdf:resource="http://gdata.youtube.com/feeds/api/users/essboogy"/>
+	<sioc:has_discussion rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<sioc:id>rE1WFSuddLY/comments/JiYq0AlWQdiL1poJMgKEc2XiXl4CVjnLpcp-6CevKW8</sioc:id>
+	<sioc:reply_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdiqLz-0Y8ytXLvAp_knOAMu-Ao2Ob6mmyI">
+	<dcterms:created>2013-01-23T02:25:14.000+01:00</dcterms:created>
+	<dcterms:modified>2013-01-23T02:25:14.000+01:00</dcterms:modified>
+	<dcterms:title>I wonder what it ...</dcterms:title>
+	<encoded xmlns="http://purl.org/rss/1.0/modules/content/">I wonder what it would taste like without the﻿ hazelnut meal?</encoded>
+	<sioc:content>I wonder what it would taste like without the﻿ hazelnut meal?</sioc:content>
+	<sioc:has_container rdf:resource="http://gdata.youtube.com/feeds/api/playlists/PLfzY04kAPUeFuopsx2THBD72IGDdACDZN"/>
+	<sioc:has_creator rdf:resource="http://gdata.youtube.com/feeds/api/users/PinkCircleO8"/>
+	<sioc:has_discussion rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<sioc:id>rE1WFSuddLY/comments/JiYq0AlWQdiqLz-0Y8ytXLvAp_knOAMu-Ao2Ob6mmyI</sioc:id>
+	<sioc:reply_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY/comments/JiYq0AlWQdjHi-WrIpvM1eP1DHQSenoJRqlmE1CNojE">
+	<dcterms:created>2013-01-29T03:33:22.000+01:00</dcterms:created>
+	<dcterms:modified>2013-01-29T03:33:22.000+01:00</dcterms:modified>
+	<dcterms:title>Is it drinking ...</dcterms:title>
+	<encoded xmlns="http://purl.org/rss/1.0/modules/content/">Is it drinking chocolate or cocoa...?﻿ He says cocoa but it looks like drinking chocolate...</encoded>
+	<sioc:content>Is it drinking chocolate or cocoa...?﻿ He says cocoa but it looks like drinking chocolate...</sioc:content>
+	<sioc:has_container rdf:resource="http://gdata.youtube.com/feeds/api/playlists/PLfzY04kAPUeFuopsx2THBD72IGDdACDZN"/>
+	<sioc:has_creator rdf:resource="http://gdata.youtube.com/feeds/api/users/xaoife07x"/>
+	<sioc:has_discussion rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
+	<sioc:id>rE1WFSuddLY/comments/JiYq0AlWQdjHi-WrIpvM1eP1DHQSenoJRqlmE1CNojE</sioc:id>
+	<sioc:reply_of rdf:resource="http://gdata.youtube.com/feeds/api/videos/rE1WFSuddLY"/>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
 </rdf:Description>
 

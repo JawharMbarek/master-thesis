@@ -3,7 +3,6 @@ package de.m0ep.socc.shop.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -125,15 +124,15 @@ public class ConnectorsInternalFrame extends JInternalFrame {
 		ConnectorsInternalFrame.class
 			.getResource("/images/connect.png")));
 	setIconifiable(true);
-	setMinimumSize(new Dimension(250, 150));
 	setClosable(true);
 	setResizable(true);
 	setMaximizable(true);
+	setDefaultCloseOperation(HIDE_ON_CLOSE);
 	this.app = Preconditions.checkNotNull(app, "App can not be null.");
 
 	setToolTipText("Window to add and remove SOCC-Selectors");
 	setTitle("Connectors");
-	setBounds(100, 100, 253, 150);
+	setBounds(100, 100, 450, 300);
 	getContentPane().setLayout(new BorderLayout(0, 0));
 
 	listConnectorsModel = new DefaultListModel<ConnectorItem>();

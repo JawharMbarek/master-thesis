@@ -26,8 +26,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 import javax.swing.filechooser.FileFilter;
 
 import org.slf4j.Logger;
@@ -46,6 +44,7 @@ public class ApplicationWindow {
     private JDesktopPane desktopPane;
 
     private ConnectorsInternalFrame connectorFrame;
+    private RoutesInternalFrame pipesFrame;
     private SIOCInternalFrame siocFrame;
     private FOAFInternalFrame foafFrame;
 
@@ -105,18 +104,10 @@ public class ApplicationWindow {
 	    public void actionPerformed(ActionEvent event) {
 		if (null == connectorFrame) {
 		    connectorFrame = new ConnectorsInternalFrame(app);
-		    connectorFrame
-			    .addInternalFrameListener(new InternalFrameAdapter() {
-				@Override
-				public void internalFrameClosed(
-					InternalFrameEvent event) {
-				    connectorFrame = null;
-				}
-			    });
-		    connectorFrame.setVisible(true);
 		    desktopPane.add(connectorFrame);
 		}
 
+		connectorFrame.setVisible(true);
 		desktopPane.moveToFront(connectorFrame);
 	    }
 	});
@@ -124,6 +115,19 @@ public class ApplicationWindow {
 	JMenuItem mntmPipes = new JMenuItem("Pipes");
 	mntmPipes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
 		InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+	mntmPipes.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		if (null == pipesFrame) {
+		    pipesFrame = new RoutesInternalFrame(app);
+		    desktopPane.add(pipesFrame);
+		}
+
+		pipesFrame.setVisible(true);
+		desktopPane.moveToFront(pipesFrame);
+	    }
+	});
+
 	mnSocc.add(mntmPipes);
 	mntmPipes.setIcon(new ImageIcon(ApplicationWindow.class
 		.getResource("/images/arrow_switch.png")));
@@ -184,18 +188,10 @@ public class ApplicationWindow {
 	    public void actionPerformed(ActionEvent event) {
 		if (null == siocFrame) {
 		    siocFrame = new SIOCInternalFrame(app);
-		    siocFrame
-			    .addInternalFrameListener(new InternalFrameAdapter() {
-				@Override
-				public void internalFrameClosed(
-					InternalFrameEvent event) {
-				    siocFrame = null;
-				}
-			    });
-		    siocFrame.setVisible(true);
 		    desktopPane.add(siocFrame);
 		}
 
+		siocFrame.setVisible(true);
 		desktopPane.moveToFront(siocFrame);
 	    }
 	});
@@ -210,18 +206,10 @@ public class ApplicationWindow {
 	    public void actionPerformed(ActionEvent e) {
 		if (null == foafFrame) {
 		    foafFrame = new FOAFInternalFrame(app);
-		    foafFrame
-			    .addInternalFrameListener(new InternalFrameAdapter() {
-				@Override
-				public void internalFrameClosed(
-					InternalFrameEvent event) {
-				    foafFrame = null;
-				}
-			    });
-		    foafFrame.setVisible(true);
 		    desktopPane.add(foafFrame);
 		}
 
+		foafFrame.setVisible(true);
 		desktopPane.moveToFront(foafFrame);
 	    }
 	});

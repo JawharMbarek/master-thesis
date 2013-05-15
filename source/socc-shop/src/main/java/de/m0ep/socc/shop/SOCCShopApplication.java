@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.commons.io.FileUtils;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.util.RDFTool;
@@ -96,6 +97,15 @@ public class SOCCShopApplication {
 	} catch (Exception e) {
 	    LOG.error("Failed to start Apache Camel", e);
 	    shutdown();
+	}
+
+	RouteDefinition route = new RouteDefinition();
+	route.setId("test-route1");
+	route.from("timer://test1").to("mock:test2");
+	try {
+	    camelContext.addRouteDefinition(route);
+	} catch (Exception e) {
+	    LOG.error("failed to add route", e);
 	}
     }
 

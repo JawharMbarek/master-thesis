@@ -1,5 +1,6 @@
 package de.m0ep.socc.shop.ui.components;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Locale;
@@ -13,49 +14,64 @@ import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SpringLayout;
+
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
 
 import de.m0ep.socc.config.form.DataForm;
 import de.m0ep.socc.config.form.FormField;
-import de.m0ep.socc.shop.utils.SpringUtilities;
 
 public class DynamicDataFormPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private DataForm dataForm;
     private Map<String, JComponent> componentMap;
+    private FormLayout formLayout;
 
     /**
      * Create the panel.
      */
     public DynamicDataFormPanel() {
 	this.componentMap = new HashMap<String, JComponent>();
-	setLayout(new SpringLayout());
+
+	formLayout = new FormLayout(new ColumnSpec[] {
+		FormFactory.DEFAULT_COLSPEC,
+		FormFactory.RELATED_GAP_COLSPEC,
+		ColumnSpec.decode("default:grow")
+	});
+
+	setLayout(new BorderLayout());
     }
 
     public void setDataForm(final DataForm dataForm) {
 	this.dataForm = dataForm;
-	this.removeAll();
-	this.componentMap.clear();
 
-	for (FormField field : this.dataForm.getFields()) {
+	this.componentMap.clear();
+	this.removeAll();
+
+	DefaultFormBuilder builder = new DefaultFormBuilder(formLayout);
+
+	for (FormField field : dataForm.getFields()) {
 	    JComponent component = createFieldComponent(field, null);
 	    componentMap.put(field.getVariable(), component);
 
-	    add(new JLabel(field.getLabel()
-		    + ((field.isRequired()) ? ("*") : (""))));
-	    add(component);
+	    JLabel label = new JLabel(
+		    field.getLabel() + ((field.isRequired()) ? ("*") : ("")));
+
+	    builder.append(label, component);
 	}
 
-	SpringUtilities.makeCompactGrid(this, this.dataForm.getFields().size(),
-		2, 6, 6, 6, 6);
+	add(builder.getPanel(), BorderLayout.CENTER);
     }
 
     public void setDataForm(final DataForm dataForm,
 	    Map<String, Object> paramaters) {
 	this.dataForm = dataForm;
-	this.removeAll();
+
 	this.componentMap.clear();
+	this.removeAll();
 
 	for (FormField field : this.dataForm.getFields()) {
 	    Object value = paramaters.get(field.getVariable());
@@ -63,13 +79,13 @@ public class DynamicDataFormPanel extends JPanel {
 	    JComponent component = createFieldComponent(field, value);
 	    componentMap.put(field.getVariable(), component);
 
-	    add(new JLabel(field.getLabel()
-		    + ((field.isRequired()) ? ("*") : (""))));
+	    JLabel label = new JLabel(
+		    field.getLabel() + ((field.isRequired()) ? ("*") : ("")));
+
+	    add(label);
 	    add(component);
 	}
 
-	SpringUtilities.makeCompactGrid(this, this.dataForm.getFields().size(),
-		2, 6, 6, 6, 6);
     }
 
     private JComponent createFieldComponent(final FormField field,

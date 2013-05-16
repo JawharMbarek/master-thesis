@@ -1,18 +1,28 @@
 package de.m0ep.socc.shop.ui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.camel.model.RouteDefinition;
+
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 public class RouteDialog extends JDialog {
     private static final long serialVersionUID = 1L;
@@ -23,12 +33,21 @@ public class RouteDialog extends JDialog {
     private final JPanel contentPanel = new JPanel();
     private int resultOption;
     private RouteDefinition resultRoute;
+    private JTextField textFrom;
+    private JTextField textTo;
+    private JTextField textId;
 
     /**
      * Create the dialog.
      */
     public RouteDialog() {
-	setBounds(100, 100, 450, 300);
+	setAlwaysOnTop(true);
+	setTitle("Create Route");
+	setResizable(false);
+	setModalityType(ModalityType.APPLICATION_MODAL);
+	setModal(true);
+	setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+	setBounds(100, 100, 450, 200);
 
 	addWindowListener(new WindowAdapter() {
 	    @Override
@@ -38,10 +57,70 @@ public class RouteDialog extends JDialog {
 	});
 
 	getContentPane().setLayout(new BorderLayout());
-	contentPanel.setLayout(new FlowLayout());
 	contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 	getContentPane().add(contentPanel, BorderLayout.CENTER);
+	contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
+		FormFactory.RELATED_GAP_COLSPEC,
+		FormFactory.DEFAULT_COLSPEC,
+		FormFactory.RELATED_GAP_COLSPEC,
+		ColumnSpec.decode("default:grow"),
+		FormFactory.RELATED_GAP_COLSPEC,
+		FormFactory.DEFAULT_COLSPEC, },
+		new RowSpec[] {
+			FormFactory.RELATED_GAP_ROWSPEC,
+			FormFactory.DEFAULT_ROWSPEC,
+			FormFactory.RELATED_GAP_ROWSPEC,
+			FormFactory.DEFAULT_ROWSPEC,
+			FormFactory.RELATED_GAP_ROWSPEC,
+			FormFactory.DEFAULT_ROWSPEC,
+			FormFactory.RELATED_GAP_ROWSPEC,
+			FormFactory.DEFAULT_ROWSPEC, }));
+	{
+	    JLabel lblId = new JLabel("Id:");
+	    contentPanel.add(lblId, "2, 2, right, default");
+	}
+	{
+	    textId = new JTextField();
+	    textId.setMinimumSize(new Dimension(4, 25));
+	    textId.setPreferredSize(new Dimension(4, 25));
+	    contentPanel.add(textId, "4, 2, fill, default");
+	    textId.setColumns(10);
+	}
+	{
+	    JLabel lblFrom = new JLabel("From:");
+	    contentPanel.add(lblFrom, "2, 4, right, default");
+	}
+	{
+	    textFrom = new JTextField();
+	    textFrom.setPreferredSize(new Dimension(4, 25));
+	    contentPanel.add(textFrom, "4, 4, fill, default");
+	    textFrom.setColumns(10);
+	}
+	{
+	    JButton btnFromAssist = new JButton("...");
+	    btnFromAssist.setMargin(new Insets(2, 2, 2, 2));
+	    contentPanel.add(btnFromAssist, "6, 4");
+	}
+	{
+	    JLabel lblTo = new JLabel("To:");
+	    contentPanel.add(lblTo, "2, 6, right, default");
+	}
+	{
+	    textTo = new JTextField();
+	    textTo.setPreferredSize(new Dimension(4, 25));
+	    contentPanel.add(textTo, "4, 6, fill, default");
+	    textTo.setColumns(10);
+	}
+	{
+	    JButton btnToAssist = new JButton("...");
+	    btnToAssist.setMargin(new Insets(2, 2, 2, 2));
+	    contentPanel.add(btnToAssist, "6, 6");
+	}
+	{
+	    JCheckBox chckbxUseRdfxml = new JCheckBox("use RDF/XML");
+	    contentPanel.add(chckbxUseRdfxml, "4, 8");
+	}
 	{
 	    JPanel buttonPane = new JPanel();
 	    buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));

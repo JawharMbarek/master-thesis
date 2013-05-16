@@ -12,7 +12,6 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -38,6 +37,7 @@ import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.shop.SOCCShopApplication;
 import de.m0ep.socc.shop.ui.dialogs.RouteDialog;
+import de.m0ep.socc.shop.utils.Icons;
 import de.m0ep.socc.shop.utils.UIUtils;
 
 public class RoutesInternalFrame extends JInternalFrame {
@@ -82,11 +82,9 @@ public class RoutesInternalFrame extends JInternalFrame {
 	    ServiceStatus status = app.getCamelContext().getRouteStatus(value);
 
 	    if (status.isStarted()) {
-		renderer.setIcon(new ImageIcon(RoutesInternalFrame.class
-			.getResource("/images/accept.png")));
+		renderer.setIcon(Icons.ACCEPT);
 	    } else {
-		renderer.setIcon(new ImageIcon(RoutesInternalFrame.class
-			.getResource("/images/stop.png")));
+		renderer.setIcon(Icons.STOP);
 	    }
 
 	    return renderer;
@@ -97,7 +95,7 @@ public class RoutesInternalFrame extends JInternalFrame {
     private static final long serialVersionUID = 935536656770656646L;
     private static final Logger LOG = LoggerFactory
 	    .getLogger(RoutesInternalFrame.class);
-    public static final String REMOVE_ROUTE_ACTION_STRING = "action_remove_route";
+    private static final String REMOVE_ROUTE_ACTION_STRING = "action_remove_route";
 
     private SOCCShopApplication app;
     JList<String> listRoutes;
@@ -111,8 +109,7 @@ public class RoutesInternalFrame extends JInternalFrame {
      * Create the frame.
      */
     public RoutesInternalFrame(final SOCCShopApplication app) {
-	setFrameIcon(new ImageIcon(RoutesInternalFrame.class
-		.getResource("/images/arrow_switch.png")));
+	setFrameIcon(Icons.ARROW_SWITCH);
 	setTitle("Routes");
 	setResizable(true);
 	setMaximizable(true);
@@ -130,13 +127,11 @@ public class RoutesInternalFrame extends JInternalFrame {
 	buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 
 	JButton btnCreate = new JButton("Create");
-	btnCreate.setIcon(new ImageIcon(RoutesInternalFrame.class
-		.getResource("/images/add.png")));
+	btnCreate.setIcon(Icons.ADD);
 	btnCreate.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		RouteDialog dialog = new RouteDialog();
-		dialog.showDialog();
+		onCreateNewRoute();
 	    }
 	});
 	buttonPane.add(btnCreate);
@@ -174,15 +169,24 @@ public class RoutesInternalFrame extends JInternalFrame {
 		});
 
 	getContentPane().add(new JScrollPane(listRoutes), BorderLayout.CENTER);
+
 	initialize();
+    }
+
+    protected void onCreateNewRoute() {
+	RouteDialog dialog = new RouteDialog();
+	int res = dialog.showDialog();
+
+	if (RouteDialog.OK_OPTION == res) {
+	    RouteDefinition routeDefinition = dialog.getRoute();
+	}
     }
 
     private JPopupMenu createItemPopUpMenu() {
 	JPopupMenu popupMenu = UIUtils.createTitledPopupMenu("Route Popup");
 
 	JMenuItem mntmDelete = new JMenuItem("Delete");
-	mntmDelete.setIcon(new ImageIcon(RoutesInternalFrame.class
-		.getResource("/images/cross.png")));
+	mntmDelete.setIcon(Icons.CROSS);
 	mntmDelete.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -192,8 +196,7 @@ public class RoutesInternalFrame extends JInternalFrame {
 	popupMenu.add(mntmDelete);
 
 	mntmStart = new JMenuItem("Start");
-	mntmStart.setIcon(new ImageIcon(RoutesInternalFrame.class
-		.getResource("/images/accept.png")));
+	mntmStart.setIcon(Icons.ACCEPT);
 	mntmStart.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -203,8 +206,7 @@ public class RoutesInternalFrame extends JInternalFrame {
 	popupMenu.add(mntmStart);
 
 	mntmStop = new JMenuItem("Stop");
-	mntmStop.setIcon(new ImageIcon(RoutesInternalFrame.class
-		.getResource("/images/stop.png")));
+	mntmStop.setIcon(Icons.STOP);
 	mntmStop.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {

@@ -3,6 +3,7 @@ package de.m0ep.socc.shop.ui.desktop;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -21,10 +22,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -39,6 +38,7 @@ import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.shop.SOCCShopApplication;
 import de.m0ep.socc.shop.ui.dialogs.RouteDialog;
+import de.m0ep.socc.shop.utils.UIUtils;
 
 public class RoutesInternalFrame extends JInternalFrame {
 
@@ -106,7 +106,6 @@ public class RoutesInternalFrame extends JInternalFrame {
     private JPopupMenu popupMenu;
     private JMenuItem mntmStart;
     private JMenuItem mntmStop;
-    private JLabel lblPopupTitle;
 
     /**
      * Create the frame.
@@ -147,39 +146,13 @@ public class RoutesInternalFrame extends JInternalFrame {
 	listRoutes.setCellRenderer(new RouteItemCellRenderer());
 	listRoutes.addMouseListener(new MouseAdapter() {
 	    @Override
-	    public void mouseClicked(MouseEvent e) {
-		if (SwingUtilities.isRightMouseButton(e)) {
-		    int index = listRoutes.locationToIndex(e.getPoint());
+	    public void mousePressed(MouseEvent e) {
+		checkPopup(e);
+	    }
 
-		    if (-1 < index) {
-			listRoutes.setSelectedIndex(index);
-			String routeId = listRoutes.getSelectedValue();
-
-			if (null != routeId) {
-			    ServiceStatus status = app.getCamelContext()
-				    .getRouteStatus(
-					    routeId);
-
-			    if (status.isStarted() || status.isStarting()) {
-				mntmStart.setVisible(false);
-			    } else {
-				mntmStart.setVisible(true);
-			    }
-
-			    if (status.isStopped() || status.isStopping()) {
-				mntmStop.setVisible(false);
-			    } else {
-				mntmStop.setVisible(true);
-			    }
-
-			    lblPopupTitle.setText(routeId);
-			    popupMenu.show(listRoutes, e.getX(), e.getY());
-			    return;
-			}
-		    }
-		}
-
-		super.mouseClicked(e);
+	    @Override
+	    public void mouseReleased(MouseEvent e) {
+		checkPopup(e);
 	    }
 	});
 
@@ -205,13 +178,7 @@ public class RoutesInternalFrame extends JInternalFrame {
     }
 
     private JPopupMenu createItemPopUpMenu() {
-	JPopupMenu popupMenu = new JPopupMenu();
-
-	lblPopupTitle = new JLabel("Route Popup");
-	lblPopupTitle.setAlignmentX(0.5f);
-
-	popupMenu.add(lblPopupTitle);
-	popupMenu.add(new JSeparator());
+	JPopupMenu popupMenu = UIUtils.createTitledPopupMenu("Route Popup");
 
 	JMenuItem mntmDelete = new JMenuItem("Delete");
 	mntmDelete.setIcon(new ImageIcon(RoutesInternalFrame.class
@@ -247,6 +214,49 @@ public class RoutesInternalFrame extends JInternalFrame {
 	popupMenu.add(mntmStop);
 
 	return popupMenu;
+    }
+
+    private void checkPopup(MouseEvent e) {
+	if (e.isPopupTrigger()) {
+	    int index = listRoutes.locationToIndex(e.getPoint());
+
+	    if (-1 < index) {
+		Rectangle cellBounds = listRoutes.getCellBounds(index, index);
+
+		if (null != cellBounds && cellBounds.contains(e.getPoint())) {
+		    listRoutes.setSelectedIndex(index);
+		    String routeId = listRoutes.getSelectedValue();
+
+		    if (null != routeId) {
+			ServiceStatus status = app.getCamelContext()
+				.getRouteStatus(
+					routeId);
+
+			if (status.isStarted() || status.isStarting()) {
+			    mntmStart.setVisible(false);
+			} else {
+			    mntmStart.setVisible(true);
+			}
+
+			if (status.isStopped() || status.isStopping()) {
+			    mntmStop.setVisible(false);
+			} else {
+			    mntmStop.setVisible(true);
+			}
+
+			// update title
+			Component component = popupMenu.getComponent(0);
+			if (component instanceof JLabel) {
+			    JLabel title = (JLabel) component;
+			    title.setText(routeId);
+			}
+
+			popupMenu.show(listRoutes, e.getX(), e.getY());
+			return;
+		    }
+		}
+	    }
+	}
     }
 
     protected void initialize() {

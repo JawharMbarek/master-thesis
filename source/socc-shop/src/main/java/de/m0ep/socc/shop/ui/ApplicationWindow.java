@@ -15,7 +15,6 @@ import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -38,6 +37,7 @@ import de.m0ep.socc.shop.ui.desktop.RoutesInternalFrame;
 import de.m0ep.socc.shop.ui.desktop.SIOCInternalFrame;
 import de.m0ep.socc.shop.ui.dialogs.AboutDialog;
 import de.m0ep.socc.shop.utils.ExportUtils;
+import de.m0ep.socc.shop.utils.Icons;
 
 public class ApplicationWindow {
     private static final Logger LOG = LoggerFactory
@@ -100,11 +100,7 @@ public class ApplicationWindow {
 	menuBar.add(mnSocc);
 
 	JMenuItem mntmConnectors = new JMenuItem("Connectors");
-	mntmConnectors.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
-		InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
-	mnSocc.add(mntmConnectors);
-	mntmConnectors.setIcon(new ImageIcon(ApplicationWindow.class
-		.getResource("/images/connect.png")));
+	mntmConnectors.setIcon(Icons.CONNECT);
 	mntmConnectors.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent event) {
 		if (null == connectorFrame) {
@@ -116,10 +112,9 @@ public class ApplicationWindow {
 		desktopPane.moveToFront(connectorFrame);
 	    }
 	});
+	mnSocc.add(mntmConnectors);
 
 	JMenuItem mntmPipes = new JMenuItem("Pipes");
-	mntmPipes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
-		InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 	mntmPipes.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -134,8 +129,7 @@ public class ApplicationWindow {
 	});
 
 	mnSocc.add(mntmPipes);
-	mntmPipes.setIcon(new ImageIcon(ApplicationWindow.class
-		.getResource("/images/arrow_switch.png")));
+	mntmPipes.setIcon(Icons.ARROW_SWITCH);
 
 	mnSocc.add(new JSeparator());
 
@@ -149,8 +143,6 @@ public class ApplicationWindow {
 	mnSocc.add(mntmImport);
 
 	JMenuItem mntmExport = new JMenuItem("Export...");
-	mntmExport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
-		InputEvent.CTRL_MASK));
 	mntmExport.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		try {
@@ -169,7 +161,7 @@ public class ApplicationWindow {
 
 	mnSocc.add(new JSeparator());
 
-	JMenuItem mntmClose = new JMenuItem("Close");
+	JMenuItem mntmClose = new JMenuItem("Quit");
 	mntmClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
 		InputEvent.CTRL_MASK));
 	mntmClose.addActionListener(new ActionListener() {
@@ -178,8 +170,6 @@ public class ApplicationWindow {
 		app.shutdown();
 	    }
 	});
-	mntmClose.setIcon(new ImageIcon(ApplicationWindow.class
-		.getResource("/images/door.png")));
 	mnSocc.add(mntmClose);
 
 	JMenu mnViewer = new JMenu("Viewer");
@@ -187,8 +177,6 @@ public class ApplicationWindow {
 	menuBar.add(mnViewer);
 
 	JMenuItem mntmSioc = new JMenuItem("SIOC Viewer");
-	mntmSioc.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-		InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 	mntmSioc.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent event) {
 		if (null == siocFrame) {
@@ -200,13 +188,10 @@ public class ApplicationWindow {
 		desktopPane.moveToFront(siocFrame);
 	    }
 	});
-	mntmSioc.setIcon(new ImageIcon(ApplicationWindow.class
-		.getResource("/images/user_comment.png")));
+	mntmSioc.setIcon(Icons.USER_COMMENT);
 	mnViewer.add(mntmSioc);
 
 	JMenuItem mntmFoafViewer = new JMenuItem("FOAF Viewer");
-	mntmFoafViewer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
-		InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 	mntmFoafViewer.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		if (null == foafFrame) {
@@ -218,8 +203,7 @@ public class ApplicationWindow {
 		desktopPane.moveToFront(foafFrame);
 	    }
 	});
-	mntmFoafViewer.setIcon(new ImageIcon(ApplicationWindow.class
-		.getResource("/images/group.png")));
+	mntmFoafViewer.setIcon(Icons.GROUP);
 	mnViewer.add(mntmFoafViewer);
 
 	JMenu mnHelp = new JMenu("Help");
@@ -232,8 +216,7 @@ public class ApplicationWindow {
 		new AboutDialog().showDialog();
 	    }
 	});
-	mntmAbout.setIcon(new ImageIcon(ApplicationWindow.class
-		.getResource("/images/help.png")));
+	mntmAbout.setIcon(Icons.HELP);
 	mnHelp.add(mntmAbout);
 
 	desktopPane = new JDesktopPane();

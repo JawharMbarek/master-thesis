@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><routes xmlns="http://camel.apache.org/schema/spring"><route id="test-route1"><from uri="timer://test1"/><to uri="mock:test2" id="to1"/></route></routes>

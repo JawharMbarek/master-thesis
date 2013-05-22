@@ -44,15 +44,19 @@ public class RoutesInternalFrame extends JInternalFrame {
 
     private class RouteItemCellRenderer implements
 	    ListCellRenderer<String> {
+	private Border noFocusBorder;
+	private JLabel renderer;
 
-	private Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
+	public RouteItemCellRenderer() {
+	    renderer = new JLabel();
+	    noFocusBorder = new EmptyBorder(1, 1, 1, 1);
+	}
 
 	@Override
 	public Component getListCellRendererComponent(
 		JList<? extends String> list, String value, int index,
 		boolean isSelected, boolean cellHasFocus) {
-
-	    JLabel renderer = new JLabel(value);
+	    renderer.setText(value);
 	    renderer.setEnabled(list.isEnabled());
 	    renderer.setFont(list.getFont());
 
@@ -170,15 +174,31 @@ public class RoutesInternalFrame extends JInternalFrame {
 
 	getContentPane().add(new JScrollPane(listRoutes), BorderLayout.CENTER);
 
-	initialize();
+	updateList();
     }
 
     protected void onCreateNewRoute() {
-	RouteDialog dialog = new RouteDialog();
+	RouteDialog dialog = new RouteDialog(app);
 	int res = dialog.showDialog();
 
 	if (RouteDialog.OK_OPTION == res) {
 	    RouteDefinition routeDefinition = dialog.getRoute();
+
+	    if (null != routeDefinition && null != routeDefinition.getId()) {
+		try {
+		    app.getCamelContext().addRouteDefinition(routeDefinition);
+		} catch (Exception e) {
+		    LOG.error("Failed to add route " + routeDefinition
+			    + " to context", e);
+		    JOptionPane
+			    .showMessageDialog(this, "Failed to add route "
+				    + routeDefinition
+				    + " to context", "Error",
+				    JOptionPane.ERROR_MESSAGE);
+		}
+
+		updateList();
+	    }
 	}
     }
 
@@ -261,10 +281,11 @@ public class RoutesInternalFrame extends JInternalFrame {
 	}
     }
 
-    protected void initialize() {
+    protected void updateList() {
 	List<RouteDefinition> routes = app.getCamelContext()
 		.getRouteDefinitions();
 
+	listRoutesModel.removeAllElements();
 	for (RouteDefinition routeDefinition : routes) {
 	    if (null != routeDefinition.getId()) {
 		listRoutesModel.addElement(routeDefinition.getId());

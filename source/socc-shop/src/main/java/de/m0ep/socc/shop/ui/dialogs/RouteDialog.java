@@ -19,16 +19,21 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.camel.model.RouteDefinition;
 
+import com.google.common.base.Preconditions;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+
+import de.m0ep.socc.shop.SOCCShopApplication;
 
 public class RouteDialog extends JDialog {
     private static final long serialVersionUID = 1L;
 
     public static final int OK_OPTION = 0;
     public static final int CANCEL_OPTION = 1;
+
+    private SOCCShopApplication app;
 
     private final JPanel contentPanel = new JPanel();
     private int resultOption;
@@ -40,7 +45,9 @@ public class RouteDialog extends JDialog {
     /**
      * Create the dialog.
      */
-    public RouteDialog() {
+    public RouteDialog(SOCCShopApplication app) {
+	this.app = Preconditions.checkNotNull(app, "App can not be null");
+
 	setAlwaysOnTop(true);
 	setTitle("Create Route");
 	setResizable(false);
@@ -164,7 +171,16 @@ public class RouteDialog extends JDialog {
     }
 
     public void onOk() {
+	String fromUrl = textFrom.getText();
+	String toUrl = textTo.getText();
+	String id = textId.getText();
 
+	resultOption = OK_OPTION;
+	resultRoute = new RouteDefinition();
+	resultRoute.setId(id);
+	resultRoute.from(fromUrl).to(toUrl);
+
+	closeDialog();
     }
 
     protected void onCancel() {

@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><routes xmlns="http://camel.apache.org/schema/spring"><route id="test-gp"><from uri="socc://googleplus-test?forumId=115922275158052155050/public"/><to uri="socc://moodle-test?threadId=2" id="to1"/></route></routes>

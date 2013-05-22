@@ -16,6 +16,9 @@ public final class Icons {
     public static final ImageIcon ARROW_SWITCH = new ImageIcon(Icons.class
 	    .getResource("/images/arrow_switch.png"));
 
+    public static final ImageIcon ATTACH = new ImageIcon(Icons.class
+	    .getResource("/images/attach.png"));
+
     public static final ImageIcon CONNECT = new ImageIcon(Icons.class
 	    .getResource("/images/connect.png"));
 

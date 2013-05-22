@@ -2,26 +2,28 @@ package de.m0ep.socc.shop.ui.desktop;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JTree;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -35,7 +37,6 @@ import org.rdfs.sioc.Post;
 import org.rdfs.sioc.SIOC;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
-import org.rdfs.sioc.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +45,57 @@ import com.google.common.base.Preconditions;
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.shop.SOCCShopApplication;
+import de.m0ep.socc.shop.ui.components.SIOCPostPane;
+import de.m0ep.socc.shop.utils.Icons;
 
 public class SIOCInternalFrame extends JInternalFrame {
     private static final long serialVersionUID = 1750490537282051026L;
     private static final Logger LOG = LoggerFactory
 	    .getLogger(SIOCInternalFrame.class);
+
+    private static class PostCellItemRenderer implements ListCellRenderer<Post> {
+	private Border noFocusBorder;
+	private SIOCPostPane renderer;
+
+	public PostCellItemRenderer() {
+	    noFocusBorder = new EmptyBorder(1, 1, 1, 1);
+	    renderer = new SIOCPostPane();
+	}
+
+	@Override
+	public Component getListCellRendererComponent(
+		JList<? extends Post> list, Post value, int index,
+		boolean isSelected, boolean cellHasFocus) {
+
+	    renderer.setPost(value);
+
+	    if (isSelected) {
+		renderer.setBackground(list.getSelectionBackground());
+		renderer.setForeground(list.getSelectionForeground());
+	    } else {
+		renderer.setBackground(list.getBackground());
+		renderer.setForeground(list.getForeground());
+	    }
+
+	    Border border = null;
+	    if (cellHasFocus) {
+		if (isSelected) {
+		    border = UIManager
+			    .getBorder("List.focusSelectedCellHighlightBorder");
+		}
+		if (border == null) {
+		    border = UIManager
+			    .getBorder("List.focusCellHighlightBorder");
+		}
+	    } else {
+		border = noFocusBorder;
+	    }
+	    renderer.setBorder(border);
+
+	    return renderer;
+	}
+
+    }
 
     private SOCCShopApplication app;
 
@@ -56,23 +103,17 @@ public class SIOCInternalFrame extends JInternalFrame {
     private DefaultMutableTreeNode treeRoot;
     private DefaultTreeModel treeContainersModel;
 
-    private DefaultTableModel tablePostsModel;
-    private JTable tablePosts;
-
-    ImageIcon loadingIcon = new ImageIcon(
-	    SIOCInternalFrame.class.getResource("/images/imagesLoadingOLD.gif"));
-    ImageIcon refreshIcon = new ImageIcon(
-	    SIOCInternalFrame.class.getResource("/images/arrow_refresh.png"));
     private JButton btnUpdate;
+
+    private DefaultListModel<Post> listPostsModel;
+    private JList<Post> listPosts;
 
     /**
      * Create the frame.
      */
     public SIOCInternalFrame(final SOCCShopApplication app) {
 	setTitle("SIOC Viewer");
-	setMinimumSize(new Dimension(250, 150));
-	setFrameIcon(new ImageIcon(
-		SIOCInternalFrame.class.getResource("/images/user_comment.png")));
+	setFrameIcon(Icons.USER_COMMENT);
 	setResizable(true);
 	setMaximizable(true);
 	setIconifiable(true);
@@ -100,19 +141,11 @@ public class SIOCInternalFrame extends JInternalFrame {
 	JScrollPane scrollPane = new JScrollPane(treeContainers);
 	splitPane.setLeftComponent(scrollPane);
 
-	tablePostsModel = new DefaultTableModel();
-	tablePostsModel.addColumn("Title");
-	tablePostsModel.addColumn("Subject");
-	tablePostsModel.addColumn("Content");
-	tablePostsModel.addColumn("Creator");
-	tablePostsModel.addColumn("Date Created");
-	tablePostsModel.addColumn("Container");
-	tablePostsModel.addColumn("Parent");
-
-	tablePosts = new JTable();
-	tablePosts.setModel(tablePostsModel);
-	scrollPane = new JScrollPane(tablePosts);
-	splitPane.setRightComponent(scrollPane);
+	listPostsModel = new DefaultListModel<Post>();
+	listPosts = new JList<Post>(listPostsModel);
+	listPosts.setCellRenderer(new PostCellItemRenderer());
+	listPosts.setFixedCellHeight(-1);
+	splitPane.setRightComponent(new JScrollPane(listPosts));
 
 	JPanel buttonPanel = new JPanel();
 	getContentPane().add(buttonPanel, BorderLayout.SOUTH);
@@ -126,14 +159,14 @@ public class SIOCInternalFrame extends JInternalFrame {
 	});
 
 	buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-	btnUpdate.setIcon(refreshIcon);
+	btnUpdate.setIcon(Icons.ARROW_REFRESH);
 	buttonPanel.add(btnUpdate);
 
 	onUpdateContainers();
     }
 
     protected void onUpdateContainers() {
-	btnUpdate.setIcon(loadingIcon);
+	btnUpdate.setIcon(Icons.LOADING);
 
 	java.lang.Thread t = new java.lang.Thread(new Runnable() {
 	    @Override
@@ -198,7 +231,7 @@ public class SIOCInternalFrame extends JInternalFrame {
 	    public void run() {
 		treeContainersModel.setRoot(treeRoot);
 		treeContainers.revalidate();
-		btnUpdate.setIcon(refreshIcon);
+		btnUpdate.setIcon(Icons.ARROW_REFRESH);
 	    }
 	});
     }
@@ -237,7 +270,7 @@ public class SIOCInternalFrame extends JInternalFrame {
     }
 
     protected void onUpdatePost(final Container container) {
-	btnUpdate.setIcon(loadingIcon);
+	btnUpdate.setIcon(Icons.LOADING);
 	java.lang.Thread t = new java.lang.Thread(new Runnable() {
 	    @Override
 	    public void run() {
@@ -260,31 +293,19 @@ public class SIOCInternalFrame extends JInternalFrame {
 	    }
 	}
 
+	listPostsModel.removeAllElements();
 	final List<Post> posts = SIOC.listAllPosts(app.getSiocModel());
 	SwingUtilities.invokeLater(new Runnable() {
 	    @Override
 	    public void run() {
-		for (int i = tablePostsModel.getRowCount() - 1; i >= 0; i--) {
-		    tablePostsModel.removeRow(i);
-		}
 
 		for (Post post : posts) {
 		    if (post.hasContainer(container)) {
-			UserAccount user = post.getCreator();
-
-			tablePostsModel.addRow(new Object[] {
-				post.getTitle(),
-				post.getSubject(),
-				post.getContent(),
-				user.getName(),
-				post.getCreated(),
-				post.getContainer(),
-				post.getReplyOf()
-			});
+			listPostsModel.addElement(post);
 		    }
 		}
 
-		btnUpdate.setIcon(refreshIcon);
+		btnUpdate.setIcon(Icons.ARROW_REFRESH);
 	    }
 	});
 

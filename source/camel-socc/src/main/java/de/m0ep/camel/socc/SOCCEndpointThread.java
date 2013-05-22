@@ -22,6 +22,8 @@
 
 package de.m0ep.camel.socc;
 
+import java.util.Map;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -34,72 +36,81 @@ import org.slf4j.LoggerFactory;
 import de.m0ep.camel.socc.consumer.SOCCPollingConsumerThread;
 import de.m0ep.camel.socc.producer.SOCCProducerThread;
 import de.m0ep.socc.IConnector;
+import de.m0ep.socc.config.DefaultConnectorConfig;
 import de.m0ep.socc.exceptions.ConnectorException;
 
 public class SOCCEndpointThread extends DirectEndpoint implements ISOCCEndpoint {
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SOCCEndpointThread.class);
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(SOCCEndpointThread.class);
 
-	private SOCCComponent soccComponent;
-	private String uri;
-	private SOCCEndpointProperties properties;
-	private IConnector connector;
-	private Thread thread;
+    private SOCCComponent soccComponent;
+    private String uri;
+    private SOCCEndpointProperties properties;
+    private IConnector connector;
+    private Thread thread;
 
-	public SOCCEndpointThread(SOCCComponent soccComponent, String uri,
-			SOCCEndpointProperties properties, IConnector connector)
-			throws ConnectorException {
-		super(uri, soccComponent);
+    public SOCCEndpointThread(SOCCComponent soccComponent, String uri,
+	    SOCCEndpointProperties properties, IConnector connector)
+	    throws ConnectorException {
+	super(uri, soccComponent);
 
-		this.soccComponent = soccComponent;
-		this.uri = uri;
-		this.properties = properties;
-		this.connector = connector;
-		this.thread = connector.getThread(properties.getThreadId());
+	this.soccComponent = soccComponent;
+	this.uri = uri;
+	this.properties = properties;
+	this.connector = connector;
+	this.thread = connector.getThread(properties.getThreadId());
 
-		LOG.debug(
-				"Create SOCCEndpointThread with uri={} and connector={}",
-				uri,
-				connector.getId());
+	LOG.debug(
+		"Create SOCCEndpointThread with uri={} and connector={}",
+		uri,
+		connector.getId());
+    }
+
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+	ScheduledPollConsumer consumer = new SOCCPollingConsumerThread(
+		this,
+		processor);
+
+	Map<String, Object> connectorConfig = connector.getConfiguration();
+	if (connectorConfig.containsKey(DefaultConnectorConfig.POLL_COOLDOWN)) {
+	    consumer.setDelay((Long) connectorConfig.get(
+		    DefaultConnectorConfig.POLL_COOLDOWN));
+	} else {
+	    consumer.setDelay(properties.getDelay());
 	}
 
-	@Override
-	public Consumer createConsumer(Processor processor) throws Exception {
-		ScheduledPollConsumer consumer = new SOCCPollingConsumerThread(
-				this,
-				processor);
-		consumer.setDelay(properties.getDelay());
-		configureConsumer(consumer);
+	configureConsumer(consumer);
 
-		return consumer;
-	}
+	return consumer;
+    }
 
-	@Override
-	public Producer createProducer() throws Exception {
-		return new SOCCProducerThread(this);
-	}
+    @Override
+    public Producer createProducer() throws Exception {
+	return new SOCCProducerThread(this);
+    }
 
-	@Override
-	public String getEndpointUri() {
-		return uri;
-	}
+    @Override
+    public String getEndpointUri() {
+	return uri;
+    }
 
-	@Override
-	public SOCCComponent getSOCCComponent() {
-		return soccComponent;
-	}
+    @Override
+    public SOCCComponent getSOCCComponent() {
+	return soccComponent;
+    }
 
-	@Override
-	public SOCCEndpointProperties getProperties() {
-		return properties;
-	}
+    @Override
+    public SOCCEndpointProperties getProperties() {
+	return properties;
+    }
 
-	@Override
-	public synchronized IConnector getConnector() {
-		return connector;
-	}
+    @Override
+    public synchronized IConnector getConnector() {
+	return connector;
+    }
 
-	public synchronized Thread getThread() {
-		return this.thread;
-	}
+    public synchronized Thread getThread() {
+	return this.thread;
+    }
 }

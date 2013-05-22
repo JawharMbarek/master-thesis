@@ -35,9 +35,9 @@ public class RouteDialog extends JDialog {
 
     private SOCCShopApplication app;
 
-    private final JPanel contentPanel = new JPanel();
     private int resultOption;
     private RouteDefinition resultRoute;
+
     private JTextField textFrom;
     private JTextField textTo;
     private JTextField textId;
@@ -64,9 +64,9 @@ public class RouteDialog extends JDialog {
 	});
 
 	getContentPane().setLayout(new BorderLayout());
-	contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-	getContentPane().add(contentPanel, BorderLayout.CENTER);
+	JPanel contentPanel = new JPanel();
+	contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 	contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
 		FormFactory.RELATED_GAP_COLSPEC,
 		FormFactory.DEFAULT_COLSPEC,
@@ -83,77 +83,70 @@ public class RouteDialog extends JDialog {
 			FormFactory.DEFAULT_ROWSPEC,
 			FormFactory.RELATED_GAP_ROWSPEC,
 			FormFactory.DEFAULT_ROWSPEC, }));
-	{
-	    JLabel lblId = new JLabel("Id:");
-	    contentPanel.add(lblId, "2, 2, right, default");
-	}
-	{
-	    textId = new JTextField();
-	    textId.setMinimumSize(new Dimension(4, 25));
-	    textId.setPreferredSize(new Dimension(4, 25));
-	    contentPanel.add(textId, "4, 2, fill, default");
-	    textId.setColumns(10);
-	}
-	{
-	    JLabel lblFrom = new JLabel("From:");
-	    contentPanel.add(lblFrom, "2, 4, right, default");
-	}
-	{
-	    textFrom = new JTextField();
-	    textFrom.setPreferredSize(new Dimension(4, 25));
-	    contentPanel.add(textFrom, "4, 4, fill, default");
-	    textFrom.setColumns(10);
-	}
-	{
-	    JButton btnFromAssist = new JButton("...");
-	    btnFromAssist.setMargin(new Insets(2, 2, 2, 2));
-	    contentPanel.add(btnFromAssist, "6, 4");
-	}
-	{
-	    JLabel lblTo = new JLabel("To:");
-	    contentPanel.add(lblTo, "2, 6, right, default");
-	}
-	{
-	    textTo = new JTextField();
-	    textTo.setPreferredSize(new Dimension(4, 25));
-	    contentPanel.add(textTo, "4, 6, fill, default");
-	    textTo.setColumns(10);
-	}
-	{
-	    JButton btnToAssist = new JButton("...");
-	    btnToAssist.setMargin(new Insets(2, 2, 2, 2));
-	    contentPanel.add(btnToAssist, "6, 6");
-	}
-	{
-	    JCheckBox chckbxUseRdfxml = new JCheckBox("use RDF/XML");
-	    contentPanel.add(chckbxUseRdfxml, "4, 8");
-	}
-	{
-	    JPanel buttonPane = new JPanel();
-	    buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-	    getContentPane().add(buttonPane, BorderLayout.SOUTH);
-	    {
-		JButton okButton = new JButton("OK");
-		okButton.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-			onOk();
-		    }
-		});
-		buttonPane.add(okButton);
-		getRootPane().setDefaultButton(okButton);
+	getContentPane().add(contentPanel, BorderLayout.CENTER);
+
+	JLabel lblId = new JLabel("Id:");
+	contentPanel.add(lblId, "2, 2, right, default");
+
+	textId = new JTextField();
+	textId.setMinimumSize(new Dimension(4, 25));
+	textId.setPreferredSize(new Dimension(4, 25));
+	contentPanel.add(textId, "4, 2, fill, default");
+	textId.setColumns(10);
+
+	JLabel lblFrom = new JLabel("From:");
+	contentPanel.add(lblFrom, "2, 4, right, default");
+
+	textFrom = new JTextField();
+	textFrom.setPreferredSize(new Dimension(4, 25));
+	contentPanel.add(textFrom, "4, 4, fill, default");
+	textFrom.setColumns(10);
+
+	JButton btnFromAssist = new JButton("...");
+	btnFromAssist.setMargin(new Insets(2, 2, 2, 2));
+	contentPanel.add(btnFromAssist, "6, 4");
+
+	JLabel lblTo = new JLabel("To:");
+	contentPanel.add(lblTo, "2, 6, right, default");
+
+	textTo = new JTextField();
+	textTo.setPreferredSize(new Dimension(4, 25));
+	contentPanel.add(textTo, "4, 6, fill, default");
+	textTo.setColumns(10);
+
+	JButton btnToAssist = new JButton("...");
+	btnToAssist.setMargin(new Insets(2, 2, 2, 2));
+	contentPanel.add(btnToAssist, "6, 6");
+
+	JCheckBox chckbxUseRdfxml = new JCheckBox("use RDF/XML");
+	contentPanel.add(chckbxUseRdfxml, "4, 8");
+
+	JPanel buttonPane = new JPanel();
+	buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+	getContentPane().add(buttonPane, BorderLayout.SOUTH);
+
+	JButton okButton = new JButton("OK");
+	okButton.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		onOk();
 	    }
-	    {
-		JButton cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-			onCancel();
-		    }
-		});
-		buttonPane.add(cancelButton);
+	});
+	buttonPane.add(okButton);
+	getRootPane().setDefaultButton(okButton);
+
+	JButton cancelButton = new JButton("Cancel");
+	cancelButton.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		onCancel();
 	    }
-	}
+	});
+	buttonPane.add(cancelButton);
+    }
+
+    public SOCCShopApplication getApp() {
+	return app;
     }
 
     public int showDialog() {

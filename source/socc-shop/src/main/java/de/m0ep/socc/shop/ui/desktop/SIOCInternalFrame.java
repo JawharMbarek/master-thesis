@@ -5,7 +5,12 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -47,6 +52,7 @@ import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.shop.SOCCShopApplication;
 import de.m0ep.socc.shop.ui.components.SIOCPostPane;
 import de.m0ep.socc.shop.utils.Icons;
+import de.m0ep.socc.utils.DateUtils;
 
 public class SIOCInternalFrame extends JInternalFrame {
     private static final long serialVersionUID = 1750490537282051026L;
@@ -294,15 +300,39 @@ public class SIOCInternalFrame extends JInternalFrame {
 	}
 
 	listPostsModel.removeAllElements();
-	final List<Post> posts = SIOC.listAllPosts(app.getSiocModel());
+	final List<Post> postsAll = SIOC.listAllPosts(app.getSiocModel());
+	final List<Post> posts = new ArrayList<Post>();
+
+	for (Post post : postsAll) {
+	    if (post.hasContainer(container)) {
+		posts.add(post);
+	    }
+	}
+
+	// TODO may be slow
+	Collections.sort(posts, new Comparator<Post>() {
+	    @Override
+	    public int compare(Post o1, Post o2) {
+		String createA = o1.getCreated();
+		String createB = o2.getCreated();
+
+		try {
+		    Date dateA = DateUtils.parseISO8601(createA);
+		    Date dateB = DateUtils.parseISO8601(createB);
+
+		    return dateA.compareTo(dateB);
+
+		} catch (ParseException e) {
+		    return 0;
+		}
+	    }
+	});
+
 	SwingUtilities.invokeLater(new Runnable() {
 	    @Override
 	    public void run() {
-
 		for (Post post : posts) {
-		    if (post.hasContainer(container)) {
-			listPostsModel.addElement(post);
-		    }
+		    listPostsModel.addElement(post);
 		}
 
 		btnUpdate.setIcon(Icons.ARROW_REFRESH);

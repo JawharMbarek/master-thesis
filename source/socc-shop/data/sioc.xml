@@ -9182,6 +9182,20 @@ alle anderen sollten mal ernsthaft nachdenken..."</encoded>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
 </rdf:Description>
 
+<rdf:Description rdf:about="http://localhost/florian/moodle24/post/58">
+	<dcterms:created>2013-05-22T15:31:56.000+02:00</dcterms:created>
+	<dcterms:modified>2013-05-22T15:31:56.000+02:00</dcterms:modified>
+	<dcterms:subject>ich will nur was zeigen</dcterms:subject>
+	<encoded xmlns="http://purl.org/rss/1.0/modules/content/">&lt;![CDATA[ich will nur was zeigen]]&gt;</encoded>
+	<sioc:content>ich will nur was zeigen</sioc:content>
+	<sioc:has_container rdf:resource="http://localhost/florian/moodle24/thread/2"/>
+	<sioc:has_creator rdf:resource="http://localhost/florian/moodle24/user/2"/>
+	<sioc:has_discussion rdf:resource="http://localhost/florian/moodle24/thread/2"/>
+	<sioc:id>58</sioc:id>
+	<sioc:sibling rdf:resource="https://plus.google.com/activity/z120unvrsquvenwae04cd11zeyzncb2hv5o"/>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
+</rdf:Description>
+
 <rdf:Description rdf:about="http://localhost/florian/moodle24/post/6">
 	<dcterms:created>2013-01-30T16:14:38.000+01:00</dcterms:created>
 	<dcterms:modified>2013-01-30T16:14:38.000+01:00</dcterms:modified>
@@ -9285,6 +9299,7 @@ alle anderen sollten mal ernsthaft nachdenken..."</encoded>
 	<sioc:container_of rdf:resource="http://localhost/florian/moodle24/post/55"/>
 	<sioc:container_of rdf:resource="http://localhost/florian/moodle24/post/56"/>
 	<sioc:container_of rdf:resource="http://localhost/florian/moodle24/post/57"/>
+	<sioc:container_of rdf:resource="http://localhost/florian/moodle24/post/58"/>
 	<sioc:container_of rdf:resource="http://localhost/florian/moodle24/post/6"/>
 	<sioc:container_of rdf:resource="http://localhost/florian/moodle24/post/7"/>
 	<sioc:container_of rdf:resource="http://localhost/florian/moodle24/post/8"/>
@@ -9292,9 +9307,9 @@ alle anderen sollten mal ernsthaft nachdenken..."</encoded>
 	<sioc:has_creator rdf:resource="http://localhost/florian/moodle24/user/2"/>
 	<sioc:has_parent rdf:resource="http://localhost/florian/moodle24/forum/1"/>
 	<sioc:id>2</sioc:id>
-	<sioc:last_item_date>2013-05-22T12:47:13.000+02:00</sioc:last_item_date>
+	<sioc:last_item_date>2013-05-22T15:31:56.000+02:00</sioc:last_item_date>
 	<sioc:name>TestTopic2</sioc:name>
-	<sioc:num_items rdf:datatype="http://www.w3.org/2001/XMLSchema#int">30</sioc:num_items>
+	<sioc:num_items rdf:datatype="http://www.w3.org/2001/XMLSchema#int">31</sioc:num_items>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Thread"/>
 </rdf:Description>
 
@@ -9336,6 +9351,7 @@ alle anderen sollten mal ernsthaft nachdenken..."</encoded>
 </rdf:Description>
 
 <rdf:Description rdf:about="https://plus.google.com/115922275158052155050/public">
+	<sioc:container_of rdf:resource="https://plus.google.com/activity/z120unvrsquvenwae04cd11zeyzncb2hv5o"/>
 	<sioc:container_of rdf:resource="https://plus.google.com/activity/z12dxjdqszzaitu1r22ccjurrwu1snith"/>
 	<sioc:container_of rdf:resource="https://plus.google.com/activity/z12ot3syiquvvvl2u22ccjurrwu1snith"/>
 	<sioc:container_of rdf:resource="https://plus.google.com/activity/z12vwpsaepmqzd0kl22ccjurrwu1snith"/>
@@ -9343,9 +9359,21 @@ alle anderen sollten mal ernsthaft nachdenken..."</encoded>
 	<sioc:container_of rdf:resource="https://plus.google.com/activity/z13su1szvqe2tlrt522ccjurrwu1snith"/>
 	<sioc:has_host rdf:resource="https://plus.google.com/"/>
 	<sioc:id>115922275158052155050/public</sioc:id>
-	<sioc:last_item_date>2013-05-22T12:47:06.558+02:00</sioc:last_item_date>
+	<sioc:last_item_date>2013-05-22T15:31:51.989+02:00</sioc:last_item_date>
 	<sioc:name>Public</sioc:name>
 	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Forum"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="https://plus.google.com/activity/z120unvrsquvenwae04cd11zeyzncb2hv5o">
+	<dcterms:created>2013-05-22T15:31:51.989+02:00</dcterms:created>
+	<dcterms:modified>2013-05-22T15:31:51.989+02:00</dcterms:modified>
+	<dcterms:title>ich will nur was zeigen</dcterms:title>
+	<encoded xmlns="http://purl.org/rss/1.0/modules/content/">ich will nur was zeigen</encoded>
+	<sioc:content>ich will nur was zeigen</sioc:content>
+	<sioc:has_container rdf:resource="https://plus.google.com/115922275158052155050/public"/>
+	<sioc:has_creator rdf:resource="https://plus.google.com/user/115922275158052155050"/>
+	<sioc:id>z120unvrsquvenwae04cd11zeyzncb2hv5o</sioc:id>
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#Post"/>
 </rdf:Description>
 
 <rdf:Description rdf:about="https://plus.google.com/activity/z12dxjdqszzaitu1r22ccjurrwu1snith">

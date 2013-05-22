@@ -74,8 +74,8 @@ public class SOCCEndpointThread extends DirectEndpoint implements ISOCCEndpoint 
 
 	Map<String, Object> connectorConfig = connector.getConfiguration();
 	if (connectorConfig.containsKey(DefaultConnectorConfig.POLL_COOLDOWN)) {
-	    consumer.setDelay((Long) connectorConfig.get(
-		    DefaultConnectorConfig.POLL_COOLDOWN));
+	    consumer.setDelay(Long.parseLong((String) connectorConfig.get(
+		    DefaultConnectorConfig.POLL_COOLDOWN)));
 	} else {
 	    consumer.setDelay(properties.getDelay());
 	}

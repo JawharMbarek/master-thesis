@@ -39,7 +39,7 @@
       "factoryId": "GooglePlusConnectorFactory",
       "parameters": {
         "expiresInSeconds": "0",
-        "accessToken": "ya29.AHES6ZQfcQvLS3h-sAlueJ3RzYFDwl0I71VE_La3nSqeQgUQHVtz",
+        "accessToken": "ya29.AHES6ZQn8OmkXk3Gu8y2LGHWszfM99U1LqFa2zAEZcN7BhjYSRyc",
         "pollCooldownMillis": "100",
         "maxNewPostsOnPoll": "10",
         "refreshToken": "1/Qsc2kHvKM5g-t_GyrFIF54RvXmCMU5AM3ezxrHdRjBI",

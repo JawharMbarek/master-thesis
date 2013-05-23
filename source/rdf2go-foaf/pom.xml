@@ -57,11 +57,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.semweb4j</groupId>
-            <artifactId>rdfreactor.generator</artifactId>
-            <version>4.8.1</version>
-        </dependency>
-        <dependency>
         	<groupId>de.m0ep.rdf2go</groupId>
         	<artifactId>rdf2go-basic</artifactId>
         	<version>0.0.1</version>

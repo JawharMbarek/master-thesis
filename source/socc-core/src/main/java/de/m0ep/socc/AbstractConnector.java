@@ -34,7 +34,7 @@ import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOCThing;
+import org.rdfs.sioc.Thing;
 import org.rdfs.sioc.SIOCVocabulary;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
@@ -70,7 +70,7 @@ public abstract class AbstractConnector implements IConnector {
 	    + SPARQL_VAR_USER + " WHERE {" + "?" + SPARQL_VAR_USER + " "
 	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.UserAccount.toSPARQL()
 	    + " ; "
-	    + SIOCThing.ISPARTOF.toSPARQL() + " %s . }";
+	    + Thing.ISPARTOF.toSPARQL() + " %s . }";
 
     private static final String SPARQL_SELECT_FORUMS_OF_SITE = "SELECT ?"
 	    + SPARQL_VAR_FORUM + " WHERE { ?" + SPARQL_VAR_FORUM + " "

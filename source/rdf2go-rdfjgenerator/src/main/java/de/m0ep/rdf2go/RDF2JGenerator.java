@@ -4,6 +4,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
+import org.ontoware.rdf2go.util.VocabularyWriter;
 import org.ontoware.rdfreactor.generator.CodeGenerator;
 
 public class RDF2JGenerator {
@@ -42,6 +43,17 @@ public class RDF2JGenerator {
 		true,
 		true,
 		methodPrefix);
+
+	args = new String[] {
+		"-i", "services",
+		"-o", "./gen-src",
+		"--package", "org.rdfs.sioc.services",
+		"-n", "ServicesVocabulary",
+		"-a", "http://rdfs.org/sioc/services#",
+		"-namespacestrict", "true"
+	};
+
+	VocabularyWriter.main(args);
     }
 
     private static Options createOptions() {

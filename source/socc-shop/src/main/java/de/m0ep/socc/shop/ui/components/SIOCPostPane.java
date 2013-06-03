@@ -10,7 +10,7 @@ import javax.swing.JTextArea;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOCThing;
+import org.rdfs.sioc.Thing;
 import org.rdfs.sioc.UserAccount;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -131,9 +131,9 @@ public class SIOCPostPane extends JPanel {
 
 	panelAttachments.removeAll();
 	if (post.hasAttachments()) {
-	    ClosableIterator<SIOCThing> attachIter = post.getAllAttachments();
+	    ClosableIterator<Thing> attachIter = post.getAllAttachments();
 	    while (attachIter.hasNext()) {
-		SIOCThing siocThing = (SIOCThing) attachIter.next();
+		Thing siocThing = (Thing) attachIter.next();
 		panelAttachments.add(
 			new JLabel(
 				siocThing.asResource().toString(),

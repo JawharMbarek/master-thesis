@@ -255,7 +255,7 @@ public class Image extends Document {
      */
     public static ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDepictions_Inverse(
 	    Model model, Object objectValue) {
-	return Base.getAll_Inverse(model, FOAFThing.DEPICTION, objectValue);
+	return Base.getAll_Inverse(model, Thing.DEPICTION, objectValue);
     }
 
     /**
@@ -265,7 +265,7 @@ public class Image extends Document {
      *         [Generated from RDFReactor template rule #getallinverse1dynamic]
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllDepictions_Inverse() {
-	return Base.getAll_Inverse(this.model, FOAFThing.DEPICTION,
+	return Base.getAll_Inverse(this.model, Thing.DEPICTION,
 		this.getResource());
     }
 

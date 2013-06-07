@@ -2,9 +2,16 @@ package de.m0ep.oauth;
 
 import java.awt.Desktop;
 import java.net.URI;
+import java.nio.charset.Charset;
+import java.util.List;
 
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 public class OAuthTest {
 
@@ -18,6 +25,7 @@ public class OAuthTest {
 
     public static final String AUTH_URL = "https://www.facebook.com/dialog/oauth?scope=%s&redirect_uri=%s&client_id=%s";
     public static final String TOKEN_URL = "https://graph.facebook.com/oauth/access_token?client_id=%s&redirect_uri=%s&client_secret=%s&code=%s";;
+    public static final String EXTENDED_URL = "https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s";;
     public static final String SCOPE = "user_about_me";
     public static final String CLIENT_ID = "218182098322396";
     public static final String CLIENT_SECRET = "f4ed27b621c0f6476c2741f7cf9c4dc5";
@@ -39,18 +47,67 @@ public class OAuthTest {
 
 	System.out.println("wait for code...");
 	String code = receiverServer.waitForCode();
+	receiverServer.stopServer();
 
 	System.out.println("Code: " + code);
 
-	SslContextFactory sslFactory = new SslContextFactory(true);
-	HttpClient client = new HttpClient(sslFactory);
-	client.start();
+	/*
+	 * Get access token from authorization code
+	 */
+	String accessTokenUri = String.format(
+		TOKEN_URL,
+		CLIENT_ID,
+		redirectUri,
+		CLIENT_SECRET,
+		code);
 
-	System.out.println(client.GET(
-		String.format(TOKEN_URL, CLIENT_ID, redirectUri,
-			CLIENT_SECRET, code)).getContentAsString());
+	HttpClient client = new DefaultHttpClient();
+	HttpPost postRequest = new HttpPost(accessTokenUri);
+	HttpResponse response = client.execute(postRequest);
 
-	client.stop();
-	receiverServer.stopServer();
+	System.out.println(response.getStatusLine().getStatusCode());
+	String body = EntityUtils.toString(response.getEntity());
+
+	List<NameValuePair> pairs = URLEncodedUtils.parse(body, Charset
+		.defaultCharset());
+
+	String accessToken = null;
+	for (NameValuePair nvp : pairs) {
+	    if ("access_token".equals(nvp.getName())) {
+		accessToken = nvp.getValue();
+	    }
+
+	    System.out.print(nvp.getName());
+	    System.out.print(" = ");
+	    System.out.println(nvp.getValue());
+	}
+
+	System.out.println("--------------------");
+
+	if (null != accessToken) {
+	    /*
+	     * extend access token
+	     */
+	    postRequest = new HttpPost(
+		    String.format(
+			    EXTENDED_URL,
+			    CLIENT_ID,
+			    CLIENT_SECRET,
+			    accessToken));
+
+	    response = client.execute(postRequest);
+
+	    System.out.println(response.getStatusLine().getStatusCode());
+	    body = EntityUtils.toString(response.getEntity());
+
+	    pairs = URLEncodedUtils.parse(body, Charset
+		    .defaultCharset());
+
+	    for (NameValuePair nvp : pairs) {
+		System.out.print(nvp.getName());
+		System.out.print(" = ");
+		System.out.println(nvp.getValue());
+	    }
+	}
     }
 }

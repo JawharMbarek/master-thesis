@@ -337,26 +337,6 @@ public class UserAccount extends org.rdfs.sioc.UserAccount {
     }
 
     /**
-     * Get all values of property Authentication as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAuthentication_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, AUTHENTICATION,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property Authentication as an Iterator over RDF2Go
      * nodes
      * 
@@ -367,20 +347,6 @@ public class UserAccount extends org.rdfs.sioc.UserAccount {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAuthentication_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		AUTHENTICATION);
-    }
-
-    /**
-     * Get all values of property Authentication as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAuthentication_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), AUTHENTICATION,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -396,27 +362,6 @@ public class UserAccount extends org.rdfs.sioc.UserAccount {
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, AUTHENTICATION,
-		Authentication.class);
-    }
-
-    /**
-     * Get all values of property Authentication as a ReactorResult of
-     * Authentication
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Authentication> getAllAuthentication_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, AUTHENTICATION,
 		Authentication.class);
     }
 
@@ -441,9 +386,9 @@ public class UserAccount extends org.rdfs.sioc.UserAccount {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Authentication> getAllAuthentication_as() {
+    public Authentication getAuthentication() {
 	return Base.getAll_as(this.model, this.getResource(), AUTHENTICATION,
-		Authentication.class);
+		Authentication.class).firstValue();
     }
 
     /**

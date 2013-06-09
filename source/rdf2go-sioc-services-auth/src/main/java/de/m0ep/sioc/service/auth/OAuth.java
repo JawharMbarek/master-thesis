@@ -364,26 +364,6 @@ public class OAuth extends Authentication {
     }
 
     /**
-     * Get all values of property AccessTokeneEndpoint as a ReactorResult of
-     * RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAccessTokeneEndpoint_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ACCESSTOKENENDPOINT,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property AccessTokeneEndpoint as an Iterator over
      * RDF2Go nodes
      * 
@@ -394,20 +374,6 @@ public class OAuth extends Authentication {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAccessTokeneEndpoint_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		ACCESSTOKENENDPOINT);
-    }
-
-    /**
-     * Get all values of property AccessTokeneEndpoint as a ReactorResult of
-     * RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAccessTokeneEndpoint_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(),
-		ACCESSTOKENENDPOINT, org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -424,27 +390,6 @@ public class OAuth extends Authentication {
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, ACCESSTOKENENDPOINT,
-		Thing.class);
-    }
-
-    /**
-     * Get all values of property AccessTokeneEndpoint as a ReactorResult of
-     * Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Thing> getAllAccessTokeneEndpoint_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, ACCESSTOKENENDPOINT,
 		Thing.class);
     }
 
@@ -469,9 +414,9 @@ public class OAuth extends Authentication {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllAccessTokeneEndpoint_as() {
+    public Thing getAccessTokeneEndpoint() {
 	return Base.getAll_as(this.model, this.getResource(),
-		ACCESSTOKENENDPOINT, Thing.class);
+		ACCESSTOKENENDPOINT, Thing.class).firstValue();
     }
 
     /**
@@ -773,26 +718,6 @@ public class OAuth extends Authentication {
     }
 
     /**
-     * Get all values of property AuthorizationURL as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAuthorizationURL_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, AUTHORIZATIONURL,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property AuthorizationURL as an Iterator over RDF2Go
      * nodes
      * 
@@ -803,20 +728,6 @@ public class OAuth extends Authentication {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllAuthorizationURL_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		AUTHORIZATIONURL);
-    }
-
-    /**
-     * Get all values of property AuthorizationURL as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllAuthorizationURL_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), AUTHORIZATIONURL,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -832,25 +743,6 @@ public class OAuth extends Authentication {
     public static ClosableIterator<Thing> getAllAuthorizationURL(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, AUTHORIZATIONURL,
-		Thing.class);
-    }
-
-    /**
-     * Get all values of property AuthorizationURL as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Thing> getAllAuthorizationURL_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, AUTHORIZATIONURL,
 		Thing.class);
     }
 
@@ -874,9 +766,9 @@ public class OAuth extends Authentication {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllAuthorizationURL_as() {
+    public Thing getAuthorizationURL() {
 	return Base.getAll_as(this.model, this.getResource(), AUTHORIZATIONURL,
-		Thing.class);
+		Thing.class).firstValue();
     }
 
     /**
@@ -1174,26 +1066,6 @@ public class OAuth extends Authentication {
     }
 
     /**
-     * Get all values of property OAuthVersion as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllOAuthVersion_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, OAUTHVERSION,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property OAuthVersion as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -1202,20 +1074,6 @@ public class OAuth extends Authentication {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllOAuthVersion_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), OAUTHVERSION);
-    }
-
-    /**
-     * Get all values of property OAuthVersion as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllOAuthVersion_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), OAUTHVERSION,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -1231,27 +1089,6 @@ public class OAuth extends Authentication {
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, OAUTHVERSION,
-		java.lang.String.class);
-    }
-
-    /**
-     * Get all values of property OAuthVersion as a ReactorResult of
-     * java.lang.String
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.String> getAllOAuthVersion_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, OAUTHVERSION,
 		java.lang.String.class);
     }
 
@@ -1276,9 +1113,9 @@ public class OAuth extends Authentication {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<java.lang.String> getAllOAuthVersion_as() {
+    public String getOAuthVersion() {
 	return Base.getAll_as(this.model, this.getResource(), OAUTHVERSION,
-		java.lang.String.class);
+		java.lang.String.class).firstValue();
     }
 
     /**
@@ -1582,26 +1419,6 @@ public class OAuth extends Authentication {
     }
 
     /**
-     * Get all values of property RequestTokenEndpoint as a ReactorResult of
-     * RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllRequestTokenEndpoint_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, REQUESTTOKENENDPOINT,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property RequestTokenEndpoint as an Iterator over
      * RDF2Go nodes
      * 
@@ -1612,22 +1429,6 @@ public class OAuth extends Authentication {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllRequestTokenEndpoint_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		REQUESTTOKENENDPOINT);
-    }
-
-    /**
-     * Get all values of property RequestTokenEndpoint as a ReactorResult of
-     * RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllRequestTokenEndpoint_asNode_() {
-	return Base
-		.getAll_as(this.model, this.getResource(),
-			REQUESTTOKENENDPOINT,
-			org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -1644,27 +1445,6 @@ public class OAuth extends Authentication {
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, REQUESTTOKENENDPOINT,
-		Thing.class);
-    }
-
-    /**
-     * Get all values of property RequestTokenEndpoint as a ReactorResult of
-     * Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Thing> getAllRequestTokenEndpoint_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, REQUESTTOKENENDPOINT,
 		Thing.class);
     }
 
@@ -1689,9 +1469,9 @@ public class OAuth extends Authentication {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllRequestTokenEndpoint_as() {
+    public Thing getRequestTokenEndpoint() {
 	return Base.getAll_as(this.model, this.getResource(),
-		REQUESTTOKENENDPOINT, Thing.class);
+		REQUESTTOKENENDPOINT, Thing.class).firstValue();
     }
 
     /**

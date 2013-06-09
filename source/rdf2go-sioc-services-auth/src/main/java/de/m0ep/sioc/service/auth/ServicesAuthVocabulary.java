@@ -113,12 +113,4 @@ public interface ServicesAuthVocabulary {
     public static final URI has_authentication = new URIImpl(
 	    "http://www.m0ep.de/sioc-service-auth#has_authentication", false);
 
-    /**
-     * Comment: http://rdfs.org/sioc/services#Service Range:
-     * http://www.m0ep.de/sioc-service-auth#Authentication
-     */
-    public static final URI require_authentication = new URIImpl(
-	    "http://www.m0ep.de/sioc-service-auth#require_authentication",
-	    false);
-
 }

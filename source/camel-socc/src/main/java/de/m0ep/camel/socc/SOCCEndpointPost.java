@@ -22,8 +22,6 @@
 
 package de.m0ep.camel.socc;
 
-import java.util.Map;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import de.m0ep.camel.socc.consumer.SOCCPollingConsumerPost;
 import de.m0ep.camel.socc.producer.SOCCProducerPost;
 import de.m0ep.socc.IConnector;
-import de.m0ep.socc.config.DefaultConnectorConfig;
 import de.m0ep.socc.exceptions.ConnectorException;
 
 public class SOCCEndpointPost extends DirectEndpoint implements ISOCCEndpoint {
@@ -71,15 +68,7 @@ public class SOCCEndpointPost extends DirectEndpoint implements ISOCCEndpoint {
 	ScheduledPollConsumer consumer = new SOCCPollingConsumerPost(
 		this,
 		processor);
-
-	Map<String, Object> connectorConfig = connector.getConfiguration();
-	if (connectorConfig.containsKey(DefaultConnectorConfig.POLL_COOLDOWN)) {
-	    consumer.setDelay(Long.parseLong((String) connectorConfig.get(
-		    DefaultConnectorConfig.POLL_COOLDOWN)));
-	} else {
-	    consumer.setDelay(properties.getDelay());
-	}
-
+	consumer.setDelay(properties.getDelay());
 	configureConsumer(consumer);
 
 	return consumer;

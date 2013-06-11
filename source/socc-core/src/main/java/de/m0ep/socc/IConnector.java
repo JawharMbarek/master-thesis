@@ -23,7 +23,6 @@
 package de.m0ep.socc;
 
 import java.util.List;
-import java.util.Map;
 
 import org.ontoware.rdf2go.model.Model;
 import org.rdfs.sioc.Container;
@@ -32,8 +31,8 @@ import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
-import org.rdfs.sioc.Usergroup;
 
+import de.m0ep.sioc.service.auth.Service;
 import de.m0ep.socc.exceptions.ConnectorException;
 
 /**
@@ -54,8 +53,17 @@ public interface IConnector {
      * @param parameters
      *            Configuration parameters for this connector.
      */
-    public void initialize(String id, Model model,
-	    Map<String, Object> parameters) throws ConnectorException;
+    public void initialize(
+	    String id,
+	    ISOCCContext context,
+	    Service service,
+	    UserAccount userAccount)
+	    throws ConnectorException;
+
+    /**
+     * Called if the Connector will be destroyed.
+     */
+    public void destroy() throws ConnectorException;
 
     /**
      * Connect this connector.
@@ -63,9 +71,16 @@ public interface IConnector {
     public void connect() throws ConnectorException;
 
     /**
-     * Called if the Connector will be destroyed.
+     * Returns if a connector is connected or not.
+     * 
+     * @return Returns true if this connector is connected, false otherwise.
      */
-    public void destroy() throws ConnectorException;
+    public boolean isConnected();
+
+    /**
+     * Disconnect this connector.
+     */
+    public void disconnect();
 
     /**
      * Return the Id of this Connector.
@@ -79,35 +94,7 @@ public interface IConnector {
      * 
      * @return URL to the community
      */
-    public String getURL();
-
-    /**
-     * Get the (maybe modified) configuration parameters of this connector.
-     * 
-     * @return Map with configuration parameters
-     */
-    public Map<String, Object> getConfiguration();
-
-    /**
-     * Returns if a connector is online or not.
-     * 
-     * @return Returns true if this connector is online, false otherwise.
-     */
-    public boolean isOnline();
-
-    /**
-     * Get the {@link Model} used by this connector
-     * 
-     * @return Used {@link Model}
-     */
-    public Model getModel();
-
-    /**
-     * Returns {@link Site} object of the connected community.
-     * 
-     * @return
-     */
-    public Site getSite() throws ConnectorException;
+    public Service getService();
 
     /**
      * Returns the {@link UserAccount} object of the used user to connect to the
@@ -115,27 +102,21 @@ public interface IConnector {
      * 
      * @return {@link UserAccount} object of the used user.
      */
-    public UserAccount getLoginUser() throws ConnectorException;
+    public UserAccount getUserAccount();
 
     /**
-     * Returns the {@link UserAccount} with the committed id
+     * Get the used {@link ISOCCContext} implementation
      * 
-     * @param id
-     *            Id of the {@link UserAccount}
-     * 
-     * @return The {@link UserAccount} with this id
-     * 
-     * @throws ConnectorException
-     *             Thrown if there is no user with this id
+     * @return An {@link ISOCCContext} implementation
      */
-    public UserAccount getUserAccount(String id) throws ConnectorException;
+    public ISOCCContext getContext();
 
     /**
-     * Returns all known {@link UserAccount}s of this community.
+     * Returns {@link Site} object of the connected community.
      * 
-     * @return Iterator of all found {@link UserAccount}s.
+     * @return
      */
-    public List<UserAccount> getUserAccounts() throws ConnectorException;
+    public Site getSite() throws ConnectorException;
 
     /**
      * Returns the {@link Forum} with the committed id
@@ -211,10 +192,12 @@ public interface IConnector {
      * 
      * @param container
      *            The container where should be polled to get new posts
+     * @param limit
+     *            Limit the number of returned posts.
      * 
      * @return List of all new Posts
      */
-    public List<Post> pollPosts(Container container)
+    public List<Post> pollPosts(Container container, long limit)
 	    throws ConnectorException;
 
     /**
@@ -223,6 +206,9 @@ public interface IConnector {
      * 
      * @param parent
      *            The {@link Post} from where the replies should be polled.
+     * @param limit
+     *            Limit the number of returned posts.
+     * 
      * @return List of all replies
      * 
      * @throws ConnectorException
@@ -230,27 +216,8 @@ public interface IConnector {
      *             unknown parent, network issues, problems with the underlying
      *             API...
      */
-    public List<Post> pollReplies(Post parent) throws ConnectorException;
-
-    /**
-     * Returns the {@link Usergroup} with the committed id
-     * 
-     * @param id
-     *            Id of the {@link Usergroup}
-     * 
-     * @return The {@link Usergroup} with this id
-     * 
-     * @throws ConnectorException
-     *             Thrown if there is no usergroup with this id
-     */
-    public Usergroup getUsergroup(String id) throws ConnectorException;
-
-    /**
-     * Returns all known {@link Usergroup}s of this community.
-     * 
-     * @return Iterator of all found {@link Usergroup}s.
-     */
-    public List<Usergroup> getUsergroups() throws ConnectorException;
+    public List<Post> pollReplies(Post parent, long limit)
+	    throws ConnectorException;
 
     /**
      * Test if their are possible {@link Post}s inside this {@link Container}.
@@ -259,6 +226,7 @@ public interface IConnector {
      * 
      * @param container
      *            {@link Container} to test for containing {@link Post}s.
+     * 
      * @return Returns true if there are possibly {@link Post}s, false
      *         otherwise.
      */
@@ -285,7 +253,7 @@ public interface IConnector {
      * @return Returns the published post (Not the same as the given post).
      */
     public Post publishPost(Post post, Container container)
-            throws ConnectorException;
+	    throws ConnectorException;
 
     /**
      * Tests if this post has possible replies inside this connector.

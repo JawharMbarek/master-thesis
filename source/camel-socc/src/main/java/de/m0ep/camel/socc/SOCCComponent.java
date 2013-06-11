@@ -11,17 +11,17 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.IConnector;
-import de.m0ep.socc.SOCC;
+import de.m0ep.socc.SOCCContext;
 
 public class SOCCComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(SOCCComponent.class);
-    private SOCC socc;
+    private SOCCContext socc;
 
     public SOCCComponent() {
     }
 
-    public SOCCComponent(final SOCC socc) {
+    public SOCCComponent(final SOCCContext socc) {
 	this.socc = Preconditions.checkNotNull(socc, "Socc can not be null");
     }
 
@@ -63,7 +63,7 @@ public class SOCCComponent extends DefaultComponent {
     /**
      * @return the socc
      */
-    public SOCC getSOCC() {
+    public SOCCContext getSOCC() {
 	return this.socc;
     }
 
@@ -71,7 +71,7 @@ public class SOCCComponent extends DefaultComponent {
      * @param socc
      *            the socc to set
      */
-    public void setSOCC(SOCC socc) {
+    public void setSOCC(SOCCContext socc) {
 	this.socc = socc;
     }
 }

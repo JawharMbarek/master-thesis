@@ -180,7 +180,7 @@ public class GooglePlusConnector extends AbstractConnector {
 
     @Override
     public void connect() throws ConnectorException {
-	setOnline(false);
+	setConnected(false);
 
 	plus = new Plus.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
 		.setApplicationName(getId()).build();
@@ -217,7 +217,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	    getSite().addHostOf(moments);
 	}
 
-	setOnline(true);
+	setConnected(true);
     }
 
     @Override
@@ -728,7 +728,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	case 404:
 	    return new NotFoundException(error.getMessage());
 	case 401:
-	    setOnline(false);
+	    setConnected(false);
 	    return new de.m0ep.socc.exceptions.AuthenticationException(
 		    error.getMessage());
 	default:

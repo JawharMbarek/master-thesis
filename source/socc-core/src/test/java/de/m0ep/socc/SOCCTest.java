@@ -28,7 +28,6 @@ import org.rdfs.sioc.UserAccount;
 
 import com.google.common.collect.Lists;
 
-import de.m0ep.socc.config.SOCCConfiguration;
 import de.m0ep.socc.exceptions.ConnectorException;
 
 public class SOCCTest {
@@ -134,16 +133,16 @@ public class SOCCTest {
 	// socc.createConnector("FacebookConnectorFactory_1.0",
 	// "facebook-test", fbParams) };
 
-	SOCC socc = null;
+	SOCCContext socc = null;
 	File soccConfigFile = new File(SOCCTest.class.getResource(
 		"/soccConfiguration.json").toURI());
 
 	if (soccConfigFile.exists()) {
 	    SOCCConfiguration soccConfiguration = SOCCConfiguration
 		    .load(soccConfigFile);
-	    socc = new SOCC(model, soccConfiguration);
+	    socc = new SOCCContext(model, soccConfiguration);
 	} else {
-	    socc = new SOCC(model);
+	    socc = new SOCCContext(model);
 	}
 
 	List<IConnector> connectors = new ArrayList<IConnector>();
@@ -192,11 +191,11 @@ public class SOCCTest {
     private static void printConnector(IConnector connector)
 	    throws ConnectorException {
 	System.out.println();
-	System.out.println(connector.getURL());
+	System.out.println(connector.getSite().toString());
 	System.out.println("=====================================");
 	System.out.println("=====================================");
 
-	UserAccount user = connector.getLoginUser();
+	UserAccount user = connector.getUserAccount();
 	printUser(user, 0);
 
 	Iterator<Forum> forums = connector.getForums().iterator();
@@ -216,7 +215,7 @@ public class SOCCTest {
 	    printWithIndent("hasPost: " + connector.hasPosts(forum), 0);
 
 	    if (connector.hasPosts(forum)) {
-		connector.pollPosts(forum);
+		connector.pollPosts(forum, 25);
 		listPosts(connector, forum, 1);
 	    }
 
@@ -238,7 +237,7 @@ public class SOCCTest {
 		printWithIndent("hasPost: " + connector.hasPosts(thread), 1);
 
 		if (connector.hasPosts(thread)) {
-		    connector.pollPosts(thread);
+		    connector.pollPosts(thread, 25);
 		    listPosts(connector, thread, 2);
 		}
 	    }

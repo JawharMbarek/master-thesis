@@ -22,49 +22,56 @@
 
 package de.m0ep.socc;
 
-import java.util.Map;
+import org.rdfs.sioc.UserAccount;
 
-import org.ontoware.rdf2go.model.Model;
-
-import de.m0ep.socc.config.form.DataForm;
+import de.m0ep.sioc.service.auth.Service;
 import de.m0ep.socc.exceptions.ConnectorException;
 
 /**
- * Interface of a {@link IConnectorFactory} to create new {@link IConnector}s
+ * Fabric class to create new instance of {@link IConnector}s.
  * 
  * @author Florian Müller
  * 
  */
 public interface IConnectorFactory {
     /**
-     * Returns a human readable name for this connectors
+     * Returns the id of this factory.
      * 
-     * @return Name for this connectors
-     */
-    public String getConnectorName();
-
-    /**
-     * Returns a unique id for this factory
-     * 
-     * @return
+     * @return Id as {@link String}
      */
     public String getId();
 
-    public DataForm getParameterForm();
+    /**
+     * Returns a human readable label for this factory.
+     * 
+     * @return Label as {@link String}
+     */
+    public String getLabel();
 
     /**
-     * Create a new {@link IConnector}.
+     * Create a new instance of an {@link IConnector}.
      * 
      * @param id
-     *            Id of this connector.
-     * @param model
-     *            RDF2Go {@link Model} to use as SIOC store.
-     * @param parameters
-     *            {@link Map} with configuration parameters for a new
-     *            {@link IConnector}.
-     * @return
+     *            Id of the connector.
+     * @param context
+     *            Instance of an {@link ISOCCContext} implementation.
+     * @param service
+     *            {@link Service} resource to use with this instance.
+     * @param userAccount
+     *            The {@link UserAccount} that is used with this instance.
+     * 
+     * @return A new instance of an {@link IConnector}
+     * 
+     * @throws ConnectorException
+     *             Thrown if there is a problem creating the connector.
+     * @throws NullPointerException
+     *             Thrown if one or more arguments are null.
+     * @throws IllegalArgumentException
+     *             Thrown if there are problems with the passed arguments.
      */
-    public IConnector createConnector(String id, Model model,
-	    Map<String, Object> parameters) throws ConnectorException;
-
+    public IConnector createNewInstance(
+	    String id,
+	    ISOCCContext context,
+	    Service service,
+	    UserAccount userAccount) throws ConnectorException;
 }

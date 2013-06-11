@@ -24,9 +24,7 @@ package de.m0ep.socc;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.QueryResultTable;
 import org.ontoware.rdf2go.model.QueryRow;
 import org.ontoware.rdf2go.util.SparqlUtil;
@@ -34,43 +32,28 @@ import org.ontoware.rdf2go.vocabulary.RDF;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.Thing;
 import org.rdfs.sioc.SIOCVocabulary;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
-import org.rdfs.sioc.Usergroup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import de.m0ep.socc.config.DefaultConnectorConfig;
+import de.m0ep.sioc.service.auth.Service;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.exceptions.NotFoundException;
-import de.m0ep.socc.utils.ConfigUtils;
 
 /**
  * Abstract connector that implements the {@link IConnector} interface. It's a
- * good startingpoint for new connectors.
+ * good starting point for new connectors.
  * 
  * @author Florian Müller
  * 
  */
 public abstract class AbstractConnector implements IConnector {
-    private static final Logger LOG = LoggerFactory
-	    .getLogger(AbstractConnector.class);
-
-    private static final String SPARQL_VAR_USER = "user";
     private static final String SPARQL_VAR_FORUM = "forum";
     private static final String SPARQL_VAR_THREAD = "thread";
-
-    private static final String SPARQL_SELECT_USERACCOUNTS_OF_SITE = "SELECT ?"
-	    + SPARQL_VAR_USER + " WHERE {" + "?" + SPARQL_VAR_USER + " "
-	    + RDF.type.toSPARQL() + " " + SIOCVocabulary.UserAccount.toSPARQL()
-	    + " ; "
-	    + Thing.ISPARTOF.toSPARQL() + " %s . }";
 
     private static final String SPARQL_SELECT_FORUMS_OF_SITE = "SELECT ?"
 	    + SPARQL_VAR_FORUM + " WHERE { ?" + SPARQL_VAR_FORUM + " "
@@ -85,34 +68,54 @@ public abstract class AbstractConnector implements IConnector {
 	    + SIOCVocabulary.has_parent.toSPARQL() + " %s . }";
 
     protected String id;
-    protected Model model;
-    protected DefaultConnectorConfig defaultConfig;
-    protected boolean isOnline;
+    protected ISOCCContext context;
+    protected Service service;
+    protected UserAccount userAccount;
 
-    protected long lastPollTime;
+    protected boolean isConnected;
 
     @Override
-    public void initialize(String id, Model model,
-	    Map<String, Object> parameters) throws ConnectorException {
-	this.id = Preconditions.checkNotNull(id, "id can't be null");
-	this.model = Preconditions.checkNotNull(model, "model can't be null");
-	Preconditions.checkNotNull(parameters, "parameters can't be null");
-	Preconditions.checkArgument(!id.isEmpty(), "id can't be empty");
-	Preconditions.checkArgument(model.isOpen(), "model is not open");
+    public void initialize(String id, ISOCCContext context, Service service,
+	    UserAccount userAccount) throws ConnectorException {
+	this.id = Preconditions.checkNotNull(
+		id,
+		"Id can not be null.");
+	this.context = Preconditions.checkNotNull(
+		context,
+		"Context can not be null.");
+	this.userAccount = Preconditions.checkNotNull(
+		userAccount,
+		"UserAccount can not be null.");
+	this.service = Preconditions.checkNotNull(
+		service,
+		"Service can not be null.");
+	Preconditions.checkArgument(
+		!id.isEmpty(),
+		"Id can not be empty.");
 
-	this.defaultConfig = new DefaultConnectorConfig();
-	this.defaultConfig
-		.setMaxNewPostsOnPoll(SOCCConstants.POLL_MAX_NEW_POST);
-	this.defaultConfig
-		.setPollCooldownMillis(SOCCConstants.POLL_COOLDOWN_MILLIS);
-	ConfigUtils.fromMap(parameters, defaultConfig);
-
-	this.lastPollTime = System.currentTimeMillis();
-	this.isOnline = false;
+	this.isConnected = false;
     }
 
     @Override
     public abstract void connect() throws ConnectorException;
+
+    @Override
+    public boolean isConnected() {
+	return isConnected;
+    }
+
+    /**
+     * Sets this connector to be online/offline.
+     * 
+     * @param online
+     *            Online status
+     */
+    protected void setConnected(final boolean online) {
+	this.isConnected = online;
+    }
+
+    @Override
+    public abstract void disconnect();
 
     @Override
     public void destroy() throws ConnectorException {
@@ -124,60 +127,22 @@ public abstract class AbstractConnector implements IConnector {
     }
 
     @Override
-    public abstract String getURL();
-
-    @Override
-    public abstract Map<String, Object> getConfiguration();
-
-    @Override
-    public boolean isOnline() {
-	return isOnline;
-    }
-
-    /**
-     * Sets this connector to be online/offline.
-     * 
-     * @param online
-     *            Online status
-     */
-    protected void setOnline(final boolean online) {
-	this.isOnline = online;
+    public ISOCCContext getContext() {
+	return context;
     }
 
     @Override
-    public Model getModel() {
-	return model;
+    public Service getService() {
+	return service;
+    }
+
+    @Override
+    public UserAccount getUserAccount() {
+	return userAccount;
     }
 
     @Override
     public abstract Site getSite() throws ConnectorException;
-
-    @Override
-    public abstract UserAccount getLoginUser() throws ConnectorException;
-
-    /**
-     * @throws NotFoundException
-     *             Thrown if no {@link UserAccount} with this id was found.
-     */
-    @Override
-    public UserAccount getUserAccount(String id) throws ConnectorException {
-	throw new NotFoundException("There is no user with the id=" + id);
-    }
-
-    @Override
-    public List<UserAccount> getUserAccounts() throws ConnectorException {
-	List<UserAccount> result = new ArrayList<UserAccount>();
-
-	QueryResultTable resultTable = getModel().sparqlSelect(
-		SparqlUtil.formatQuery(SPARQL_SELECT_USERACCOUNTS_OF_SITE,
-			getSite()));
-	for (QueryRow row : resultTable) {
-	    result.add(UserAccount.getInstance(getModel(),
-		    row.getValue(SPARQL_VAR_USER).asResource()));
-	}
-
-	return result;
-    }
 
     /**
      * @throws NotFoundException
@@ -185,20 +150,20 @@ public abstract class AbstractConnector implements IConnector {
      */
     @Override
     public Forum getForum(String id) throws ConnectorException {
-	throw new NotFoundException("There is no forum with this id=" + id);
+	throw new NotFoundException("There is no forum with the id=" + id);
     }
 
     @Override
     public List<Forum> getForums() throws ConnectorException {
 	List<Forum> result = new ArrayList<Forum>();
 
-	QueryResultTable table = getModel()
+	QueryResultTable table = context.getDataModel()
 		.sparqlSelect(
 			SparqlUtil.formatQuery(SPARQL_SELECT_FORUMS_OF_SITE,
 				getSite()));
 
 	for (QueryRow row : table) {
-	    result.add(Forum.getInstance(getModel(),
+	    result.add(Forum.getInstance(context.getDataModel(),
 		    row.getValue(SPARQL_VAR_FORUM).asURI()));
 	}
 
@@ -220,10 +185,10 @@ public abstract class AbstractConnector implements IConnector {
 		"forum don't belong to this site");
 	List<Thread> result = new ArrayList<Thread>();
 
-	QueryResultTable resultTable = getModel().sparqlSelect(
+	QueryResultTable resultTable = context.getDataModel().sparqlSelect(
 		SparqlUtil.formatQuery(SPARQL_SELECT_THREADS_OF_FORUM, forum));
 	for (QueryRow row : resultTable) {
-	    result.add(Thread.getInstance(getModel(),
+	    result.add(Thread.getInstance(context.getDataModel(),
 		    row.getValue(SPARQL_VAR_FORUM).asResource()));
 	}
 
@@ -245,33 +210,20 @@ public abstract class AbstractConnector implements IConnector {
     }
 
     @Override
-    public List<Post> pollPosts(Container container)
+    public List<Post> pollPosts(Container container, long limit)
 	    throws ConnectorException {
 	return new ArrayList<Post>();
     }
 
     @Override
-    public List<Post> pollReplies(Post parent) throws ConnectorException {
+    public List<Post> pollReplies(Post parent, long limit)
+	    throws ConnectorException {
 	return new ArrayList<Post>();
-    }
-
-    /**
-     * @throws NotFoundException
-     *             Thrown if no {@link Usergroup} with this id was found.
-     */
-    @Override
-    public Usergroup getUsergroup(String id) throws ConnectorException {
-	throw new NotFoundException("There is no usergroup with the id=" + id);
-    }
-
-    @Override
-    public List<Usergroup> getUsergroups() throws ConnectorException {
-	return new ArrayList<Usergroup>();
     }
 
     @Override
     public boolean hasPosts(Container container) {
-        return false;
+	return false;
     }
 
     @Override
@@ -285,13 +237,13 @@ public abstract class AbstractConnector implements IConnector {
      */
     @Override
     public Post publishPost(Post post, Container container)
-            throws ConnectorException {
-        throw new UnsupportedOperationException();
+	    throws ConnectorException {
+	throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean hasReplies(Post parent) {
-        return false;
+	return false;
     }
 
     @Override
@@ -308,35 +260,11 @@ public abstract class AbstractConnector implements IConnector {
 	throw new UnsupportedOperationException();
     }
 
-    /**
-     * Method that checks if it is time for the next poll after specific
-     * colldown. If it is not, it sends the current thread to sleep.
-     */
-    protected void startPolling() {
-	if (lastPollTime > System.currentTimeMillis()) {
-	    try {
-		java.lang.Thread.sleep(lastPollTime
-			- System.currentTimeMillis());
-	    } catch (InterruptedException e) {
-		LOG.warn("Interrupted", e);
-	    }
-	}
-    }
-
-    /**
-     * Should be called if the polling has finished. The colldown timer will be
-     * reseted.
-     */
-    protected void finishPolling() {
-	lastPollTime = System.currentTimeMillis()
-		+ defaultConfig.getPollCooldownMillis();
-    }
-
     @Override
     public int hashCode() {
 	final int prime = 31;
 	int result = 1;
-	result = prime * result + Objects.hashCode(this.id, this.model);
+	result = prime * result + Objects.hashCode(this.id, this.context);
 	return result;
     }
 
@@ -357,11 +285,11 @@ public abstract class AbstractConnector implements IConnector {
 	    return false;
 	}
 
-	if (!Objects.equal(this.model, other.model)) {
+	if (!Objects.equal(this.context, other.context)) {
 	    return false;
 	}
 
-	return super.equals(obj);
+	return true;
     }
 
     @Override

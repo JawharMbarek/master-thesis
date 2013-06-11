@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.xmlns.foaf.FOAF;
 
 import de.m0ep.camel.socc.SOCCComponent;
-import de.m0ep.socc.SOCC;
+import de.m0ep.socc.SOCCContext;
 import de.m0ep.socc.config.SOCCConfiguration;
 import de.m0ep.socc.shop.ui.ApplicationWindow;
 import de.m0ep.socc.shop.utils.ExportUtils;
@@ -38,7 +38,7 @@ public class SOCCShopApplication {
 
     private ApplicationWindow window;
 
-    private SOCC socc;
+    private SOCCContext socc;
 
     private Model siocModel;
     private Model foafModel;
@@ -79,10 +79,10 @@ public class SOCCShopApplication {
 	}
 
 	if (null == this.siocModel) {
-	    this.siocModel = SOCC.createDefaultMemoryModel();
+	    this.siocModel = SOCCContext.createDefaultMemoryModel();
 	}
 
-	this.socc = new SOCC(siocModel, configuration);
+	this.socc = new SOCCContext(siocModel, configuration);
 
 	// try to load saved foaf model
 	File foafFile = new File(dataDir, FOAF_DATA_FILENAME);
@@ -264,7 +264,7 @@ public class SOCCShopApplication {
 
     /* Getter & Setter */
 
-    public SOCC getSocc() {
+    public SOCCContext getSocc() {
 	return this.socc;
     }
 

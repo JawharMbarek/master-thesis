@@ -120,7 +120,7 @@ public class MoodleConnector extends AbstractConnector {
 
     @Override
     public void connect() throws ConnectorException {
-	setOnline(false);
+	setConnected(false);
 
 	this.moodle = new Mdl_soapserverBindingStub(getURL() + MOODLEWS_PATH,
 		getURL() + MOODLE_WSDL_POSTFIX, false);
@@ -128,7 +128,7 @@ public class MoodleConnector extends AbstractConnector {
 	tryLogin();
 	this.myId = moodle.get_my_id(client, sesskey);
 
-	setOnline(true);
+	setConnected(true);
     }
 
     @Override

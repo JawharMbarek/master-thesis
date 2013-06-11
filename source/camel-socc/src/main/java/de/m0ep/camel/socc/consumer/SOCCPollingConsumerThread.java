@@ -38,45 +38,46 @@ import de.m0ep.camel.socc.data.SIOCPostData;
 import de.m0ep.socc.utils.RDF2GoUtils;
 
 public class SOCCPollingConsumerThread extends DefaultScheduledPollConsumer {
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SOCCPollingConsumerThread.class);
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(SOCCPollingConsumerThread.class);
 
-	private SOCCEndpointThread endpoint;
+    private SOCCEndpointThread endpoint;
 
-	public SOCCPollingConsumerThread(SOCCEndpointThread threadEndpoint,
-			Processor processor) {
-		super(threadEndpoint, processor);
+    public SOCCPollingConsumerThread(SOCCEndpointThread threadEndpoint,
+	    Processor processor) {
+	super(threadEndpoint, processor);
 
-		this.endpoint = threadEndpoint;
+	this.endpoint = threadEndpoint;
 
-		LOG.debug(
-				"Created {} for {}",
-				getClass().getSimpleName(),
-				threadEndpoint.getEndpointUri());
+	LOG.debug(
+		"Created {} for {}",
+		getClass().getSimpleName(),
+		threadEndpoint.getEndpointUri());
+    }
+
+    @Override
+    protected int poll() throws Exception {
+	List<Post> posts = endpoint.getConnector().pollPosts(
+		endpoint.getThread(),
+		25); // TODO make it variable
+
+	for (Post post : posts) {
+	    Message msg = new DefaultMessage();
+	    msg.setHeader(Exchange.CONTENT_TYPE, SIOCPostData.class.getName());
+	    SIOCPostData postData = new SIOCPostData(
+		    post.asURI().toString(),
+		    RDF2GoUtils.getAllStatements(post.getModel(), post));
+	    msg.setBody(postData);
+
+	    Exchange exchange = getEndpoint().createExchange();
+	    exchange.setIn(msg);
+	    getProcessor().process(exchange);
 	}
 
-	@Override
-	protected int poll() throws Exception {
-		List<Post> posts = endpoint.getConnector().pollPosts(
-				endpoint.getThread());
-
-		for (Post post : posts) {
-			Message msg = new DefaultMessage();
-			msg.setHeader(Exchange.CONTENT_TYPE, SIOCPostData.class.getName());
-			SIOCPostData postData = new SIOCPostData(
-					post.asURI().toString(),
-					RDF2GoUtils.getAllStatements(post.getModel(), post));
-			msg.setBody(postData);
-
-			Exchange exchange = getEndpoint().createExchange();
-			exchange.setIn(msg);
-			getProcessor().process(exchange);
-		}
-
-		LOG.debug(
-				"Polled {} new posts @ {}",
-				posts.size(),
-				endpoint.getEndpointUri());
-		return posts.size();
-	}
+	LOG.debug(
+		"Polled {} new posts @ {}",
+		posts.size(),
+		endpoint.getEndpointUri());
+	return posts.size();
+    }
 }

@@ -114,7 +114,7 @@ public class FacebookConnector extends AbstractConnector {
 
     @Override
     public void connect() throws ConnectorException {
-	setOnline(false);
+	setConnected(false);
 
 	this.client = new DefaultFacebookClient(fbConfig.getAccessToken());
 
@@ -153,7 +153,7 @@ public class FacebookConnector extends AbstractConnector {
 	    getSite().addHostOf(wall);
 	}
 
-	setOnline(true);
+	setConnected(true);
     }
 
     @Override
@@ -738,14 +738,14 @@ public class FacebookConnector extends AbstractConnector {
 	    case 454: // A session key is required for calling this method
 	    case 455: // A session key must be specified when request is signed
 		      // with a session secret
-		setOnline(false);
+		setConnected(false);
 		return new AuthenticationException(fae.getErrorMessage(), fae);
 	    case 803: // Specified object cannot be found
 		return new NotFoundException("Not found", fae);
 	    }
 	} else if (e instanceof FacebookNetworkException) {
 	    FacebookNetworkException fne = (FacebookNetworkException) e;
-	    setOnline(false);
+	    setConnected(false);
 	    return new NetworkException("Network error: "
 		    + fne.getHttpStatusCode() + " " + fne.getMessage(), fne);
 	}

@@ -141,7 +141,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 
     @Override
     public void connect() throws ConnectorException {
-	setOnline(false);
+	setConnected(false);
 
 	this.service = new YouTubeService("YoutubeConnectorV2",
 		this.ytConfig.getDeveloperKey());
@@ -176,7 +176,7 @@ public class YoutubeV2Connector extends AbstractConnector {
 	    finishPolling();
 	}
 
-	setOnline(true);
+	setConnected(true);
     }
 
     @Override

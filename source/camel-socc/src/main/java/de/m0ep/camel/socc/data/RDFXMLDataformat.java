@@ -29,11 +29,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
+import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.util.RDFTool;
-
-import de.m0ep.socc.SOCC;
 
 /**
  * The {@link RDFXMLDataformat} class is used by Apache camel to convert
@@ -44,30 +43,30 @@ import de.m0ep.socc.SOCC;
  * 
  */
 public class RDFXMLDataformat implements DataFormat {
-	@Override
-	public void marshal(Exchange exchange, Object graph, OutputStream stream)
-			throws Exception {
-		TypeConverter typeConverter = exchange.getContext().getTypeConverter();
-		SIOCPostData postData = typeConverter.mandatoryConvertTo(
-				SIOCPostData.class,
-				graph);
+    @Override
+    public void marshal(Exchange exchange, Object graph, OutputStream stream)
+	    throws Exception {
+	TypeConverter typeConverter = exchange.getContext().getTypeConverter();
+	SIOCPostData postData = typeConverter.mandatoryConvertTo(
+		SIOCPostData.class,
+		graph);
 
-		Model model = SOCC.createDefaultMemoryModel();
+	Model model = RDF2Go.getModelFactory().createModel();
 
-		try {
-			model.addAll(postData.getRDFStatements().iterator());
-			String xml = RDFTool.modelToString(model, Syntax.RdfXml);
-			stream.write(xml.getBytes());
-		} finally {
-			model.close();
-		}
+	try {
+	    model.addAll(postData.getRDFStatements().iterator());
+	    String xml = RDFTool.modelToString(model, Syntax.RdfXml);
+	    stream.write(xml.getBytes());
+	} finally {
+	    model.close();
 	}
+    }
 
-	@Override
-	public Object unmarshal(Exchange exchange, InputStream stream)
-			throws Exception {
-		TypeConverter typeConverter = exchange.getContext().getTypeConverter();
-		String xml = typeConverter.mandatoryConvertTo(String.class, stream);
-		return new SIOCPostData(xml);
-	}
+    @Override
+    public Object unmarshal(Exchange exchange, InputStream stream)
+	    throws Exception {
+	TypeConverter typeConverter = exchange.getContext().getTypeConverter();
+	String xml = typeConverter.mandatoryConvertTo(String.class, stream);
+	return new SIOCPostData(xml);
+    }
 }

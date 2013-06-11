@@ -19,7 +19,7 @@ import org.ontoware.rdf2go.util.RDFTool;
 
 import com.google.common.collect.Lists;
 
-import de.m0ep.socc.SOCC;
+import de.m0ep.socc.SOCCContext;
 import de.m0ep.socc.utils.RDF2GoUtils;
 
 public final class ExportUtils {
@@ -45,7 +45,7 @@ public final class ExportUtils {
 	});
 
 	// create a new model with sorted statements
-	Model tmpModel = SOCC.createDefaultMemoryModel();
+	Model tmpModel = SOCCContext.createDefaultMemoryModel();
 	tmpModel.open();
 	tmpModel.addAll(statements.iterator());
 

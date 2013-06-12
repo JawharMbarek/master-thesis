@@ -53,8 +53,8 @@ public class FacebookSIOCConverter {
 
 	result.setId(user.getId());
 	result.setIsPartOf(connector.getSite());
-	result.setAccountServiceHomepage(Builder.createURI(connector
-		.getURL()));
+	result.setAccountServiceHomepage(connector.getService()
+		.getServiceEndpoint());
 
 	if (null != user.getEmail() && !user.getEmail().isEmpty()) {
 	    result.addEmail(RDF2GoUtils.createMailtoURI(user.getEmail()));

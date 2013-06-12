@@ -1,7 +1,6 @@
 package de.m0ep.socc.connectors.moodle;
 
 import org.ontoware.rdf2go.model.node.URI;
-import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
@@ -23,19 +22,23 @@ import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.SIOCUtils;
 import de.m0ep.socc.utils.StringUtils;
 
-public final class MoodleToSIOCConverter {
+public final class MoodleSIOCConverter {
     public static UserAccount createUserAccount(
-	    final MoodleConnector connector, final UserRecord userRecord,
+	    final MoodleConnector connector,
+	    final UserRecord userRecord,
 	    final URI uri) {
 	Preconditions.checkNotNull(connector, "connector can not be null");
 	Preconditions.checkNotNull(userRecord, "userRecord can not be null");
 	Preconditions.checkNotNull(uri, "uri can not be null");
 
-	UserAccount result = new UserAccount(connector.getModel(), uri, true);
+	UserAccount result = new UserAccount(
+		connector.getContext().getDataModel(),
+		uri,
+		true);
 	result.setId(Integer.toString(userRecord.getId()));
 	result.setIsPartOf(connector.getSite());
-	result.setAccountServiceHomepage(Builder.createURI(connector
-		.getURL()));
+	result.setAccountServiceHomepage(connector.getService()
+		.getServiceEndpoint());
 
 	String firstName = Strings.emptyToNull(userRecord.getFirstname());
 	String lastName = Strings.emptyToNull(userRecord.getLastname());
@@ -69,7 +72,10 @@ public final class MoodleToSIOCConverter {
 	Preconditions.checkNotNull(forumRecord, "forumRecord can not be null");
 	Preconditions.checkNotNull(uri, "uri can not be null");
 
-	Forum result = new Forum(connector.getModel(), uri, true);
+	Forum result = new Forum(
+		connector.getContext().getDataModel(),
+		uri,
+		true);
 	CourseRecord course = connector.getCourse(forumRecord.getCourse());
 	result.setId(Integer.toString(forumRecord.getId()));
 	result.setNumThreads(0);
@@ -99,7 +105,10 @@ public final class MoodleToSIOCConverter {
 	Preconditions.checkNotNull(uri, "uri can not be null");
 	Preconditions.checkNotNull(parentForum, "parentForum can not be null");
 
-	Thread result = new Thread(connector.getModel(), uri, true);
+	Thread result = new Thread(
+		connector.getContext().getDataModel(),
+		uri,
+		true);
 	result.setId(Integer.toString(discussionRecord.getId()));
 	result.setParent(parentForum);
 	result.setNumItems(0);
@@ -131,7 +140,10 @@ public final class MoodleToSIOCConverter {
 	Preconditions.checkNotNull(uri, "uri can not be null");
 	Preconditions.checkNotNull(container, "container can not be null");
 
-	Post result = new Post(connector.getModel(), uri, true);
+	Post result = new Post(
+		connector.getContext().getDataModel(),
+		uri,
+		true);
 	result.setId(Integer.toString(postRecord.getId()));
 	result.setCreator(connector.getUserAccount(Integer.toString(postRecord
 		.getUserid())));
@@ -144,8 +156,10 @@ public final class MoodleToSIOCConverter {
 	result.setContent(StringUtils.stripHTML(content));
 	result.setContentEncoded(RDF2GoUtils.createCDATASection(content));
 
-	result.setCreated(DateUtils.formatISO8601(postRecord.getCreated() * 1000L));
-	result.setModified(DateUtils.formatISO8601(postRecord.getModified() * 1000L));
+	result.setCreated(DateUtils
+		.formatISO8601(postRecord.getCreated() * 1000L));
+	result.setModified(DateUtils
+		.formatISO8601(postRecord.getModified() * 1000L));
 
 	if (null != container) {
 	    result.setContainer(container);

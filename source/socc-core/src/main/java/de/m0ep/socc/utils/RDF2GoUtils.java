@@ -35,6 +35,7 @@ import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.Variable;
 import org.ontoware.rdf2go.model.node.impl.PlainLiteralImpl;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
+import org.openrdf.model.vocabulary.RDF;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -50,9 +51,9 @@ public final class RDF2GoUtils {
     /*
      * Private constructor to avoid creating objects from this class.
      */
-    private RDF2GoUtils(){
+    private RDF2GoUtils() {
     }
-    
+
     /**
      * Resturn all {@link Statement}s of a {@link Resource} in a given
      * {@link Model}.
@@ -114,21 +115,39 @@ public final class RDF2GoUtils {
 		+ Strings.nullToEmpty(value).replace("]]>",
 			"]]]]><![CDATA[>") + "]]>");
     }
-    
+
     /**
      * Tries to lock a RDF2Go {@link Model} or waits if its already locked-
      * 
-     * @param model {@link Model} to lock.
+     * @param model
+     *            {@link Model} to lock.
      */
-    public static void lockModelOrWait(final Model model){
-	while(model.isLocked()){	    
+    public static void lockModelOrWait(final Model model) {
+	while (model.isLocked()) {
 	    try {
 		Thread.sleep(1);
 	    } catch (InterruptedException e) {
 		// ignore this
 	    }
 	}
-	
+
 	model.lock();
+    }
+
+    public static URI getType(final Model model, final Resource resource) {
+	URI result = null;
+	ClosableIterator<Statement> stmtIter = model.findStatements(
+		resource,
+		new URIImpl(RDF.TYPE.toString()),
+		Variable.ANY);
+
+	if (stmtIter.hasNext()) {
+	    Statement next = stmtIter.next();
+	    result = (URI) next.getObject();
+	}
+
+	stmtIter.close();
+
+	return result;
     }
 }

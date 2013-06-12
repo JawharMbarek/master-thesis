@@ -22,7 +22,7 @@ import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.SIOCUtils;
 import de.m0ep.socc.utils.StringUtils;
 
-public class FacebookToSIOCConverter {
+public class FacebookSIOCConverter {
     /**
      * Create a {@link UserAccount} from a RestFB Facebook {@link User}.
      * 
@@ -46,7 +46,10 @@ public class FacebookToSIOCConverter {
 	Preconditions.checkNotNull(user, "user can not be null");
 	Preconditions.checkNotNull(uri, "uri can not be null");
 
-	UserAccount result = new UserAccount(connector.getModel(), uri, true);
+	UserAccount result = new UserAccount(
+		connector.getContext().getDataModel(),
+		uri,
+		true);
 
 	result.setId(user.getId());
 	result.setIsPartOf(connector.getSite());
@@ -95,7 +98,10 @@ public class FacebookToSIOCConverter {
 	Preconditions.checkNotNull(group, "group can not be null");
 	Preconditions.checkNotNull(uri, "uri can not be null");
 
-	Forum result = new Forum(connector.getModel(), uri, true);
+	Forum result = new Forum(
+		connector.getContext().getDataModel(),
+		uri,
+		true);
 	result.setId(group.getId());
 	result.setHost(connector.getSite());
 	connector.getSite().addHostOf(result);
@@ -145,16 +151,21 @@ public class FacebookToSIOCConverter {
 	Preconditions.checkNotNull(obj, "obj can not be null");
 	Preconditions.checkNotNull(uri, "uri can not be null");
 
-	Post result = new Post(connector.getModel(), uri, true);
+	Post result = new Post(
+		connector.getContext().getDataModel(),
+		uri,
+		true);
 
 	if (obj.has(FacebookConstants.FIELD_ID)) {
 	    result.setId(obj.getString(FacebookConstants.FIELD_ID));
 	}
 
 	if (obj.has(FacebookConstants.FIELD_FROM)) {
-	    result.setCreator(connector.getUserAccount(obj.getJsonObject(
-		    FacebookConstants.FIELD_FROM).getString(
-		    FacebookConstants.FIELD_ID)));
+	    result.setCreator(
+		    connector.getUserAccount(
+			    obj.getJsonObject(
+				    FacebookConstants.FIELD_FROM).getString(
+				    FacebookConstants.FIELD_ID)));
 	}
 
 	String content = "";
@@ -235,7 +246,10 @@ public class FacebookToSIOCConverter {
 	Preconditions.checkNotNull(obj, "obj can not be null");
 	Preconditions.checkNotNull(uri, "uri can not be null");
 
-	Post result = new Post(connector.getModel(), uri, true);
+	Post result = new Post(
+		connector.getContext().getDataModel(),
+		uri,
+		true);
 
 	if (obj.has(FacebookConstants.FIELD_ID)) {
 	    result.setId(obj.getString(FacebookConstants.FIELD_ID));

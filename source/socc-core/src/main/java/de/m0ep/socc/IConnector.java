@@ -24,7 +24,6 @@ package de.m0ep.socc;
 
 import java.util.List;
 
-import org.ontoware.rdf2go.model.Model;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
@@ -34,6 +33,7 @@ import org.rdfs.sioc.UserAccount;
 
 import de.m0ep.sioc.service.auth.Service;
 import de.m0ep.socc.exceptions.ConnectorException;
+import de.m0ep.socc.exceptions.NotFoundException;
 
 /**
  * Interface for a connector to a social online community
@@ -44,14 +44,23 @@ import de.m0ep.socc.exceptions.ConnectorException;
 public interface IConnector {
 
     /**
-     * Initialize this connector
+     * Initialize this connector.
      * 
      * @param id
-     *            Id of this connector.
-     * @param model
-     *            RDF2Go {@link Model} to use.
-     * @param parameters
-     *            Configuration parameters for this connector.
+     *            Unique ID of this connector.
+     * @param context
+     *            The used SOCC context.
+     * @param service
+     *            The data for the service of this connector.
+     * @param userAccount
+     *            The user that us used with this connector.
+     * 
+     * @throws ConnectorException
+     *             Thrown if there is a problem initializing this connector.
+     * @throws NullPointerException
+     *             Thrown if one or more arguments are <code>null</code>.
+     * @throws IllegalArgumentException
+     *             Thrown if an argument has an illegal value or state.
      */
     public void initialize(
 	    String id,
@@ -90,9 +99,9 @@ public interface IConnector {
     public String getId();
 
     /**
-     * Return the URL of the connected social online community.
+     * Returns the {@link Service} that is used with this connector.
      * 
-     * @return URL to the community
+     * @return A {@link Service} object.
      */
     public Service getService();
 
@@ -100,16 +109,31 @@ public interface IConnector {
      * Returns the {@link UserAccount} object of the used user to connect to the
      * community.
      * 
-     * @return {@link UserAccount} object of the used user.
+     * @return An {@link UserAccount} object.
      */
     public UserAccount getUserAccount();
 
     /**
-     * Get the used {@link ISOCCContext} implementation
+     * Get the used {@link ISOCCContext} implementation.
      * 
-     * @return An {@link ISOCCContext} implementation
+     * @return An {@link ISOCCContext}.
      */
     public ISOCCContext getContext();
+
+    /**
+     * Returns the {@link UserAccount} with the committed id
+     * 
+     * @param id
+     *            Id of the {@link UserAccount}
+     * 
+     * @return The {@link UserAccount} with this id
+     * 
+     * @throws ConnectorException
+     *             Thrown if there is a problem with the connector.
+     * @throws NotFoundException
+     *             Thrown if there is no user with this id.
+     */
+    public UserAccount getUserAccount(String id) throws ConnectorException;
 
     /**
      * Returns {@link Site} object of the connected community.

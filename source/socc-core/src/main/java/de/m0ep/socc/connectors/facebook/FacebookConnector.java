@@ -26,11 +26,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
-import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
@@ -52,7 +50,6 @@ import com.google.common.base.Preconditions;
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
-import com.restfb.FacebookClient.AccessToken;
 import com.restfb.Parameter;
 import com.restfb.exception.FacebookException;
 import com.restfb.exception.FacebookNetworkException;
@@ -63,12 +60,19 @@ import com.restfb.types.FacebookType;
 import com.restfb.types.Group;
 import com.restfb.types.User;
 
+import de.m0ep.sioc.service.auth.AccessToken;
+import de.m0ep.sioc.service.auth.Authentication;
+import de.m0ep.sioc.service.auth.ClientId;
+import de.m0ep.sioc.service.auth.ClientSecret;
+import de.m0ep.sioc.service.auth.Credential;
+import de.m0ep.sioc.service.auth.Service;
 import de.m0ep.socc.AbstractConnector;
+import de.m0ep.socc.ISOCCContext;
 import de.m0ep.socc.exceptions.AuthenticationException;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.exceptions.NetworkException;
 import de.m0ep.socc.exceptions.NotFoundException;
-import de.m0ep.socc.utils.ConfigUtils;
+import de.m0ep.socc.utils.RDF2GoUtils;
 
 /**
  * A SOCC Connector for Facebook using RestFb to access Facebooks GraphAPI.
@@ -87,43 +91,112 @@ public class FacebookConnector extends AbstractConnector {
 
     private FacebookClient client;
     private String myId;
-    private FacebookConnectorConfig fbConfig;
+
+    private ClientId clientId;
+    private ClientSecret clientSecret;
+    private AccessToken accessToken;
+
+    private URI endpoint = Builder.createURI("http://facebook.com");
 
     @Override
-    public void initialize(String id, Model model,
-	    Map<String, Object> parameters) throws ConnectorException {
-	Preconditions.checkNotNull(id, "Id can not be null");
-	Preconditions.checkNotNull(model, "Model can not be null");
-	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty");
-	Preconditions.checkArgument(model.isOpen(), "Model must be open");
-	Preconditions.checkArgument(
-		parameters.containsKey(FacebookConnectorConfig.CLIENT_ID),
-		"No client-id given");
-	Preconditions.checkArgument(
-		parameters.containsKey(FacebookConnectorConfig.CLIENT_SECRET),
-		"No client-secret given");
-	Preconditions.checkArgument(
-		parameters.containsKey(FacebookConnectorConfig.ACCESS_TOKEN),
-		"No accesstoken given");
-	super.initialize(id, model, parameters);
+    public void initialize(String id, ISOCCContext context, Service service,
+	    UserAccount userAccount) throws ConnectorException {
+	super.initialize(id, context, service, userAccount);
 
-	this.fbConfig = new FacebookConnectorConfig();
-	this.fbConfig = ConfigUtils.fromMap(parameters, this.fbConfig);
+	if (service.hasServiceEndpoint()) {
+	    this.endpoint = Builder.createURI(
+		    service.getServiceEndpoint().toString());
+	}
 
+	Preconditions.checkArgument(
+		service.hasAuthentication(),
+		"Service has no Authentication.");
+	Authentication serviceAuth = service.getAuthentication();
+
+	Preconditions.checkArgument(
+		serviceAuth.hasCredential(),
+		"Service has no credentials.");
+	ClosableIterator<Credential> serviceCredentialsIter = serviceAuth
+		.getAllCredential();
+
+	this.clientId = null;
+	this.clientSecret = null;
+	while (serviceCredentialsIter.hasNext()) {
+	    Credential credential = (Credential) serviceCredentialsIter.next();
+	    URI type = RDF2GoUtils.getType(
+		    credential.getModel(),
+		    credential.asResource());
+
+	    if (type.equals(ClientId.RDFS_CLASS)) {
+		this.clientId = ClientId.getInstance(
+			credential.getModel(),
+			credential.asResource());
+	    } else if (type.equals(ClientSecret.RDFS_CLASS)) {
+		this.clientSecret = ClientSecret.getInstance(
+			credential.getModel(),
+			credential.asResource());
+	    }
+	}
+	serviceCredentialsIter.close();
+
+	Preconditions.checkArgument(
+		null != this.clientId && clientId.hasValue(),
+		"No ClientId credential found in service");
+
+	Preconditions.checkArgument(
+		null != this.clientSecret && clientSecret.hasValue(),
+		"No ClientSecret credential found in service");
+
+	de.m0ep.sioc.service.auth.UserAccount authUserAccount =
+		de.m0ep.sioc.service.auth.UserAccount.getInstance(
+			userAccount.getModel(),
+			userAccount.getResource());
+
+	Preconditions.checkArgument(
+		authUserAccount.hasAuthentication(),
+		"UserAccount has no authentication");
+	Authentication userAuth = authUserAccount.getAuthentication();
+
+	Preconditions.checkArgument(
+		userAuth.hasCredential(),
+		"UserAccount has no credentials.");
+	ClosableIterator<Credential> credentials = userAuth.getAllCredential();
+
+	this.accessToken = null;
+	while (credentials.hasNext()) {
+	    Credential credential = (Credential) credentials.next();
+
+	    URI type = RDF2GoUtils.getType(
+		    credential.getModel(),
+		    credential);
+
+	    if (type.equals(de.m0ep.sioc.service.auth.AccessToken.RDFS_CLASS)) {
+		this.accessToken = de.m0ep.sioc.service.auth.AccessToken
+			.getInstance(
+				credential.getModel(),
+				credential.getResource());
+	    }
+	}
+
+	Preconditions.checkArgument(
+		null != this.accessToken && accessToken.hasValue(),
+		"No AccessToken credential found in userAccount");
     }
 
     @Override
     public void connect() throws ConnectorException {
 	setConnected(false);
 
-	this.client = new DefaultFacebookClient(fbConfig.getAccessToken());
+	this.client = new DefaultFacebookClient(accessToken.getValue());
 
 	try {
-	    AccessToken extendedToken = this.client.obtainExtendedAccessToken(
-		    fbConfig.getClientId(), fbConfig.getClientSecret(),
-		    fbConfig.getAccessToken());
+	    com.restfb.FacebookClient.AccessToken extendedToken = this.client
+		    .obtainExtendedAccessToken(
+			    clientId.getValue(),
+			    clientSecret.getValue(),
+			    accessToken.getValue());
 
-	    fbConfig.setAccessToken(extendedToken.getAccessToken());
+	    accessToken.setValue(extendedToken.getAccessToken());
 	} catch (Exception e) {
 	    LOG.error("failed to obtain an extended accesstoken", e);
 	}
@@ -142,14 +215,15 @@ public class FacebookConnector extends AbstractConnector {
 	    throw new ConnectorException("unknown error", t);
 	}
 
-	// add static forums
-	URI uri = Builder.createURI(getURL() + myId + "/"
+	// add users wall as a forum
+	URI uri = Builder.createURI(endpoint + myId + "/"
 		+ FacebookConstants.CONNECTION_FEED);
-	if (!Forum.hasInstance(getModel(), uri)) {
-	    Forum wall = new Forum(getModel(), uri, true);
+	if (!Forum.hasInstance(context.getDataModel(), uri)) {
+	    Forum wall = new Forum(context.getDataModel(), uri, true);
 	    wall.setId(myId);
-	    wall.setName(getLoginUser().getAccountName() + "'s Wall");
+	    wall.setName(getUserAccount().getAccountName() + "'s Wall");
 	    wall.setHost(getSite());
+	    wall.setOwner(getUserAccount());
 	    getSite().addHostOf(wall);
 	}
 
@@ -157,32 +231,25 @@ public class FacebookConnector extends AbstractConnector {
     }
 
     @Override
-    public String getURL() {
-	return "http://www.facebook.com/";
-    }
+    public void disconnect() {
+	this.client = null;
+	this.clientId = null;
+	this.clientSecret = null;
+	this.accessToken = null;
+	this.myId = null;
 
-    @Override
-    public Map<String, Object> getConfiguration() {
-	return ConfigUtils.toMap(fbConfig);
+	setConnected(false);
     }
 
     @Override
     public Site getSite() throws ConnectorException {
-	URI uri = Builder.createURI(getURL());
-
-	if (!Site.hasInstance(getModel(), uri)) {
-	    Site result = new Site(getModel(), uri, true);
+	if (!Site.hasInstance(context.getDataModel(), endpoint)) {
+	    Site result = new Site(context.getDataModel(), endpoint, true);
 	    result.setName("Facebook");
 	    return result;
 	} else {
-	    return Site.getInstance(getModel(), uri);
+	    return Site.getInstance(context.getDataModel(), endpoint);
 	}
-    }
-
-    @Override
-    public UserAccount getLoginUser() throws ConnectorException {
-	Preconditions.checkState(isOnline(), "Connector is not online");
-	return getUserAccount(myId);
     }
 
     /**
@@ -198,11 +265,11 @@ public class FacebookConnector extends AbstractConnector {
 	    throws ConnectorException {
 	Preconditions.checkNotNull(id, "id can not be null");
 	Preconditions.checkArgument(!id.isEmpty(), "id can not be empty");
-	Preconditions.checkState(isOnline(), "Connector is not online");
+	Preconditions.checkState(isConnected(), "Connector is not online");
 
-	URI uri = Builder.createURI(getURL() + id);
+	URI uri = Builder.createURI(endpoint + id);
 
-	if (!UserAccount.hasInstance(getModel(), uri)) {
+	if (!UserAccount.hasInstance(context.getDataModel(), uri)) {
 	    User user = null;
 	    try {
 		user = client.fetchObject(id, User.class);
@@ -214,10 +281,10 @@ public class FacebookConnector extends AbstractConnector {
 		throw new ConnectorException("unknown error", t);
 	    }
 
-	    return FacebookToSIOCConverter.createUserAccount(this, user, uri);
+	    return FacebookSIOCConverter.createUserAccount(this, user, uri);
 
 	} else {
-	    return UserAccount.getInstance(getModel(), uri);
+	    return UserAccount.getInstance(context.getDataModel(), uri);
 	}
     }
 
@@ -225,14 +292,14 @@ public class FacebookConnector extends AbstractConnector {
     public Forum getForum(final String id) throws ConnectorException {
 	Preconditions.checkNotNull(id, "Id can not be null.");
 	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty.");
-	Preconditions.checkState(isOnline(), "Connector is not online");
+	Preconditions.checkState(isConnected(), "Connector is not online");
 
-	URI uri = Builder.createURI(getURL()
+	URI uri = Builder.createURI(endpoint
 		+ (FacebookConstants.ID_ME.equalsIgnoreCase(id) ? (myId) : (id
 			.toLowerCase())) + "/"
 		+ FacebookConstants.CONNECTION_FEED);
 
-	if (!Forum.hasInstance(getModel(), uri)) {
+	if (!Forum.hasInstance(context.getDataModel(), uri)) {
 	    Group group = null;
 	    try {
 		// need 'metadata=1' parameter to get 'type' value
@@ -250,29 +317,33 @@ public class FacebookConnector extends AbstractConnector {
 		    && FacebookConstants.TYPE_GROUP.equalsIgnoreCase(group
 			    .getType())) {
 
-		return FacebookToSIOCConverter.createForum(this, group, uri);
+		return FacebookSIOCConverter.createForum(this, group, uri);
 	    }
 
 	    throw new NotFoundException("No forum found with id " + id);
 	}
 
-	return Forum.getInstance(getModel(), uri);
+	return Forum.getInstance(context.getDataModel(), uri);
     }
 
     @Override
     public List<Forum> getForums() throws ConnectorException {
-	Preconditions.checkState(isOnline(), "Connector is not online");
+	Preconditions.checkState(isConnected(), "Connector is not online");
 	List<Forum> result = new ArrayList<Forum>();
 
 	// add all known forums
-	ClosableIterator<Statement> stmtIter = getModel().findStatements(
-		Variable.ANY, SIOCVocabulary.has_host, getSite());
+	ClosableIterator<Statement> stmtIter = context.getDataModel()
+		.findStatements(
+			Variable.ANY, SIOCVocabulary.has_host, getSite());
 	while (stmtIter.hasNext()) {
 	    Statement statement = stmtIter.next();
 	    Resource subject = statement.getSubject();
 
-	    if (getModel().contains(subject, RDF.type, SIOCVocabulary.Forum)) {
-		result.add(Forum.getInstance(getModel(), subject));
+	    if (context.getDataModel().contains(
+		    subject,
+		    RDF.type,
+		    SIOCVocabulary.Forum)) {
+		result.add(Forum.getInstance(context.getDataModel(), subject));
 	    }
 	}
 	stmtIter.close();
@@ -292,11 +363,11 @@ public class FacebookConnector extends AbstractConnector {
 
 	for (List<Group> myGroups : groupsConnections) {
 	    for (Group group : myGroups) {
-		URI uri = Builder.createURI(getURL() + group.getId() + "/"
+		URI uri = Builder.createURI(endpoint + group.getId() + "/"
 			+ FacebookConstants.CONNECTION_FEED);
 
-		if (!Forum.hasInstance(getModel(), uri)) {
-		    Forum forum = FacebookToSIOCConverter.createForum(this,
+		if (!Forum.hasInstance(context.getDataModel(), uri)) {
+		    Forum forum = FacebookSIOCConverter.createForum(this,
 			    group, uri);
 		    LOG.debug("Add new forum " + uri.toString());
 		    result.add(forum);
@@ -311,11 +382,11 @@ public class FacebookConnector extends AbstractConnector {
     public Post getPost(String id) throws ConnectorException {
 	Preconditions.checkNotNull(id, "Id can not be null.");
 	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty.");
-	Preconditions.checkState(isOnline(), "Connector is not online");
+	Preconditions.checkState(isConnected(), "Connector is not online");
 
-	URI uri = Builder.createURI(getURL() + id);
+	URI uri = Builder.createURI(endpoint + id);
 
-	if (!Post.hasInstance(getModel(), uri)) {
+	if (!Post.hasInstance(context.getDataModel(), uri)) {
 	    JsonObject obj;
 
 	    try {
@@ -353,7 +424,7 @@ public class FacebookConnector extends AbstractConnector {
 			}
 
 			if (null != container) {
-			    Post result = FacebookToSIOCConverter.createPost(
+			    Post result = FacebookSIOCConverter.createPost(
 				    this, container, obj, uri);
 
 			    // read available comments
@@ -386,7 +457,7 @@ public class FacebookConnector extends AbstractConnector {
 		}
 
 		if (null != parentPost) {
-		    return FacebookToSIOCConverter.createComment(this,
+		    return FacebookSIOCConverter.createComment(this,
 			    parentPost, obj, uri);
 		}
 
@@ -395,7 +466,7 @@ public class FacebookConnector extends AbstractConnector {
 	    throw new NotFoundException("No post found with id " + id);
 	}
 
-	return Post.getInstance(getModel(), uri);
+	return Post.getInstance(context.getDataModel(), uri);
     }
 
     @Override
@@ -407,8 +478,11 @@ public class FacebookConnector extends AbstractConnector {
 	    // 2) Facebook is the host of this container
 	    // 3) The container has a "feed" connection in Facebooks GraphAPI
 
-	    if (getModel().contains(container, RDF.type, SIOCVocabulary.Forum)) {
-		Forum forum = Forum.getInstance(getModel(),
+	    if (context.getDataModel().contains(
+		    container,
+		    RDF.type,
+		    SIOCVocabulary.Forum)) {
+		Forum forum = Forum.getInstance(context.getDataModel(),
 			container.getResource());
 		try {
 		    return forum.hasHost(getSite())
@@ -479,7 +553,7 @@ public class FacebookConnector extends AbstractConnector {
 	Preconditions.checkNotNull(container, "container can't be null");
 	Preconditions.checkArgument(post.hasContent());
 	Preconditions.checkArgument(canPublishOn(container));
-	Preconditions.checkState(isOnline(), "Connector is not online");
+	Preconditions.checkState(isConnected(), "Connector is not online");
 
 	List<Parameter> params = new ArrayList<Parameter>();
 
@@ -542,7 +616,7 @@ public class FacebookConnector extends AbstractConnector {
 	Preconditions.checkArgument(post.hasContent(), "post has no content");
 	Preconditions.checkArgument(canReplyOn(parentPost),
 		"can't reply on the parent post");
-	Preconditions.checkState(isOnline(), "Connector is not online");
+	Preconditions.checkState(isConnected(), "Connector is not online");
 
 	FacebookType result = null;
 	try {
@@ -568,18 +642,18 @@ public class FacebookConnector extends AbstractConnector {
     };
 
     @Override
-    public List<Post> pollPosts(Container container)
+    public List<Post> pollPosts(Container container, long limit)
 	    throws ConnectorException {
 	Preconditions.checkNotNull(container, "Container can not be null.");
 	Preconditions.checkArgument(
 		hasPosts(container),
 		"This container has no posts in this connector");
-	Preconditions.checkState(isOnline(), "Connector is not online");
+	Preconditions.checkState(isConnected(), "Connector is not online");
 
 	LOG.debug("pollNewPosts");
 	List<Post> result = new ArrayList<Post>();
 	Date lastItemDate = new Date(0);
-	int numLoadedPosts = fbConfig.getMaxNewPostsOnPoll();
+	long numPostsLeftToLimit = limit;
 
 	if (container.hasLastItemDate()) {
 	    try {
@@ -602,8 +676,7 @@ public class FacebookConnector extends AbstractConnector {
 				    .with(FacebookConstants.PARAM_FIELDS,
 					    POST_FIELDS), Parameter.with(
 				    FacebookConstants.PARAM_SINCE,
-				    Math.min(20,
-					    fbConfig.getMaxNewPostsOnPoll())));
+				    Math.min(20, limit)));
 	} catch (FacebookException e) {
 	    LOG.error(e.getLocalizedMessage(), e);
 	    throw mapToConnectorException(e);
@@ -615,21 +688,21 @@ public class FacebookConnector extends AbstractConnector {
 	if (null != feed) {
 	    for (List<JsonObject> posts : feed) {
 		for (JsonObject obj : posts) {
-		    URI uri = Builder.createURI(getURL()
+		    URI uri = Builder.createURI(endpoint
 			    + obj.getString(FacebookConstants.FIELD_ID));
 		    Date created = com.restfb.util.DateUtils
 			    .toDateFromLongFormat(obj
 				    .getString(FacebookConstants.FIELD_CREATED_TIME));
 
 		    if (created.after(lastItemDate)) {
-			if (!Post.hasInstance(getModel(), uri)) {
+			if (!Post.hasInstance(context.getDataModel(), uri)) {
 			    LOG.debug("Add new post " + uri.toString());
-			    result.add(FacebookToSIOCConverter.createPost(this,
+			    result.add(FacebookSIOCConverter.createPost(this,
 				    container, obj, uri));
 			}
 		    }
 
-		    if (Post.hasInstance(getModel(), uri)
+		    if (Post.hasInstance(context.getDataModel(), uri)
 			    && obj.has(FacebookConstants.FIELD_COMMENTS)) {
 			JsonObject comments = obj
 				.getJsonObject(FacebookConstants.FIELD_COMMENTS);
@@ -639,11 +712,14 @@ public class FacebookConnector extends AbstractConnector {
 				    .getJsonArray(FacebookConstants.FIELD_DATA);
 
 			    result.addAll(getNewReplies(
-				    Post.getInstance(getModel(), uri), data));
+				    Post.getInstance(
+					    context.getDataModel(),
+					    uri),
+				    data));
 			}
 		    }
 
-		    if (0 == --numLoadedPosts) {
+		    if (0 == --numPostsLeftToLimit) {
 			return result;
 		    }
 		}
@@ -674,10 +750,10 @@ public class FacebookConnector extends AbstractConnector {
 
 	    if (created.after(lastReplyDate)) {
 		String id = obj.getString(FacebookConstants.FIELD_ID);
-		URI uri = Builder.createURI(getURL() + id);
+		URI uri = Builder.createURI(endpoint + id);
 
-		if (!Post.hasInstance(getModel(), uri)) {
-		    result.add(FacebookToSIOCConverter.createComment(this,
+		if (!Post.hasInstance(context.getDataModel(), uri)) {
+		    result.add(FacebookSIOCConverter.createComment(this,
 			    parentPost, obj, uri));
 		}
 	    }
@@ -759,7 +835,11 @@ public class FacebookConnector extends AbstractConnector {
     public int hashCode() {
 	final int prime = 31;
 	int result = super.hashCode();
-	result = prime * result + Objects.hashCode(this.fbConfig, this.myId);
+	result = prime * result + Objects.hashCode(
+		this.clientId,
+		this.clientSecret,
+		this.accessToken,
+		this.myId);
 	return result;
     }
 
@@ -776,7 +856,15 @@ public class FacebookConnector extends AbstractConnector {
 	}
 	FacebookConnector other = (FacebookConnector) obj;
 
-	if (!Objects.equal(this.fbConfig, other.fbConfig)) {
+	if (!Objects.equal(this.clientId, other.clientId)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.clientSecret, other.clientSecret)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.accessToken, other.accessToken)) {
 	    return false;
 	}
 

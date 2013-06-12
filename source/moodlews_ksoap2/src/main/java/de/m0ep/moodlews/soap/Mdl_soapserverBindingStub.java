@@ -2841,6 +2841,7 @@ public class Mdl_soapserverBindingStub extends  KSoap2BindingStubBase{
      try {
        httpTransport.call(METH_NAME, envelope);
      SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+     System.err.println(envelope.bodyIn.toString());
       SoapObject response = (SoapObject) resultsRequestSOAP.getProperty(0);
 	  this.logInfo(METH_NAME, response);
       return (LoginReturn)KSoap2Utils.getObject(response,new LoginReturn(this.NAMESPACE));

@@ -22,10 +22,6 @@
 
 package de.m0ep.socc;
 
-import org.rdfs.sioc.UserAccount;
-
-import de.m0ep.sioc.service.auth.Service;
-import de.m0ep.socc.exceptions.ConnectorException;
 
 /**
  * Fabric class to create new instance of {@link IConnector}s.
@@ -50,28 +46,6 @@ public interface IConnectorFactory {
 
     /**
      * Create a new instance of an {@link IConnector}.
-     * 
-     * @param id
-     *            Id of the connector.
-     * @param context
-     *            Instance of an {@link ISOCCContext} implementation.
-     * @param service
-     *            {@link Service} resource to use with this instance.
-     * @param userAccount
-     *            The {@link UserAccount} that is used with this instance.
-     * 
-     * @return A new instance of an {@link IConnector}
-     * 
-     * @throws ConnectorException
-     *             Thrown if there is a problem creating the connector.
-     * @throws NullPointerException
-     *             Thrown if one or more arguments are null.
-     * @throws IllegalArgumentException
-     *             Thrown if there are problems with the passed arguments.
      */
-    public IConnector createNewInstance(
-	    String id,
-	    ISOCCContext context,
-	    Service service,
-	    UserAccount userAccount) throws ConnectorException;
+    public IConnector createNewInstance();
 }

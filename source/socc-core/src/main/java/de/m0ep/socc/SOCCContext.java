@@ -25,7 +25,7 @@ public class SOCCContext implements ISOCCContext {
     private Model dataModel;
     private Map<String, IConnector> connectors;
 
-    public SOCCContext() {
+    private SOCCContext() {
 	connectors = new HashMap<>();
     }
 
@@ -65,14 +65,15 @@ public class SOCCContext implements ISOCCContext {
 
 	    IConnector connector = null;
 	    try {
-		connector = factory
-			.createNewInstance(
-				entry.getId(),
-				this,
-				Service.getInstance(getDataModel(), entry
-					.getService()),
-				UserAccount.getInstance(
-					getDataModel(), entry.getUserAccount()));
+		Service service = Service.getInstance(
+			getDataModel(),
+			entry.getService());
+		UserAccount userAccount = UserAccount.getInstance(
+			getDataModel(),
+			entry.getUserAccount());
+
+		connector = factory.createNewInstance();
+		connector.initialize(entry.getId(), this, service, userAccount);
 	    } catch (ConnectorException e) {
 		LOG.warn("Failed to create connector.", e);
 		continue;

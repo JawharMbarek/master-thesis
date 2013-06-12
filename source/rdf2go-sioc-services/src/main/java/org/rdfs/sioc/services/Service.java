@@ -10,7 +10,6 @@ import org.ontoware.rdf2go.model.node.BlankNode;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
 import org.ontoware.rdfreactor.runtime.Base;
-import org.ontoware.rdfreactor.runtime.ReactorResult;
 
 /**
  * This class manages access to these properties:
@@ -238,19 +237,6 @@ public class Service extends Thing {
     }
 
     /**
-     * @param model
-     *            an RDF2Go model
-     * @return all instances of this class in Model 'model' as a ReactorResult,
-     *         which can conveniently be converted to iterator, list or array.
-     * 
-     *         [Generated from RDFReactor template rule #class3-as]
-     */
-    public static ReactorResult<? extends Service> getAllInstances_as(
-	    Model model) {
-	return Base.getAllInstances_as(model, RDFS_CLASS, Service.class);
-    }
-
-    /**
      * Remove rdf:type Service from this instance. Other triples are not
      * affected. To delete more, use deleteAllProperties
      * 
@@ -304,22 +290,6 @@ public class Service extends Thing {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Resource> getAllService_Inverse() {
 	return Base.getAll_Inverse(this.model, Thing.SERVICE, this
 		.getResource());
-    }
-
-    /**
-     * @param model
-     *            an RDF2Go model
-     * @param objectValue
-     * @return all A's as a ReactorResult, that have a relation 'Service' to
-     *         this Service instance
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #getallinverse-as1static]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Resource> getAllService_Inverse_as(
-	    Model model, Object objectValue) {
-	return Base.getAll_Inverse_as(model, Thing.SERVICE, objectValue,
-		org.ontoware.rdf2go.model.node.Resource.class);
     }
 
     /**
@@ -405,25 +375,6 @@ public class Service extends Thing {
     }
 
     /**
-     * Get all values of property MaxResults as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllMaxResults_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, MAXRESULTS,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property MaxResults as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -432,19 +383,6 @@ public class Service extends Thing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllMaxResults_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), MAXRESULTS);
-    }
-
-    /**
-     * Get all values of property MaxResults as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllMaxResults_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), MAXRESULTS,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -460,27 +398,6 @@ public class Service extends Thing {
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, MAXRESULTS,
-		java.lang.Integer.class);
-    }
-
-    /**
-     * Get all values of property MaxResults as a ReactorResult of
-     * java.lang.Integer
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<java.lang.Integer> getAllMaxResults_as(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, MAXRESULTS,
 		java.lang.Integer.class);
     }
 
@@ -505,9 +422,9 @@ public class Service extends Thing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<java.lang.Integer> getAllMaxResults_as() {
+    public Integer getMaxResults() {
 	return Base.getAll_as(this.model, this.getResource(), MAXRESULTS,
-		java.lang.Integer.class);
+		java.lang.Integer.class).firstValue();
     }
 
     /**
@@ -804,26 +721,6 @@ public class Service extends Thing {
     }
 
     /**
-     * Get all values of property ResultsFormat as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllResultsFormat_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, RESULTSFORMAT,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property ResultsFormat as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -833,20 +730,6 @@ public class Service extends Thing {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllResultsFormat_asNode() {
 	return Base
 		.getAll_asNode(this.model, this.getResource(), RESULTSFORMAT);
-    }
-
-    /**
-     * Get all values of property ResultsFormat as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllResultsFormat_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), RESULTSFORMAT,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -861,25 +744,6 @@ public class Service extends Thing {
     public static ClosableIterator<Thing> getAllResultsFormat(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, RESULTSFORMAT, Thing.class);
-    }
-
-    /**
-     * Get all values of property ResultsFormat as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Thing> getAllResultsFormat_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, RESULTSFORMAT,
-		Thing.class);
     }
 
     /**
@@ -902,9 +766,9 @@ public class Service extends Thing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllResultsFormat_as() {
+    public Thing getResultsFormat() {
 	return Base.getAll_as(this.model, this.getResource(), RESULTSFORMAT,
-		Thing.class);
+		Thing.class).firstValue();
     }
 
     /**
@@ -1202,26 +1066,6 @@ public class Service extends Thing {
     }
 
     /**
-     * Get all values of property ServiceDefinition as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllServiceDefinition_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SERVICEDEFINITION,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property ServiceDefinition as an Iterator over RDF2Go
      * nodes
      * 
@@ -1232,20 +1076,6 @@ public class Service extends Thing {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllServiceDefinition_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		SERVICEDEFINITION);
-    }
-
-    /**
-     * Get all values of property ServiceDefinition as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllServiceDefinition_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(),
-		SERVICEDEFINITION, org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -1261,25 +1091,6 @@ public class Service extends Thing {
     public static ClosableIterator<Thing> getAllServiceDefinition(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, SERVICEDEFINITION,
-		Thing.class);
-    }
-
-    /**
-     * Get all values of property ServiceDefinition as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Thing> getAllServiceDefinition_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SERVICEDEFINITION,
 		Thing.class);
     }
 
@@ -1303,9 +1114,9 @@ public class Service extends Thing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllServiceDefinition_as() {
+    public Thing getServiceDefinition() {
 	return Base.getAll_as(this.model, this.getResource(),
-		SERVICEDEFINITION, Thing.class);
+		SERVICEDEFINITION, Thing.class).firstValue();
     }
 
     /**
@@ -1605,26 +1416,6 @@ public class Service extends Thing {
     }
 
     /**
-     * Get all values of property ServiceEndpoint as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllServiceEndpoint_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SERVICEENDPOINT,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property ServiceEndpoint as an Iterator over RDF2Go
      * nodes
      * 
@@ -1635,20 +1426,6 @@ public class Service extends Thing {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllServiceEndpoint_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		SERVICEENDPOINT);
-    }
-
-    /**
-     * Get all values of property ServiceEndpoint as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllServiceEndpoint_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), SERVICEENDPOINT,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -1663,25 +1440,6 @@ public class Service extends Thing {
     public static ClosableIterator<Thing> getAllServiceEndpoint(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, SERVICEENDPOINT,
-		Thing.class);
-    }
-
-    /**
-     * Get all values of property ServiceEndpoint as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Thing> getAllServiceEndpoint_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SERVICEENDPOINT,
 		Thing.class);
     }
 
@@ -1705,9 +1463,9 @@ public class Service extends Thing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllServiceEndpoint_as() {
+    public Thing getServiceEndpoint() {
 	return Base.getAll_as(this.model, this.getResource(), SERVICEENDPOINT,
-		Thing.class);
+		Thing.class).firstValue();
     }
 
     /**
@@ -2002,25 +1760,6 @@ public class Service extends Thing {
     }
 
     /**
-     * Get all values of property ServiceOf as a ReactorResult of RDF2Go nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllServiceOf_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SERVICEOF,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property ServiceOf as an Iterator over RDF2Go nodes
      * 
      * @return a ClosableIterator of RDF2Go Nodes
@@ -2029,19 +1768,6 @@ public class Service extends Thing {
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllServiceOf_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(), SERVICEOF);
-    }
-
-    /**
-     * Get all values of property ServiceOf as a ReactorResult of RDF2Go nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllServiceOf_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), SERVICEOF,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2056,24 +1782,6 @@ public class Service extends Thing {
     public static ClosableIterator<Thing> getAllServiceOf(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, SERVICEOF, Thing.class);
-    }
-
-    /**
-     * Get all values of property ServiceOf as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Thing> getAllServiceOf_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SERVICEOF, Thing.class);
     }
 
     /**
@@ -2096,9 +1804,9 @@ public class Service extends Thing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllServiceOf_as() {
+    public Thing getServiceOf() {
 	return Base.getAll_as(this.model, this.getResource(), SERVICEOF,
-		Thing.class);
+		Thing.class).firstValue();
     }
 
     /**
@@ -2394,26 +2102,6 @@ public class Service extends Thing {
     }
 
     /**
-     * Get all values of property ServiceProtocol as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get7static-reactor-result]
-     */
-    public static ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllServiceProtocol_asNode_(
-	    Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SERVICEPROTOCOL,
-		org.ontoware.rdf2go.model.node.Node.class);
-    }
-
-    /**
      * Get all values of property ServiceProtocol as an Iterator over RDF2Go
      * nodes
      * 
@@ -2424,20 +2112,6 @@ public class Service extends Thing {
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllServiceProtocol_asNode() {
 	return Base.getAll_asNode(this.model, this.getResource(),
 		SERVICEPROTOCOL);
-    }
-
-    /**
-     * Get all values of property ServiceProtocol as a ReactorResult of RDF2Go
-     * nodes
-     * 
-     * @return a List of RDF2Go Nodes
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get8dynamic-reactor-result]
-     */
-    public ReactorResult<org.ontoware.rdf2go.model.node.Node> getAllServiceProtocol_asNode_() {
-	return Base.getAll_as(this.model, this.getResource(), SERVICEPROTOCOL,
-		org.ontoware.rdf2go.model.node.Node.class);
     }
 
     /**
@@ -2452,25 +2126,6 @@ public class Service extends Thing {
     public static ClosableIterator<Thing> getAllServiceProtocol(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
 	return Base.getAll(model, instanceResource, SERVICEPROTOCOL,
-		Thing.class);
-    }
-
-    /**
-     * Get all values of property ServiceProtocol as a ReactorResult of Thing
-     * 
-     * @param model
-     *            an RDF2Go model
-     * @param resource
-     *            an RDF2Go resource
-     * @return a ReactorResult of $type which can conveniently be converted to
-     *         iterator, list or array
-     * 
-     *         [Generated from RDFReactor template rule
-     *         #get11static-reactorresult]
-     */
-    public static ReactorResult<Thing> getAllServiceProtocol_as(Model model,
-	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_as(model, instanceResource, SERVICEPROTOCOL,
 		Thing.class);
     }
 
@@ -2494,9 +2149,9 @@ public class Service extends Thing {
      *         [Generated from RDFReactor template rule
      *         #get12dynamic-reactorresult]
      */
-    public ReactorResult<Thing> getAllServiceProtocol_as() {
+    public Thing getServiceProtocol() {
 	return Base.getAll_as(this.model, this.getResource(), SERVICEPROTOCOL,
-		Thing.class);
+		Thing.class).firstValue();
     }
 
     /**

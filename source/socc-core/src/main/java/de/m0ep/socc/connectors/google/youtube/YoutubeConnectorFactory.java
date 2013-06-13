@@ -20,31 +20,26 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.connectors.moodle;
+package de.m0ep.socc.connectors.google.youtube;
 
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
 
-/**
- * ConnectorFactory to create new instances of an Moodle 2.4 connector.
- * 
- * @author Florian Müller
- * 
- */
-public class MoodleConnectorFactory implements IConnectorFactory {
+public class YoutubeConnectorFactory implements IConnectorFactory {
 
     @Override
     public String getId() {
-	return "MoodleConnectorFactory2.4-v1.0";
+	return "YoutubeV2ConnectoraFactory-v1.0";
     }
 
     @Override
     public String getLabel() {
-	return "Moodle 2.4";
+	return "Youtube V2";
     }
 
     @Override
     public IConnector createNewInstance() {
-	return new MoodleConnector();
+	return new YoutubeV2Connector();
     }
+
 }

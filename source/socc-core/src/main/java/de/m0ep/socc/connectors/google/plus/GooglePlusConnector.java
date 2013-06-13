@@ -27,10 +27,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
-import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.QueryResultTable;
 import org.ontoware.rdf2go.model.QueryRow;
 import org.ontoware.rdf2go.model.Statement;
@@ -62,24 +60,26 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.plus.Plus;
 import com.google.api.services.plus.Plus.Activities;
 import com.google.api.services.plus.Plus.Comments;
-import com.google.api.services.plus.Plus.Moments;
 import com.google.api.services.plus.model.Activity;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments;
 import com.google.api.services.plus.model.ActivityFeed;
 import com.google.api.services.plus.model.Comment;
 import com.google.api.services.plus.model.CommentFeed;
-import com.google.api.services.plus.model.ItemScope;
-import com.google.api.services.plus.model.Moment;
-import com.google.api.services.plus.model.MomentsFeed;
 import com.google.api.services.plus.model.Person;
 import com.google.api.services.plus.model.Person.Emails;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import de.m0ep.sioc.service.auth.AccessToken;
+import de.m0ep.sioc.service.auth.Authentication;
+import de.m0ep.sioc.service.auth.ClientId;
+import de.m0ep.sioc.service.auth.ClientSecret;
+import de.m0ep.sioc.service.auth.RefreshToken;
+import de.m0ep.sioc.service.auth.Service;
 import de.m0ep.socc.AbstractConnector;
+import de.m0ep.socc.ISOCCContext;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.exceptions.NotFoundException;
-import de.m0ep.socc.utils.ConfigUtils;
 import de.m0ep.socc.utils.DateUtils;
 import de.m0ep.socc.utils.RDF2GoUtils;
 import de.m0ep.socc.utils.SIOCUtils;
@@ -93,7 +93,6 @@ public class GooglePlusConnector extends AbstractConnector {
      * URI Path segments
      */
     private static final String PATH_ACTIVITY = "activity/";
-    private static final String PATH_MOMENT = "moment/";
     // private static final String PATH_CIRCLE = "circle/";
     private static final String PATH_COMMENT = "comment/";
     private static final String PATH_USER = "user/";
@@ -102,7 +101,6 @@ public class GooglePlusConnector extends AbstractConnector {
      * Connector constants
      */
     private static final String ID_FORUM_PUBLIC = "public";
-    private static final String ID_FORUM_MOMENTS = "moments";
     private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     private static final JacksonFactory JSON_FACTORY = new JacksonFactory();
 
@@ -123,48 +121,129 @@ public class GooglePlusConnector extends AbstractConnector {
     /*
      * Member variables
      */
-    private GooglePlusConnectorConfig gpConfig;
-    private GoogleCredential credential;
 
-    private Plus plus;
+    private Plus gpClient;
+    private URI endpoint = Builder.createURI("http://plus.google.com");
     private String myId;
 
-    @Override
-    public void initialize(final String id, final Model model,
-	    final Map<String, Object> parameters) throws ConnectorException {
-	Preconditions.checkNotNull(id, "Id can not be null");
-	Preconditions.checkNotNull(model, "Model can not be null");
-	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty");
-	Preconditions.checkArgument(model.isOpen(), "Model must be open");
-	Preconditions.checkArgument(
-		parameters.containsKey(GooglePlusConnectorConfig.CLIENT_ID),
-		"No client-id given");
-	Preconditions
-		.checkArgument(parameters
-			.containsKey(GooglePlusConnectorConfig.CLIENT_SECRET),
-			"No client-secret given");
-	Preconditions.checkArgument(
-		parameters.containsKey(GooglePlusConnectorConfig.ACCESS_TOKEN),
-		"No accesstoken given");
-	Preconditions
-		.checkArgument(parameters
-			.containsKey(GooglePlusConnectorConfig.REFRESH_TOKEN),
-			"No refreshtoken given");
-	super.initialize(id, model, parameters);
+    private GoogleCredential credential;
+    private ClientId clientId;
+    private ClientSecret clientSecret;
+    private AccessToken accessToken;
+    private RefreshToken refreshToken;
 
-	this.gpConfig = new GooglePlusConnectorConfig();
-	this.gpConfig = ConfigUtils.fromMap(parameters, this.gpConfig);
+    @Override
+    public void initialize(String id, ISOCCContext context, Service service,
+	    UserAccount userAccount) throws ConnectorException {
+	super.initialize(id, context, service, userAccount);
+
+	if (service.hasServiceEndpoint()) {
+	    this.endpoint = Builder.createURI(
+		    service.getServiceEndpoint().toString());
+	}
+	service.setServiceEndpoint(endpoint);
+
+	Preconditions.checkArgument(
+		service.hasAuthentication(),
+		"Service has no Authentication.");
+	Authentication serviceAuth = service.getAuthentication();
+
+	Preconditions.checkArgument(
+		serviceAuth.hasCredential(),
+		"Service has no credentials.");
+	ClosableIterator<de.m0ep.sioc.service.auth.Credential> serviceCredentialsIter =
+		serviceAuth.getAllCredential();
+
+	this.clientId = null;
+	this.clientSecret = null;
+	while (serviceCredentialsIter.hasNext()) {
+	    de.m0ep.sioc.service.auth.Credential credential =
+		    (de.m0ep.sioc.service.auth.Credential)
+		    serviceCredentialsIter.next();
+	    URI type = RDF2GoUtils.getType(
+		    credential.getModel(),
+		    credential.asResource());
+
+	    if (type.equals(ClientId.RDFS_CLASS)) {
+		this.clientId = ClientId.getInstance(
+			credential.getModel(),
+			credential.asResource());
+	    } else if (type.equals(ClientSecret.RDFS_CLASS)) {
+		this.clientSecret = ClientSecret.getInstance(
+			credential.getModel(),
+			credential.asResource());
+	    }
+	}
+	serviceCredentialsIter.close();
+
+	Preconditions.checkArgument(
+		null != this.clientId && clientId.hasValue(),
+		"No ClientId credential found in service");
+
+	Preconditions.checkArgument(
+		null != this.clientSecret && clientSecret.hasValue(),
+		"No ClientSecret credential found in service");
+
+	de.m0ep.sioc.service.auth.UserAccount authUserAccount =
+		de.m0ep.sioc.service.auth.UserAccount.getInstance(
+			userAccount.getModel(),
+			userAccount.getResource());
+
+	Preconditions.checkArgument(
+		authUserAccount.hasAuthentication(),
+		"UserAccount has no authentication");
+	Authentication userAuth = authUserAccount.getAuthentication();
+
+	Preconditions.checkArgument(
+		userAuth.hasCredential(),
+		"UserAccount has no credentials.");
+	ClosableIterator<de.m0ep.sioc.service.auth.Credential> credentials = userAuth
+		.getAllCredential();
+
+	this.accessToken = null;
+	this.refreshToken = null;
+	while (credentials.hasNext()) {
+	    de.m0ep.sioc.service.auth.Credential credential =
+		    (de.m0ep.sioc.service.auth.Credential) credentials.next();
+
+	    URI type = RDF2GoUtils.getType(
+		    credential.getModel(),
+		    credential);
+
+	    if (type.equals(AccessToken.RDFS_CLASS)) {
+		this.accessToken = AccessToken.getInstance(
+			credential.getModel(),
+			credential.getResource());
+	    } else if (type.equals(RefreshToken.RDFS_CLASS)) {
+		this.refreshToken = RefreshToken.getInstance(
+			credential.getModel(),
+			credential.getResource());
+	    }
+	}
+
+	Preconditions.checkArgument(
+		null != this.accessToken && accessToken.hasValue(),
+		"No AccessToken credential found in userAccount");
 
 	credential = new GoogleCredential.Builder()
-		.setClientSecrets(gpConfig.getClientId(),
-			gpConfig.getClientSecret())
+		.setClientSecrets(
+			clientId.getValue(),
+			clientSecret.getValue())
 		.setJsonFactory(JSON_FACTORY).setTransport(HTTP_TRANSPORT)
+		// Save new token on token refresh
 		.addRefreshListener(new CredentialRefreshListener() {
 		    @Override
 		    public void onTokenResponse(Credential credential,
 			    TokenResponse tokenResponse) throws IOException {
-			// update accesstoken
-			gpConfig.setAccessToken(tokenResponse.getAccessToken());
+			if (null != tokenResponse.getAccessToken()) {
+			    accessToken
+				    .setValue(tokenResponse.getAccessToken());
+			}
+
+			if (null != tokenResponse.getRefreshToken()) {
+			    refreshToken.setValue(tokenResponse
+				    .getRefreshToken());
+			}
 		    }
 
 		    @Override
@@ -173,20 +252,24 @@ public class GooglePlusConnector extends AbstractConnector {
 			    throws IOException {
 		    }
 		}).build();
-	credential.setAccessToken(gpConfig.getAccessToken());
-	credential.setRefreshToken(gpConfig.getRefreshToken());
 
+	credential.setAccessToken(accessToken.getValue());
+
+	// Set refreshtoken if there is one.
+	if (null != refreshToken && refreshToken.hasValue()) {
+	    credential.setRefreshToken(refreshToken.getValue());
+	}
     }
 
     @Override
     public void connect() throws ConnectorException {
 	setConnected(false);
 
-	plus = new Plus.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+	gpClient = new Plus.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
 		.setApplicationName(getId()).build();
 
 	try {
-	    Person me = plus.people().get("me").setFields("id").execute();
+	    Person me = gpClient.people().get("me").setFields("id").execute();
 	    myId = me.getId();
 	} catch (GoogleJsonResponseException e) {
 	    LOG.error(e.getLocalizedMessage(), e);
@@ -197,55 +280,37 @@ public class GooglePlusConnector extends AbstractConnector {
 	}
 
 	// set all static forums
-	URI uri = Builder.createURI(getURL() + myId + "/" + ID_FORUM_PUBLIC);
+	URI uri = Builder.createURI(endpoint + "/" + myId + "/"
+		+ ID_FORUM_PUBLIC);
 
-	if (!Forum.hasInstance(getModel(), uri)) {
-	    Forum pub = new Forum(getModel(), uri, true);
+	if (!Forum.hasInstance(context.getDataModel(), uri)) {
+	    Forum pub = new Forum(context.getDataModel(), uri, true);
 	    pub.setId(myId + "/" + ID_FORUM_PUBLIC);
 	    pub.setName("Public");
 	    pub.setHost(getSite());
 	    getSite().addHostOf(pub);
 	}
 
-	uri = Builder.createURI(getURL() + myId + "/" + ID_FORUM_MOMENTS);
-
-	if (!Forum.hasInstance(getModel(), uri)) {
-	    Forum moments = new Forum(getModel(), uri, true);
-	    moments.setId(myId + "/" + ID_FORUM_MOMENTS);
-	    moments.setName("Moments");
-	    moments.setHost(getSite());
-	    getSite().addHostOf(moments);
-	}
-
 	setConnected(true);
     }
 
     @Override
-    public String getURL() {
-	return "https://plus.google.com/";
+    public void disconnect() {
+	gpClient = null;
+	myId = null;
+
+	setConnected(false);
     }
 
     @Override
     public Site getSite() {
-	URI uri = Builder.createURI(getURL());
-
-	if (!Site.hasInstance(getModel(), uri)) {
-	    Site result = new Site(getModel(), uri, true);
+	if (!Site.hasInstance(context.getDataModel(), endpoint)) {
+	    Site result = new Site(context.getDataModel(), endpoint, true);
 	    result.setName("Google+");
 	    return result;
 	}
 
-	return Site.getInstance(getModel(), uri);
-    }
-
-    @Override
-    public UserAccount getLoginUser() throws ConnectorException {
-	return getUserAccount(myId);
-    }
-
-    @Override
-    public Map<String, Object> getConfiguration() {
-	return ConfigUtils.toMap(gpConfig);
+	return Site.getInstance(context.getDataModel(), endpoint);
     }
 
     @Override
@@ -253,13 +318,13 @@ public class GooglePlusConnector extends AbstractConnector {
 	    throws ConnectorException {
 	Preconditions.checkNotNull(id, "Id can not be null.");
 	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty.");
-	Preconditions.checkState(isOnline(), "Connector is not online");
-	URI uri = Builder.createURI(getURL() + PATH_USER + id);
+	Preconditions.checkState(isConnected(), "Connector is not online");
+	URI uri = Builder.createURI(endpoint + "/" + PATH_USER + id);
 
-	if (!UserAccount.hasInstance(getModel(), uri)) {
+	if (!UserAccount.hasInstance(context.getDataModel(), uri)) {
 	    Person user = null;
 	    try {
-		user = plus
+		user = gpClient
 			.people()
 			.get(id)
 			.setFields(
@@ -274,11 +339,14 @@ public class GooglePlusConnector extends AbstractConnector {
 		throw new ConnectorException("Unknown error", t);
 	    }
 
-	    UserAccount result = new UserAccount(getModel(), uri, true);
+	    UserAccount result = new UserAccount(
+		    context.getDataModel(),
+		    uri,
+		    true);
 
 	    result.setId(user.getId());
 	    result.setIsPartOf(getSite());
-	    result.setAccountServiceHomepage(Builder.createURI(getURL()));
+	    result.setAccountServiceHomepage(endpoint);
 
 	    if (null != user.getAboutMe()) {
 		result.setDescription(user.getAboutMe());
@@ -306,7 +374,7 @@ public class GooglePlusConnector extends AbstractConnector {
 
 	    return result;
 	} else {
-	    return UserAccount.getInstance(getModel(), uri);
+	    return UserAccount.getInstance(context.getDataModel(), uri);
 	}
     }
 
@@ -314,18 +382,12 @@ public class GooglePlusConnector extends AbstractConnector {
     public Forum getForum(final String id) throws ConnectorException {
 	Preconditions.checkNotNull(id, "Id can not be null.");
 	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty.");
-	Preconditions.checkState(isOnline(), "Connector is not online");
-	// atm. only public posts and moments are available
-	// TODO: later check for circles
+	Preconditions.checkState(isConnected(), "Connector is not online");
 
 	if ((myId + "/" + ID_FORUM_PUBLIC).equalsIgnoreCase(id)) {
-	    URI uri = Builder.createURI(getURL() + myId + "/"
+	    URI uri = Builder.createURI(endpoint + "/" + myId + "/"
 		    + ID_FORUM_PUBLIC);
-	    return Forum.getInstance(getModel(), uri);
-	} else if ((myId + "/" + ID_FORUM_MOMENTS).equalsIgnoreCase(id)) {
-	    URI uri = Builder.createURI(getURL() + myId + "/"
-		    + ID_FORUM_MOMENTS);
-	    return Forum.getInstance(getModel(), uri);
+	    return Forum.getInstance(context.getDataModel(), uri);
 	}
 
 	throw new NotFoundException("Forum with id " + id + " not found");
@@ -333,21 +395,20 @@ public class GooglePlusConnector extends AbstractConnector {
 
     @Override
     public List<Forum> getForums() throws ConnectorException {
-	Preconditions.checkState(isOnline(), "Connector is not online");
+	Preconditions.checkState(isConnected(), "Connector is not online");
 
 	List<Forum> result = new ArrayList<Forum>();
 
-	QueryResultTable table = getModel()
-		.sparqlSelect(
-			SparqlUtil.formatQuery(SPARQL_SELECT_FORUMS_OF_SITE,
-				getSite()));
+	QueryResultTable table = context.getDataModel().sparqlSelect(
+		SparqlUtil.formatQuery(SPARQL_SELECT_FORUMS_OF_SITE,
+			getSite()));
 
 	for (QueryRow row : table) {
-	    result.add(Forum.getInstance(getModel(), row.getValue("forum")
-		    .asURI()));
+	    result.add(Forum.getInstance(
+		    context.getDataModel(),
+		    row.getValue("forum")
+			    .asURI()));
 	}
-
-	// TODO: load dynamic circles if necessary
 
 	return result;
     }
@@ -358,17 +419,24 @@ public class GooglePlusConnector extends AbstractConnector {
 	Preconditions.checkNotNull(container, "container can not be null");
 	Preconditions.checkArgument(hasPosts(container), "container "
 		+ container + " has no post on this site");
-	Preconditions.checkState(isOnline(), "Connector is not online");
+	Preconditions.checkState(isConnected(), "Connector is not online");
 
 	List<Post> result = new ArrayList<Post>();
-	ClosableIterator<Statement> stmtsIter = getModel().findStatements(
-		Variable.ANY, SIOCVocabulary.has_container, container);
+	ClosableIterator<Statement> stmtsIter = context.getDataModel().
+		findStatements(
+			Variable.ANY,
+			SIOCVocabulary.has_container,
+			container);
 
 	while (stmtsIter.hasNext()) {
 	    Statement statement = stmtsIter.next();
 
-	    if (Post.hasInstance(getModel(), statement.getSubject())) {
-		result.add(Post.getInstance(getModel(), statement.getSubject()));
+	    if (Post.hasInstance(
+		    context.getDataModel(),
+		    statement.getSubject())) {
+		result.add(Post.getInstance(
+			context.getDataModel(),
+			statement.getSubject()));
 	    }
 	}
 	stmtsIter.close();
@@ -377,133 +445,18 @@ public class GooglePlusConnector extends AbstractConnector {
     }
 
     @Override
-    public List<Post> pollPosts(final Container container)
+    public List<Post> pollPosts(final Container container, long limit)
 	    throws ConnectorException {
 	Preconditions.checkNotNull(container, "container can not be null");
 	Preconditions.checkArgument(hasPosts(container),
 		"this container has no post on " + getSite().getName());
-	Preconditions.checkState(isOnline(), "Connector is not online");
+	Preconditions.checkState(isConnected(), "Connector is not online");
 
 	List<Post> result = new ArrayList<Post>();
 
-	if (container.getId().contains(ID_FORUM_MOMENTS)) {
-	    result.addAll(pollMoments(container));
-	} else if (container.getId().contains(ID_FORUM_PUBLIC)) {
+	if (container.getId().contains(ID_FORUM_PUBLIC)) {
 	    result.addAll(pollPublicActivities(container));
 	}
-
-	return result;
-    }
-
-    private List<Post> pollMoments(final Container container)
-	    throws ConnectorException {
-	String pageToken = null;
-	List<Post> result = new ArrayList<Post>();
-	Date lastItemDate = new Date(0);
-
-	if (container.hasLastItemDate()) {
-	    try {
-		lastItemDate = RDFTool.string2DateTime(container
-			.getLastItemDate());
-	    } catch (ParseException e1) {
-		lastItemDate = new Date(0);
-	    }
-	}
-
-	Moments.List momentListRequest = null;
-	do {
-	    MomentsFeed feed = null;
-	    try {
-		if (null == momentListRequest) {
-		    momentListRequest = plus.moments().list("me", "vault");
-		    // activityListRequest.setFields("id,items(actor/id,id,"
-		    // + "object(attachments/url,content,"
-		    // + "replies/totalItems),published,title,updated),"
-		    // + "nextPageToken,updated");
-
-		}
-
-		if (null != pageToken) {
-		    momentListRequest.setPageToken(pageToken);
-		}
-
-		feed = momentListRequest.execute();
-	    } catch (GoogleJsonResponseException e) {
-		LOG.error(e.getLocalizedMessage(), e);
-		throw mapToConnectorException(e);
-	    } catch (Throwable t) {
-		LOG.error(t.getLocalizedMessage(), t);
-		throw new ConnectorException("Unknown error", t);
-	    }
-
-	    if (null != feed) {
-		pageToken = feed.getNextPageToken();
-		for (Moment moment : feed.getItems()) {
-		    URI uri = Builder.createURI(getURL() + PATH_MOMENT
-			    + moment.getId());
-
-		    if (null != moment.getTarget()) {
-			ItemScope target = moment.getTarget();
-			if (null != target.getDateCreated()) {
-			    Date created;
-			    try {
-				created = DateUtils.parseISO8601(target
-					.getDateCreated());
-			    } catch (ParseException e) {
-				created = new Date(1);
-			    }
-			    if (created.after(lastItemDate)) {
-				if (!Post.hasInstance(getModel(), uri)) {
-				    Post post = new Post(getModel(), uri, true);
-				    post.setId(moment.getId());
-
-				    if (null != target.getName()) {
-					post.setTitle(target.getName());
-				    }
-
-				    if (null != target.getDescription()) {
-					post.setContent(target.getDescription());
-				    }
-
-				    if (null != target.getAuthor()) {
-					try {
-					    post.setCreator(getUserAccount(target
-						    .getAuthor().get(0).getId()));
-					} catch (NotFoundException e) {
-					    LOG.error(e.toString(), e);
-					}
-				    }
-
-				    if (null != target.getDateCreated()) {
-					try {
-					    post.setCreated(DateUtils
-						    .formatISO8601(DateUtils
-							    .parseISO8601(target
-								    .getDateCreated())));
-					} catch (ParseException e) {
-					    LOG.error(e.getMessage(), e);
-					}
-				    }
-
-				    if (null != target.getDateModified()) {
-					try {
-					    post.setModified(DateUtils
-						    .formatISO8601(DateUtils
-							    .parseISO8601(target
-								    .getDateModified())));
-					} catch (ParseException e) {
-					    LOG.error(e.getMessage(), e);
-					}
-				    }
-
-				    result.add(post);
-				}
-			    }
-			}
-		    }
-		}
-	    }
-	} while (null != pageToken);
 
 	return result;
     }
@@ -528,7 +481,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	    ActivityFeed feed = null;
 	    try {
 		if (null == activityListRequest) {
-		    activityListRequest = plus.activities()
+		    activityListRequest = gpClient.activities()
 			    .list("me", "public");
 		    activityListRequest.setFields("id,items(actor/id,id,"
 			    + "object(attachments/url,content,"
@@ -552,14 +505,19 @@ public class GooglePlusConnector extends AbstractConnector {
 	    if (null != feed) {
 		pageToken = feed.getNextPageToken();
 		for (Activity activity : feed.getItems()) {
-		    URI uri = Builder.createURI(getURL() + PATH_ACTIVITY
-			    + activity.getId());
+		    URI uri = Builder.createURI(
+			    endpoint + "/" +
+				    PATH_ACTIVITY
+				    + activity.getId());
 		    Date created = new Date(activity.getPublished().getValue());
 		    // TODO: check for updated posts!?
 
 		    if (created.after(lastItemDate)) {
-			if (!Post.hasInstance(getModel(), uri)) {
-			    Post post = new Post(getModel(), uri, true);
+			if (!Post.hasInstance(context.getDataModel(), uri)) {
+			    Post post = new Post(
+				    context.getDataModel(),
+				    uri,
+				    true);
 			    post.setId(activity.getId());
 
 			    if (null != activity.getTitle())
@@ -603,9 +561,14 @@ public class GooglePlusConnector extends AbstractConnector {
 
 		    Long numReplies = activity.getObject().getReplies()
 			    .getTotalItems();
-		    if (Post.hasInstance(getModel(), uri) && 0 < numReplies) {
+		    if (Post.hasInstance(
+			    context.getDataModel(),
+			    uri) && 0 < numReplies) {
 			List<Post> comments = pollNewReplies(
-				Post.getInstance(getModel(), uri), activity);
+				Post.getInstance(
+					context.getDataModel(),
+					uri),
+				activity);
 
 			result.addAll(comments);
 		    }
@@ -636,7 +599,8 @@ public class GooglePlusConnector extends AbstractConnector {
 	    CommentFeed feed = null;
 	    try {
 		if (null == commentListRequest) {
-		    commentListRequest = plus.comments().list(activity.getId());
+		    commentListRequest = gpClient.comments().list(
+			    activity.getId());
 		    commentListRequest.setFields("id,items(actor/id,id,"
 			    + "object/content,published,updated),"
 			    + "nextPageToken");
@@ -663,12 +627,17 @@ public class GooglePlusConnector extends AbstractConnector {
 		    Date created = new Date(comment.getPublished().getValue());
 
 		    if (created.after(lastReplyDate)) {
-			URI uri = Builder.createURI(getURL() + PATH_COMMENT
-				+ comment.getId());
+			URI uri = Builder.createURI(
+				endpoint + "/"
+					+ PATH_COMMENT
+					+ comment.getId());
 
 			// TODO: check for updated comments!?
-			if (!Post.hasInstance(getModel(), uri)) {
-			    Post reply = new Post(getModel(), uri, true);
+			if (!Post.hasInstance(context.getDataModel(), uri)) {
+			    Post reply = new Post(
+				    context.getDataModel(),
+				    uri,
+				    true);
 
 			    reply.setId(comment.getId());
 
@@ -715,8 +684,10 @@ public class GooglePlusConnector extends AbstractConnector {
 
     @Override
     public boolean hasPosts(final Container container) {
-	return getModel().sparqlAsk(
-		SparqlUtil.formatQuery(SPARQL_ASK_IS_FORUM_OF_SITE, container,
+	return context.getDataModel().sparqlAsk(
+		SparqlUtil.formatQuery(
+			SPARQL_ASK_IS_FORUM_OF_SITE,
+			container,
 			getSite()));
     }
 
@@ -743,7 +714,7 @@ public class GooglePlusConnector extends AbstractConnector {
 	final int prime = 31;
 	int result = super.hashCode();
 	result = prime * result
-		+ Objects.hashCode(this.credential, this.gpConfig, this.myId);
+		+ Objects.hashCode(this.myId);
 	return result;
     }
 
@@ -759,14 +730,6 @@ public class GooglePlusConnector extends AbstractConnector {
 	    return false;
 	}
 	GooglePlusConnector other = (GooglePlusConnector) obj;
-
-	if (!Objects.equal(this.credential, other.credential)) {
-	    return false;
-	}
-
-	if (!Objects.equal(this.gpConfig, other.gpConfig)) {
-	    return false;
-	}
 
 	if (!Objects.equal(this.myId, other.myId)) {
 	    return false;

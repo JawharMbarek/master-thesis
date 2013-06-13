@@ -20,31 +20,32 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.connectors.moodle;
+package de.m0ep.socc.connectors.google.plus;
 
 import de.m0ep.socc.IConnector;
 import de.m0ep.socc.IConnectorFactory;
 
 /**
- * ConnectorFactory to create new instances of an Moodle 2.4 connector.
+ * ConnectorFactory to create new {@link IConnector} instances for Google Plus.
  * 
  * @author Florian Müller
  * 
  */
-public class MoodleConnectorFactory implements IConnectorFactory {
+public class GooglePlusConnectorFactory implements IConnectorFactory {
 
     @Override
     public String getId() {
-	return "MoodleConnectorFactory2.4-v1.0";
+	return "GooglePlusConnectorFactory-v1.0";
     }
 
     @Override
     public String getLabel() {
-	return "Moodle 2.4";
+	return "Google+";
     }
 
     @Override
     public IConnector createNewInstance() {
-	return new MoodleConnector();
+	return new GooglePlusConnector();
     }
+
 }

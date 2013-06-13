@@ -89,7 +89,7 @@ public class FacebookConnector extends AbstractConnector {
 	    + "description,caption,source,updated_time,created_time,"
 	    + "link,name,from";
 
-    private FacebookClient client;
+    private FacebookClient fbClient;
     private String myId;
 
     private ClientId clientId;
@@ -188,10 +188,10 @@ public class FacebookConnector extends AbstractConnector {
     public void connect() throws ConnectorException {
 	setConnected(false);
 
-	this.client = new DefaultFacebookClient(accessToken.getValue());
+	this.fbClient = new DefaultFacebookClient(accessToken.getValue());
 
 	try {
-	    com.restfb.FacebookClient.AccessToken extendedToken = this.client
+	    com.restfb.FacebookClient.AccessToken extendedToken = this.fbClient
 		    .obtainExtendedAccessToken(
 			    clientId.getValue(),
 			    clientSecret.getValue(),
@@ -203,7 +203,7 @@ public class FacebookConnector extends AbstractConnector {
 	}
 
 	try {
-	    this.myId = client.fetchObject(
+	    this.myId = fbClient.fetchObject(
 		    FacebookConstants.ID_ME,
 		    FacebookType.class,
 		    Parameter.with(FacebookConstants.PARAM_FIELDS,
@@ -217,7 +217,7 @@ public class FacebookConnector extends AbstractConnector {
 	}
 
 	// add users wall as a forum
-	URI uri = Builder.createURI(endpoint + myId + "/"
+	URI uri = Builder.createURI(endpoint + "/" + myId + "/"
 		+ FacebookConstants.CONNECTION_FEED);
 	if (!Forum.hasInstance(context.getDataModel(), uri)) {
 	    Forum wall = new Forum(context.getDataModel(), uri, true);
@@ -233,10 +233,7 @@ public class FacebookConnector extends AbstractConnector {
 
     @Override
     public void disconnect() {
-	this.client = null;
-	this.clientId = null;
-	this.clientSecret = null;
-	this.accessToken = null;
+	this.fbClient = null;
 	this.myId = null;
 
 	setConnected(false);
@@ -268,12 +265,12 @@ public class FacebookConnector extends AbstractConnector {
 	Preconditions.checkArgument(!id.isEmpty(), "id can not be empty");
 	Preconditions.checkState(isConnected(), "Connector is not online");
 
-	URI uri = Builder.createURI(endpoint + id);
+	URI uri = Builder.createURI(endpoint + "/" + id);
 
 	if (!UserAccount.hasInstance(context.getDataModel(), uri)) {
 	    User user = null;
 	    try {
-		user = client.fetchObject(id, User.class);
+		user = fbClient.fetchObject(id, User.class);
 	    } catch (FacebookException e) {
 		LOG.error(e.getLocalizedMessage(), e);
 		throw mapToConnectorException(e);
@@ -295,7 +292,7 @@ public class FacebookConnector extends AbstractConnector {
 	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty.");
 	Preconditions.checkState(isConnected(), "Connector is not online");
 
-	URI uri = Builder.createURI(endpoint
+	URI uri = Builder.createURI(endpoint + "/"
 		+ (FacebookConstants.ID_ME.equalsIgnoreCase(id) ? (myId) : (id
 			.toLowerCase())) + "/"
 		+ FacebookConstants.CONNECTION_FEED);
@@ -304,7 +301,7 @@ public class FacebookConnector extends AbstractConnector {
 	    Group group = null;
 	    try {
 		// need 'metadata=1' parameter to get 'type' value
-		group = client.fetchObject(id, Group.class,
+		group = fbClient.fetchObject(id, Group.class,
 			Parameter.with(FacebookConstants.PARAM_METADATA, "1"));
 	    } catch (FacebookException e) {
 		LOG.error(e.getLocalizedMessage(), e);
@@ -351,7 +348,7 @@ public class FacebookConnector extends AbstractConnector {
 
 	Connection<Group> groupsConnections = null;
 	try {
-	    groupsConnections = client.fetchConnection("me/groups",
+	    groupsConnections = fbClient.fetchConnection("me/groups",
 		    Group.class, Parameter.with(FacebookConstants.PARAM_FIELDS,
 			    "name,id,description,updated_time"));
 	} catch (FacebookException e) {
@@ -364,7 +361,8 @@ public class FacebookConnector extends AbstractConnector {
 
 	for (List<Group> myGroups : groupsConnections) {
 	    for (Group group : myGroups) {
-		URI uri = Builder.createURI(endpoint + group.getId() + "/"
+		URI uri = Builder.createURI(endpoint + "/" + group.getId()
+			+ "/"
 			+ FacebookConstants.CONNECTION_FEED);
 
 		if (!Forum.hasInstance(context.getDataModel(), uri)) {
@@ -385,13 +383,13 @@ public class FacebookConnector extends AbstractConnector {
 	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty.");
 	Preconditions.checkState(isConnected(), "Connector is not online");
 
-	URI uri = Builder.createURI(endpoint + id);
+	URI uri = Builder.createURI(endpoint + "/" + id);
 
 	if (!Post.hasInstance(context.getDataModel(), uri)) {
 	    JsonObject obj;
 
 	    try {
-		obj = client.fetchObject(id, JsonObject.class,
+		obj = fbClient.fetchObject(id, JsonObject.class,
 			Parameter.with(FacebookConstants.PARAM_METADATA, "1"));
 	    } catch (FacebookException e) {
 		LOG.error(e.getLocalizedMessage(), e);
@@ -588,7 +586,7 @@ public class FacebookConnector extends AbstractConnector {
 
 	FacebookType result = null;
 	try {
-	    result = client.publish(container.getId() + "/"
+	    result = fbClient.publish(container.getId() + "/"
 		    + FacebookConstants.CONNECTION_FEED, FacebookType.class,
 		    params.toArray(new Parameter[0]));
 	} catch (FacebookException e) {
@@ -621,7 +619,7 @@ public class FacebookConnector extends AbstractConnector {
 
 	FacebookType result = null;
 	try {
-	    result = client.publish(parentPost.getId() + "/"
+	    result = fbClient.publish(parentPost.getId() + "/"
 		    + FacebookConstants.CONNECTION_COMMENTS,
 		    FacebookType.class,
 		    Parameter.with("message", post.getContent()));
@@ -668,7 +666,7 @@ public class FacebookConnector extends AbstractConnector {
 
 	Connection<JsonObject> feed = null;
 	try {
-	    feed = client
+	    feed = fbClient
 		    .fetchConnection(container.getId() + "/"
 			    + FacebookConstants.CONNECTION_FEED,
 			    JsonObject.class, Parameter.with(
@@ -689,7 +687,7 @@ public class FacebookConnector extends AbstractConnector {
 	if (null != feed) {
 	    for (List<JsonObject> posts : feed) {
 		for (JsonObject obj : posts) {
-		    URI uri = Builder.createURI(endpoint
+		    URI uri = Builder.createURI(endpoint + "/"
 			    + obj.getString(FacebookConstants.FIELD_ID));
 		    Date created = com.restfb.util.DateUtils
 			    .toDateFromLongFormat(obj
@@ -751,7 +749,7 @@ public class FacebookConnector extends AbstractConnector {
 
 	    if (created.after(lastReplyDate)) {
 		String id = obj.getString(FacebookConstants.FIELD_ID);
-		URI uri = Builder.createURI(endpoint + id);
+		URI uri = Builder.createURI(endpoint + "/" + id);
 
 		if (!Post.hasInstance(context.getDataModel(), uri)) {
 		    result.add(FacebookSIOCConverter.createComment(this,
@@ -767,10 +765,12 @@ public class FacebookConnector extends AbstractConnector {
 	    throws ConnectorException {
 
 	try {
-	    JsonObject obj = client.fetchObject(id, JsonObject.class, Parameter
-		    .with(FacebookConstants.PARAM_FIELDS,
-			    FacebookConstants.FIELD_ID), Parameter.with(
-		    FacebookConstants.PARAM_METADATA, "1"));
+	    JsonObject obj = fbClient.fetchObject(id, JsonObject.class,
+		    Parameter
+			    .with(FacebookConstants.PARAM_FIELDS,
+				    FacebookConstants.FIELD_ID), Parameter
+			    .with(
+				    FacebookConstants.PARAM_METADATA, "1"));
 
 	    if (null != obj && obj.has(FacebookConstants.FIELD_METADATA)) {
 		JsonObject metadata = obj

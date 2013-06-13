@@ -85,7 +85,7 @@ public class MoodleConnector extends AbstractConnector {
     private static final String URI_THREAD_PATH = "thread/";
     private static final String URI_POST_PATH = "post/";
 
-    private Mdl_soapserverBindingStub moodle;
+    private Mdl_soapserverBindingStub mdlClient;
 
     private Username username = null;
     private Password password = null;
@@ -98,10 +98,6 @@ public class MoodleConnector extends AbstractConnector {
     // Map to save retrieved courses, so no need to call the server twice.
     private Map<Integer, CourseRecord> courses = new HashMap<Integer, CourseRecord>();
     private Map<Integer, Integer> firstPostIds = new HashMap<Integer, Integer>();
-
-    public MoodleConnector() {
-	super();
-    }
 
     @Override
     public void initialize(String id, ISOCCContext context, Service service,
@@ -166,13 +162,13 @@ public class MoodleConnector extends AbstractConnector {
     public void connect() throws ConnectorException {
 	setConnected(false);
 
-	this.moodle = new Mdl_soapserverBindingStub(
+	this.mdlClient = new Mdl_soapserverBindingStub(
 		endpoint + MOODLEWS_PATH,
 		endpoint + MOODLE_WSDL_POSTFIX,
 		false);
 
 	tryLogin();
-	this.myId = moodle.get_my_id(client, sesskey);
+	this.myId = mdlClient.get_my_id(client, sesskey);
 	this.userAccount.setId(Integer.toString(this.myId));
 
 	setConnected(true);
@@ -180,9 +176,9 @@ public class MoodleConnector extends AbstractConnector {
 
     @Override
     public void disconnect() {
-	this.moodle.logout(client, sesskey);
-	this.moodle = null;
-	this.myId = -1;
+	mdlClient.logout(client, sesskey);
+	mdlClient = null;
+	myId = -1;
 
 	setConnected(false);
     }
@@ -195,7 +191,7 @@ public class MoodleConnector extends AbstractConnector {
 	URI uri = Builder.createURI(endpoint + URI_USER_PATH + id);
 
 	if (!UserAccount.hasInstance(context.getDataModel(), uri)) {
-	    UserRecord[] users = moodle.get_user_byid(client, sesskey, myId);
+	    UserRecord[] users = mdlClient.get_user_byid(client, sesskey, myId);
 
 	    if (null != users && 0 < users.length) {
 		return MoodleSIOCConverter.createUserAccount(this, users[0],
@@ -226,7 +222,7 @@ public class MoodleConnector extends AbstractConnector {
 	ForumRecord[] forumRecordArray = callMethod(new Callable<ForumRecord[]>() {
 	    @Override
 	    public ForumRecord[] call() throws Exception {
-		return moodle.get_all_forums(
+		return mdlClient.get_all_forums(
 			client,
 			sesskey,
 			"",
@@ -281,7 +277,8 @@ public class MoodleConnector extends AbstractConnector {
 	ForumDiscussionRecord[] forumDiscussionArray = callMethod(new Callable<ForumDiscussionRecord[]>() {
 	    @Override
 	    public ForumDiscussionRecord[] call() throws Exception {
-		return moodle.get_forum_discussions(client, sesskey, forumid,
+		return mdlClient.get_forum_discussions(client, sesskey,
+			forumid,
 			Integer.MAX_VALUE);
 	    }
 	});
@@ -315,7 +312,7 @@ public class MoodleConnector extends AbstractConnector {
 	ForumPostRecord[] posts = callMethod(new Callable<ForumPostRecord[]>() {
 	    @Override
 	    public ForumPostRecord[] call() throws Exception {
-		return moodle.get_forum_posts(
+		return mdlClient.get_forum_posts(
 			client,
 			sesskey,
 			discussionId,
@@ -480,7 +477,8 @@ public class MoodleConnector extends AbstractConnector {
 	Preconditions.checkArgument(post.hasContent());
 	Preconditions.checkArgument(canPublishOn(container));
 
-	final ForumPostDatum datum = new ForumPostDatum(moodle.getNAMESPACE());
+	final ForumPostDatum datum = new ForumPostDatum(mdlClient
+		.getNAMESPACE());
 	datum.setMessage(post.getContent());
 	if (post.hasTitle()) {
 	    datum.setSubject(post.getTitle());
@@ -500,7 +498,7 @@ public class MoodleConnector extends AbstractConnector {
 	    ForumPostRecord[] firstPostRecordArray = callMethod(new Callable<ForumPostRecord[]>() {
 		@Override
 		public ForumPostRecord[] call() throws Exception {
-		    return moodle.get_forum_posts(client, sesskey,
+		    return mdlClient.get_forum_posts(client, sesskey,
 			    discussionId, 1);
 		}
 	    });
@@ -517,7 +515,8 @@ public class MoodleConnector extends AbstractConnector {
 	    ForumPostRecord[] postRecordArray = callMethod(new Callable<ForumPostRecord[]>() {
 		@Override
 		public ForumPostRecord[] call() throws Exception {
-		    return moodle.forum_add_reply(client, sesskey, firstPostId,
+		    return mdlClient.forum_add_reply(client, sesskey,
+			    firstPostId,
 			    datum);
 		}
 	    });
@@ -557,7 +556,8 @@ public class MoodleConnector extends AbstractConnector {
 	Preconditions.checkArgument(canReplyOn(parentPost),
 		"can not reply on parentPost");
 
-	final ForumPostDatum datum = new ForumPostDatum(moodle.getNAMESPACE());
+	final ForumPostDatum datum = new ForumPostDatum(mdlClient
+		.getNAMESPACE());
 	datum.setMessage(post.getContent());
 	if (post.hasTitle()) {
 	    datum.setSubject(post.getTitle());
@@ -570,7 +570,7 @@ public class MoodleConnector extends AbstractConnector {
 	ForumPostRecord[] postRecordArray = callMethod(new Callable<ForumPostRecord[]>() {
 	    @Override
 	    public ForumPostRecord[] call() throws Exception {
-		return moodle.forum_add_reply(client, sesskey,
+		return mdlClient.forum_add_reply(client, sesskey,
 			Integer.parseInt(parentPost.getId()), datum);
 	    }
 	});
@@ -603,7 +603,7 @@ public class MoodleConnector extends AbstractConnector {
 	CourseRecord[] courseRecordArray = callMethod(new Callable<CourseRecord[]>() {
 	    @Override
 	    public CourseRecord[] call() throws Exception {
-		return moodle.get_course_byid(client, sesskey,
+		return mdlClient.get_course_byid(client, sesskey,
 			Integer.toString(id));
 	    }
 	});
@@ -627,11 +627,11 @@ public class MoodleConnector extends AbstractConnector {
      *             Thrown if the url to moodle is invalid.
      */
     private boolean isMoodleWSRunning() throws ConnectorException {
-	if (null == moodle)
+	if (null == mdlClient)
 	    return false;
 
 	try {
-	    new URL(moodle.getURL()).openConnection().connect();
+	    new URL(mdlClient.getURL()).openConnection().connect();
 	} catch (MalformedURLException e) {
 	    throw new ConnectorException("Invalid URL to moodle", e);
 	} catch (IOException e) {
@@ -647,7 +647,7 @@ public class MoodleConnector extends AbstractConnector {
      * @return Returns true if the webservice session in Moodle is maybe expired
      */
     private boolean isSessionMaybeExpired() {
-	return 0 == moodle.get_my_id(client, sesskey);
+	return 0 == mdlClient.get_my_id(client, sesskey);
     }
 
     /**
@@ -660,12 +660,12 @@ public class MoodleConnector extends AbstractConnector {
      */
     private void tryLogin() throws ConnectorException {
 	if (null != sesskey)
-	    moodle.logout(client, sesskey);
+	    mdlClient.logout(client, sesskey);
 
 	System.out.println(username.getValue());
 	System.out.println(password.getValue());
 
-	LoginReturn login = moodle.login(
+	LoginReturn login = mdlClient.login(
 		username.getValue(),
 		password.getValue());
 
@@ -676,7 +676,7 @@ public class MoodleConnector extends AbstractConnector {
 				" is no MoodleWS service.");
 	    }
 
-	    throw new NetworkException("No connection to " + moodle.getURL());
+	    throw new NetworkException("No connection to " + mdlClient.getURL());
 	}
 
 	this.client = login.getClient();
@@ -706,7 +706,7 @@ public class MoodleConnector extends AbstractConnector {
 	    if (null == result) {
 		if (!isMoodleWSRunning()) {
 		    throw new NetworkException(
-			    "No connection to " + moodle.getURL());
+			    "No connection to " + mdlClient.getURL());
 		}
 
 		if (isSessionMaybeExpired()) {

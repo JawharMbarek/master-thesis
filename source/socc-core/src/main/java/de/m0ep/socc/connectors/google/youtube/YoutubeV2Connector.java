@@ -31,10 +31,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
-import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.Variable;
@@ -67,56 +65,147 @@ import com.google.gdata.util.ResourceNotFoundException;
 import com.google.gdata.util.ServiceException;
 import com.google.gdata.util.ServiceForbiddenException;
 
+import de.m0ep.sioc.service.auth.APIKey;
+import de.m0ep.sioc.service.auth.Authentication;
+import de.m0ep.sioc.service.auth.Credential;
+import de.m0ep.sioc.service.auth.Password;
+import de.m0ep.sioc.service.auth.Service;
+import de.m0ep.sioc.service.auth.Username;
 import de.m0ep.socc.AbstractConnector;
+import de.m0ep.socc.ISOCCContext;
 import de.m0ep.socc.exceptions.AuthenticationException;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.exceptions.NetworkException;
 import de.m0ep.socc.exceptions.NotFoundException;
-import de.m0ep.socc.utils.ConfigUtils;
+import de.m0ep.socc.utils.RDF2GoUtils;
 
 public class YoutubeV2Connector extends AbstractConnector {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(YoutubeV2Connector.class);
 
     private YouTubeService service;
-    private YoutubeV2ConnectorConfig ytConfig;
     private String myId;
 
     private UserProfileEntry userProfile;
     private Forum uploads;
     private Forum playlists;
 
+    private URI endpoint;
+
+    private APIKey developerKey;
+    private Username username;
+    private Password password;
+
+    public YoutubeV2Connector() {
+	super();
+	this.endpoint = Builder.createURI("http://www.youtube.com");
+	this.developerKey = null;
+	this.username = null;
+	this.password = null;
+    }
+
     @Override
-    public void initialize(String id, Model model,
-	    Map<String, Object> parameters) throws ConnectorException {
-	Preconditions.checkNotNull(id, "Id can not be null");
-	Preconditions.checkNotNull(model, "Model can not be null");
-	Preconditions.checkArgument(!id.isEmpty(), "Id can not be empty");
-	Preconditions.checkArgument(model.isOpen(), "Model must be open");
+    public void initialize(String id, ISOCCContext context, Service service,
+	    UserAccount userAccount) throws ConnectorException {
+	super.initialize(id, context, service, userAccount);
+
+	if (service.hasServiceEndpoint()) {
+	    this.endpoint = Builder.createURI(
+		    service.getServiceEndpoint().toString());
+	}
+	service.setServiceEndpoint(endpoint);
+
 	Preconditions.checkArgument(
-		parameters.containsKey(YoutubeV2ConnectorConfig.USERNAME),
-		"No username given");
+		service.hasAuthentication(),
+		"Service has no Authentication.");
+	Authentication serviceAuth = service.getAuthentication();
+
 	Preconditions.checkArgument(
-		parameters.containsKey(YoutubeV2ConnectorConfig.PASSWORD),
-		"No password given");
-	super.initialize(id, model, parameters);
+		serviceAuth.hasCredential(),
+		"Service has no credentials.");
+	ClosableIterator<Credential> serviceCredentialsIter = serviceAuth
+		.getAllCredential();
 
-	this.ytConfig = new YoutubeV2ConnectorConfig();
-	this.ytConfig = ConfigUtils.fromMap(parameters, this.ytConfig);
+	this.developerKey = null;
+	while (serviceCredentialsIter.hasNext()) {
+	    Credential credential = (Credential) serviceCredentialsIter.next();
+	    URI type = RDF2GoUtils.getType(
+		    credential.getModel(),
+		    credential.asResource());
 
-	if (500 > this.ytConfig.getPollCooldownMillis())
-	    this.ytConfig.setPollCooldownMillis(500);
+	    if (type.equals(APIKey.RDFS_CLASS)) {
+		this.developerKey = APIKey.getInstance(
+			credential.getModel(),
+			credential.asResource());
+	    }
+	}
+	serviceCredentialsIter.close();
 
+	Preconditions.checkArgument(
+		null != developerKey && developerKey.hasValue(),
+		"No APIKey (DeveloperKey) credential found in service");
+
+	de.m0ep.sioc.service.auth.UserAccount authUserAccount =
+		de.m0ep.sioc.service.auth.UserAccount.getInstance(
+			userAccount.getModel(),
+			userAccount.getResource());
+
+	Preconditions.checkArgument(
+		authUserAccount.hasAuthentication(),
+		"UserAccount has no authentication");
+	Authentication userAuth = authUserAccount.getAuthentication();
+
+	Preconditions.checkArgument(
+		userAuth.hasCredential(),
+		"UserAccount has no credentials.");
+	ClosableIterator<Credential> credentialsIter = userAuth
+		.getAllCredential();
+
+	this.username = null;
+	this.password = null;
+	while (credentialsIter.hasNext()) {
+	    Credential credential = (Credential) credentialsIter.next();
+
+	    URI type = RDF2GoUtils.getType(
+		    credential.getModel(),
+		    credential);
+
+	    if (type.equals(Username.RDFS_CLASS)) {
+		this.username = Username.getInstance(
+			credential.getModel(),
+			credential.getResource());
+	    } else if (type.equals(Password.RDFS_CLASS)) {
+		this.password = Password.getInstance(
+			credential.getModel(),
+			credential.asResource());
+	    }
+	}
+	credentialsIter.close();
+
+	Preconditions.checkArgument(
+		null != this.username && username.hasValue(),
+		"No Username credential found in userAccount");
+
+	Preconditions.checkArgument(
+		null != this.password && password.hasValue(),
+		"No Password credential found in userAccount");
+
+	initModel();
+    }
+
+    private void initModel() {
 	URI uri = Builder.createURI(String.format(
 		YoutubeV2Constants.FMT_FEED_UPLOADS, myId));
 
-	if (Forum.hasInstance(getModel(), uri)) {
-	    this.uploads = Forum.getInstance(getModel(), uri);
+	if (Forum.hasInstance(context.getDataModel(), uri)) {
+	    this.uploads = Forum.getInstance(context.getDataModel(), uri);
 	} else {
-	    this.uploads = new Forum(model, uri, true);
+	    this.uploads = new Forum(context.getDataModel(), uri, true);
 	    this.uploads
 		    .setId(
-		    String.format(YoutubeV2Constants.FMT_ID_FORUM_UPLOADS, myId));
+		    String.format(
+			    YoutubeV2Constants.FMT_ID_FORUM_UPLOADS,
+			    myId));
 	    this.uploads.setName("Uploads");
 	    this.uploads.setHost(getSite());
 	    getSite().addHostOf(this.uploads);
@@ -125,10 +214,10 @@ public class YoutubeV2Connector extends AbstractConnector {
 	uri = Builder.createURI(String.format(
 		YoutubeV2Constants.FMT_FEED_PLAYLISTS, myId));
 
-	if (Forum.hasInstance(getModel(), uri)) {
-	    this.playlists = Forum.getInstance(getModel(), uri);
+	if (Forum.hasInstance(context.getDataModel(), uri)) {
+	    this.playlists = Forum.getInstance(context.getDataModel(), uri);
 	} else {
-	    this.playlists = new Forum(model, uri, true);
+	    this.playlists = new Forum(context.getDataModel(), uri, true);
 	    this.playlists.setId(
 		    String.format(YoutubeV2Constants.FMT_ID_FORUM_PLAYLISTS,
 			    myId));
@@ -143,12 +232,14 @@ public class YoutubeV2Connector extends AbstractConnector {
     public void connect() throws ConnectorException {
 	setConnected(false);
 
-	this.service = new YouTubeService("YoutubeConnectorV2",
-		this.ytConfig.getDeveloperKey());
+	this.service = new YouTubeService(
+		getId(),
+		developerKey.getValue());
 
 	try {
-	    this.service.setUserCredentials(this.ytConfig.getUsername(),
-		    this.ytConfig.getPassword());
+	    this.service.setUserCredentials(
+		    username.getValue(),
+		    password.getValue());
 	} catch (com.google.gdata.util.AuthenticationException e) {
 	    throw new AuthenticationException(e.getMessage(), e);
 	}
@@ -180,32 +271,21 @@ public class YoutubeV2Connector extends AbstractConnector {
     }
 
     @Override
-    public String getURL() {
-	return "http://www.youtube.com/";
-    }
+    public void disconnect() {
+	// TODO Auto-generated method stub
 
-    @Override
-    public Map<String, Object> getConfiguration() {
-	return ConfigUtils.toMap(ytConfig);
     }
 
     @Override
     public Site getSite() {
-	URI uri = Builder.createURI(getURL());
-
-	if (!Site.hasInstance(getModel(), uri)) {
-	    Site result = new Site(getModel(), uri, true);
+	if (!Site.hasInstance(context.getDataModel(), endpoint)) {
+	    Site result = new Site(context.getDataModel(), endpoint, true);
 	    result.setName("Youtube");
 
 	    return result;
 	}
 
-	return Site.getInstance(getModel(), uri);
-    }
-
-    @Override
-    public UserAccount getLoginUser() throws ConnectorException {
-	return getUserAccount(myId);
+	return Site.getInstance(context.getDataModel(), endpoint);
     }
 
     @Override

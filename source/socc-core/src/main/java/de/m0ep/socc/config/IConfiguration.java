@@ -25,8 +25,7 @@ package de.m0ep.socc.config;
 import java.io.Serializable;
 import java.util.Collection;
 
-import org.ontoware.rdf2go.model.node.Resource;
-import org.ontoware.rdf2go.model.node.impl.URIImpl;
+import org.ontoware.rdf2go.model.node.URI;
 
 import de.m0ep.sioc.service.auth.Service;
 import de.m0ep.sioc.service.auth.UserAccount;
@@ -65,17 +64,17 @@ public interface IConfiguration extends Serializable {
 	/**
 	 * Returns the RDF resource that is associated with this connector.
 	 * 
-	 * @return An {@link Service} {@link Resource}.
+	 * @return An {@link Service} {@link URI}.
 	 */
-	public URIImpl getService();
+	public URI getService();
 
 	/**
 	 * Returns the SIOC {@link UserAccount} that is associated with this
 	 * connector.
 	 * 
-	 * @return An {@link UserAccount} {@link Resource}.
+	 * @return An {@link UserAccount} {@link URI}.
 	 */
-	public URIImpl getUserAccount();
+	public URI getUserAccount();
     }
 
     /**

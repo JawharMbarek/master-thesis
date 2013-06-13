@@ -107,6 +107,7 @@ public class FacebookConnector extends AbstractConnector {
 	    this.endpoint = Builder.createURI(
 		    service.getServiceEndpoint().toString());
 	}
+	service.setServiceEndpoint(endpoint);
 
 	Preconditions.checkArgument(
 		service.hasAuthentication(),

@@ -9,6 +9,7 @@ import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.BlankNode;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
+import org.ontoware.rdf2go.vocabulary.RDF;
 import org.ontoware.rdfreactor.runtime.Base;
 import org.rdfs.sioc.services.Thing;
 
@@ -23,16 +24,12 @@ public class Credential extends Thing {
     public static final URI RDFS_CLASS = new URIImpl(
 	    "http://www.m0ep.de/sioc-service-auth#Credential", false);
 
-    public static final URI HAS_VALUE = new URIImpl(
-	    "http://www.m0ep.de/sioc-service-auth#has_value", false);
-
     /**
      * All property-URIs with this class as domain. All properties of all
      * super-classes are also available.
      */
     public static final URI[] MANAGED_URIS = {
-	    new URIImpl(
-		    "http://www.m0ep.de/sioc-service-auth#has_value", false)
+	    RDF.value
     };
 
     // protected constructors needed for inheritance
@@ -243,7 +240,7 @@ public class Credential extends Thing {
      */
     public static boolean hasValue(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.has(model, instanceResource, HAS_VALUE);
+	return Base.has(model, instanceResource, RDF.value);
     }
 
     /**
@@ -255,7 +252,7 @@ public class Credential extends Thing {
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
     public boolean hasValue() {
-	return Base.has(this.model, this.getResource(), HAS_VALUE);
+	return Base.has(this.model, this.getResource(), RDF.value);
     }
 
     /**
@@ -276,7 +273,7 @@ public class Credential extends Thing {
     public static boolean hasValue(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
-	return Base.hasValue(model, instanceResource, HAS_VALUE, value);
+	return Base.hasValue(model, instanceResource, RDF.value, value);
     }
 
     /**
@@ -291,7 +288,7 @@ public class Credential extends Thing {
      *         [Generated from RDFReactor template rule #get0has-value-dynamic]
      */
     public boolean hasValue(org.ontoware.rdf2go.model.node.Node value) {
-	return Base.hasValue(this.model, this.getResource(), HAS_VALUE, value);
+	return Base.hasValue(this.model, this.getResource(), RDF.value, value);
     }
 
     /**
@@ -308,7 +305,7 @@ public class Credential extends Thing {
     public static ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllValues_asNode(
 	    Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll_asNode(model, instanceResource, HAS_VALUE);
+	return Base.getAll_asNode(model, instanceResource, RDF.value);
     }
 
     /**
@@ -319,7 +316,7 @@ public class Credential extends Thing {
      *         [Generated from RDFReactor template rule #get8dynamic]
      */
     public ClosableIterator<org.ontoware.rdf2go.model.node.Node> getAllValues_asNode() {
-	return Base.getAll_asNode(this.model, this.getResource(), HAS_VALUE);
+	return Base.getAll_asNode(this.model, this.getResource(), RDF.value);
     }
 
     /**
@@ -333,7 +330,7 @@ public class Credential extends Thing {
      */
     public static ClosableIterator<String> getAllValues(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	return Base.getAll(model, instanceResource, HAS_VALUE, String.class);
+	return Base.getAll(model, instanceResource, RDF.value, String.class);
     }
 
     /**
@@ -342,7 +339,7 @@ public class Credential extends Thing {
      * [Generated from RDFReactor template rule #get12dynamic]
      */
     public ClosableIterator<String> getAllValues() {
-	return Base.getAll(this.model, this.getResource(), HAS_VALUE,
+	return Base.getAll(this.model, this.getResource(), RDF.value,
 		String.class);
     }
 
@@ -356,7 +353,7 @@ public class Credential extends Thing {
      *         #get12dynamic-reactorresult]
      */
     public String getValue() {
-	return Base.getAll_as(this.model, this.getResource(), HAS_VALUE,
+	return Base.getAll_as(this.model, this.getResource(), RDF.value,
 		java.lang.String.class).firstValue();
     }
 
@@ -375,7 +372,7 @@ public class Credential extends Thing {
     public static void addValue(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
-	Base.add(model, instanceResource, HAS_VALUE, value);
+	Base.add(model, instanceResource, RDF.value, value);
     }
 
     /**
@@ -387,7 +384,7 @@ public class Credential extends Thing {
      *            [Generated from RDFReactor template rule #add1dynamic]
      */
     public void addValue(org.ontoware.rdf2go.model.node.Node value) {
-	Base.add(this.model, this.getResource(), HAS_VALUE, value);
+	Base.add(this.model, this.getResource(), RDF.value, value);
     }
 
     /**
@@ -403,7 +400,7 @@ public class Credential extends Thing {
     public static void addValue(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
-	Base.add(model, instanceResource, HAS_VALUE, value);
+	Base.add(model, instanceResource, RDF.value, value);
     }
 
     /**
@@ -412,7 +409,7 @@ public class Credential extends Thing {
      * [Generated from RDFReactor template rule #add4dynamic]
      */
     public void addValue(java.lang.String value) {
-	Base.add(this.model, this.getResource(), HAS_VALUE, value);
+	Base.add(this.model, this.getResource(), RDF.value, value);
     }
 
     /**
@@ -433,7 +430,7 @@ public class Credential extends Thing {
     public static void setValue(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
-	Base.set(model, instanceResource, HAS_VALUE, value);
+	Base.set(model, instanceResource, RDF.value, value);
     }
 
     /**
@@ -448,7 +445,7 @@ public class Credential extends Thing {
      *            [Generated from RDFReactor template rule #set1dynamic]
      */
     public void setValue(org.ontoware.rdf2go.model.node.Node value) {
-	Base.set(this.model, this.getResource(), HAS_VALUE, value);
+	Base.set(this.model, this.getResource(), RDF.value, value);
     }
 
     /**
@@ -469,7 +466,7 @@ public class Credential extends Thing {
     public static void setValue(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
-	Base.set(model, instanceResource, HAS_VALUE, value);
+	Base.set(model, instanceResource, RDF.value, value);
     }
 
     /**
@@ -484,7 +481,7 @@ public class Credential extends Thing {
      *            [Generated from RDFReactor template rule #set4dynamic]
      */
     public void setValue(java.lang.String value) {
-	Base.set(this.model, this.getResource(), HAS_VALUE, value);
+	Base.set(this.model, this.getResource(), RDF.value, value);
     }
 
     /**
@@ -502,7 +499,7 @@ public class Credential extends Thing {
     public static void removeValue(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    org.ontoware.rdf2go.model.node.Node value) {
-	Base.remove(model, instanceResource, HAS_VALUE, value);
+	Base.remove(model, instanceResource, RDF.value, value);
     }
 
     /**
@@ -514,7 +511,7 @@ public class Credential extends Thing {
      *            [Generated from RDFReactor template rule #remove1dynamic]
      */
     public void removeValue(org.ontoware.rdf2go.model.node.Node value) {
-	Base.remove(this.model, this.getResource(), HAS_VALUE, value);
+	Base.remove(this.model, this.getResource(), RDF.value, value);
     }
 
     /**
@@ -533,7 +530,7 @@ public class Credential extends Thing {
     public static void removeValue(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource,
 	    java.lang.String value) {
-	Base.remove(model, instanceResource, HAS_VALUE, value);
+	Base.remove(model, instanceResource, RDF.value, value);
     }
 
     /**
@@ -546,7 +543,7 @@ public class Credential extends Thing {
      *            [Generated from RDFReactor template rule #remove4dynamic]
      */
     public void removeValue(java.lang.String value) {
-	Base.remove(this.model, this.getResource(), HAS_VALUE, value);
+	Base.remove(this.model, this.getResource(), RDF.value, value);
     }
 
     /**
@@ -559,7 +556,7 @@ public class Credential extends Thing {
      */
     public static void removeAllValue(Model model,
 	    org.ontoware.rdf2go.model.node.Resource instanceResource) {
-	Base.removeAll(model, instanceResource, HAS_VALUE);
+	Base.removeAll(model, instanceResource, RDF.value);
     }
 
     /**
@@ -567,7 +564,7 @@ public class Credential extends Thing {
      * template rule #removeall1dynamic]
      */
     public void removeAllValue() {
-	Base.removeAll(this.model, this.getResource(), HAS_VALUE);
+	Base.removeAll(this.model, this.getResource(), RDF.value);
     }
 
 }

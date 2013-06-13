@@ -59,14 +59,17 @@ public class YoutubeV2SIOCConverter {
     public static UserAccount createUserAccount(
 	    final YoutubeV2Connector connector,
 	    final UserProfileEntry userProfileEntry, final URI uri) {
-	UserAccount result = new UserAccount(connector.getModel(), uri, true);
+	UserAccount result = new UserAccount(
+		connector.getContext().getDataModel(),
+		uri,
+		true);
 
 	result.setId(connector.parseYoutubeEntryID(userProfileEntry.getId()));
 	result.setIsPartOf(connector.getSite());
 	result.setAccountName(Strings.nullToEmpty(userProfileEntry
 		.getUsername()));
-	result.setAccountServiceHomepage(Builder.createURI(connector
-		.getURL()));
+	result.setAccountServiceHomepage(
+		connector.getService().getServiceEndpoint());
 
 	if (null != userProfileEntry.getAboutMe()) {
 	    result.setDescription(userProfileEntry.getAboutMe());
@@ -96,7 +99,11 @@ public class YoutubeV2SIOCConverter {
     public static Thread createThread(final YoutubeV2Connector connector,
 	    final PlaylistLinkEntry playlistLinkEntry, final URI uri,
 	    final Forum parentForum) throws ConnectorException {
-	Thread result = new Thread(connector.getModel(), uri, true);
+	Thread result = new Thread(
+		connector.getContext().getDataModel(),
+		uri,
+		true);
+
 	result.setId(connector.parseYoutubeEntryID(playlistLinkEntry.getId()));
 
 	if (null != playlistLinkEntry.getTitle()) {
@@ -135,8 +142,11 @@ public class YoutubeV2SIOCConverter {
     public static Post createPost(final YoutubeV2Connector connector,
 	    final VideoEntry videoEntry, final URI uri,
 	    final Container container) throws ConnectorException {
+	Post result = new Post(
+		connector.getContext().getDataModel(),
+		uri,
+		true);
 
-	Post result = new Post(connector.getModel(), uri, true);
 	result.setId(connector.getVideoEntryId(videoEntry));
 
 	for (Person person : videoEntry.getAuthors()) {
@@ -191,7 +201,10 @@ public class YoutubeV2SIOCConverter {
 	    final CommentEntry commentEntry, final URI uri,
 	    final Container container, final Post videoPost)
 	    throws ConnectorException {
-	Post result = new Post(connector.getModel(), uri, true);
+	Post result = new Post(
+		connector.getContext().getDataModel(),
+		uri,
+		true);
 
 	result.setId(
 		String.format(
@@ -242,8 +255,11 @@ public class YoutubeV2SIOCConverter {
 	    URI replyToUri = Builder.createURI(href.substring(0,
 		    href.lastIndexOf('?')));
 
-	    if (Post.hasInstance(connector.getModel(), replyToUri)) {
-		Post replyToPost = Post.getInstance(connector.getModel(),
+	    if (Post.hasInstance(
+		    connector.getContext().getDataModel(),
+		    replyToUri)) {
+		Post replyToPost = Post.getInstance(
+			connector.getContext().getDataModel(),
 			replyToUri);
 		result.setReplyOf(replyToPost);
 		replyToPost.addReply(result);

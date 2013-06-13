@@ -35,7 +35,7 @@ import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.Variable;
 import org.ontoware.rdf2go.model.node.impl.PlainLiteralImpl;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
-import org.openrdf.model.vocabulary.RDF;
+import org.ontoware.rdf2go.vocabulary.RDF;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -138,7 +138,7 @@ public final class RDF2GoUtils {
 	URI result = null;
 	ClosableIterator<Statement> stmtIter = model.findStatements(
 		resource,
-		new URIImpl(RDF.TYPE.toString()),
+		RDF.type,
 		Variable.ANY);
 
 	if (stmtIter.hasNext()) {

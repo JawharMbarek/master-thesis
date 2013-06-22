@@ -22,10 +22,11 @@
 
 package de.m0ep.socc.utils;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+
+import javax.xml.bind.DatatypeConverter;
 
 import com.google.common.base.Preconditions;
 
@@ -36,27 +37,10 @@ import com.google.common.base.Preconditions;
  * 
  */
 public final class DateUtils {
-    private static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
-
-    private static DateFormat dateFormat;
-
     /*
      * Private constructor to avoid creating objects from this class.
      */
     private DateUtils() {
-    }
-
-    /**
-     * Get a {@link DateFormat} to handle the ISO8601 date format.
-     * 
-     * @return A {@link DateFormat} for ISO8601
-     */
-    public static DateFormat getISO8601Format() {
-	if (null == dateFormat) {
-	    dateFormat = new SimpleDateFormat(ISO8601_FORMAT);
-	}
-
-	return dateFormat;
     }
 
     /**
@@ -70,8 +54,13 @@ public final class DateUtils {
      *             Thrown if date is null.
      */
     public static String formatISO8601(final Date date) {
-	return getISO8601Format().format(
-		Preconditions.checkNotNull(date, "Date can not be null."));
+	Calendar cal = Calendar.getInstance();
+	cal.setTime(
+		Preconditions.checkNotNull(
+			date,
+			"Date can not be null."));
+
+	return DatatypeConverter.printDateTime(cal);
     }
 
     /**
@@ -85,10 +74,10 @@ public final class DateUtils {
      *             Thrown if millis is null.
      */
     public static String formatISO8601(final Long millis) {
-	return getISO8601Format().format(
-		new Date(Preconditions.checkNotNull(
+	return formatISO8601(new Date(
+		Preconditions.checkNotNull(
 			millis,
-			"Date can not be null.")));
+			"Millis can not be null.")));
     }
 
     /**
@@ -98,13 +87,15 @@ public final class DateUtils {
      *            ISO8601 String
      * @return {@link Date} object of the ISO8601 String.
      * 
-     * @throws ParseException
+     * @throws IllegalArgumentException
      *             Thrown if parsing fails.
      * @throws NullPointerException
      *             Thrown if value is null.
      */
     public static Date parseISO8601(final String value) throws ParseException {
-	return getISO8601Format().parse(
-		Preconditions.checkNotNull(value, "value can not be null."));
+	return DatatypeConverter.parseDateTime(
+		Preconditions.checkNotNull(
+			value,
+			"Value can not be null.")).getTime();
     }
 }

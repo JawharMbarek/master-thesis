@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
+import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
 
 public class DiscussionTopicResponse {
@@ -207,6 +208,48 @@ public class DiscussionTopicResponse {
 	}
     }
 
+    public static class LockInfo {
+	@SerializedName("asset_string")
+	private String assetString;
+
+	@SerializedName("unlock_at")
+	private Date unlockAt;
+
+	@SerializedName("lock_at")
+	private Date lockAt;
+
+	@SerializedName("context_module")
+	private JsonElement context_module;
+
+	/**
+	 * @return the assetString
+	 */
+	public String getAssetString() {
+	    return assetString;
+	}
+
+	/**
+	 * @return the unlockAt
+	 */
+	public Date getUnlockAt() {
+	    return unlockAt;
+	}
+
+	/**
+	 * @return the lockAt
+	 */
+	public Date getLockAt() {
+	    return lockAt;
+	}
+
+	/**
+	 * @return the context_module
+	 */
+	public JsonElement getContext_module() {
+	    return context_module;
+	}
+    }
+
     private Long id;
 
     private Author author;
@@ -250,11 +293,14 @@ public class DiscussionTopicResponse {
     @SerializedName("locked_for_user")
     private boolean lockedForUser;
 
+    @SerializedName("lock_explanation")
+    private String lockExplanation;
+
     @SerializedName("user_name")
     private String userName;
 
     @SerializedName("topic_children")
-    private Collection<Long> topicChildren;
+    private Long[] topicChildren;
 
     @SerializedName("root_topic_id")
     private Long rootTopicId;
@@ -268,7 +314,7 @@ public class DiscussionTopicResponse {
     @SerializedName("discussion_type")
     private String discussionType;
 
-    private Collection<Attachment> attachments;
+    private Attachment[] attachments;
 
     private Map<String, Boolean> permissions;
 
@@ -385,6 +431,14 @@ public class DiscussionTopicResponse {
     }
 
     /**
+     * 
+     * @return the lockExplanation
+     */
+    public String getLockExplanation() {
+	return lockExplanation;
+    }
+
+    /**
      * @return the userName
      */
     public String getUserName() {
@@ -394,7 +448,7 @@ public class DiscussionTopicResponse {
     /**
      * @return the topicChildren
      */
-    public Collection<Long> getTopicChildren() {
+    public Long[] getTopicChildren() {
 	return topicChildren;
     }
 
@@ -422,7 +476,7 @@ public class DiscussionTopicResponse {
     /**
      * @return the attachments
      */
-    public Collection<Attachment> getAttachments() {
+    public Attachment[] getAttachments() {
 	return attachments;
     }
 

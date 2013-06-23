@@ -1,6 +1,9 @@
 package de.m0ep.canvaslms.test.gson;
 
+import java.util.List;
+
 import de.m0ep.canvaslms.CanvasLMSClient;
+import de.m0ep.canvaslms.Pagination;
 import de.m0ep.canvaslms.exceptions.CanvasLMSException;
 import de.m0ep.canvaslms.model.DiscussionTopicResponse;
 
@@ -10,9 +13,9 @@ public class CanvasLMSClientTest {
 		"https://canvas.instructure.com",
 		"7~w8C7LIFV0hVr94zD2watmgXWGv2uCG4TKcTWXRF4KoAgkpTavEDUdlZPExRRMvIO");
 
-	DiscussionTopicResponse[] discussions;
+	Pagination<DiscussionTopicResponse> discussionPages;
 	try {
-	    discussions = client
+	    discussionPages = client
 		    .listCourseDiscussionTopics(798152);
 	} catch (CanvasLMSException e) {
 	    e.printStackTrace();
@@ -21,12 +24,18 @@ public class CanvasLMSClientTest {
 
 	System.out.println();
 	System.out.println();
-	for (DiscussionTopicResponse discussion : discussions) {
-	    System.out.println(discussion.getId());
-	    System.out.println(discussion.getTitle());
-	    System.out.println(discussion.getMessage());
-	    System.out.println(discussion.getAuthor().getDisplayName());
-	    System.out.println("--------------------");
+
+	int page = 0;
+	for (List<DiscussionTopicResponse> discussions : discussionPages) {
+	    System.out.println("Page " + (++page));
+	    System.out.println("====================");
+	    for (DiscussionTopicResponse discussion : discussions) {
+		System.out.println(discussion.getId());
+		System.out.println(discussion.getTitle());
+		System.out.println(discussion.getMessage());
+		System.out.println(discussion.getAuthor().getDisplayName());
+		System.out.println("--------------------");
+	    }
 	}
     }
 }

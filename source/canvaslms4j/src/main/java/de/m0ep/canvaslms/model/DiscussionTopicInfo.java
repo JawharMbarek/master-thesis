@@ -1,171 +1,12 @@
 package de.m0ep.canvaslms.model;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
 import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
 
-public class DiscussionTopicResponse {
-
-    public static class Attachment {
-	@SerializedName("content-type")
-	private String contentType;
-
-	private String url;
-
-	private String filename;
-
-	@SerializedName("display_name")
-	private String displayName;
-
-	/**
-	 * @return the contentType
-	 */
-	public String getContentType() {
-	    return contentType;
-	}
-
-	/**
-	 * @return the url
-	 */
-	public String getUrl() {
-	    return url;
-	}
-
-	/**
-	 * @return the filename
-	 */
-	public String getFilename() {
-	    return filename;
-	}
-
-	/**
-	 * @return the displayName
-	 */
-	public String getDisplayName() {
-	    return displayName;
-	}
-    }
-
-    public static class Entry {
-	private long id;
-
-	@SerializedName("user_id")
-	private long userId;
-
-	@SerializedName("editor_id")
-	private long editorId;
-
-	@SerializedName("user_name")
-	private String userName;
-
-	private String message;
-
-	@SerializedName("read_state")
-	private String readState;
-
-	@SerializedName("created_at")
-	private Date createdAt;
-
-	@SerializedName("updated_at")
-	private Date updatedAt;
-
-	private Attachment attachment;
-
-	@SerializedName("recent_replies")
-	private Collection<Entry> recentReplies;
-
-	@SerializedName("has_more_replies")
-	private boolean hasMoreReplies;
-
-	private boolean deleted;
-
-	/**
-	 * @return the id
-	 */
-	public long getId() {
-	    return id;
-	}
-
-	/**
-	 * @return the userId
-	 */
-	public long getUserId() {
-	    return userId;
-	}
-
-	/**
-	 * @return the editorId
-	 */
-	public long getEditorId() {
-	    return editorId;
-	}
-
-	/**
-	 * @return the userName
-	 */
-	public String getUserName() {
-	    return userName;
-	}
-
-	/**
-	 * @return the message
-	 */
-	public String getMessage() {
-	    return message;
-	}
-
-	/**
-	 * @return the readState
-	 */
-	public String getReadState() {
-	    return readState;
-	}
-
-	/**
-	 * @return the createdAt
-	 */
-	public Date getCreatedAt() {
-	    return createdAt;
-	}
-
-	/**
-	 * @return the updatedAt
-	 */
-	public Date getUpdatedAt() {
-	    return updatedAt;
-	}
-
-	/**
-	 * @return the attachment
-	 */
-	public Attachment getAttachment() {
-	    return attachment;
-	}
-
-	/**
-	 * @return the recentReplies
-	 */
-	public Collection<Entry> getRecentReplies() {
-	    return recentReplies;
-	}
-
-	/**
-	 * @return the hasMoreReplies
-	 */
-	public boolean hasMoreReplies() {
-	    return hasMoreReplies;
-	}
-
-	/**
-	 * @return the deleted
-	 */
-	public boolean isDeleted() {
-	    return deleted;
-	}
-    }
+public class DiscussionTopicInfo {
 
     public static class Author {
 	private Long id;
@@ -523,7 +364,7 @@ public class DiscussionTopicResponse {
 	if (getClass() != obj.getClass())
 	    return false;
 
-	DiscussionTopicResponse other = (DiscussionTopicResponse) obj;
+	DiscussionTopicInfo other = (DiscussionTopicInfo) obj;
 	if (id != other.id)
 	    return false;
 	return true;

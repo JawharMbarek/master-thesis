@@ -194,7 +194,7 @@ public class MoodleConnector extends AbstractConnector {
 	    UserRecord[] users = mdlClient.get_user_byid(client, sesskey, myId);
 
 	    if (null != users && 0 < users.length) {
-		return MoodleSIOCConverter.createUserAccount(this, users[0],
+		return MoodleSIOCConverter.createSiocUserAccount(this, users[0],
 			uri);
 	    }
 
@@ -238,7 +238,7 @@ public class MoodleConnector extends AbstractConnector {
 		    endpoint + URI_FORUM_PATH + forumRecord.getId());
 
 	    if (!Forum.hasInstance(context.getDataModel(), uri)) {
-		result.add(MoodleSIOCConverter.createForum(
+		result.add(MoodleSIOCConverter.createSiocForum(
 			this,
 			forumRecord,
 			uri));
@@ -291,7 +291,7 @@ public class MoodleConnector extends AbstractConnector {
 		    + discussionRecord.getId());
 
 	    if (!Thread.hasInstance(context.getDataModel(), uri)) {
-		result.add(MoodleSIOCConverter.createThread(this,
+		result.add(MoodleSIOCConverter.createSiocThread(this,
 			discussionRecord, uri, forum));
 	    } else {
 		result.add(Thread.getInstance(context.getDataModel(), uri));
@@ -339,7 +339,7 @@ public class MoodleConnector extends AbstractConnector {
 		if (created.after(lastItemDate)) {
 
 		    if (!Post.hasInstance(context.getDataModel(), uri)) {
-			Post post = MoodleSIOCConverter.createPost(this,
+			Post post = MoodleSIOCConverter.createSiocPost(this,
 				postRecord, uri, container, null);
 			result.add(post);
 
@@ -386,7 +386,7 @@ public class MoodleConnector extends AbstractConnector {
 		if (created.after(lastReplyDate)) {
 
 		    if (!Post.hasInstance(context.getDataModel(), uri)) {
-			Post replyPost = MoodleSIOCConverter.createPost(this,
+			Post replyPost = MoodleSIOCConverter.createSiocPost(this,
 				replyRecord, uri, parentPost.getContainer(),
 				parentPost);
 			result.add(replyPost);
@@ -477,16 +477,9 @@ public class MoodleConnector extends AbstractConnector {
 	Preconditions.checkArgument(post.hasContent());
 	Preconditions.checkArgument(canPublishOn(container));
 
-	final ForumPostDatum datum = new ForumPostDatum(mdlClient
-		.getNAMESPACE());
-	datum.setMessage(post.getContent());
-	if (post.hasTitle()) {
-	    datum.setSubject(post.getTitle());
-	} else if (post.hasSubject()) {
-	    datum.setSubject(post.getSubject());
-	} else {
-	    datum.setSubject("");
-	}
+	final ForumPostDatum datum = MoodleSIOCConverter.createMoodleForumPost(
+		mdlClient,
+		post);
 
 	final int discussionId = Integer.parseInt(container.getId());
 	final int firstPostId;
@@ -530,7 +523,7 @@ public class MoodleConnector extends AbstractConnector {
 			+ postRecord.getId());
 
 		if (!Post.hasInstance(context.getDataModel(), uri)) {
-		    Post addedPost = MoodleSIOCConverter.createPost(this,
+		    Post addedPost = MoodleSIOCConverter.createSiocPost(this,
 			    postRecord, uri, container, null);
 		    // add original post as sibling
 		    addedPost.setSibling(post);
@@ -556,16 +549,9 @@ public class MoodleConnector extends AbstractConnector {
 	Preconditions.checkArgument(canReplyOn(parentPost),
 		"can not reply on parentPost");
 
-	final ForumPostDatum datum = new ForumPostDatum(mdlClient
-		.getNAMESPACE());
-	datum.setMessage(post.getContent());
-	if (post.hasTitle()) {
-	    datum.setSubject(post.getTitle());
-	} else if (post.hasSubject()) {
-	    datum.setSubject(post.getSubject());
-	} else {
-	    datum.setSubject("");
-	}
+	final ForumPostDatum datum = MoodleSIOCConverter.createMoodleForumPost(
+		mdlClient,
+		post);
 
 	ForumPostRecord[] postRecordArray = callMethod(new Callable<ForumPostRecord[]>() {
 	    @Override
@@ -581,7 +567,7 @@ public class MoodleConnector extends AbstractConnector {
 		    endpoint + URI_POST_PATH + postRecord.getId());
 
 	    if (!Post.hasInstance(context.getDataModel(), uri)) {
-		Post addedPost = MoodleSIOCConverter.createPost(this,
+		Post addedPost = MoodleSIOCConverter.createSiocPost(this,
 			postRecord, uri, parentPost.getContainer(), parentPost);
 		// add original post as sibling
 		addedPost.setSibling(post);

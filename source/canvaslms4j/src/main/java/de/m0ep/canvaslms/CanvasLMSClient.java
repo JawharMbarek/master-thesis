@@ -3,6 +3,7 @@ package de.m0ep.canvaslms;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.http.Header;
@@ -11,23 +12,35 @@ import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Range;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import de.m0ep.canvaslms.exceptions.AccessControlException;
 import de.m0ep.canvaslms.exceptions.AuthorizationException;
 import de.m0ep.canvaslms.exceptions.CanvasLMSException;
 import de.m0ep.canvaslms.exceptions.NetworkException;
 import de.m0ep.canvaslms.gson.ISO8601TypeAdapter;
-import de.m0ep.canvaslms.model.DiscussionTopicResponse;
+import de.m0ep.canvaslms.model.CourseInfo;
+import de.m0ep.canvaslms.model.DiscussionTopicEntry;
+import de.m0ep.canvaslms.model.DiscussionTopicInfo;
 
 public class CanvasLMSClient {
+
+    public static Range<Integer> HTTP_SUCCESSFULL_CODE_RANGE = Range
+	    .closedOpen(200, 300);
+
     private String accessToken;
     private String baseUri;
     private HttpClient httpClient;
@@ -59,6 +72,8 @@ public class CanvasLMSClient {
 	if (uri.endsWith("/")) {
 	    this.baseUri = this.baseUri.substring(0, this.baseUri.length() - 1);
 	}
+
+	this.baseUri += "/api/v1";
 
 	this.accessToken = Preconditions.checkNotNull(
 		accesstoken,
@@ -103,21 +118,121 @@ public class CanvasLMSClient {
 	return gson;
     }
 
-    public Pagination<DiscussionTopicResponse> listCourseDiscussionTopics(
+    public Pagination<DiscussionTopicInfo> listCourseDiscussionTopics(
 	    final long id) throws CanvasLMSException {
 	return fetchPagination(
-		"/api/v1/courses/"
+		"/courses/"
 			+ id
 			+ "/discussion_topics",
-		DiscussionTopicResponse.class);
+		DiscussionTopicInfo.class);
+    }
+
+    public Pagination<CourseInfo> listCourses() throws CanvasLMSException {
+	return fetchPagination("/courses", CourseInfo.class);
+    }
+
+    public Pagination<DiscussionTopicEntry> listDiscussionTopicEntries(
+	    final long courseId, final long topicId) throws CanvasLMSException {
+	return fetchPagination("/courses/"
+		+ courseId
+		+ "/discussion_topics/"
+		+ topicId
+		+ "/entries",
+		DiscussionTopicEntry.class);
+    }
+
+    public DiscussionTopicEntry postDiscussionEntry(String message,
+	    long courseId,
+	    long topicId) throws CanvasLMSException {
+	HttpResponse response = makePostRequest("/courses/"
+		+ courseId
+		+ "/discussion_topics/"
+		+ topicId
+		+ "/entries",
+		new BasicNameValuePair("message", message));
+
+	String data = "";
+	try {
+	    data = EntityUtils.toString(response.getEntity());
+	} catch (Throwable t) {
+	    throw new CanvasLMSException(
+		    "Failed to read data from stream.", t);
+	}
+
+	StatusLine status = response.getStatusLine();
+	int statusCode = status.getStatusCode();
+	if (HTTP_SUCCESSFULL_CODE_RANGE.contains(statusCode)) { // OK
+
+	    return gson.fromJson(
+		    data,
+		    DiscussionTopicEntry.class);
+
+	} else if (401 == statusCode) { // Unauthorized
+	    throw new AuthorizationException(
+		    "Authorization error: Accesstoken is missing or invalid.");
+	} else if (403 == statusCode) { // Forbidden
+	    throw new AccessControlException("Forbidden access: " + data);
+	} else {
+	    throw new CanvasLMSException(
+		    "Http error: " + status.getStatusCode());
+	}
+    }
+
+    public DiscussionTopicEntry postReply(String message, long courseId,
+	    long topicId,
+	    long postId) throws CanvasLMSException {
+	HttpResponse response = makePostRequest("/courses/"
+		+ courseId
+		+ "/discussion_topics/"
+		+ topicId
+		+ "/entries/"
+		+ postId
+		+ "/replies",
+		new BasicNameValuePair("message", message));
+
+	String data = "";
+	try {
+	    data = EntityUtils.toString(response.getEntity());
+	} catch (Throwable t) {
+	    throw new CanvasLMSException(
+		    "Failed to read data from stream.", t);
+	}
+
+	StatusLine status = response.getStatusLine();
+	int statusCode = status.getStatusCode();
+	if (HTTP_SUCCESSFULL_CODE_RANGE.contains(statusCode)) { // OK
+
+	    return gson.fromJson(
+		    data,
+		    DiscussionTopicEntry.class);
+
+	} else if (401 == statusCode) { // Unauthorized
+	    throw new AuthorizationException(
+		    "Authorization error: Accesstoken is missing or invalid.");
+	} else if (403 == statusCode) { // Forbidden
+	    throw new AccessControlException("Forbidden access: " + data);
+	} else {
+	    throw new CanvasLMSException(
+		    "Http error: " + status.getStatusCode());
+	}
     }
 
     public <T> Pagination<T> fetchPagination(String uri, Class<T> type)
 	    throws CanvasLMSException {
 	HttpResponse response = makeGetRequest(uri);
-	StatusLine status = response.getStatusLine();
 
-	if (200 == status.getStatusCode()) {
+	String data = "";
+	try {
+	    data = EntityUtils.toString(response.getEntity());
+	} catch (Throwable t) {
+	    throw new CanvasLMSException(
+		    "Failed to read data from stream.", t);
+	}
+
+	StatusLine status = response.getStatusLine();
+	int statusCode = status.getStatusCode();
+
+	if (HTTP_SUCCESSFULL_CODE_RANGE.contains(statusCode)) {// OK
 	    Header[] links = response.getHeaders("Link");
 
 	    String nextUri = null;
@@ -132,18 +247,12 @@ public class CanvasLMSClient {
 		}
 	    }
 
-	    String json = "[]";
-	    try {
-		json = EntityUtils.toString(response.getEntity());
-	    } catch (Throwable t) {
-		throw new CanvasLMSException(
-			"Failed to read data from stream.", t);
-	    }
-
-	    return new Pagination<T>(this, json, nextUri, type);
-	} else if (401 == status.getStatusCode()) {
+	    return new Pagination<T>(this, data, nextUri, type);
+	} else if (401 == statusCode) { // Unauthorized
 	    throw new AuthorizationException(
 		    "Authorization error: Accesstoken is missing or invalid.");
+	} else if (403 == statusCode) { // Forbidden
+	    throw new AccessControlException("Forbidden access: " + data);
 	} else {
 	    throw new CanvasLMSException(
 		    "Http error: " + status.getStatusCode());
@@ -171,6 +280,44 @@ public class CanvasLMSClient {
 	    return httpClient.execute(request);
 	} catch (URISyntaxException e) {
 	    throw new CanvasLMSException("Invalid URI: " + uri);
+	} catch (ClientProtocolException e) {
+	    throw new CanvasLMSException("Http protocol error.", e);
+	} catch (IOException e) {
+	    throw new NetworkException("Network error.", e);
+	}
+    }
+
+    HttpResponse makePostRequest(String uri, NameValuePair... params)
+	    throws CanvasLMSException {
+
+	try {
+	    HttpPost request = createRequestObject(
+		    HttpPost.class,
+		    uri);
+
+	    request.setEntity(new UrlEncodedFormEntity(
+		    Arrays.asList(params), "UTF-8"));
+
+	    return httpClient.execute(request);
+	} catch (ClientProtocolException e) {
+	    throw new CanvasLMSException("Http protocol error.", e);
+	} catch (IOException e) {
+	    throw new NetworkException("Network error.", e);
+	}
+    }
+
+    HttpResponse makePutRequest(String uri, NameValuePair... params)
+	    throws CanvasLMSException {
+
+	try {
+	    HttpPut request = createRequestObject(
+		    HttpPut.class,
+		    uri);
+
+	    request.setEntity(new UrlEncodedFormEntity(
+		    Arrays.asList(params), "UTF-8"));
+
+	    return httpClient.execute(request);
 	} catch (ClientProtocolException e) {
 	    throw new CanvasLMSException("Http protocol error.", e);
 	} catch (IOException e) {

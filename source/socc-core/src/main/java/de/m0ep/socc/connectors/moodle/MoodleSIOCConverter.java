@@ -13,8 +13,10 @@ import com.google.common.base.Strings;
 
 import de.m0ep.moodlews.soap.CourseRecord;
 import de.m0ep.moodlews.soap.ForumDiscussionRecord;
+import de.m0ep.moodlews.soap.ForumPostDatum;
 import de.m0ep.moodlews.soap.ForumPostRecord;
 import de.m0ep.moodlews.soap.ForumRecord;
+import de.m0ep.moodlews.soap.Mdl_soapserverBindingStub;
 import de.m0ep.moodlews.soap.UserRecord;
 import de.m0ep.socc.exceptions.ConnectorException;
 import de.m0ep.socc.utils.DateUtils;
@@ -23,7 +25,27 @@ import de.m0ep.socc.utils.SIOCUtils;
 import de.m0ep.socc.utils.StringUtils;
 
 public final class MoodleSIOCConverter {
-    public static UserAccount createUserAccount(
+
+    /**
+     * Private constructor to prevent instanciation.
+     */
+    private MoodleSIOCConverter() {
+    }
+
+/**
+     * Create a {@link UserAccount} from a {@link UserRecord} with the provided {@link URI}.
+     * 
+     * @param connector
+     *            Connector to create the {@link UserAccount}
+     * @param userRecord
+     *            The {@link UserRecord} where the data are from.
+     * @param uri
+     *            The {@link URI) for the new UserAccount;
+     *            
+     * @throws NullPointerException 
+     * 		  Thrown if one or more parameter are null.
+     */
+    public static UserAccount createSiocUserAccount(
 	    final MoodleConnector connector,
 	    final UserRecord userRecord,
 	    final URI uri) {
@@ -65,7 +87,23 @@ public final class MoodleSIOCConverter {
 	return result;
     }
 
-    public static Forum createForum(final MoodleConnector connector,
+    /**
+     * Create a new SIOC {@link Forum} from the provided {@link ForumRecord}
+     * with the provided {@link URI}.
+     * 
+     * @param connector
+     *            The connector to create the {@link Forum}.
+     * @param forumRecord
+     *            The {@link ForumRecord} where the data for the new
+     *            {@link Forum} is from.
+     * @param uri
+     *            The {@link URI} for the {@link Forum}.
+     * 
+     * @return
+     * 
+     * @throws ConnectorException
+     */
+    public static Forum createSiocForum(final MoodleConnector connector,
 	    final ForumRecord forumRecord, final URI uri)
 	    throws ConnectorException {
 	Preconditions.checkNotNull(connector, "connector can not be null");
@@ -96,7 +134,16 @@ public final class MoodleSIOCConverter {
 	return result;
     }
 
-    public static Thread createThread(final MoodleConnector connector,
+    /**
+     * 
+     * @param connector
+     * @param discussionRecord
+     * @param uri
+     * @param parentForum
+     * @return
+     * @throws ConnectorException
+     */
+    public static Thread createSiocThread(final MoodleConnector connector,
 	    final ForumDiscussionRecord discussionRecord, final URI uri,
 	    final Forum parentForum) throws ConnectorException {
 	Preconditions.checkNotNull(connector, "connector can not be null");
@@ -132,7 +179,17 @@ public final class MoodleSIOCConverter {
 	return result;
     }
 
-    public static Post createPost(final MoodleConnector connector,
+    /**
+     * 
+     * @param connector
+     * @param postRecord
+     * @param uri
+     * @param container
+     * @param parentPost
+     * @return
+     * @throws ConnectorException
+     */
+    public static Post createSiocPost(final MoodleConnector connector,
 	    ForumPostRecord postRecord, URI uri, final Container container,
 	    final Post parentPost) throws ConnectorException {
 	Preconditions.checkNotNull(connector, "connector can not be null");
@@ -181,5 +238,28 @@ public final class MoodleSIOCConverter {
 	}
 
 	return result;
+    }
+
+    /**
+     * 
+     * @param mdlClient
+     * @param post
+     * @return
+     */
+    public static ForumPostDatum createMoodleForumPost(
+	    final Mdl_soapserverBindingStub mdlClient,
+	    final Post post) {
+	final ForumPostDatum datum = new ForumPostDatum(mdlClient
+		.getNAMESPACE());
+	datum.setMessage(post.getContent());
+	if (post.hasTitle()) {
+	    datum.setSubject(post.getTitle());
+	} else if (post.hasSubject()) {
+	    datum.setSubject(post.getSubject());
+	} else {
+	    datum.setSubject("");
+	}
+
+	return datum;
     }
 }

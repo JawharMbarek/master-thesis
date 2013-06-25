@@ -1,4 +1,4 @@
-package de.m0ep.canvaslms.gson;
+package de.m0ep.canvas.gson;
 
 import java.io.IOException;
 import java.util.Calendar;

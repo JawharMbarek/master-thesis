@@ -12,7 +12,7 @@ import org.junit.Test;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import de.m0ep.canvaslms.gson.ISO8601TypeAdapter;
+import de.m0ep.canvas.gson.ISO8601TypeAdapter;
 
 public class ISO8601TypeAdapterTest {
 

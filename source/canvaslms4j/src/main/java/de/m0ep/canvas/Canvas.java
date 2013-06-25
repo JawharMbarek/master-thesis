@@ -1,4 +1,4 @@
-package de.m0ep.canvaslms;
+package de.m0ep.canvas;
 
 import java.io.IOException;
 import java.net.URI;
@@ -27,20 +27,23 @@ import com.google.common.collect.Range;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import de.m0ep.canvaslms.exceptions.AccessControlException;
-import de.m0ep.canvaslms.exceptions.AuthorizationException;
-import de.m0ep.canvaslms.exceptions.CanvasLMSException;
-import de.m0ep.canvaslms.exceptions.NetworkException;
-import de.m0ep.canvaslms.gson.ISO8601TypeAdapter;
-import de.m0ep.canvaslms.model.CourseInfo;
-import de.m0ep.canvaslms.model.DiscussionTopicEntry;
-import de.m0ep.canvaslms.model.DiscussionTopicInfo;
+import de.m0ep.canvas.exceptions.AccessControlException;
+import de.m0ep.canvas.exceptions.AuthorizationException;
+import de.m0ep.canvas.exceptions.CanvasException;
+import de.m0ep.canvas.exceptions.NetworkException;
+import de.m0ep.canvas.gson.ISO8601TypeAdapter;
+import de.m0ep.canvas.model.Course;
+import de.m0ep.canvas.model.DiscussionTopicEntry;
+import de.m0ep.canvas.model.DiscussionTopicInfo;
+import de.m0ep.canvas.model.UserInfo;
+import de.m0ep.canvas.model.UserProfile;
 
-public class CanvasLMSClient {
+public class Canvas {
 
     public static Range<Integer> HTTP_SUCCESSFULL_CODE_RANGE = Range
 	    .closedOpen(200, 300);
 
+    private long accountId;
     private String accessToken;
     private String baseUri;
     private HttpClient httpClient;
@@ -48,7 +51,7 @@ public class CanvasLMSClient {
     /* package */Gson gson;
 
     /**
-     * Constructor to create a new {@link CanvasLMSClient}
+     * Constructor to create a new {@link Canvas}
      * 
      * @param uri
      *            The uri to a CanvasLMS instance.
@@ -61,7 +64,8 @@ public class CanvasLMSClient {
      * @throws IllegalArgumentException
      *             Thrown if uri or accesstoken are empty.
      */
-    public CanvasLMSClient(final String uri, final String accesstoken) {
+    public Canvas(final String uri, final String accesstoken,
+	    final long accountId) {
 	this.baseUri = Preconditions.checkNotNull(
 		uri,
 		"Uri can not be null.");
@@ -69,10 +73,9 @@ public class CanvasLMSClient {
 		!uri.isEmpty(),
 		"Uri can not be empty.");
 
-	if (uri.endsWith("/")) {
+	if (uri.endsWith("/")) { // remove tailing backslash
 	    this.baseUri = this.baseUri.substring(0, this.baseUri.length() - 1);
 	}
-
 	this.baseUri += "/api/v1";
 
 	this.accessToken = Preconditions.checkNotNull(
@@ -81,6 +84,8 @@ public class CanvasLMSClient {
 	Preconditions.checkArgument(
 		!accesstoken.isEmpty(),
 		"Token can not be empty.");
+
+	this.accountId = accountId;
 
 	this.httpClient = new DefaultHttpClient();
 	this.gson = new GsonBuilder()
@@ -119,7 +124,7 @@ public class CanvasLMSClient {
     }
 
     public Pagination<DiscussionTopicInfo> listCourseDiscussionTopics(
-	    final long id) throws CanvasLMSException {
+	    final long id) throws CanvasException {
 	return fetchPagination(
 		"/courses/"
 			+ id
@@ -127,12 +132,12 @@ public class CanvasLMSClient {
 		DiscussionTopicInfo.class);
     }
 
-    public Pagination<CourseInfo> listCourses() throws CanvasLMSException {
-	return fetchPagination("/courses", CourseInfo.class);
+    public Pagination<Course> listCourses() throws CanvasException {
+	return fetchPagination("/courses", Course.class);
     }
 
     public Pagination<DiscussionTopicEntry> listDiscussionTopicEntries(
-	    final long courseId, final long topicId) throws CanvasLMSException {
+	    final long courseId, final long topicId) throws CanvasException {
 	return fetchPagination("/courses/"
 		+ courseId
 		+ "/discussion_topics/"
@@ -143,7 +148,7 @@ public class CanvasLMSClient {
 
     public DiscussionTopicEntry postDiscussionEntry(String message,
 	    long courseId,
-	    long topicId) throws CanvasLMSException {
+	    long topicId) throws CanvasException {
 	HttpResponse response = makePostRequest("/courses/"
 		+ courseId
 		+ "/discussion_topics/"
@@ -155,7 +160,7 @@ public class CanvasLMSClient {
 	try {
 	    data = EntityUtils.toString(response.getEntity());
 	} catch (Throwable t) {
-	    throw new CanvasLMSException(
+	    throw new CanvasException(
 		    "Failed to read data from stream.", t);
 	}
 
@@ -173,14 +178,14 @@ public class CanvasLMSClient {
 	} else if (403 == statusCode) { // Forbidden
 	    throw new AccessControlException("Forbidden access: " + data);
 	} else {
-	    throw new CanvasLMSException(
+	    throw new CanvasException(
 		    "Http error: " + status.getStatusCode());
 	}
     }
 
     public DiscussionTopicEntry postReply(String message, long courseId,
 	    long topicId,
-	    long postId) throws CanvasLMSException {
+	    long postId) throws CanvasException {
 	HttpResponse response = makePostRequest("/courses/"
 		+ courseId
 		+ "/discussion_topics/"
@@ -194,7 +199,7 @@ public class CanvasLMSClient {
 	try {
 	    data = EntityUtils.toString(response.getEntity());
 	} catch (Throwable t) {
-	    throw new CanvasLMSException(
+	    throw new CanvasException(
 		    "Failed to read data from stream.", t);
 	}
 
@@ -208,24 +213,70 @@ public class CanvasLMSClient {
 
 	} else if (401 == statusCode) { // Unauthorized
 	    throw new AuthorizationException(
-		    "Authorization error: Accesstoken is missing or invalid.");
+		    "Authorization error: Accesstoken is missing or " +
+			    "invalid for this operation.");
 	} else if (403 == statusCode) { // Forbidden
 	    throw new AccessControlException("Forbidden access: " + data);
 	} else {
-	    throw new CanvasLMSException(
+	    throw new CanvasException(
 		    "Http error: " + status.getStatusCode());
 	}
     }
 
-    public <T> Pagination<T> fetchPagination(String uri, Class<T> type)
-	    throws CanvasLMSException {
+    public Pagination<UserInfo> listUsers() throws CanvasException {
+	return fetchPagination(
+		"/accounts/"
+			+ accountId
+			+ "/users",
+		UserInfo.class);
+    }
+
+    public UserProfile getUserProfile(final long id) throws CanvasException {
+	return fetchObject(
+		"/users/" +
+			id +
+			"/profile",
+		UserProfile.class);
+    }
+
+    public <T> T fetchObject(String uri, Class<T> type)
+	    throws CanvasException {
 	HttpResponse response = makeGetRequest(uri);
 
 	String data = "";
 	try {
 	    data = EntityUtils.toString(response.getEntity());
 	} catch (Throwable t) {
-	    throw new CanvasLMSException(
+	    throw new CanvasException(
+		    "Failed to read data from stream.", t);
+	}
+
+	StatusLine status = response.getStatusLine();
+	int statusCode = status.getStatusCode();
+
+	if (HTTP_SUCCESSFULL_CODE_RANGE.contains(statusCode)) {// OK
+	    return gson.fromJson(data, type);
+	} else if (401 == statusCode) { // Unauthorized
+	    System.err.println(data);
+	    throw new AuthorizationException(
+		    "Authorization error: Accesstoken is missing or invalid.");
+	} else if (403 == statusCode) { // Forbidden
+	    throw new AccessControlException("Forbidden access: " + data);
+	} else {
+	    throw new CanvasException(
+		    "Http error: " + status.getStatusCode());
+	}
+    }
+
+    public <T> Pagination<T> fetchPagination(String uri, Class<T> type)
+	    throws CanvasException {
+	HttpResponse response = makeGetRequest(uri);
+
+	String data = "";
+	try {
+	    data = EntityUtils.toString(response.getEntity());
+	} catch (Throwable t) {
+	    throw new CanvasException(
 		    "Failed to read data from stream.", t);
 	}
 
@@ -254,19 +305,19 @@ public class CanvasLMSClient {
 	} else if (403 == statusCode) { // Forbidden
 	    throw new AccessControlException("Forbidden access: " + data);
 	} else {
-	    throw new CanvasLMSException(
+	    throw new CanvasException(
 		    "Http error: " + status.getStatusCode());
 	}
     }
 
     HttpResponse makeGetRequest(String uri, NameValuePair... params)
-	    throws CanvasLMSException {
+	    throws CanvasException {
 
 	URIBuilder builder;
 	try {
 	    builder = new URIBuilder(uri);
 	} catch (URISyntaxException e) {
-	    throw new CanvasLMSException("Invalid URI: " + uri);
+	    throw new CanvasException("Invalid URI: " + uri);
 	}
 
 	for (NameValuePair param : params) {
@@ -279,16 +330,16 @@ public class CanvasLMSClient {
 		    builder.build());
 	    return httpClient.execute(request);
 	} catch (URISyntaxException e) {
-	    throw new CanvasLMSException("Invalid URI: " + uri);
+	    throw new CanvasException("Invalid URI: " + uri);
 	} catch (ClientProtocolException e) {
-	    throw new CanvasLMSException("Http protocol error.", e);
+	    throw new CanvasException("Http protocol error.", e);
 	} catch (IOException e) {
 	    throw new NetworkException("Network error.", e);
 	}
     }
 
     HttpResponse makePostRequest(String uri, NameValuePair... params)
-	    throws CanvasLMSException {
+	    throws CanvasException {
 
 	try {
 	    HttpPost request = createRequestObject(
@@ -300,14 +351,14 @@ public class CanvasLMSClient {
 
 	    return httpClient.execute(request);
 	} catch (ClientProtocolException e) {
-	    throw new CanvasLMSException("Http protocol error.", e);
+	    throw new CanvasException("Http protocol error.", e);
 	} catch (IOException e) {
 	    throw new NetworkException("Network error.", e);
 	}
     }
 
     HttpResponse makePutRequest(String uri, NameValuePair... params)
-	    throws CanvasLMSException {
+	    throws CanvasException {
 
 	try {
 	    HttpPut request = createRequestObject(
@@ -319,14 +370,14 @@ public class CanvasLMSClient {
 
 	    return httpClient.execute(request);
 	} catch (ClientProtocolException e) {
-	    throw new CanvasLMSException("Http protocol error.", e);
+	    throw new CanvasException("Http protocol error.", e);
 	} catch (IOException e) {
 	    throw new NetworkException("Network error.", e);
 	}
     }
 
     <T extends HttpRequestBase> T createRequestObject(Class<T> type,
-	    String uri) throws CanvasLMSException {
+	    String uri) throws CanvasException {
 	try {
 	    if (!uri.startsWith(baseUri)) {
 		if (!uri.startsWith("/")) {
@@ -341,12 +392,12 @@ public class CanvasLMSClient {
 
 	    return instance;
 	} catch (Exception e) {
-	    throw new CanvasLMSException("Failed to create request", e);
+	    throw new CanvasException("Failed to create request", e);
 	}
     }
 
     <T extends HttpRequestBase> T createRequestObject(Class<T> type,
-	    URI uri) throws CanvasLMSException {
+	    URI uri) throws CanvasException {
 	return createRequestObject(type, uri.toString());
     }
 }

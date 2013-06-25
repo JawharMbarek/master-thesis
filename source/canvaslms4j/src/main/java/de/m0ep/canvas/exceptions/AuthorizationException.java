@@ -1,6 +1,6 @@
-package de.m0ep.canvaslms.exceptions;
+package de.m0ep.canvas.exceptions;
 
-public class AuthorizationException extends CanvasLMSException {
+public class AuthorizationException extends CanvasException {
     private static final long serialVersionUID = 6627465563801750355L;
 
     public AuthorizationException() {

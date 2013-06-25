@@ -1,13 +1,18 @@
-package de.m0ep.canvaslms.model;
+package de.m0ep.canvas.model;
 
 import java.util.Collection;
 import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
 
-
 public class DiscussionTopicEntry {
+    public static final String READ_STATE_READ = "read";
+    public static final String READ_STATE_UNREAD = "unread";
+
     private long id;
+
+    @SerializedName("parent_id")
+    private long parentId;
 
     @SerializedName("user_id")
     private long userId;
@@ -22,6 +27,9 @@ public class DiscussionTopicEntry {
 
     @SerializedName("read_state")
     private String readState;
+
+    @SerializedName("forced_read_state")
+    private boolean forcedReadState;
 
     @SerializedName("created_at")
     private Date createdAt;
@@ -39,86 +47,58 @@ public class DiscussionTopicEntry {
 
     private boolean deleted;
 
-    /**
-     * @return the id
-     */
     public long getId() {
 	return id;
     }
 
-    /**
-     * @return the userId
-     */
+    public long getParentId() {
+	return parentId;
+    }
+
     public long getUserId() {
 	return userId;
     }
 
-    /**
-     * @return the editorId
-     */
     public long getEditorId() {
 	return editorId;
     }
 
-    /**
-     * @return the userName
-     */
     public String getUserName() {
 	return userName;
     }
 
-    /**
-     * @return the message
-     */
     public String getMessage() {
 	return message;
     }
 
-    /**
-     * @return the readState
-     */
     public String getReadState() {
 	return readState;
     }
 
-    /**
-     * @return the createdAt
-     */
+    public boolean hasForcedReadState() {
+	return forcedReadState;
+    }
+
     public Date getCreatedAt() {
 	return createdAt;
     }
 
-    /**
-     * @return the updatedAt
-     */
     public Date getUpdatedAt() {
 	return updatedAt;
     }
 
-    /**
-     * @return the attachment
-     */
     public Attachment getAttachment() {
 	return attachment;
     }
 
-    /**
-     * @return the recentReplies
-     */
     public Collection<DiscussionTopicEntry> getRecentReplies() {
 	return recentReplies;
     }
 
-    /**
-     * @return the hasMoreReplies
-     */
     public boolean hasMoreReplies() {
 	return hasMoreReplies;
     }
 
-    /**
-     * @return the deleted
-     */
     public boolean isDeleted() {
 	return deleted;
     }

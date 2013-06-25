@@ -1,6 +1,6 @@
-package de.m0ep.canvaslms.exceptions;
+package de.m0ep.canvas.exceptions;
 
-public class NetworkException extends CanvasLMSException {
+public class NetworkException extends CanvasException {
     private static final long serialVersionUID = -1438999210049126702L;
 
     public NetworkException() {

@@ -1,4 +1,4 @@
-package de.m0ep.canvaslms.model;
+package de.m0ep.canvas.model;
 
 import java.util.Date;
 import java.util.Map;

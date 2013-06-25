@@ -1,4 +1,4 @@
-package de.m0ep.canvaslms;
+package de.m0ep.canvas;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
 import com.google.common.base.Strings;
 import com.google.gson.JsonArray;
 
-import de.m0ep.canvaslms.exceptions.CanvasLMSException;
+import de.m0ep.canvas.exceptions.CanvasException;
 
 public class Pagination<T> implements Iterable<List<T>> {
     protected class PaginationIterator implements Iterator<List<T>> {
@@ -53,12 +53,12 @@ public class Pagination<T> implements Iterable<List<T>> {
 	}
     }
 
-    private CanvasLMSClient canvasLMSClient;
+    private Canvas canvasLMSClient;
     private Class<T> paginationType;
     private String nextURL;
     private List<T> data;
 
-    public Pagination(CanvasLMSClient client, String json, String next,
+    public Pagination(Canvas client, String json, String next,
 	    Class<T> paginationType) {
 	this.paginationType = paginationType;
 	this.canvasLMSClient = client;
@@ -85,7 +85,7 @@ public class Pagination<T> implements Iterable<List<T>> {
 	try {
 	    return canvasLMSClient
 		    .fetchPagination(getNextURL(), paginationType);
-	} catch (CanvasLMSException e) {
+	} catch (CanvasException e) {
 	    throw new RuntimeException(e);
 	}
     }

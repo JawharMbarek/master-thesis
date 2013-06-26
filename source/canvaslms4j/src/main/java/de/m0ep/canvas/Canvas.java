@@ -37,8 +37,11 @@ import de.m0ep.canvas.model.DiscussionTopicEntry;
 import de.m0ep.canvas.model.DiscussionTopicInfo;
 import de.m0ep.canvas.model.UserInfo;
 import de.m0ep.canvas.model.UserProfile;
+import de.m0ep.canvas.utils.UriTemplate;
 
 public class Canvas {
+
+    private static final String SERVICE_PATH = "/api/v1";
 
     public static Range<Integer> HTTP_SUCCESSFULL_CODE_RANGE = Range
 	    .closedOpen(200, 300);
@@ -49,6 +52,8 @@ public class Canvas {
     private HttpClient httpClient;
 
     /* package */Gson gson;
+
+    private String rootUri;
 
     /**
      * Constructor to create a new {@link Canvas}
@@ -66,24 +71,24 @@ public class Canvas {
      */
     public Canvas(final String uri, final String accesstoken,
 	    final long accountId) {
-	this.baseUri = Preconditions.checkNotNull(
-		uri,
-		"Uri can not be null.");
+	this.rootUri = Preconditions.checkNotNull(uri,
+		"Required parameter uri must be specified.");
+
 	Preconditions.checkArgument(
 		!uri.isEmpty(),
-		"Uri can not be empty.");
+		"Required parameter uri may not be empty");
 
-	if (uri.endsWith("/")) { // remove tailing backslash
-	    this.baseUri = this.baseUri.substring(0, this.baseUri.length() - 1);
+	if (this.rootUri.endsWith("/")) { // remove tailing backslash
+	    this.rootUri = this.rootUri.substring(0, this.rootUri.length() - 1);
 	}
-	this.baseUri += "/api/v1";
 
-	this.accessToken = Preconditions.checkNotNull(
-		accesstoken,
-		"Token can not be null.");
+	this.baseUri = this.rootUri + SERVICE_PATH;
+
+	this.accessToken = Preconditions.checkNotNull(accesstoken,
+		"Required parameter accesstoken must be specified.");
 	Preconditions.checkArgument(
 		!accesstoken.isEmpty(),
-		"Token can not be empty.");
+		"Required parameter accesstoken may not be empty");
 
 	this.accountId = accountId;
 
@@ -101,7 +106,11 @@ public class Canvas {
      * 
      * @return A {@link String} containing the url.
      */
-    public String getUri() {
+    public String getRootUri() {
+	return baseUri;
+    }
+
+    public String getBaseUri() {
 	return baseUri;
     }
 
@@ -119,12 +128,17 @@ public class Canvas {
      * 
      * @return A {@link Gson} instance.
      */
-    public Gson getJsonParser() {
+    public Gson getGson() {
 	return gson;
+    }
+
+    public HttpClient getHttpClient() {
+	return httpClient;
     }
 
     public Pagination<DiscussionTopicInfo> listCourseDiscussionTopics(
 	    final long id) throws CanvasException {
+
 	return fetchPagination(
 		"/courses/"
 			+ id
@@ -133,17 +147,20 @@ public class Canvas {
     }
 
     public Pagination<Course> listCourses() throws CanvasException {
-	return fetchPagination("/courses", Course.class);
+	return new ListCourses(this)
+		.setOauthToken(accessToken)
+		.executePagination();
     }
 
     public Pagination<DiscussionTopicEntry> listDiscussionTopicEntries(
 	    final long courseId, final long topicId) throws CanvasException {
-	return fetchPagination("/courses/"
-		+ courseId
-		+ "/discussion_topics/"
-		+ topicId
-		+ "/entries",
-		DiscussionTopicEntry.class);
+
+	String uri = new UriTemplate("/courses/{}/discussion_topics/{topicId}")
+		.set("courseId", courseId)
+		.set("topicId", topicId)
+		.toString();
+
+	return fetchPagination(uri, DiscussionTopicEntry.class);
     }
 
     public DiscussionTopicEntry postDiscussionEntry(String message,
@@ -400,4 +417,5 @@ public class Canvas {
 	    URI uri) throws CanvasException {
 	return createRequestObject(type, uri.toString());
     }
+
 }

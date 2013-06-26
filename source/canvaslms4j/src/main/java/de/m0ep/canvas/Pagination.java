@@ -64,11 +64,11 @@ public class Pagination<T> implements Iterable<List<T>> {
 	this.canvasLMSClient = client;
 	this.nextURL = next;
 
-	JsonArray array = client.getJsonParser()
+	JsonArray array = client.getGson()
 		.fromJson(json, JsonArray.class);
 	List<T> pageItems = new ArrayList<T>();
 	for (int i = 0; i < array.size(); i++) {
-	    pageItems.add(client.getJsonParser().fromJson(
+	    pageItems.add(client.getGson().fromJson(
 		    array.get(i),
 		    paginationType));
 	}

@@ -6,7 +6,7 @@ import java.util.Map;
 import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
 
-public class DiscussionTopicInfo {
+public class DiscussionTopic {
 
     public static class Author {
 	private Long id;
@@ -364,7 +364,7 @@ public class DiscussionTopicInfo {
 	if (getClass() != obj.getClass())
 	    return false;
 
-	DiscussionTopicInfo other = (DiscussionTopicInfo) obj;
+	DiscussionTopic other = (DiscussionTopic) obj;
 	if (id != other.id)
 	    return false;
 	return true;

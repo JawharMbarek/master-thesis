@@ -13,6 +13,8 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.util.EntityUtils;
 
+import com.google.common.base.Objects;
+
 import de.m0ep.canvas.exceptions.AccessControlException;
 import de.m0ep.canvas.exceptions.AuthorizationException;
 import de.m0ep.canvas.exceptions.CanvasException;
@@ -38,6 +40,7 @@ public abstract class CanvasRequest<T> {
 	this.uri = uri;
 	this.methodType = methodType;
 	this.responseType = responseType;
+	this.content = content;
 
 	if (!this.uri.startsWith(client.getBaseUri())) {
 	    if (this.uri.startsWith("/")) {
@@ -152,6 +155,10 @@ public abstract class CanvasRequest<T> {
 
 	isHttpStatusOkOrThrow(response.getStatusLine(), content);
 
+	if (Void.class.equals(responseType)) {
+	    return null;
+	}
+
 	return client.getGson().fromJson(content, responseType);
     }
 
@@ -170,4 +177,62 @@ public abstract class CanvasRequest<T> {
 	    throw new CanvasException("Http error: " + statusCode);
 	}
     }
+
+    @Override
+    public int hashCode() {
+	return Objects.hashCode(
+		client,
+		methodType,
+		uri,
+		oauthToken,
+		content,
+		responseType);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (null == obj) {
+	    return false;
+	}
+
+	if (this.getClass() != obj.getClass()) {
+	    return false;
+	}
+
+	CanvasRequest<?> other = (CanvasRequest<?>) obj;
+
+	if (!Objects.equal(this.methodType, other.methodType)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.client, other.client)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.uri, other.uri)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.content, other.content)) {
+	    return false;
+	}
+
+	if (!Objects.equal(this.responseType, other.responseType)) {
+	    return false;
+	}
+
+	return true;
+    }
+
+    @Override
+    public String toString() {
+	return Objects.toStringHelper(this)
+		.add("method", methodType.getSimpleName())
+		.add("uri", uri)
+		.add("has_accesstoken", null != oauthToken)
+		.add("has_content", null != content)
+		.add("response_type", responseType.getSimpleName())
+		.toString();
+    }
+
 }

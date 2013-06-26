@@ -1,58 +1,57 @@
 package de.m0ep.canvas;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import de.m0ep.canvas.exceptions.AccessControlException;
-import de.m0ep.canvas.exceptions.AuthorizationException;
 import de.m0ep.canvas.exceptions.CanvasException;
-import de.m0ep.canvas.exceptions.NetworkException;
 import de.m0ep.canvas.gson.ISO8601TypeAdapter;
 import de.m0ep.canvas.model.Course;
+import de.m0ep.canvas.model.DiscussionTopic;
 import de.m0ep.canvas.model.DiscussionTopicEntry;
-import de.m0ep.canvas.model.DiscussionTopicInfo;
-import de.m0ep.canvas.model.UserInfo;
-import de.m0ep.canvas.model.UserProfile;
 import de.m0ep.canvas.utils.UriTemplate;
 
 public class Canvas {
 
     private static final String SERVICE_PATH = "/api/v1";
 
+    private static final String COURSE_ID = "courseId";
+    private static final String TOPIC_ID = "topicId";
+    private static final String ENTRY_ID = "entryId";
+
+    private static final String PATH_COURSES = "/courses";
+    private static final String PATH_COURSE_DISCUSSION_TOPICS =
+	    "/courses/{courseId}/discussion_topics";
+    private static final String PATH_COURSE_DISCUSSION_TOPIC_ENTRIES =
+	    "/courses/{courseId}/discussion_topics/{topicId}/entries";
+    private static final String PATH_COURSE_DISCUSSION_TOPIC_ENTRY_REPLIES =
+	    "/courses/{courseId}/discussion_topics/{topicId}/entries/{entryId}/replies";
+
+    private static final String PATH_COURSE = "/courses/{courseId}";
+    private static final String PATH_COURSE_DISCUSSION_TOPIC =
+	    "/courses/{courseId}/discussion_topics/{topicId}";
+
     public static Range<Integer> HTTP_SUCCESSFULL_CODE_RANGE = Range
 	    .closedOpen(200, 300);
 
-    private long accountId;
-    private String accessToken;
-    private String baseUri;
+    private String oauthToken;
     private HttpClient httpClient;
 
-    /* package */Gson gson;
+    private Gson gson;
 
+    private String baseUri;
     private String rootUri;
 
     /**
@@ -61,7 +60,7 @@ public class Canvas {
      * @param uri
      *            The uri to a CanvasLMS instance.
      * 
-     * @param accesstoken
+     * @param oauthtoken
      *            An CanvasLMS accesstoken
      * 
      * @throws NullPointerException
@@ -69,8 +68,7 @@ public class Canvas {
      * @throws IllegalArgumentException
      *             Thrown if uri or accesstoken are empty.
      */
-    public Canvas(final String uri, final String accesstoken,
-	    final long accountId) {
+    public Canvas(final String uri, final String oauthtoken) {
 	this.rootUri = Preconditions.checkNotNull(uri,
 		"Required parameter uri must be specified.");
 
@@ -84,28 +82,20 @@ public class Canvas {
 
 	this.baseUri = this.rootUri + SERVICE_PATH;
 
-	this.accessToken = Preconditions.checkNotNull(accesstoken,
+	this.oauthToken = Preconditions.checkNotNull(oauthtoken,
 		"Required parameter accesstoken must be specified.");
 	Preconditions.checkArgument(
-		!accesstoken.isEmpty(),
+		!oauthtoken.isEmpty(),
 		"Required parameter accesstoken may not be empty");
-
-	this.accountId = accountId;
 
 	this.httpClient = new DefaultHttpClient();
 	this.gson = new GsonBuilder()
-		.registerTypeAdapter(
-			Date.class,
+		.registerTypeAdapter(Date.class,
 			new ISO8601TypeAdapter().nullSafe())
 		.create();
 
     }
 
-    /**
-     * Returns the CanvasLMS instance url.
-     * 
-     * @return A {@link String} containing the url.
-     */
     public String getRootUri() {
 	return baseUri;
     }
@@ -114,20 +104,10 @@ public class Canvas {
 	return baseUri;
     }
 
-    /**
-     * Returns the provided accesstoken.
-     * 
-     * @return A {@link String} containing the accesstoken.
-     */
-    public String getAccessToken() {
-	return accessToken;
+    public String getOAuthToken() {
+	return oauthToken;
     }
 
-    /**
-     * Retruns the used GSON parser.
-     * 
-     * @return A {@link Gson} instance.
-     */
     public Gson getGson() {
 	return gson;
     }
@@ -136,286 +116,282 @@ public class Canvas {
 	return httpClient;
     }
 
-    public Pagination<DiscussionTopicInfo> listCourseDiscussionTopics(
-	    final long id) throws CanvasException {
-
-	return fetchPagination(
-		"/courses/"
-			+ id
-			+ "/discussion_topics",
-		DiscussionTopicInfo.class);
+    /* package */void initialize(CanvasRequest<?> request) {
+	request.setOauthToken(oauthToken);
     }
 
-    public Pagination<Course> listCourses() throws CanvasException {
-	return new ListCourses(this)
-		.setOauthToken(accessToken)
-		.executePagination();
+    public Courses courses() {
+	return new Courses();
     }
 
-    public Pagination<DiscussionTopicEntry> listDiscussionTopicEntries(
-	    final long courseId, final long topicId) throws CanvasException {
-
-	String uri = new UriTemplate("/courses/{}/discussion_topics/{topicId}")
-		.set("courseId", courseId)
-		.set("topicId", topicId)
-		.toString();
-
-	return fetchPagination(uri, DiscussionTopicEntry.class);
-    }
-
-    public DiscussionTopicEntry postDiscussionEntry(String message,
-	    long courseId,
-	    long topicId) throws CanvasException {
-	HttpResponse response = makePostRequest("/courses/"
-		+ courseId
-		+ "/discussion_topics/"
-		+ topicId
-		+ "/entries",
-		new BasicNameValuePair("message", message));
-
-	String data = "";
-	try {
-	    data = EntityUtils.toString(response.getEntity());
-	} catch (Throwable t) {
-	    throw new CanvasException(
-		    "Failed to read data from stream.", t);
+    public class Courses {
+	public List list() {
+	    List result = new List();
+	    initialize(result);
+	    return result;
 	}
 
-	StatusLine status = response.getStatusLine();
-	int statusCode = status.getStatusCode();
-	if (HTTP_SUCCESSFULL_CODE_RANGE.contains(statusCode)) { // OK
+	public class List extends CanvasRequest<Course> {
+	    public List() {
+		super(Canvas.this,
+			HttpGet.class,
+			PATH_COURSES,
+			null,
+			Course.class);
+	    }
 
-	    return gson.fromJson(
-		    data,
-		    DiscussionTopicEntry.class);
-
-	} else if (401 == statusCode) { // Unauthorized
-	    throw new AuthorizationException(
-		    "Authorization error: Accesstoken is missing or invalid.");
-	} else if (403 == statusCode) { // Forbidden
-	    throw new AccessControlException("Forbidden access: " + data);
-	} else {
-	    throw new CanvasException(
-		    "Http error: " + status.getStatusCode());
-	}
-    }
-
-    public DiscussionTopicEntry postReply(String message, long courseId,
-	    long topicId,
-	    long postId) throws CanvasException {
-	HttpResponse response = makePostRequest("/courses/"
-		+ courseId
-		+ "/discussion_topics/"
-		+ topicId
-		+ "/entries/"
-		+ postId
-		+ "/replies",
-		new BasicNameValuePair("message", message));
-
-	String data = "";
-	try {
-	    data = EntityUtils.toString(response.getEntity());
-	} catch (Throwable t) {
-	    throw new CanvasException(
-		    "Failed to read data from stream.", t);
+	    @Override
+	    public Course execute() throws CanvasException {
+		throw new UnsupportedOperationException(
+			"execute() is not supported by List");
+	    }
 	}
 
-	StatusLine status = response.getStatusLine();
-	int statusCode = status.getStatusCode();
-	if (HTTP_SUCCESSFULL_CODE_RANGE.contains(statusCode)) { // OK
-
-	    return gson.fromJson(
-		    data,
-		    DiscussionTopicEntry.class);
-
-	} else if (401 == statusCode) { // Unauthorized
-	    throw new AuthorizationException(
-		    "Authorization error: Accesstoken is missing or " +
-			    "invalid for this operation.");
-	} else if (403 == statusCode) { // Forbidden
-	    throw new AccessControlException("Forbidden access: " + data);
-	} else {
-	    throw new CanvasException(
-		    "Http error: " + status.getStatusCode());
-	}
-    }
-
-    public Pagination<UserInfo> listUsers() throws CanvasException {
-	return fetchPagination(
-		"/accounts/"
-			+ accountId
-			+ "/users",
-		UserInfo.class);
-    }
-
-    public UserProfile getUserProfile(final long id) throws CanvasException {
-	return fetchObject(
-		"/users/" +
-			id +
-			"/profile",
-		UserProfile.class);
-    }
-
-    public <T> T fetchObject(String uri, Class<T> type)
-	    throws CanvasException {
-	HttpResponse response = makeGetRequest(uri);
-
-	String data = "";
-	try {
-	    data = EntityUtils.toString(response.getEntity());
-	} catch (Throwable t) {
-	    throw new CanvasException(
-		    "Failed to read data from stream.", t);
+	public Get get(final long id) {
+	    Get result = new Get(id);
+	    initialize(result);
+	    return result;
 	}
 
-	StatusLine status = response.getStatusLine();
-	int statusCode = status.getStatusCode();
+	public class Get extends CanvasRequest<Course> {
+	    public Get(final long id) {
+		super(Canvas.this,
+			HttpGet.class,
+			new UriTemplate(
+				PATH_COURSE)
+				.set(COURSE_ID, id)
+				.toString(),
+			null,
+			Course.class);
+	    }
 
-	if (HTTP_SUCCESSFULL_CODE_RANGE.contains(statusCode)) {// OK
-	    return gson.fromJson(data, type);
-	} else if (401 == statusCode) { // Unauthorized
-	    System.err.println(data);
-	    throw new AuthorizationException(
-		    "Authorization error: Accesstoken is missing or invalid.");
-	} else if (403 == statusCode) { // Forbidden
-	    throw new AccessControlException("Forbidden access: " + data);
-	} else {
-	    throw new CanvasException(
-		    "Http error: " + status.getStatusCode());
-	}
-    }
-
-    public <T> Pagination<T> fetchPagination(String uri, Class<T> type)
-	    throws CanvasException {
-	HttpResponse response = makeGetRequest(uri);
-
-	String data = "";
-	try {
-	    data = EntityUtils.toString(response.getEntity());
-	} catch (Throwable t) {
-	    throw new CanvasException(
-		    "Failed to read data from stream.", t);
+	    @Override
+	    public Pagination<Course> executePagination()
+		    throws CanvasException {
+		throw new UnsupportedOperationException(
+			"executePagination() is not supported by Get");
+	    }
 	}
 
-	StatusLine status = response.getStatusLine();
-	int statusCode = status.getStatusCode();
+	public DiscussionTopics discussionTopics(final long courseId) {
+	    return new DiscussionTopics(courseId);
+	}
 
-	if (HTTP_SUCCESSFULL_CODE_RANGE.contains(statusCode)) {// OK
-	    Header[] links = response.getHeaders("Link");
+	public class DiscussionTopics {
+	    private long courseId;
 
-	    String nextUri = null;
-	    for (Header link : links) {
-		String value = link.getValue();
-		if (value.contains("rel=\"next\"")) {
-		    String[] split = value.split(";");
+	    public DiscussionTopics(long courseId) {
+		this.courseId = courseId;
+	    }
 
-		    nextUri = split[0].trim();
-		    nextUri = nextUri.substring(1, nextUri.length() - 1);
-		    break;
+	    public long getCourseId() {
+		return courseId;
+	    }
+
+	    public List list() {
+		List result = new List();
+		initialize(result);
+		return result;
+	    }
+
+	    public class List extends CanvasRequest<DiscussionTopic> {
+		public List() {
+		    super(Canvas.this,
+			    HttpGet.class,
+			    new UriTemplate(PATH_COURSE_DISCUSSION_TOPICS)
+				    .set(COURSE_ID, getCourseId()).toString()
+			    , null,
+			    DiscussionTopic.class);
+		}
+
+		@Override
+		public DiscussionTopic execute() throws CanvasException {
+		    throw new UnsupportedOperationException(
+			    "execute() is not supported by List");
 		}
 	    }
 
-	    return new Pagination<T>(this, data, nextUri, type);
-	} else if (401 == statusCode) { // Unauthorized
-	    throw new AuthorizationException(
-		    "Authorization error: Accesstoken is missing or invalid.");
-	} else if (403 == statusCode) { // Forbidden
-	    throw new AccessControlException("Forbidden access: " + data);
-	} else {
-	    throw new CanvasException(
-		    "Http error: " + status.getStatusCode());
-	}
-    }
-
-    HttpResponse makeGetRequest(String uri, NameValuePair... params)
-	    throws CanvasException {
-
-	URIBuilder builder;
-	try {
-	    builder = new URIBuilder(uri);
-	} catch (URISyntaxException e) {
-	    throw new CanvasException("Invalid URI: " + uri);
-	}
-
-	for (NameValuePair param : params) {
-	    builder.addParameter(param.getName(), param.getValue());
-	}
-
-	try {
-	    HttpGet request = createRequestObject(
-		    HttpGet.class,
-		    builder.build());
-	    return httpClient.execute(request);
-	} catch (URISyntaxException e) {
-	    throw new CanvasException("Invalid URI: " + uri);
-	} catch (ClientProtocolException e) {
-	    throw new CanvasException("Http protocol error.", e);
-	} catch (IOException e) {
-	    throw new NetworkException("Network error.", e);
-	}
-    }
-
-    HttpResponse makePostRequest(String uri, NameValuePair... params)
-	    throws CanvasException {
-
-	try {
-	    HttpPost request = createRequestObject(
-		    HttpPost.class,
-		    uri);
-
-	    request.setEntity(new UrlEncodedFormEntity(
-		    Arrays.asList(params), "UTF-8"));
-
-	    return httpClient.execute(request);
-	} catch (ClientProtocolException e) {
-	    throw new CanvasException("Http protocol error.", e);
-	} catch (IOException e) {
-	    throw new NetworkException("Network error.", e);
-	}
-    }
-
-    HttpResponse makePutRequest(String uri, NameValuePair... params)
-	    throws CanvasException {
-
-	try {
-	    HttpPut request = createRequestObject(
-		    HttpPut.class,
-		    uri);
-
-	    request.setEntity(new UrlEncodedFormEntity(
-		    Arrays.asList(params), "UTF-8"));
-
-	    return httpClient.execute(request);
-	} catch (ClientProtocolException e) {
-	    throw new CanvasException("Http protocol error.", e);
-	} catch (IOException e) {
-	    throw new NetworkException("Network error.", e);
-	}
-    }
-
-    <T extends HttpRequestBase> T createRequestObject(Class<T> type,
-	    String uri) throws CanvasException {
-	try {
-	    if (!uri.startsWith(baseUri)) {
-		if (!uri.startsWith("/")) {
-		    uri = "/" + uri;
-		}
-		uri = baseUri + uri;
+	    public Get get(final long topicId) {
+		Get result = new Get(topicId);
+		initialize(result);
+		return result;
 	    }
 
-	    T instance = type.newInstance();
-	    instance.setURI(new URI(uri));
-	    instance.addHeader("Authorization", "Bearer " + accessToken);
+	    public class Get extends CanvasRequest<DiscussionTopic> {
+		public Get(long topicId) {
+		    super(Canvas.this,
+			    HttpGet.class,
+			    new UriTemplate(PATH_COURSE_DISCUSSION_TOPIC)
+				    .set(COURSE_ID, getCourseId())
+				    .set(TOPIC_ID, topicId).toString()
+			    , null,
+			    DiscussionTopic.class);
+		}
 
-	    return instance;
-	} catch (Exception e) {
-	    throw new CanvasException("Failed to create request", e);
+		@Override
+		public Pagination<DiscussionTopic> executePagination()
+			throws CanvasException {
+		    throw new UnsupportedOperationException(
+			    "executePagination() is not supported by Get");
+		}
+	    }
+
+	    public Entries entries(final long topicId) {
+		return new Entries(topicId);
+	    }
+
+	    public class Entries {
+		private final long topicId;
+
+		public Entries(final long topicId) {
+		    this.topicId = topicId;
+		}
+
+		public long getTopicId() {
+		    return topicId;
+		}
+
+		public List list() {
+		    List result = new List();
+		    initialize(result);
+		    return result;
+		}
+
+		public class List extends CanvasRequest<DiscussionTopicEntry> {
+		    public List() {
+			super(
+				Canvas.this,
+				HttpGet.class,
+				new UriTemplate(
+					PATH_COURSE_DISCUSSION_TOPIC_ENTRIES)
+					.set(COURSE_ID, getCourseId())
+					.set(TOPIC_ID, topicId).toString(),
+				null,
+				DiscussionTopicEntry.class);
+		    }
+
+		    @Override
+		    public DiscussionTopicEntry execute()
+			    throws CanvasException {
+			throw new UnsupportedOperationException(
+				"execute() is not supported by List");
+		    }
+		}
+
+		public Post post(final String message) {
+		    Post result = new Post(message);
+		    initialize(result);
+		    return result;
+		}
+
+		public class Post extends CanvasRequest<DiscussionTopicEntry> {
+		    public Post(final String message) {
+			super(
+				Canvas.this,
+				HttpPost.class,
+				new UriTemplate(
+					PATH_COURSE_DISCUSSION_TOPIC_ENTRIES)
+					.set(COURSE_ID, getCourseId())
+					.set(TOPIC_ID, topicId).toString(),
+				new UrlEncodedFormEntity(
+					Arrays.asList(
+						new BasicNameValuePair(
+							"message",
+							message)),
+					Charset.defaultCharset()),
+				DiscussionTopicEntry.class);
+
+		    }
+
+		    @Override
+		    public Pagination<DiscussionTopicEntry> executePagination()
+			    throws CanvasException {
+			throw new UnsupportedOperationException(
+				"executePagination() is not supported by Post");
+		    }
+		}
+
+		public Replies replies(final long entryId) {
+		    return new Replies(entryId);
+		}
+
+		public class Replies {
+		    private final long entryId;
+
+		    public Replies(final long entryId) {
+			this.entryId = entryId;
+		    }
+
+		    public long getEntryId() {
+			return entryId;
+		    }
+
+		    public List list() {
+			List result = new List();
+			initialize(result);
+			return result;
+		    }
+
+		    public class List extends
+			    CanvasRequest<DiscussionTopicEntry> {
+
+			public List() {
+			    super(
+				    Canvas.this,
+				    HttpGet.class,
+				    new UriTemplate(
+					    PATH_COURSE_DISCUSSION_TOPIC_ENTRY_REPLIES)
+					    .set(COURSE_ID, getCourseId())
+					    .set(TOPIC_ID, getTopicId())
+					    .set(ENTRY_ID, entryId).toString(),
+				    null,
+				    DiscussionTopicEntry.class);
+			}
+
+			@Override
+			public DiscussionTopicEntry execute()
+				throws CanvasException {
+			    throw new UnsupportedOperationException(
+				    "execute() is not supported by List");
+			}
+		    }
+
+		    public Post post(final String message) {
+			Post result = new Post(message);
+			initialize(result);
+			return result;
+		    }
+
+		    public class Post extends
+			    CanvasRequest<DiscussionTopicEntry> {
+			public Post(final String message) {
+			    super(
+				    Canvas.this,
+				    HttpPost.class,
+				    new UriTemplate(
+					    PATH_COURSE_DISCUSSION_TOPIC_ENTRY_REPLIES)
+					    .set(COURSE_ID, getCourseId())
+					    .set(TOPIC_ID, topicId)
+					    .set(ENTRY_ID, entryId).toString(),
+				    new UrlEncodedFormEntity(
+					    Arrays.asList(
+						    new BasicNameValuePair(
+							    "message",
+							    message)),
+					    Charset.defaultCharset()),
+				    DiscussionTopicEntry.class);
+
+			}
+
+			@Override
+			public Pagination<DiscussionTopicEntry> executePagination()
+				throws CanvasException {
+			    throw new UnsupportedOperationException(
+				    "executePagination() is not supported by Post");
+			}
+		    }
+		}
+	    }
 	}
     }
-
-    <T extends HttpRequestBase> T createRequestObject(Class<T> type,
-	    URI uri) throws CanvasException {
-	return createRequestObject(type, uri.toString());
-    }
-
 }

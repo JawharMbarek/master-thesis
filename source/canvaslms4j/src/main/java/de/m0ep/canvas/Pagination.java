@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.apache.http.client.methods.HttpGet;
+
 import com.google.common.base.Strings;
 import com.google.gson.JsonArray;
 
@@ -53,7 +55,7 @@ public class Pagination<T> implements Iterable<List<T>> {
 	}
     }
 
-    private Canvas canvasLMSClient;
+    private Canvas client;
     private Class<T> paginationType;
     private String nextURL;
     private List<T> data;
@@ -61,7 +63,7 @@ public class Pagination<T> implements Iterable<List<T>> {
     public Pagination(Canvas client, String json, String next,
 	    Class<T> paginationType) {
 	this.paginationType = paginationType;
-	this.canvasLMSClient = client;
+	this.client = client;
 	this.nextURL = next;
 
 	JsonArray array = client.getGson()
@@ -83,8 +85,16 @@ public class Pagination<T> implements Iterable<List<T>> {
 
     public Pagination<T> fetchNextPage() {
 	try {
-	    return canvasLMSClient
-		    .fetchPagination(getNextURL(), paginationType);
+	    CanvasRequest<T> request = new CanvasRequest<T>(
+		    client,
+		    HttpGet.class,
+		    getNextURL(),
+		    null,
+		    paginationType) {
+	    };
+
+	    client.initialize(request);
+	    return request.executePagination();
 	} catch (CanvasException e) {
 	    throw new RuntimeException(e);
 	}

@@ -1,8 +1,10 @@
+
 package de.m0ep.canvas.model;
 
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Date;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 public class DiscussionTopicEntry {
@@ -40,7 +42,7 @@ public class DiscussionTopicEntry {
     private Attachment attachment;
 
     @SerializedName("recent_replies")
-    private Collection<DiscussionTopicEntry> recentReplies;
+    private DiscussionTopicEntry[] recentReplies;
 
     @SerializedName("has_more_replies")
     private boolean hasMoreReplies;
@@ -48,58 +50,129 @@ public class DiscussionTopicEntry {
     private boolean deleted;
 
     public long getId() {
-	return id;
+        return id;
     }
 
     public long getParentId() {
-	return parentId;
+        return parentId;
     }
 
     public long getUserId() {
-	return userId;
+        return userId;
     }
 
     public long getEditorId() {
-	return editorId;
+        return editorId;
     }
 
     public String getUserName() {
-	return userName;
+        return userName;
     }
 
     public String getMessage() {
-	return message;
+        return message;
     }
 
     public String getReadState() {
-	return readState;
+        return readState;
     }
 
     public boolean hasForcedReadState() {
-	return forcedReadState;
+        return forcedReadState;
     }
 
     public Date getCreatedAt() {
-	return createdAt;
+        return createdAt;
     }
 
     public Date getUpdatedAt() {
-	return updatedAt;
+        return updatedAt;
     }
 
     public Attachment getAttachment() {
-	return attachment;
+        return attachment;
     }
 
-    public Collection<DiscussionTopicEntry> getRecentReplies() {
-	return recentReplies;
+    public DiscussionTopicEntry[] getRecentReplies() {
+        return recentReplies;
     }
 
     public boolean hasMoreReplies() {
-	return hasMoreReplies;
+        return hasMoreReplies;
     }
 
     public boolean isDeleted() {
-	return deleted;
+        return deleted;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(
+                id,
+                parentId,
+                userId,
+                editorId,
+                userName,
+                message,
+                readState,
+                forcedReadState,
+                createdAt,
+                updatedAt,
+                attachment,
+                Arrays.hashCode(recentReplies),
+                hasMoreReplies,
+                deleted);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (null == obj) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        DiscussionTopicEntry other = (DiscussionTopicEntry) obj;
+
+        return Objects.equal(this.id, other.id) &&
+                Objects.equal(this.parentId, other.parentId) &&
+                Objects.equal(this.userId, other.userId) &&
+                Objects.equal(this.editorId, other.editorId) &&
+                Objects.equal(this.userName, other.userName) &&
+                Objects.equal(this.message, other.message) &&
+                Objects.equal(this.readState, other.readState) &&
+                Objects.equal(this.forcedReadState, other.forcedReadState) &&
+                Objects.equal(this.createdAt, other.createdAt) &&
+                Objects.equal(this.updatedAt, other.updatedAt) &&
+                Objects.equal(this.attachment, other.attachment) &&
+                Arrays.equals(this.recentReplies, other.recentReplies) &&
+                Objects.equal(this.hasMoreReplies, other.hasMoreReplies) &&
+                Objects.equal(this.deleted, other.deleted);
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("id", id)
+                .add("parentId", parentId)
+                .add("userId", userId)
+                .add("editorId", editorId)
+                .add("userName", userName)
+                .add("message", message)
+                .add("readState", readState)
+                .add("forcedReadState", forcedReadState)
+                .add("createdAt", createdAt)
+                .add("updatedAt", updatedAt)
+                .add("attachment", attachment)
+                .add("recentReplies", Arrays.toString(recentReplies))
+                .add("hasMoreReplies", hasMoreReplies)
+                .add("deleted", deleted)
+                .toString();
     }
 }

@@ -80,29 +80,20 @@ public class Attachment {
 	    return false;
 	}
 
+	if (this == obj) {
+	    return true;
+	}
+
 	if (this.getClass() != obj.getClass()) {
 	    return false;
 	}
 
 	Attachment other = (Attachment) obj;
 
-	if (!Objects.equal(this.url, other.url)) {
-	    return false;
-	}
-
-	if (!Objects.equal(this.contentType, other.contentType)) {
-	    return false;
-	}
-
-	if (!Objects.equal(this.filename, other.filename)) {
-	    return false;
-	}
-
-	if (!Objects.equal(this.displayName, other.displayName)) {
-	    return false;
-	}
-
-	return true;
+	return Objects.equal(this.url, other.url) &&
+		Objects.equal(this.contentType, other.contentType) &&
+		Objects.equal(this.filename, other.filename) &&
+		Objects.equal(this.displayName, other.displayName);
     }
 
     @Override

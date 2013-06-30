@@ -37,7 +37,7 @@ public class Calendar {
 
     @Override
     public int hashCode() {
-	return Objects.hashCode(super.hashCode(), ics);
+	return Objects.hashCode(ics);
     }
 
     @Override
@@ -46,17 +46,17 @@ public class Calendar {
 	    return false;
 	}
 
+	if (this == obj) {
+	    return true;
+	}
+
 	if (this.getClass() != obj.getClass()) {
 	    return false;
 	}
 
 	Calendar other = (Calendar) obj;
 
-	if (!Objects.equal(this.ics, other.ics)) {
-	    return false;
-	}
-
-	return true;
+	return Objects.equal(this.ics, other.ics);
     }
 
     @Override

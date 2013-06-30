@@ -1,3 +1,4 @@
+
 package de.m0ep.canvas.model;
 
 import java.util.Arrays;
@@ -9,226 +10,207 @@ import com.google.gson.annotations.SerializedName;
 public class Course {
 
     public static class Enrollment {
-	private String type;
+        private String type;
 
-	private String role;
+        private String role;
 
-	@SerializedName("computed_final_score")
-	private Double computedFinalScore;
+        @SerializedName("computed_final_score")
+        private Double computedFinalScore;
 
-	@SerializedName("computed_current_score")
-	private Integer computedCurrentScore;
+        @SerializedName("computed_current_score")
+        private Integer computedCurrentScore;
 
-	@SerializedName("computed_final_grade")
-	private String computedFinalGrade;
+        @SerializedName("computed_final_grade")
+        private String computedFinalGrade;
 
-	@SerializedName("computed_current_grade")
-	private String computedCurrentGrade;
+        @SerializedName("computed_current_grade")
+        private String computedCurrentGrade;
 
-	public String getType() {
-	    return type;
-	}
+        public String getType() {
+            return type;
+        }
 
-	public void setType(String type) {
-	    this.type = type;
-	}
+        public void setType(String type) {
+            this.type = type;
+        }
 
-	public String getRole() {
-	    return role;
-	}
+        public String getRole() {
+            return role;
+        }
 
-	public void setRole(String role) {
-	    this.role = role;
-	}
+        public void setRole(String role) {
+            this.role = role;
+        }
 
-	public Double getComputedFinalScore() {
-	    return computedFinalScore;
-	}
+        public Double getComputedFinalScore() {
+            return computedFinalScore;
+        }
 
-	public void setComputedFinalScore(Double computedFinalScore) {
-	    this.computedFinalScore = computedFinalScore;
-	}
+        public void setComputedFinalScore(Double computedFinalScore) {
+            this.computedFinalScore = computedFinalScore;
+        }
 
-	public Integer getComputedCurrentScore() {
-	    return computedCurrentScore;
-	}
+        public Integer getComputedCurrentScore() {
+            return computedCurrentScore;
+        }
 
-	public void setComputedCurrentScore(Integer computedCurrentScore) {
-	    this.computedCurrentScore = computedCurrentScore;
-	}
+        public void setComputedCurrentScore(Integer computedCurrentScore) {
+            this.computedCurrentScore = computedCurrentScore;
+        }
 
-	public String getComputedFinalGrade() {
-	    return computedFinalGrade;
-	}
+        public String getComputedFinalGrade() {
+            return computedFinalGrade;
+        }
 
-	public void setComputedFinalGrade(String computedFinalGrade) {
-	    this.computedFinalGrade = computedFinalGrade;
-	}
+        public void setComputedFinalGrade(String computedFinalGrade) {
+            this.computedFinalGrade = computedFinalGrade;
+        }
 
-	public String getComputedCurrentGrade() {
-	    return computedCurrentGrade;
-	}
+        public String getComputedCurrentGrade() {
+            return computedCurrentGrade;
+        }
 
-	public void setComputedCurrentGrade(String computedCurrentGrade) {
-	    this.computedCurrentGrade = computedCurrentGrade;
-	}
+        public void setComputedCurrentGrade(String computedCurrentGrade) {
+            this.computedCurrentGrade = computedCurrentGrade;
+        }
 
-	@Override
-	public int hashCode() {
-	    return Objects.hashCode(
-		    type,
-		    role,
-		    computedFinalScore,
-		    computedCurrentScore,
-		    computedFinalGrade,
-		    computedCurrentGrade);
-	}
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(
+                    type,
+                    role,
+                    computedFinalScore,
+                    computedCurrentScore,
+                    computedFinalGrade,
+                    computedCurrentGrade);
+        }
 
-	@Override
-	public boolean equals(Object obj) {
-	    if (null == obj) {
-		return false;
-	    }
+        @Override
+        public boolean equals(Object obj) {
+            if (null == obj) {
+                return false;
+            }
 
-	    if (this.getClass() != obj.getClass()) {
-		return false;
-	    }
+            if (this == obj) {
+                return true;
+            }
 
-	    Enrollment other = (Enrollment) obj;
+            if (this.getClass() != obj.getClass()) {
+                return false;
+            }
 
-	    if (!Objects.equal(this.type, other.type)) {
-		return false;
-	    }
+            Enrollment other = (Enrollment) obj;
 
-	    if (!Objects.equal(this.role, other.role)) {
-		return false;
-	    }
+            return Objects.equal(this.type, other.type) &&
+                    Objects.equal(this.role, other.role) &&
+                    Objects.equal(this.computedFinalScore, other.computedFinalScore) &&
+                    Objects.equal(this.computedCurrentScore, other.computedCurrentScore) &&
+                    Objects.equal(this.computedFinalGrade, other.computedFinalGrade) &&
+                    Objects.equal(this.computedCurrentGrade, other.computedCurrentGrade);
+        }
 
-	    if (!Objects.equal(this.computedFinalScore,
-		    other.computedFinalScore)) {
-		return false;
-	    }
-
-	    if (!Objects.equal(this.computedCurrentScore,
-		    other.computedCurrentScore)) {
-		return false;
-	    }
-
-	    if (!Objects.equal(this.computedFinalGrade,
-		    other.computedFinalGrade)) {
-		return false;
-	    }
-
-	    if (!Objects.equal(this.computedCurrentGrade,
-		    other.computedCurrentGrade)) {
-		return false;
-	    }
-
-	    return true;
-	}
-
-	@Override
-	public String toString() {
-	    return Objects.toStringHelper(this)
-		    .add("type", type)
-		    .add("role", role)
-		    .add("computed_final_score", computedFinalScore)
-		    .add("computed_current_score", computedCurrentScore)
-		    .add("computed_final_grade", computedFinalGrade)
-		    .add("computed_current_grade", computedCurrentGrade)
-		    .toString();
-	}
+        @Override
+        public String toString() {
+            return Objects.toStringHelper(this)
+                    .add("type", type)
+                    .add("role", role)
+                    .add("computed_final_score", computedFinalScore)
+                    .add("computed_current_score", computedCurrentScore)
+                    .add("computed_final_grade", computedFinalGrade)
+                    .add("computed_current_grade", computedCurrentGrade)
+                    .toString();
+        }
     }
 
     public static class Term {
 
-	private long id;
+        private long id;
 
-	private String name;
+        private String name;
 
-	@SerializedName("start_at")
-	private Date startAt;
+        @SerializedName("start_at")
+        private Date startAt;
 
-	@SerializedName("end_at")
-	private Date endAt;
+        @SerializedName("end_at")
+        private Date endAt;
 
-	public long getId() {
-	    return id;
-	}
+        public long getId() {
+            return id;
+        }
 
-	public void setId(long id) {
-	    this.id = id;
-	}
+        public void setId(long id) {
+            this.id = id;
+        }
 
-	public String getName() {
-	    return name;
-	}
+        public String getName() {
+            return name;
+        }
 
-	public void setName(String name) {
-	    this.name = name;
-	}
+        public void setName(String name) {
+            this.name = name;
+        }
 
-	public Date getStartAt() {
-	    return startAt;
-	}
+        public Date getStartAt() {
+            return startAt;
+        }
 
-	public void setStartAt(Date startAt) {
-	    this.startAt = startAt;
-	}
+        public void setStartAt(Date startAt) {
+            this.startAt = startAt;
+        }
 
-	public Date getEndAt() {
-	    return endAt;
-	}
+        public Date getEndAt() {
+            return endAt;
+        }
 
-	public void setEndAt(Date endAt) {
-	    this.endAt = endAt;
-	}
+        public void setEndAt(Date endAt) {
+            this.endAt = endAt;
+        }
 
-	@Override
-	public int hashCode() {
-	    return Objects.hashCode(id, name, startAt, endAt);
-	}
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(id, name, startAt, endAt);
+        }
 
-	@Override
-	public boolean equals(Object obj) {
-	    if (null == obj) {
-		return false;
-	    }
+        @Override
+        public boolean equals(Object obj) {
+            if (null == obj) {
+                return false;
+            }
 
-	    if (this.getClass() != obj.getClass()) {
-		return false;
-	    }
+            if (this.getClass() != obj.getClass()) {
+                return false;
+            }
 
-	    Term other = (Term) obj;
+            Term other = (Term) obj;
 
-	    if (!Objects.equal(this.id, other.id)) {
-		return false;
-	    }
+            if (!Objects.equal(this.id, other.id)) {
+                return false;
+            }
 
-	    if (!Objects.equal(this.name, other.name)) {
-		return false;
-	    }
+            if (!Objects.equal(this.name, other.name)) {
+                return false;
+            }
 
-	    if (!Objects.equal(this.startAt, other.startAt)) {
-		return false;
-	    }
+            if (!Objects.equal(this.startAt, other.startAt)) {
+                return false;
+            }
 
-	    if (!Objects.equal(this.endAt, other.endAt)) {
-		return false;
-	    }
+            if (!Objects.equal(this.endAt, other.endAt)) {
+                return false;
+            }
 
-	    return true;
-	}
+            return true;
+        }
 
-	@Override
-	public String toString() {
-	    return Objects.toStringHelper(this)
-		    .add("id", id)
-		    .add("name", name)
-		    .add("start_at", startAt)
-		    .add("end_at", endAt)
-		    .toString();
-	}
+        @Override
+        public String toString() {
+            return Objects.toStringHelper(this)
+                    .add("id", id)
+                    .add("name", name)
+                    .add("start_at", startAt)
+                    .add("end_at", endAt)
+                    .toString();
+        }
     }
 
     private long id;
@@ -269,219 +251,219 @@ public class Course {
     private Term term;
 
     public long getId() {
-	return id;
+        return id;
     }
 
     public void setId(long id) {
-	this.id = id;
+        this.id = id;
     }
 
     public String getSisCourseId() {
-	return sisCourseId;
+        return sisCourseId;
     }
 
     public void setSisCourseId(String sisCourseId) {
-	this.sisCourseId = sisCourseId;
+        this.sisCourseId = sisCourseId;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     public String getCourseCode() {
-	return courseCode;
+        return courseCode;
     }
 
     public void setCourseCode(String courseCode) {
-	this.courseCode = courseCode;
+        this.courseCode = courseCode;
     }
 
     public String getWorkflowState() {
-	return workflowState;
+        return workflowState;
     }
 
     public void setWorkflowState(String workflowState) {
-	this.workflowState = workflowState;
+        this.workflowState = workflowState;
     }
 
     public long getAccountId() {
-	return accountId;
+        return accountId;
     }
 
     public void setAccountId(long accountId) {
-	this.accountId = accountId;
+        this.accountId = accountId;
     }
 
     public Date getStartAt() {
-	return startAt;
+        return startAt;
     }
 
     public void setStartAt(Date startAt) {
-	this.startAt = startAt;
+        this.startAt = startAt;
     }
 
     public Date getEndAt() {
-	return endAt;
+        return endAt;
     }
 
     public void setEndAt(Date endAt) {
-	this.endAt = endAt;
+        this.endAt = endAt;
     }
 
     public Enrollment[] getEnrollments() {
-	return enrollments;
+        return enrollments;
     }
 
     public void setEnrollments(Enrollment[] enrollments) {
-	this.enrollments = enrollments;
+        this.enrollments = enrollments;
     }
 
     public Calendar getCalendar() {
-	return calendar;
+        return calendar;
     }
 
     public void setCalendar(Calendar calendar) {
-	this.calendar = calendar;
+        this.calendar = calendar;
     }
 
     public String getDefaultView() {
-	return defaultView;
+        return defaultView;
     }
 
     public void setDefaultView(String defaultView) {
-	this.defaultView = defaultView;
+        this.defaultView = defaultView;
     }
 
     public String getSyllabusBody() {
-	return syllabusBody;
+        return syllabusBody;
     }
 
     public void setSyllabusBody(String syllabusBody) {
-	this.syllabusBody = syllabusBody;
+        this.syllabusBody = syllabusBody;
     }
 
     public String getNeedsGradingCount() {
-	return needsGradingCount;
+        return needsGradingCount;
     }
 
     public void setNeedsGradingCount(String needsGradingCount) {
-	this.needsGradingCount = needsGradingCount;
+        this.needsGradingCount = needsGradingCount;
     }
 
     public Term getTerm() {
-	return term;
+        return term;
     }
 
     public void setTerm(Term term) {
-	this.term = term;
+        this.term = term;
     }
 
     @Override
     public int hashCode() {
-	return Objects.hashCode(
-		id,
-		sisCourseId,
-		name, courseCode,
-		workflowState,
-		accountId,
-		startAt,
-		endAt,
-		Arrays.hashCode(enrollments),
-		calendar,
-		defaultView,
-		syllabusBody,
-		needsGradingCount,
-		term);
+        return Objects.hashCode(
+                id,
+                sisCourseId,
+                name, courseCode,
+                workflowState,
+                accountId,
+                startAt,
+                endAt,
+                Arrays.hashCode(enrollments),
+                calendar,
+                defaultView,
+                syllabusBody,
+                needsGradingCount,
+                term);
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (null == obj) {
-	    return false;
-	}
+        if (null == obj) {
+            return false;
+        }
 
-	if (this.getClass() != obj.getClass()) {
-	    return false;
-	}
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
 
-	Course other = (Course) obj;
+        Course other = (Course) obj;
 
-	if (!Objects.equal(this.id, other.id)) {
-	    return false;
-	}
+        if (!Objects.equal(this.id, other.id)) {
+            return false;
+        }
 
-	if (!Objects.equal(this.sisCourseId, other.sisCourseId)) {
-	    return false;
-	}
+        if (!Objects.equal(this.sisCourseId, other.sisCourseId)) {
+            return false;
+        }
 
-	if (!Objects.equal(this.name, other.name)) {
-	    return false;
-	}
+        if (!Objects.equal(this.name, other.name)) {
+            return false;
+        }
 
-	if (!Objects.equal(this.courseCode, other.courseCode)) {
-	    return false;
-	}
+        if (!Objects.equal(this.courseCode, other.courseCode)) {
+            return false;
+        }
 
-	if (!Objects.equal(this.accountId, other.accountId)) {
-	    return false;
-	}
+        if (!Objects.equal(this.accountId, other.accountId)) {
+            return false;
+        }
 
-	if (!Objects.equal(this.startAt, other.startAt)) {
-	    return false;
-	}
+        if (!Objects.equal(this.startAt, other.startAt)) {
+            return false;
+        }
 
-	if (!Objects.equal(this.endAt, other.endAt)) {
-	    return false;
-	}
+        if (!Objects.equal(this.endAt, other.endAt)) {
+            return false;
+        }
 
-	if (!Arrays.equals(this.enrollments, other.enrollments)) {
-	    return false;
-	}
+        if (!Arrays.equals(this.enrollments, other.enrollments)) {
+            return false;
+        }
 
-	if (!Objects.equal(this.calendar, other.calendar)) {
-	    return false;
-	}
+        if (!Objects.equal(this.calendar, other.calendar)) {
+            return false;
+        }
 
-	if (!Objects.equal(this.defaultView, other.defaultView)) {
-	    return false;
-	}
+        if (!Objects.equal(this.defaultView, other.defaultView)) {
+            return false;
+        }
 
-	if (!Objects.equal(this.syllabusBody, other.syllabusBody)) {
-	    return false;
-	}
+        if (!Objects.equal(this.syllabusBody, other.syllabusBody)) {
+            return false;
+        }
 
-	if (!Objects.equal(this.needsGradingCount, other.needsGradingCount)) {
-	    return false;
-	}
+        if (!Objects.equal(this.needsGradingCount, other.needsGradingCount)) {
+            return false;
+        }
 
-	if (!Objects.equal(this.term, other.term)) {
-	    return false;
-	}
+        if (!Objects.equal(this.term, other.term)) {
+            return false;
+        }
 
-	return true;
+        return true;
     }
 
     @Override
     public String toString() {
-	return Objects.toStringHelper(this)
-		.add("id", id)
-		.add("sys_course_id", sisCourseId)
-		.add("name", name)
-		.add("course_code", courseCode)
-		.add("workflow_state", workflowState)
-		.add("account_id", accountId)
-		.add("start_at", startAt)
-		.add("end_at", endAt)
-		.add("enrollments", Arrays.toString(enrollments))
-		.add("calendar", calendar)
-		.add("default_view", defaultView)
-		.add("syllabus_body", syllabusBody)
-		.add("need_grading_count", needsGradingCount)
-		.add("term", term)
-		.toString();
+        return Objects.toStringHelper(this)
+                .add("id", id)
+                .add("sys_course_id", sisCourseId)
+                .add("name", name)
+                .add("course_code", courseCode)
+                .add("workflow_state", workflowState)
+                .add("account_id", accountId)
+                .add("start_at", startAt)
+                .add("end_at", endAt)
+                .add("enrollments", Arrays.toString(enrollments))
+                .add("calendar", calendar)
+                .add("default_view", defaultView)
+                .add("syllabus_body", syllabusBody)
+                .add("need_grading_count", needsGradingCount)
+                .add("term", term)
+                .toString();
     }
 }

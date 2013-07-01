@@ -288,82 +288,70 @@ public class Enrollment {
         return user;
     }
 
-    // TODO Update hashCode and equals !!!!!
-
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (courseId ^ (courseId >>> 32));
-        result = prime * result
-                + (int) (courseSectionId ^ (courseSectionId >>> 32));
-        result = prime * result
-                + ((enrollmentState == null) ? 0 : enrollmentState.hashCode());
-        result = prime * result + ((grades == null) ? 0 : grades.hashCode());
-        result = prime * result + ((htmlUrl == null) ? 0 : htmlUrl.hashCode());
-        result = prime * result + (int) (id ^ (id >>> 32));
-        result = prime * result
-                + (limitPrivilegesToCourseSection ? 1231 : 1237);
-        result = prime * result + ((role == null) ? 0 : role.hashCode());
-        result = prime * result
-                + (int) (rootAccountId ^ (rootAccountId >>> 32));
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((user == null) ? 0 : user.hashCode());
-        result = prime * result + (int) (userId ^ (userId >>> 32));
-        return result;
+        return Objects.hashCode(
+                id,
+                courseId,
+                courseSectionId,
+                enrollmentState,
+                limitPrivilegesToCourseSection,
+                rootAccountId,
+                type,
+                role,
+                userId,
+                htmlUrl,
+                grades,
+                user);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (obj == null) {
+            return false;
+        }
+
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+
+        if (getClass() != obj.getClass()) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
+
         Enrollment other = (Enrollment) obj;
-        if (courseId != other.courseId)
-            return false;
-        if (courseSectionId != other.courseSectionId)
-            return false;
-        if (enrollmentState == null) {
-            if (other.enrollmentState != null)
-                return false;
-        } else if (!enrollmentState.equals(other.enrollmentState))
-            return false;
-        if (grades == null) {
-            if (other.grades != null)
-                return false;
-        } else if (!grades.equals(other.grades))
-            return false;
-        if (htmlUrl == null) {
-            if (other.htmlUrl != null)
-                return false;
-        } else if (!htmlUrl.equals(other.htmlUrl))
-            return false;
-        if (id != other.id)
-            return false;
-        if (limitPrivilegesToCourseSection != other.limitPrivilegesToCourseSection)
-            return false;
-        if (role == null) {
-            if (other.role != null)
-                return false;
-        } else if (!role.equals(other.role))
-            return false;
-        if (rootAccountId != other.rootAccountId)
-            return false;
-        if (type == null) {
-            if (other.type != null)
-                return false;
-        } else if (!type.equals(other.type))
-            return false;
-        if (user == null) {
-            if (other.user != null)
-                return false;
-        } else if (!user.equals(other.user))
-            return false;
-        if (userId != other.userId)
-            return false;
-        return true;
+
+        return Objects.equal(this.id, other.id) &&
+                Objects.equal(this.courseId, other.courseId) &&
+                Objects.equal(this.courseSectionId, other.courseSectionId) &&
+                Objects.equal(this.enrollmentState, other.enrollmentState) &&
+                Objects.equal(
+                        this.limitPrivilegesToCourseSection,
+                        other.limitPrivilegesToCourseSection) &&
+                Objects.equal(this.rootAccountId, other.rootAccountId) &&
+                Objects.equal(this.type, other.type) &&
+                Objects.equal(this.role, other.role) &&
+                Objects.equal(this.userId, other.userId) &&
+                Objects.equal(this.htmlUrl, other.htmlUrl) &&
+                Objects.equal(this.grades, other.grades) &&
+                Objects.equal(this.user, other.user);
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("id", id)
+                .add("courseId", courseId)
+                .add("courseSectionId", courseSectionId)
+                .add("enrollmentState", enrollmentState)
+                .add("limitPrivilegesToCourseSection", limitPrivilegesToCourseSection)
+                .add("rootAccountId", rootAccountId)
+                .add("type", type)
+                .add("role", role)
+                .add("userId", userId)
+                .add("htmlUrl", htmlUrl)
+                .add("grades", grades)
+                .add("user", user)
+                .toString();
     }
 }

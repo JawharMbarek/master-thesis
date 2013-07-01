@@ -262,38 +262,28 @@ public abstract class CanvasRequest<T> {
             return false;
         }
 
+        if (this == obj) {
+            return true;
+        }
+
         if (this.getClass() != obj.getClass()) {
             return false;
         }
 
         CanvasRequest<?> other = (CanvasRequest<?>) obj;
 
-        if (!Objects.equal(this.methodType, other.methodType)) {
-            return false;
-        }
-
-        if (!Objects.equal(this.client, other.client)) {
-            return false;
-        }
-
-        if (!Objects.equal(this.uri, other.uri)) {
-            return false;
-        }
-
-        if (!Objects.equal(this.content, other.content)) {
-            return false;
-        }
-
-        if (!Objects.equal(this.responseType, other.responseType)) {
-            return false;
-        }
-
-        return true;
+        return Objects.equal(this.client, other.client) &&
+                Objects.equal(this.oauthToken, other.oauthToken) &&
+                Objects.equal(this.uri, other.uri) &&
+                Objects.equal(this.methodType, other.methodType) &&
+                Objects.equal(this.content, other.content) &&
+                Objects.equal(this.responseType, other.responseType);
     }
 
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
+                .add("client", client)
                 .add("method", methodType.getSimpleName())
                 .add("uri", uri)
                 .add("has_accesstoken", null != oauthToken)

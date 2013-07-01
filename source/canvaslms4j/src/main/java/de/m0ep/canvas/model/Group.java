@@ -1,5 +1,7 @@
+
 package de.m0ep.canvas.model;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 public class Group {
@@ -49,190 +51,151 @@ public class Group {
     private int storageQuotaMB;
 
     public static String getJoinLevelParentContextAutoJoin() {
-	return JOIN_LEVEL_PARENT_CONTEXT_AUTO_JOIN;
+        return JOIN_LEVEL_PARENT_CONTEXT_AUTO_JOIN;
     }
 
     public static String getJoinLevelParentContextRequest() {
-	return JOIN_LEVEL_PARENT_CONTEXT_REQUEST;
+        return JOIN_LEVEL_PARENT_CONTEXT_REQUEST;
     }
 
     public static String getJoinLevelInvitationOnly() {
-	return JOIN_LEVEL_INVITATION_ONLY;
+        return JOIN_LEVEL_INVITATION_ONLY;
     }
 
     public static String getContextTypeCourse() {
-	return CONTEXT_TYPE_COURSE;
+        return CONTEXT_TYPE_COURSE;
     }
 
     public static String getContextTypeAccount() {
-	return CONTEXT_TYPE_ACCOUNT;
+        return CONTEXT_TYPE_ACCOUNT;
     }
 
     public long getId() {
-	return id;
+        return id;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public String getDescription() {
-	return description;
+        return description;
     }
 
     public boolean isPublic() {
-	return isPublic;
+        return isPublic;
     }
 
     public boolean isFollowedByUser() {
-	return followedByUser;
+        return followedByUser;
     }
 
     public String getJoinLevel() {
-	return joinLevel;
+        return joinLevel;
     }
 
     public int getMembersCount() {
-	return membersCount;
+        return membersCount;
     }
 
     public String getAvatarUrl() {
-	return avatarUrl;
+        return avatarUrl;
     }
 
     public String getContextType() {
-	return contextType;
+        return contextType;
     }
 
     public long getCourseId() {
-	return courseId;
+        return courseId;
     }
 
     public long getAccountId() {
-	return accountId;
+        return accountId;
     }
 
     public String getRole() {
-	return role;
+        return role;
     }
 
     public long getGroupCategoryId() {
-	return groupCategoryId;
+        return groupCategoryId;
     }
 
     public int getStorageQuotaMB() {
-	return storageQuotaMB;
+        return storageQuotaMB;
     }
 
     @Override
     public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result + (int) (accountId ^ (accountId >>> 32));
-	result = prime * result
-		+ ((avatarUrl == null) ? 0 : avatarUrl.hashCode());
-	result = prime * result
-		+ ((contextType == null) ? 0 : contextType.hashCode());
-	result = prime * result + (int) (courseId ^ (courseId >>> 32));
-	result = prime * result
-		+ ((description == null) ? 0 : description.hashCode());
-	result = prime * result + (followedByUser ? 1231 : 1237);
-	result = prime * result
-		+ (int) (groupCategoryId ^ (groupCategoryId >>> 32));
-	result = prime * result + (int) (id ^ (id >>> 32));
-	result = prime * result + (isPublic ? 1231 : 1237);
-	result = prime * result
-		+ ((joinLevel == null) ? 0 : joinLevel.hashCode());
-	result = prime * result + membersCount;
-	result = prime * result + ((name == null) ? 0 : name.hashCode());
-	result = prime * result + ((role == null) ? 0 : role.hashCode());
-	result = prime * result + storageQuotaMB;
-	return result;
+        return Objects.hashCode(
+                id,
+                name,
+                description,
+                isPublic,
+                followedByUser,
+                joinLevel,
+                membersCount,
+                avatarUrl,
+                contextType,
+                courseId,
+                role,
+                groupCategoryId,
+                accountId,
+                storageQuotaMB);
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
+        if (obj == null) {
+            return false;
+        }
 
-	if (obj == null) {
-	    return false;
-	}
+        if (this == obj) {
+            return true;
+        }
 
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
 
-	Group other = (Group) obj;
+        Group other = (Group) obj;
 
-	if (accountId != other.accountId) {
-	    return false;
-	}
-	if (avatarUrl == null) {
-	    if (other.avatarUrl != null) {
-		return false;
-	    }
-	} else if (!avatarUrl.equals(other.avatarUrl)) {
-	    return false;
-	}
-	if (contextType == null) {
-	    if (other.contextType != null) {
-		return false;
-	    }
-	} else if (!contextType.equals(other.contextType)) {
-	    return false;
-	}
-	if (courseId != other.courseId) {
-	    return false;
-	}
-	if (description == null) {
-	    if (other.description != null) {
-		return false;
-	    }
-	} else if (!description.equals(other.description)) {
-	    return false;
-	}
-	if (followedByUser != other.followedByUser) {
-	    return false;
-	}
-	if (groupCategoryId != other.groupCategoryId) {
-	    return false;
-	}
-	if (id != other.id) {
-	    return false;
-	}
-	if (isPublic != other.isPublic) {
-	    return false;
-	}
-	if (joinLevel == null) {
-	    if (other.joinLevel != null) {
-		return false;
-	    }
-	} else if (!joinLevel.equals(other.joinLevel)) {
-	    return false;
-	}
-	if (membersCount != other.membersCount) {
-	    return false;
-	}
-	if (name == null) {
-	    if (other.name != null) {
-		return false;
-	    }
-	} else if (!name.equals(other.name)) {
-	    return false;
-	}
-	if (role == null) {
-	    if (other.role != null) {
-		return false;
-	    }
-	} else if (!role.equals(other.role)) {
-	    return false;
-	}
-	if (storageQuotaMB != other.storageQuotaMB) {
-	    return false;
-	}
-	return true;
+        return Objects.equal(this.id, other.id) &&
+                Objects.equal(this.name, other.name) &&
+                Objects.equal(this.description, other.description) &&
+                Objects.equal(this.isPublic, other.isPublic) &&
+                Objects.equal(this.followedByUser, other.followedByUser) &&
+                Objects.equal(this.joinLevel, other.joinLevel) &&
+                Objects.equal(this.membersCount, other.membersCount) &&
+                Objects.equal(this.avatarUrl, other.avatarUrl) &&
+                Objects.equal(this.contextType, other.contextType) &&
+                Objects.equal(this.courseId, other.courseId) &&
+                Objects.equal(this.accountId, other.accountId) &&
+                Objects.equal(this.role, other.role) &&
+                Objects.equal(this.groupCategoryId, other.groupCategoryId) &&
+                Objects.equal(this.storageQuotaMB, other.storageQuotaMB);
+
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("id", id)
+                .add("name", name)
+                .add("description", description)
+                .add("isPublic", isPublic)
+                .add("followedByUser", followedByUser)
+                .add("joinLevel", joinLevel)
+                .add("memberCount", membersCount)
+                .add("avatarUrl", avatarUrl)
+                .add("contextType", contextType)
+                .add("courseId", courseId)
+                .add("accountId", accountId)
+                .add("role", role)
+                .add("groupCategoryId", groupCategoryId)
+                .add("storageQuotaMB", storageQuotaMB)
+                .toString();
     }
 
 }

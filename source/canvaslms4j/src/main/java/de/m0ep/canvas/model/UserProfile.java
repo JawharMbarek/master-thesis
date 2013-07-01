@@ -1,5 +1,7 @@
+
 package de.m0ep.canvas.model;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 public class UserProfile {
@@ -31,125 +33,101 @@ public class UserProfile {
     private Calendar calendar;
 
     public long getId() {
-	return id;
+        return id;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public String getShortName() {
-	return shortName;
+        return shortName;
     }
 
     public String getSortableName() {
-	return sortableName;
+        return sortableName;
     }
 
     public String getPrimaryEmail() {
-	return primaryEmail;
+        return primaryEmail;
     }
 
     public String getLoginId() {
-	return loginId;
+        return loginId;
     }
 
     public String getSisUserId() {
-	return sisUserId;
+        return sisUserId;
     }
 
     public String getSisLoginId() {
-	return sisLoginId;
+        return sisLoginId;
     }
 
     public String getAvatarUrl() {
-	return avatarUrl;
+        return avatarUrl;
     }
 
     public Calendar getCalendar() {
-	return calendar;
+        return calendar;
     }
 
     @Override
     public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result
-		+ ((avatarUrl == null) ? 0 : avatarUrl.hashCode());
-	result = prime * result
-		+ ((calendar == null) ? 0 : calendar.hashCode());
-	result = prime * result + (int) (id ^ (id >>> 32));
-	result = prime * result + ((loginId == null) ? 0 : loginId.hashCode());
-	result = prime * result + ((name == null) ? 0 : name.hashCode());
-	result = prime * result
-		+ ((primaryEmail == null) ? 0 : primaryEmail.hashCode());
-	result = prime * result
-		+ ((shortName == null) ? 0 : shortName.hashCode());
-	result = prime * result
-		+ ((sisLoginId == null) ? 0 : sisLoginId.hashCode());
-	result = prime * result
-		+ ((sisUserId == null) ? 0 : sisUserId.hashCode());
-	result = prime * result
-		+ ((sortableName == null) ? 0 : sortableName.hashCode());
-	return result;
+        return Objects.hashCode(
+                id,
+                name,
+                shortName,
+                sortableName,
+                primaryEmail,
+                loginId,
+                sisUserId,
+                sisLoginId,
+                avatarUrl,
+                calendar);
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj)
-	    return true;
-	if (obj == null)
-	    return false;
-	if (getClass() != obj.getClass())
-	    return false;
-	UserProfile other = (UserProfile) obj;
-	if (avatarUrl == null) {
-	    if (other.avatarUrl != null)
-		return false;
-	} else if (!avatarUrl.equals(other.avatarUrl))
-	    return false;
-	if (calendar == null) {
-	    if (other.calendar != null)
-		return false;
-	} else if (!calendar.equals(other.calendar))
-	    return false;
-	if (id != other.id)
-	    return false;
-	if (loginId == null) {
-	    if (other.loginId != null)
-		return false;
-	} else if (!loginId.equals(other.loginId))
-	    return false;
-	if (name == null) {
-	    if (other.name != null)
-		return false;
-	} else if (!name.equals(other.name))
-	    return false;
-	if (primaryEmail == null) {
-	    if (other.primaryEmail != null)
-		return false;
-	} else if (!primaryEmail.equals(other.primaryEmail))
-	    return false;
-	if (shortName == null) {
-	    if (other.shortName != null)
-		return false;
-	} else if (!shortName.equals(other.shortName))
-	    return false;
-	if (sisLoginId == null) {
-	    if (other.sisLoginId != null)
-		return false;
-	} else if (!sisLoginId.equals(other.sisLoginId))
-	    return false;
-	if (sisUserId == null) {
-	    if (other.sisUserId != null)
-		return false;
-	} else if (!sisUserId.equals(other.sisUserId))
-	    return false;
-	if (sortableName == null) {
-	    if (other.sortableName != null)
-		return false;
-	} else if (!sortableName.equals(other.sortableName))
-	    return false;
-	return true;
+        if (obj == null) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        UserProfile other = (UserProfile) obj;
+
+        return Objects.equal(this.id, other.id) &&
+                Objects.equal(this.name, other.name) &&
+                Objects.equal(this.shortName, other.shortName) &&
+                Objects.equal(this.sortableName, other.sortableName) &&
+                Objects.equal(this.primaryEmail, other.primaryEmail) &&
+                Objects.equal(this.loginId, other.loginId) &&
+                Objects.equal(this.sisUserId, other.sisUserId) &&
+                Objects.equal(this.sisLoginId, other.sisLoginId) &&
+                Objects.equal(this.avatarUrl, other.avatarUrl) &&
+                Objects.equal(this.calendar, other.calendar);
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("id", id)
+                .add("name", name)
+                .add("shortName", shortName)
+                .add("sortableName", sortableName)
+                .add("primaryEmail", primaryEmail)
+                .add("loginId", loginId)
+                .add("sisUserId", sisUserId)
+                .add("sisLoginId", sisLoginId)
+                .add("avatarUrl", avatarUrl)
+                .add("calendar", calendar)
+                .toString();
     }
 }

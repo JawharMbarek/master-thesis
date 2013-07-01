@@ -9,7 +9,7 @@ import de.m0ep.canvas.Pagination;
 import de.m0ep.canvas.exceptions.CanvasException;
 import de.m0ep.canvas.model.Course;
 import de.m0ep.canvas.model.DiscussionTopic;
-import de.m0ep.canvas.model.DiscussionTopicEntry;
+import de.m0ep.canvas.model.Entry;
 
 public class CanvasTest {
     public static void main(String[] args) {
@@ -90,7 +90,7 @@ public class CanvasTest {
         System.out.println("Get entries course=798152, topic=1424406");
         System.out.println("-----------------");
 
-        Pagination<DiscussionTopicEntry> entryPages;
+        Pagination<Entry> entryPages;
         try {
             entryPages = client.courses()
                     .discussionTopics(798152)
@@ -102,8 +102,8 @@ public class CanvasTest {
             return;
         }
 
-        for (List<DiscussionTopicEntry> entries : entryPages) {
-            for (DiscussionTopicEntry entry : entries) {
+        for (List<Entry> entries : entryPages) {
+            for (Entry entry : entries) {
                 printDiscussionTopicEntry(entry);
             }
         }
@@ -118,7 +118,7 @@ public class CanvasTest {
             System.out.print("Message:");
             String message = scn.nextLine();
 
-            DiscussionTopicEntry entry = client.courses()
+            Entry entry = client.courses()
                     .discussionTopics(798152)
                     .entries(1424406)
                     .post(message)
@@ -140,7 +140,7 @@ public class CanvasTest {
             System.out.print("Message:");
             String message = scn.nextLine();
 
-            DiscussionTopicEntry entry = client.courses()
+            Entry entry = client.courses()
                     .discussionTopics(798152)
                     .entries(1424406)
                     .postReply(message, 3084155)
@@ -190,7 +190,7 @@ public class CanvasTest {
     /**
      * @param entry
      */
-    public static void printDiscussionTopicEntry(DiscussionTopicEntry entry) {
+    public static void printDiscussionTopicEntry(Entry entry) {
         System.out.println(entry.getId());
         System.out.println(entry.getUserName());
         System.out.println(entry.getCreatedAt());

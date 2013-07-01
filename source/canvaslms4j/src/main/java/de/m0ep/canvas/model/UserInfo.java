@@ -1,8 +1,10 @@
+
 package de.m0ep.canvas.model;
 
 import java.util.Arrays;
 import java.util.Date;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 public class UserInfo {
@@ -38,145 +40,115 @@ public class UserInfo {
     private Date lastLogin;
 
     public long getId() {
-	return id;
+        return id;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public String getSortableName() {
-	return sortableName;
+        return sortableName;
     }
 
     public String getShortName() {
-	return shortName;
+        return shortName;
     }
 
     public String getSisUserId() {
-	return sisUserId;
+        return sisUserId;
     }
 
     public String getSisLoginId() {
-	return sisLoginId;
+        return sisLoginId;
     }
 
     public String getLoginId() {
-	return loginId;
+        return loginId;
     }
 
     public String getAvatarUrl() {
-	return avatarUrl;
+        return avatarUrl;
     }
 
     public Enrollment[] getEnrollments() {
-	return enrollments;
+        return enrollments;
     }
 
     public String getEmail() {
-	return email;
+        return email;
     }
 
     public String getLocale() {
-	return locale;
+        return locale;
     }
 
     public Date getLastLogin() {
-	return lastLogin;
+        return lastLogin;
     }
 
     @Override
     public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result
-		+ ((avatarUrl == null) ? 0 : avatarUrl.hashCode());
-	result = prime * result + ((email == null) ? 0 : email.hashCode());
-	result = prime * result + Arrays.hashCode(enrollments);
-	result = prime * result + (int) (id ^ (id >>> 32));
-	result = prime * result
-		+ ((lastLogin == null) ? 0 : lastLogin.hashCode());
-	result = prime * result + ((locale == null) ? 0 : locale.hashCode());
-	result = prime * result + ((loginId == null) ? 0 : loginId.hashCode());
-	result = prime * result + ((name == null) ? 0 : name.hashCode());
-	result = prime * result
-		+ ((shortName == null) ? 0 : shortName.hashCode());
-	result = prime * result
-		+ ((sisLoginId == null) ? 0 : sisLoginId.hashCode());
-	result = prime * result
-		+ ((sisUserId == null) ? 0 : sisUserId.hashCode());
-	result = prime * result
-		+ ((sortableName == null) ? 0 : sortableName.hashCode());
-	return result;
+        return Objects.hashCode(
+                id,
+                name,
+                sortableName,
+                shortName,
+                sisLoginId,
+                sisUserId,
+                loginId,
+                avatarUrl,
+                Arrays.hashCode(enrollments),
+                email,
+                locale,
+                lastLogin);
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj)
-	    return true;
+        if (obj == null) {
+            return false;
+        }
 
-	if (obj == null)
-	    return false;
+        if (this == obj) {
+            return true;
+        }
 
-	if (getClass() != obj.getClass())
-	    return false;
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
 
-	UserInfo other = (UserInfo) obj;
+        UserInfo other = (UserInfo) obj;
 
-	if (avatarUrl == null) {
-	    if (other.avatarUrl != null)
-		return false;
-	} else if (!avatarUrl.equals(other.avatarUrl))
-	    return false;
-	if (email == null) {
-	    if (other.email != null)
-		return false;
-	} else if (!email.equals(other.email))
-	    return false;
-	if (!Arrays.equals(enrollments, other.enrollments))
-	    return false;
-	if (id != other.id)
-	    return false;
-	if (lastLogin == null) {
-	    if (other.lastLogin != null)
-		return false;
-	} else if (!lastLogin.equals(other.lastLogin))
-	    return false;
-	if (locale == null) {
-	    if (other.locale != null)
-		return false;
-	} else if (!locale.equals(other.locale))
-	    return false;
-	if (loginId == null) {
-	    if (other.loginId != null)
-		return false;
-	} else if (!loginId.equals(other.loginId))
-	    return false;
-	if (name == null) {
-	    if (other.name != null)
-		return false;
-	} else if (!name.equals(other.name))
-	    return false;
-	if (shortName == null) {
-	    if (other.shortName != null)
-		return false;
-	} else if (!shortName.equals(other.shortName))
-	    return false;
-	if (sisLoginId == null) {
-	    if (other.sisLoginId != null)
-		return false;
-	} else if (!sisLoginId.equals(other.sisLoginId))
-	    return false;
-	if (sisUserId == null) {
-	    if (other.sisUserId != null)
-		return false;
-	} else if (!sisUserId.equals(other.sisUserId))
-	    return false;
-	if (sortableName == null) {
-	    if (other.sortableName != null)
-		return false;
-	} else if (!sortableName.equals(other.sortableName))
-	    return false;
-	return true;
+        return Objects.equal(this.id, other.id) &&
+                Objects.equal(this.name, other.name) &&
+                Objects.equal(this.sortableName, other.sortableName) &&
+                Objects.equal(this.shortName, other.sortableName) &&
+                Objects.equal(this.sisUserId, other.sisUserId) &&
+                Objects.equal(this.sisLoginId, other.sisLoginId) &&
+                Objects.equal(this.loginId, other.loginId) &&
+                Objects.equal(this.avatarUrl, other.avatarUrl) &&
+                Arrays.equals(this.enrollments, other.enrollments) &&
+                Objects.equal(this.email, other.email) &&
+                Objects.equal(this.locale, other.locale) &&
+                Objects.equal(this.lastLogin, other.lastLogin);
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("id", id)
+                .add("name", name)
+                .add("sortableName", sortableName)
+                .add("shortName", shortName)
+                .add("sisUserId", sisUserId)
+                .add("sisLoginId", sisLoginId)
+                .add("loginId", loginId)
+                .add("avatarUrl", avatarUrl)
+                .add("enrtollments", Arrays.toString(enrollments))
+                .add("email", email)
+                .add("locale", locale)
+                .add("lastLogin", lastLogin)
+                .toString();
     }
 }

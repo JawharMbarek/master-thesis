@@ -18,6 +18,7 @@
 
 package de.m0ep.canvas;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 public abstract class AbstractEndpoint implements IEndpoint {
@@ -65,5 +66,19 @@ public abstract class AbstractEndpoint implements IEndpoint {
 
     public void initializeRequest(final CanvasRequest<?> request) {
         request.setOauthToken(getClient().getOAuthToken());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(client, endpoint, parentEndpoint);
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("client", client)
+                .add("endpoint", endpoint)
+                .add("parentEndmpoint", parentEndpoint)
+                .toString();
     }
 }

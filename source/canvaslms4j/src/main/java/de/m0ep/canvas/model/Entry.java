@@ -7,7 +7,7 @@ import java.util.Date;
 import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
-public class DiscussionTopicEntry {
+public class Entry {
     public static final String READ_STATE_READ = "read";
     public static final String READ_STATE_UNREAD = "unread";
 
@@ -42,7 +42,7 @@ public class DiscussionTopicEntry {
     private Attachment attachment;
 
     @SerializedName("recent_replies")
-    private DiscussionTopicEntry[] recentReplies;
+    private Entry[] recentReplies;
 
     @SerializedName("has_more_replies")
     private boolean hasMoreReplies;
@@ -93,7 +93,7 @@ public class DiscussionTopicEntry {
         return attachment;
     }
 
-    public DiscussionTopicEntry[] getRecentReplies() {
+    public Entry[] getRecentReplies() {
         return recentReplies;
     }
 
@@ -138,7 +138,7 @@ public class DiscussionTopicEntry {
             return false;
         }
 
-        DiscussionTopicEntry other = (DiscussionTopicEntry) obj;
+        Entry other = (Entry) obj;
 
         return Objects.equal(this.id, other.id) &&
                 Objects.equal(this.parentId, other.parentId) &&

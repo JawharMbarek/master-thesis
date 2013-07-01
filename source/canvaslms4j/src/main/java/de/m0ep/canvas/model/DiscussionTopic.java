@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.Map;
 
 import com.google.common.base.Objects;
-import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
 
 public class DiscussionTopic {
@@ -23,30 +22,18 @@ public class DiscussionTopic {
         @SerializedName("html_url")
         private String htmlUrl;
 
-        /**
-         * @return the id
-         */
         public Long getId() {
             return id;
         }
 
-        /**
-         * @return the avatarIamgeUrl
-         */
         public String getAvatarIamgeUrl() {
             return avatarIamgeUrl;
         }
 
-        /**
-         * @return the displayName
-         */
         public String getDisplayName() {
             return displayName;
         }
 
-        /**
-         * @return the htmlUrl
-         */
         public String getHtmlUrl() {
             return htmlUrl;
         }
@@ -89,84 +76,84 @@ public class DiscussionTopic {
         }
     }
 
-    public static class LockInfo {
-        @SerializedName("asset_string")
-        private String assetString;
-
-        @SerializedName("unlock_at")
-        private Date unlockAt;
-
-        @SerializedName("lock_at")
-        private Date lockAt;
-
-        @SerializedName("context_module")
-        private JsonElement context_module;
-
-        /**
-         * @return the assetString
-         */
-        public String getAssetString() {
-            return assetString;
-        }
-
-        /**
-         * @return the unlockAt
-         */
-        public Date getUnlockAt() {
-            return unlockAt;
-        }
-
-        /**
-         * @return the lockAt
-         */
-        public Date getLockAt() {
-            return lockAt;
-        }
-
-        /**
-         * @return the context_module
-         */
-        public JsonElement getContext_module() {
-            return context_module;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(assetString, unlockAt, lockAt, context_module);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (null == obj) {
-                return false;
-            }
-
-            if (this == obj) {
-                return true;
-            }
-
-            if (this.getClass() != obj.getClass()) {
-                return false;
-            }
-
-            LockInfo other = (LockInfo) obj;
-
-            return Objects.equal(this.assetString, other.assetString) &&
-                    Objects.equal(this.lockAt, other.lockAt) &&
-                    Objects.equal(this.lockAt, other.lockAt) &&
-                    Objects.equal(this.context_module, other.context_module);
-        }
-
-        @Override
-        public String toString() {
-            return Objects.toStringHelper(this)
-                    .add("assetString", assetString)
-                    .add("unlockAt", unlockAt)
-                    .add("lockAt", lockAt)
-                    .add("context_module", context_module)
-                    .toString();
-        }
-    }
+    // public static class LockInfo {
+    // @SerializedName("asset_string")
+    // private String assetString;
+    //
+    // @SerializedName("unlock_at")
+    // private Date unlockAt;
+    //
+    // @SerializedName("lock_at")
+    // private Date lockAt;
+    //
+    // @SerializedName("context_module")
+    // private JsonElement context_module;
+    //
+    // /**
+    // * @return the assetString
+    // */
+    // public String getAssetString() {
+    // return assetString;
+    // }
+    //
+    // /**
+    // * @return the unlockAt
+    // */
+    // public Date getUnlockAt() {
+    // return unlockAt;
+    // }
+    //
+    // /**
+    // * @return the lockAt
+    // */
+    // public Date getLockAt() {
+    // return lockAt;
+    // }
+    //
+    // /**
+    // * @return the context_module
+    // */
+    // public JsonElement getContext_module() {
+    // return context_module;
+    // }
+    //
+    // @Override
+    // public int hashCode() {
+    // return Objects.hashCode(assetString, unlockAt, lockAt, context_module);
+    // }
+    //
+    // @Override
+    // public boolean equals(Object obj) {
+    // if (null == obj) {
+    // return false;
+    // }
+    //
+    // if (this == obj) {
+    // return true;
+    // }
+    //
+    // if (this.getClass() != obj.getClass()) {
+    // return false;
+    // }
+    //
+    // LockInfo other = (LockInfo) obj;
+    //
+    // return Objects.equal(this.assetString, other.assetString) &&
+    // Objects.equal(this.lockAt, other.lockAt) &&
+    // Objects.equal(this.lockAt, other.lockAt) &&
+    // Objects.equal(this.context_module, other.context_module);
+    // }
+    //
+    // @Override
+    // public String toString() {
+    // return Objects.toStringHelper(this)
+    // .add("assetString", assetString)
+    // .add("unlockAt", unlockAt)
+    // .add("lockAt", lockAt)
+    // .add("context_module", context_module)
+    // .toString();
+    // }
+    // }
 
     private Long id;
 

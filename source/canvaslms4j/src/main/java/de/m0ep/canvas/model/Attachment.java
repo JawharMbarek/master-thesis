@@ -37,72 +37,59 @@ public class Attachment {
     private String displayName;
 
     public String getContentType() {
-	return contentType;
-    }
-
-    public void setContentType(String contentType) {
-	this.contentType = contentType;
+        return contentType;
     }
 
     public String getUrl() {
-	return url;
-    }
-
-    public void setUrl(String url) {
-	this.url = url;
+        return url;
     }
 
     public String getFilename() {
-	return filename;
-    }
-
-    public void setFilename(String filename) {
-	this.filename = filename;
+        return filename;
     }
 
     public String getDisplayName() {
-	return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-	this.displayName = displayName;
+        return displayName;
     }
 
     @Override
     public int hashCode() {
-	return Objects.hashCode(super.hashCode(), contentType, url, filename,
-		displayName);
+        return Objects.hashCode(
+                contentType,
+                url,
+                filename,
+                displayName);
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (null == obj) {
-	    return false;
-	}
+        if (null == obj) {
+            return false;
+        }
 
-	if (this == obj) {
-	    return true;
-	}
+        if (this == obj) {
+            return true;
+        }
 
-	if (this.getClass() != obj.getClass()) {
-	    return false;
-	}
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
 
-	Attachment other = (Attachment) obj;
+        Attachment other = (Attachment) obj;
 
-	return Objects.equal(this.url, other.url) &&
-		Objects.equal(this.contentType, other.contentType) &&
-		Objects.equal(this.filename, other.filename) &&
-		Objects.equal(this.displayName, other.displayName);
+        return Objects.equal(this.url, other.url) &&
+                Objects.equal(this.contentType, other.contentType) &&
+                Objects.equal(this.filename, other.filename) &&
+                Objects.equal(this.displayName, other.displayName);
     }
 
     @Override
     public String toString() {
-	return Objects.toStringHelper(this)
-		.add("url", url)
-		.add("content_type", contentType)
-		.add("filename", filename)
-		.add("display_name", displayName)
-		.toString();
+        return Objects.toStringHelper(this)
+                .add("url", url)
+                .add("content_type", contentType)
+                .add("filename", filename)
+                .add("display_name", displayName)
+                .toString();
     }
 }

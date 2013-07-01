@@ -28,40 +28,36 @@ public class Calendar {
     private String ics;
 
     public String getIcs() {
-	return ics;
-    }
-
-    public void setIcs(String ics) {
-	this.ics = ics;
+        return ics;
     }
 
     @Override
     public int hashCode() {
-	return Objects.hashCode(ics);
+        return Objects.hashCode(ics);
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (null == obj) {
-	    return false;
-	}
+        if (null == obj) {
+            return false;
+        }
 
-	if (this == obj) {
-	    return true;
-	}
+        if (this == obj) {
+            return true;
+        }
 
-	if (this.getClass() != obj.getClass()) {
-	    return false;
-	}
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
 
-	Calendar other = (Calendar) obj;
+        Calendar other = (Calendar) obj;
 
-	return Objects.equal(this.ics, other.ics);
+        return Objects.equal(this.ics, other.ics);
     }
 
     @Override
     public String toString() {
-	return Objects.toStringHelper(this).add("ics", ics).toString();
+        return Objects.toStringHelper(this).add("ics", ics).toString();
     }
 
 }

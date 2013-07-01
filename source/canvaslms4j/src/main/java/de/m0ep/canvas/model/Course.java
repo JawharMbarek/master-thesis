@@ -30,48 +30,24 @@ public class Course {
             return type;
         }
 
-        public void setType(String type) {
-            this.type = type;
-        }
-
         public String getRole() {
             return role;
-        }
-
-        public void setRole(String role) {
-            this.role = role;
         }
 
         public Double getComputedFinalScore() {
             return computedFinalScore;
         }
 
-        public void setComputedFinalScore(Double computedFinalScore) {
-            this.computedFinalScore = computedFinalScore;
-        }
-
         public Integer getComputedCurrentScore() {
             return computedCurrentScore;
-        }
-
-        public void setComputedCurrentScore(Integer computedCurrentScore) {
-            this.computedCurrentScore = computedCurrentScore;
         }
 
         public String getComputedFinalGrade() {
             return computedFinalGrade;
         }
 
-        public void setComputedFinalGrade(String computedFinalGrade) {
-            this.computedFinalGrade = computedFinalGrade;
-        }
-
         public String getComputedCurrentGrade() {
             return computedCurrentGrade;
-        }
-
-        public void setComputedCurrentGrade(String computedCurrentGrade) {
-            this.computedCurrentGrade = computedCurrentGrade;
         }
 
         @Override
@@ -138,32 +114,16 @@ public class Course {
             return id;
         }
 
-        public void setId(long id) {
-            this.id = id;
-        }
-
         public String getName() {
             return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
         }
 
         public Date getStartAt() {
             return startAt;
         }
 
-        public void setStartAt(Date startAt) {
-            this.startAt = startAt;
-        }
-
         public Date getEndAt() {
             return endAt;
-        }
-
-        public void setEndAt(Date endAt) {
-            this.endAt = endAt;
         }
 
         @Override
@@ -254,112 +214,56 @@ public class Course {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getSisCourseId() {
         return sisCourseId;
-    }
-
-    public void setSisCourseId(String sisCourseId) {
-        this.sisCourseId = sisCourseId;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getCourseCode() {
         return courseCode;
-    }
-
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
     }
 
     public String getWorkflowState() {
         return workflowState;
     }
 
-    public void setWorkflowState(String workflowState) {
-        this.workflowState = workflowState;
-    }
-
     public long getAccountId() {
         return accountId;
-    }
-
-    public void setAccountId(long accountId) {
-        this.accountId = accountId;
     }
 
     public Date getStartAt() {
         return startAt;
     }
 
-    public void setStartAt(Date startAt) {
-        this.startAt = startAt;
-    }
-
     public Date getEndAt() {
         return endAt;
-    }
-
-    public void setEndAt(Date endAt) {
-        this.endAt = endAt;
     }
 
     public Enrollment[] getEnrollments() {
         return enrollments;
     }
 
-    public void setEnrollments(Enrollment[] enrollments) {
-        this.enrollments = enrollments;
-    }
-
     public Calendar getCalendar() {
         return calendar;
-    }
-
-    public void setCalendar(Calendar calendar) {
-        this.calendar = calendar;
     }
 
     public String getDefaultView() {
         return defaultView;
     }
 
-    public void setDefaultView(String defaultView) {
-        this.defaultView = defaultView;
-    }
-
     public String getSyllabusBody() {
         return syllabusBody;
-    }
-
-    public void setSyllabusBody(String syllabusBody) {
-        this.syllabusBody = syllabusBody;
     }
 
     public String getNeedsGradingCount() {
         return needsGradingCount;
     }
 
-    public void setNeedsGradingCount(String needsGradingCount) {
-        this.needsGradingCount = needsGradingCount;
-    }
-
     public Term getTerm() {
         return term;
-    }
-
-    public void setTerm(Term term) {
-        this.term = term;
     }
 
     @Override

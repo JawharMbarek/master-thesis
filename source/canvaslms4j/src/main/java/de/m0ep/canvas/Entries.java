@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.damnhandy.uri.template.UriTemplate;
 
 import de.m0ep.canvas.exceptions.CanvasException;
-import de.m0ep.canvas.model.DiscussionTopicEntry;
+import de.m0ep.canvas.model.Entry;
 
 public class Entries extends AbstractEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(Entries.class);
@@ -24,28 +24,28 @@ public class Entries extends AbstractEndpoint {
     private static final String PATH = "/entries";
     private static final String PATH_REPLIES = "/entries/{entryId}/replies";
 
-    public class List extends CanvasRequest<DiscussionTopicEntry> {
+    public class List extends CanvasRequest<Entry> {
         public List() {
             super(Entries.this.getClient(),
                     HttpGet.class,
                     getEndpoint(),
-                    DiscussionTopicEntry.class);
+                    Entry.class);
         }
 
         @Override
-        public DiscussionTopicEntry execute()
+        public Entry execute()
                 throws CanvasException {
             throw new UnsupportedOperationException(
                     "execute() is not supported by List");
         }
     }
 
-    public class Post extends CanvasRequest<DiscussionTopicEntry> {
+    public class Post extends CanvasRequest<Entry> {
         public Post(final String message) {
             super(Entries.this.getClient(),
                     HttpPost.class,
                     getEndpoint(),
-                    DiscussionTopicEntry.class);
+                    Entry.class);
 
             setContent(new UrlEncodedFormEntity(
                     Arrays.asList(
@@ -56,7 +56,7 @@ public class Entries extends AbstractEndpoint {
         }
 
         @Override
-        public Pagination<DiscussionTopicEntry> executePagination()
+        public Pagination<Entry> executePagination()
                 throws CanvasException {
             throw new UnsupportedOperationException(
                     "executePagination() is not supported by Post");
@@ -64,17 +64,17 @@ public class Entries extends AbstractEndpoint {
     }
 
     public class ListReplies extends
-            CanvasRequest<DiscussionTopicEntry> {
+            CanvasRequest<Entry> {
         public ListReplies(final long entryId) {
             super(Entries.this.getClient(),
                     HttpGet.class,
                     UriTemplate.fromTemplate(getParentEndpoint() + PATH_REPLIES)
                             .set(PARAM_ENTRY_ID, entryId).expand(),
-                    DiscussionTopicEntry.class);
+                    Entry.class);
         }
 
         @Override
-        public DiscussionTopicEntry execute()
+        public Entry execute()
                 throws CanvasException {
             throw new UnsupportedOperationException(
                     "execute() is not supported by List");
@@ -82,13 +82,13 @@ public class Entries extends AbstractEndpoint {
     }
 
     public class PostReply extends
-            CanvasRequest<DiscussionTopicEntry> {
+            CanvasRequest<Entry> {
         public PostReply(final String message, final long entryId) {
             super(Entries.this.getClient(),
                     HttpPost.class,
                     UriTemplate.fromTemplate(getParentEndpoint() + PATH_REPLIES)
                             .set(PARAM_ENTRY_ID, entryId).expand(),
-                    DiscussionTopicEntry.class);
+                    Entry.class);
 
             setContent(new UrlEncodedFormEntity(
                     Arrays.asList(
@@ -99,7 +99,7 @@ public class Entries extends AbstractEndpoint {
         }
 
         @Override
-        public Pagination<DiscussionTopicEntry> executePagination()
+        public Pagination<Entry> executePagination()
                 throws CanvasException {
             throw new UnsupportedOperationException(
                     "executePagination() is not supported by Post");

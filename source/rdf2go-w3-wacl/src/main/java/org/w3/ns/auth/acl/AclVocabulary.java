@@ -8,7 +8,7 @@ import org.ontoware.rdf2go.model.node.impl.URIImpl;
  * input file: acl
  * namespace: http://www.w3.org/ns/auth/acl#
  */
-public interface Vocabulary {
+public interface AclVocabulary {
 	public static final URI NS_ACLVocabulary = new URIImpl("http://www.w3.org/ns/auth/acl#",false);
 
     /**

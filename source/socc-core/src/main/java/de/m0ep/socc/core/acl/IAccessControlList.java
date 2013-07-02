@@ -21,10 +21,12 @@ package de.m0ep.socc.core.acl;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
-import org.rdfs.sioc.UserAccount;
 import org.w3.ns.auth.acl.Authorization;
+
+import com.xmlns.foaf.Agent;
 
 /**
  * Interface that describes a Access Control List to manage authorizations
@@ -32,12 +34,18 @@ import org.w3.ns.auth.acl.Authorization;
  * 
  * @author Florian Müller
  */
-public interface IAcl {
+public interface IAccessControlList {
+
+    /**
+     * Returns the RDF2Go {@link Model} used by this {@link IAccessControlList}.
+     */
+    public Model getModel();
+
     /**
      * Returns the SOCC-Agent {@link URI} that is used as the Agent of an
      * {@link Authorization}.
      */
-    public URI getSoccAgent();
+    public Agent getSoccBotAgent();
 
     /**
      * Adds an new {@link Authorization} to the Access Control List for a RDF
@@ -47,51 +55,70 @@ public interface IAcl {
      *            dcterms:creator.
      * @param accessTo To which resource should this {@link Authorization} be
      *            applied.
-     * @param accessModes The modes that are allowed by this
+     * @param accessModeSet The modes that are allowed by this
      *            {@link Authorization}.
      */
-    public void addAuthorization(
-            UserAccount creator,
-            Resource accessTo,
-            EnumSet<AccessMode> accessModes);
+    public void addAuthorizationForResource(
+            Agent owner,
+            URI accessTo,
+            EnumSet<Access> accessModeSet);
 
     /**
      * Adds an new {@link Authorization} to the Access Control List for a RDF
      * class.
      * 
-     * @param creator The creator of this {@link Authorization}. Stored as
-     *            dcterms:creator.
+     * @param owner The owner of this {@link Authorization}.
      * @param accessToClass To which class should this {@link Authorization} be
      *            applied.
-     * @param accessModes The modes that are allowed by this
+     * @param accessModeSet The modes that are allowed by this
      *            {@link Authorization}.
      */
-    public void addAuthorization(
-            UserAccount creator,
+    public void addAuthorizationForClass(
+            Agent owner,
             URI accessToClass,
-            EnumSet<AccessMode> accessModes);
+            EnumSet<Access> accessModeSet);
+
+    /**
+     * Removes an {@link Authorization}.
+     * 
+     * @param authorization
+     */
+    public void removeAuthorization(Authorization authorization);
 
     /**
      * Lists all {@link Authorization} that are created by the provided
-     * {@link UserAccount}.
+     * {@link Agent}.
      * 
      * @param creator
-     * @return List of all {@link Authorization} created by this
-     *         {@link UserAccount}
+     * @return List of all {@link Authorization} created by this {@link Agent}
      */
-    public List<Authorization> listAuthorizations(UserAccount creator);
+    public List<Authorization> listAuthorizations(Agent owner);
 
     /**
-     * Checks if the provided {@link UserAccount} has granted access to a
-     * {@link Resource} with the wanted {@link AccessMode}s.
+     * Checks if the provided {@link Agent} has granted access to a
+     * {@link Resource} with the wanted {@link Access} modes.
      * 
      * @param creator
      * @param accessTo
-     * @param accessModes
+     * @param accessModeSet
      * @return
      */
-    public boolean checkAuthorization(
-            UserAccount creator,
-            Resource accessTo,
-            EnumSet<AccessMode> accessModes);
+    public boolean checkAuthorizationForResource(
+            Agent owner,
+            URI accessTo,
+            EnumSet<Access> accessModeSet);
+
+    /**
+     * Checks if the provided {@link Agent} has granted access to a rdf class
+     * with the wanted {@link Access} modes.
+     * 
+     * @param creator
+     * @param accessToClass
+     * @param accessModeSet
+     * @return
+     */
+    public boolean checkAuthorizationForClass(
+            Agent owner,
+            URI accessToClass,
+            EnumSet<Access> accessModeSet);
 }

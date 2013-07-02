@@ -10,12 +10,14 @@ import org.w3.ns.auth.acl.Control;
 import org.w3.ns.auth.acl.Read;
 import org.w3.ns.auth.acl.Write;
 
+import com.google.common.base.Preconditions;
+
 /**
  * Enum for better handling with {@link Authorization} access modes.
  * 
  * @author Florian Müller
  */
-public enum AccessMode {
+public enum Access {
     READ(Read.RDFS_CLASS),
     WRITE(Write.RDFS_CLASS),
     APPEND(Append.RDFS_CLASS),
@@ -24,11 +26,11 @@ public enum AccessMode {
     private URI classUri;
 
     /**
-     * Constructs a new AccessMode with a provided class URI.
+     * Constructs a new Access with a provided class URI.
      * 
      * @param classUri
      */
-    private AccessMode(URI classUri) {
+    private Access(URI classUri) {
         this.classUri = classUri;
     }
 
@@ -47,5 +49,22 @@ public enum AccessMode {
      */
     public Class asClass(final Model model) {
         return new Class(model, classUri, false);
+    }
+
+    public static Access fromClass(Class clazz) {
+        Preconditions.checkNotNull(clazz, "Required parameter clazz must be specified.");
+
+        if (Read.RDFS_CLASS.equals(clazz.asURI())) {
+            return Access.READ;
+        } else if (Write.RDFS_CLASS.equals(clazz.asURI())) {
+            return Access.WRITE;
+        } else if (Append.RDFS_CLASS.equals(clazz.asURI())) {
+            return Access.APPEND;
+        } else if (Control.RDFS_CLASS.equals(clazz.asURI())) {
+            return Access.CONTROL;
+        }
+
+        throw new IllegalArgumentException(
+                "Failed to match '" + clazz.asURI() + "' to an Access type.");
     }
 }

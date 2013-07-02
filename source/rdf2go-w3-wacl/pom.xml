@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.w3.ns.auth.acl</groupId>
 	<artifactId>rdf2go-w3-wacl</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.semweb4j</groupId>

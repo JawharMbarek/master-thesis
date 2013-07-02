@@ -7,7 +7,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.m0ep.socc</groupId>
-			<artifactId>socc-core</artifactId>
+			<artifactId>socc-core-old</artifactId>
 			<version>0.1</version>
 		</dependency>
 		<dependency>
@@ -17,7 +17,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.m0ep</groupId>
-			<artifactId>camel-socc</artifactId>
+			<artifactId>camel-socc-old</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 		<dependency>

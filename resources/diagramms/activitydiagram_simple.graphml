@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml" xmlns:yed="http://www.yworks.com/xml/yed/3" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
-  <!--Created by yFiles for Java 2.10-->
+  <!--Created by yFiles for Java 2.11-->
   <key for="graphml" id="d0" yfiles.type="resources"/>
   <key for="port" id="d1" yfiles.type="portgraphics"/>
   <key for="port" id="d2" yfiles.type="portgeometry"/>
@@ -15,7 +15,6 @@
   <graph edgedefault="directed" id="G">
     <data key="d7"/>
     <node id="n0" yfiles.foldertype="group">
-      <data key="d5"/>
       <data key="d6">
         <y:TableNode configuration="YED_TABLE_NODE">
           <y:Geometry height="562.8655451971607" width="713.6319894006306" x="1331.2463182334386" y="35.60423398265013"/>
@@ -29,14 +28,14 @@
               <y:RowNodeLabelModelParameter horizontalPosition="0.0" id="row_0" inside="true"/>
             </y:ModelParameter>
           </y:NodeLabel>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" rotationAngle="270.0" textColor="#000000" visible="true" width="111.818359375" x="3.0" y="236.74338813584382">Post Poll Endpoint<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" rotationAngle="270.0" textColor="#000000" visible="true" width="111.818359375" x="3.0" y="236.74338813584382">Poll Post Endpoint<y:LabelModel>
               <y:RowNodeLabelModel offset="3.0"/>
             </y:LabelModel>
             <y:ModelParameter>
               <y:RowNodeLabelModelParameter horizontalPosition="0.0" id="row_1" inside="true"/>
             </y:ModelParameter>
           </y:NodeLabel>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" rotationAngle="270.0" textColor="#000000" visible="true" width="122.79296875" x="3.0" y="425.80645857058346">Post Write Endpoint<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" rotationAngle="270.0" textColor="#000000" visible="true" width="122.79296875" x="3.0" y="425.80645857058346">Write Post Endpoint<y:LabelModel>
               <y:RowNodeLabelModel offset="3.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -414,7 +413,7 @@ Network B<y:LabelModel>
       <data key="d5"/>
       <data key="d6">
         <y:SVGNode>
-          <y:Geometry height="40.0" width="30.0" x="1276.2463182334386" y="263.0129047712934"/>
+          <y:Geometry height="40.0" width="30.0" x="1273.7463182334386" y="263.0129047712934"/>
           <y:Fill color="#CCCCFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="63.73046875" x="-16.865234375" y="44.0">Poll Timer</y:NodeLabel>
@@ -446,7 +445,6 @@ Network B<y:LabelModel>
       </data>
     </edge>
     <edge id="e0" source="n1" target="n0::n0">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -507,7 +505,6 @@ Network B<y:LabelModel>
       </data>
     </edge>
     <edge id="n0::e6" source="n0::n2" target="n0::n3">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -541,7 +538,6 @@ Network B<y:LabelModel>
       </data>
     </edge>
     <edge id="n0::e9" source="n0::n7" target="n0::n8">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -554,19 +550,7 @@ Network B<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e1" source="n2" target="n0::n3">
-      <data key="d9"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="18.669300276014155" sy="0.0" tx="0.0" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="plain"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
     <edge id="n0::e10" source="n0::n8" target="n0::n9">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -577,7 +561,6 @@ Network B<y:LabelModel>
       </data>
     </edge>
     <edge id="n0::e11" source="n0::n10" target="n0::n11">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -588,7 +571,6 @@ Network B<y:LabelModel>
       </data>
     </edge>
     <edge id="n0::e12" source="n0::n2" target="n0::n13">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -599,7 +581,6 @@ Network B<y:LabelModel>
       </data>
     </edge>
     <edge id="n0::e13" source="n0::n6" target="n0::n7">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -610,6 +591,16 @@ Network B<y:LabelModel>
       </data>
     </edge>
     <edge id="n0::e14" source="n0::n7" target="n0::n14">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="plain"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e1" source="n2" target="n0::n3">
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -632,10 +623,38 @@ Network B<y:LabelModel>
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
-   width="50"
+   width="35"
    height="50"
-   id="svg2"&gt;
+   id="svg2"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="time_event.svg"&gt;
+  &lt;sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1680"
+     inkscape:window-height="990"
+     id="namedview8"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="13.350176"
+     inkscape:cx="24.373475"
+     inkscape:cy="25.25911"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" /&gt;
   &lt;defs
      id="defs4" /&gt;
   &lt;metadata
@@ -646,21 +665,29 @@ Network B<y:LabelModel>
         &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
         &lt;dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
-        &lt;dc:title&gt;&lt;/dc:title&gt;
+        &lt;dc:title /&gt;
       &lt;/cc:Work&gt;
     &lt;/rdf:RDF&gt;
   &lt;/metadata&gt;
+  &lt;rect
+     style="fill:#ffffff;fill-opacity:1;stroke:none"
+     id="rect2985"
+     width="34.900002"
+     height="50"
+     x="0"
+     y="0" /&gt;
   &lt;g
-     transform="translate(0,-1002.3622)"
+     transform="translate(-0.07490538,-1002.4003)"
      id="layer1" /&gt;
   &lt;g
-     transform="translate(0,-1002.3622)"
+     transform="matrix(0.69456156,0,0,1.0066597,0.06234941,-1009.2434)"
      id="layer2"
      style="display:inline"&gt;
     &lt;path
        d="m 0.98856781,1003.3507 48.02286419,48.0053 -47.987226,0.018 47.898125,-47.9878 z"
        id="path2999"
-       style="fill:none;stroke:#000000;stroke-width:1.97713566;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" /&gt;
+       style="fill:none;stroke:#000000;stroke-width:1.97713566;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       inkscape:connector-curvature="0" /&gt;
   &lt;/g&gt;
 &lt;/svg&gt;
 </y:Resource>

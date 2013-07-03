@@ -1,6 +1,7 @@
 
 package de.m0ep.test.socc.core.acl;
 
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -8,8 +9,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.RDF2Go;
+import org.ontoware.rdf2go.exception.ModelRuntimeException;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Statement;
+import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.Variable;
 import org.ontoware.rdf2go.util.Builder;
@@ -96,6 +99,16 @@ public class AccessControlListTest {
                         authorization,
                         Authorization.ACCESSMODE,
                         Access.CONTROL.asClass(model)));
+
+        try {
+            model.writeTo(System.err, Syntax.RdfXml);
+        } catch (ModelRuntimeException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         model.close();
     }

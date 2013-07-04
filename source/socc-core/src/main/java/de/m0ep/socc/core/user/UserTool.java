@@ -25,10 +25,16 @@ package de.m0ep.socc.core.user;
 import java.util.List;
 
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.QueryResultTable;
+import org.ontoware.rdf2go.model.QueryRow;
+import org.ontoware.rdf2go.model.node.Node;
+import org.ontoware.rdf2go.model.node.URI;
+import org.rdfs.sioc.SIOCVocabulary;
 import org.rdfs.sioc.UserAccount;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.xmlns.foaf.FOAFVocabulary;
 import com.xmlns.foaf.OnlineAccount;
 import com.xmlns.foaf.Person;
 
@@ -42,6 +48,12 @@ import de.m0ep.socc.core.exceptions.NotFoundException;
 public class UserTool implements IUserTool {
     private Model model;
 
+    /**
+     * Construct a new {@link UserTool} that operates on the provided
+     * {@link Model}.
+     * 
+     * @param model
+     */
     public UserTool(final Model model) {
         this.model = Preconditions.checkNotNull(model,
                 "Required parameter model must be specified.");
@@ -54,16 +66,32 @@ public class UserTool implements IUserTool {
     }
 
     @Override
-    public List<UserAccount> listUserAccounts(Person person) throws NotFoundException {
+    public List<UserAccount> listUserAccounts(Person person) {
         Preconditions.checkNotNull(person, "Required parameter person must be specified.");
 
         List<UserAccount> result = Lists.newArrayList();
-        // TODO Auto-generated method stub
+
+        QueryResultTable resultTable = model.sparqlSelect(
+                "SELECT DISTINCT ?acc WHERE {{{?acc a "
+                        + SIOCVocabulary.UserAccount.toSPARQL()
+                        + "}UNION{?acc a "
+                        + FOAFVocabulary.OnlineAccount.toSPARQL()
+                        + "}}{{?acc "
+                        + SIOCVocabulary.account_of.toSPARQL() + " " + person.toSPARQL()
+                        + "}UNION{"
+                        + person.toSPARQL() + " " + FOAFVocabulary.account.toSPARQL()
+                        + " ?acc}}}");
+
+        for (QueryRow row : resultTable) {
+            Node node = row.getValue("acc");
+            result.add(UserAccount.getInstance(getModel(), node.asResource()));
+        }
+
         return result;
     }
 
     @Override
-    public UserAccount findUserAccount(String accountName, String accountServiceHomepage)
+    public UserAccount findUserAccount(String accountName, URI accountServiceHomepage)
             throws NotFoundException {
         Preconditions.checkNotNull(
                 accountName,
@@ -75,11 +103,28 @@ public class UserTool implements IUserTool {
                 accountServiceHomepage,
                 "Required parameter accountServiceHomepage must be specified.");
         Preconditions.checkArgument(
-                !accountServiceHomepage.isEmpty(),
+                !accountServiceHomepage.toString().isEmpty(),
                 "Required parameter accountServiceHomepage may not be empty.");
 
-        // TODO Auto-generated method stub
-        return null;
+        QueryResultTable resultTable = getModel().sparqlSelect(
+                "SELECT DISTINCT ?acc WHERE{{{?acc a "
+                        + SIOCVocabulary.UserAccount.toSPARQL() + "}UNION{?acc a " +
+                        FOAFVocabulary.OnlineAccount.toSPARQL()
+                        + "}} ?acc "
+                        + FOAFVocabulary.accountName.toSPARQL()
+                        + " \""
+                        + accountName
+                        + "\" . ?acc "
+                        + FOAFVocabulary.accountServiceHomepage.toSPARQL()
+                        + " "
+                        + accountServiceHomepage.toSPARQL() + " .}");
+
+        for (QueryRow row : resultTable) {
+            Node node = row.getValue("acc");
+            return UserAccount.getInstance(getModel(), node.asResource());
+        }
+
+        throw new NotFoundException("No UserAccount found matching criteria.");
     }
 
     @Override
@@ -88,8 +133,25 @@ public class UserTool implements IUserTool {
                 userAccount,
                 "Required parameter userAccount must be specified.");
 
-        // TODO Auto-generated method stub
-        return null;
+        QueryResultTable resultTable = model.sparqlSelect(
+                "SELECT DISTINCT ?person WHERE {{{?person a "
+                        + FOAFVocabulary.Person.toSPARQL()
+                        + "}UNION{?person a "
+                        + FOAFVocabulary.Agent.toSPARQL()
+                        + "}}{{" + userAccount.toSPARQL() + " "
+                        + SIOCVocabulary.account_of.toSPARQL()
+                        + " ?person}UNION{?person "
+                        + FOAFVocabulary.account.toSPARQL()
+                        + " "
+                        + userAccount.toSPARQL()
+                        + "}}}");
+
+        for (QueryRow row : resultTable) {
+            Node node = row.getValue("person");
+            return Person.getInstance(getModel(), node.asResource());
+        }
+
+        throw new NotFoundException("No Person found matching criteria.");
     }
 
     @Override

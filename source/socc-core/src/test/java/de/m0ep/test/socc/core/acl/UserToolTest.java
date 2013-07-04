@@ -86,48 +86,51 @@ public class UserToolTest {
 
     @Test
     public void testListUserAccounts() {
-        try {
-            List<UserAccount> actual1 = userTool.listUserAccounts(person1);
-            Assert.assertNotNull("Result shouldn't be null", actual1);
-            Assert.assertEquals("Expected 2 results, was " + actual1.size(), 2, actual1.size());
-        } catch (NotFoundException e) {
-            Assert.fail("Shouln't been thrown.");
-        }
+        List<UserAccount> actual1 = userTool.listUserAccounts(person1);
+        Assert.assertNotNull("Result shouldn't be null", actual1);
+        Assert.assertEquals("Expected 2 results, was " + actual1.size(), 2, actual1.size());
 
-        try {
-            List<UserAccount> actual2 = userTool.listUserAccounts(person2);
-            Assert.assertNotNull("Result shouldn't be null", actual2);
-            Assert.assertEquals("Expected 1 results, was " + actual2.size(), 1, actual2.size());
-        } catch (NotFoundException e) {
-            Assert.fail("Shouln't been thrown.");
-        }
+        List<UserAccount> actual2 = userTool.listUserAccounts(person2);
+        Assert.assertNotNull("Result shouldn't be null", actual2);
+        Assert.assertEquals("Expected 1 results, was " + actual2.size(), 1, actual2.size());
 
-        try {
-            List<UserAccount> actual3 = userTool.listUserAccounts(person3);
-            Assert.assertNotNull("Result shouldn't be null", actual3);
-            Assert.assertEquals("Expected 0 results, was " + actual3.size(), 0, actual3.size());
-        } catch (NotFoundException e) {
-            Assert.fail("Shouln't been thrown.");
-        }
+        List<UserAccount> actual3 = userTool.listUserAccounts(person3);
+        Assert.assertNotNull("Result shouldn't be null", actual3);
+        Assert.assertEquals("Expected 0 results, was " + actual3.size(), 0, actual3.size());
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testListUserAccountsNull() throws NotFoundException {
-        userTool.listUserAccounts(null);
+    @Test
+    public void testFindUserAccount() throws NotFoundException {
+        UserAccount actual = userTool.findUserAccount(
+                person1Acc1.getAccountName(),
+                person1Acc1.getAccountServiceHomepage().asURI());
+        Assert.assertEquals(person1Acc1, actual);
+
+        actual = userTool.findUserAccount(
+                person2Acc1.getAccountName(),
+                person2Acc1.getAccountServiceHomepage().asURI());
+        Assert.assertEquals(person2Acc1, actual);
     }
 
     @Test(expected = NotFoundException.class)
-    public void testListUserAccountsNotFound() throws NotFoundException {
-        userTool.listUserAccounts(new Person(model, false));
+    public void testFindUserAccountNotFound() throws NotFoundException {
+        userTool.findUserAccount("James May", Builder.createURI("http://www.example.com/serviceC"));
     }
 
     @Test
-    public void testFindUserAccount() {
+    public void testFindPerson() throws NotFoundException {
+        Person actual = userTool.findPerson(person1Acc1);
+        Assert.assertEquals(person1, actual);
 
+        actual = userTool.findPerson(person1Acc2);
+        Assert.assertEquals(person1, actual);
+
+        actual = userTool.findPerson(person2Acc1);
+        Assert.assertEquals(person2, actual);
     }
 
-    @Test
-    public void testFindPerson() {
-
+    @Test(expected = NotFoundException.class)
+    public void testFindPersonNotFound() throws NotFoundException {
+        userTool.findPerson(new UserAccount(model, false));
     }
 }

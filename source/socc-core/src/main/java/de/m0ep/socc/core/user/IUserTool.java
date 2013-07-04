@@ -25,6 +25,7 @@ package de.m0ep.socc.core.user;
 import java.util.List;
 
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.UserAccount;
 
 import com.xmlns.foaf.OnlineAccount;
@@ -49,10 +50,10 @@ public interface IUserTool {
      * {@link Person}.
      * 
      * @param person
-     * @throws NotFoundException Thrown if the <code>person</code> couldn't been
-     *             found.
+     * @throws IllegalArgumentException Thrown if <code>person</code> leads to
+     *             no valid {@link Person}.
      */
-    public List<UserAccount> listUserAccounts(Person person) throws NotFoundException;
+    public List<UserAccount> listUserAccounts(Person person);
 
     /**
      * Searches for an {@link UserAccount} that matches the provided parameters.
@@ -63,7 +64,7 @@ public interface IUserTool {
      * @throws NotFoundException Thrown if there is no {@link UserAccount}
      *             matching the provided parameters.
      */
-    public UserAccount findUserAccount(String accountName, String accountServiceHomepage)
+    public UserAccount findUserAccount(String accountName, URI accountServiceHomepage)
             throws NotFoundException;
 
     /**

@@ -1,31 +1,44 @@
+/*
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 package de.m0ep.test.socc.core.acl;
 
-import java.io.IOException;
 import java.util.EnumSet;
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.RDF2Go;
-import org.ontoware.rdf2go.exception.ModelRuntimeException;
 import org.ontoware.rdf2go.model.Model;
-import org.ontoware.rdf2go.model.Statement;
-import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.URI;
-import org.ontoware.rdf2go.model.node.Variable;
 import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdfreactor.schema.rdfs.Class;
 import org.rdfs.sioc.Post;
-import org.w3.ns.auth.acl.AclVocabulary;
 import org.w3.ns.auth.acl.Authorization;
 
 import com.xmlns.foaf.Agent;
 
 import de.m0ep.socc.core.acl.Access;
-import de.m0ep.socc.core.acl.AccessControlList;
-import de.m0ep.socc.core.acl.IAccessControlList;
+import de.m0ep.socc.core.acl.AccessControl;
+import de.m0ep.socc.core.acl.IAccessControl;
 
 public class AccessControlListTest {
 
@@ -40,195 +53,28 @@ public class AccessControlListTest {
     private static final URI SAMPLE_CLASS_URI = Post.RDFS_CLASS;
 
     @Test
-    public void testAddAuthorizationForResource() {
-        Model model = createEmptyModel();
-
-        IAccessControlList acl = new AccessControlList(model, SOCC_BOT_AGENT_URI);
-        Agent user = Agent.getInstance(model, SAMPLE_USERACCOUNT_URI);
-
-        acl.addAuthorizationForResource(
-                user,
-                SAMPLE_RESOURCE_URI,
-                EnumSet.of(
-                        Access.READ,
-                        Access.WRITE,
-                        Access.APPEND,
-                        Access.CONTROL));
-
-        Assert.assertTrue(
-                "No new auhtorization found.",
-                model.contains(Variable.ANY, AclVocabulary.owner, user));
-        ClosableIterator<Statement> stmtIter = model.findStatements(
-                Variable.ANY,
-                AclVocabulary.owner,
-                user);
-
-        Statement stmt = stmtIter.next();
-        Assert.assertFalse("There should only be one entry with this creator", stmtIter.hasNext());
-        stmtIter.close();
-
-        Authorization authorization = Authorization.getInstance(model, stmt.getSubject());
-        Assert.assertNotNull("There should be at least one authorization.", authorization);
-
-        Assert.assertTrue("Agent property should be '" + SOCC_BOT_AGENT_URI + "'.",
-                model.contains(authorization, Authorization.AGENT, SOCC_BOT_AGENT_URI));
-
-        Assert.assertTrue("AccessTo should point to '" + SAMPLE_RESOURCE_URI + "'.",
-                model.contains(authorization, Authorization.ACCESS_TO, SAMPLE_RESOURCE_URI));
-
-        Assert.assertTrue("Read permission missing.",
-                model.contains(
-                        authorization,
-                        Authorization.ACCESSMODE,
-                        Access.READ.asClass(model)));
-
-        Assert.assertTrue("Read permission missing.",
-                model.contains(
-                        authorization,
-                        Authorization.ACCESSMODE,
-                        Access.WRITE.asClass(model)));
-
-        Assert.assertTrue("Read permission missing.",
-                model.contains(
-                        authorization,
-                        Authorization.ACCESSMODE,
-                        Access.APPEND.asClass(model)));
-
-        Assert.assertTrue("Read permission missing.",
-                model.contains(
-                        authorization,
-                        Authorization.ACCESSMODE,
-                        Access.CONTROL.asClass(model)));
-
-        try {
-            model.writeTo(System.err, Syntax.RdfXml);
-        } catch (ModelRuntimeException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        model.close();
-    }
-
-    @Test
-    public void testAddAuthorizationForClass() {
-        Model model = createEmptyModel();
-
-        IAccessControlList acl = new AccessControlList(model, SOCC_BOT_AGENT_URI);
-        Agent user = Agent.getInstance(model, SAMPLE_USERACCOUNT_URI);
-
-        acl.addAuthorizationForClass(
-                user,
-                SAMPLE_CLASS_URI,
-                EnumSet.of(
-                        Access.READ,
-                        Access.WRITE,
-                        Access.APPEND,
-                        Access.CONTROL));
-
-        Assert.assertTrue(
-                "No new auhtorization found.",
-                model.contains(Variable.ANY, AclVocabulary.owner, user));
-        ClosableIterator<Statement> stmtIter = model.findStatements(
-                Variable.ANY,
-                AclVocabulary.owner,
-                user);
-
-        Statement stmt = stmtIter.next();
-        Assert.assertFalse("There should only be one entry with this creator", stmtIter.hasNext());
-
-        Authorization authorization = Authorization.getInstance(model, stmt.getSubject());
-        Assert.assertNotNull("There should be at least one authorization.", authorization);
-
-        Assert.assertTrue("Agent property should be '" + SOCC_BOT_AGENT_URI + "'.",
-                model.contains(authorization, Authorization.AGENT, SOCC_BOT_AGENT_URI));
-
-        Assert.assertTrue("AccessTo should point to '" + SAMPLE_RESOURCE_URI + "'.",
-                model.contains(authorization, Authorization.ACCESS_TO_CLASS, SAMPLE_CLASS_URI));
-
-        Assert.assertTrue("Read permission missing.",
-                model.contains(
-                        authorization,
-                        Authorization.ACCESSMODE,
-                        Access.READ.asClass(model)));
-
-        Assert.assertTrue("Read permission missing.",
-                model.contains(
-                        authorization,
-                        Authorization.ACCESSMODE,
-                        Access.WRITE.asClass(model)));
-
-        Assert.assertTrue("Read permission missing.",
-                model.contains(
-                        authorization,
-                        Authorization.ACCESSMODE,
-                        Access.APPEND.asClass(model)));
-
-        Assert.assertTrue("Read permission missing.",
-                model.contains(
-                        authorization,
-                        Authorization.ACCESSMODE,
-                        Access.CONTROL.asClass(model)));
-
-        model.close();
-    }
-
-    @Test
-    public void testListAuthorizations() {
-        Model model = createFilledModel();
-
-        IAccessControlList acl = new AccessControlList(model, SOCC_BOT_AGENT_URI);
-        Agent user = Agent.getInstance(model, SAMPLE_USERACCOUNT_URI);
-
-        List<Authorization> authorizations = acl.listAuthorizations(user);
-
-        Assert.assertNotNull("Should return empty list not 'null'.", authorizations);
-        Assert.assertEquals(
-                "There should be 2 authorizations created by '" + SAMPLE_USERACCOUNT_URI + ".",
-                2, authorizations.size());
-
-        for (Authorization authorization : authorizations) {
-            Assert.assertTrue(authorization.hasOwner(user));
-            Assert.assertTrue(authorization.hasAgent(SOCC_BOT_AGENT_URI));
-
-            if (authorization.hasAccessTo()) {
-                Assert.assertTrue(authorization.hasAccessTo(SAMPLE_RESOURCE_URI));
-            }
-
-            if (authorization.hasAccessToClass()) {
-                Assert.assertTrue(authorization.hasAccessToClass(SAMPLE_CLASS_URI));
-            }
-        }
-
-        model.close();
-    }
-
-    @Test
     public void testCheckAuthorizationForResource() {
         Model model = createFilledModel();
 
-        IAccessControlList acl = new AccessControlList(model, SOCC_BOT_AGENT_URI);
+        IAccessControl instance = new AccessControl(model, new Agent(model, SOCC_BOT_AGENT_URI, false));
         Agent user = Agent.getInstance(model, SAMPLE_USERACCOUNT_URI);
 
-        Assert.assertTrue(acl.checkAuthorizationForResource(
+        Assert.assertTrue(instance.checkAuthorizationForResource(
                 user,
                 SAMPLE_RESOURCE_URI,
                 EnumSet.of(Access.READ)));
 
-        Assert.assertTrue(acl.checkAuthorizationForResource(
+        Assert.assertTrue(instance.checkAuthorizationForResource(
                 user,
                 SAMPLE_RESOURCE_URI,
                 EnumSet.of(Access.READ, Access.WRITE)));
 
-        Assert.assertFalse(acl.checkAuthorizationForResource(
+        Assert.assertFalse(instance.checkAuthorizationForResource(
                 user,
                 SAMPLE_RESOURCE_URI,
                 EnumSet.of(Access.APPEND)));
 
-        Assert.assertFalse(acl.checkAuthorizationForResource(
+        Assert.assertFalse(instance.checkAuthorizationForResource(
                 user,
                 SAMPLE_RESOURCE_URI,
                 EnumSet.of(Access.WRITE, Access.CONTROL)));
@@ -240,7 +86,7 @@ public class AccessControlListTest {
     public void testCheckAuthorizationForClass() {
         Model model = createFilledModel();
 
-        IAccessControlList acl = new AccessControlList(model, SOCC_BOT_AGENT_URI);
+        IAccessControl acl = new AccessControl(model, new Agent(model, SOCC_BOT_AGENT_URI, false));
         Agent user = Agent.getInstance(model, SAMPLE_USERACCOUNT_URI);
 
         Assert.assertTrue(acl.checkAuthorizationForClass(

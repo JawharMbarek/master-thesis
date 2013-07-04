@@ -1,3 +1,24 @@
+/*
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 package de.m0ep.test.socc.core.acl;
 
@@ -17,15 +38,16 @@ import com.xmlns.foaf.OnlineAccount;
 import com.xmlns.foaf.Person;
 
 import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.user.UserTool;
+import de.m0ep.socc.core.user.IPersonUserAccountFinder;
+import de.m0ep.socc.core.user.PersonUserAccountFinder;
 
-public class UserToolTest {
+public class PersonUserAccountFinderTest {
 
     private static final URI URI_SERVICE_A = Builder.createURI("http://www.example.com/serviceA");
     private static final URI URI_SERVICE_B = Builder.createURI("http://www.example.com/serviceB");
 
     private Model model;
-    private UserTool userTool;
+    private IPersonUserAccountFinder instance;
 
     private Person person1;
     private Person person2;
@@ -41,7 +63,7 @@ public class UserToolTest {
         model = RDF2Go.getModelFactory().createModel();
         model.open();
 
-        userTool = new UserTool(model);
+        instance = new PersonUserAccountFinder(model);
 
         person1 = new Person(model, true);
         person1.setName("John Doe");
@@ -86,27 +108,27 @@ public class UserToolTest {
 
     @Test
     public void testListUserAccounts() {
-        List<UserAccount> actual1 = userTool.listUserAccounts(person1);
+        List<UserAccount> actual1 = instance.listUserAccounts(person1);
         Assert.assertNotNull("Result shouldn't be null", actual1);
         Assert.assertEquals("Expected 2 results, was " + actual1.size(), 2, actual1.size());
 
-        List<UserAccount> actual2 = userTool.listUserAccounts(person2);
+        List<UserAccount> actual2 = instance.listUserAccounts(person2);
         Assert.assertNotNull("Result shouldn't be null", actual2);
         Assert.assertEquals("Expected 1 results, was " + actual2.size(), 1, actual2.size());
 
-        List<UserAccount> actual3 = userTool.listUserAccounts(person3);
+        List<UserAccount> actual3 = instance.listUserAccounts(person3);
         Assert.assertNotNull("Result shouldn't be null", actual3);
         Assert.assertEquals("Expected 0 results, was " + actual3.size(), 0, actual3.size());
     }
 
     @Test
     public void testFindUserAccount() throws NotFoundException {
-        UserAccount actual = userTool.findUserAccount(
+        UserAccount actual = instance.findUserAccount(
                 person1Acc1.getAccountName(),
                 person1Acc1.getAccountServiceHomepage().asURI());
         Assert.assertEquals(person1Acc1, actual);
 
-        actual = userTool.findUserAccount(
+        actual = instance.findUserAccount(
                 person2Acc1.getAccountName(),
                 person2Acc1.getAccountServiceHomepage().asURI());
         Assert.assertEquals(person2Acc1, actual);
@@ -114,23 +136,23 @@ public class UserToolTest {
 
     @Test(expected = NotFoundException.class)
     public void testFindUserAccountNotFound() throws NotFoundException {
-        userTool.findUserAccount("James May", Builder.createURI("http://www.example.com/serviceC"));
+        instance.findUserAccount("James May", Builder.createURI("http://www.example.com/serviceC"));
     }
 
     @Test
     public void testFindPerson() throws NotFoundException {
-        Person actual = userTool.findPerson(person1Acc1);
+        Person actual = instance.findPerson(person1Acc1);
         Assert.assertEquals(person1, actual);
 
-        actual = userTool.findPerson(person1Acc2);
+        actual = instance.findPerson(person1Acc2);
         Assert.assertEquals(person1, actual);
 
-        actual = userTool.findPerson(person2Acc1);
+        actual = instance.findPerson(person2Acc1);
         Assert.assertEquals(person2, actual);
     }
 
     @Test(expected = NotFoundException.class)
     public void testFindPersonNotFound() throws NotFoundException {
-        userTool.findPerson(new UserAccount(model, false));
+        instance.findPerson(new UserAccount(model, false));
     }
 }

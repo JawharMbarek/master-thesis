@@ -41,28 +41,33 @@ import com.xmlns.foaf.Person;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
 /**
- * A class that implements the {@link IUserTool} interface.
+ * A class that implements the {@link IPersonUserAccountFinder} interface.
  * 
  * @author Florian Müller
  */
-public class UserTool implements IUserTool {
+public class PersonUserAccountFinder implements IPersonUserAccountFinder {
     private Model model;
 
     /**
-     * Construct a new {@link UserTool} that operates on the provided
-     * {@link Model}.
+     * Construct a new {@link PersonUserAccountFinder} object that operates on
+     * the provided {@link Model}.
      * 
      * @param model
      */
-    public UserTool(final Model model) {
-        this.model = Preconditions.checkNotNull(model,
-                "Required parameter model must be specified.");
-        Preconditions.checkArgument(model.isOpen(), "The provided model is not open.");
+    public PersonUserAccountFinder(final Model model) {
+        setModel(model);
     }
 
     @Override
     public Model getModel() {
         return model;
+    }
+
+    @Override
+    public void setModel(Model model) {
+        this.model = Preconditions.checkNotNull(model,
+                "Required parameter model must be specified.");
+        Preconditions.checkArgument(model.isOpen(), "The provided model is not open.");
     }
 
     @Override

@@ -23,80 +23,49 @@
 package de.m0ep.socc.core.acl;
 
 import java.util.EnumSet;
-import java.util.List;
 
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
+import org.rdfs.sioc.Post;
 import org.w3.ns.auth.acl.Authorization;
 
 import com.xmlns.foaf.Agent;
 
 /**
- * Interface that describes an Access Control List to manage authorizations
- * granted by the user to SOCC.
+ * An interface to check if a user granted access the SOCC Framework to
+ * resources owned by him. The SOCC-Bot is a default user that is used to read
+ * SIOC data form various serviced and writes {@link Post} if the creator is
+ * unknown by the system or has not granted access wo write on its behalf.
  * 
  * @author Florian Müller
  */
-public interface IAccessControlList {
+public interface IAccessControl {
 
     /**
-     * Returns the RDF2Go {@link Model} used by this {@link IAccessControlList}.
+     * Returns the {@link Model} used by this {@link IAccessControl}.
      */
     public Model getModel();
 
     /**
-     * Returns the SOCC-Agent {@link URI} that is used as the Agent of an
-     * {@link Authorization}.
+     * Sets the used {@link Model};
+     * 
+     * @param model
+     */
+    public void setModel(Model model);
+
+    /**
+     * Returns the {@link Agent} of the SOCC Bot that is used inside the
+     * {@link Authorization}s as agent.
      */
     public Agent getSoccBotAgent();
 
     /**
-     * Adds an new {@link Authorization} to the Access Control List for a RDF
-     * resource.
+     * Sets the SOCC-Bot Agent
      * 
-     * @param creator The creator of this {@link Authorization}. Stored as
-     *            dcterms:creator.
-     * @param accessTo To which resource should this {@link Authorization} be
-     *            applied.
-     * @param accessModeSet The modes that are allowed by this
-     *            {@link Authorization}.
+     * @param soccBotAgent
      */
-    public void addAuthorizationForResource(
-            Agent owner,
-            URI accessTo,
-            EnumSet<Access> accessModeSet);
-
-    /**
-     * Adds an new {@link Authorization} to the Access Control List for a RDF
-     * class.
-     * 
-     * @param owner The owner of this {@link Authorization}.
-     * @param accessToClass To which class should this {@link Authorization} be
-     *            applied.
-     * @param accessModeSet The modes that are allowed by this
-     *            {@link Authorization}.
-     */
-    public void addAuthorizationForClass(
-            Agent owner,
-            URI accessToClass,
-            EnumSet<Access> accessModeSet);
-
-    /**
-     * Removes an {@link Authorization}.
-     * 
-     * @param authorization
-     */
-    public void removeAuthorization(Authorization authorization);
-
-    /**
-     * Lists all {@link Authorization} that are created by the provided
-     * {@link Agent}.
-     * 
-     * @param creator
-     * @return List of all {@link Authorization} created by this {@link Agent}
-     */
-    public List<Authorization> listAuthorizations(Agent owner);
+    public void setSoccBotAgent(Agent soccBotAgent);
 
     /**
      * Checks if the provided {@link Agent} has granted access to a

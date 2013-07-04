@@ -23,7 +23,6 @@
 package de.m0ep.socc.core.acl;
 
 import java.util.EnumSet;
-import java.util.List;
 
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.QueryResultTable;
@@ -34,36 +33,29 @@ import org.w3.ns.auth.acl.AclVocabulary;
 import org.w3.ns.auth.acl.Authorization;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.xmlns.foaf.Agent;
 
 /**
- * Implements the {@link IAccessControlList} to create an
- * {@link AccessControlList} for the SOCC-Framework to access user data or to
- * write data in behalf of an individual user.
+ * Implements the {@link IAccessControl} to create an {@link AccessControl} for
+ * the SOCC-Framework to access user data or to write data in behalf of an
+ * individual user.
  * 
  * @author Florian Müller
  */
-public class AccessControlList implements IAccessControlList {
-    private final Model model;
-    private final Agent soccBotAgent;
+public class AccessControl implements IAccessControl {
+    private Model model;
+    private Agent soccBotAgent;
 
     /**
+     * Constructs a new {@link AccessControl} object with a specified
+     * {@link Model} and <code>soccBotAgent</code>.
+     * 
      * @param model
      * @param soccBotAgentUri
      */
-    public AccessControlList(final Model model, final URI soccBotAgentUri) {
-        this.model = Preconditions.checkNotNull(
-                model,
-                "Required parameter aclModel must be specified.");
-        Preconditions.checkArgument(model.isOpen(), "The model isn't open. ");
-
-        this.soccBotAgent = new Agent(
-                getModel(),
-                Preconditions.checkNotNull(
-                        soccBotAgentUri,
-                        "Required parameter soccBotAgent must be specified."),
-                false);
+    public AccessControl(final Model model, final Agent soccBotAgent) {
+        setModel(model);
+        setSoccBotAgent(soccBotAgent);
     }
 
     @Override
@@ -72,88 +64,23 @@ public class AccessControlList implements IAccessControlList {
     }
 
     @Override
+    public void setModel(final Model model) {
+        this.model = Preconditions.checkNotNull(
+                model,
+                "Required parameter model must be specified.");
+        Preconditions.checkArgument(model.isOpen(), "The model isn't open. ");
+    }
+
+    @Override
     public Agent getSoccBotAgent() {
         return soccBotAgent;
     }
 
     @Override
-    public void addAuthorizationForResource(Agent owner, URI accessTo,
-            EnumSet<Access> accessModeSet) {
-        Preconditions.checkNotNull(owner,
-                "Required parameter owner must be specified.");
-        Preconditions.checkNotNull(accessTo,
-                "Required parameter accessTo must be specified.");
-        Preconditions.checkNotNull(accessModeSet,
-                "Required parameter accessModeSet must be specified.");
-        Preconditions.checkArgument(!accessModeSet.isEmpty(),
-                "Required parameter accessModeSet may not be empty.");
-
-        Authorization result = new Authorization(
-                getModel(),
-                getModel().createBlankNode(),
-                true);
-
-        result.setOwner(owner);
-        result.setAccessTo(accessTo);
-        result.setAgent(getSoccBotAgent());
-
-        for (Access access : accessModeSet) {
-            result.addAccessMode(access.getClassUri());
-        }
-    }
-
-    @Override
-    public void addAuthorizationForClass(Agent owner, URI accessToClass,
-            EnumSet<Access> accessModeSet) {
-        Preconditions.checkNotNull(owner,
-                "Required parameter owner must be specified.");
-        Preconditions.checkNotNull(accessToClass,
-                "Required parameter accessModeSet must be specified.");
-        Preconditions.checkNotNull(accessModeSet,
-                "Required parameter accessModeSet must be specified.");
-        Preconditions.checkArgument(!accessModeSet.isEmpty(),
-                "Required parameter accessModeSet may not be empty.");
-
-        Authorization result = new Authorization(
-                getModel(),
-                getModel().createBlankNode(),
-                true);
-
-        result.setOwner(owner);
-        result.setAccessToClass(accessToClass);
-        result.setAgent(getSoccBotAgent());
-
-        for (Access access : accessModeSet) {
-            result.addAccessMode(access.getClassUri());
-        }
-    }
-
-    @Override
-    public void removeAuthorization(Authorization authorization) {
-        Preconditions.checkNotNull(authorization,
-                "Required parameter authorization must be specified.");
-
-        Authorization.deleteAllProperties(getModel(), authorization);
-    }
-
-    @Override
-    public List<Authorization> listAuthorizations(Agent owner) {
-        Preconditions.checkNotNull(owner, "Required parameter creator must be specified.");
-
-        List<Authorization> result = Lists.newArrayList();
-        QueryResultTable resultTable = getModel().sparqlSelect(
-                "SELECT ?auth\n" +
-                        "WHERE {\n" +
-                        "?auth " + RDF.type.toSPARQL() + " "
-                        + AclVocabulary.Authorization.toSPARQL() + ".\n" +
-                        "?auth " + AclVocabulary.owner.toSPARQL() + " " + owner.toSPARQL()
-                        + ".}");
-
-        for (QueryRow row : resultTable) {
-            result.add(Authorization.getInstance(getModel(), row.getValue("auth").asResource()));
-        }
-
-        return result;
+    public void setSoccBotAgent(final Agent soccBotAgent) {
+        this.soccBotAgent = Preconditions.checkNotNull(
+                soccBotAgent,
+                "Required parameter soccBotAgent must be specified.");
     }
 
     @Override

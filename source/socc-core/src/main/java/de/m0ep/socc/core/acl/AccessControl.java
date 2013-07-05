@@ -54,30 +54,11 @@ public class AccessControl implements IAccessControl {
      * @param soccBotAgentUri
      */
     public AccessControl(final Model model, final Agent soccBotAgent) {
-        setModel(model);
-        setSoccBotAgent(soccBotAgent);
-    }
-
-    @Override
-    public Model getModel() {
-        return model;
-    }
-
-    @Override
-    public void setModel(final Model model) {
         this.model = Preconditions.checkNotNull(
                 model,
                 "Required parameter model must be specified.");
         Preconditions.checkArgument(model.isOpen(), "The model isn't open. ");
-    }
 
-    @Override
-    public Agent getSoccBotAgent() {
-        return soccBotAgent;
-    }
-
-    @Override
-    public void setSoccBotAgent(final Agent soccBotAgent) {
         this.soccBotAgent = Preconditions.checkNotNull(
                 soccBotAgent,
                 "Required parameter soccBotAgent must be specified.");
@@ -95,7 +76,7 @@ public class AccessControl implements IAccessControl {
         Preconditions.checkArgument(!accessModeSet.isEmpty(),
                 "Required parameter accessModeSet may not be empty.");
 
-        QueryResultTable resultTable = getModel().sparqlSelect(
+        QueryResultTable resultTable = model.sparqlSelect(
                 "SELECT ?auth\n" +
                         "WHERE {\n" +
                         "?auth " + RDF.type.toSPARQL() + " "
@@ -103,18 +84,18 @@ public class AccessControl implements IAccessControl {
                         "?auth " + AclVocabulary.owner.toSPARQL() + " " + owner.toSPARQL()
                         + ".\n" +
                         "?auth " + AclVocabulary.agent.toSPARQL() + " "
-                        + getSoccBotAgent().toSPARQL() + ".\n" +
+                        + soccBotAgent.toSPARQL() + ".\n" +
                         "?auth " + AclVocabulary.accessTo.toSPARQL() + " " + accessTo.toSPARQL() +
                         ".}");
 
         for (QueryRow row : resultTable) {
             Authorization authorization = Authorization.getInstance(
-                    getModel(),
+                    model,
                     row.getValue("auth").asResource());
 
             int hits = 0;
             for (Access access : accessModeSet) {
-                if (authorization.hasAccessMode(access.asClass(getModel()))) {
+                if (authorization.hasAccessMode(access.asClass(model))) {
                     hits++;
                 }
             }
@@ -139,7 +120,7 @@ public class AccessControl implements IAccessControl {
         Preconditions.checkArgument(!accessModeSet.isEmpty(),
                 "Required parameter accessModeSet may not be empty.");
 
-        QueryResultTable resultTable = getModel().sparqlSelect(
+        QueryResultTable resultTable = model.sparqlSelect(
                 "SELECT ?auth\n" +
                         "WHERE {\n" +
                         "?auth " + RDF.type.toSPARQL() + " "
@@ -147,18 +128,18 @@ public class AccessControl implements IAccessControl {
                         "?auth " + AclVocabulary.owner.toSPARQL() + " " + owner.toSPARQL()
                         + ".\n" +
                         "?auth " + AclVocabulary.agent.toSPARQL() + " "
-                        + getSoccBotAgent().toSPARQL() + ".\n" +
+                        + soccBotAgent.toSPARQL() + ".\n" +
                         "?auth " + AclVocabulary.accessToClass.toSPARQL() + " "
                         + accessToClass.toSPARQL() + ".}");
 
         for (QueryRow row : resultTable) {
             Authorization authorization = Authorization.getInstance(
-                    getModel(),
+                    model,
                     row.getValue("auth").asResource());
 
             int hits = 0;
             for (Access access : accessModeSet) {
-                if (authorization.hasAccessMode(access.asClass(getModel()))) {
+                if (authorization.hasAccessMode(access.asClass(model))) {
                     hits++;
                 }
             }

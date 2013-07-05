@@ -24,11 +24,9 @@ package de.m0ep.socc.core.acl;
 
 import java.util.EnumSet;
 
-import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Post;
-import org.w3.ns.auth.acl.Authorization;
 
 import com.xmlns.foaf.Agent;
 
@@ -41,32 +39,6 @@ import com.xmlns.foaf.Agent;
  * @author Florian Müller
  */
 public interface IAccessControl {
-
-    /**
-     * Returns the {@link Model} used by this {@link IAccessControl}.
-     */
-    public Model getModel();
-
-    /**
-     * Sets the used {@link Model};
-     * 
-     * @param model
-     */
-    public void setModel(Model model);
-
-    /**
-     * Returns the {@link Agent} of the SOCC Bot that is used inside the
-     * {@link Authorization}s as agent.
-     */
-    public Agent getSoccBotAgent();
-
-    /**
-     * Sets the SOCC-Bot Agent
-     * 
-     * @param soccBotAgent
-     */
-    public void setSoccBotAgent(Agent soccBotAgent);
-
     /**
      * Checks if the provided {@link Agent} has granted access to a
      * {@link Resource} with the wanted {@link Access} modes.

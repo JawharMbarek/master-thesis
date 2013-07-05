@@ -24,7 +24,6 @@ package de.m0ep.socc.core.user;
 
 import java.util.List;
 
-import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.UserAccount;
 
@@ -40,16 +39,6 @@ import de.m0ep.socc.core.exceptions.NotFoundException;
  * @author Florian Müller
  */
 public interface IPersonUserAccountFinder {
-    /**
-     * Returns the {@link Model} that is used as backend.
-     */
-    public Model getModel();
-
-    /**
-     * Sets the {@link Model} that ist used as backend.
-     */
-    public void setModel(Model model);
-
     /**
      * Returns all {@link UserAccount}s that are linked to the provided
      * {@link Person}.

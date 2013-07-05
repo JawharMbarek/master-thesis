@@ -55,16 +55,6 @@ public class PersonUserAccountFinder implements IPersonUserAccountFinder {
      * @param model
      */
     public PersonUserAccountFinder(final Model model) {
-        setModel(model);
-    }
-
-    @Override
-    public Model getModel() {
-        return model;
-    }
-
-    @Override
-    public void setModel(Model model) {
         this.model = Preconditions.checkNotNull(model,
                 "Required parameter model must be specified.");
         Preconditions.checkArgument(model.isOpen(), "The provided model is not open.");
@@ -89,7 +79,7 @@ public class PersonUserAccountFinder implements IPersonUserAccountFinder {
 
         for (QueryRow row : resultTable) {
             Node node = row.getValue("acc");
-            result.add(UserAccount.getInstance(getModel(), node.asResource()));
+            result.add(UserAccount.getInstance(model, node.asResource()));
         }
 
         return result;
@@ -111,7 +101,7 @@ public class PersonUserAccountFinder implements IPersonUserAccountFinder {
                 !accountServiceHomepage.toString().isEmpty(),
                 "Required parameter accountServiceHomepage may not be empty.");
 
-        QueryResultTable resultTable = getModel().sparqlSelect(
+        QueryResultTable resultTable = model.sparqlSelect(
                 "SELECT DISTINCT ?acc WHERE{{{?acc a "
                         + SIOCVocabulary.UserAccount.toSPARQL() + "}UNION{?acc a " +
                         FOAFVocabulary.OnlineAccount.toSPARQL()
@@ -126,7 +116,7 @@ public class PersonUserAccountFinder implements IPersonUserAccountFinder {
 
         for (QueryRow row : resultTable) {
             Node node = row.getValue("acc");
-            return UserAccount.getInstance(getModel(), node.asResource());
+            return UserAccount.getInstance(model, node.asResource());
         }
 
         throw new NotFoundException("No UserAccount found matching criteria.");
@@ -153,7 +143,7 @@ public class PersonUserAccountFinder implements IPersonUserAccountFinder {
 
         for (QueryRow row : resultTable) {
             Node node = row.getValue("person");
-            return Person.getInstance(getModel(), node.asResource());
+            return Person.getInstance(model, node.asResource());
         }
 
         throw new NotFoundException("No Person found matching criteria.");

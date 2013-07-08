@@ -41,7 +41,7 @@ import com.xmlns.foaf.Agent;
 public interface IAccessControl {
     /**
      * Checks if the provided {@link Agent} has granted access to a
-     * {@link Resource} with the wanted {@link Access} modes.
+     * {@link Resource} with the wanted {@link AccessMode} modes.
      * 
      * @param creator
      * @param accessTo
@@ -51,11 +51,11 @@ public interface IAccessControl {
     public boolean checkAuthorizationForResource(
             Agent owner,
             URI accessTo,
-            EnumSet<Access> accessModeSet);
+            EnumSet<AccessMode> accessModeSet);
 
     /**
      * Checks if the provided {@link Agent} has granted access to a rdf class
-     * with the wanted {@link Access} modes.
+     * with the wanted {@link AccessMode} modes.
      * 
      * @param creator
      * @param accessToClass
@@ -65,5 +65,5 @@ public interface IAccessControl {
     public boolean checkAuthorizationForClass(
             Agent owner,
             URI accessToClass,
-            EnumSet<Access> accessModeSet);
+            EnumSet<AccessMode> accessModeSet);
 }

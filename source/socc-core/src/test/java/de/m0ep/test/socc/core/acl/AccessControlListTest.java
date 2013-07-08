@@ -36,7 +36,7 @@ import org.w3.ns.auth.acl.Authorization;
 
 import com.xmlns.foaf.Agent;
 
-import de.m0ep.socc.core.acl.Access;
+import de.m0ep.socc.core.acl.AccessMode;
 import de.m0ep.socc.core.acl.AccessControl;
 import de.m0ep.socc.core.acl.IAccessControl;
 
@@ -56,28 +56,29 @@ public class AccessControlListTest {
     public void testCheckAuthorizationForResource() {
         Model model = createFilledModel();
 
-        IAccessControl instance = new AccessControl(model, new Agent(model, SOCC_BOT_AGENT_URI, false));
+        IAccessControl instance = new AccessControl(model, new Agent(model, SOCC_BOT_AGENT_URI,
+                false));
         Agent user = Agent.getInstance(model, SAMPLE_USERACCOUNT_URI);
 
         Assert.assertTrue(instance.checkAuthorizationForResource(
                 user,
                 SAMPLE_RESOURCE_URI,
-                EnumSet.of(Access.READ)));
+                EnumSet.of(AccessMode.READ)));
 
         Assert.assertTrue(instance.checkAuthorizationForResource(
                 user,
                 SAMPLE_RESOURCE_URI,
-                EnumSet.of(Access.READ, Access.WRITE)));
+                EnumSet.of(AccessMode.READ, AccessMode.WRITE)));
 
         Assert.assertFalse(instance.checkAuthorizationForResource(
                 user,
                 SAMPLE_RESOURCE_URI,
-                EnumSet.of(Access.APPEND)));
+                EnumSet.of(AccessMode.APPEND)));
 
         Assert.assertFalse(instance.checkAuthorizationForResource(
                 user,
                 SAMPLE_RESOURCE_URI,
-                EnumSet.of(Access.WRITE, Access.CONTROL)));
+                EnumSet.of(AccessMode.WRITE, AccessMode.CONTROL)));
 
         model.close();
     }
@@ -92,22 +93,22 @@ public class AccessControlListTest {
         Assert.assertTrue(acl.checkAuthorizationForClass(
                 user,
                 SAMPLE_CLASS_URI,
-                EnumSet.of(Access.READ)));
+                EnumSet.of(AccessMode.READ)));
 
         Assert.assertFalse(acl.checkAuthorizationForClass(
                 user,
                 SAMPLE_CLASS_URI,
-                EnumSet.of(Access.READ, Access.WRITE)));
+                EnumSet.of(AccessMode.READ, AccessMode.WRITE)));
 
         Assert.assertFalse(acl.checkAuthorizationForClass(
                 user,
                 SAMPLE_CLASS_URI,
-                EnumSet.of(Access.APPEND)));
+                EnumSet.of(AccessMode.APPEND)));
 
         Assert.assertFalse(acl.checkAuthorizationForClass(
                 user,
                 SAMPLE_CLASS_URI,
-                EnumSet.of(Access.WRITE, Access.CONTROL)));
+                EnumSet.of(AccessMode.WRITE, AccessMode.CONTROL)));
 
         model.close();
     }
@@ -130,20 +131,20 @@ public class AccessControlListTest {
         resAuth.setOwner(user);
         resAuth.setAccessTo(SAMPLE_RESOURCE_URI);
         resAuth.setAgent(new Agent(model, SOCC_BOT_AGENT_URI, false));
-        resAuth.addAccessMode(Access.READ.asClass(model));
-        resAuth.addAccessMode(Access.WRITE.asClass(model));
+        resAuth.addAccessMode(AccessMode.READ.toUri());
+        resAuth.addAccessMode(AccessMode.WRITE.toUri());
 
         Authorization resAuth2 = new Authorization(model, model.createBlankNode(), true);
         resAuth2.setOwner(user);
         resAuth2.setAccessToClass(new Class(model, SAMPLE_CLASS_URI, false));
         resAuth2.setAgent(new Agent(model, SOCC_BOT_AGENT_URI, false));
-        resAuth2.addAccessMode(Access.READ.asClass(model));
+        resAuth2.addAccessMode(AccessMode.READ.toUri());
 
         Authorization resAuth3 = new Authorization(model, model.createBlankNode(), true);
         resAuth3.setOwner(user2);
         resAuth3.setAccessToClass(new Class(model, SAMPLE_CLASS_URI, false));
         resAuth3.setAgent(new Agent(model, SOCC_BOT_AGENT_URI, false));
-        resAuth3.addAccessMode(Access.READ.asClass(model));
+        resAuth3.addAccessMode(AccessMode.READ.toUri());
 
         return model;
     }

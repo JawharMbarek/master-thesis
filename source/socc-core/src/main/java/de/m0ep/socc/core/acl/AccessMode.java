@@ -24,7 +24,7 @@ package de.m0ep.socc.core.acl;
 
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.URI;
-import org.ontoware.rdfreactor.schema.rdfs.Class;
+import org.w3.ns.auth.acl.Access;
 import org.w3.ns.auth.acl.Append;
 import org.w3.ns.auth.acl.Authorization;
 import org.w3.ns.auth.acl.Control;
@@ -38,54 +38,39 @@ import com.google.common.base.Preconditions;
  * 
  * @author Florian Müller
  */
-public enum Access {
+public enum AccessMode {
     READ(Read.RDFS_CLASS),
     WRITE(Write.RDFS_CLASS),
     APPEND(Append.RDFS_CLASS),
     CONTROL(Control.RDFS_CLASS);
 
-    private URI classUri;
+    private URI uri;
 
     /**
-     * Constructs a new Access with a provided class URI.
+     * Constructs a new access mode with the provided URI.
      * 
-     * @param classUri
+     * @param uri
      */
-    private Access(URI classUri) {
-        this.classUri = classUri;
+    private AccessMode(URI uri) {
+        this.uri = uri;
     }
 
     /**
-     * Returns the access mode class URI.
+     * Returns the {@link URI} of this access mode.
      */
-    public URI getClassUri() {
-        return classUri;
+    public URI toUri() {
+        return uri;
     }
 
     /**
-     * Returns the class URI as a {@link Class} object. No Triple will be writen
-     * to the model.
+     * Returns the access mode as an {@link Access} class object.
      * 
-     * @param model RDF2Go model needed to create the object.
+     * @param model
+     * @throws NullPointerException Thrown if <code>model</code> is
+     *             <code>null</code>.
      */
-    public Class asClass(final Model model) {
-        return new Class(model, classUri, false);
-    }
-
-    public static Access fromClass(Class clazz) {
-        Preconditions.checkNotNull(clazz, "Required parameter clazz must be specified.");
-
-        if (Read.RDFS_CLASS.equals(clazz.asURI())) {
-            return Access.READ;
-        } else if (Write.RDFS_CLASS.equals(clazz.asURI())) {
-            return Access.WRITE;
-        } else if (Append.RDFS_CLASS.equals(clazz.asURI())) {
-            return Access.APPEND;
-        } else if (Control.RDFS_CLASS.equals(clazz.asURI())) {
-            return Access.CONTROL;
-        }
-
-        throw new IllegalArgumentException(
-                "Failed to match '" + clazz.asURI() + "' to an Access type.");
+    public Access toAccess(Model model) {
+        Preconditions.checkNotNull(model, "Required parameter model must be specified.");
+        return new Access(model, uri, false);
     }
 }

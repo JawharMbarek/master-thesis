@@ -38,7 +38,7 @@ import de.m0ep.socc.core.exceptions.NotFoundException;
  * 
  * @author Florian Müller
  */
-public interface IPersonUserAccountFinder {
+public interface IPersonAccountService {
     /**
      * Returns all {@link UserAccount}s that are linked to the provided
      * {@link Person}.

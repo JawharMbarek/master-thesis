@@ -66,7 +66,7 @@ public class AccessControl implements IAccessControl {
 
     @Override
     public boolean checkAuthorizationForResource(Agent owner, URI accessTo,
-            EnumSet<Access> accessModeSet) {
+            EnumSet<AccessMode> accessModeSet) {
         Preconditions.checkNotNull(owner,
                 "Required parameter owner must be specified.");
         Preconditions.checkNotNull(accessTo,
@@ -94,8 +94,8 @@ public class AccessControl implements IAccessControl {
                     row.getValue("auth").asResource());
 
             int hits = 0;
-            for (Access access : accessModeSet) {
-                if (authorization.hasAccessMode(access.asClass(model))) {
+            for (AccessMode access : accessModeSet) {
+                if (authorization.hasAccessMode(access.toUri())) {
                     hits++;
                 }
             }
@@ -110,7 +110,7 @@ public class AccessControl implements IAccessControl {
 
     @Override
     public boolean checkAuthorizationForClass(Agent owner, URI accessToClass,
-            EnumSet<Access> accessModeSet) {
+            EnumSet<AccessMode> accessModeSet) {
         Preconditions.checkNotNull(owner,
                 "Required parameter owner must be specified.");
         Preconditions.checkNotNull(accessToClass,
@@ -138,8 +138,8 @@ public class AccessControl implements IAccessControl {
                     row.getValue("auth").asResource());
 
             int hits = 0;
-            for (Access access : accessModeSet) {
-                if (authorization.hasAccessMode(access.asClass(model))) {
+            for (AccessMode access : accessModeSet) {
+                if (authorization.hasAccessMode(access.toUri())) {
                     hits++;
                 }
             }

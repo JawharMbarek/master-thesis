@@ -19,8 +19,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="3" language="java" name="de.m0ep.socc.core.acl.Access" project="socc-core" 
-    file="/socc-core/src/main/java/de/m0ep/socc/core/acl/Access.java" binary="false" corner="BOTTOM_RIGHT">    
+  <enumeration id="3" language="java" name="de.m0ep.socc.core.acl.AccessMode" project="socc-core" 
+    file="/socc-core/src/main/java/de/m0ep/socc/core/acl/AccessMode.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="128" width="144" x="305" y="-18"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      

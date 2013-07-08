@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package de.m0ep.test.socc.core.acl;
+package de.m0ep.test.socc.core;
 
 import java.util.List;
 

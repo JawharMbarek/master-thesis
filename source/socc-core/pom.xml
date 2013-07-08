@@ -100,6 +100,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>de.m0ep.rdf2go</groupId>
+			<artifactId>rdf2go-sioc-services-auth</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -8,6 +8,7 @@ import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Thread;
 
+import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
 /**
@@ -29,21 +30,26 @@ public interface IServiceStructureReader {
      * @throws IOException
      *             Thrown if there is a problem with the connection to the
      *             service endpoint.
+     * @throws AuthenticationException
      * @throws NotFoundException
      *             Thrown if there is no {@link Forum} with this <code>id</code>
      *             .
      */
-    public Forum getForum(String id);
+    public Forum getForum(String id) throws IOException, AuthenticationException;
 
     /**
      * Returns a {@link List} with all {@link Forum}s of this service.
+     * 
+     * @throws IOException
+     * @throws AuthenticationException
      */
-    public List<Forum> listForums();
+    public List<Forum> listForums() throws IOException, AuthenticationException;
 
     /**
      * Returns a {@link Thread} by its <code>id</code>.
      * 
      * @param id
+     * @throws AuthenticationException
      * @throws NullPointerException
      *             Thrown if <code>id</code> is <code>null</code>.
      * @throws IllegalArgumentException
@@ -55,13 +61,16 @@ public interface IServiceStructureReader {
      *             Thrown if there is no {@link Thread} with this
      *             <code>id</code> .
      */
-    public Thread getThread(String id);
+    public Thread getThread(String id, Container parent) throws IOException,
+            AuthenticationException;
 
     /**
      * Returns a {@link List} with all {@link Thread}s inside the
      * <code>parent</code> {@link Container}.
      * 
      * @param parent
+     * @throws AuthenticationException
+     * @throws IOException
      */
-    public List<Thread> listThreads(Container parent);
+    public List<Thread> listThreads(Container parent) throws IOException, AuthenticationException;
 }

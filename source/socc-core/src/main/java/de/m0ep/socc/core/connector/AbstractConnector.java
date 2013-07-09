@@ -36,10 +36,10 @@ import de.m0ep.socc.core.ISoccContext;
  * @author Florian Müller
  */
 public abstract class AbstractConnector implements IConnector {
-    private String id;
-    private ISoccContext context;
-    private UserAccount defaultUserAccount;
-    private Service service;
+    protected String id;
+    protected ISoccContext context;
+    protected UserAccount defaultUserAccount;
+    protected Service service;
 
     /**
      * Constructs a new instance with an <code>id</code>, <code>context</code>,

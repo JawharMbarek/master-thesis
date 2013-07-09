@@ -11,8 +11,8 @@ public interface IServiceClientManager<T> {
      * found.
      * 
      * @param client
-     * @throws NullPointerException Thrown if <code>client</code> is
-     *             <code>null</code>.
+     * @throws NullPointerException
+     *             Thrown if <code>client</code> is <code>null</code>.
      */
     public void setDefaultClient(T client);
 
@@ -26,8 +26,9 @@ public interface IServiceClientManager<T> {
      * 
      * @param client
      * @param userAccount
-     * @throws NullPointerException Thrown if <code>userAccount</code> or
-     *             <code>client</code> are <code>null</code>.
+     * @throws NullPointerException
+     *             Thrown if <code>userAccount</code> or <code>client</code> are
+     *             <code>null</code>.
      */
     public void add(UserAccount userAccount, T client);
 
@@ -48,7 +49,8 @@ public interface IServiceClientManager<T> {
      * there is no such client, it will return the default client.
      * 
      * @param userAccount
-     * @throws IllegalStateException Thrown if no default client was set.
+     * @throws IllegalStateException
+     *             Thrown if no default client was set.
      */
     public T get(UserAccount userAccount);
 }

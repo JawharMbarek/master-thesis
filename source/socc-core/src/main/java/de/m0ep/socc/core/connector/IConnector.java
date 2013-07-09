@@ -69,6 +69,10 @@ public interface IConnector {
      * Sets the service informations of this connector.
      * 
      * @param service
+     * @throws NullPointerException
+     *             Thrown if <code>service</code> is <code>null</code>.
+     * @throws IllegalArgumentException
+     *             Thrown if <code>service</code> has invalid values.
      */
     public void setService(Service service);
 
@@ -93,7 +97,7 @@ public interface IConnector {
      * Returns a {@link IServiceClientManager} instance to manage client objects
      * of different {@link UserAccount} for the used service.
      */
-    public <T> IServiceClientManager<T> getServiceClientManager();
+    public IServiceClientManager<?> getServiceClientManager();
 
     /**
      * Returns an {@link IServiceStructureReader} to get information about the

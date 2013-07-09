@@ -105,6 +105,11 @@
 			<artifactId>rdf2go-sioc-services-auth</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>de.m0ep.canvaslms</groupId>
+			<artifactId>canvaslms4j</artifactId>
+			<version>0.0.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>

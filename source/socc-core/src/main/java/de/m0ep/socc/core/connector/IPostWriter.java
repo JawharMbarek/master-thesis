@@ -35,10 +35,10 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
  * 
  * @author Florian Müller
  */
-public interface IWriteConnector {
+public interface IPostWriter {
     /**
      * Returns the {@link IConnector} instance to which this
-     * {@link IWriteConnector} belongs.
+     * {@link IPostWriter} belongs.
      */
     public IConnector getConnector();
 

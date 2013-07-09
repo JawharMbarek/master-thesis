@@ -26,9 +26,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.rdfs.sioc.Container;
-import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.Thread;
 
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
@@ -38,46 +36,12 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
  * 
  * @author Florian Müller
  */
-public interface IReadConnector {
+public interface IPostReader {
     /**
-     * Returns the {@link IConnector} instance to wicht this
-     * {@link IReadConnector} belongs.
+     * Returns the {@link IConnector} instance to wicht this {@link IPostReader}
+     * belongs.
      */
     public IConnector getConnector();
-
-    /**
-     * Returns all {@link Forum}s of an corresponding connector as a
-     * {@link List}.
-     * 
-     * @throws AuthenticationException
-     *             Thrown if there is a problem to authenticate the user
-     *             account.
-     * @throws IOException
-     *             Thrown if there is a problem with the network.
-     */
-    public List<Forum> listForums()
-            throws AuthenticationException, IOException;
-
-    /**
-     * Returns all {@link Thread}s of a provided {@link Container} as a
-     * {@link List}.
-     * 
-     * @param container
-     *            {@link Container} from where the {@link Thread}s should be
-     *            listed.
-     * @throws AuthenticationException
-     *             Thrown if there is a problem to authenticate the user
-     *             account.
-     * @throws IOException
-     *             Thrown if there is a problem with the network.
-     * @throws NullPointerException
-     *             Thrown if <code>container</code> is <code>null</code>.
-     * @throws IllegalArgumentException
-     *             Thrown if <code>container</code> doesn't belong to the
-     *             connector.
-     */
-    public List<Thread> listThreads(Container container)
-            throws AuthenticationException, IOException;
 
     /**
      * Returns true if the provided <code>container</code> contains possibly
@@ -87,7 +51,7 @@ public interface IReadConnector {
      * @throws NullPointerException
      *             Thrown if <code>container</code> is <code>null</code>.
      */
-    public boolean hasPosts(Container container);
+    public boolean containsPosts(Container container);
 
     /**
      * Polls the for new {@link Post}s inside the provided
@@ -111,7 +75,7 @@ public interface IReadConnector {
      *             Thrown if <code>container</code> doesn't belong to the
      *             connector.
      */
-    public List<Post> pollNewPosts(long limit, Container container)
+    public List<Post> readNewPosts(long limit, Container container)
             throws AuthenticationException, IOException;
 
     /**
@@ -122,7 +86,7 @@ public interface IReadConnector {
      * @throws NullPointerException
      *             Thrown if <code>parent</code> is <code>null</code>.
      */
-    public boolean hasReplies(Post parent);
+    public boolean containsReplies(Post parent);
 
     /**
      * Polls for new replies to a provided parent {@link Post}. The result can
@@ -145,6 +109,6 @@ public interface IReadConnector {
      *             Thrown if <code>parent</code> doesn't belong to the
      *             connector.
      */
-    public List<Post> pollNewReplies(long limit, Post parent)
+    public List<Post> readNewReplies(long limit, Post parent)
             throws AuthenticationException, IOException;
 }

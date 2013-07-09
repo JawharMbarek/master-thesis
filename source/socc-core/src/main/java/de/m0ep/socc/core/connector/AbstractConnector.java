@@ -29,12 +29,27 @@ import com.google.common.base.Preconditions;
 import de.m0ep.sioc.service.auth.Service;
 import de.m0ep.socc.core.ISoccContext;
 
+/**
+ * Abstract connector that implements some basic methods which may be used in
+ * all subclasses.
+ * 
+ * @author Florian Müller
+ */
 public abstract class AbstractConnector implements IConnector {
     private String id;
     private ISoccContext context;
     private UserAccount defaultUserAccount;
     private Service service;
 
+    /**
+     * Constructs a new instance with an <code>id</code>, <code>context</code>,
+     * <code>defaultUserAccount</code> and a <code>service</code>.
+     * 
+     * @param id
+     * @param context
+     * @param defaultUserAccount
+     * @param service
+     */
     public AbstractConnector(
             String id,
             ISoccContext context,
@@ -46,16 +61,25 @@ public abstract class AbstractConnector implements IConnector {
         setService(service);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getId() {
         return id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ISoccContext getContext() {
         return context;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setContext(ISoccContext context) {
         this.context = Preconditions.checkNotNull(
@@ -63,11 +87,17 @@ public abstract class AbstractConnector implements IConnector {
                 "Required parameter context must be specified.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public UserAccount getDefaultUserAccount() {
         return defaultUserAccount;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDefaultUserAccount(UserAccount defaultUserAccount) {
         this.defaultUserAccount = Preconditions.checkNotNull(
@@ -75,11 +105,17 @@ public abstract class AbstractConnector implements IConnector {
                 "Required parameter defaultUserAccount must be specified.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Service getService() {
         return service;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setService(Service service) {
         this.service = Preconditions.checkNotNull(

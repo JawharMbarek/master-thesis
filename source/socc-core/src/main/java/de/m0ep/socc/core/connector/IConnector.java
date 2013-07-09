@@ -24,6 +24,7 @@ package de.m0ep.socc.core.connector;
 
 import java.io.IOException;
 
+import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.UserAccount;
 
@@ -60,12 +61,12 @@ public interface IConnector {
     public void setContext(ISoccContext context);
 
     /**
-     * Returns the service endpoint of this connector.
+     * Returns the service informations of this connector.
      */
     public Service getService();
 
     /**
-     * Sets the service endpoint of this connector.
+     * Sets the service informations of this connector.
      * 
      * @param service
      */
@@ -94,12 +95,26 @@ public interface IConnector {
      */
     public <T> IServiceClientManager<T> getServiceClientManager();
 
-    public IReadConnector getReadConnector();
-
-    public IWriteConnector getWriteConnector();
+    /**
+     * Returns an {@link IServiceStructureReader} to get information about the
+     * structure of the used service.
+     */
+    public IServiceStructureReader getServiceStructureReader();
 
     /**
-     * Initializes the connector
+     * Returns an {@link IPostReader} to read {@link Post}s from the connectors
+     * service endpoint.
+     */
+    public IPostReader getPostReader();
+
+    /**
+     * Returns an {@link IPostWriter to write {@link Post}s to the connectors
+     * service endpoint.
+     */
+    public IPostWriter getPostWriter();
+
+    /**
+     * Initializes the connector.
      * 
      * @throws IllegalStateException
      *             Throw if was no {@link Site} or default {@link UserAccount}
@@ -111,7 +126,7 @@ public interface IConnector {
      *             throw if there is a problem with the connection to the
      *             service endpoint.
      */
-    public void intialize() throws AuthenticationException, IOException;
+    public void initialize() throws AuthenticationException, IOException;
 
     /**
      * Destroys the connector.

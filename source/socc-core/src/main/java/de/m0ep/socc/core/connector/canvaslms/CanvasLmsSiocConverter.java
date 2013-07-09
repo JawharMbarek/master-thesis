@@ -60,7 +60,11 @@ public final class CanvasLmsSiocConverter {
                         Long.toString(discussionTopic.getAuthor().getId()),
                         connector.getServiceEndpointUri());
             } catch (NotFoundException e) {
+                URI userUri = Builder.createURI(connector.getServiceEndpointUri().toString()
+                        + "/user/"
+                        + discussionTopic.getAuthor().getId());
 
+                creator = new UserAccount(connector.getContext().getModel(), userUri, true);
             }
         }
 

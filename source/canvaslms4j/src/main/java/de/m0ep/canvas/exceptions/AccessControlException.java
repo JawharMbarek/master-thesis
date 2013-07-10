@@ -1,6 +1,6 @@
 package de.m0ep.canvas.exceptions;
 
-public class AccessControlException extends CanvasException {
+public class AccessControlException extends CanvasLmsException {
     private static final long serialVersionUID = 3003790748613812295L;
 
     public AccessControlException() {

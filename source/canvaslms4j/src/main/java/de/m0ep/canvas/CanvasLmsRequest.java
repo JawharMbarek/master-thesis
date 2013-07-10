@@ -21,21 +21,22 @@ import com.google.common.base.Preconditions;
 
 import de.m0ep.canvas.exceptions.AccessControlException;
 import de.m0ep.canvas.exceptions.AuthorizationException;
-import de.m0ep.canvas.exceptions.CanvasException;
+import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.exceptions.NetworkException;
+import de.m0ep.canvas.exceptions.NotFoundException;
 
-public abstract class CanvasRequest<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(CanvasRequest.class);
+public abstract class CanvasLmsRequest<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(CanvasLmsRequest.class);
 
     private Class<? extends HttpRequestBase> methodType;
     private String uri;
-    private CanvasClient client;
+    private CanvasLmsClient client;
     private String oauthToken;
     private HttpEntity content;
     private Class<T> responseType;
 
-    public CanvasRequest(
-            final CanvasClient client,
+    public CanvasLmsRequest(
+            final CanvasLmsClient client,
             final Class<? extends HttpRequestBase> methodType,
             final String uri,
             final Class<T> responseType) {
@@ -54,11 +55,11 @@ public abstract class CanvasRequest<T> {
         }
     }
 
-    public CanvasClient getClient() {
+    public CanvasLmsClient getClient() {
         return client;
     }
 
-    public CanvasRequest<T> setClient(CanvasClient client) {
+    public CanvasLmsRequest<T> setClient(CanvasLmsClient client) {
         this.client = Preconditions.checkNotNull(
                 client,
                 "Required parameter client must be specified.");
@@ -69,7 +70,7 @@ public abstract class CanvasRequest<T> {
         return methodType;
     }
 
-    public CanvasRequest<T> setMethodType(Class<? extends HttpRequestBase> methodType) {
+    public CanvasLmsRequest<T> setMethodType(Class<? extends HttpRequestBase> methodType) {
         this.methodType = Preconditions.checkNotNull(
                 methodType,
                 "Required parameter methodType must be specified.");
@@ -80,7 +81,7 @@ public abstract class CanvasRequest<T> {
         return uri;
     }
 
-    public CanvasRequest<T> setUri(String uri) {
+    public CanvasLmsRequest<T> setUri(String uri) {
         this.uri = Preconditions.checkNotNull(uri, "Required parameter uri must be specified.");
         return this;
     }
@@ -89,7 +90,7 @@ public abstract class CanvasRequest<T> {
         return oauthToken;
     }
 
-    public CanvasRequest<T> setOauthToken(String oauthToken) {
+    public CanvasLmsRequest<T> setOauthToken(String oauthToken) {
         this.oauthToken = oauthToken;
         return this;
     }
@@ -98,7 +99,7 @@ public abstract class CanvasRequest<T> {
         return content;
     }
 
-    public CanvasRequest<T> setContent(HttpEntity content) {
+    public CanvasLmsRequest<T> setContent(HttpEntity content) {
         this.content = content;
         return this;
     }
@@ -107,19 +108,19 @@ public abstract class CanvasRequest<T> {
         return responseType;
     }
 
-    public CanvasRequest<T> setResponseType(Class<T> responseType) {
+    public CanvasLmsRequest<T> setResponseType(Class<T> responseType) {
         this.responseType = Preconditions.checkNotNull(
                 responseType,
                 "Required parameter responseType must be specified.");
         return this;
     }
 
-    private HttpResponse executeUnparsed() throws CanvasException {
+    private HttpResponse executeUnparsed() throws CanvasLmsException {
         HttpRequestBase request = null;
         try {
             request = getMethodType().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new CanvasException(
+            throw new CanvasLmsException(
                     "Failed to create requeset method object.",
                     e);
         }
@@ -127,7 +128,7 @@ public abstract class CanvasRequest<T> {
         try {
             request.setURI(new URI(getUri()));
         } catch (URISyntaxException e) {
-            throw new CanvasException("Invalid uri", e);
+            throw new CanvasLmsException("Invalid uri", e);
         }
 
         if (null != getOauthToken()) {
@@ -155,7 +156,7 @@ public abstract class CanvasRequest<T> {
         }
     }
 
-    public Pagination<T> executePagination() throws CanvasException {
+    public Pagination<T> executePagination() throws CanvasLmsException {
         HttpResponse response = executeUnparsed();
 
         String responseContent = null;
@@ -163,7 +164,7 @@ public abstract class CanvasRequest<T> {
             try {
                 responseContent = EntityUtils.toString(response.getEntity());
             } catch (ParseException | IOException e) {
-                throw new CanvasException("Failed to read data from stream.", e);
+                throw new CanvasLmsException("Failed to read data from stream.", e);
             }
         }
 
@@ -197,7 +198,7 @@ public abstract class CanvasRequest<T> {
         return new Pagination<T>(getClient(), responseContent, nextUri, getResponseType());
     }
 
-    public T execute() throws CanvasException {
+    public T execute() throws CanvasLmsException {
         HttpResponse response = executeUnparsed();
 
         String responseContent = null;
@@ -205,7 +206,7 @@ public abstract class CanvasRequest<T> {
             try {
                 responseContent = EntityUtils.toString(response.getEntity());
             } catch (ParseException | IOException e) {
-                throw new CanvasException("Failed to read data from stream.", e);
+                throw new CanvasLmsException("Failed to read data from stream.", e);
             }
         }
 
@@ -230,7 +231,7 @@ public abstract class CanvasRequest<T> {
     }
 
     private void isHttpStatusOkOrThrow(StatusLine statusLine, String content)
-            throws CanvasException {
+            throws CanvasLmsException {
         int statusCode = statusLine.getStatusCode();
 
         if (200 <= statusCode && 300 > statusCode) {
@@ -240,8 +241,10 @@ public abstract class CanvasRequest<T> {
                     "Authorization error, check your accesstoken.");
         } else if (403 == statusCode) { // Forbidden
             throw new AccessControlException("Forbidden access");
+        } else if (404 == statusCode) { // Not Found
+            throw new NotFoundException("Resource not found");
         } else {
-            throw new CanvasException("Http error: " + statusCode);
+            throw new CanvasLmsException("Http error: " + statusCode);
         }
     }
 
@@ -270,7 +273,7 @@ public abstract class CanvasRequest<T> {
             return false;
         }
 
-        CanvasRequest<?> other = (CanvasRequest<?>) obj;
+        CanvasLmsRequest<?> other = (CanvasLmsRequest<?>) obj;
 
         return Objects.equal(this.client, other.client) &&
                 Objects.equal(this.oauthToken, other.oauthToken) &&

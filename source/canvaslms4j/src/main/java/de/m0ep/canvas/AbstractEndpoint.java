@@ -22,7 +22,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 public abstract class AbstractEndpoint implements IEndpoint {
-    protected CanvasClient client;
+    protected CanvasLmsClient client;
     protected String endpoint;
     protected String parentEndpoint;
 
@@ -31,12 +31,12 @@ public abstract class AbstractEndpoint implements IEndpoint {
     }
 
     @Override
-    public CanvasClient getClient() {
+    public CanvasLmsClient getClient() {
         return client;
     }
 
     @Override
-    public void setClient(CanvasClient client) {
+    public void setClient(CanvasLmsClient client) {
         this.client = Preconditions.checkNotNull(
                 client,
                 "Required parameter client must be specified.");
@@ -64,7 +64,7 @@ public abstract class AbstractEndpoint implements IEndpoint {
         this.parentEndpoint = parentEndpoint;
     }
 
-    public void initializeRequest(final CanvasRequest<?> request) {
+    public void initializeRequest(final CanvasLmsRequest<?> request) {
         request.setOauthToken(getClient().getOAuthToken());
     }
 

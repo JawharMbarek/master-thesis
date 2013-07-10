@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.gson.JsonArray;
 
-import de.m0ep.canvas.exceptions.CanvasException;
+import de.m0ep.canvas.exceptions.CanvasLmsException;
 
 public class Pagination<T> implements Iterable<List<T>> {
     private static final Logger LOG = LoggerFactory.getLogger(Pagination.class);
@@ -60,12 +60,12 @@ public class Pagination<T> implements Iterable<List<T>> {
         }
     }
 
-    private CanvasClient client;
+    private CanvasLmsClient client;
     private Class<T> paginationType;
     private String nextURL;
     private List<T> data;
 
-    public Pagination(CanvasClient client, String json, String next,
+    public Pagination(CanvasLmsClient client, String json, String next,
             Class<T> paginationType) {
         this.paginationType = paginationType;
         this.client = client;
@@ -91,7 +91,7 @@ public class Pagination<T> implements Iterable<List<T>> {
     public Pagination<T> fetchNextPage() {
         LOG.info("Fetch next page {}.", getNextURL());
         try {
-            CanvasRequest<T> request = new CanvasRequest<T>(
+            CanvasLmsRequest<T> request = new CanvasLmsRequest<T>(
                     client,
                     HttpGet.class,
                     getNextURL(),
@@ -100,7 +100,7 @@ public class Pagination<T> implements Iterable<List<T>> {
             request.setOauthToken(client.getOAuthToken());
 
             return request.executePagination();
-        } catch (CanvasException e) {
+        } catch (CanvasLmsException e) {
             throw new RuntimeException(e);
         }
     }

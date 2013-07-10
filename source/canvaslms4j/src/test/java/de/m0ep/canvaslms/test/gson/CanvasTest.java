@@ -4,16 +4,16 @@ package de.m0ep.canvaslms.test.gson;
 import java.util.List;
 import java.util.Scanner;
 
-import de.m0ep.canvas.CanvasClient;
+import de.m0ep.canvas.CanvasLmsClient;
 import de.m0ep.canvas.Pagination;
-import de.m0ep.canvas.exceptions.CanvasException;
+import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.model.Course;
 import de.m0ep.canvas.model.DiscussionTopic;
 import de.m0ep.canvas.model.Entry;
 
 public class CanvasTest {
     public static void main(String[] args) {
-        CanvasClient client = new CanvasClient(
+        CanvasLmsClient client = new CanvasLmsClient(
                 "https://canvas.instructure.com",
                 /* "7~w8C7LIFV0hVr94zD2watmgXWGv2uCG4TKcTWXRF4KoAgkpTavEDUdlZPExRRMvIO" */
                 "7~LUpV7B3lJYadvZ2sHlpJiTcyJ6HaduVb3Ho8YjBNXSdIE4AEFzLFfORcOHRHh1fU"
@@ -27,14 +27,14 @@ public class CanvasTest {
         try {
             coursePages = client.courses()
                     .list().executePagination();
-        } catch (CanvasException e1) {
+        } catch (CanvasLmsException e1) {
             e1.printStackTrace();
             return;
         }
 
         for (List<Course> courses : coursePages) {
             for (Course course : courses) {
-                printCourse(course);
+                System.out.println(course);
             }
         }
 
@@ -44,8 +44,8 @@ public class CanvasTest {
 
         try {
             Course course = client.courses().get(798152).execute();
-            printCourse(course);
-        } catch (CanvasException e) {
+            System.out.println(course);
+        } catch (CanvasLmsException e) {
             e.printStackTrace();
             return;
         }
@@ -60,14 +60,14 @@ public class CanvasTest {
                     .discussionTopics(798152)
                     .list()
                     .executePagination();
-        } catch (CanvasException e) {
+        } catch (CanvasLmsException e) {
             e.printStackTrace();
             return;
         }
 
         for (List<DiscussionTopic> discussions : discussionPages) {
             for (DiscussionTopic discussion : discussions) {
-                printDiscussionTopic(discussion);
+                System.out.println(discussion);
             }
         }
 
@@ -80,8 +80,8 @@ public class CanvasTest {
                     .discussionTopics(798152)
                     .get(1424406)
                     .execute();
-            printDiscussionTopic(topic);
-        } catch (CanvasException e) {
+            System.out.println(topic);
+        } catch (CanvasLmsException e) {
             e.printStackTrace();
             return;
         }
@@ -97,14 +97,14 @@ public class CanvasTest {
                     .entries(1424406)
                     .list()
                     .executePagination();
-        } catch (CanvasException e) {
+        } catch (CanvasLmsException e) {
             e.printStackTrace();
             return;
         }
 
         for (List<Entry> entries : entryPages) {
             for (Entry entry : entries) {
-                printDiscussionTopicEntry(entry);
+                System.out.println(entry);
             }
         }
 
@@ -124,8 +124,8 @@ public class CanvasTest {
                     .post(message)
                     .execute();
 
-            printDiscussionTopicEntry(entry);
-        } catch (CanvasException e) {
+            System.out.println(entry);
+        } catch (CanvasLmsException e) {
             e.printStackTrace();
             scn.close();
             return;
@@ -146,8 +146,8 @@ public class CanvasTest {
                     .postReply(message, 3084155)
                     .execute();
 
-            printDiscussionTopicEntry(entry);
-        } catch (CanvasException e) {
+            System.out.println(entry);
+        } catch (CanvasLmsException e) {
             e.printStackTrace();
             scn.close();
             return;
@@ -155,48 +155,4 @@ public class CanvasTest {
 
         scn.close();
     }
-
-    /**
-     * @param course
-     */
-    public static void printCourse(Course course) {
-        System.out.println("id:          " + course.getId());
-        System.out.println("account:     " + course.getAccountId());
-        System.out.println("name:        " + course.getName());
-        System.out.println("start_at:    " + course.getStartAt());
-        System.out.println("Course code: " + course.getCourseCode());
-        System.out.println("Account id:  " + course.getAccountId());
-        System.out.println("=================");
-    }
-
-    /**
-     * @param discussion
-     */
-    public static void printDiscussionTopic(DiscussionTopic discussion) {
-        System.out.println(
-                "id:        " + discussion.getId());
-        System.out.println(
-                "titel:     " + discussion.getTitle());
-        System.out.println(
-                "message:   " + discussion.getMessage());
-        System.out
-                .println(
-                "author:    " + discussion.getAuthor().getDisplayName());
-        System.out.println(
-                "author id: " + discussion.getAuthor().getId());
-        System.out.println("=================");
-    }
-
-    /**
-     * @param entry
-     */
-    public static void printDiscussionTopicEntry(Entry entry) {
-        System.out.println(entry.getId());
-        System.out.println(entry.getUserName());
-        System.out.println(entry.getCreatedAt());
-        System.out.println(entry.getMessage());
-        System.out.println(entry.hasMoreReplies());
-        System.out.println("=================");
-    }
-
 }

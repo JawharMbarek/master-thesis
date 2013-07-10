@@ -20,9 +20,9 @@ package de.m0ep.canvas;
 
 public interface IEndpoint {
 
-    public CanvasClient getClient();
+    public CanvasLmsClient getClient();
 
-    public void setClient(CanvasClient client);
+    public void setClient(CanvasLmsClient client);
 
     public String getEndpoint();
 

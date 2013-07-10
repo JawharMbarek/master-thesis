@@ -23,14 +23,20 @@
 package de.m0ep.socc.core.connector;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 
+import org.rdfs.sioc.Container;
+import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Site;
+import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
+import org.rdfs.sioc.services.Service;
 
-import de.m0ep.sioc.service.auth.Service;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
+import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.service.IServiceClientManager;
 
 /**
@@ -52,46 +58,14 @@ public interface IConnector {
     public ISoccContext getContext();
 
     /**
-     * Sets the used context.
-     * 
-     * @param context
-     * @throws NullPointerException
-     *             Thrown if <code>context</code> is <code>null</code>.
-     */
-    public void setContext(ISoccContext context);
-
-    /**
      * Returns the service informations of this connector.
      */
     public Service getService();
 
     /**
-     * Sets the service informations of this connector.
-     * 
-     * @param service
-     * @throws NullPointerException
-     *             Thrown if <code>service</code> is <code>null</code>.
-     * @throws IllegalArgumentException
-     *             Thrown if <code>service</code> has invalid values.
-     */
-    public void setService(Service service);
-
-    /**
      * Returns the default {@link UserAccount} of this connector.
      */
     public UserAccount getDefaultUserAccount();
-
-    /**
-     * Sets the default {@link UserAccount} of this connector.
-     * 
-     * @param defaultUserAccount
-     */
-    public void setDefaultUserAccount(UserAccount defaultUserAccount);
-
-    /**
-     * Gets a SIOC representation of the underlying online community site.
-     */
-    public Site getSite();
 
     /**
      * Returns a {@link IServiceClientManager} instance to manage client objects
@@ -136,4 +110,241 @@ public interface IConnector {
      * Destroys the connector.
      */
     public void destroy();
+
+    /**********************************************************************/
+
+    /**
+     * An interface to read some structural information about a service of an
+     * online community.
+     * 
+     * @author Florian Müller
+     */
+    public static interface IServiceStructureReader {
+        /**
+         * Gets a SIOC representation of the underlying online community site.
+         */
+        public Site getSite();
+
+        /**
+         * Returns a {@link Forum} by its <code>id</code>.
+         * 
+         * @param id
+         * @throws NullPointerException
+         *             Thrown if <code>id</code> is <code>null</code>.
+         * @throws IllegalArgumentException
+         *             Thrown if <code>id</code> is empty.
+         * @throws IOException
+         *             Thrown if there is a problem with the connection to the
+         *             service endpoint.
+         * @throws AuthenticationException
+         * @throws NotFoundException
+         *             Thrown if there is no {@link Forum} with this
+         *             <code>id</code> .
+         */
+        public Forum getForum(String id) throws NotFoundException, AuthenticationException,
+                IOException;
+
+        /**
+         * Returns a {@link List} with all {@link Forum}s of this service.
+         * 
+         * @throws IOException
+         * @throws AuthenticationException
+         */
+        public List<Forum> listForums() throws AuthenticationException, IOException;
+
+        /**
+         * Returns a {@link Thread} by its <code>id</code>.
+         * 
+         * @param id
+         * @throws AuthenticationException
+         * @throws NullPointerException
+         *             Thrown if <code>id</code> is <code>null</code>.
+         * @throws IllegalArgumentException
+         *             Thrown if <code>id</code> is empty.
+         * @throws IOException
+         *             Thrown if there is a problem with the connection to the
+         *             service endpoint.
+         * @throws NotFoundException
+         *             Thrown if there is no {@link Thread} with this
+         *             <code>id</code> .
+         */
+        public Thread getThread(String id, Container parent) throws NotFoundException,
+                AuthenticationException, IOException;
+
+        /**
+         * Returns a {@link List} with all {@link Thread}s inside the
+         * <code>parent</code> {@link Container}.
+         * 
+         * @param parent
+         * @throws AuthenticationException
+         * @throws IOException
+         */
+        public List<Thread> listThreads(Container parent) throws AuthenticationException,
+                IOException;
+    }
+
+    /**
+     * An interface that describes a class which is used to read data from a
+     * connectors service-endpoint.
+     * 
+     * @author Florian Müller
+     */
+    public static interface IPostReader {
+        /**
+         * Returns the {@link IConnector} instance to wicht this
+         * {@link IPostReader} belongs.
+         */
+        public IConnector getConnector();
+
+        /**
+         * Returns true if the provided <code>container</code> contains possibly
+         * posts, false otherwise.
+         * 
+         * @param container
+         * @throws NullPointerException
+         *             Thrown if <code>container</code> is <code>null</code>.
+         */
+        public boolean containsPosts(Container container);
+
+        /**
+         * Polls the for new {@link Post}s inside the provided
+         * <code>container</code>. The result can be limit to a certain amount
+         * of new Posts by the <code>limit</code> parameter. Use
+         * <code>limit = -1</code> to return all results.
+         * 
+         * @param lastPostDate
+         * @param limit
+         *            Limit results to this number of entries. Use -1 to disable
+         *            limitation.
+         * @param container
+         *            The container to poll.
+         * @throws AuthenticationException
+         *             Thrown if there is a problem to authenticate the user
+         *             account.
+         * @throws IOException
+         *             Thrown if there is a problem with the network.
+         * @throws NullPointerException
+         *             Thrown if <code>container</code> is <code>null</code>.
+         * @throws IllegalArgumentException
+         *             Thrown if <code>container</code> doesn't belong to the
+         *             connector.
+         */
+        public List<Post> readNewPosts(Date lastPostDate, long limit, Container container)
+                throws AuthenticationException, IOException;
+
+        /**
+         * Returns true if a {@link Post} contains possibly some replies, false
+         * otherwise.
+         * 
+         * @param parent
+         * @throws NullPointerException
+         *             Thrown if <code>parent</code> is <code>null</code>.
+         */
+        public boolean containsReplies(Post parent);
+
+        /**
+         * Polls for new replies to a provided parent {@link Post}. The result
+         * can be limit to a certain amount of new Posts by the
+         * <code>limit</code> parameter. Use <code>limit = -1</code> to return
+         * all results.
+         * 
+         * @param limit
+         *            Limit results to this number of entries. Use -1 to disable
+         *            limitation.
+         * @param parent
+         *            The parent post to poll.
+         * @throws AuthenticationException
+         *             Thrown if there is a problem to authenticate the user
+         *             account.
+         * @throws IOException
+         *             Thrown if there is a problem with the network.
+         * @throws NullPointerException
+         *             Thrown if <code>parent</code> is <code>null</code>.
+         * @throws IllegalArgumentException
+         *             Thrown if <code>parent</code> doesn't belong to the
+         *             connector.
+         */
+        public List<Post> readNewReplies(Date lastReplyDate, long limit, Post parent)
+                throws AuthenticationException, IOException;
+    }
+
+    /**
+     * An interface that describes a class which is used to write {@link Post}s
+     * to a connectors service-endpoint.
+     * 
+     * @author Florian Müller
+     */
+    public static interface IPostWriter {
+        /**
+         * Returns the {@link IConnector} instance to which this
+         * {@link IPostWriter} belongs.
+         */
+        public IConnector getConnector();
+
+        /**
+         * Returns true if it's possible to write to the provided container,
+         * false otherwise.
+         * 
+         * @param container
+         * @throws NullPointerException
+         *             Thrown if <code>container</code> is <code>null</code>.
+         */
+        public boolean canPostTo(Container container);
+
+        /**
+         * Writes a <code>post</code> to the <code>container</code>
+         * 
+         * @param post
+         *            The {@link Post} that should be written to the
+         *            {@link Container}.
+         * @param container
+         *            The {@link Container} where the {@link Post} should be
+         *            written to.
+         * @throws AuthenticationException
+         *             Thrown if there is a problem to authenticate the user
+         *             account.
+         * @throws IOException
+         *             Thrown if there is a problem with the network.
+         * @throws NullPointerException
+         *             Thrown if <code>post</code> or <code>container</code> are
+         *             <code>null</code>.
+         * @throws IllegalArgumentException
+         *             Thrown if <code>post</code> is invalid or
+         *             <code>container</code> doesn't belong to the connector.
+         */
+        public void writePost(Post post, Container container)
+                throws AuthenticationException, IOException;
+
+        /**
+         * Returns true if it's possible to reply to the provided
+         * <code>parent</code> {@link Post}, false otherwise.
+         * 
+         * @param parent
+         * @throws NullPointerException
+         *             Thrown if <code>parent</code> is <code>null</code>.
+         */
+        public boolean canReplyTo(Post parent);
+
+        /**
+         * Writes a <code>reply</code> to a <code>parent</code> post.
+         * 
+         * @param post
+         *            The reply that should be written to the parent post.
+         * @param container
+         *            The parent post where the reply should be written to.
+         * @throws AuthenticationException
+         *             Thrown if there is a problem to authenticate the user
+         *             account.
+         * @throws IOException
+         *             Thrown if there is a problem with the network.
+         * @throws NullPointerException
+         *             Thrown if <code>reply</code> or <code>parent</code> are
+         *             <code>null</code>.
+         * @throws IllegalArgumentException
+         *             Thrown if <code>reply</code> is invalid or
+         *             <code>parent</code> doesn't belong to the connector.
+         */
+        public void writeReply(Post reply, Post parent)
+                throws AuthenticationException, IOException;
+    }
 }

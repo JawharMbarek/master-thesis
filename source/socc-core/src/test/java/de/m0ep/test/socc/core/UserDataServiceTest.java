@@ -38,16 +38,16 @@ import com.xmlns.foaf.OnlineAccount;
 import com.xmlns.foaf.Person;
 
 import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.user.IPersonAccountService;
-import de.m0ep.socc.core.user.PersonAccountService;
+import de.m0ep.socc.core.user.IUserDataService;
+import de.m0ep.socc.core.user.UserDataService;
 
-public class PersonAccountServiceTest {
+public class UserDataServiceTest {
 
     private static final URI URI_SERVICE_A = Builder.createURI("http://www.example.com/serviceA");
     private static final URI URI_SERVICE_B = Builder.createURI("http://www.example.com/serviceB");
 
     private Model model;
-    private IPersonAccountService instance;
+    private IUserDataService instance;
 
     private Person person1;
     private Person person2;
@@ -63,7 +63,7 @@ public class PersonAccountServiceTest {
         model = RDF2Go.getModelFactory().createModel();
         model.open();
 
-        instance = new PersonAccountService(model);
+        instance = new UserDataService(model);
 
         person1 = new Person(model, true);
         person1.setName("John Doe");

@@ -22,7 +22,7 @@ import org.apache.http.client.methods.HttpGet;
 
 import com.damnhandy.uri.template.UriTemplate;
 
-import de.m0ep.canvas.exceptions.CanvasException;
+import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.model.Course;
 
 public class Courses extends AbstractEndpoint {
@@ -31,7 +31,7 @@ public class Courses extends AbstractEndpoint {
     private static final String PATH = "/courses";
     private static final String PATH_COURSE = "/courses/{courseId}";
 
-    public class List extends CanvasRequest<Course> {
+    public class List extends CanvasLmsRequest<Course> {
         public List() {
             super(Courses.this.getClient(),
                     HttpGet.class,
@@ -40,13 +40,13 @@ public class Courses extends AbstractEndpoint {
         }
 
         @Override
-        public Course execute() throws CanvasException {
+        public Course execute() throws CanvasLmsException {
             throw new UnsupportedOperationException(
                     "execute() is not supported by List");
         }
     }
 
-    public class Get extends CanvasRequest<Course> {
+    public class Get extends CanvasLmsRequest<Course> {
         public Get(final long courseId) {
             super(Courses.this.getClient(),
                     HttpGet.class,
@@ -58,13 +58,13 @@ public class Courses extends AbstractEndpoint {
 
         @Override
         public Pagination<Course> executePagination()
-                throws CanvasException {
+                throws CanvasLmsException {
             throw new UnsupportedOperationException(
                     "executePagination() is not supported by Get");
         }
     }
 
-    public Courses(final CanvasClient client) {
+    public Courses(final CanvasLmsClient client) {
         setClient(client);
         setEndpoint(PATH);
     }

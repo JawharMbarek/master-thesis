@@ -23,10 +23,11 @@
 package de.m0ep.socc.core.connector;
 
 import org.rdfs.sioc.UserAccount;
+import org.rdfs.sioc.services.Service;
 
 import com.google.common.base.Preconditions;
 
-import de.m0ep.sioc.service.auth.Service;
+import de.m0ep.socc.config.ConnectorCfg;
 import de.m0ep.socc.core.ISoccContext;
 
 /**
@@ -41,6 +42,26 @@ public abstract class AbstractConnector implements IConnector {
     protected UserAccount defaultUserAccount;
     protected Service service;
 
+    public AbstractConnector(final ISoccContext context, final ConnectorCfg config) {
+        this.context = Preconditions.checkNotNull(
+                context,
+                "Required parameter context must be specified.");
+
+        Preconditions.checkNotNull(config, "Required parameter config must be specified.");
+
+        Preconditions.checkArgument(config.hasId(), "Provides parameter config contains no id.");
+        this.id = config.getId();
+
+        Preconditions.checkArgument(
+                config.hasDefaultUser(),
+                "Provided parameter config contains no default UserAccount.");
+        this.defaultUserAccount = config.getDefaultUser();
+
+        Preconditions.checkArgument(config.hasService(),
+                "Provided parameter config contains no service");
+        this.service = config.getService();
+    }
+
     /**
      * Constructs a new instance with an <code>id</code>, <code>context</code>,
      * <code>defaultUserAccount</code> and a <code>service</code>.
@@ -49,16 +70,34 @@ public abstract class AbstractConnector implements IConnector {
      * @param context
      * @param defaultUserAccount
      * @param service
+     * @throws NullPointerException
+     *             Thrown if one or more parameter are <code>null</code>.
+     * @throws IllegalArgumentException
+     *             Thrown if <code>id</code> is empty.
      */
     public AbstractConnector(
             String id,
             ISoccContext context,
             UserAccount defaultUserAccount,
             Service service) {
-        this.id = Preconditions.checkNotNull(id, "Required parameter id must be specified.");
-        setContext(context);
-        setDefaultUserAccount(defaultUserAccount);
-        setService(service);
+        this.id = Preconditions.checkNotNull(
+                id,
+                "Required parameter id must be specified.");
+        Preconditions.checkArgument(
+                !id.isEmpty(),
+                "Required parameter id may not be empty.");
+
+        this.context = Preconditions.checkNotNull(
+                context,
+                "Required parameter context must be specified.");
+
+        this.defaultUserAccount = Preconditions.checkNotNull(
+                defaultUserAccount,
+                "Required parameter defaultUserAccount must be specified.");
+
+        this.service = Preconditions.checkNotNull(
+                service,
+                "Required parameter service must be specified.");
     }
 
     /**
@@ -81,16 +120,6 @@ public abstract class AbstractConnector implements IConnector {
      * {@inheritDoc}
      */
     @Override
-    public void setContext(ISoccContext context) {
-        this.context = Preconditions.checkNotNull(
-                context,
-                "Required parameter context must be specified.");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public UserAccount getDefaultUserAccount() {
         return defaultUserAccount;
     }
@@ -99,27 +128,7 @@ public abstract class AbstractConnector implements IConnector {
      * {@inheritDoc}
      */
     @Override
-    public void setDefaultUserAccount(UserAccount defaultUserAccount) {
-        this.defaultUserAccount = Preconditions.checkNotNull(
-                defaultUserAccount,
-                "Required parameter defaultUserAccount must be specified.");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Service getService() {
         return service;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setService(Service service) {
-        this.service = Preconditions.checkNotNull(
-                service,
-                "Required parameter service must be specified.");
     }
 }

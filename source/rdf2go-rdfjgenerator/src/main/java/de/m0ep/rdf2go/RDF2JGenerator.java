@@ -1,3 +1,4 @@
+
 package de.m0ep.rdf2go;
 
 import org.apache.commons.cli.CommandLine;
@@ -14,66 +15,66 @@ public class RDF2JGenerator {
     private static final String OPTION_METHOD_PREFIX = "m";
 
     public static void main(String[] args) throws Exception {
-	Options options = createOptions();
-	CommandLineParser parser = new PosixParser();
-	CommandLine cmd = parser.parse(options, args);
+        Options options = createOptions();
+        CommandLineParser parser = new PosixParser();
+        CommandLine cmd = parser.parse(options, args);
 
-	String[] files = cmd.getArgs();
-	if (0 == files.length) {
-	    System.err.println("no files to process");
-	}
+        String[] files = cmd.getArgs();
+        if (0 == files.length) {
+            System.err.println("no files to process");
+        }
 
-	String destString = (options.hasOption(OPTION_DESTINATION)) ?
-		(cmd.getOptionValue(OPTION_DESTINATION)) :
-		("./");
+        String destString = (options.hasOption(OPTION_DESTINATION)) ?
+                (cmd.getOptionValue(OPTION_DESTINATION)) :
+                ("./");
 
-	String pkgString = (options.hasOption(OPTION_PACKAGE)) ?
-		(cmd.getOptionValue(OPTION_PACKAGE)) :
-		("");
+        String pkgString = (options.hasOption(OPTION_PACKAGE)) ?
+                (cmd.getOptionValue(OPTION_PACKAGE)) :
+                ("");
 
-	String methodPrefix = (options.hasOption(OPTION_METHOD_PREFIX)) ?
-		(cmd.getOptionValue(OPTION_METHOD_PREFIX)) :
-		("");
+        String methodPrefix = (options.hasOption(OPTION_METHOD_PREFIX)) ?
+                (cmd.getOptionValue(OPTION_METHOD_PREFIX)) :
+                ("");
 
-	CodeGenerator.generate(
-		files[0],
-		destString,
-		pkgString,
-		"rdfs",
-		true,
-		true,
-		methodPrefix);
+        CodeGenerator.generate(
+                files[0],
+                destString,
+                pkgString,
+                "rdfs",
+                true,
+                true,
+                methodPrefix);
 
-	args = new String[] {
-		"-i", "services",
-		"-o", "./gen-src",
-		"--package", "org.rdfs.sioc.services",
-		"-n", "ServicesVocabulary",
-		"-a", "http://rdfs.org/sioc/services#",
-		"-namespacestrict", "true"
-	};
+        args = new String[] {
+                "-i", "soccconfig.owl",
+                "-o", "./gensrc",
+                "--package", "de.m0ep.socc.config",
+                "-n", "SoccConfigVocabulary",
+                "-a", "http://www.m0ep.de/ontologies/2013/soccconfig#",
+                "-namespacestrict", "true"
+        };
 
-	VocabularyWriter.main(args);
+        VocabularyWriter.main(args);
     }
 
     private static Options createOptions() {
-	Options options = new Options();
+        Options options = new Options();
 
-	options.addOption(
-		OPTION_DESTINATION,
-		true,
-		"Output directory.");
+        options.addOption(
+                OPTION_DESTINATION,
+                true,
+                "Output directory.");
 
-	options.addOption(
-		OPTION_PACKAGE,
-		true,
-		"Java package");
+        options.addOption(
+                OPTION_PACKAGE,
+                true,
+                "Java package");
 
-	options.addOption(
-		OPTION_METHOD_PREFIX,
-		true,
-		"Prefix string for class methods");
+        options.addOption(
+                OPTION_METHOD_PREFIX,
+                true,
+                "Prefix string for class methods");
 
-	return options;
+        return options;
     }
 }

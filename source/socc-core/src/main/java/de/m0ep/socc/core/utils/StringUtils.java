@@ -20,27 +20,33 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.core;
+package de.m0ep.socc.core.utils;
 
-import org.ontoware.rdf2go.model.Model;
+import org.jsoup.Jsoup;
 
-import de.m0ep.socc.core.acl.IAccessControl;
-import de.m0ep.socc.core.user.IUserDataService;
+import com.google.common.base.Strings;
 
-public interface ISoccContext {
-    /**
-     * Returns the {@link Model} that is used by the {@link ISoccContext}
-     * instance.
+/**
+ * Class with utility methods for easier handling with strings.
+ * 
+ * @author Florian Müller
+ */
+public class StringUtils {
+    /*
+     * Private constructor to avoid creating objects from this class.
      */
-    public Model getModel();
+    private StringUtils() {
+    }
 
     /**
-     * Returns an {@link IAccessControl} instance.
+     * User JSoup to remove all HTML tags from a string If value is empty, it
+     * will be converted to an empty string.
+     * 
+     * @param value
+     *            String to strip
+     * @return String without HTML tags
      */
-    public IAccessControl getAccessControl();
-
-    /**
-     * Returns an {@link IUserDataService} instance.
-     */
-    public IUserDataService getUserDataService();
+    public static String stripHTML(final String value) {
+        return Jsoup.parse(Strings.nullToEmpty(value)).text();
+    }
 }

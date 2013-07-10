@@ -13,7 +13,7 @@ import com.google.gson.GsonBuilder;
 
 import de.m0ep.canvas.gson.ISO8601TypeAdapter;
 
-public class CanvasClient {
+public class CanvasLmsClient {
     private static final String SERVICE_PATH = "/api/v1";
 
     private String oauthToken;
@@ -25,7 +25,7 @@ public class CanvasClient {
     private String rootUri;
 
     /**
-     * Constructs a new {@link CanvasClient} using the provided rootUri and
+     * Constructs a new {@link CanvasLmsClient} using the provided rootUri and
      * oauthtoken.
      * 
      * @param rootUri The uri to a CanvasLMS instance.
@@ -34,7 +34,7 @@ public class CanvasClient {
      * @throws IllegalArgumentException Thrown if rootUri or oauthtoken are
      *             empty.
      */
-    public CanvasClient(final String rootUri, final String oauthtoken) {
+    public CanvasLmsClient(final String rootUri, final String oauthtoken) {
         this.rootUri = Preconditions.checkNotNull(rootUri,
                 "Required parameter uri must be specified.");
 
@@ -104,7 +104,7 @@ public class CanvasClient {
             return false;
         }
 
-        CanvasClient other = (CanvasClient) obj;
+        CanvasLmsClient other = (CanvasLmsClient) obj;
 
         return Objects.equal(this.oauthToken, other.oauthToken) &&
                 Objects.equal(this.rootUri, other.rootUri) &&

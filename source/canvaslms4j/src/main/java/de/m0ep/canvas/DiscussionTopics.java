@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.damnhandy.uri.template.UriTemplate;
 
-import de.m0ep.canvas.exceptions.CanvasException;
+import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.model.DiscussionTopic;
 
 public class DiscussionTopics extends AbstractEndpoint {
@@ -18,7 +18,7 @@ public class DiscussionTopics extends AbstractEndpoint {
     private static final String PATH = "/discussion_topics";
     private static final String PATH_DISCUSSION_TOPIC = "/discussion_topics/{topicId}";
 
-    public class List extends CanvasRequest<DiscussionTopic> {
+    public class List extends CanvasLmsRequest<DiscussionTopic> {
         public List() {
             super(DiscussionTopics.this.getClient(),
                     HttpGet.class,
@@ -27,13 +27,13 @@ public class DiscussionTopics extends AbstractEndpoint {
         }
 
         @Override
-        public DiscussionTopic execute() throws CanvasException {
+        public DiscussionTopic execute() throws CanvasLmsException {
             throw new UnsupportedOperationException(
                     "execute() is not supported by List");
         }
     }
 
-    public class Get extends CanvasRequest<DiscussionTopic> {
+    public class Get extends CanvasLmsRequest<DiscussionTopic> {
         public Get(long topicId) {
             super(DiscussionTopics.this.getClient(),
                     HttpGet.class,
@@ -45,13 +45,13 @@ public class DiscussionTopics extends AbstractEndpoint {
 
         @Override
         public Pagination<DiscussionTopic> executePagination()
-                throws CanvasException {
+                throws CanvasLmsException {
             throw new UnsupportedOperationException(
                     "executePagination() is not supported by Get");
         }
     }
 
-    public DiscussionTopics(final CanvasClient client, final String parentEndpointPath) {
+    public DiscussionTopics(final CanvasLmsClient client, final String parentEndpointPath) {
         setClient(client);
         setParentEndpoint(parentEndpointPath);
         setEndpoint(getParentEndpoint() + PATH);

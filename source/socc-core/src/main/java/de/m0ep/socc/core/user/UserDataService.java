@@ -41,20 +41,20 @@ import com.xmlns.foaf.Person;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
 /**
- * A class that implements the {@link IPersonAccountService} interface.
+ * A class that implements the {@link IUserDataService} interface.
  * 
  * @author Florian Müller
  */
-public class PersonAccountService implements IPersonAccountService {
+public class UserDataService implements IUserDataService {
     private Model model;
 
     /**
-     * Construct a new {@link PersonAccountService} object that operates on
+     * Construct a new {@link UserDataService} object that operates on
      * the provided {@link Model}.
      * 
      * @param model
      */
-    public PersonAccountService(final Model model) {
+    public UserDataService(final Model model) {
         this.model = Preconditions.checkNotNull(model,
                 "Required parameter model must be specified.");
         Preconditions.checkArgument(model.isOpen(), "The provided model is not open.");

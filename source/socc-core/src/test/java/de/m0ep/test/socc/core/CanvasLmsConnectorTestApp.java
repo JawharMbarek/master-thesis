@@ -12,8 +12,11 @@ import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Forum;
+import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Thread;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
 import com.xmlns.foaf.Person;
 
@@ -92,12 +95,23 @@ public class CanvasLmsConnectorTestApp {
                 if (null != threads) {
                     for (Thread thread : threads) {
                         System.err.println(thread.getResource());
+
+                        List<Post> posts = null;
+                        try {
+                            posts = connector.postReader().readNewPosts(null, -1, thread);
+                        } catch (AuthenticationException | IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (null != posts) {
+                            for (Post post : posts) {
+                                printSiocPost(post);
+                            }
+                        }
                     }
                 }
             }
         }
-
-        System.out.println(RDFTool.modelToString(model, Syntax.RdfXml));
 
         List<Statement> sortedStmts = Lists.newArrayList(model);
         Collections.sort(sortedStmts);
@@ -110,5 +124,40 @@ public class CanvasLmsConnectorTestApp {
 
         writeModel.close();
         model.close();
+    }
+
+    private static void printSiocPost(Post post) {
+        ToStringHelper toStringHelper = Objects.toStringHelper("Post")
+                .add("uri", post.getResource().toString())
+                .add("id", post.getId());
+
+        if (post.hasTitle()) {
+            toStringHelper.add("title", post.getTitle());
+        }
+
+        if (post.hasSubject()) {
+            toStringHelper.add("subject", post.getSubject());
+        }
+
+        toStringHelper.add("content", post.getContent());
+
+        if (post.hasCreator()) {
+            toStringHelper.add(
+                    "creator",
+                    Objects.toStringHelper("UserAccount")
+                            .add("uri", post.getCreator().getResource().toString())
+                            .add("accountName", post.getCreator().getAccountName())
+                            .toString());
+        }
+
+        if (post.hasCreated()) {
+            toStringHelper.add("created", post.getCreated());
+        }
+
+        if (post.hasModified()) {
+            toStringHelper.add("modified", post.getModified());
+        }
+
+        System.out.println(toStringHelper.toString());
     }
 }

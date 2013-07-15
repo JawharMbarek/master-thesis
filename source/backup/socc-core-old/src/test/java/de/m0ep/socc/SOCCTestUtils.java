@@ -132,7 +132,7 @@ public class SOCCTestUtils {
 			+ connector.canReplyOn(Post.getInstance(
 				post.getModel(), post.getResource())), indent);
 
-	if (post.hasCreators()) {
+	if (post.hasCreator()) {
 	    printWithIndent("Post.From----------------", indent);
 	    printUser(post.getCreator(), indent + 1);
 	}

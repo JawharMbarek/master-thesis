@@ -37,7 +37,7 @@ public class CanvasLmsServiceStructureReader implements IConnector.IServiceStruc
                 connector,
                 "Required parameter connector must be specified.");
 
-        this.client = this.connector.serviceClientManager().getDefaultClient();
+        this.client = this.connector.getServiceClientManager().getDefaultClient();
         this.model = this.connector.getContext().getModel();
     }
 

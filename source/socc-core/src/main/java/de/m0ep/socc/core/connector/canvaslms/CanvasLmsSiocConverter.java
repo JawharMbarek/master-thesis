@@ -144,11 +144,10 @@ public final class CanvasLmsSiocConverter {
                         + entry.getId());
 
         Post result = null;
-        if (!Post.hasInstance(connector.getContext().getModel(), uri)) {
+        if (Post.hasInstance(connector.getContext().getModel(), uri)) {
             result = Post.getInstance(connector.getContext().getModel(), uri);
         } else {
-            // check if we already know the author, else create a new
-            // UserAccount + Person
+            result = new Post(connector.getContext().getModel(), uri, true);
             UserAccount creator = null;
             try {
                 IUserDataService userDataService = connector.getContext().getUserDataService();
@@ -165,9 +164,13 @@ public final class CanvasLmsSiocConverter {
             result.setCreator(creator);
             result.setCreated(DateUtils.formatISO8601(entry.getCreatedAt()));
 
+            if (null != entry.getAttachment()) {
+                result.addAttachment(Builder.createURI(entry.getAttachment().getUrl()));
+            }
+
             // update container relation.
             result.setContainer(container);
-            container.setContainerOf(result);
+            container.addContainerOf(result);
             container.setNumItems((container.hasNumItems()) ? (container.getNumItems() + 1) : (1));
         }
 

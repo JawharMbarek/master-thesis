@@ -929,7 +929,7 @@ public class Thing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasCreators() {
+    public boolean hasCreator() {
 	return Base.has(this.model, this.getResource(), CREATOR);
     }
 

@@ -44,8 +44,7 @@ public class CanvasLmsConnector extends AbstractConnector {
     }
 
     @Override
-    public IServiceClientManager<CanvasLmsClient> serviceClientManager() {
-        Preconditions.checkState(isInitialized(), "Connector was not initialized");
+    public IServiceClientManager<CanvasLmsClient> getServiceClientManager() {
         return clientManager;
     }
 
@@ -110,12 +109,12 @@ public class CanvasLmsConnector extends AbstractConnector {
             throw new IllegalArgumentException("No accesstoken found in userAccount");
         }
 
-        clientManager = new BasicServiceClientManager<CanvasLmsClient>(defaultClient);
+        setInitialized(true);
 
+        clientManager = new BasicServiceClientManager<CanvasLmsClient>(defaultClient);
         this.serviceStructureReader = new CanvasLmsServiceStructureReader(this);
         this.postReader = new CanvasLmsPostReader(this);
         this.postWriter = new CanvasLmsPostWriter(this);
-        setInitialized(true);
     }
 
     @Override

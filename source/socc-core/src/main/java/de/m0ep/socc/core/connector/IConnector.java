@@ -70,11 +70,8 @@ public interface IConnector {
     /**
      * Returns a {@link IServiceClientManager} instance to manage client objects
      * of different {@link UserAccount} for the used service.
-     * 
-     * @throws IllegalStateException
-     *             Thrown if the connector was not initialized.
      */
-    public IServiceClientManager<?> serviceClientManager();
+    public IServiceClientManager<?> getServiceClientManager();
 
     /**
      * Returns an {@link IServiceStructureReader} to get information about the

@@ -2280,7 +2280,7 @@ public class Thing extends OwlThing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasIds() {
+    public boolean hasId() {
 	return Base.has(this.model, this.getResource(), ID);
     }
 

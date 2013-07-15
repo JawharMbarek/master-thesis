@@ -417,7 +417,7 @@ public class MoodleConnector extends AbstractConnector {
 		SIOCVocabulary.Thread)) {
 	    Thread thread = Thread.getInstance(context.getDataModel(),
 		    container.getResource());
-	    if (thread.hasParents()) {
+	    if (thread.hasParent()) {
 		Container parent = thread.getParent();
 		if (context.getDataModel().contains(parent, RDF.type,
 			SIOCVocabulary.Forum)) {
@@ -440,13 +440,13 @@ public class MoodleConnector extends AbstractConnector {
 	// 1) It has a container that is a thread
 	// 2) This thread has a parent Forum
 	// 3) The parent forum belongs to this moodle instance
-	if (parentPost.hasContainers()) {
+	if (parentPost.hasContainer()) {
 	    Container container = parentPost.getContainer();
 	    if (context.getDataModel().contains(container, RDF.type,
 		    SIOCVocabulary.Thread)) {
 		Thread thread = Thread.getInstance(context.getDataModel(),
 			container.getResource());
-		if (thread.hasParents()) {
+		if (thread.hasParent()) {
 		    Container parentContainer = thread.getParent();
 		    if (context.getDataModel().contains(parentContainer,
 			    RDF.type,

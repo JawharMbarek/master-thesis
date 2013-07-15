@@ -71,10 +71,16 @@ public class BasicServiceClientManager<T> implements IServiceClientManager<T> {
 
         T result = clientMap.get(userAccount);
 
-        if (null == userAccount) {
+        if (null == result) {
             LOG.info("No client for {} found. Return default client.", userAccount);
+            return defaultClient;
         }
 
-        return (null != result) ? (result) : (getDefaultClient());
+        return result;
+    }
+
+    @Override
+    public void clear() {
+        clientMap.clear();
     }
 }

@@ -682,7 +682,7 @@ public class YoutubeV2Connector extends AbstractConnector {
     public boolean canReplyOn(Post parentPost) {
 	Preconditions.checkNotNull(parentPost, "parentPost can not be null");
 
-	return parentPost.hasContainers()
+	return parentPost.hasContainer()
 		&& (parentPost.hasContainer(uploads) || parentPost
 			.getContainer().hasParent(playlists));
     }

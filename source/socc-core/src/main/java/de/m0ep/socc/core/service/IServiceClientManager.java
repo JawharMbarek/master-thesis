@@ -53,4 +53,10 @@ public interface IServiceClientManager<T> {
      *             Thrown if no default client was set.
      */
     public T get(UserAccount userAccount);
+
+    /**
+     * Clears the {@link IServiceClientManager} and frees all allocated
+     * resources.
+     */
+    public void clear();
 }

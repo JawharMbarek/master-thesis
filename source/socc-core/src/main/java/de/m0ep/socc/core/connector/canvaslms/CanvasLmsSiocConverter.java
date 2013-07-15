@@ -3,6 +3,7 @@ package de.m0ep.socc.core.connector.canvaslms;
 
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.Builder;
+import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Site;
@@ -14,6 +15,7 @@ import com.xmlns.foaf.Person;
 import de.m0ep.canvas.model.Attachment;
 import de.m0ep.canvas.model.Course;
 import de.m0ep.canvas.model.DiscussionTopic;
+import de.m0ep.canvas.model.Entry;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.user.IUserDataService;
 import de.m0ep.socc.core.utils.DateUtils;
@@ -37,7 +39,7 @@ public final class CanvasLmsSiocConverter {
             result.setNumThreads(0);
             result.setName(course.getName());
 
-            Site site = connector.getServiceStructureReader().getSite();
+            Site site = connector.serviceStructureReader().getSite();
             result.setHost(site);
             site.addHostOf(result);
         }
@@ -65,7 +67,7 @@ public final class CanvasLmsSiocConverter {
 
             /*
              * Create a SIOC Post for the initial post. Because it has no own id
-             * "thread/{thread_id}/initialpost" will be used.
+             * "thread-{thread_id}-initialpost" will be used.
              */
 
             // check if we already know the author, else create a new
@@ -74,29 +76,20 @@ public final class CanvasLmsSiocConverter {
             try {
                 IUserDataService userDataService = connector.getContext().getUserDataService();
                 String accountName = Long.toString(discussionTopic.getAuthor().getId());
-
-                if (null != userDataService) {
-                    creator = userDataService.findUserAccount(
-                            accountName,
-                            serviceEndpoint);
-
-                } else {
-                    throw new NotFoundException(
-                            "User "
-                                    + accountName
-                                    + " not found, create new UserAccount");
-                }
+                creator = userDataService.findUserAccount(
+                        accountName,
+                        serviceEndpoint);
             } catch (NotFoundException e) {
                 creator = createSiocUserAccountFromAuthor(connector, discussionTopic.getAuthor());
             }
 
+            String initPostId = "thread-" + discussionTopic.getId() + "-initialPost";
             URI initPostUri = Builder.createURI(
                     serviceEndpoint.toString()
-                            + "/thread/"
-                            + discussionTopic.getId()
-                            + "/initialPost");
+                            + "/post/"
+                            + initPostId);
             Post initPost = new Post(connector.getContext().getModel(), initPostUri, true);
-            initPost.setId("thread/" + discussionTopic.getId() + "/initialPost");
+            initPost.setId(initPostId);
             initPost.setTitle(discussionTopic.getTitle());
             initPost.setSubject(discussionTopic.getTitle());
             initPost.setContent(StringUtils.stripHTML(discussionTopic.getMessage()));
@@ -137,6 +130,70 @@ public final class CanvasLmsSiocConverter {
         Person person = new Person(connector.getContext().getModel(), true);
         person.setNickname(Builder.createPlainliteral(author.getDisplayName()));
         person.setDepiction(Builder.createURI(author.getAvatarIamgeUrl()));
+        person.addAccount(result);
+        result.setAccountOf(person);
+
+        return result;
+    }
+
+    public static Post createSiocPost(CanvasLmsConnector connector, Entry entry, Container container) {
+        URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
+        URI uri = Builder.createURI(
+                serviceEndpoint.toString()
+                        + "/post/"
+                        + entry.getId());
+
+        Post result = null;
+        if (!Post.hasInstance(connector.getContext().getModel(), uri)) {
+            result = Post.getInstance(connector.getContext().getModel(), uri);
+        } else {
+            // check if we already know the author, else create a new
+            // UserAccount + Person
+            UserAccount creator = null;
+            try {
+                IUserDataService userDataService = connector.getContext().getUserDataService();
+                String accountName = Long.toString(entry.getUserId());
+                creator = userDataService.findUserAccount(
+                        accountName,
+                        serviceEndpoint);
+            } catch (NotFoundException e) {
+                creator = createSiocUserAccountFromEntry(connector, entry);
+            }
+
+            result = new Post(connector.getContext().getModel(), uri, true);
+            result.setId(Long.toString(entry.getId()));
+            result.setCreator(creator);
+            result.setCreated(DateUtils.formatISO8601(entry.getCreatedAt()));
+
+            // update container relation.
+            result.setContainer(container);
+            container.setContainerOf(result);
+            container.setNumItems((container.hasNumItems()) ? (container.getNumItems() + 1) : (1));
+        }
+
+        result.setContent(StringUtils.stripHTML(entry.getMessage()));
+        result.setContentEncoded(entry.getMessage());
+        result.setModified(DateUtils.formatISO8601(entry.getUpdatedAt()));
+
+        return result;
+    }
+
+    private static UserAccount createSiocUserAccountFromEntry(CanvasLmsConnector connector,
+            Entry entry) {
+        URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
+        URI userUri = Builder.createURI(
+                serviceEndpoint.toString()
+                        + "/user/"
+                        + entry.getUserId());
+
+        UserAccount result = new UserAccount(connector.getContext().getModel(), userUri, true);
+        result.setId(Long.toString(entry.getUserId()));
+        result.setAccountName(Long.toString(entry.getUserId()));
+        result.setAccountServiceHomepage(serviceEndpoint);
+
+        // create a new Person for unknown account.
+        Person person = new Person(connector.getContext().getModel(), true);
+        person.setNickname(Builder.createPlainliteral(entry.getUserName()));
         person.addAccount(result);
         result.setAccountOf(person);
 

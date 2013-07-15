@@ -70,33 +70,47 @@ public interface IConnector {
     /**
      * Returns a {@link IServiceClientManager} instance to manage client objects
      * of different {@link UserAccount} for the used service.
+     * 
+     * @throws IllegalStateException
+     *             Thrown if the connector was not initialized.
      */
-    public IServiceClientManager<?> getServiceClientManager();
+    public IServiceClientManager<?> serviceClientManager();
 
     /**
      * Returns an {@link IServiceStructureReader} to get information about the
      * structure of the used service.
+     * 
+     * @throws IllegalStateException
+     *             Thrown if the connector was not initialized.
      */
-    public IServiceStructureReader getServiceStructureReader();
+    public IServiceStructureReader serviceStructureReader();
 
     /**
      * Returns an {@link IPostReader} to read {@link Post}s from the connectors
      * service endpoint.
+     * 
+     * @throws IllegalStateException
+     *             Thrown if the connector was not initialized.
      */
-    public IPostReader getPostReader();
+    public IPostReader postReader();
 
     /**
      * Returns an {@link IPostWriter to write {@link Post}s to the connectors
      * service endpoint.
-     */
-    public IPostWriter getPostWriter();
-
-    /**
-     * Initializes the connector.
      * 
      * @throws IllegalStateException
-     *             Throw if was no {@link Site} or default {@link UserAccount}
-     *             set or are invalid.
+     *             Thrown if the connector was not initialized.
+     */
+    public IPostWriter postWriter();
+
+    /**
+     * Initializes the connector. Checking the defaultUser and the service for
+     * necessary for properties like required service endpoint or authorization
+     * parameters.
+     * 
+     * @throws IllegalStateException
+     *             Throw if <code>defaultUserAccount</code> or
+     *             <code>service</code> are invalid.
      * @throws AuthenticationException
      *             Thrown if authorization of the default {@link UserAccount}
      *             failed.
@@ -107,9 +121,14 @@ public interface IConnector {
     public void initialize() throws AuthenticationException, IOException;
 
     /**
-     * Destroys the connector.
+     * Returns true if the connector was initialized, false otherwise.
      */
-    public void destroy();
+    public boolean isInitialized();
+
+    /**
+     * Shuts down the connector.
+     */
+    public void shutdown();
 
     /**********************************************************************/
 
@@ -120,6 +139,13 @@ public interface IConnector {
      * @author Florian Müller
      */
     public static interface IServiceStructureReader {
+
+        /**
+         * Returns the {@link IConnector} instance to wich this
+         * {@link IServiceStructureReader} belongs.
+         */
+        public IConnector getConnector();
+
         /**
          * Gets a SIOC representation of the underlying online community site.
          */
@@ -191,7 +217,7 @@ public interface IConnector {
      */
     public static interface IPostReader {
         /**
-         * Returns the {@link IConnector} instance to wicht this
+         * Returns the {@link IConnector} instance to wich this
          * {@link IPostReader} belongs.
          */
         public IConnector getConnector();

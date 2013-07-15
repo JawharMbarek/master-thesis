@@ -29,28 +29,26 @@ import java.util.List;
 import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Statement;
-import org.ontoware.rdf2go.model.node.Literal;
 import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.Variable;
-import org.ontoware.rdf2go.model.node.impl.PlainLiteralImpl;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
 import org.ontoware.rdf2go.vocabulary.RDF;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /**
  * Some utility methods to work with RDF2Go
  * 
  * @author Florian Müller
  */
-public final class RDF2GoUtils {
+public final class RdfUtils {
 
     /*
      * Private constructor to avoid creating objects from this class.
      */
-    private RDF2GoUtils() {
+    private RdfUtils() {
     }
 
     /**
@@ -102,25 +100,14 @@ public final class RDF2GoUtils {
     }
 
     /**
-     * Create a XML CDATA Section from a String
-     * 
-     * @param value
-     *            String with encoded data
-     * @return "<![CDATA[" + value + "]]>"
-     */
-    public static Literal createCDATASection(final String value) {
-        return new PlainLiteralImpl("<![CDATA["
-                + Strings.nullToEmpty(value).replace("]]>",
-                        "]]]]><![CDATA[>") + "]]>");
-    }
-
-    /**
      * Tries to lock a RDF2Go {@link Model} or waits if its already locked-
      * 
      * @param model
      *            {@link Model} to lock.
      */
     public static void lockModelOrWait(final Model model) {
+        Preconditions.checkNotNull(model, "Required parameter model must be specified.");
+
         while (model.isLocked()) {
             try {
                 Thread.sleep(1);
@@ -132,20 +119,65 @@ public final class RDF2GoUtils {
         model.lock();
     }
 
-    public static URI getType(final Model model, final Resource resource) {
-        URI result = null;
+    /**
+     * Returns a {@link List} of all RDF types of a resource in a model.
+     * 
+     * @param model
+     * @param resource
+     * @return
+     */
+    public static List<URI> getTypes(final Model model, final Resource resource) {
+        Preconditions.checkNotNull(model, "Required parameter model must be specified.");
+        Preconditions.checkNotNull(resource, "Required parameter resource must be specified.");
+
+        List<URI> result = Lists.newArrayList();
         ClosableIterator<Statement> stmtIter = model.findStatements(
                 resource,
                 RDF.type,
                 Variable.ANY);
 
-        if (stmtIter.hasNext()) {
-            Statement next = stmtIter.next();
-            result = (URI) next.getObject();
+        try {
+            if (stmtIter.hasNext()) {
+                Statement next = stmtIter.next();
+                result.add((URI) next.getObject());
+            }
+        } finally {
+            stmtIter.close();
         }
 
-        stmtIter.close();
-
         return result;
+    }
+
+    /**
+     * Checks if a <code>resource</code> is a specific <code>type</code> inside
+     * a <code>model</code>.
+     * 
+     * @param model
+     * @param resource
+     * @param type
+     */
+    public static boolean isType(final Model model, final Resource resource, final URI type) {
+        Preconditions.checkNotNull(model, "Required parameter model must be specified.");
+        Preconditions.checkNotNull(resource, "Required parameter resource must be specified.");
+        Preconditions.checkNotNull(type, "Required parameter type must be specified.");
+
+        ClosableIterator<Statement> stmtIter = model.findStatements(
+                resource,
+                RDF.type,
+                Variable.ANY);
+        try {
+            if (stmtIter.hasNext()) {
+                Statement next = stmtIter.next();
+                URI result = next.getObject().asURI();
+
+                if (result.equals(type)) {
+                    return true;
+                }
+            }
+        } finally {
+            stmtIter.close();
+        }
+
+        return false;
     }
 }

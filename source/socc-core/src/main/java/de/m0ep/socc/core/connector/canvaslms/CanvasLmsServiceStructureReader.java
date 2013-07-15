@@ -37,8 +37,13 @@ public class CanvasLmsServiceStructureReader implements IConnector.IServiceStruc
                 connector,
                 "Required parameter connector must be specified.");
 
-        this.client = this.connector.getServiceClientManager().getDefaultClient();
+        this.client = this.connector.serviceClientManager().getDefaultClient();
         this.model = this.connector.getContext().getModel();
+    }
+
+    @Override
+    public IConnector getConnector() {
+        return connector;
     }
 
     @Override
@@ -129,7 +134,7 @@ public class CanvasLmsServiceStructureReader implements IConnector.IServiceStruc
         Preconditions.checkNotNull(id, "Required parameter id must be specified.");
         Preconditions.checkArgument(!id.isEmpty(), "Required parameter id may not be empty.");
         Preconditions.checkNotNull(parent, "Required parameter parent must be specified.");
-        Preconditions.checkArgument(parent.hasIds(), "Required parameter parent has no id.");
+        Preconditions.checkArgument(parent.hasId(), "Required parameter parent has no id.");
         Preconditions.checkArgument(
                 model.contains(parent, RDF.type, SIOCVocabulary.Forum),
                 "Required parameter parent is no SIOC Forum.");
@@ -174,7 +179,7 @@ public class CanvasLmsServiceStructureReader implements IConnector.IServiceStruc
     @Override
     public List<Thread> listThreads(Container parent) throws AuthenticationException, IOException {
         Preconditions.checkNotNull(parent, "Required parameter parent must be specified.");
-        Preconditions.checkArgument(parent.hasIds(), "Required parameter parent has no id.");
+        Preconditions.checkArgument(parent.hasId(), "Required parameter parent has no id.");
         Preconditions.checkArgument(
                 model.contains(parent, RDF.type, SIOCVocabulary.Forum),
                 "Required parameter parent is no SIOC Forum.");

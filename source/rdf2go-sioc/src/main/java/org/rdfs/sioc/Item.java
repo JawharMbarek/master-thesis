@@ -1696,7 +1696,7 @@ public class Item extends Thing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasContainers() {
+    public boolean hasContainer() {
 	return Base.has(this.model, this.getResource(), CONTAINER);
     }
 

@@ -508,7 +508,7 @@ public class FacebookConnector extends AbstractConnector {
 	    // 4) The parent has a "comments" connection in Facebooks GraphAPI
 
 	    if (!parent.hasReplyOf()) {
-		if (parent.hasContainers()) {
+		if (parent.hasContainer()) {
 		    Container container = parent.getContainer();
 		    String id = parent.getId();
 

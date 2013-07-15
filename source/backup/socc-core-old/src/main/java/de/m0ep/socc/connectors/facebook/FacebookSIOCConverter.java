@@ -275,7 +275,7 @@ public class FacebookSIOCConverter {
 	    result.setCreated(DateUtils.formatISO8601(date));
 	}
 
-	if (parentPost.hasContainers()) {
+	if (parentPost.hasContainer()) {
 	    Container container = parentPost.getContainer();
 	    result.setContainer(container);
 	    container.addContainerOf(result);

@@ -1426,7 +1426,7 @@ public class Container extends Thing {
      * 
      *         [Generated from RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasParents() {
+    public boolean hasParent() {
 	return Base.has(this.model, this.getResource(), PARENT);
     }
 

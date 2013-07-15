@@ -41,8 +41,29 @@ public abstract class AbstractConnector implements IConnector {
     protected ISoccContext context;
     protected UserAccount defaultUserAccount;
     protected Service service;
+    protected boolean isInitialized;
 
+    private AbstractConnector() {
+        this.id = null;
+        this.context = null;
+        this.defaultUserAccount = null;
+        this.service = null;
+        this.isInitialized = false;
+    }
+
+    /**
+     * Constructs a new instance from a {@link ConnectorCfg}.
+     * 
+     * @param context
+     * @param config
+     * @throws NullPointerException
+     *             Thrown if one or more parameter are <code>null</code>.
+     * @throws IllegalArgumentException
+     *             Thrown if <code>config</code> contains no <code>id</code>,
+     *             <code>defaultUser</code> or <code>service</code>.
+     */
     public AbstractConnector(final ISoccContext context, final ConnectorCfg config) {
+        this();
         this.context = Preconditions.checkNotNull(
                 context,
                 "Required parameter context must be specified.");
@@ -80,6 +101,7 @@ public abstract class AbstractConnector implements IConnector {
             ISoccContext context,
             UserAccount defaultUserAccount,
             Service service) {
+        this();
         this.id = Preconditions.checkNotNull(
                 id,
                 "Required parameter id must be specified.");
@@ -100,35 +122,37 @@ public abstract class AbstractConnector implements IConnector {
                 "Required parameter service must be specified.");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getId() {
         return id;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ISoccContext getContext() {
         return context;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public UserAccount getDefaultUserAccount() {
         return defaultUserAccount;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Service getService() {
         return service;
+    }
+
+    @Override
+    public boolean isInitialized() {
+        return isInitialized;
+    }
+
+    /**
+     * Sets initialized to the provided value.
+     * 
+     * @param isInitialized
+     */
+    protected void setInitialized(boolean isInitialized) {
+        this.isInitialized = isInitialized;
     }
 }

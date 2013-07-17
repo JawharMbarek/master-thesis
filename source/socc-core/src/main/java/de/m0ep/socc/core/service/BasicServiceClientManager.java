@@ -5,18 +5,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.rdfs.sioc.UserAccount;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class BasicServiceClientManager<T> implements IServiceClientManager<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(BasicServiceClientManager.class);
+import de.m0ep.socc.core.exceptions.NotFoundException;
 
+public class BasicServiceClientManager<T> implements IServiceClientManager<T> {
     private T defaultClient;
-    private Map<UserAccount, T> clientMap;
+    private Map<Integer, T> clientMap;
 
     public BasicServiceClientManager() {
         clientMap = Maps.newHashMap();
@@ -29,27 +28,32 @@ public class BasicServiceClientManager<T> implements IServiceClientManager<T> {
 
     @Override
     public void setDefaultClient(T client) {
-        this.defaultClient = Preconditions.checkNotNull(
-                client,
+        this.defaultClient = Preconditions.checkNotNull(client,
                 "Required parameter client must be specified.");
     }
 
     @Override
     public T getDefaultClient() {
+        Preconditions.checkState(null != defaultClient,
+                "No default client set.");
+
         return defaultClient;
     }
 
     @Override
     public void add(UserAccount userAccount, T client) {
-        Preconditions.checkNotNull(
-                userAccount,
+        Preconditions.checkNotNull(userAccount,
                 "Required parameter userAccount must be specified.");
+        Preconditions.checkArgument(userAccount.hasAccountName(),
+                "the paremeter userAccount has no accountName.");
+        Preconditions.checkArgument(userAccount.hasAccountServiceHomepage(),
+                "The parameter userAccount has no accountServiceHomepage.");
         Preconditions.checkNotNull(
                 client,
                 "Required parameter client must be specified.");
 
         clientMap.put(
-                userAccount,
+                generateKey(userAccount),
                 client);
     }
 
@@ -64,16 +68,18 @@ public class BasicServiceClientManager<T> implements IServiceClientManager<T> {
     }
 
     @Override
-    public T get(UserAccount userAccount) {
-        Preconditions.checkState(
-                null != defaultClient,
-                "No default client set.");
+    public T get(UserAccount userAccount) throws NotFoundException {
+        Preconditions.checkNotNull(userAccount,
+                "Required parameter userAccount must be specified.");
+        Preconditions.checkArgument(userAccount.hasAccountName(),
+                "the paremeter userAccount has no accountName.");
+        Preconditions.checkArgument(userAccount.hasAccountServiceHomepage(),
+                "The parameter userAccount has no accountServiceHomepage.");
 
-        T result = clientMap.get(userAccount);
+        T result = clientMap.get(generateKey(userAccount));
 
         if (null == result) {
-            LOG.info("No client for {} found. Return default client.", userAccount);
-            return defaultClient;
+            throw new NotFoundException("No client found for " + userAccount);
         }
 
         return result;
@@ -82,5 +88,11 @@ public class BasicServiceClientManager<T> implements IServiceClientManager<T> {
     @Override
     public void clear() {
         clientMap.clear();
+    }
+
+    private int generateKey(UserAccount userAccount) {
+        return Objects.hashCode(
+                userAccount.getAccountName(),
+                userAccount.getAccountServiceHomepage());
     }
 }

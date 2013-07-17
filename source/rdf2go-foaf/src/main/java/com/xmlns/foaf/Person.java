@@ -1208,7 +1208,7 @@ public class Person extends Agent {
      * @return true if this property has at least one value [Generated from
      *         RDFReactor template rule #get0has-dynamic]
      */
-    public boolean hasFirstNames() {
+    public boolean hasFirstName() {
         return Base.has(this.model, this.getResource(), FIRSTNAME);
     }
 

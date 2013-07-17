@@ -46,20 +46,15 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
     public boolean containsPosts(Container container) {
         Preconditions.checkNotNull(container, "Required parameter container must be specified.");
 
-        if (!RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS)) {
-            return false;
-        }
-
-        String uri = container.toString();
-        return uri.startsWith(serviceEndpoint);
+        return RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS) &&
+                container.toString().startsWith(serviceEndpoint) &&
+                container.hasParent() &&
+                container.getParent().toString().startsWith(serviceEndpoint);
     }
 
     @Override
     public List<Post> readNewPosts(Date lastPostDate, long limit, Container container)
             throws AuthenticationException, IOException {
-        Preconditions.checkNotNull(
-                container,
-                "Required parameter container must be specified.");
         Preconditions.checkArgument(
                 containsPosts(container),
                 "The container contains no posts on this service.");
@@ -67,11 +62,10 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
                 container.hasId(),
                 "The container has no id.");
         Preconditions.checkArgument(
-                container.hasParent(),
-                "Required paramter container has no parent.");
-        Preconditions.checkArgument(
                 container.getParent().hasId(),
                 "The parent of the container has no id.");
+
+        Container parentContainer = container.getParent();
 
         if (0 == limit) {
             return Lists.newArrayList();
@@ -79,11 +73,11 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
 
         long courseId;
         try {
-            courseId = Long.parseLong(container.getParent().getId());
+            courseId = Long.parseLong(parentContainer.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
                     "The id of the containers parent is invalid: was "
-                            + container.getParent().getId());
+                            + parentContainer.getId());
         }
 
         long topicId;
@@ -136,46 +130,35 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
     }
 
     @Override
-    public boolean containsReplies(Post parent) {
-        Preconditions.checkNotNull(parent, "Required parameter parent must be specified.");
+    public boolean containsReplies(Post post) {
+        Preconditions.checkNotNull(post, "Required parameter parent must be specified.");
 
-        Container parentContainer = parent.getContainer();
-        if (!containsPosts(parentContainer)) {
-            return false;
-        }
-
-        String uri = parent.toString();
-        return uri.startsWith(serviceEndpoint);
+        return post.toString().startsWith(serviceEndpoint) &&
+                post.hasContainer() &&
+                containsPosts(post.getContainer());
     }
 
     @Override
-    public List<Post> readNewReplies(Date lastReplyDate, long limit, Post parent)
+    public List<Post> readNewReplies(Date lastReplyDate, long limit, Post parentPost)
             throws AuthenticationException, IOException {
         Preconditions.checkNotNull(
-                parent,
-                "Required parameter parent must be specified.");
+                parentPost,
+                "Required parameter parentPost must be specified.");
         Preconditions.checkArgument(
-                containsReplies(parent),
-                "The parent post contains no replies on this service.");
+                containsReplies(parentPost),
+                "The parentPost contains no replies on this service.");
         Preconditions.checkArgument(
-                parent.hasId(),
-                "Required parameter parent has no id.");
+                parentPost.hasId(),
+                "Required parameter parentPost has no id.");
         Preconditions.checkArgument(
-                parent.hasContainer(),
-                "Required parameter parent has no container.");
+                parentPost.getContainer().hasId(),
+                "The container of the parentPost has no id.");
+        Preconditions.checkArgument(
+                parentPost.getContainer().getParent().hasId(),
+                "The parent container of the container of the parentPost has no id.");
 
-        Container container = parent.getContainer();
-        Preconditions.checkArgument(
-                container.hasId(),
-                "The container of the parent has no id.");
-        Preconditions.checkArgument(
-                container.hasParent(),
-                "The container of the parent post has no parent container.");
-
+        Container container = parentPost.getContainer();
         Container parentContainer = container.getParent();
-        Preconditions.checkArgument(
-                parentContainer.hasId(),
-                "The parent container of the container of the parent post has no id.");
 
         if (0 == limit) {
             return Lists.newArrayList();
@@ -183,11 +166,11 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
 
         long courseId;
         try {
-            courseId = Long.parseLong(container.getParent().getId());
+            courseId = Long.parseLong(parentContainer.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
                     "The id of the containers parent is invalid: was "
-                            + container.getParent().getId());
+                            + parentContainer.getId());
         }
 
         long topicId;
@@ -201,10 +184,10 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
 
         long entryId;
         try {
-            entryId = Long.parseLong(parent.getId());
+            entryId = Long.parseLong(parentPost.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
-                    "The id of the parent post is invalid: was "
+                    "The id of the parentPost is invalid: was "
                             + container.getId());
         }
 

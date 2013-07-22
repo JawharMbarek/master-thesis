@@ -26,6 +26,10 @@ public class ConnectToDialogController implements ActionListener {
         model = new RDFStoreConnection("http://localhost:8080/openrdf-workbench", "master-thesis");
         view = new ConnectToDialogView();
 
+        view.getAnonymousLogin().setSelected(true);
+        view.getUsername().setEditable(false);
+        view.getPassword().setEditable(false);
+
         view.getCancelButton().addActionListener(this);
         view.getOkButton().addActionListener(this);
 
@@ -43,11 +47,11 @@ public class ConnectToDialogController implements ActionListener {
             @Override
             public void stateChanged(ChangeEvent e) {
                 if (view.getAnonymousLogin().isSelected()) {
-                    view.getUsernameText().setEditable(false);
-                    view.getPasswordText().setEditable(false);
+                    view.getUsername().setEditable(false);
+                    view.getPassword().setEditable(false);
                 } else {
-                    view.getUsernameText().setEditable(true);
-                    view.getPasswordText().setEditable(true);
+                    view.getUsername().setEditable(true);
+                    view.getPassword().setEditable(true);
                 }
             }
         });
@@ -56,19 +60,19 @@ public class ConnectToDialogController implements ActionListener {
 
         Bindings.bind(
                 view.getServerUri(),
-                beanAdapter.getValueModel("serverUri"));
+                beanAdapter.getValueModel(RDFStoreConnection.PROPERTY_SERVER_URI));
         Bindings.bind(
                 view.getRespositoryId(),
-                beanAdapter.getValueModel("repositoryId"));
+                beanAdapter.getValueModel(RDFStoreConnection.PROPERTY_REPOSITORY_ID));
         Bindings.bind(
                 view.getAnonymousLogin(),
-                beanAdapter.getValueModel("anonymousLogin"));
+                beanAdapter.getValueModel(RDFStoreConnection.PROPERTY_ANONYMOUS_LOGIN));
         Bindings.bind(
-                view.getUsernameText(),
-                beanAdapter.getValueModel("username"));
+                view.getUsername(),
+                beanAdapter.getValueModel(RDFStoreConnection.PROPERTY_USERNAME));
         Bindings.bind(
-                view.getPasswordText(),
-                beanAdapter.getValueModel("password"));
+                view.getPassword(),
+                beanAdapter.getValueModel(RDFStoreConnection.PROPERTY_PASSWORD));
     }
 
     public RDFStoreConnection getModel() {

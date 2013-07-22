@@ -5,6 +5,12 @@ import com.google.common.base.Objects;
 import com.jgoodies.binding.beans.Model;
 
 public class RDFStoreConnection extends Model {
+    public static final String PROPERTY_SERVER_URI = "serverUri";
+    public static final String PROPERTY_REPOSITORY_ID = "repositoryId";
+    public static final String PROPERTY_ANONYMOUS_LOGIN = "anonymousLogin";
+    public static final String PROPERTY_USERNAME = "username";
+    public static final String PROPERTY_PASSWORD = "password";
+
     private static final long serialVersionUID = 1L;
 
     private String serverUri;

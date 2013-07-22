@@ -9,6 +9,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -30,8 +31,8 @@ public class ConnectToDialogView extends JDialog {
     private JTextField txtServerUri;
     private JTextField txtRespositoryid;
     private JTextField txtUsername;
-    private JTextField txtPassword;
     private JCheckBox chckbxAnonymousLogin;
+    private JPasswordField pwdPassword;
 
     /**
      * Create the dialog.
@@ -90,9 +91,8 @@ public class ConnectToDialogView extends JDialog {
         JLabel lblPassword = new JLabel("Password:");
         contentPanel.add(lblPassword, "2, 10, right, default");
 
-        txtPassword = new JTextField();
-        contentPanel.add(txtPassword, "4, 10, fill, default");
-        txtPassword.setColumns(10);
+        pwdPassword = new JPasswordField();
+        contentPanel.add(pwdPassword, "4, 10, fill, default");
 
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -131,12 +131,12 @@ public class ConnectToDialogView extends JDialog {
         return chckbxAnonymousLogin;
     }
 
-    public JTextField getUsernameText() {
+    public JTextField getUsername() {
         return txtUsername;
     }
 
-    public JTextField getPasswordText() {
-        return txtPassword;
+    public JTextField getPassword() {
+        return pwdPassword;
     }
 
     public JButton getOkButton() {

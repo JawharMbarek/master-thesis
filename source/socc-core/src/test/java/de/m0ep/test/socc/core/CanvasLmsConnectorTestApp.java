@@ -36,7 +36,13 @@ public class CanvasLmsConnectorTestApp {
      */
     public static void main(String[] args) {
         String rootUri = "https://canvas.instructure.com";
-        String oAuthToken = "7~LUpV7B3lJYadvZ2sHlpJiTcyJ6HaduVb3Ho8YjBNXSdIE4AEFzLFfORcOHRHh1fU";
+
+        // florian.mueller@stud.tu-darmstadt.de
+        // String oAuthToken =
+        // "7~LUpV7B3lJYadvZ2sHlpJiTcyJ6HaduVb3Ho8YjBNXSdIE4AEFzLFfORcOHRHh1fU";
+
+        // studium.mufl+default@gmail.com
+        String oAuthToken = "7~wCpRKiFl91vrGdUHQ8gQFIVlVc9KiUe396TbAsfOXPMp6qWBUbqbjxAsKnDOZcc9";
 
         Model model = RDF2Go.getModelFactory().createModel();
         model.open();

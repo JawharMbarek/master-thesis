@@ -120,6 +120,16 @@
 			<artifactId>rdf2go-soccconfig</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>de.m0ep.moodle</groupId>
+			<artifactId>moodlews_ksoap2</artifactId>
+			<version>0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -3,7 +3,6 @@ package de.m0ep.socc.core.connector.moodle;
 
 import java.io.IOException;
 
-import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.UserAccount;
 import org.rdfs.sioc.services.Service;
@@ -12,23 +11,17 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import de.m0ep.sioc.service.auth.Authentication;
-import de.m0ep.sioc.service.auth.Credential;
-import de.m0ep.sioc.service.auth.Password;
-import de.m0ep.sioc.service.auth.Username;
 import de.m0ep.socc.config.ConnectorCfg;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.AbstractConnector;
+import de.m0ep.socc.core.connector.IServiceClientManager;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
-import de.m0ep.socc.core.service.BasicServiceClientManager;
-import de.m0ep.socc.core.service.IServiceClientManager;
-import de.m0ep.socc.core.utils.RdfUtils;
 
 public class Moodle2Connector extends AbstractConnector {
     private static final Logger LOG = LoggerFactory.getLogger(Moodle2Connector.class);
 
     private URI serviceEndpointUri;
-    private BasicServiceClientManager<MoodleClientWrapper> serviceClientManager;
+    private IServiceClientManager serviceClientManager;
 
     private IServiceStructureReader serviceStructureReader;
     private IPostReader postReader;
@@ -44,22 +37,40 @@ public class Moodle2Connector extends AbstractConnector {
     }
 
     @Override
-    public IServiceClientManager<?> getServiceClientManager() {
+    public IServiceClientManager getServiceClientManager() {
         return serviceClientManager;
     }
 
     @Override
     public IServiceStructureReader serviceStructureReader() {
+        Preconditions.checkState(isInitialized(), "Connector was not initialized");
+
+        if (null == serviceStructureReader) {
+            serviceStructureReader = new Moodle2ServiceStructureReader(this);
+        }
+
         return serviceStructureReader;
     }
 
     @Override
     public IPostReader postReader() {
+        Preconditions.checkState(isInitialized(), "Connector was not initialized");
+
+        if (null == postReader) {
+            postReader = new Moodle2PostReader(this);
+        }
+
         return postReader;
     }
 
     @Override
     public IPostWriter postWriter() {
+        Preconditions.checkState(isInitialized(), "Connector was not initialized");
+
+        if (null == postWriter) {
+            postWriter = new Moodle2PostWriter(this);
+        }
+
         return postWriter;
     }
 
@@ -72,50 +83,30 @@ public class Moodle2Connector extends AbstractConnector {
 
         LOG.info("Create Moodle connector with endpoint at {}.", serviceEndpointUri);
 
-        de.m0ep.sioc.service.auth.UserAccount authUserAccount =
-                de.m0ep.sioc.service.auth.UserAccount.getInstance(
-                        getDefaultUserAccount().getModel(),
-                        getDefaultUserAccount().getResource());
-
-        Preconditions.checkArgument(
-                authUserAccount.hasAuthentication(),
-                "The defaultUserAccount has no required authentication data.");
-        Authentication authentication = authUserAccount.getAuthentication();
-
-        Preconditions.checkArgument(
-                authentication.hasCredential(),
-                "The defaultUserAccount authentication has no required credentials");
-        ClosableIterator<Credential> credentialIter = authentication.getAllCredential();
-
-        Username username = null;
-        Password password = null;
-        while (credentialIter.hasNext()) {
-            Credential credential = (Credential) credentialIter.next();
-
-            if (RdfUtils.isType(credential.getModel(), credential.getResource(),
-                    Username.RDFS_CLASS) && credential.hasValue()) {
-                username = Username.getInstance(credential.getModel(), credential.asResource());
-            } else if (RdfUtils.isType(credential.getModel(), credential.getResource(),
-                    Password.RDFS_CLASS) && credential.hasValue()) {
-                password = Password.getInstance(credential.getModel(), credential.asResource());
-            }
+        try {
+            serviceClientManager = new Moodle2ClientManager(getService(), getDefaultUserAccount());
+        } catch (Exception e) {
+            throw new AuthenticationException("Failed to create and login default client.", e);
         }
 
-        Preconditions.checkArgument(null != username,
-                "The defaultUserAccount authentication contains no required username");
-        Preconditions.checkArgument(null != password,
-                "The defaultUserAccount authentication contains no required password");
-
-        MoodleClientWrapper defaultClient = new MoodleClientWrapper(
-                serviceEndpointUri,
-                username.getValue(),
-                password.getValue());
-
-        serviceClientManager = new BasicServiceClientManager<MoodleClientWrapper>(defaultClient);
+        serviceStructureReader = new Moodle2ServiceStructureReader(this);
+        setInitialized(true);
     }
 
     @Override
     public void shutdown() {
+        for (Object obj : serviceClientManager.getAll()) {
+            Moodle2ClientWrapper client = (Moodle2ClientWrapper) obj;
+            client.getBindingStub().logout(
+                    client.getAuthClient(),
+                    client.getSessionKey());
+        }
+        serviceClientManager.clear();
 
+        Moodle2ClientWrapper client = (Moodle2ClientWrapper) serviceClientManager.getDefaultClient();
+        client.getBindingStub().logout(
+                client.getAuthClient(),
+                client.getSessionKey());
+        setInitialized(false);
     }
 }

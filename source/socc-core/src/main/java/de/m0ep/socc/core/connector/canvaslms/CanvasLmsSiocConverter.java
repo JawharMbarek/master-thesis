@@ -16,8 +16,8 @@ import de.m0ep.canvas.model.Attachment;
 import de.m0ep.canvas.model.Course;
 import de.m0ep.canvas.model.DiscussionTopic;
 import de.m0ep.canvas.model.Entry;
+import de.m0ep.socc.core.IUserDataService;
 import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.user.IUserDataService;
 import de.m0ep.socc.core.utils.DateUtils;
 import de.m0ep.socc.core.utils.StringUtils;
 
@@ -58,6 +58,8 @@ public final class CanvasLmsSiocConverter {
             Thread result = new Thread(connector.getContext().getModel(), uri, true);
             result.setId(Long.toString(discussionTopic.getId()));
             result.setName(discussionTopic.getTitle());
+            result.setTitle(discussionTopic.getTitle());
+            result.setSubject(discussionTopic.getTitle());
             result.setCreated(DateUtils.formatISO8601(discussionTopic.getPostedAt()));
             result.setSeeAlso(Builder.createURI(discussionTopic.getHtmlURL()));
 
@@ -147,7 +149,6 @@ public final class CanvasLmsSiocConverter {
         if (Post.hasInstance(connector.getContext().getModel(), uri)) {
             result = Post.getInstance(connector.getContext().getModel(), uri);
         } else {
-            result = new Post(connector.getContext().getModel(), uri, true);
             UserAccount creator = null;
             try {
                 IUserDataService userDataService = connector.getContext().getUserDataService();

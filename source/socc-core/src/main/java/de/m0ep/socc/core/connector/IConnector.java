@@ -37,7 +37,6 @@ import org.rdfs.sioc.services.Service;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.service.IServiceClientManager;
 
 /**
  * An interface that describes a class which helps to connect different online
@@ -71,7 +70,7 @@ public interface IConnector {
      * Returns a {@link IServiceClientManager} instance to manage client objects
      * of different {@link UserAccount} for the used service.
      */
-    public IServiceClientManager<?> getServiceClientManager();
+    public IServiceClientManager getServiceClientManager();
 
     /**
      * Returns an {@link IServiceStructureReader} to get information about the

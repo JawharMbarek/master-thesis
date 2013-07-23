@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.core.user;
+package de.m0ep.socc.core;
 
 import java.util.List;
 
@@ -59,6 +59,21 @@ public interface IUserDataService {
      *             matching the provided parameters.
      */
     public UserAccount findUserAccount(String accountName, URI accountServiceHomepage)
+            throws NotFoundException;
+
+    /**
+     * Searchs for an {@link UserAccount} of a {@link Person} that belongs to a
+     * specific Service.
+     * 
+     * @param person
+     * @param accountServiceHomepage
+     * @throws NotFoundException Thrown if no {@link UserAccount} of this
+     *             {@link Person} fount, that belongs to a service with this
+     *             homepage.
+     * @throws NullPointerException Thrown if one or more parameter are
+     *             <code>null</code>.
+     */
+    public UserAccount findUserAccountOfService(Person person, URI accountServiceHomepage)
             throws NotFoundException;
 
     /**

@@ -15,8 +15,8 @@ import de.m0ep.moodlews.soap.LoginReturn;
 import de.m0ep.moodlews.soap.Mdl_soapserverBindingStub;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
-public class MoodleClientWrapper {
-    private static final Logger LOG = LoggerFactory.getLogger(MoodleClientWrapper.class);
+public class Moodle2ClientWrapper {
+    private static final Logger LOG = LoggerFactory.getLogger(Moodle2ClientWrapper.class);
 
     private static final String MOODLEWS_PATH = "/wspp/service_pp2.php";
     private static final String MOODLE_WSDL_POSTFIX = "/wspp/wsdl2";
@@ -27,13 +27,20 @@ public class MoodleClientWrapper {
     private int authClient;
     private String sessionKey;
 
-    public MoodleClientWrapper(URI serviceEndpoint, String username, String password)
+    public Moodle2ClientWrapper(URI serviceEndpoint, String username, String password)
             throws AuthenticationException, IOException {
         this.bindingStub = new Mdl_soapserverBindingStub(
                 serviceEndpoint.toString() + MOODLEWS_PATH,
                 serviceEndpoint.toString() + MOODLE_WSDL_POSTFIX,
                 false);
+        this.username = username;
+        this.password = password;
+
         tryLogin();
+    }
+
+    public Mdl_soapserverBindingStub getBindingStub() {
+        return bindingStub;
     }
 
     public String getUsername() {

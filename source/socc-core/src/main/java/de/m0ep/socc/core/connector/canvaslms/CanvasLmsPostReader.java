@@ -33,7 +33,7 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
                 connector,
                 "Required parameter connector must be specified.");
 
-        this.client = connector.getServiceClientManager().getDefaultClient();
+        this.client = (CanvasLmsClient) connector.getServiceClientManager().getDefaultClient();
         this.serviceEndpoint = connector.getService().getServiceEndpoint().toString();
     }
 

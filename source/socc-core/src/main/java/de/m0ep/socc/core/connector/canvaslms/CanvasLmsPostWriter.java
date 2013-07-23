@@ -19,12 +19,10 @@ import de.m0ep.canvas.model.Entry;
 import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
-import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.service.IServiceClientManager;
+import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 public class CanvasLmsPostWriter implements IPostWriter {
-
     private CanvasLmsConnector connector;
     private String serviceEndpoint;
 
@@ -83,40 +81,29 @@ public class CanvasLmsPostWriter implements IPostWriter {
         }
 
         UserAccount creatorAccount = post.getCreator();
+        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(connector, creatorAccount);
 
-        String creator = null;
-        try {
-            Person person = connector.getContext()
-                    .getUserDataService()
-                    .findPerson(creatorAccount);
-
-            if (person.hasName()) {
-                creator = person.getName();
-            } else if (person.hasNickname()) {
-                creator = person.getNickname();
+        CanvasLmsClient client = null;
+        if (null != creatorPerson) {
+            UserAccount serviceAccount = PostWriterUtils.getServiceAccountOfPersonOrNull(
+                    connector,
+                    creatorPerson,
+                    connector.getService().getServiceEndpoint().asURI());
+            if (null != serviceAccount) {
+                client = (CanvasLmsClient) PostWriterUtils.getClientOfServiceAccountOrNull(
+                        connector,
+                        serviceAccount);
             }
-
-        } catch (NotFoundException e) {
-            creator = creatorAccount.getAccountName();
         }
 
         String content = post.getContent();
-        IServiceClientManager<CanvasLmsClient> clientManager = connector.getServiceClientManager();
-        CanvasLmsClient client = null;
-        try {
-            client = clientManager.get(creatorAccount);
-        } catch (Exception e1) {
-            // No client for this userAccount found.
-            // Get the default client and change content so it contains the
-            // unknown userAccount.
-            client = clientManager.getDefaultClient();
-
-            // TODO: make template dynamic
-            content = creator
-                    + " wrote at "
-                    + creatorAccount.getAccountServiceHomepage().toString()
-                    + ": \n"
-                    + content;
+        if (null == client) { // No client found, get default one an adapt
+                              // message content
+            client = (CanvasLmsClient) connector.getServiceClientManager().getDefaultClient();
+            content = PostWriterUtils.createContentOfUnknownAccount(
+                    post,
+                    creatorAccount,
+                    creatorPerson);
         }
 
         Entry resultEntry = null;
@@ -152,9 +139,7 @@ public class CanvasLmsPostWriter implements IPostWriter {
 
         return post.toString().startsWith(serviceEndpoint) &&
                 post.hasContainer() &&
-                post.getContainer().toString().startsWith(serviceEndpoint) &&
-                post.getContainer().hasParent() &&
-                post.getContainer().getParent().toString().startsWith(serviceEndpoint);
+                canPostTo(post.getContainer());
     }
 
     @Override
@@ -207,40 +192,29 @@ public class CanvasLmsPostWriter implements IPostWriter {
         }
 
         UserAccount creatorAccount = replyPost.getCreator();
+        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(connector, creatorAccount);
 
-        String creator = null;
-        try {
-            Person person = connector.getContext()
-                    .getUserDataService()
-                    .findPerson(creatorAccount);
-
-            if (person.hasName()) {
-                creator = person.getName();
-            } else if (person.hasNickname()) {
-                creator = person.getNickname();
+        CanvasLmsClient client = null;
+        if (null != creatorPerson) {
+            UserAccount serviceAccount = PostWriterUtils.getServiceAccountOfPersonOrNull(
+                    connector,
+                    creatorPerson,
+                    connector.getService().getServiceEndpoint().asURI());
+            if (null != serviceAccount) {
+                client = (CanvasLmsClient) PostWriterUtils.getClientOfServiceAccountOrNull(
+                        connector,
+                        serviceAccount);
             }
-
-        } catch (NotFoundException e) {
-            creator = creatorAccount.getAccountName();
         }
 
         String content = replyPost.getContent();
-        IServiceClientManager<CanvasLmsClient> clientManager = connector.getServiceClientManager();
-        CanvasLmsClient client = null;
-        try {
-            client = clientManager.get(creatorAccount);
-        } catch (Exception e1) {
-            // No client for this userAccount found.
-            // Get the default client and change content so it contains the
-            // unknown userAccount.
-            client = clientManager.getDefaultClient();
-
-            // TODO: make template dynamic
-            content = creator
-                    + " wrote at "
-                    + creatorAccount.getAccountServiceHomepage().toString()
-                    + ": \n"
-                    + content;
+        if (null == client) { // No client found, get default one an adapt
+                              // message content
+            client = (CanvasLmsClient) connector.getServiceClientManager().getDefaultClient();
+            content = PostWriterUtils.createContentOfUnknownAccount(
+                    replyPost,
+                    creatorAccount,
+                    creatorPerson);
         }
 
         Entry resultEntry = null;

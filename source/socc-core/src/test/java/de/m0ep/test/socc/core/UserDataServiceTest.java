@@ -37,9 +37,9 @@ import org.rdfs.sioc.UserAccount;
 import com.xmlns.foaf.OnlineAccount;
 import com.xmlns.foaf.Person;
 
+import de.m0ep.socc.core.IUserDataService;
+import de.m0ep.socc.core.UserDataService;
 import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.user.IUserDataService;
-import de.m0ep.socc.core.user.UserDataService;
 
 public class UserDataServiceTest {
 
@@ -137,6 +137,17 @@ public class UserDataServiceTest {
     @Test(expected = NotFoundException.class)
     public void testFindUserAccountNotFound() throws NotFoundException {
         instance.findUserAccount("James May", Builder.createURI("http://www.example.com/serviceC"));
+    }
+
+    @Test
+    public void findUserAccountOfService() throws NotFoundException {
+        UserAccount actual = instance.findUserAccountOfService(person1, URI_SERVICE_A);
+        Assert.assertEquals(person1Acc1, actual);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void findUserAccountOfServiceNotFound() throws NotFoundException {
+        instance.findUserAccountOfService(person2, URI_SERVICE_A);
     }
 
     @Test

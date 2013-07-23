@@ -25,7 +25,6 @@ package de.m0ep.socc.core;
 import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.core.acl.IAccessControl;
-import de.m0ep.socc.core.user.IUserDataService;
 
 public interface ISoccContext {
     /**

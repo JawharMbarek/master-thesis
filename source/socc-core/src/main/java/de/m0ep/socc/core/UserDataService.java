@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.core.user;
+package de.m0ep.socc.core;
 
 import java.util.List;
 
@@ -49,8 +49,8 @@ public class UserDataService implements IUserDataService {
     private Model model;
 
     /**
-     * Construct a new {@link UserDataService} object that operates on
-     * the provided {@link Model}.
+     * Construct a new {@link UserDataService} object that operates on the
+     * provided {@link Model}.
      * 
      * @param model
      */
@@ -113,6 +113,37 @@ public class UserDataService implements IUserDataService {
                         + FOAFVocabulary.accountServiceHomepage.toSPARQL()
                         + " "
                         + accountServiceHomepage.toSPARQL() + " .}");
+
+        for (QueryRow row : resultTable) {
+            Node node = row.getValue("acc");
+            return UserAccount.getInstance(model, node.asResource());
+        }
+
+        throw new NotFoundException("No UserAccount found matching criteria.");
+    }
+
+    @Override
+    public UserAccount findUserAccountOfService(Person person, URI accountServiceHomepage)
+            throws NotFoundException {
+        Preconditions.checkNotNull(person,
+                "Required parameter person must be specified.");
+        Preconditions.checkNotNull(accountServiceHomepage,
+                "Required parameter accountServiceHomepage must be specified.");
+
+        QueryResultTable resultTable = model.sparqlSelect(
+                "SELECT ?acc WHERE {{{"
+                        + person.toSPARQL()
+                        + " "
+                        + FOAFVocabulary.account.toSPARQL()
+                        + " ?acc} UNION {?acc "
+                        + SIOCVocabulary.account_of.toSPARQL()
+                        + " "
+                        + person.toSPARQL()
+                        + "}} ?acc "
+                        + FOAFVocabulary.accountServiceHomepage.toSPARQL()
+                        + " "
+                        + accountServiceHomepage.toSPARQL()
+                        + ".}");
 
         for (QueryRow row : resultTable) {
             Node node = row.getValue("acc");

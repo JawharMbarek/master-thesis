@@ -8,6 +8,7 @@ import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.util.Builder;
 import org.rdfs.sioc.Forum;
+import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Thread;
 
 import com.xmlns.foaf.Person;
@@ -25,7 +26,7 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 public class Moodle2ConnectorTestApp {
 
     public static void main(String[] args) throws AuthenticationException, IOException {
-        String rootUri = "http://localhost/~florian/moodle";
+        String rootUri = "http://localhost/moodle";
 
         Model model = RDF2Go.getModelFactory().createModel();
         model.open();
@@ -35,7 +36,7 @@ public class Moodle2ConnectorTestApp {
         username.setValue("admin");
 
         Password password = new Password(model, true);
-        password.setValue("Admin1.mufl.net");
+        password.setValue("admin");
 
         Direct direct = new Direct(model, true);
         direct.addCredential(username);
@@ -76,7 +77,21 @@ public class Moodle2ConnectorTestApp {
             List<Thread> threads = connector.serviceStructureReader().listThreads(forum);
             for (Thread thread : threads) {
                 System.out.println(thread.getName() + " " + thread);
+
+                List<Post> posts = connector.postReader().readNewPosts(null, -1, thread);
+
+                for (Post post : posts) {
+                    System.out.println(post.getContent() + " " + post);
+                }
             }
+        }
+
+        System.out.println();
+        System.out.println("read replies");
+        List<Post> posts = connector.postReader().readNewReplies(null, -1,
+                Post.getInstance(model, Builder.createURI("http://localhost/moodle/post/1")));
+        for (Post post : posts) {
+            System.out.println(post.getContent() + " " + post);
         }
     }
 

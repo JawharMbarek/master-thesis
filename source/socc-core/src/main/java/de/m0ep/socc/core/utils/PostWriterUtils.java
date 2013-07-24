@@ -116,7 +116,7 @@ public final class PostWriterUtils {
         if (creatorAccount.hasAccountOf()) {
             return Person.getInstance(
                     connector.getContext().getModel(),
-                    creatorAccount.getAccountOf());
+                    creatorAccount.getAccountOf().getResource());
         } else {
             try {
                 return UserAccountUtils.findPerson(

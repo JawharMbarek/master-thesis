@@ -43,10 +43,8 @@ public class Moodle2PostWriter implements IPostWriter {
 
     @Override
     public boolean canPostTo(Container container) {
-        Preconditions.checkNotNull(container,
-                "Required parameter container must be specified.");
-
-        return RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS) &&
+        return null != container &&
+                RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS) &&
                 container.toString().startsWith(serviceEndpoint) &&
                 container.hasParent() &&
                 container.getParent().toString().startsWith(serviceEndpoint);
@@ -157,7 +155,6 @@ public class Moodle2PostWriter implements IPostWriter {
             if (null != postRecordArray && 0 < postRecordArray.length) {
                 int numChildren = postRecordArray[0].getChildren().length;
                 ForumPostRecord postRecord = postRecordArray[0].getChildren()[numChildren - 1];
-
                 Post addedPost = Moodle2SiocConverter.createSiocPost(
                         connector,
                         postRecord,
@@ -171,18 +168,107 @@ public class Moodle2PostWriter implements IPostWriter {
 
     @Override
     public boolean canReplyTo(Post parentPost) {
-        Preconditions.checkNotNull(parentPost, "Required parameter parentPost must be specified.");
-
-        return parentPost.toString().startsWith(serviceEndpoint) &&
-                parentPost.hasContainer() &&
-                canPostTo(parentPost.getContainer());
+        return null != parentPost && parentPost.toString().startsWith(serviceEndpoint);
     }
 
     @Override
     public void writeReply(Post replyPost, Post parentPost) throws AuthenticationException,
             IOException {
-        // TODO Auto-generated method stub
+        Preconditions.checkNotNull(replyPost,
+                "Required parameter replyPost must be specified.");
+        Preconditions.checkNotNull(parentPost,
+                "Required parameter parentPost must be specified.");
+        Preconditions.checkArgument(parentPost.hasId(),
+                "The parentPost has no id.");
+        Preconditions.checkArgument(canReplyTo(parentPost),
+                "Can't write replies to the parentPost with this connector.");
 
+        final int postId;
+        try {
+            postId = Integer.parseInt(parentPost.getId());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(
+                    "The id of the parentPost is invalid: was " + parentPost.getId());
+        }
+
+        UserAccount creatorAccount = replyPost.getCreator();
+        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(connector, creatorAccount);
+
+        Moodle2ClientWrapper client = null;
+        if (null != creatorPerson) {
+            UserAccount serviceAccount = PostWriterUtils.getServiceAccountOfPersonOrNull(
+                    connector,
+                    creatorPerson,
+                    connector.getService().getServiceEndpoint().asURI());
+            if (null != serviceAccount) {
+                client = (Moodle2ClientWrapper) PostWriterUtils.getClientOfServiceAccountOrNull(
+                        connector,
+                        serviceAccount);
+            }
+        }
+
+        String content = replyPost.getContent();
+        if (null == client) { // No client found, get default one an adapt
+                              // message content
+            client = (Moodle2ClientWrapper) connector.getServiceClientManager().getDefaultClient();
+            content = PostWriterUtils.createContentOfUnknownAccount(
+                    replyPost,
+                    creatorAccount,
+                    creatorPerson);
+        }
+
+        final Moodle2ClientWrapper finalClient = client;
+        final ForumPostDatum replyDatum = new ForumPostDatum(client.getBindingStub().getNAMESPACE());
+        replyDatum.setMessage(content);
+        if (replyPost.hasSubject()) {
+            replyDatum.setSubject(replyPost.getSubject());
+        } else if (replyPost.hasTitle()) {
+            replyDatum.setSubject(replyPost.getTitle());
+        }
+
+        ForumPostRecord[] resultPostRecords = client.callMethod(new Callable<ForumPostRecord[]>() {
+            @Override
+            public ForumPostRecord[] call() throws Exception {
+                return finalClient.getBindingStub().forum_add_reply(
+                        finalClient.getAuthClient(),
+                        finalClient.getSessionKey(),
+                        postId,
+                        replyDatum);
+            }
+        });
+
+        if (null != resultPostRecords && 0 < resultPostRecords.length) {
+            ForumPostRecord parentPostRecord = findPost(resultPostRecords, postId);
+
+            if (null != parentPostRecord) {
+                int numChildren = parentPostRecord.getChildren().length;
+                ForumPostRecord postRecord = parentPostRecord.getChildren()[numChildren - 1];
+                Post addedPost = Moodle2SiocConverter.createSiocPost(
+                        connector,
+                        postRecord,
+                        parentPost.getContainer());
+
+                addedPost.addSibling(replyPost);
+            }
+        }
     }
 
+    private ForumPostRecord findPost(ForumPostRecord[] postRecordArray, int postId) {
+        for (ForumPostRecord postRecord : postRecordArray) {
+            if (postId == postRecord.getId()) {
+                return postRecord;
+            }
+
+            ForumPostRecord[] children = postRecord.getChildren();
+            if (null != children && 0 < children.length) {
+                ForumPostRecord result = findPost(children, postId);
+
+                if (null != result) {
+                    return result;
+                }
+            }
+        }
+
+        return null;
+    }
 }

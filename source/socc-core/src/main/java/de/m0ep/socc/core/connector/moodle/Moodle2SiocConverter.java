@@ -20,11 +20,11 @@ import de.m0ep.moodlews.soap.ForumDiscussionRecord;
 import de.m0ep.moodlews.soap.ForumPostRecord;
 import de.m0ep.moodlews.soap.ForumRecord;
 import de.m0ep.moodlews.soap.UserRecord;
-import de.m0ep.socc.core.IUserDataService;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.DateUtils;
 import de.m0ep.socc.core.utils.StringUtils;
+import de.m0ep.socc.core.utils.UserAccountUtils;
 
 public class Moodle2SiocConverter {
 
@@ -89,9 +89,9 @@ public class Moodle2SiocConverter {
         } else {
             UserAccount creator = null;
             try {
-                IUserDataService userDataService = connector.getContext().getUserDataService();
                 String accountName = Integer.toString(postRecord.getUserid());
-                creator = userDataService.findUserAccount(
+                creator = UserAccountUtils.findUserAccount(
+                        connector.getContext().getModel(),
                         accountName,
                         serviceEndpoint);
             } catch (NotFoundException e) {

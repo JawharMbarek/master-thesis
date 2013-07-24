@@ -16,10 +16,10 @@ import de.m0ep.canvas.model.Attachment;
 import de.m0ep.canvas.model.Course;
 import de.m0ep.canvas.model.DiscussionTopic;
 import de.m0ep.canvas.model.Entry;
-import de.m0ep.socc.core.IUserDataService;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.DateUtils;
 import de.m0ep.socc.core.utils.StringUtils;
+import de.m0ep.socc.core.utils.UserAccountUtils;
 
 public final class CanvasLmsSiocConverter {
 
@@ -76,9 +76,9 @@ public final class CanvasLmsSiocConverter {
             // UserAccount + Person
             UserAccount creator = null;
             try {
-                IUserDataService userDataService = connector.getContext().getUserDataService();
                 String accountName = Long.toString(discussionTopic.getAuthor().getId());
-                creator = userDataService.findUserAccount(
+                creator = UserAccountUtils.findUserAccount(
+                        connector.getContext().getModel(),
                         accountName,
                         serviceEndpoint);
             } catch (NotFoundException e) {
@@ -151,9 +151,9 @@ public final class CanvasLmsSiocConverter {
         } else {
             UserAccount creator = null;
             try {
-                IUserDataService userDataService = connector.getContext().getUserDataService();
                 String accountName = Long.toString(entry.getUserId());
-                creator = userDataService.findUserAccount(
+                creator = UserAccountUtils.findUserAccount(
+                        connector.getContext().getModel(),
                         accountName,
                         serviceEndpoint);
             } catch (NotFoundException e) {

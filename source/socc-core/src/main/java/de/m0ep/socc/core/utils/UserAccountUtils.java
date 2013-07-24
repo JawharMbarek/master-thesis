@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.core;
+package de.m0ep.socc.core.utils;
 
 import java.util.List;
 
@@ -41,28 +41,38 @@ import com.xmlns.foaf.Person;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
 /**
- * A class that implements the {@link IUserDataService} interface.
+ * A utility class to to find {@link UserAccount} of a {@link Person} or vice
+ * versa.
  * 
  * @author Florian Müller
  */
-public class UserDataService implements IUserDataService {
-    private Model model;
-
+public final class UserAccountUtils {
     /**
-     * Construct a new {@link UserDataService} object that operates on the
-     * provided {@link Model}.
-     * 
-     * @param model
+     * Private constructor, because this class has only static methods.
      */
-    public UserDataService(final Model model) {
-        this.model = Preconditions.checkNotNull(model,
-                "Required parameter model must be specified.");
-        Preconditions.checkArgument(model.isOpen(), "The provided model is not open.");
+    private UserAccountUtils() {
     }
 
-    @Override
-    public List<UserAccount> listUserAccounts(Person person) {
-        Preconditions.checkNotNull(person, "Required parameter person must be specified.");
+    /**
+     * List all {@link UserAccount} of a {@link Person} in a specific
+     * {@link Model}.
+     * 
+     * @param model
+     * @param person
+     * @return Returns a {@link List} of all found {@link UserAccount}s.
+     * @throws NullPointerException
+     *             Thrown if <code>model</code> or <code>person</code> are
+     *             <code>null</code>.
+     * @throws IllegalArgumentException
+     *             Thrown if <code>model</code> is not open.
+     */
+    public static List<UserAccount> listUserAccounts(Model model, Person person) {
+        Preconditions.checkNotNull(model,
+                "Required parameter model must be specified.");
+        Preconditions.checkArgument(model.isOpen(),
+                "Required parameter model may be open.");
+        Preconditions.checkNotNull(person,
+                "Required parameter person must be specified.");
 
         List<UserAccount> result = Lists.newArrayList();
 
@@ -85,9 +95,33 @@ public class UserDataService implements IUserDataService {
         return result;
     }
 
-    @Override
-    public UserAccount findUserAccount(String accountName, URI accountServiceHomepage)
+    /**
+     * Find a {@link UserAccount} that matches <code>accountName</code> and
+     * <code>accountServiceHompage</code>.
+     * 
+     * @param model
+     * @param accountName
+     * @param accountServiceHomepage
+     * @return Returns an instance of the found {@link UserAccount}.
+     * @throws NotFoundException
+     *             Thrown if no {@link UserAccount} was found that matches
+     *             <code>accountName</code> and
+     *             <code>accountServiceHompage</code>.
+     * @throws NullPointerException
+     *             Thrown if <code>model</code>, <code>accountName</code> or
+     *             <code>accountServiceHompage</code> are <code>null</code>.
+     * @throws IllegalArgumentException
+     *             Thrown if <code>model</code> is not open or
+     *             <code>accountName</code> or
+     *             <code>accountServiceHompage</code> are empty.
+     */
+    public static UserAccount findUserAccount(Model model, String accountName,
+            URI accountServiceHomepage)
             throws NotFoundException {
+        Preconditions.checkNotNull(model,
+                "Required parameter model must be specified.");
+        Preconditions.checkArgument(model.isOpen(),
+                "Required parameter model may be open.");
         Preconditions.checkNotNull(
                 accountName,
                 "Required parameter accountName must be specified.");
@@ -122,13 +156,38 @@ public class UserDataService implements IUserDataService {
         throw new NotFoundException("No UserAccount found matching criteria.");
     }
 
-    @Override
-    public UserAccount findUserAccountOfService(Person person, URI accountServiceHomepage)
+    /**
+     * Find a {@link UserAccount} of a {@link Person} that belongs to the
+     * <code>accountServiceHomepage</code> service.
+     * 
+     * @param model
+     * @param person
+     * @param accountServiceHomepage
+     * @return Returns an instance of the found {@link UserAccount}.
+     * @throws NotFoundException
+     *             Thrown if the {@link Person} has no {@link UserAccount} for
+     *             that service.
+     * @throws NullPointerException
+     *             Thrown if <code>model</code>, <code>person</code> or
+     *             <code>accountServiceHomepage</code> are <code>null</code>.
+     * @throws IllegalArgumentException
+     *             Thrown if <code>model</code> is not open or
+     *             <code>accountServiceHomepage</code> is empty.
+     */
+    public static UserAccount findUserAccountOfService(Model model, Person person,
+            URI accountServiceHomepage)
             throws NotFoundException {
+        Preconditions.checkNotNull(model,
+                "Required parameter model must be specified.");
+        Preconditions.checkArgument(model.isOpen(),
+                "Required parameter model may be open.");
         Preconditions.checkNotNull(person,
                 "Required parameter person must be specified.");
         Preconditions.checkNotNull(accountServiceHomepage,
                 "Required parameter accountServiceHomepage must be specified.");
+        Preconditions.checkArgument(
+                !accountServiceHomepage.toString().isEmpty(),
+                "Required parameter accountServiceHomepage may not be empty.");
 
         QueryResultTable resultTable = model.sparqlSelect(
                 "SELECT ?acc WHERE {{{"
@@ -153,11 +212,33 @@ public class UserDataService implements IUserDataService {
         throw new NotFoundException("No UserAccount found matching criteria.");
     }
 
-    @Override
-    public Person findPerson(UserAccount userAccount) throws NotFoundException {
-        Preconditions.checkNotNull(
-                userAccount,
+    /**
+     * Searches for the {@link Person} to which this {@link UserAccount} belongs
+     * to.
+     * 
+     * @param model
+     * @param userAccount
+     * @return Returns an instance of the found {@link Person}.
+     * @throws NotFoundException
+     *             Thrown if no {@link Person} found for this
+     *             {@link UserAccount}.
+     * @throws NullPointerException
+     *             thrown if <code>model</code> or <code>userAccount</code> are
+     *             null.
+     * @throws IllegalArgumentException
+     *             Thrown if <code>model</code> is not open.
+     */
+    public static Person findPerson(Model model, UserAccount userAccount) throws NotFoundException {
+        Preconditions.checkNotNull(model,
+                "Required parameter model must be specified.");
+        Preconditions.checkArgument(model.isOpen(),
+                "Required parameter model may be open.");
+        Preconditions.checkNotNull(userAccount,
                 "Required parameter userAccount must be specified.");
+
+        if (userAccount.hasAccountOf()) {
+            return Person.getInstance(model, userAccount.getAccountOf());
+        }
 
         QueryResultTable resultTable = model.sparqlSelect(
                 "SELECT DISTINCT ?person WHERE {{{?person a "
@@ -180,13 +261,29 @@ public class UserDataService implements IUserDataService {
         throw new NotFoundException("No Person found matching criteria.");
     }
 
-    @Override
-    public Person findPerson(OnlineAccount onlineAccount) throws NotFoundException {
+    /**
+     * Searches for the {@link Person} to which this {@link OnlineAccount}
+     * belongs to.
+     * 
+     * @param model
+     * @param onlineAccount
+     * @return Returns an instance of the found {@link Person}.
+     * @throws NotFoundException
+     *             Thrown if no {@link Person} found for this
+     *             {@link OnlineAccount}.
+     * @throws NullPointerException
+     *             thrown if <code>model</code> or <code>onlineAccount</code>
+     *             are null.
+     * @throws IllegalArgumentException
+     *             Thrown if <code>model</code> is not open.
+     */
+    public static Person findPerson(Model model, OnlineAccount onlineAccount)
+            throws NotFoundException {
         UserAccount userAccount = UserAccount.getInstance(
                 onlineAccount.getModel(),
                 onlineAccount.getResource());
 
-        return findPerson(userAccount);
+        return findPerson(model, userAccount);
     }
 
 }

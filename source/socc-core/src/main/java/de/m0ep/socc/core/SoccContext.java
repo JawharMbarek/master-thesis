@@ -11,7 +11,6 @@ public class SoccContext implements ISoccContext {
 
     private Model model;
     private IAccessControl accessControl;
-    private IUserDataService userDataService;
 
     public SoccContext(final Model model) {
         this.model = Preconditions.checkNotNull(
@@ -20,8 +19,6 @@ public class SoccContext implements ISoccContext {
         Preconditions.checkArgument(
                 model.isOpen(),
                 "Required paramater model is not open");
-
-        this.userDataService = new UserDataService(this.model);
 
         // TODO: finish initialization
     }
@@ -35,10 +32,4 @@ public class SoccContext implements ISoccContext {
     public IAccessControl getAccessControl() {
         return accessControl;
     }
-
-    @Override
-    public IUserDataService getUserDataService() {
-        return userDataService;
-    }
-
 }

@@ -37,17 +37,15 @@ import org.rdfs.sioc.UserAccount;
 import com.xmlns.foaf.OnlineAccount;
 import com.xmlns.foaf.Person;
 
-import de.m0ep.socc.core.IUserDataService;
-import de.m0ep.socc.core.UserDataService;
 import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.UserAccountUtils;
 
-public class UserDataServiceTest {
+public class UserAccountUtilsTest {
 
     private static final URI URI_SERVICE_A = Builder.createURI("http://www.example.com/serviceA");
     private static final URI URI_SERVICE_B = Builder.createURI("http://www.example.com/serviceB");
 
     private Model model;
-    private IUserDataService instance;
 
     private Person person1;
     private Person person2;
@@ -62,8 +60,6 @@ public class UserDataServiceTest {
     public void setUp() throws Exception {
         model = RDF2Go.getModelFactory().createModel();
         model.open();
-
-        instance = new UserDataService(model);
 
         person1 = new Person(model, true);
         person1.setName("John Doe");
@@ -108,27 +104,29 @@ public class UserDataServiceTest {
 
     @Test
     public void testListUserAccounts() {
-        List<UserAccount> actual1 = instance.listUserAccounts(person1);
+        List<UserAccount> actual1 = UserAccountUtils.listUserAccounts(model, person1);
         Assert.assertNotNull("Result shouldn't be null", actual1);
         Assert.assertEquals("Expected 2 results, was " + actual1.size(), 2, actual1.size());
 
-        List<UserAccount> actual2 = instance.listUserAccounts(person2);
+        List<UserAccount> actual2 = UserAccountUtils.listUserAccounts(model, person2);
         Assert.assertNotNull("Result shouldn't be null", actual2);
         Assert.assertEquals("Expected 1 results, was " + actual2.size(), 1, actual2.size());
 
-        List<UserAccount> actual3 = instance.listUserAccounts(person3);
+        List<UserAccount> actual3 = UserAccountUtils.listUserAccounts(model, person3);
         Assert.assertNotNull("Result shouldn't be null", actual3);
         Assert.assertEquals("Expected 0 results, was " + actual3.size(), 0, actual3.size());
     }
 
     @Test
     public void testFindUserAccount() throws NotFoundException {
-        UserAccount actual = instance.findUserAccount(
+        UserAccount actual = UserAccountUtils.findUserAccount(
+                model,
                 person1Acc1.getAccountName(),
                 person1Acc1.getAccountServiceHomepage().asURI());
         Assert.assertEquals(person1Acc1, actual);
 
-        actual = instance.findUserAccount(
+        actual = UserAccountUtils.findUserAccount(
+                model,
                 person2Acc1.getAccountName(),
                 person2Acc1.getAccountServiceHomepage().asURI());
         Assert.assertEquals(person2Acc1, actual);
@@ -136,34 +134,40 @@ public class UserDataServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void testFindUserAccountNotFound() throws NotFoundException {
-        instance.findUserAccount("James May", Builder.createURI("http://www.example.com/serviceC"));
+        UserAccountUtils.findUserAccount(
+                model,
+                "James May",
+                Builder.createURI("http://www.example.com/serviceC"));
     }
 
     @Test
     public void findUserAccountOfService() throws NotFoundException {
-        UserAccount actual = instance.findUserAccountOfService(person1, URI_SERVICE_A);
+        UserAccount actual = UserAccountUtils.findUserAccountOfService(
+                model,
+                person1,
+                URI_SERVICE_A);
         Assert.assertEquals(person1Acc1, actual);
     }
 
     @Test(expected = NotFoundException.class)
     public void findUserAccountOfServiceNotFound() throws NotFoundException {
-        instance.findUserAccountOfService(person2, URI_SERVICE_A);
+        UserAccountUtils.findUserAccountOfService(model, person2, URI_SERVICE_A);
     }
 
     @Test
     public void testFindPerson() throws NotFoundException {
-        Person actual = instance.findPerson(person1Acc1);
+        Person actual = UserAccountUtils.findPerson(model, person1Acc1);
         Assert.assertEquals(person1, actual);
 
-        actual = instance.findPerson(person1Acc2);
+        actual = UserAccountUtils.findPerson(model, person1Acc2);
         Assert.assertEquals(person1, actual);
 
-        actual = instance.findPerson(person2Acc1);
+        actual = UserAccountUtils.findPerson(model, person2Acc1);
         Assert.assertEquals(person2, actual);
     }
 
     @Test(expected = NotFoundException.class)
     public void testFindPersonNotFound() throws NotFoundException {
-        instance.findPerson(new UserAccount(model, false));
+        UserAccountUtils.findPerson(model, new UserAccount(model, false));
     }
 }

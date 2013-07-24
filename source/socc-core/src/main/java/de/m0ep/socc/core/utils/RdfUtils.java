@@ -45,8 +45,8 @@ import com.google.common.collect.Lists;
  */
 public final class RdfUtils {
 
-    /*
-     * Private constructor to avoid creating objects from this class.
+    /**
+     * Private constructor, because this class has only static methods.
      */
     private RdfUtils() {
     }
@@ -97,26 +97,6 @@ public final class RdfUtils {
      */
     public static URI createMailtoURI(final String email) {
         return new URIImpl("mailto:" + Preconditions.checkNotNull(email));
-    }
-
-    /**
-     * Tries to lock a RDF2Go {@link Model} or waits if its already locked-
-     * 
-     * @param model
-     *            {@link Model} to lock.
-     */
-    public static void lockModelOrWait(final Model model) {
-        Preconditions.checkNotNull(model, "Required parameter model must be specified.");
-
-        while (model.isLocked()) {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                // ignore this
-            }
-        }
-
-        model.lock();
     }
 
     /**

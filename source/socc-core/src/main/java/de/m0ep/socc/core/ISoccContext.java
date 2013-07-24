@@ -37,9 +37,4 @@ public interface ISoccContext {
      * Returns an {@link IAccessControl} instance.
      */
     public IAccessControl getAccessControl();
-
-    /**
-     * Returns an {@link IUserDataService} instance.
-     */
-    public IUserDataService getUserDataService();
 }

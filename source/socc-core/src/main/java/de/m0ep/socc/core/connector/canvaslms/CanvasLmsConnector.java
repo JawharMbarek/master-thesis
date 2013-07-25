@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 
 import de.m0ep.socc.config.ConnectorCfg;
 import de.m0ep.socc.core.ISoccContext;
@@ -81,8 +82,9 @@ public class CanvasLmsConnector extends AbstractConnector {
         try {
             clientManager = new CanvasLmsClientManager(getService(), getDefaultUserAccount());
         } catch (Exception e) {
-            // should not happened
-            throw new RuntimeException(e);
+            Throwables.propagateIfInstanceOf(e, AuthenticationException.class);
+            Throwables.propagateIfInstanceOf(e, IOException.class);
+            throw Throwables.propagate(e);
         }
         setInitialized(true);
 

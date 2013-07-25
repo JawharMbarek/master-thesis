@@ -22,9 +22,15 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 public class YoutubeV2Connector extends AbstractConnector {
     private static final Logger LOG = LoggerFactory.getLogger(YoutubeV2Connector.class);
 
-    private URI serviceEndpoint = Builder.createURI("https://youtube.com");
+    public static final String PLAYLISTS_ID = "playlists";
+    public static final String UPLOADS_ID = "uploads";
+
+    private URI serviceEndpoint = Builder.createURI("http://www.youtube.com");
 
     private IServiceClientManager serviceClientManager;
+    private IServiceStructureReader serviceStructureReader;
+    private IPostReader postReader;
+    private IPostWriter postWriter;
 
     private YoutubeV2Connector(String id, ISoccContext context, UserAccount defaultUserAccount,
             Service service) {
@@ -43,7 +49,12 @@ public class YoutubeV2Connector extends AbstractConnector {
     @Override
     public IServiceStructureReader serviceStructureReader() {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
-        return null;
+
+        if (null == serviceStructureReader) {
+            serviceStructureReader = new YoutubeV2StructureReader(this);
+        }
+
+        return serviceStructureReader;
     }
 
     @Override

@@ -6,7 +6,6 @@ import org.rdfs.sioc.UserAccount;
 import org.rdfs.sioc.services.Service;
 
 import com.google.common.base.Preconditions;
-import com.google.gdata.client.youtube.YouTubeService;
 
 import de.m0ep.sioc.service.auth.APIKey;
 import de.m0ep.sioc.service.auth.Authentication;
@@ -14,7 +13,6 @@ import de.m0ep.sioc.service.auth.Credential;
 import de.m0ep.sioc.service.auth.Password;
 import de.m0ep.sioc.service.auth.Username;
 import de.m0ep.socc.core.connector.AbstractServiceClientManager;
-import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 public class YoutubeV2ClientManager extends AbstractServiceClientManager {
@@ -32,6 +30,10 @@ public class YoutubeV2ClientManager extends AbstractServiceClientManager {
 
     @Override
     public Object createClientFromAccount(UserAccount userAccount) throws Exception {
+        if (null == apiKey) {
+            checkService(getService());
+        }
+
         de.m0ep.sioc.service.auth.UserAccount authUserAccount =
                 de.m0ep.sioc.service.auth.UserAccount.getInstance(
                         userAccount.getModel(),
@@ -66,17 +68,7 @@ public class YoutubeV2ClientManager extends AbstractServiceClientManager {
         Preconditions.checkArgument(null != password,
                 "The defaultUserAccount authentication contains no required password");
 
-        YouTubeService client = new YouTubeService("socc", apiKey.getValue());
-
-        try {
-            client.setUserCredentials(
-                    username.getValue(),
-                    password.getValue());
-        } catch (com.google.gdata.util.AuthenticationException e) {
-            throw new AuthenticationException(e);
-        }
-
-        return client;
+        return new YoutubeV2ClientWrapper(apiKey, username, password);
     }
 
     private void checkService(Service service) {

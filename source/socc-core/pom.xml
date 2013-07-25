@@ -135,6 +135,11 @@
 			<artifactId>core</artifactId>
 			<version>1.47.1</version>
 		</dependency>
+		<dependency>
+			<groupId>com.damnhandy</groupId>
+			<artifactId>handy-uri-templates</artifactId>
+			<version>1.1.7</version>
+		</dependency>
 	</dependencies>
 
 	<build>

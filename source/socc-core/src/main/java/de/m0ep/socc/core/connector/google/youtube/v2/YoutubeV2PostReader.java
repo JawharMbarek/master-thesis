@@ -1,3 +1,24 @@
+/*
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 package de.m0ep.socc.core.connector.google.youtube.v2;
 
@@ -17,6 +38,8 @@ import com.damnhandy.uri.template.UriTemplate;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.gdata.data.youtube.CommentEntry;
+import com.google.gdata.data.youtube.CommentFeed;
 import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.VideoFeed;
 import com.google.gdata.util.ServiceException;
@@ -28,11 +51,6 @@ import de.m0ep.socc.core.utils.RdfUtils;
 
 public class YoutubeV2PostReader implements IPostReader {
     private static final Logger LOG = LoggerFactory.getLogger(YoutubeV2PostReader.class);
-
-    private static final UriTemplate playlistUriTemplate = UriTemplate.fromTemplate(
-            "http://gdata.youtube.com/feeds/api/playlists/{playlistId}?v=2");
-
-    public static final String KEY_PLAYLIST_ID = "playlistId";
 
     private YoutubeV2Connector connector;
     private YoutubeV2ClientWrapper client;
@@ -73,9 +91,12 @@ public class YoutubeV2PostReader implements IPostReader {
             nextFeedUri = UriTemplate.fromTemplate(
                     "http://gdata.youtube.com/feeds/api/users/{userId}/uploads?v=2")
                     .set("userId", container.getId().split(":")[1])
-                    .expand();
+                    .expand(); // FIXME: magic strings
         } else if (isPlaylistContainer(container)) {
-            results.addAll(readPlaylistPosts(lastPostDate, limit, container));
+            nextFeedUri = UriTemplate.fromTemplate(
+                    "http://gdata.youtube.com/feeds/api/playlists/{playlistId}?v=2")
+                    .set("playlistId", container.getId())
+                    .expand(); // FIXME: magic strings
         }
 
         while (null != nextFeedUri) {
@@ -85,8 +106,10 @@ public class YoutubeV2PostReader implements IPostReader {
                 videoFeed = client.getService().getFeed(
                         new URL(nextFeedUri),
                         VideoFeed.class);
-                LOG.debug("Fetched {} videos from {}.", videoFeed.getEntries().size(), nextFeedUri);
-
+                LOG.debug(
+                        "Fetched {} videos from {}.",
+                        videoFeed.getEntries().size(),
+                        nextFeedUri);
             } catch (com.google.gdata.util.AuthenticationException e) {
                 throw new AuthenticationException(e);
             } catch (ServiceException e) {
@@ -96,12 +119,27 @@ public class YoutubeV2PostReader implements IPostReader {
             }
 
             if (null != videoFeed) {
-                for (VideoEntry entry : videoFeed.getEntries()) {
+                for (VideoEntry videoEntry : videoFeed.getEntries()) {
+                    Date created;
+                    if (null != videoEntry.getPublished()) {
+                        created = new Date(videoEntry.getPublished().getValue());
+                    } else {
+                        created = new Date(0);
+                    }
+
+                    if (null != lastPostDate && lastPostDate.before(created)) {
+                        return results;
+                    }
+
                     results.add(
-                            YoutubeV2SiocConverter.createSiocPostFromVideoEntry(
+                            YoutubeV2SiocConverter.createSiocPost(
                                     connector,
-                                    entry,
+                                    videoEntry,
                                     container));
+
+                    if (0 < limit && limit == results.size()) {
+                        return results;
+                    }
                 }
             }
 
@@ -113,25 +151,43 @@ public class YoutubeV2PostReader implements IPostReader {
         return results;
     }
 
-    private List<Post> readUploadsPosts(Date lastPostDate, long limit,
-            Container container) throws AuthenticationException, IOException {
+    @Override
+    public boolean containsReplies(Post post) {
+        return post.toString().startsWith(serviceEndpoint) &&
+                post.hasId() &&
+                post.getId().startsWith(YoutubeV2SiocConverter.VIDEO_ID_PREFIX) &&
+                post.hasContainer() &&
+                post.getContainer().toString().startsWith(serviceEndpoint);
+    }
+
+    @Override
+    public List<Post> readNewReplies(Date lastReplyDate, long limit, Post parentPost)
+            throws AuthenticationException, IOException {
+        if (0 == limit) {
+            return Lists.newArrayList();
+        }
+
+        Preconditions.checkNotNull(parentPost,
+                "Required parameter parentPost must be specified.");
+        Preconditions.checkArgument(containsReplies(parentPost),
+                "The parameter parentPost contians no replies at this service.");
+
+        String videoId = parentPost.getId().substring(parentPost.getId().lastIndexOf(':') + 1);
+        String nextFeedUri = UriTemplate.fromTemplate(
+                "http://gdata.youtube.com/feeds/api/videos/{videoId}/comments")
+                .set("videoId", videoId)
+                .expand(); // FIXME: magic strings
 
         List<Post> results = Lists.newArrayList();
-
-        String nextFeedUri = UriTemplate.fromTemplate(
-                "http://gdata.youtube.com/feeds/api/users/{userId}/uploads?v=2")
-                .set("userId", container.getId().split(":")[1])
-                .expand();
-
-        do {
-            System.out.println(nextFeedUri);
-            VideoFeed videoFeed = null;
+        while (null != nextFeedUri) {
+            CommentFeed commentFeed = null;
             try {
-                videoFeed = client.getService().getFeed(
+                commentFeed = client.getService().getFeed(
                         new URL(nextFeedUri),
-                        VideoFeed.class);
-                LOG.debug("Fetched {} videos from {}.", videoFeed.getEntries().size(), nextFeedUri);
-
+                        CommentFeed.class);
+                LOG.debug("Fetched {} comments from {}.",
+                        commentFeed.getEntries().size(),
+                        nextFeedUri);
             } catch (com.google.gdata.util.AuthenticationException e) {
                 throw new AuthenticationException(e);
             } catch (ServiceException e) {
@@ -140,49 +196,42 @@ public class YoutubeV2PostReader implements IPostReader {
                 nextFeedUri = null;
             }
 
-            if (null != videoFeed) {
-                for (VideoEntry entry : videoFeed.getEntries()) {
+            if (null != commentFeed) {
+                for (CommentEntry commentEntry : commentFeed.getEntries()) {
+                    Date created;
+                    if (null != commentEntry.getPublished()) {
+                        created = new Date(commentEntry.getPublished().getValue());
+                    } else {
+                        created = new Date(0);
+                    }
+
+                    if (null != lastReplyDate && lastReplyDate.before(created)) {
+                        return results;
+                    }
+
                     results.add(
-                            YoutubeV2SiocConverter.createSiocPostFromVideoEntry(
+                            YoutubeV2SiocConverter.createSiocPost(
                                     connector,
-                                    entry,
-                                    container));
+                                    commentEntry,
+                                    parentPost));
+
+                    if (0 < limit && limit == results.size()) {
+                        return results;
+                    }
                 }
             }
 
-            if (null != videoFeed.getNextLink()) {
-                nextFeedUri = videoFeed.getNextLink().getHref();
+            if (null != commentFeed.getNextLink()) {
+                nextFeedUri = commentFeed.getNextLink().getHref();
             }
-        } while (null != nextFeedUri);
+        }
 
         return results;
-    }
-
-    private List<Post> readPlaylistPosts(Date lastPostDate, long limit,
-            Container container) throws AuthenticationException, IOException {
-
-        List<Post> results = Lists.newArrayList();
-
-        return results;
-    }
-
-    @Override
-    public boolean containsReplies(Post post) {
-        return post.toString().startsWith(serviceEndpoint) &&
-                !post.hasReplyOf() &&
-                post.hasContainer() &&
-                post.getContainer().toString().startsWith(serviceEndpoint);
-    }
-
-    @Override
-    public List<Post> readNewReplies(Date lastReplyDate, long limit, Post parentPost)
-            throws AuthenticationException, IOException {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     private boolean isPlaylistContainer(Container container) {
-        return container.toString().startsWith(serviceEndpoint) &&
+        return null != container &&
+                container.toString().startsWith(serviceEndpoint) &&
                 RdfUtils.isType(
                         container.getModel(),
                         container.getResource(),
@@ -190,7 +239,7 @@ public class YoutubeV2PostReader implements IPostReader {
                 container.hasParent() &&
                 container.getParent().toString().startsWith(serviceEndpoint) &&
                 container.getParent().hasId() &&
-                container.getId().startsWith(YoutubeV2Connector.PLAYLISTS_ID);
+                container.getParent().getId().startsWith(YoutubeV2Connector.PLAYLISTS_ID);
     }
 
     private boolean isUploadsContainer(Container container) {

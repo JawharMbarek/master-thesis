@@ -9,6 +9,7 @@ import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.Syntax;
+import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Forum;
@@ -43,18 +44,19 @@ public class YoutubeV2ConnectorTestApp {
      */
     public static void main(String[] args) throws NotFoundException, AuthenticationException,
             IOException {
+        URI serviceEndpointUri = Builder.createURI("http://www.youtube.com");
+
         Model model = RDF2Go.getModelFactory().createModel();
         model.open();
 
         ISoccContext context = new SoccContext(model);
 
         Service service = new Service(model, true);
-        service.setServiceEndpoint(Builder.createURI("http://www.youtube.com"));
+        service.setServiceEndpoint(serviceEndpointUri);
 
         UserAccount userAccount = new UserAccount(model, true);
-        userAccount.setAccountName("m0eper");
-        userAccount.setAccountServiceHomepage(
-                Builder.createURI("http://www.youtube.com"));
+        userAccount.setAccountName("qX2si9NbFXXGS14BWC1juw");
+        userAccount.setAccountServiceHomepage(serviceEndpointUri);
 
         Person defaultPerson = new Person(model, true);
         defaultPerson.setName("Max Hiwi");
@@ -102,12 +104,17 @@ public class YoutubeV2ConnectorTestApp {
 
         List<Thread> threads = connector.serviceStructureReader().listThreads(playlists);
         for (Thread thread : threads) {
-            System.out.println(thread.getName() + " " + thread);
+            System.out.println(thread.getName() + " " + thread.getId() + " " + thread);
 
-            // posts = connector.postReader().readNewPosts(null, -1, thread);
-            // for (Post post : posts) {
-            // System.out.println(post.getContent() + " " + post);
-            // }
+            posts = connector.postReader().readNewPosts(null, -1, thread);
+            for (Post post : posts) {
+                System.out.println(post.getContent() + " " + post);
+
+                List<Post> replies = connector.postReader().readNewReplies(null, -1, post);
+                for (Post reply : replies) {
+                    System.out.println(reply);
+                }
+            }
         }
 
         List<Statement> sortedStmts = Lists.newArrayList(model);

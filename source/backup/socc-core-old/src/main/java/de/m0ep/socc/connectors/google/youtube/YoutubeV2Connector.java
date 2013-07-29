@@ -707,7 +707,7 @@ public class YoutubeV2Connector extends AbstractConnector {
         CommentEntry resultCommentEntry = null;
         String commentsFeedURL = null;
 
-        // get the correct url for the comments feed
+        // get the correct URI for the comments feed
         if (parentPost.hasReplyOf()) {
             commentsFeedURL = String.format(
                     YoutubeV2Constants.FMT_FEED_COMMENTS,

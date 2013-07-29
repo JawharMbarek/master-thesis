@@ -58,7 +58,10 @@ public class YoutubeV2StructureReader implements IServiceStructureReader {
 
         if (!Forum.hasInstance(model, playlistsUri)) {
             this.playlists = new Forum(model, playlistsUri, true);
-            this.playlists.setId(YoutubeV2Connector.PLAYLISTS_ID);
+            this.playlists.setId(
+                    YoutubeV2Connector.PLAYLISTS_ID
+                            + ":"
+                            + client.getUserProfile().getUsername());
             this.playlists.setName(
                     (Strings.nullToEmpty(client.getUserProfile().getFirstName())
                             + " "
@@ -82,7 +85,10 @@ public class YoutubeV2StructureReader implements IServiceStructureReader {
 
         if (!Forum.hasInstance(model, uploadsUri)) {
             this.uploads = new Forum(model, uploadsUri, true);
-            this.uploads.setId(YoutubeV2Connector.UPLOADS_ID);
+            this.uploads.setId(
+                    YoutubeV2Connector.UPLOADS_ID
+                            + ":"
+                            + client.getUserProfile().getUsername());
             this.uploads.setName(
                     (Strings.nullToEmpty(client.getUserProfile().getFirstName())
                             + " "
@@ -150,7 +156,7 @@ public class YoutubeV2StructureReader implements IServiceStructureReader {
         Preconditions.checkArgument(parent.getResource().equals(playlists.getResource()),
                 "Only the playlists forum contains threads");
 
-        String feedUrl = UriTemplate.fromTemplate(FEED_USER_PLAYLISTS)
+        String nextFeed = UriTemplate.fromTemplate(FEED_USER_PLAYLISTS)
                 .set(PARAM_USER_ID, client.getUserProfile().getUsername())
                 .expand();
 
@@ -160,12 +166,14 @@ public class YoutubeV2StructureReader implements IServiceStructureReader {
             PlaylistLinkFeed playlistFeed = null;
             try {
                 playlistFeed = client.getService().getFeed(
-                        new URL(feedUrl),
+                        new URL(nextFeed),
                         PlaylistLinkFeed.class);
             } catch (com.google.gdata.util.AuthenticationException e) {
                 throw new AuthenticationException(e);
             } catch (ServiceException e) {
                 Throwables.propagate(e);
+            } finally {
+                nextFeed = null;
             }
 
             if (null != playlistFeed) {
@@ -177,11 +185,10 @@ public class YoutubeV2StructureReader implements IServiceStructureReader {
                 }
             }
 
-            feedUrl = null;
             if (null != playlistFeed.getNextLink()) {
-                feedUrl = playlistFeed.getNextLink().getHref();
+                nextFeed = playlistFeed.getNextLink().getHref();
             }
-        } while (null != feedUrl);
+        } while (null != nextFeed);
 
         return results;
     }

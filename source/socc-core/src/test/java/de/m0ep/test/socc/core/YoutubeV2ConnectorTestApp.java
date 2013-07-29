@@ -12,6 +12,7 @@ import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Forum;
+import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Thread;
 
 import com.google.common.collect.Lists;
@@ -86,12 +87,27 @@ public class YoutubeV2ConnectorTestApp {
         IConnector connector = new YoutubeV2Connector(context, config);
         connector.initialize();
 
+        Forum uploads = connector.serviceStructureReader()
+                .getForum(YoutubeV2Connector.UPLOADS_ID);
+
+        System.err.println(uploads + " " + uploads.getId());
+
+        List<Post> posts = connector.postReader().readNewPosts(null, -1, uploads);
+        for (Post post : posts) {
+            System.err.println(post.getContent() + " " + post);
+        }
+
         Forum playlists = connector.serviceStructureReader()
                 .getForum(YoutubeV2Connector.PLAYLISTS_ID);
 
         List<Thread> threads = connector.serviceStructureReader().listThreads(playlists);
         for (Thread thread : threads) {
             System.out.println(thread.getName() + " " + thread);
+
+            // posts = connector.postReader().readNewPosts(null, -1, thread);
+            // for (Post post : posts) {
+            // System.out.println(post.getContent() + " " + post);
+            // }
         }
 
         List<Statement> sortedStmts = Lists.newArrayList(model);

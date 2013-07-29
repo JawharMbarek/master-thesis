@@ -60,7 +60,11 @@ public class YoutubeV2Connector extends AbstractConnector {
     @Override
     public IPostReader postReader() {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
-        return null;
+        if (null == postReader) {
+            postReader = new YoutubeV2PostReader(this);
+        }
+
+        return postReader;
     }
 
     @Override

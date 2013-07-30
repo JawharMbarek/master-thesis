@@ -21,6 +21,7 @@
  */
 
 package de.m0ep.socc.core.connector.google.youtube.v2;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,7 +36,6 @@ import de.m0ep.sioc.service.auth.APIKey;
 import de.m0ep.sioc.service.auth.Password;
 import de.m0ep.sioc.service.auth.Username;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
-
 
 public class YoutubeClientWrapper {
     private YouTubeService service;

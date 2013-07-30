@@ -31,6 +31,7 @@ import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.SoccContext;
 import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.connector.google.youtube.v2.YoutubeConnector;
+import de.m0ep.socc.core.connector.google.youtube.v2.YoutubeSiocConverter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
@@ -119,17 +120,18 @@ public class YoutubeV2ConnectorTestApp {
         IConnector connector = new YoutubeConnector(context, config);
         connector.initialize();
 
-        Forum uploads = connector.serviceStructureReader()
-                .getForum(YoutubeConnector.UPLOADS_ID);
-
-        System.err.println(uploads + " " + uploads.getId());
-
-        List<Post> posts = connector.postReader().readNewPosts(null, -1, uploads);
-        for (Post post : posts) {
-            List<Post> replies = connector.postReader().readNewReplies(null, -1, post);
-            for (Post reply : replies) {
-                connector.postWriter().writeReply(replyPost, reply);
-                System.err.println(reply.getContent() + " " + reply);
+        List<Forum> forums = connector.serviceStructureReader().listForums();
+        for (Forum forum : forums) {
+            System.err.println(forum + " " + forum.getId());
+            if (forum.getId().startsWith(YoutubeSiocConverter.PLAYLISTS_ID_PREFIX)) {
+                List<Post> posts = connector.postReader().readNewPosts(null, -1, forum);
+                for (Post post : posts) {
+                    List<Post> replies = connector.postReader().readNewReplies(null, -1, post);
+                    for (Post reply : replies) {
+                        connector.postWriter().writeReply(replyPost, reply);
+                        System.err.println(reply.getContent() + " " + reply);
+                    }
+                }
             }
         }
 

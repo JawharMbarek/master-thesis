@@ -41,12 +41,15 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.gdata.data.youtube.PlaylistLinkEntry;
 import com.google.gdata.data.youtube.PlaylistLinkFeed;
+import com.google.gdata.util.ResourceNotFoundException;
 import com.google.gdata.util.ServiceException;
+import com.google.gdata.util.ServiceForbiddenException;
 
 import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.connector.IConnector.IServiceStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.RdfUtils;
 
 public class YoutubeStructureReader implements IServiceStructureReader {
     private YoutubeConnector connector;
@@ -70,16 +73,13 @@ public class YoutubeStructureReader implements IServiceStructureReader {
 
         URI playlistsUri = Builder.createURI(
                 serviceEndpoint
-                        + "/"
-                        + client.getUserProfile().getUsername()
-                        + "/"
-                        + YoutubeConnector.PLAYLISTS_ID);
+                        + YoutubeSiocConverter.PLAYLISTS_URI_PATH
+                        + client.getUserProfile().getUsername());
 
         if (!Forum.hasInstance(model, playlistsUri)) {
             this.playlists = new Forum(model, playlistsUri, true);
             this.playlists.setId(
-                    YoutubeConnector.PLAYLISTS_ID
-                            + ":"
+                    YoutubeSiocConverter.PLAYLISTS_ID_PREFIX
                             + client.getUserProfile().getUsername());
             this.playlists.setName(
                     (Strings.nullToEmpty(client.getUserProfile().getFirstName())
@@ -97,16 +97,13 @@ public class YoutubeStructureReader implements IServiceStructureReader {
 
         URI uploadsUri = Builder.createURI(
                 serviceEndpoint
-                        + "/"
-                        + client.getUserProfile().getUsername()
-                        + "/"
-                        + YoutubeConnector.UPLOADS_ID);
+                        + YoutubeSiocConverter.UPLOADS_URI_PATH
+                        + client.getUserProfile().getUsername());
 
         if (!Forum.hasInstance(model, uploadsUri)) {
             this.uploads = new Forum(model, uploadsUri, true);
             this.uploads.setId(
-                    YoutubeConnector.UPLOADS_ID
-                            + ":"
+                    YoutubeSiocConverter.UPLOADS_ID_PREFIX
                             + client.getUserProfile().getUsername());
             this.uploads.setName(
                     (Strings.nullToEmpty(client.getUserProfile().getFirstName())
@@ -147,9 +144,9 @@ public class YoutubeStructureReader implements IServiceStructureReader {
         Preconditions.checkArgument(!id.isEmpty(),
                 "Required parameter id may not be empty.");
 
-        if (YoutubeConnector.PLAYLISTS_ID.equals(id)) {
+        if (id.startsWith(YoutubeSiocConverter.PLAYLISTS_ID_PREFIX)) {
             return playlists;
-        } else if (YoutubeConnector.UPLOADS_ID.equals(id)) {
+        } else if (id.startsWith(YoutubeSiocConverter.UPLOADS_ID_PREFIX)) {
             return uploads;
         }
 
@@ -164,8 +161,58 @@ public class YoutubeStructureReader implements IServiceStructureReader {
     @Override
     public Thread getThread(String id, Container parent) throws NotFoundException,
             AuthenticationException, IOException {
-        // TODO Auto-generated method stub
-        return null;
+        Preconditions.checkNotNull(id,
+                "Required parameter id must be specified.");
+        Preconditions.checkArgument(!id.isEmpty(),
+                "Required parameter id may not be empty.");
+        Preconditions.checkNotNull(parent,
+                "Required parameter parent must be specified.");
+        Preconditions.checkArgument(RdfUtils.isType(
+                parent.getModel(),
+                parent.getResource(),
+                Forum.RDFS_CLASS),
+                "The parameter parent is no sioc:forum.");
+        Preconditions.checkArgument(parent.hasId(),
+                "The parameter parent has no id");
+        Preconditions.checkArgument(parent.getId().startsWith(
+                YoutubeSiocConverter.PLAYLISTS_ID_PREFIX),
+                "The parent is no Playlist forum");
+
+        String userId = parent.getId().split(YoutubeSiocConverter.ID_SEPERATOR)[1];
+        String playlistUri = UriTemplate.fromTemplate(
+                "http://gdata.youtube.com/feeds/api/users/{userId}/playlists/{playlistId}?v=2")
+                .set("userId", userId)
+                .set("playlistId", id)
+                .expand(); // FIXME: magic strings
+
+        PlaylistLinkEntry playlistEntry = null;
+        try {
+            connector.waitForCooldown();
+            playlistEntry = client.getService().getEntry(
+                    new URL(playlistUri),
+                    PlaylistLinkEntry.class);
+        } catch (com.google.gdata.util.AuthenticationException e) {
+            throw new AuthenticationException(e);
+        } catch (ServiceForbiddenException e) {
+            throw new AuthenticationException(
+                    client.getUserProfile().getUsername()
+                            + " has no access to the youtube service.", e);
+        } catch (ResourceNotFoundException e) {
+            throw new NotFoundException("No thread found with id " + id);
+        } catch (ServiceException e) {
+            Throwables.propagate(e);
+        }
+
+        if (null != playlistEntry) {
+            Thread result = YoutubeSiocConverter.createSiocThread(
+                    connector,
+                    playlistEntry,
+                    Forum.getInstance(parent.getModel(), parent.getResource()));
+
+            return result;
+        }
+
+        throw new NotFoundException("No thread found with id " + id);
     }
 
     @Override
@@ -182,9 +229,9 @@ public class YoutubeStructureReader implements IServiceStructureReader {
 
         List<Thread> results = Lists.newArrayList();
         do {
-
             PlaylistLinkFeed playlistFeed = null;
             try {
+                connector.waitForCooldown();
                 playlistFeed = client.getService().getFeed(
                         new URL(nextFeed),
                         PlaylistLinkFeed.class);

@@ -90,12 +90,13 @@ public class YoutubePostReader implements IPostReader {
         if (isUploadsContainer(container)) {
             nextFeedUri = UriTemplate.fromTemplate(
                     "http://gdata.youtube.com/feeds/api/users/{userId}/uploads?v=2")
-                    .set("userId", container.getId().split(":")[1])
+                    .set("userId", container.getId().split(YoutubeSiocConverter.ID_SEPERATOR)[1])
                     .expand(); // FIXME: magic strings
         } else if (isPlaylistContainer(container)) {
             nextFeedUri = UriTemplate.fromTemplate(
                     "http://gdata.youtube.com/feeds/api/playlists/{playlistId}?v=2")
-                    .set("playlistId", container.getId())
+                    .set("playlistId",
+                            container.getId().split(YoutubeSiocConverter.ID_SEPERATOR)[1])
                     .expand(); // FIXME: magic strings
         }
 
@@ -103,6 +104,7 @@ public class YoutubePostReader implements IPostReader {
             System.out.println(nextFeedUri);
             VideoFeed videoFeed = null;
             try {
+                connector.waitForCooldown();
                 videoFeed = client.getService().getFeed(
                         new URL(nextFeedUri),
                         VideoFeed.class);
@@ -172,7 +174,7 @@ public class YoutubePostReader implements IPostReader {
         Preconditions.checkArgument(containsReplies(parentPost),
                 "The parameter parentPost contians no replies at this service.");
 
-        String videoId = parentPost.getId().substring(parentPost.getId().lastIndexOf(':') + 1);
+        String videoId = parentPost.getId().split(YoutubeSiocConverter.ID_SEPERATOR)[1];
         String nextFeedUri = UriTemplate.fromTemplate(
                 "http://gdata.youtube.com/feeds/api/videos/{videoId}/comments")
                 .set("videoId", videoId)
@@ -182,6 +184,7 @@ public class YoutubePostReader implements IPostReader {
         while (null != nextFeedUri) {
             CommentFeed commentFeed = null;
             try {
+                connector.waitForCooldown();
                 commentFeed = client.getService().getFeed(
                         new URL(nextFeedUri),
                         CommentFeed.class);
@@ -239,7 +242,7 @@ public class YoutubePostReader implements IPostReader {
                 container.hasParent() &&
                 container.getParent().toString().startsWith(serviceEndpoint) &&
                 container.getParent().hasId() &&
-                container.getParent().getId().startsWith(YoutubeConnector.PLAYLISTS_ID);
+                container.getParent().getId().startsWith(YoutubeSiocConverter.PLAYLISTS_ID_PREFIX);
     }
 
     private boolean isUploadsContainer(Container container) {
@@ -249,7 +252,7 @@ public class YoutubePostReader implements IPostReader {
                         container.getResource(),
                         Forum.RDFS_CLASS) &&
                 container.hasId() &&
-                container.getId().startsWith(YoutubeConnector.UPLOADS_ID);
+                container.getId().startsWith(YoutubeSiocConverter.UPLOADS_ID_PREFIX);
     }
 
 }

@@ -100,7 +100,6 @@ public class YoutubePostWriter implements IPostWriter {
         UserAccount creatorAccount = replyPost.getCreator();
         Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(connector, creatorAccount);
 
-        LOG.debug("Fetch client of creator UserAccount or defaultClient");
         YoutubeClientWrapper client = null;
         if (null != creatorPerson) {
             UserAccount serviceAccount = PostWriterUtils.getServiceAccountOfPersonOrNull(
@@ -114,7 +113,6 @@ public class YoutubePostWriter implements IPostWriter {
             }
         }
 
-        LOG.debug("Create content String");
         String content = replyPost.getContent();
         if (null == client) { // No client found, get default one an adapt
                               // message content
@@ -131,7 +129,6 @@ public class YoutubePostWriter implements IPostWriter {
                 .set("videoId", videoId)
                 .expand(); // FIXME: magic strings
 
-        LOG.debug("Create CommentEntry");
         CommentEntry insertEntry = new CommentEntry();
         insertEntry.setContent(new PlainTextConstruct(content));
 
@@ -152,6 +149,7 @@ public class YoutubePostWriter implements IPostWriter {
 
         CommentEntry resultEntry = null;
         try {
+            connector.waitForCooldown();
             resultEntry = client.getService()
                     .insert(
                             new URL(commentsUri),
@@ -164,7 +162,6 @@ public class YoutubePostWriter implements IPostWriter {
         }
 
         if (null != resultEntry) {
-            LOG.debug("Convert result CommentEntry to SIOC Post");
             Post resultPost = YoutubeSiocConverter.createSiocPost(
                     connector,
                     resultEntry,
@@ -172,12 +169,6 @@ public class YoutubePostWriter implements IPostWriter {
 
             resultPost.addSibling(parentPost);
             parentPost.addSibling(resultPost);
-        }
-
-        try {
-            Thread.currentThread().sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
@@ -189,7 +180,7 @@ public class YoutubePostWriter implements IPostWriter {
                         replyOf.getId().lastIndexOf(YoutubeSiocConverter.ID_SEPERATOR) + 1);
             }
 
-            replyOf = (post.hasReplyOf()) ? (post.getReplyOf()) : (null);
+            replyOf = (replyOf.hasReplyOf()) ? (replyOf.getReplyOf()) : (null);
         } while (null != replyOf);
 
         throw new IllegalArgumentException("Couldn't found the id of the parent video.");

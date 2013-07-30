@@ -43,15 +43,14 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 public class YoutubeConnector extends AbstractConnector {
     private static final Logger LOG = LoggerFactory.getLogger(YoutubeConnector.class);
 
-    public static final String PLAYLISTS_ID = "playlists";
-    public static final String UPLOADS_ID = "uploads";
-
     private URI serviceEndpoint = Builder.createURI("http://www.youtube.com");
 
     private IServiceClientManager serviceClientManager;
     private IServiceStructureReader serviceStructureReader;
     private IPostReader postReader;
     private IPostWriter postWriter;
+
+    private long lastServiceRequest = 0;
 
     private YoutubeConnector(String id, ISoccContext context, UserAccount defaultUserAccount,
             Service service) {
@@ -121,4 +120,15 @@ public class YoutubeConnector extends AbstractConnector {
         serviceClientManager.clear();
     }
 
+    public synchronized void waitForCooldown() {
+        long delta = System.currentTimeMillis() - lastServiceRequest;
+
+        if (500 >= delta) {
+            try {
+                Thread.sleep(500 - delta);
+            } catch (InterruptedException e) {
+                LOG.debug("Cooldown interrupted");
+            }
+        }
+    }
 }

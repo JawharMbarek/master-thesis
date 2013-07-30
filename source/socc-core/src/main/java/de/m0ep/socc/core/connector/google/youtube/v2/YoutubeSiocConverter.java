@@ -47,8 +47,14 @@ import de.m0ep.socc.core.utils.StringUtils;
 import de.m0ep.socc.core.utils.UserAccountUtils;
 
 public class YoutubeSiocConverter {
+    private static final String USER_URI_PATH = "/user/";
     public static final String ID_SEPERATOR = ":";
+    public static final String UPLOADS_URI_PATH = "/uploads/";
+    public static final String UPLOADS_ID_PREFIX = "uploads" + ID_SEPERATOR;
+    public static final String PLAYLISTS_URI_PATH = "/playlists/";
+    public static final String PLAYLISTS_ID_PREFIX = "playlists" + ID_SEPERATOR;
     public static final String PLAYLIST_URI_PATH = "/playlist/";
+    public static final String PLAYLIST_ID_PREFIX = "playlist" + ID_SEPERATOR;
     public static final String VIDEO_URI_PATH = "/video/";
     public static final String VIDEO_ID_PREFIX = "video" + ID_SEPERATOR;
     public static final String COMMENT_URI_PATH = "/comment/";
@@ -63,7 +69,7 @@ public class YoutubeSiocConverter {
                         + playlistEntry.getPlaylistId());
 
         Thread result = new Thread(model, uri, true);
-        result.setId(playlistEntry.getPlaylistId());
+        result.setId(PLAYLIST_ID_PREFIX + playlistEntry.getPlaylistId());
         result.setSeeAlso(Builder.createURI(playlistEntry.getSelfLink().getHref()));
 
         if (null != playlistEntry.getTitle()) {
@@ -217,7 +223,9 @@ public class YoutubeSiocConverter {
                             commentEntry.getUpdated().getValue()));
         }
 
-        Link replyToLink = commentEntry.getLink(YouTubeNamespace.IN_REPLY_TO, null);
+        Link replyToLink = commentEntry.getLink(
+                YouTubeNamespace.IN_REPLY_TO,
+                "application/atom+xml");
         if (null != replyToLink) {
             String replyToLinkHref = replyToLink.getHref();
             String replyToId = replyToLinkHref
@@ -258,7 +266,7 @@ public class YoutubeSiocConverter {
         URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
         String accountName = extractAuthorUsername(author);
 
-        URI uri = Builder.createURI(serviceEndpoint + "/user/" + accountName);
+        URI uri = Builder.createURI(serviceEndpoint + USER_URI_PATH + accountName);
 
         UserAccount result = new UserAccount(model, uri, true);
         result.setAccountName(accountName);

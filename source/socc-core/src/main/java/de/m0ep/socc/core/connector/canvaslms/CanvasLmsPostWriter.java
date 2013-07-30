@@ -9,6 +9,7 @@ import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.xmlns.foaf.Person;
 
 import de.m0ep.canvas.CanvasLmsClient;
@@ -129,7 +130,8 @@ public class CanvasLmsPostWriter implements IPostWriter {
                     resultEntry,
                     container);
 
-            resultPost.setSibling(post);
+            resultPost.addSibling(post);
+            post.addSibling(resultPost);
         }
     }
 
@@ -224,14 +226,12 @@ public class CanvasLmsPostWriter implements IPostWriter {
                     .entries(topicId)
                     .postReply(content, entryId)
                     .execute();
+        } catch (NetworkException e) {
+            throw new IOException(e);
+        } catch (AuthorizationException e) {
+            throw new AuthenticationException(e);
         } catch (CanvasLmsException e) {
-            if (e instanceof NetworkException) {
-                throw new IOException(e);
-            } else if (e instanceof AuthorizationException) {
-                throw new AuthenticationException(e);
-            }
-
-            throw new RuntimeException(e);
+            Throwables.propagate(e);
         }
 
         if (null != resultEntry) {
@@ -240,7 +240,8 @@ public class CanvasLmsPostWriter implements IPostWriter {
                     resultEntry,
                     container);
 
-            resultPost.setSibling(replyPost);
+            resultPost.addSibling(replyPost);
+            replyPost.addSibling(resultPost);
         }
     }
 }

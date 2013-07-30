@@ -49,16 +49,16 @@ import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class YoutubeV2PostReader implements IPostReader {
-    private static final Logger LOG = LoggerFactory.getLogger(YoutubeV2PostReader.class);
+public class YoutubePostReader implements IPostReader {
+    private static final Logger LOG = LoggerFactory.getLogger(YoutubePostReader.class);
 
-    private YoutubeV2Connector connector;
-    private YoutubeV2ClientWrapper client;
+    private YoutubeConnector connector;
+    private YoutubeClientWrapper client;
     private String serviceEndpoint;
 
-    public YoutubeV2PostReader(YoutubeV2Connector connector) {
+    public YoutubePostReader(YoutubeConnector connector) {
         this.connector = connector;
-        this.client = (YoutubeV2ClientWrapper) this.connector.getServiceClientManager()
+        this.client = (YoutubeClientWrapper) this.connector.getServiceClientManager()
                 .getDefaultClient();
         this.serviceEndpoint = connector.getService().getServiceEndpoint().toString();
     }
@@ -132,7 +132,7 @@ public class YoutubeV2PostReader implements IPostReader {
                     }
 
                     results.add(
-                            YoutubeV2SiocConverter.createSiocPost(
+                            YoutubeSiocConverter.createSiocPost(
                                     connector,
                                     videoEntry,
                                     container));
@@ -155,7 +155,7 @@ public class YoutubeV2PostReader implements IPostReader {
     public boolean containsReplies(Post post) {
         return post.toString().startsWith(serviceEndpoint) &&
                 post.hasId() &&
-                post.getId().startsWith(YoutubeV2SiocConverter.VIDEO_ID_PREFIX) &&
+                post.getId().startsWith(YoutubeSiocConverter.VIDEO_ID_PREFIX) &&
                 post.hasContainer() &&
                 post.getContainer().toString().startsWith(serviceEndpoint);
     }
@@ -210,7 +210,7 @@ public class YoutubeV2PostReader implements IPostReader {
                     }
 
                     results.add(
-                            YoutubeV2SiocConverter.createSiocPost(
+                            YoutubeSiocConverter.createSiocPost(
                                     connector,
                                     commentEntry,
                                     parentPost));
@@ -239,7 +239,7 @@ public class YoutubeV2PostReader implements IPostReader {
                 container.hasParent() &&
                 container.getParent().toString().startsWith(serviceEndpoint) &&
                 container.getParent().hasId() &&
-                container.getParent().getId().startsWith(YoutubeV2Connector.PLAYLISTS_ID);
+                container.getParent().getId().startsWith(YoutubeConnector.PLAYLISTS_ID);
     }
 
     private boolean isUploadsContainer(Container container) {
@@ -249,7 +249,7 @@ public class YoutubeV2PostReader implements IPostReader {
                         container.getResource(),
                         Forum.RDFS_CLASS) &&
                 container.hasId() &&
-                container.getId().startsWith(YoutubeV2Connector.UPLOADS_ID);
+                container.getId().startsWith(YoutubeConnector.UPLOADS_ID);
     }
 
 }

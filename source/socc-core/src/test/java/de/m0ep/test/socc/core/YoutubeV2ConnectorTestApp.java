@@ -3,6 +3,7 @@ package de.m0ep.test.socc.core;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.ontoware.rdf2go.RDF2Go;
@@ -14,7 +15,6 @@ import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.Thread;
 
 import com.google.common.collect.Lists;
 import com.xmlns.foaf.Person;
@@ -30,7 +30,7 @@ import de.m0ep.socc.config.ConnectorCfg;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.SoccContext;
 import de.m0ep.socc.core.connector.IConnector;
-import de.m0ep.socc.core.connector.google.youtube.v2.YoutubeV2Connector;
+import de.m0ep.socc.core.connector.google.youtube.v2.YoutubeConnector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
@@ -54,6 +54,15 @@ public class YoutubeV2ConnectorTestApp {
         Service service = new Service(model, true);
         service.setServiceEndpoint(serviceEndpointUri);
 
+        Authentication serviceAuth = new WebAPI(model, true);
+        service.setAuthentication(serviceAuth);
+
+        APIKey apiKey = new APIKey(model, true);
+        apiKey.setValue("AI39si48dEjhAE9RrY6w1HnlmyrUUTDt-xssOKkEEcpOIMD1gFcQ-0Xv40YNl-H1MxFzGzbHih4ootWo1cRrPH9gV-5UdazEbQ");
+        serviceAuth.addCredential(apiKey);
+
+        /*********************************/
+
         UserAccount userAccount = new UserAccount(model, true);
         userAccount.setAccountName("qX2si9NbFXXGS14BWC1juw");
         userAccount.setAccountServiceHomepage(serviceEndpointUri);
@@ -63,15 +72,8 @@ public class YoutubeV2ConnectorTestApp {
         defaultPerson.addAccount(userAccount);
         userAccount.setAccountOf(defaultPerson);
 
-        Authentication serviceAuth = new WebAPI(model, true);
-        service.setAuthentication(serviceAuth);
-
         Authentication userAuth = new WebAPI(model, true);
         userAccount.setAuthentication(userAuth);
-
-        APIKey apiKey = new APIKey(model, true);
-        apiKey.setValue("AI39si48dEjhAE9RrY6w1HnlmyrUUTDt-xssOKkEEcpOIMD1gFcQ-0Xv40YNl-H1MxFzGzbHih4ootWo1cRrPH9gV-5UdazEbQ");
-        serviceAuth.addCredential(apiKey);
 
         Username username = new Username(model, true);
         username.setValue("tkhiwis@gmail.com");
@@ -81,41 +83,76 @@ public class YoutubeV2ConnectorTestApp {
         password.setValue("turing123");
         userAuth.addCredential(password);
 
+        /*********************************/
+
+        UserAccount m0eperAccount = new UserAccount(model, true);
+        m0eperAccount.setAccountName("m0eper");
+        m0eperAccount.setAccountServiceHomepage(serviceEndpointUri);
+
+        Person m0eperPerson = new Person(model, true);
+        m0eperPerson.setName("Florian Müller");
+        m0eperPerson.addAccount(m0eperAccount);
+        m0eperAccount.setAccountOf(m0eperPerson);
+
+        Authentication m0eperAuth = new WebAPI(model, true);
+        m0eperAccount.setAuthentication(m0eperAuth);
+
+        Username m0eperUsername = new Username(model, true);
+        m0eperUsername.setValue("email.mufl@gmail.com");
+        m0eperAuth.addCredential(m0eperUsername);
+
+        Password m0eperPassword = new Password(model, true);
+        m0eperPassword.setValue("email.mufl.net");
+        m0eperAuth.addCredential(m0eperPassword);
+
+        /*********************************/
+
         ConnectorCfg config = new ConnectorCfg(model, true);
         config.setId("youtube-test");
         config.setDefaultUser(userAccount);
         config.setService(service);
 
-        IConnector connector = new YoutubeV2Connector(context, config);
+        Post replyPost = new Post(model, true);
+        replyPost.setContent("automated reply at " + new Date());
+        replyPost.setCreator(userAccount);
+
+        IConnector connector = new YoutubeConnector(context, config);
         connector.initialize();
 
         Forum uploads = connector.serviceStructureReader()
-                .getForum(YoutubeV2Connector.UPLOADS_ID);
+                .getForum(YoutubeConnector.UPLOADS_ID);
 
         System.err.println(uploads + " " + uploads.getId());
 
         List<Post> posts = connector.postReader().readNewPosts(null, -1, uploads);
         for (Post post : posts) {
-            System.err.println(post.getContent() + " " + post);
-        }
-
-        Forum playlists = connector.serviceStructureReader()
-                .getForum(YoutubeV2Connector.PLAYLISTS_ID);
-
-        List<Thread> threads = connector.serviceStructureReader().listThreads(playlists);
-        for (Thread thread : threads) {
-            System.out.println(thread.getName() + " " + thread.getId() + " " + thread);
-
-            posts = connector.postReader().readNewPosts(null, -1, thread);
-            for (Post post : posts) {
-                System.out.println(post.getContent() + " " + post);
-
-                List<Post> replies = connector.postReader().readNewReplies(null, -1, post);
-                for (Post reply : replies) {
-                    System.out.println(reply);
-                }
+            List<Post> replies = connector.postReader().readNewReplies(null, -1, post);
+            for (Post reply : replies) {
+                connector.postWriter().writeReply(replyPost, reply);
+                System.err.println(reply.getContent() + " " + reply);
             }
         }
+
+        // Forum playlists = connector.serviceStructureReader()
+        // .getForum(YoutubeConnector.PLAYLISTS_ID);
+        //
+        // List<Thread> threads =
+        // connector.serviceStructureReader().listThreads(playlists);
+        // for (Thread thread : threads) {
+        // System.out.println(thread.getName() + " " + thread.getId() + " " +
+        // thread);
+        //
+        // posts = connector.postReader().readNewPosts(null, -1, thread);
+        // for (Post post : posts) {
+        // System.out.println(post.getContent() + " " + post);
+        //
+        // List<Post> replies = connector.postReader().readNewReplies(null, -1,
+        // post);
+        // for (Post reply : replies) {
+        // System.out.println(reply);
+        // }
+        // }
+        // }
 
         List<Statement> sortedStmts = Lists.newArrayList(model);
         Collections.sort(sortedStmts);

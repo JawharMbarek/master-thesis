@@ -40,8 +40,8 @@ import de.m0ep.socc.core.connector.AbstractConnector;
 import de.m0ep.socc.core.connector.IServiceClientManager;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
-public class YoutubeV2Connector extends AbstractConnector {
-    private static final Logger LOG = LoggerFactory.getLogger(YoutubeV2Connector.class);
+public class YoutubeConnector extends AbstractConnector {
+    private static final Logger LOG = LoggerFactory.getLogger(YoutubeConnector.class);
 
     public static final String PLAYLISTS_ID = "playlists";
     public static final String UPLOADS_ID = "uploads";
@@ -53,12 +53,12 @@ public class YoutubeV2Connector extends AbstractConnector {
     private IPostReader postReader;
     private IPostWriter postWriter;
 
-    private YoutubeV2Connector(String id, ISoccContext context, UserAccount defaultUserAccount,
+    private YoutubeConnector(String id, ISoccContext context, UserAccount defaultUserAccount,
             Service service) {
         super(id, context, defaultUserAccount, service);
     }
 
-    public YoutubeV2Connector(ISoccContext context, ConnectorCfg config) {
+    public YoutubeConnector(ISoccContext context, ConnectorCfg config) {
         super(context, config);
     }
 
@@ -72,7 +72,7 @@ public class YoutubeV2Connector extends AbstractConnector {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
 
         if (null == serviceStructureReader) {
-            serviceStructureReader = new YoutubeV2StructureReader(this);
+            serviceStructureReader = new YoutubeStructureReader(this);
         }
 
         return serviceStructureReader;
@@ -82,7 +82,7 @@ public class YoutubeV2Connector extends AbstractConnector {
     public IPostReader postReader() {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
         if (null == postReader) {
-            postReader = new YoutubeV2PostReader(this);
+            postReader = new YoutubePostReader(this);
         }
 
         return postReader;
@@ -93,7 +93,7 @@ public class YoutubeV2Connector extends AbstractConnector {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
 
         if (null == postWriter) {
-            postWriter = new YoutubeV2PostWriter(this);
+            postWriter = new YoutubePostWriter(this);
         }
 
         return postWriter;
@@ -104,7 +104,7 @@ public class YoutubeV2Connector extends AbstractConnector {
         getService().setServiceEndpoint(serviceEndpoint);
 
         try {
-            serviceClientManager = new YoutubeV2ClientManager(getService(), getDefaultUserAccount());
+            serviceClientManager = new YoutubeClientManager(getService(), getDefaultUserAccount());
         } catch (Exception e) {
             Throwables.propagateIfInstanceOf(e, AuthenticationException.class);
             Throwables.propagateIfInstanceOf(e, IOException.class);

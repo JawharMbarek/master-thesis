@@ -37,11 +37,11 @@ import de.m0ep.sioc.service.auth.Username;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
 
-public class YoutubeV2ClientWrapper {
+public class YoutubeClientWrapper {
     private YouTubeService service;
     private UserProfileEntry userProfile;
 
-    public YoutubeV2ClientWrapper(APIKey apiKey, Username username, Password password)
+    public YoutubeClientWrapper(APIKey apiKey, Username username, Password password)
             throws AuthenticationException, IOException {
         Preconditions.checkNotNull(apiKey,
                 "Required parameter apiKey must be specified.");

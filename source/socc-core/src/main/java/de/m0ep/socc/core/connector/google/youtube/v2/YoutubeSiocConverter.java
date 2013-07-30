@@ -46,14 +46,15 @@ import de.m0ep.socc.core.utils.DateUtils;
 import de.m0ep.socc.core.utils.StringUtils;
 import de.m0ep.socc.core.utils.UserAccountUtils;
 
-public class YoutubeV2SiocConverter {
+public class YoutubeSiocConverter {
+    public static final String ID_SEPERATOR = ":";
     public static final String PLAYLIST_URI_PATH = "/playlist/";
     public static final String VIDEO_URI_PATH = "/video/";
-    public static final String VIDEO_ID_PREFIX = "video:";
+    public static final String VIDEO_ID_PREFIX = "video" + ID_SEPERATOR;
     public static final String COMMENT_URI_PATH = "/comment/";
-    public static final String COMMENT_ID_PREFIX = "comment:";
+    public static final String COMMENT_ID_PREFIX = "comment" + ID_SEPERATOR;
 
-    public static Thread createSiocThread(YoutubeV2Connector connector,
+    public static Thread createSiocThread(YoutubeConnector connector,
             PlaylistLinkEntry playlistEntry, Forum parent) {
         Model model = connector.getContext().getModel();
         URI uri = Builder.createURI(
@@ -88,7 +89,7 @@ public class YoutubeV2SiocConverter {
         return result;
     }
 
-    public static Post createSiocPost(YoutubeV2Connector connector, VideoEntry videoEntry,
+    public static Post createSiocPost(YoutubeConnector connector, VideoEntry videoEntry,
             Container container) {
         Model model = connector.getContext().getModel();
         URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
@@ -98,6 +99,7 @@ public class YoutubeV2SiocConverter {
 
         Post result = new Post(model, uri, true);
         result.setId(VIDEO_ID_PREFIX + mediaGroup.getVideoId());
+        result.setSeeAlso(Builder.createURI(videoEntry.getSelfLink().getHref()));
 
         for (Person author : videoEntry.getAuthors()) {
             String accountName = extractAuthorUsername(author);
@@ -159,7 +161,7 @@ public class YoutubeV2SiocConverter {
         return result;
     }
 
-    public static Post createSiocPost(YoutubeV2Connector connector, CommentEntry commentEntry,
+    public static Post createSiocPost(YoutubeConnector connector, CommentEntry commentEntry,
             Post parentPost) {
         Model model = connector.getContext().getModel();
         URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
@@ -172,6 +174,7 @@ public class YoutubeV2SiocConverter {
 
         Post result = new Post(model, uri, true);
         result.setId(COMMENT_ID_PREFIX + commentId);
+        result.setSeeAlso(Builder.createURI(commentEntry.getSelfLink().getHref()));
 
         for (Person author : commentEntry.getAuthors()) {
             String accountName = extractAuthorUsername(author);
@@ -250,7 +253,7 @@ public class YoutubeV2SiocConverter {
         return result;
     }
 
-    public static UserAccount createSiocUserAccount(YoutubeV2Connector connector, Person author) {
+    public static UserAccount createSiocUserAccount(YoutubeConnector connector, Person author) {
         Model model = connector.getContext().getModel();
         URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
         String accountName = extractAuthorUsername(author);

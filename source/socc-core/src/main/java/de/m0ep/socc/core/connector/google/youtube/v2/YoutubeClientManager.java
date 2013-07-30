@@ -36,16 +36,16 @@ import de.m0ep.sioc.service.auth.Username;
 import de.m0ep.socc.core.connector.AbstractServiceClientManager;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class YoutubeV2ClientManager extends AbstractServiceClientManager {
+public class YoutubeClientManager extends AbstractServiceClientManager {
 
     private APIKey apiKey;
 
-    public YoutubeV2ClientManager(Service service) {
+    public YoutubeClientManager(Service service) {
         super(service);
         checkService(service);
     }
 
-    public YoutubeV2ClientManager(Service service, UserAccount defaultUserAccount) throws Exception {
+    public YoutubeClientManager(Service service, UserAccount defaultUserAccount) throws Exception {
         super(service, defaultUserAccount);
     }
 
@@ -89,7 +89,7 @@ public class YoutubeV2ClientManager extends AbstractServiceClientManager {
         Preconditions.checkArgument(null != password,
                 "The defaultUserAccount authentication contains no required password");
 
-        return new YoutubeV2ClientWrapper(apiKey, username, password);
+        return new YoutubeClientWrapper(apiKey, username, password);
     }
 
     private void checkService(Service service) {

@@ -48,9 +48,9 @@ import de.m0ep.socc.core.connector.IConnector.IServiceStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
-public class YoutubeV2StructureReader implements IServiceStructureReader {
-    private YoutubeV2Connector connector;
-    private YoutubeV2ClientWrapper client;
+public class YoutubeStructureReader implements IServiceStructureReader {
+    private YoutubeConnector connector;
+    private YoutubeClientWrapper client;
 
     private Model model;
     private URI serviceEndpoint;
@@ -58,14 +58,14 @@ public class YoutubeV2StructureReader implements IServiceStructureReader {
     private Forum playlists;
     private Forum uploads;
 
-    public YoutubeV2StructureReader(YoutubeV2Connector youtubeV2Connector) {
+    public YoutubeStructureReader(YoutubeConnector youtubeV2Connector) {
         Preconditions.checkNotNull(youtubeV2Connector,
                 "Required parameter youtubeV2Connector must be specified.");
 
         this.connector = youtubeV2Connector;
         this.model = this.connector.getContext().getModel();
         this.serviceEndpoint = this.connector.getService().getServiceEndpoint().asURI();
-        this.client = (YoutubeV2ClientWrapper) this.connector.getServiceClientManager()
+        this.client = (YoutubeClientWrapper) this.connector.getServiceClientManager()
                 .getDefaultClient();
 
         URI playlistsUri = Builder.createURI(
@@ -73,12 +73,12 @@ public class YoutubeV2StructureReader implements IServiceStructureReader {
                         + "/"
                         + client.getUserProfile().getUsername()
                         + "/"
-                        + YoutubeV2Connector.PLAYLISTS_ID);
+                        + YoutubeConnector.PLAYLISTS_ID);
 
         if (!Forum.hasInstance(model, playlistsUri)) {
             this.playlists = new Forum(model, playlistsUri, true);
             this.playlists.setId(
-                    YoutubeV2Connector.PLAYLISTS_ID
+                    YoutubeConnector.PLAYLISTS_ID
                             + ":"
                             + client.getUserProfile().getUsername());
             this.playlists.setName(
@@ -100,12 +100,12 @@ public class YoutubeV2StructureReader implements IServiceStructureReader {
                         + "/"
                         + client.getUserProfile().getUsername()
                         + "/"
-                        + YoutubeV2Connector.UPLOADS_ID);
+                        + YoutubeConnector.UPLOADS_ID);
 
         if (!Forum.hasInstance(model, uploadsUri)) {
             this.uploads = new Forum(model, uploadsUri, true);
             this.uploads.setId(
-                    YoutubeV2Connector.UPLOADS_ID
+                    YoutubeConnector.UPLOADS_ID
                             + ":"
                             + client.getUserProfile().getUsername());
             this.uploads.setName(
@@ -147,9 +147,9 @@ public class YoutubeV2StructureReader implements IServiceStructureReader {
         Preconditions.checkArgument(!id.isEmpty(),
                 "Required parameter id may not be empty.");
 
-        if (YoutubeV2Connector.PLAYLISTS_ID.equals(id)) {
+        if (YoutubeConnector.PLAYLISTS_ID.equals(id)) {
             return playlists;
-        } else if (YoutubeV2Connector.UPLOADS_ID.equals(id)) {
+        } else if (YoutubeConnector.UPLOADS_ID.equals(id)) {
             return uploads;
         }
 
@@ -198,7 +198,7 @@ public class YoutubeV2StructureReader implements IServiceStructureReader {
 
             if (null != playlistFeed) {
                 for (PlaylistLinkEntry playlistEntry : playlistFeed.getEntries()) {
-                    results.add(YoutubeV2SiocConverter.createSiocThread(
+                    results.add(YoutubeSiocConverter.createSiocThread(
                             connector,
                             playlistEntry,
                             playlists));

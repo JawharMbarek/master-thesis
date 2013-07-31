@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 import org.ontoware.rdf2go.model.Model;
 import org.openrdf.rdf2go.RepositoryModel;
@@ -17,17 +18,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.m0ep.socc.workbench.controller.ConnectToDialogController;
+import de.m0ep.socc.workbench.controller.ServiceDialogController;
 import de.m0ep.socc.workbench.models.RDFStoreConnection;
+import de.m0ep.socc.workbench.models.ServiceGuiModel;
 
 public class SoccWorkbenchApp implements ActionListener {
     private static final Logger LOG = LoggerFactory.getLogger(SoccWorkbenchApp.class);
     private static final String CMD_CONNECT_TO = "cmd_connect_to";
+    private static final String CMD_ADD_SERVICE = "cmd_add_service";
 
     private JFrame frame;
     private Model model;
     private JMenuBar menuBar;
     private JMenu mnSocc;
     private JMenuItem mntmConnectTo;
+    private JMenuItem mntmAddService;
 
     /**
      * Launch the application.
@@ -96,6 +101,11 @@ public class SoccWorkbenchApp implements ActionListener {
         mntmConnectTo.addActionListener(this);
         mnSocc.add(mntmConnectTo);
 
+        mntmAddService = new JMenuItem("Add Service");
+        mntmAddService.setActionCommand(CMD_ADD_SERVICE);
+        mntmAddService.addActionListener(this);
+        mnSocc.add(mntmAddService);
+
     }
 
     public void shutdown() {
@@ -133,6 +143,20 @@ public class SoccWorkbenchApp implements ActionListener {
                 }
             });
             mcp.run();
+        } else if (CMD_ADD_SERVICE.equals(cmd)) {
+            final ServiceDialogController sdc = new ServiceDialogController();
+
+            sdc.setOkListener(new Runnable() {
+                @Override
+                public void run() {
+                    ServiceGuiModel model = sdc.getModel();
+
+                    JOptionPane.showMessageDialog(null, model.getEndpointUri() + " "
+                            + model.getDescription());
+                }
+            });
+
+            sdc.run();
         }
     }
 }

@@ -121,7 +121,7 @@ public class CanvasLmsPostWriter implements IPostWriter {
                 throw new AuthenticationException(e);
             }
 
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
 
         if (null != resultEntry) {
@@ -231,7 +231,7 @@ public class CanvasLmsPostWriter implements IPostWriter {
         } catch (AuthorizationException e) {
             throw new AuthenticationException(e);
         } catch (CanvasLmsException e) {
-            Throwables.propagate(e);
+            throw Throwables.propagate(e);
         }
 
         if (null != resultEntry) {

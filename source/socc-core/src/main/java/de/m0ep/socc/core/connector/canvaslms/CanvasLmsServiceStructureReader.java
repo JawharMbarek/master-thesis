@@ -14,6 +14,7 @@ import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 import de.m0ep.canvas.CanvasLmsClient;
@@ -92,7 +93,7 @@ public class CanvasLmsServiceStructureReader implements IConnector.IServiceStruc
                 throw new NotFoundException(e);
             }
 
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -114,7 +115,7 @@ public class CanvasLmsServiceStructureReader implements IConnector.IServiceStruc
                 throw new NotFoundException(e);
             }
 
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
 
         if (null != coursePages) {
@@ -172,7 +173,7 @@ public class CanvasLmsServiceStructureReader implements IConnector.IServiceStruc
                 throw new NotFoundException(e);
             }
 
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -209,7 +210,7 @@ public class CanvasLmsServiceStructureReader implements IConnector.IServiceStruc
                 throw new NotFoundException(e);
             }
 
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
 
         List<Thread> result = Lists.newArrayList();

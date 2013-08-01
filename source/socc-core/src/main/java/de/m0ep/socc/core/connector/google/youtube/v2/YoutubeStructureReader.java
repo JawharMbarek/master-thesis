@@ -200,7 +200,7 @@ public class YoutubeStructureReader implements IServiceStructureReader {
         } catch (ResourceNotFoundException e) {
             throw new NotFoundException("No thread found with id " + id);
         } catch (ServiceException e) {
-            Throwables.propagate(e);
+            throw Throwables.propagate(e);
         }
 
         if (null != playlistEntry) {
@@ -238,7 +238,7 @@ public class YoutubeStructureReader implements IServiceStructureReader {
             } catch (com.google.gdata.util.AuthenticationException e) {
                 throw new AuthenticationException(e);
             } catch (ServiceException e) {
-                Throwables.propagate(e);
+                throw Throwables.propagate(e);
             } finally {
                 nextFeed = null;
             }

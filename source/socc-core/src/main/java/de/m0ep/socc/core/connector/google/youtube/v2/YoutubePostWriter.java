@@ -158,7 +158,7 @@ public class YoutubePostWriter implements IPostWriter {
         } catch (com.google.gdata.util.AuthenticationException e) {
             throw new AuthenticationException(e);
         } catch (ServiceException e) {
-            Throwables.propagate(e);
+            throw Throwables.propagate(e);
         }
 
         if (null != resultEntry) {

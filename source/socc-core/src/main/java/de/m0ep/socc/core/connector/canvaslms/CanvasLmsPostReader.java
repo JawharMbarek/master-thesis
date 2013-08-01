@@ -10,6 +10,7 @@ import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Thread;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 import de.m0ep.canvas.CanvasLmsClient;
@@ -105,7 +106,7 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
                 throw new NotFoundException(e);
             }
 
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
 
         List<Post> result = Lists.newArrayList();
@@ -207,7 +208,7 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
                 throw new NotFoundException(e);
             }
 
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
 
         List<Post> result = Lists.newArrayList();

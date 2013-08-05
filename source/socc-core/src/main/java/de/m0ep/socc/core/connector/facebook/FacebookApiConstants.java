@@ -34,6 +34,7 @@ public final class FacebookApiConstants {
     static final String CONNECTION_FEED = "feed";
 
     // JSON Fields
+    static final String FIELD_ATTACHMENT = "attachment";
     static final String FIELD_CAPTION = "caption";
     static final String FIELD_COMMENTS = "comments";
     static final String FIELD_CONNECTIONS = "connections";
@@ -46,10 +47,13 @@ public final class FacebookApiConstants {
     static final String FIELD_MESSAGE = "message";
     static final String FIELD_METADATA = "metadata";
     static final String FIELD_NAME = "name";
+    static final String FIELD_PARENT = "parent";
     static final String FIELD_SOURCE = "source";
     static final String FIELD_STORY = "story";
+    static final String FIELD_TARGET = "target";
     static final String FIELD_TYPE = "type";
     static final String FIELD_UPDATED_TIME = "updated_time";
+    static final String FIELD_URL = "url";
 
     // Request parameters
     static final String PARAM_LIMIT = "limit";

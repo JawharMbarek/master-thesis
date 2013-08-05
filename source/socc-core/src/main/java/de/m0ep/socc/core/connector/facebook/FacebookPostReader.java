@@ -128,7 +128,8 @@ public class FacebookPostReader implements IPostReader {
         return null != post &&
                 post.toString().startsWith(endpointUri) &&
                 post.hasId() &&
-                post.getId().startsWith(FacebookSiocConverter.POST_ID_PREFIX);
+                (post.getId().startsWith(FacebookSiocConverter.POST_ID_PREFIX) ||
+                post.getId().startsWith(FacebookSiocConverter.COMMENT_ID_PREFIX));
     }
 
     @Override
@@ -142,20 +143,39 @@ public class FacebookPostReader implements IPostReader {
         String postId = parentPost.getId();
         String id = postId.substring(postId.lastIndexOf(FacebookSiocConverter.ID_SEPERATOR) + 1);
 
-        Parameter paramSince = Parameter.with(
-                FacebookApiConstants.PARAM_SINCE,
-                (null != since) ? (since.getTime() / 1000L) : (0));
-        Parameter paramLimit = Parameter.with(
-                FacebookApiConstants.PARAM_LIMIT,
-                (0 < limit || limit < 25) ? (limit) : (25));
+        List<Parameter> params = Lists.newArrayList();
+
+        if (null != since) {
+            params.add(
+                    Parameter.with(
+                            FacebookApiConstants.PARAM_SINCE,
+                            since.getTime() / 1000L));
+        }
+
+        if (0 < limit || limit < 25) {
+            params.add(
+                    Parameter.with(
+                            FacebookApiConstants.PARAM_LIMIT,
+                            limit));
+        }
+
+        params.add(
+                Parameter.with(
+                        FacebookApiConstants.PARAM_FIELDS,
+                        FacebookApiConstants.FIELD_ID + ","
+                                + FacebookApiConstants.FIELD_FROM + ","
+                                + FacebookApiConstants.FIELD_MESSAGE + ","
+                                + FacebookApiConstants.FIELD_CREATED_TIME + ","
+                                + FacebookApiConstants.FIELD_PARENT + ","
+                                + FacebookApiConstants.FIELD_ATTACHMENT
+                        ));
 
         Connection<JsonObject> feed = null;
         try {
             feed = clientWrapper.getClient().fetchConnection(
                     id + "/" + FacebookApiConstants.CONNECTION_COMMENTS,
                     JsonObject.class,
-                    paramSince,
-                    paramLimit);
+                    params.toArray(new Parameter[params.size()]));
         } catch (FacebookException e) {
             FacebookConnector.handleFacebookException(e);
         }

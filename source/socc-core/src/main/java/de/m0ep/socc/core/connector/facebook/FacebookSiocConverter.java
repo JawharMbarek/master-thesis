@@ -257,9 +257,8 @@ public class FacebookSiocConverter {
         }
 
         if (object.has(FacebookApiConstants.FIELD_FROM)) {
-            String creatorId = object.getJsonObject(
-                    FacebookApiConstants.FIELD_FROM)
-                    .getString(FacebookApiConstants.FIELD_ID);
+            JsonObject from = object.getJsonObject(FacebookApiConstants.FIELD_FROM);
+            String creatorId = from.getString(FacebookApiConstants.FIELD_ID);
 
             // check if we already know the author, else create a new
             // UserAccount + Person
@@ -279,9 +278,7 @@ public class FacebookSiocConverter {
         }
 
         String content = "";
-        if (object.has(FacebookApiConstants.FIELD_STORY)) {
-            content = object.getString(FacebookApiConstants.FIELD_STORY);
-        } else if (object.has(FacebookApiConstants.FIELD_MESSAGE)) {
+        if (object.has(FacebookApiConstants.FIELD_MESSAGE)) {
             content = object.getString(FacebookApiConstants.FIELD_MESSAGE);
         }
 
@@ -297,6 +294,23 @@ public class FacebookSiocConverter {
             Container container = parentPost.getContainer();
             result.setContainer(container);
             container.addContainerOf(result);
+        }
+
+        if (object.has(FacebookApiConstants.FIELD_ATTACHMENT)) {
+            JsonObject attachment = object.getJsonObject(FacebookApiConstants.FIELD_ATTACHMENT);
+
+            if (attachment.has(FacebookApiConstants.FIELD_TARGET)) {
+                JsonObject target = attachment.getJsonObject(FacebookApiConstants.FIELD_TARGET);
+                if (target.has(FacebookApiConstants.FIELD_URL)) {
+                    result.addAttachment(
+                            Builder.createURI(
+                                    target.getString(FacebookApiConstants.FIELD_URL)));
+                }
+            } else if (attachment.has(FacebookApiConstants.FIELD_URL)) {
+                result.addAttachment(
+                        Builder.createURI(
+                                attachment.getString(FacebookApiConstants.FIELD_URL)));
+            }
         }
 
         result.setReplyOf(parentPost);

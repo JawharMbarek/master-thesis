@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
+import org.rdfs.sioc.Thing;
 import org.rdfs.sioc.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,31 +97,26 @@ public class FacebookPostWriter implements IPostWriter {
                     creatorPerson);
         }
 
+        ClosableIterator<Thing> attachIter = post.getAllAttachments();
+        try {
+            while (attachIter.hasNext()) {
+                Thing thing = (Thing) attachIter.next();
+                content += "\n" + thing.toString();
+            }
+
+        } finally {
+            attachIter.close();
+        }
+
         // create Facebook Graph API publish parameter
         List<Parameter> params = new ArrayList<Parameter>();
         params.add(Parameter.with(FacebookApiConstants.FIELD_MESSAGE, content));
 
         if (post.hasAttachments()) {
-            params.add(Parameter.with(FacebookApiConstants.FIELD_LINK,
-                    post.getAttachment()));
-        }
-
-        if (post.hasTitle()) {
-            params.add(Parameter.with(FacebookApiConstants.FIELD_CAPTION,
-                    post.getTitle()));
-        } else if (post.hasSubject()) {
-            params.add(Parameter.with(FacebookApiConstants.FIELD_CAPTION,
-                    post.getSubject()));
-        }
-
-        if (post.hasDescriptions()) {
-            params.add(Parameter.with(FacebookApiConstants.FIELD_DESCRIPTION,
-                    post.getDescription()));
-        }
-
-        if (post.hasName()) {
-            params.add(Parameter.with(FacebookApiConstants.FIELD_NAME,
-                    post.getName()));
+            params.add(
+                    Parameter.with(
+                            FacebookApiConstants.FIELD_LINK,
+                            post.getAttachment().toString()));
         }
 
         FacebookType result = null;
@@ -127,12 +124,13 @@ public class FacebookPostWriter implements IPostWriter {
             result = client.getClient().publish(
                     containerFbId + "/" + FacebookApiConstants.CONNECTION_FEED,
                     FacebookType.class,
-                    params.toArray(new Parameter[0]));
+                    params.toArray(new Parameter[params.size()]));
         } catch (FacebookException e) {
             FacebookConnector.handleFacebookException(e);
         }
 
         if (null != result && null != result.getId()) {
+            LOG.debug("Successfully writen post {} to container {}.", post, container);
             JsonObject object = null;
             try {
                 object = client.getClient().fetchObject(
@@ -142,10 +140,11 @@ public class FacebookPostWriter implements IPostWriter {
                 FacebookConnector.handleFacebookException(e);
             }
 
-            Post addedPost = FacebookSiocConverter.createSiocPost(connector, object, container);
-            addedPost.setSibling(post);
-            post.addSibling(addedPost);
-            LOG.debug("Successfully writen post {} to container {}.", post, container);
+            if (null != object) {
+                Post addedPost = FacebookSiocConverter.createSiocPost(connector, object, container);
+                addedPost.setSibling(post);
+                post.addSibling(addedPost);
+            }
         }
     }
 
@@ -154,14 +153,89 @@ public class FacebookPostWriter implements IPostWriter {
         return null != post &&
                 post.toString().startsWith(serviceEndpoint) &&
                 post.hasId() &&
-                post.getId().startsWith(FacebookSiocConverter.POST_ID_PREFIX);
+                (post.getId().startsWith(FacebookSiocConverter.POST_ID_PREFIX) ||
+                post.getId().startsWith(FacebookSiocConverter.COMMENT_URI_PATH));
     }
 
     @Override
     public void writeReply(Post replyPost, Post parentPost) throws AuthenticationException,
             IOException {
-        // TODO Auto-generated method stub
+        Preconditions.checkNotNull(replyPost,
+                "Required parameter replyPost must be specified.");
+        Preconditions.checkNotNull(parentPost,
+                "Required parameter parentPost must be specified.");
+        Preconditions.checkArgument(canReplyTo(parentPost),
+                "Can't write a reply to this parenPost at this service.");
 
+        String parentSiocId = parentPost.getId();
+        String parentFbId = parentSiocId.substring(
+                parentSiocId.lastIndexOf(
+                        FacebookSiocConverter.ID_SEPERATOR) + 1);
+
+        UserAccount creatorAccount = replyPost.getCreator();
+        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(connector, creatorAccount);
+
+        FacebookClientWrapper client = null;
+        if (null != creatorPerson) {
+            UserAccount serviceAccount = PostWriterUtils.getServiceAccountOfPersonOrNull(
+                    connector,
+                    creatorPerson,
+                    connector.getService().getServiceEndpoint().asURI());
+            if (null != serviceAccount) {
+                client = (FacebookClientWrapper) PostWriterUtils.getClientOfServiceAccountOrNull(
+                        connector,
+                        serviceAccount);
+            }
+        }
+
+        String content = Strings.nullToEmpty(replyPost.getContent());
+        if (null == client) { // No client found, get default one an adapt
+                              // message content
+            client = (FacebookClientWrapper) connector.getServiceClientManager().getDefaultClient();
+            content = PostWriterUtils.createContentOfUnknownAccount(
+                    replyPost,
+                    creatorAccount,
+                    creatorPerson);
+        }
+
+        ClosableIterator<Thing> attachIter = replyPost.getAllAttachments();
+        try {
+            while (attachIter.hasNext()) {
+                Thing thing = (Thing) attachIter.next();
+                content += "\n" + thing.toString();
+            }
+
+        } finally {
+            attachIter.close();
+        }
+
+        FacebookType result = null;
+        try {
+            result = client.getClient().publish(
+                    parentFbId + "/" + FacebookApiConstants.CONNECTION_COMMENTS,
+                    FacebookType.class,
+                    Parameter.with(FacebookApiConstants.FIELD_MESSAGE, content));
+        } catch (FacebookException e) {
+            FacebookConnector.handleFacebookException(e);
+        }
+
+        if (null != result && null != result.getId()) {
+            LOG.debug("Successfully writen reply {} to post {}.", replyPost, parentPost);
+
+            JsonObject object = null;
+            try {
+                object = client.getClient().fetchObject(
+                        result.getId(),
+                        JsonObject.class);
+            } catch (FacebookException e) {
+                FacebookConnector.handleFacebookException(e);
+            }
+            if (null != object) {
+                Post addedPost = FacebookSiocConverter.createSiocComment(connector, object,
+                        parentPost);
+                addedPost.setSibling(replyPost);
+                replyPost.addSibling(addedPost);
+            }
+        }
     }
-
 }

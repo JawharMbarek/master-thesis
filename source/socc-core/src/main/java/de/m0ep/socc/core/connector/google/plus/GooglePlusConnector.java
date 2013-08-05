@@ -30,19 +30,19 @@ public class GooglePlusConnector extends AbstractConnector {
     }
 
     @Override
-    public IServiceStructureReader serviceStructureReader() {
+    public IStructureReader getStructureReader() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public IPostReader postReader() {
+    public IPostReader getPostReader() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public IPostWriter postWriter() {
+    public IPostWriter getPostWriter() {
         // TODO Auto-generated method stub
         return null;
     }

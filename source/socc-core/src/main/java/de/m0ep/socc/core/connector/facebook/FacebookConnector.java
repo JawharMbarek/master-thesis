@@ -46,7 +46,7 @@ public class FacebookConnector extends AbstractConnector {
 
     private IServiceClientManager clientManager;
 
-    private IServiceStructureReader serviceStructureReader;
+    private IStructureReader serviceStructureReader;
 
     private IPostReader postReader;
 
@@ -67,7 +67,7 @@ public class FacebookConnector extends AbstractConnector {
     }
 
     @Override
-    public IServiceStructureReader serviceStructureReader() {
+    public IStructureReader getStructureReader() {
         if (null == serviceStructureReader) {
             serviceStructureReader = new FacebookStructureReader(this);
         }
@@ -76,7 +76,7 @@ public class FacebookConnector extends AbstractConnector {
     }
 
     @Override
-    public IPostReader postReader() {
+    public IPostReader getPostReader() {
         if (null == postReader) {
             this.postReader = new FacebookPostReader(this);
         }
@@ -85,7 +85,7 @@ public class FacebookConnector extends AbstractConnector {
     }
 
     @Override
-    public IPostWriter postWriter() {
+    public IPostWriter getPostWriter() {
         if (null == postWriter) {
             postWriter = new FacebookPostWriter(this);
         }
@@ -103,12 +103,14 @@ public class FacebookConnector extends AbstractConnector {
             Throwables.propagateIfInstanceOf(e, AuthenticationException.class);
             throw Throwables.propagate(e);
         }
+
+        setInitialized(true);
     }
 
     @Override
     public void shutdown() {
-        // TODO Auto-generated method stub
-
+        clientManager.clear();
+        setInitialized(false);
     }
 
     public static void handleFacebookException(FacebookException e) throws AuthenticationException,

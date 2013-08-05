@@ -17,27 +17,15 @@ import de.m0ep.canvas.exceptions.AuthorizationException;
 import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.exceptions.NetworkException;
 import de.m0ep.canvas.model.Entry;
-import de.m0ep.socc.core.connector.IConnector;
+import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class CanvasLmsPostWriter implements IPostWriter {
-    private CanvasLmsConnector connector;
-    private String serviceEndpoint;
-
+public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements IPostWriter {
     public CanvasLmsPostWriter(final CanvasLmsConnector connector) {
-        this.connector = Preconditions.checkNotNull(
-                connector,
-                "Required parameter connector must be specified.");
-
-        this.serviceEndpoint = connector.getService().getServiceEndpoint().toString();
-    }
-
-    @Override
-    public IConnector getConnector() {
-        return connector;
+        super(connector);
     }
 
     @Override
@@ -45,10 +33,10 @@ public class CanvasLmsPostWriter implements IPostWriter {
         Preconditions.checkNotNull(container,
                 "Required parameter container must be specified.");
 
-        return container.toString().startsWith(serviceEndpoint) &&
+        return container.toString().startsWith(getServiceEndpoint().toString()) &&
                 RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS) &&
                 container.hasParent() &&
-                container.getParent().toString().startsWith(serviceEndpoint);
+                container.getParent().toString().startsWith(getServiceEndpoint().toString());
     }
 
     @Override
@@ -126,7 +114,7 @@ public class CanvasLmsPostWriter implements IPostWriter {
 
         if (null != resultEntry) {
             Post resultPost = CanvasLmsSiocConverter.createSiocPost(
-                    connector,
+                    (CanvasLmsConnector) connector,
                     resultEntry,
                     container);
 
@@ -139,7 +127,7 @@ public class CanvasLmsPostWriter implements IPostWriter {
     public boolean canReplyTo(Post post) {
         Preconditions.checkNotNull(post, "Required parameter post must be specified.");
 
-        return post.toString().startsWith(serviceEndpoint) &&
+        return post.toString().startsWith(getServiceEndpoint().toString()) &&
                 post.hasContainer() &&
                 canPostTo(post.getContainer());
     }
@@ -236,7 +224,7 @@ public class CanvasLmsPostWriter implements IPostWriter {
 
         if (null != resultEntry) {
             Post resultPost = CanvasLmsSiocConverter.createSiocPost(
-                    connector,
+                    (CanvasLmsConnector) connector,
                     resultEntry,
                     container);
 

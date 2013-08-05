@@ -42,28 +42,16 @@ import com.google.gdata.data.youtube.YouTubeNamespace;
 import com.google.gdata.util.ServiceException;
 import com.xmlns.foaf.Person;
 
-import de.m0ep.socc.core.connector.IConnector;
+import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 
-public class YoutubePostWriter implements IPostWriter {
+public class YoutubePostWriter extends AbstractConnectorIOComponent implements IPostWriter {
     private static final Logger LOG = LoggerFactory.getLogger(YoutubePostWriter.class);
 
-    private YoutubeConnector connector;
-    private String serviceEndpoint;
-
     public YoutubePostWriter(YoutubeConnector connector) {
-        Preconditions.checkNotNull(connector,
-                "Required parameter connector must be specified.");
-
-        this.connector = connector;
-        this.serviceEndpoint = connector.getService().getServiceEndpoint().toString();
-    }
-
-    @Override
-    public IConnector getConnector() {
-        return connector;
+        super(connector);
     }
 
     @Override
@@ -80,7 +68,7 @@ public class YoutubePostWriter implements IPostWriter {
 
     @Override
     public boolean canReplyTo(Post post) {
-        return post.toString().startsWith(serviceEndpoint) &&
+        return post.toString().startsWith(getServiceEndpoint().toString()) &&
                 post.hasId() &&
                 (post.getId().startsWith(YoutubeSiocConverter.VIDEO_ID_PREFIX) ||
                 post.getId().startsWith(YoutubeSiocConverter.COMMENT_ID_PREFIX));
@@ -149,7 +137,7 @@ public class YoutubePostWriter implements IPostWriter {
 
         CommentEntry resultEntry = null;
         try {
-            connector.waitForCooldown();
+            ((YoutubeConnector) connector).waitForCooldown();
             resultEntry = client.getService()
                     .insert(
                             new URL(commentsUri),
@@ -163,7 +151,7 @@ public class YoutubePostWriter implements IPostWriter {
 
         if (null != resultEntry) {
             Post resultPost = YoutubeSiocConverter.createSiocPost(
-                    connector,
+                    (YoutubeConnector) connector,
                     resultEntry,
                     parentPost);
 

@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.Builder;
 import org.rdfs.sioc.Container;
@@ -45,46 +44,39 @@ import com.google.gdata.util.ResourceNotFoundException;
 import com.google.gdata.util.ServiceException;
 import com.google.gdata.util.ServiceForbiddenException;
 
-import de.m0ep.socc.core.connector.IConnector;
-import de.m0ep.socc.core.connector.IConnector.IServiceStructureReader;
+import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class YoutubeStructureReader implements IServiceStructureReader {
-    private YoutubeConnector connector;
-    private YoutubeClientWrapper client;
-
-    private Model model;
-    private URI serviceEndpoint;
+public class YoutubeStructureReader extends AbstractConnectorIOComponent implements
+        IStructureReader {
 
     private Forum playlists;
     private Forum uploads;
 
-    public YoutubeStructureReader(YoutubeConnector youtubeV2Connector) {
-        Preconditions.checkNotNull(youtubeV2Connector,
-                "Required parameter youtubeV2Connector must be specified.");
-
-        this.connector = youtubeV2Connector;
-        this.model = this.connector.getContext().getModel();
-        this.serviceEndpoint = this.connector.getService().getServiceEndpoint().asURI();
-        this.client = (YoutubeClientWrapper) this.connector.getServiceClientManager()
-                .getDefaultClient();
+    public YoutubeStructureReader(YoutubeConnector connector) {
+        super(connector);
 
         URI playlistsUri = Builder.createURI(
                 serviceEndpoint
                         + YoutubeSiocConverter.PLAYLISTS_URI_PATH
-                        + client.getUserProfile().getUsername());
+                        + ((YoutubeClientWrapper) getDefaultClient()).getUserProfile()
+                                .getUsername());
 
-        if (!Forum.hasInstance(model, playlistsUri)) {
-            this.playlists = new Forum(model, playlistsUri, true);
+        if (!Forum.hasInstance(getModel(), playlistsUri)) {
+            this.playlists = new Forum(getModel(), playlistsUri, true);
             this.playlists.setId(
                     YoutubeSiocConverter.PLAYLISTS_ID_PREFIX
-                            + client.getUserProfile().getUsername());
+                            + ((YoutubeClientWrapper) getDefaultClient()).getUserProfile()
+                                    .getUsername());
             this.playlists.setName(
-                    (Strings.nullToEmpty(client.getUserProfile().getFirstName())
+                    (Strings.nullToEmpty(((YoutubeClientWrapper) getDefaultClient())
+                            .getUserProfile().getFirstName())
                             + " "
-                            + Strings.nullToEmpty(client.getUserProfile().getLastName())
+                            + Strings.nullToEmpty(((YoutubeClientWrapper) getDefaultClient())
+                                    .getUserProfile().getLastName())
                             + "'s Playlists").trim());
             this.playlists.setNumThreads(0);
 
@@ -92,23 +84,27 @@ public class YoutubeStructureReader implements IServiceStructureReader {
             this.playlists.setHost(site);
             site.addHostOf(this.playlists);
         } else {
-            this.playlists = Forum.getInstance(model, playlistsUri);
+            this.playlists = Forum.getInstance(getModel(), playlistsUri);
         }
 
         URI uploadsUri = Builder.createURI(
                 serviceEndpoint
                         + YoutubeSiocConverter.UPLOADS_URI_PATH
-                        + client.getUserProfile().getUsername());
+                        + ((YoutubeClientWrapper) getDefaultClient()).getUserProfile()
+                                .getUsername());
 
-        if (!Forum.hasInstance(model, uploadsUri)) {
-            this.uploads = new Forum(model, uploadsUri, true);
+        if (!Forum.hasInstance(getModel(), uploadsUri)) {
+            this.uploads = new Forum(getModel(), uploadsUri, true);
             this.uploads.setId(
                     YoutubeSiocConverter.UPLOADS_ID_PREFIX
-                            + client.getUserProfile().getUsername());
+                            + ((YoutubeClientWrapper) getDefaultClient()).getUserProfile()
+                                    .getUsername());
             this.uploads.setName(
-                    (Strings.nullToEmpty(client.getUserProfile().getFirstName())
+                    (Strings.nullToEmpty(((YoutubeClientWrapper) getDefaultClient())
+                            .getUserProfile().getFirstName())
                             + " "
-                            + Strings.nullToEmpty(client.getUserProfile().getLastName())
+                            + Strings.nullToEmpty(((YoutubeClientWrapper) getDefaultClient())
+                                    .getUserProfile().getLastName())
                             + "'s Uploads").trim());
             this.uploads.setNumItems(0);
 
@@ -116,21 +112,16 @@ public class YoutubeStructureReader implements IServiceStructureReader {
             this.uploads.setHost(site);
             site.addHostOf(this.uploads);
         } else {
-            this.uploads = Forum.getInstance(model, uploadsUri);
+            this.uploads = Forum.getInstance(getModel(), uploadsUri);
         }
     }
 
     @Override
-    public IConnector getConnector() {
-        return connector;
-    }
-
-    @Override
     public Site getSite() {
-        Site result = Site.getInstance(model, serviceEndpoint);
+        Site result = Site.getInstance(getModel(), serviceEndpoint);
 
         if (null == result) {
-            result = new Site(model, serviceEndpoint, true);
+            result = new Site(getModel(), serviceEndpoint, true);
             result.setName("Youtube");
         }
 
@@ -187,15 +178,15 @@ public class YoutubeStructureReader implements IServiceStructureReader {
 
         PlaylistLinkEntry playlistEntry = null;
         try {
-            connector.waitForCooldown();
-            playlistEntry = client.getService().getEntry(
+            ((YoutubeConnector) connector).waitForCooldown();
+            playlistEntry = ((YoutubeClientWrapper) getDefaultClient()).getService().getEntry(
                     new URL(playlistUri),
                     PlaylistLinkEntry.class);
         } catch (com.google.gdata.util.AuthenticationException e) {
             throw new AuthenticationException(e);
         } catch (ServiceForbiddenException e) {
             throw new AuthenticationException(
-                    client.getUserProfile().getUsername()
+                    ((YoutubeClientWrapper) getDefaultClient()).getUserProfile().getUsername()
                             + " has no access to the youtube service.", e);
         } catch (ResourceNotFoundException e) {
             throw new NotFoundException("No thread found with id " + id);
@@ -205,7 +196,7 @@ public class YoutubeStructureReader implements IServiceStructureReader {
 
         if (null != playlistEntry) {
             Thread result = YoutubeSiocConverter.createSiocThread(
-                    connector,
+                    (YoutubeConnector) connector,
                     playlistEntry,
                     Forum.getInstance(parent.getModel(), parent.getResource()));
 
@@ -224,15 +215,16 @@ public class YoutubeStructureReader implements IServiceStructureReader {
 
         String nextFeed = UriTemplate.fromTemplate(
                 "https://gdata.youtube.com/feeds/api/users/{userId}/playlists?v=2")
-                .set("userId", client.getUserProfile().getUsername())
+                .set("userId", ((YoutubeClientWrapper) getDefaultClient()).getUserProfile()
+                        .getUsername())
                 .expand(); // FIXME: magic strings
 
         List<Thread> results = Lists.newArrayList();
         do {
             PlaylistLinkFeed playlistFeed = null;
             try {
-                connector.waitForCooldown();
-                playlistFeed = client.getService().getFeed(
+                ((YoutubeConnector) connector).waitForCooldown();
+                playlistFeed = ((YoutubeClientWrapper) getDefaultClient()).getService().getFeed(
                         new URL(nextFeed),
                         PlaylistLinkFeed.class);
             } catch (com.google.gdata.util.AuthenticationException e) {
@@ -246,7 +238,7 @@ public class YoutubeStructureReader implements IServiceStructureReader {
             if (null != playlistFeed) {
                 for (PlaylistLinkEntry playlistEntry : playlistFeed.getEntries()) {
                     results.add(YoutubeSiocConverter.createSiocThread(
-                            connector,
+                            (YoutubeConnector) connector,
                             playlistEntry,
                             playlists));
                 }

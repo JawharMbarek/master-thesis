@@ -73,13 +73,13 @@ public interface IConnector {
     public IServiceClientManager getServiceClientManager();
 
     /**
-     * Returns an {@link IServiceStructureReader} to get information about the
+     * Returns an {@link IStructureReader} to get information about the
      * structure of the used service.
      * 
      * @throws IllegalStateException Thrown if the connector was not
      *             initialized.
      */
-    public IServiceStructureReader serviceStructureReader();
+    public IStructureReader getStructureReader();
 
     /**
      * Returns an {@link IPostReader} to read {@link Post}s from the connectors
@@ -88,7 +88,7 @@ public interface IConnector {
      * @throws IllegalStateException Thrown if the connector was not
      *             initialized.
      */
-    public IPostReader postReader();
+    public IPostReader getPostReader();
 
     /**
      * Returns an {@link IPostWriter to write {@link Post}s to the connectors
@@ -97,7 +97,7 @@ public interface IConnector {
      * @throws IllegalStateException Thrown if the connector was not
      *             initialized.
      */
-    public IPostWriter postWriter();
+    public IPostWriter getPostWriter();
 
     /**
      * Initializes the connector. Checking the defaultUser and the service for
@@ -131,11 +131,11 @@ public interface IConnector {
      * 
      * @author Florian Müller
      */
-    public static interface IServiceStructureReader {
+    public static interface IStructureReader {
 
         /**
          * Returns the {@link IConnector} instance to wich this
-         * {@link IServiceStructureReader} belongs.
+         * {@link IStructureReader} belongs.
          */
         public IConnector getConnector();
 
@@ -181,18 +181,18 @@ public interface IConnector {
          * @throws NotFoundException Thrown if there is no {@link Thread} with
          *             this <code>id</code> .
          */
-        public Thread getThread(String id, Container parent) throws NotFoundException,
+        public Thread getThread(String id, Container container) throws NotFoundException,
                 AuthenticationException, IOException;
 
         /**
          * Returns a {@link List} with all {@link Thread}s inside the
          * <code>parent</code> {@link Container}.
          * 
-         * @param parent
+         * @param container
          * @throws AuthenticationException
          * @throws IOException
          */
-        public List<Thread> listThreads(Container parent) throws AuthenticationException,
+        public List<Thread> listThreads(Container container) throws AuthenticationException,
                 IOException;
     }
 
@@ -225,7 +225,7 @@ public interface IConnector {
          * of new Posts by the <code>limit</code> parameter. Use
          * <code>limit = -1</code> to return all results.
          * 
-         * @param lastPostDate
+         * @param since
          * @param limit Limit results to this number of entries. Use -1 to
          *            disable limitation.
          * @param container The container to poll.
@@ -237,7 +237,7 @@ public interface IConnector {
          * @throws IllegalArgumentException Thrown if <code>container</code>
          *             doesn't belong to the connector.
          */
-        public List<Post> readNewPosts(Date lastPostDate, long limit, Container container)
+        public List<Post> readNewPosts(Date since, long limit, Container container)
                 throws AuthenticationException, IOException;
 
         /**
@@ -267,7 +267,7 @@ public interface IConnector {
          * @throws IllegalArgumentException Thrown if <code>parent</code> 
          *             doesn't belong to the connector.
          */
-        public List<Post> readNewReplies(Date lastReplyDate, long limit, Post parentPost)
+        public List<Post> readNewReplies(Date since, long limit, Post parentPost)
                 throws AuthenticationException, IOException;
     }
 
@@ -317,11 +317,11 @@ public interface IConnector {
          * Returns true if it's possible to reply to the provided
          * <code>parent</code> {@link Post}, false otherwise.
          * 
-         * @param parentPost
+         * @param post
          * @throws NullPointerException Thrown if <code>parent</code> is
          *             <code>null</code>.
          */
-        public boolean canReplyTo(Post parentPost);
+        public boolean canReplyTo(Post post);
 
         /**
          * Writes a <code>reply</code> to a <code>parent</code> post.

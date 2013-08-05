@@ -19,28 +19,16 @@ import de.m0ep.canvas.exceptions.AuthorizationException;
 import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.exceptions.NetworkException;
 import de.m0ep.canvas.model.Entry;
-import de.m0ep.socc.core.connector.IConnector;
+import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class CanvasLmsPostReader implements IConnector.IPostReader {
-    private CanvasLmsConnector connector;
-    private CanvasLmsClient client;
-    private String serviceEndpoint;
+public class CanvasLmsPostReader extends AbstractConnectorIOComponent implements IPostReader {
 
     public CanvasLmsPostReader(final CanvasLmsConnector connector) {
-        this.connector = Preconditions.checkNotNull(
-                connector,
-                "Required parameter connector must be specified.");
-
-        this.client = (CanvasLmsClient) connector.getServiceClientManager().getDefaultClient();
-        this.serviceEndpoint = connector.getService().getServiceEndpoint().toString();
-    }
-
-    @Override
-    public IConnector getConnector() {
-        return connector;
+        super(connector);
     }
 
     @Override
@@ -48,9 +36,9 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
         Preconditions.checkNotNull(container, "Required parameter container must be specified.");
 
         return RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS) &&
-                container.toString().startsWith(serviceEndpoint) &&
+                container.toString().startsWith(getServiceEndpoint().toString()) &&
                 container.hasParent() &&
-                container.getParent().toString().startsWith(serviceEndpoint);
+                container.getParent().toString().startsWith(getServiceEndpoint().toString());
     }
 
     @Override
@@ -92,7 +80,7 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
 
         Pagination<Entry> entryPages = null;
         try {
-            entryPages = client.courses()
+            entryPages = ((CanvasLmsClient) getDefaultClient()).courses()
                     .discussionTopics(courseId)
                     .entries(topicId)
                     .list()
@@ -117,7 +105,9 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
                         return result;
                     }
 
-                    result.add(CanvasLmsSiocConverter.createSiocPost(connector, entry,
+                    result.add(CanvasLmsSiocConverter.createSiocPost(
+                            (CanvasLmsConnector) connector,
+                            entry,
                             container));
 
                     if (0 < limit && limit == result.size()) {
@@ -134,7 +124,7 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
     public boolean containsReplies(Post post) {
         Preconditions.checkNotNull(post, "Required parameter parent must be specified.");
 
-        return post.toString().startsWith(serviceEndpoint) &&
+        return post.toString().startsWith(getServiceEndpoint().toString()) &&
                 post.hasContainer() &&
                 containsPosts(post.getContainer());
     }
@@ -194,7 +184,7 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
 
         Pagination<Entry> replyPages = null;
         try {
-            replyPages = client.courses()
+            replyPages = ((CanvasLmsClient) getDefaultClient()).courses()
                     .discussionTopics(courseId)
                     .entries(topicId)
                     .listReplies(entryId)
@@ -219,7 +209,9 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
                         return result;
                     }
 
-                    result.add(CanvasLmsSiocConverter.createSiocPost(connector, entry,
+                    result.add(CanvasLmsSiocConverter.createSiocPost(
+                            (CanvasLmsConnector) connector,
+                            entry,
                             container));
 
                     if (0 < limit && limit == result.size()) {

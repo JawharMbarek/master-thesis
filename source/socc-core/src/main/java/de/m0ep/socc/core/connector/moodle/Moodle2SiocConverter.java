@@ -46,7 +46,7 @@ public class Moodle2SiocConverter {
         result.setName("Course (id=" + forumRecord.getCourse() + ")/" + forumRecord.getName());
         result.setDescription(forumRecord.getIntro());
 
-        Site site = connector.serviceStructureReader().getSite();
+        Site site = connector.getStructureReader().getSite();
         result.setHost(site);
         site.addHostOf(result);
 

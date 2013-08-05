@@ -16,38 +16,27 @@ import com.xmlns.foaf.Person;
 
 import de.m0ep.moodlews.soap.ForumPostDatum;
 import de.m0ep.moodlews.soap.ForumPostRecord;
-import de.m0ep.socc.core.connector.IConnector;
+import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class Moodle2PostWriter implements IPostWriter {
-
-    private Moodle2Connector connector;
-    private String serviceEndpoint;
+public class Moodle2PostWriter extends AbstractConnectorIOComponent implements IPostWriter {
 
     private Map<Integer, Integer> firstPostIdMap = new HashMap<Integer, Integer>();
 
-    public Moodle2PostWriter(Moodle2Connector moodle2Connector) {
-        this.connector = Preconditions.checkNotNull(moodle2Connector,
-                "Required parameter moodle2Connector must be specified.");
-
-        this.serviceEndpoint = connector.getService().getServiceEndpoint().toString();
-    }
-
-    @Override
-    public IConnector getConnector() {
-        return connector;
+    public Moodle2PostWriter(Moodle2Connector connector) {
+        super(connector);
     }
 
     @Override
     public boolean canPostTo(Container container) {
         return null != container &&
                 RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS) &&
-                container.toString().startsWith(serviceEndpoint) &&
+                container.toString().startsWith(getServiceEndpoint().toString()) &&
                 container.hasParent() &&
-                container.getParent().toString().startsWith(serviceEndpoint);
+                container.getParent().toString().startsWith(getServiceEndpoint().toString());
     }
 
     @Override
@@ -156,7 +145,7 @@ public class Moodle2PostWriter implements IPostWriter {
                 int numChildren = postRecordArray[0].getChildren().length;
                 ForumPostRecord postRecord = postRecordArray[0].getChildren()[numChildren - 1];
                 Post addedPost = Moodle2SiocConverter.createSiocPost(
-                        connector,
+                        (Moodle2Connector) connector,
                         postRecord,
                         container);
 
@@ -167,8 +156,10 @@ public class Moodle2PostWriter implements IPostWriter {
     }
 
     @Override
-    public boolean canReplyTo(Post parentPost) {
-        return null != parentPost && parentPost.toString().startsWith(serviceEndpoint);
+    public boolean canReplyTo(Post post) {
+        return null != post &&
+                post.toString().startsWith(getServiceEndpoint().toString()) &&
+                post.hasId();
     }
 
     @Override
@@ -178,8 +169,6 @@ public class Moodle2PostWriter implements IPostWriter {
                 "Required parameter replyPost must be specified.");
         Preconditions.checkNotNull(parentPost,
                 "Required parameter parentPost must be specified.");
-        Preconditions.checkArgument(parentPost.hasId(),
-                "The parentPost has no id.");
         Preconditions.checkArgument(canReplyTo(parentPost),
                 "Can't write replies to the parentPost with this connector.");
 
@@ -244,7 +233,7 @@ public class Moodle2PostWriter implements IPostWriter {
                 int numChildren = parentPostRecord.getChildren().length;
                 ForumPostRecord postRecord = parentPostRecord.getChildren()[numChildren - 1];
                 Post addedPost = Moodle2SiocConverter.createSiocPost(
-                        connector,
+                        (Moodle2Connector) connector,
                         postRecord,
                         parentPost.getContainer());
 

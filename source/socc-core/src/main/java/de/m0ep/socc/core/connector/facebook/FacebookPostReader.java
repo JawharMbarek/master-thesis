@@ -37,35 +37,21 @@ import com.restfb.Parameter;
 import com.restfb.exception.FacebookException;
 import com.restfb.json.JsonObject;
 
-import de.m0ep.socc.core.connector.IConnector;
+import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class FacebookPostReader implements IPostReader {
-
-    private FacebookConnector connector;
-    private String endpointUri;
-    private FacebookClientWrapper clientWrapper;
+public class FacebookPostReader extends AbstractConnectorIOComponent implements IPostReader {
 
     public FacebookPostReader(FacebookConnector connector) {
-        this.connector = Preconditions.checkNotNull(connector,
-                "Required parameter connector must be specified.");
-
-        this.endpointUri = connector.getService().getServiceEndpoint().toString();
-        this.clientWrapper = (FacebookClientWrapper) connector.getServiceClientManager()
-                .getDefaultClient();
-    }
-
-    @Override
-    public IConnector getConnector() {
-        return connector;
+        super(connector);
     }
 
     @Override
     public boolean containsPosts(Container container) {
         return null != container &&
-                container.toString().startsWith(endpointUri) &&
+                container.toString().startsWith(getServiceEndpoint().toString()) &&
                 RdfUtils.isType(container.getModel(), container.getResource(), Forum.RDFS_CLASS) &&
                 container.hasId() &&
                 (container.getId().startsWith(FacebookSiocConverter.WALL_ID_PREFIX) ||
@@ -97,7 +83,7 @@ public class FacebookPostReader implements IPostReader {
 
         Connection<JsonObject> feed = null;
         try {
-            feed = clientWrapper.getClient().fetchConnection(
+            feed = ((FacebookClientWrapper) getDefaultClient()).getClient().fetchConnection(
                     id + "/" + FacebookApiConstants.CONNECTION_FEED,
                     JsonObject.class,
                     paramSince,
@@ -112,7 +98,7 @@ public class FacebookPostReader implements IPostReader {
                 for (JsonObject object : objectList) {
                     if (0 > limit || limit > results.size()) {
                         results.add(FacebookSiocConverter.createSiocPost(
-                                connector,
+                                (FacebookConnector) connector,
                                 object,
                                 container));
                     }
@@ -126,7 +112,7 @@ public class FacebookPostReader implements IPostReader {
     @Override
     public boolean containsReplies(Post post) {
         return null != post &&
-                post.toString().startsWith(endpointUri) &&
+                post.toString().startsWith(getServiceEndpoint().toString()) &&
                 post.hasId() &&
                 (post.getId().startsWith(FacebookSiocConverter.POST_ID_PREFIX) ||
                 post.getId().startsWith(FacebookSiocConverter.COMMENT_ID_PREFIX));
@@ -172,7 +158,7 @@ public class FacebookPostReader implements IPostReader {
 
         Connection<JsonObject> feed = null;
         try {
-            feed = clientWrapper.getClient().fetchConnection(
+            feed = ((FacebookClientWrapper) getDefaultClient()).getClient().fetchConnection(
                     id + "/" + FacebookApiConstants.CONNECTION_COMMENTS,
                     JsonObject.class,
                     params.toArray(new Parameter[params.size()]));
@@ -186,7 +172,7 @@ public class FacebookPostReader implements IPostReader {
                 for (JsonObject object : objectList) {
                     if (0 > limit || limit > results.size()) {
                         results.add(FacebookSiocConverter.createSiocComment(
-                                connector,
+                                (FacebookConnector) connector,
                                 object,
                                 parentPost));
                     }

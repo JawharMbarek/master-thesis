@@ -39,7 +39,7 @@ public final class CanvasLmsSiocConverter {
             result.setNumThreads(0);
             result.setName(course.getName());
 
-            Site site = connector.serviceStructureReader().getSite();
+            Site site = connector.getStructureReader().getSite();
             result.setHost(site);
             site.addHostOf(result);
         }

@@ -120,15 +120,15 @@ public class YoutubeV2ConnectorTestApp {
         IConnector connector = new YoutubeConnector(context, config);
         connector.initialize();
 
-        List<Forum> forums = connector.serviceStructureReader().listForums();
+        List<Forum> forums = connector.getStructureReader().listForums();
         for (Forum forum : forums) {
             System.err.println(forum + " " + forum.getId());
             if (forum.getId().startsWith(YoutubeSiocConverter.PLAYLISTS_ID_PREFIX)) {
-                List<Post> posts = connector.postReader().readNewPosts(null, -1, forum);
+                List<Post> posts = connector.getPostReader().readNewPosts(null, -1, forum);
                 for (Post post : posts) {
-                    List<Post> replies = connector.postReader().readNewReplies(null, -1, post);
+                    List<Post> replies = connector.getPostReader().readNewReplies(null, -1, post);
                     for (Post reply : replies) {
-                        connector.postWriter().writeReply(replyPost, reply);
+                        connector.getPostWriter().writeReply(replyPost, reply);
                         System.err.println(reply.getContent() + " " + reply);
                     }
                 }

@@ -22,35 +22,24 @@ import com.restfb.json.JsonObject;
 import com.restfb.types.FacebookType;
 import com.xmlns.foaf.Person;
 
-import de.m0ep.socc.core.connector.IConnector;
+import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class FacebookPostWriter implements IPostWriter {
+public class FacebookPostWriter extends AbstractConnectorIOComponent implements IPostWriter {
     private static final Logger LOG = LoggerFactory.getLogger(FacebookPostWriter.class);
 
-    private FacebookConnector connector;
-    private String serviceEndpoint;
-
     public FacebookPostWriter(FacebookConnector connector) {
-        this.connector = Preconditions.checkNotNull(connector,
-                "Required parameter connector must be specified.");
-
-        this.serviceEndpoint = this.connector.getService().getServiceEndpoint().toString();
-    }
-
-    @Override
-    public IConnector getConnector() {
-        return connector;
+        super(connector);
     }
 
     @Override
     public boolean canPostTo(Container container) {
         return null != container &&
                 RdfUtils.isType(container.getModel(), container.getResource(), Forum.RDFS_CLASS) &&
-                container.toString().startsWith(serviceEndpoint) &&
+                container.toString().startsWith(getServiceEndpoint().toString()) &&
                 container.hasId() &&
                 (container.getId().startsWith(FacebookSiocConverter.WALL_ID_PREFIX) ||
                 container.getId().startsWith(FacebookSiocConverter.GROUP_ID_PREFIX));
@@ -141,7 +130,10 @@ public class FacebookPostWriter implements IPostWriter {
             }
 
             if (null != object) {
-                Post addedPost = FacebookSiocConverter.createSiocPost(connector, object, container);
+                Post addedPost = FacebookSiocConverter.createSiocPost(
+                        (FacebookConnector) connector,
+                        object,
+                        container);
                 addedPost.setSibling(post);
                 post.addSibling(addedPost);
             }
@@ -151,7 +143,7 @@ public class FacebookPostWriter implements IPostWriter {
     @Override
     public boolean canReplyTo(Post post) {
         return null != post &&
-                post.toString().startsWith(serviceEndpoint) &&
+                post.toString().startsWith(getServiceEndpoint().toString()) &&
                 post.hasId() &&
                 (post.getId().startsWith(FacebookSiocConverter.POST_ID_PREFIX) ||
                 post.getId().startsWith(FacebookSiocConverter.COMMENT_URI_PATH));
@@ -231,7 +223,9 @@ public class FacebookPostWriter implements IPostWriter {
                 FacebookConnector.handleFacebookException(e);
             }
             if (null != object) {
-                Post addedPost = FacebookSiocConverter.createSiocComment(connector, object,
+                Post addedPost = FacebookSiocConverter.createSiocComment(
+                        (FacebookConnector) connector,
+                        object,
                         parentPost);
                 addedPost.setSibling(replyPost);
                 replyPost.addSibling(addedPost);

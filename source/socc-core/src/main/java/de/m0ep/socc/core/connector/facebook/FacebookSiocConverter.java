@@ -72,7 +72,7 @@ public class FacebookSiocConverter {
         result.setId(FacebookSiocConverter.WALL_ID_PREFIX + user.getId());
         result.setName(user.getName() + "'s Wall");
 
-        Site site = connector.serviceStructureReader().getSite();
+        Site site = connector.getStructureReader().getSite();
         result.setHost(site);
         site.setHostOf(result);
         result.setNumItems(0);
@@ -93,7 +93,7 @@ public class FacebookSiocConverter {
             result = new Forum(model, uri, true);
             result.setId(GROUP_ID_PREFIX + group.getId());
 
-            Site site = connector.serviceStructureReader().getSite();
+            Site site = connector.getStructureReader().getSite();
             result.setHost(site);
             site.setHostOf(result);
         }
@@ -104,7 +104,7 @@ public class FacebookSiocConverter {
             result.setDescription(group.getDescription());
         }
 
-        Site site = connector.serviceStructureReader().getSite();
+        Site site = connector.getStructureReader().getSite();
         result.setHost(site);
         site.addHostOf(result);
         result.setNumItems(0);

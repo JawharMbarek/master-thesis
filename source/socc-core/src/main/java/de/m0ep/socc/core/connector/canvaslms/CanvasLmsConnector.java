@@ -22,7 +22,7 @@ public class CanvasLmsConnector extends AbstractConnector {
 
     private IServiceClientManager clientManager;
 
-    private IServiceStructureReader serviceStructureReader;
+    private IStructureReader serviceStructureReader;
     private IPostReader postReader;
     private IPostWriter postWriter;
 
@@ -41,7 +41,7 @@ public class CanvasLmsConnector extends AbstractConnector {
     }
 
     @Override
-    public IServiceStructureReader serviceStructureReader() {
+    public IStructureReader getStructureReader() {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
 
         if (null == serviceStructureReader) {
@@ -52,7 +52,7 @@ public class CanvasLmsConnector extends AbstractConnector {
     }
 
     @Override
-    public IPostReader postReader() {
+    public IPostReader getPostReader() {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
 
         if (null == postReader) {
@@ -63,7 +63,7 @@ public class CanvasLmsConnector extends AbstractConnector {
     }
 
     @Override
-    public IPostWriter postWriter() {
+    public IPostWriter getPostWriter() {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
 
         if (null == postWriter) {

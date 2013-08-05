@@ -120,7 +120,7 @@ public class FacebookConnectorTestApp {
         IConnector connector = new FacebookConnector(context, config);
         connector.initialize();
 
-        List<Forum> forums = connector.serviceStructureReader().listForums();
+        List<Forum> forums = connector.getStructureReader().listForums();
         for (Forum forum : forums) {
             System.out.println(forum);
         }

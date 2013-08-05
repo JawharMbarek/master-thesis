@@ -46,7 +46,7 @@ public class YoutubeConnector extends AbstractConnector {
     private URI serviceEndpoint = Builder.createURI("http://www.youtube.com");
 
     private IServiceClientManager serviceClientManager;
-    private IServiceStructureReader serviceStructureReader;
+    private IStructureReader serviceStructureReader;
     private IPostReader postReader;
     private IPostWriter postWriter;
 
@@ -67,7 +67,7 @@ public class YoutubeConnector extends AbstractConnector {
     }
 
     @Override
-    public IServiceStructureReader serviceStructureReader() {
+    public IStructureReader getStructureReader() {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
 
         if (null == serviceStructureReader) {
@@ -78,7 +78,7 @@ public class YoutubeConnector extends AbstractConnector {
     }
 
     @Override
-    public IPostReader postReader() {
+    public IPostReader getPostReader() {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
         if (null == postReader) {
             postReader = new YoutubePostReader(this);
@@ -88,7 +88,7 @@ public class YoutubeConnector extends AbstractConnector {
     }
 
     @Override
-    public IPostWriter postWriter() {
+    public IPostWriter getPostWriter() {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
 
         if (null == postWriter) {
@@ -118,6 +118,7 @@ public class YoutubeConnector extends AbstractConnector {
     @Override
     public void shutdown() {
         serviceClientManager.clear();
+        setInitialized(false);
     }
 
     public synchronized void waitForCooldown() {

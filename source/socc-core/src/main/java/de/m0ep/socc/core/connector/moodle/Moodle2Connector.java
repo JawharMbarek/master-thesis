@@ -23,7 +23,7 @@ public class Moodle2Connector extends AbstractConnector {
     private URI serviceEndpointUri;
     private IServiceClientManager serviceClientManager;
 
-    private IServiceStructureReader serviceStructureReader;
+    private IStructureReader serviceStructureReader;
     private IPostReader postReader;
     private IPostWriter postWriter;
 
@@ -42,7 +42,7 @@ public class Moodle2Connector extends AbstractConnector {
     }
 
     @Override
-    public IServiceStructureReader serviceStructureReader() {
+    public IStructureReader getStructureReader() {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
 
         if (null == serviceStructureReader) {
@@ -53,7 +53,7 @@ public class Moodle2Connector extends AbstractConnector {
     }
 
     @Override
-    public IPostReader postReader() {
+    public IPostReader getPostReader() {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
 
         if (null == postReader) {
@@ -64,7 +64,7 @@ public class Moodle2Connector extends AbstractConnector {
     }
 
     @Override
-    public IPostWriter postWriter() {
+    public IPostWriter getPostWriter() {
         Preconditions.checkState(isInitialized(), "Connector was not initialized");
 
         if (null == postWriter) {
@@ -103,10 +103,12 @@ public class Moodle2Connector extends AbstractConnector {
         }
         serviceClientManager.clear();
 
-        Moodle2ClientWrapper client = (Moodle2ClientWrapper) serviceClientManager.getDefaultClient();
+        Moodle2ClientWrapper client = (Moodle2ClientWrapper) serviceClientManager
+                .getDefaultClient();
         client.getBindingStub().logout(
                 client.getAuthClient(),
                 client.getSessionKey());
+
         setInitialized(false);
     }
 }

@@ -25,7 +25,6 @@ package de.m0ep.socc.core.connector.facebook;
 import java.io.IOException;
 import java.util.List;
 
-import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.Builder;
 import org.rdfs.sioc.Container;
@@ -41,26 +40,17 @@ import com.restfb.exception.FacebookException;
 import com.restfb.types.FacebookType;
 import com.restfb.types.Group;
 
+import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector;
-import de.m0ep.socc.core.connector.IConnector.IServiceStructureReader;
+import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
-public class FacebookStructureReader implements IServiceStructureReader {
-
-    private FacebookConnector connector;
-    private Model model;
-    private FacebookClientWrapper clientWrapper;
-    private URI serviceEndpoint;
+public class FacebookStructureReader extends AbstractConnectorIOComponent implements
+        IStructureReader {
 
     public FacebookStructureReader(FacebookConnector connector) {
-        this.connector = Preconditions.checkNotNull(connector,
-                "Required parameter connector must be specified.");
-
-        this.serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
-        this.model = connector.getContext().getModel();
-        this.clientWrapper = (FacebookClientWrapper) connector.getServiceClientManager()
-                .getDefaultClient();
+        super(connector);
     }
 
     @Override
@@ -70,13 +60,13 @@ public class FacebookStructureReader implements IServiceStructureReader {
 
     @Override
     public Site getSite() {
-        if (!Site.hasInstance(model, serviceEndpoint)) {
-            Site result = new Site(model, serviceEndpoint, true);
+        if (!Site.hasInstance(getModel(), serviceEndpoint)) {
+            Site result = new Site(getModel(), serviceEndpoint, true);
             result.setName("Facebook");
             return result;
         }
 
-        return Site.getInstance(model, serviceEndpoint);
+        return Site.getInstance(getModel(), serviceEndpoint);
     }
 
     @Override
@@ -96,20 +86,21 @@ public class FacebookStructureReader implements IServiceStructureReader {
                                 + FacebookSiocConverter.WALL_URI_PATH
                                 + fbId);
 
-                if (Forum.hasInstance(model, uri)) {
-                    return Forum.getInstance(model, uri);
+                if (Forum.hasInstance(getModel(), uri)) {
+                    return Forum.getInstance(getModel(), uri);
                 } else {
                     try {
                         // check if this is a valid user id.
                         // there should be an exception if not.
-                        clientWrapper.getClient().fetchObject("/" + fbId, FacebookType.class);
+                        ((FacebookClientWrapper) getDefaultClient()).getClient().fetchObject(
+                                "/" + fbId, FacebookType.class);
                     } catch (FacebookException e) {
                         FacebookConnector.handleFacebookException(e);
                     }
 
                     return FacebookSiocConverter.createSiocForum(
-                            connector,
-                            clientWrapper.getUser());
+                            (FacebookConnector) connector,
+                            ((FacebookClientWrapper) getDefaultClient()).getUser());
                 }
             } else if (id.startsWith(FacebookSiocConverter.GROUP_ID_PREFIX)) {
                 URI uri = Builder.createURI(
@@ -117,25 +108,28 @@ public class FacebookStructureReader implements IServiceStructureReader {
                                 + FacebookSiocConverter.GROUP_URI_PATH
                                 + fbId);
 
-                if (Forum.hasInstance(model, uri)) {
-                    return Forum.getInstance(model, uri);
+                if (Forum.hasInstance(getModel(), uri)) {
+                    return Forum.getInstance(getModel(), uri);
                 } else {
                     Group group = null;
 
                     try {
-                        group = clientWrapper.getClient().fetchObject(
-                                fbId,
-                                Group.class,
-                                Parameter.with(FacebookApiConstants.PARAM_FIELDS,
-                                        FacebookApiConstants.FIELD_ID + ","
-                                                + FacebookApiConstants.FIELD_NAME + ","
-                                                + FacebookApiConstants.FIELD_DESCRIPTION));
+                        group = ((FacebookClientWrapper) getDefaultClient()).getClient()
+                                .fetchObject(
+                                        fbId,
+                                        Group.class,
+                                        Parameter.with(FacebookApiConstants.PARAM_FIELDS,
+                                                FacebookApiConstants.FIELD_ID + ","
+                                                        + FacebookApiConstants.FIELD_NAME + ","
+                                                        + FacebookApiConstants.FIELD_DESCRIPTION));
 
                     } catch (FacebookException e) {
                         FacebookConnector.handleFacebookException(e);
                     }
 
-                    return FacebookSiocConverter.createSiocForum(connector, group);
+                    return FacebookSiocConverter.createSiocForum(
+                            (FacebookConnector) connector,
+                            group);
                 }
             }
         }
@@ -149,24 +143,27 @@ public class FacebookStructureReader implements IServiceStructureReader {
 
         // add the default users wall
         results.add(getForum(FacebookSiocConverter.WALL_ID_PREFIX
-                + clientWrapper.getUser().getId()));
+                + ((FacebookClientWrapper) getDefaultClient()).getUser().getId()));
 
         Connection<Group> groupsConnections = null;
         try {
-            groupsConnections = clientWrapper.getClient().fetchConnection(
-                    "me/groups",
-                    Group.class,
-                    Parameter.with(FacebookApiConstants.PARAM_FIELDS,
-                            FacebookApiConstants.FIELD_ID + ","
-                                    + FacebookApiConstants.FIELD_NAME + ","
-                                    + FacebookApiConstants.FIELD_DESCRIPTION));
+            groupsConnections = ((FacebookClientWrapper) getDefaultClient()).getClient()
+                    .fetchConnection(
+                            "me/groups",
+                            Group.class,
+                            Parameter.with(FacebookApiConstants.PARAM_FIELDS,
+                                    FacebookApiConstants.FIELD_ID + ","
+                                            + FacebookApiConstants.FIELD_NAME + ","
+                                            + FacebookApiConstants.FIELD_DESCRIPTION));
         } catch (FacebookException e) {
             FacebookConnector.handleFacebookException(e);
         }
 
         for (List<Group> list : groupsConnections) {
             for (Group group : list) {
-                results.add(FacebookSiocConverter.createSiocForum(connector, group));
+                results.add(FacebookSiocConverter.createSiocForum(
+                        (FacebookConnector) connector,
+                        group));
             }
         }
 

@@ -74,16 +74,16 @@ public class Moodle2ConnectorTestApp {
             return;
         }
 
-        List<Forum> forums = connector.serviceStructureReader().listForums();
+        List<Forum> forums = connector.getStructureReader().listForums();
         for (Forum forum : forums) {
             System.out.println(forum.getName() + " " + forum);
 
-            List<Thread> threads = connector.serviceStructureReader().listThreads(forum);
+            List<Thread> threads = connector.getStructureReader().listThreads(forum);
             for (Thread thread : threads) {
                 System.out.println(thread.getName() + " " + thread);
-                connector.postWriter().writePost(replyPost, thread);
+                connector.getPostWriter().writePost(replyPost, thread);
 
-                List<Post> posts = connector.postReader().readNewPosts(null, -1, thread);
+                List<Post> posts = connector.getPostReader().readNewPosts(null, -1, thread);
 
                 for (Post post : posts) {
                     System.out.println(post.getContent() + " " + post);
@@ -93,7 +93,7 @@ public class Moodle2ConnectorTestApp {
 
         System.out.println();
         System.out.println("read replies");
-        List<Post> posts = connector.postReader().readNewReplies(null, -1,
+        List<Post> posts = connector.getPostReader().readNewReplies(null, -1,
                 Post.getInstance(model, Builder.createURI("http://localhost/moodle/post/1")));
         for (Post post : posts) {
             System.out.println(post.getContent() + " " + post);

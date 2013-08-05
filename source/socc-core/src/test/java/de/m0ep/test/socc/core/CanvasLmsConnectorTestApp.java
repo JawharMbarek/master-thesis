@@ -82,7 +82,7 @@ public class CanvasLmsConnectorTestApp {
 
         List<Forum> forums = null;
         try {
-            forums = connector.serviceStructureReader().listForums();
+            forums = connector.getStructureReader().listForums();
         } catch (AuthenticationException | IOException e) {
             e.printStackTrace();
         }
@@ -93,7 +93,7 @@ public class CanvasLmsConnectorTestApp {
 
                 List<Thread> threads = null;
                 try {
-                    threads = connector.serviceStructureReader().listThreads(forum);
+                    threads = connector.getStructureReader().listThreads(forum);
                 } catch (AuthenticationException | IOException e) {
                     e.printStackTrace();
                 }
@@ -104,7 +104,7 @@ public class CanvasLmsConnectorTestApp {
 
                         List<Post> posts = null;
                         try {
-                            posts = connector.postReader().readNewPosts(null, -1, thread);
+                            posts = connector.getPostReader().readNewPosts(null, -1, thread);
                         } catch (AuthenticationException | IOException e) {
                             e.printStackTrace();
                         }

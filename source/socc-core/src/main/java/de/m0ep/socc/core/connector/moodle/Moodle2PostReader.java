@@ -16,36 +16,23 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.m0ep.moodlews.soap.ForumPostRecord;
-import de.m0ep.socc.core.connector.IConnector;
+import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class Moodle2PostReader implements IPostReader {
+public class Moodle2PostReader extends AbstractConnectorIOComponent implements IPostReader {
     private static final Logger LOG = LoggerFactory.getLogger(Moodle2PostReader.class);
 
-    private Moodle2Connector connector;
-    private Moodle2ClientWrapper client;
-    private String serviceEndpoint;
-
-    public Moodle2PostReader(Moodle2Connector moodle2Connector) {
-        this.connector = Preconditions.checkNotNull(moodle2Connector,
-                "Required parameter moodle2Connector must be specified.");
-
-        this.client = (Moodle2ClientWrapper) connector.getServiceClientManager().getDefaultClient();
-        this.serviceEndpoint = this.connector.getService().getServiceEndpoint().toString();
-    }
-
-    @Override
-    public IConnector getConnector() {
-        return connector;
+    public Moodle2PostReader(Moodle2Connector connector) {
+        super(connector);
     }
 
     @Override
     public boolean containsPosts(final Container container) {
         return null != container &&
                 RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS) &&
-                container.toString().startsWith(serviceEndpoint);
+                container.toString().startsWith(getServiceEndpoint().toString());
     }
 
     @Override
@@ -70,16 +57,19 @@ public class Moodle2PostReader implements IPostReader {
                     "The id of the container is invalid: was " + container.getId());
         }
 
-        ForumPostRecord[] postRecordArray = client.callMethod(new Callable<ForumPostRecord[]>() {
-            @Override
-            public ForumPostRecord[] call() throws Exception {
-                return client.getBindingStub().get_forum_posts(
-                        client.getAuthClient(),
-                        client.getSessionKey(),
-                        discussionId,
-                        (int) limit);
-            }
-        });
+        ForumPostRecord[] postRecordArray = ((Moodle2ClientWrapper) getDefaultClient())
+                .callMethod(new Callable<ForumPostRecord[]>() {
+                    @Override
+                    public ForumPostRecord[] call() throws Exception {
+                        return ((Moodle2ClientWrapper) getDefaultClient())
+                                .getBindingStub()
+                                .get_forum_posts(
+                                        ((Moodle2ClientWrapper) getDefaultClient()).getAuthClient(),
+                                        ((Moodle2ClientWrapper) getDefaultClient()).getSessionKey(),
+                                        discussionId,
+                                        (int) limit);
+                    }
+                });
 
         List<Post> result = Lists.newArrayList();
         if (null != postRecordArray && 0 < postRecordArray.length) {
@@ -92,7 +82,7 @@ public class Moodle2PostReader implements IPostReader {
     @Override
     public boolean containsReplies(final Post post) {
         return null != post &&
-                post.toString().startsWith(serviceEndpoint) &&
+                post.toString().startsWith(getServiceEndpoint().toString()) &&
                 post.hasContainer() &&
                 containsPosts(post.getContainer());
     }
@@ -128,16 +118,19 @@ public class Moodle2PostReader implements IPostReader {
                     "The id of the parentPost is invalid: was " + parentPost.getId());
         }
 
-        ForumPostRecord[] postRecordArray = client.callMethod(new Callable<ForumPostRecord[]>() {
-            @Override
-            public ForumPostRecord[] call() throws Exception {
-                return client.getBindingStub().get_forum_posts(
-                        client.getAuthClient(),
-                        client.getSessionKey(),
-                        discussionId,
-                        (int) limit);
-            }
-        });
+        ForumPostRecord[] postRecordArray = ((Moodle2ClientWrapper) getDefaultClient()).callMethod(
+                new Callable<ForumPostRecord[]>() {
+                    @Override
+                    public ForumPostRecord[] call() throws Exception {
+                        return ((Moodle2ClientWrapper) getDefaultClient())
+                                .getBindingStub()
+                                .get_forum_posts(
+                                        ((Moodle2ClientWrapper) getDefaultClient()).getAuthClient(),
+                                        ((Moodle2ClientWrapper) getDefaultClient()).getSessionKey(),
+                                        discussionId,
+                                        (int) limit);
+                    }
+                });
 
         List<Post> result = Lists.newArrayList();
         if (null != postRecordArray && 0 < postRecordArray.length) {
@@ -178,7 +171,10 @@ public class Moodle2PostReader implements IPostReader {
         Date createdDate = new Date(postRecord.getCreated() * 1000L);
 
         if (null == lastPostDate || createdDate.after(lastPostDate)) {
-            result.add(Moodle2SiocConverter.createSiocPost(connector, postRecord, container));
+            result.add(Moodle2SiocConverter.createSiocPost(
+                    (Moodle2Connector) connector,
+                    postRecord,
+                    container));
         }
     }
 

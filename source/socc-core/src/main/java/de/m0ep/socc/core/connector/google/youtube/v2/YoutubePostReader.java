@@ -44,23 +44,17 @@ import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.VideoFeed;
 import com.google.gdata.util.ServiceException;
 
+import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class YoutubePostReader implements IPostReader {
+public class YoutubePostReader extends AbstractConnectorIOComponent implements IPostReader {
     private static final Logger LOG = LoggerFactory.getLogger(YoutubePostReader.class);
 
-    private YoutubeConnector connector;
-    private YoutubeClientWrapper client;
-    private String serviceEndpoint;
-
     public YoutubePostReader(YoutubeConnector connector) {
-        this.connector = connector;
-        this.client = (YoutubeClientWrapper) this.connector.getServiceClientManager()
-                .getDefaultClient();
-        this.serviceEndpoint = connector.getService().getServiceEndpoint().toString();
+        super(connector);
     }
 
     @Override
@@ -104,8 +98,8 @@ public class YoutubePostReader implements IPostReader {
             System.out.println(nextFeedUri);
             VideoFeed videoFeed = null;
             try {
-                connector.waitForCooldown();
-                videoFeed = client.getService().getFeed(
+                ((YoutubeConnector) connector).waitForCooldown();
+                videoFeed = ((YoutubeClientWrapper) getDefaultClient()).getService().getFeed(
                         new URL(nextFeedUri),
                         VideoFeed.class);
                 LOG.debug(
@@ -135,7 +129,7 @@ public class YoutubePostReader implements IPostReader {
 
                     results.add(
                             YoutubeSiocConverter.createSiocPost(
-                                    connector,
+                                    (YoutubeConnector) connector,
                                     videoEntry,
                                     container));
 
@@ -155,11 +149,11 @@ public class YoutubePostReader implements IPostReader {
 
     @Override
     public boolean containsReplies(Post post) {
-        return post.toString().startsWith(serviceEndpoint) &&
+        return post.toString().startsWith(getServiceEndpoint().toString()) &&
                 post.hasId() &&
                 post.getId().startsWith(YoutubeSiocConverter.VIDEO_ID_PREFIX) &&
                 post.hasContainer() &&
-                post.getContainer().toString().startsWith(serviceEndpoint);
+                post.getContainer().toString().startsWith(getServiceEndpoint().toString());
     }
 
     @Override
@@ -184,8 +178,8 @@ public class YoutubePostReader implements IPostReader {
         while (null != nextFeedUri) {
             CommentFeed commentFeed = null;
             try {
-                connector.waitForCooldown();
-                commentFeed = client.getService().getFeed(
+                ((YoutubeConnector) connector).waitForCooldown();
+                commentFeed = ((YoutubeClientWrapper) getDefaultClient()).getService().getFeed(
                         new URL(nextFeedUri),
                         CommentFeed.class);
                 LOG.debug("Fetched {} comments from {}.",
@@ -214,7 +208,7 @@ public class YoutubePostReader implements IPostReader {
 
                     results.add(
                             YoutubeSiocConverter.createSiocPost(
-                                    connector,
+                                    (YoutubeConnector) connector,
                                     commentEntry,
                                     parentPost));
 
@@ -234,19 +228,19 @@ public class YoutubePostReader implements IPostReader {
 
     private boolean isPlaylistContainer(Container container) {
         return null != container &&
-                container.toString().startsWith(serviceEndpoint) &&
+                container.toString().startsWith(getServiceEndpoint().toString()) &&
                 RdfUtils.isType(
                         container.getModel(),
                         container.getResource(),
                         Thread.RDFS_CLASS) &&
                 container.hasParent() &&
-                container.getParent().toString().startsWith(serviceEndpoint) &&
+                container.getParent().toString().startsWith(getServiceEndpoint().toString()) &&
                 container.getParent().hasId() &&
                 container.getParent().getId().startsWith(YoutubeSiocConverter.PLAYLISTS_ID_PREFIX);
     }
 
     private boolean isUploadsContainer(Container container) {
-        return container.toString().startsWith(serviceEndpoint) &&
+        return container.toString().startsWith(getServiceEndpoint().toString()) &&
                 RdfUtils.isType(
                         container.getModel(),
                         container.getResource(),

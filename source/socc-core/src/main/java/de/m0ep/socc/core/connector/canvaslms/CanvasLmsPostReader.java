@@ -1,3 +1,24 @@
+/*
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 package de.m0ep.socc.core.connector.canvaslms;
 
@@ -25,24 +46,36 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class CanvasLmsPostReader extends AbstractConnectorIOComponent implements IPostReader {
+/**
+ * @author Florian Müller
+ */
+public class CanvasLmsPostReader extends AbstractConnectorIOComponent implements
+        IPostReader {
 
+    /**
+     * @param connector
+     */
     public CanvasLmsPostReader(final CanvasLmsConnector connector) {
         super(connector);
     }
 
     @Override
-    public boolean containsPosts(Container container) {
-        Preconditions.checkNotNull(container, "Required parameter container must be specified.");
+    public boolean containsPosts(final Container container) {
+        Preconditions.checkNotNull(container,
+                "Required parameter container must be specified.");
 
-        return RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS) &&
-                container.toString().startsWith(getServiceEndpoint().toString()) &&
-                container.hasParent() &&
-                container.getParent().toString().startsWith(getServiceEndpoint().toString());
+        return RdfUtils.isType(container.getModel(), container,
+                Thread.RDFS_CLASS)
+                && container.toString().startsWith(
+                        getServiceEndpoint().toString())
+                && container.hasParent()
+                && container.getParent().toString().startsWith(
+                        getServiceEndpoint().toString());
     }
 
     @Override
-    public List<Post> readNewPosts(Date lastPostDate, long limit, Container container)
+    public List<Post> readNewPosts(final Date since, final long limit,
+            final Container container)
             throws AuthenticationException, IOException {
         Preconditions.checkArgument(
                 containsPosts(container),
@@ -101,7 +134,8 @@ public class CanvasLmsPostReader extends AbstractConnectorIOComponent implements
         if (null != entryPages) {
             for (List<Entry> entries : entryPages) {
                 for (Entry entry : entries) {
-                    if (null != lastPostDate && lastPostDate.before(entry.getCreatedAt())) {
+                    if (null != since
+                            && since.before(entry.getCreatedAt())) {
                         return result;
                     }
 
@@ -121,16 +155,18 @@ public class CanvasLmsPostReader extends AbstractConnectorIOComponent implements
     }
 
     @Override
-    public boolean containsReplies(Post post) {
-        Preconditions.checkNotNull(post, "Required parameter parent must be specified.");
+    public boolean containsReplies(final Post post) {
+        Preconditions.checkNotNull(post,
+                "Required parameter parent must be specified.");
 
-        return post.toString().startsWith(getServiceEndpoint().toString()) &&
-                post.hasContainer() &&
-                containsPosts(post.getContainer());
+        return post.toString().startsWith(getServiceEndpoint().toString())
+                && post.hasContainer()
+                && containsPosts(post.getContainer());
     }
 
     @Override
-    public List<Post> readNewReplies(Date lastReplyDate, long limit, Post parentPost)
+    public List<Post> readNewReplies(final Date since, final long limit,
+            final Post parentPost)
             throws AuthenticationException, IOException {
         Preconditions.checkNotNull(
                 parentPost,
@@ -144,9 +180,10 @@ public class CanvasLmsPostReader extends AbstractConnectorIOComponent implements
         Preconditions.checkArgument(
                 parentPost.getContainer().hasId(),
                 "The container of the parentPost has no id.");
-        Preconditions.checkArgument(
-                parentPost.getContainer().getParent().hasId(),
-                "The parent container of the container of the parentPost has no id.");
+        Preconditions
+                .checkArgument(
+                        parentPost.getContainer().getParent().hasId(),
+                        "The parent container of the container of the parentPost has no id.");
 
         Container container = parentPost.getContainer();
         Container parentContainer = container.getParent();
@@ -205,7 +242,8 @@ public class CanvasLmsPostReader extends AbstractConnectorIOComponent implements
         if (null != replyPages) {
             for (List<Entry> entries : replyPages) {
                 for (Entry entry : entries) {
-                    if (null != lastReplyDate && lastReplyDate.before(entry.getCreatedAt())) {
+                    if (null != since
+                            && since.before(entry.getCreatedAt())) {
                         return result;
                     }
 

@@ -23,7 +23,8 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements IPostWriter {
+public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements
+        IPostWriter {
     public CanvasLmsPostWriter(final CanvasLmsConnector connector) {
         super(connector);
     }
@@ -33,14 +34,19 @@ public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements
         Preconditions.checkNotNull(container,
                 "Required parameter container must be specified.");
 
-        return container.toString().startsWith(getServiceEndpoint().toString()) &&
-                RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS) &&
-                container.hasParent() &&
-                container.getParent().toString().startsWith(getServiceEndpoint().toString());
+        return container.toString().startsWith(getServiceEndpoint().toString())
+                && RdfUtils.isType(
+                        container.getModel(),
+                        container,
+                        Thread.RDFS_CLASS)
+                && container.hasParent()
+                && container.getParent().toString().startsWith(
+                        getServiceEndpoint().toString());
     }
 
     @Override
-    public void writePost(Post post, Container container) throws AuthenticationException,
+    public void writePost(Post post, Container container)
+            throws AuthenticationException,
             IOException {
         Preconditions.checkNotNull(container,
                 "Required parameter container must be specified.");
@@ -70,25 +76,29 @@ public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements
         }
 
         UserAccount creatorAccount = post.getCreator();
-        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(connector, creatorAccount);
+        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
+                connector, creatorAccount);
 
         CanvasLmsClient client = null;
         if (null != creatorPerson) {
-            UserAccount serviceAccount = PostWriterUtils.getServiceAccountOfPersonOrNull(
-                    connector,
-                    creatorPerson,
-                    connector.getService().getServiceEndpoint().asURI());
+            UserAccount serviceAccount = PostWriterUtils
+                    .getServiceAccountOfPersonOrNull(
+                            connector,
+                            creatorPerson,
+                            connector.getService().getServiceEndpoint().asURI());
             if (null != serviceAccount) {
-                client = (CanvasLmsClient) PostWriterUtils.getClientOfServiceAccountOrNull(
-                        connector,
-                        serviceAccount);
+                client = (CanvasLmsClient) PostWriterUtils
+                        .getClientOfServiceAccountOrNull(
+                                connector,
+                                serviceAccount);
             }
         }
 
         String content = post.getContent();
         if (null == client) { // No client found, get default one an adapt
                               // message content
-            client = (CanvasLmsClient) connector.getServiceClientManager().getDefaultClient();
+            client = (CanvasLmsClient) connector.getServiceClientManager()
+                    .getDefaultClient();
             content = PostWriterUtils.createContentOfUnknownAccount(
                     post,
                     creatorAccount,
@@ -125,15 +135,17 @@ public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements
 
     @Override
     public boolean canReplyTo(Post post) {
-        Preconditions.checkNotNull(post, "Required parameter post must be specified.");
+        Preconditions.checkNotNull(post,
+                "Required parameter post must be specified.");
 
-        return post.toString().startsWith(getServiceEndpoint().toString()) &&
-                post.hasContainer() &&
-                canPostTo(post.getContainer());
+        return post.toString().startsWith(getServiceEndpoint().toString())
+                && post.hasContainer()
+                && canPostTo(post.getContainer());
     }
 
     @Override
-    public void writeReply(Post replyPost, Post parentPost) throws AuthenticationException,
+    public void writeReply(Post replyPost, Post parentPost)
+            throws AuthenticationException,
             IOException {
         Preconditions.checkNotNull(replyPost,
                 "Required parameter replyPost must be specified.");
@@ -182,25 +194,29 @@ public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements
         }
 
         UserAccount creatorAccount = replyPost.getCreator();
-        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(connector, creatorAccount);
+        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
+                connector, creatorAccount);
 
         CanvasLmsClient client = null;
         if (null != creatorPerson) {
-            UserAccount serviceAccount = PostWriterUtils.getServiceAccountOfPersonOrNull(
-                    connector,
-                    creatorPerson,
-                    connector.getService().getServiceEndpoint().asURI());
+            UserAccount serviceAccount = PostWriterUtils
+                    .getServiceAccountOfPersonOrNull(
+                            connector,
+                            creatorPerson,
+                            connector.getService().getServiceEndpoint().asURI());
             if (null != serviceAccount) {
-                client = (CanvasLmsClient) PostWriterUtils.getClientOfServiceAccountOrNull(
-                        connector,
-                        serviceAccount);
+                client = (CanvasLmsClient) PostWriterUtils
+                        .getClientOfServiceAccountOrNull(
+                                connector,
+                                serviceAccount);
             }
         }
 
         String content = replyPost.getContent();
         if (null == client) { // No client found, get default one an adapt
                               // message content
-            client = (CanvasLmsClient) connector.getServiceClientManager().getDefaultClient();
+            client = (CanvasLmsClient) connector.getServiceClientManager()
+                    .getDefaultClient();
             content = PostWriterUtils.createContentOfUnknownAccount(
                     replyPost,
                     creatorAccount,

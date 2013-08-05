@@ -1,3 +1,24 @@
+/*
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 package de.m0ep.socc.core.connector.canvaslms;
 
@@ -27,20 +48,27 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class CanvasLmsServiceStructureReader extends AbstractConnectorIOComponent implements
-        IStructureReader {
-    public CanvasLmsServiceStructureReader(final CanvasLmsConnector connector) {
+/**
+ * Structure reader for the CanvasLMS.
+ * 
+ * @author Florian Müller
+ */
+public class CanvasLmsStructureReader extends AbstractConnectorIOComponent
+        implements IStructureReader {
+    /**
+     * Constructs a new {@link CanvasLmsStructureReader} for the given
+     * {@link CanvasLmsConnector}.
+     * 
+     * @param connector
+     */
+    public CanvasLmsStructureReader(final CanvasLmsConnector connector) {
         super(connector);
     }
 
     @Override
     public Site getSite() {
-        if (!Site.hasInstance(
-                getModel(),
-                getServiceEndpoint())) {
-            Site result = new Site(
-                    getModel(),
-                    getServiceEndpoint(), true);
+        if (!Site.hasInstance(getModel(), getServiceEndpoint())) {
+            Site result = new Site(getModel(), getServiceEndpoint(), true);
             result.setName("Canvas LMS (" + getServiceEndpoint() + ")");
             return result;
         }
@@ -51,7 +79,8 @@ public class CanvasLmsServiceStructureReader extends AbstractConnectorIOComponen
     }
 
     @Override
-    public Forum getForum(String id) throws NotFoundException, AuthenticationException, IOException {
+    public Forum getForum(String id) throws NotFoundException,
+            AuthenticationException, IOException {
         Preconditions.checkNotNull(id,
                 "Required parameter id must be specified.");
         Preconditions.checkArgument(!id.isEmpty(),
@@ -120,7 +149,8 @@ public class CanvasLmsServiceStructureReader extends AbstractConnectorIOComponen
     }
 
     @Override
-    public Thread getThread(String id, Container contaienr) throws NotFoundException,
+    public Thread getThread(String id, Container contaienr)
+            throws NotFoundException,
             AuthenticationException, IOException {
         Preconditions.checkNotNull(id,
                 "Required parameter id must be specified.");
@@ -130,16 +160,19 @@ public class CanvasLmsServiceStructureReader extends AbstractConnectorIOComponen
                 "Required parameter parent must be specified.");
         Preconditions.checkArgument(contaienr.hasId(),
                 "Required parameter parent has no id.");
-        Preconditions.checkArgument(RdfUtils.isType(getModel(), contaienr, SIOCVocabulary.Forum),
+        Preconditions.checkArgument(RdfUtils.isType(getModel(), contaienr,
+                SIOCVocabulary.Forum),
                 "Required parameter parent is no SIOC Forum.");
 
-        Forum parentForum = Forum.getInstance(getModel(), contaienr.getResource());
+        Forum parentForum = Forum.getInstance(getModel(), contaienr
+                .getResource());
 
         long topicId;
         try {
             topicId = Long.parseLong(id);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("The parameter id is invalid, was " + id);
+            throw new IllegalArgumentException(
+                    "The parameter id is invalid, was " + id);
         }
 
         long courseId;
@@ -152,7 +185,8 @@ public class CanvasLmsServiceStructureReader extends AbstractConnectorIOComponen
         }
 
         try {
-            DiscussionTopic discussionTopic = ((CanvasLmsClient) getDefaultClient()).courses()
+            DiscussionTopic discussionTopic = ((CanvasLmsClient) getDefaultClient())
+                    .courses()
                     .discussionTopics(courseId)
                     .get(topicId)
                     .execute();
@@ -175,13 +209,18 @@ public class CanvasLmsServiceStructureReader extends AbstractConnectorIOComponen
     }
 
     @Override
-    public List<Thread> listThreads(Container container) throws AuthenticationException,
+    public List<Thread> listThreads(Container container)
+            throws AuthenticationException,
             IOException {
-        Preconditions.checkNotNull(container, "Required parameter parent must be specified.");
-        Preconditions.checkArgument(container.hasId(), "Required parameter parent has no id.");
-        Preconditions.checkArgument(RdfUtils.isType(getModel(), container, SIOCVocabulary.Forum),
+        Preconditions.checkNotNull(container,
+                "Required parameter parent must be specified.");
+        Preconditions.checkArgument(container.hasId(),
+                "Required parameter parent has no id.");
+        Preconditions.checkArgument(RdfUtils.isType(getModel(), container,
+                SIOCVocabulary.Forum),
                 "Required parameter parent is no SIOC Forum.");
-        Forum parentForum = Forum.getInstance(getModel(), container.getResource());
+        Forum parentForum = Forum.getInstance(getModel(), container
+                .getResource());
 
         long courseId;
         try {
@@ -194,7 +233,8 @@ public class CanvasLmsServiceStructureReader extends AbstractConnectorIOComponen
 
         Pagination<DiscussionTopic> discussionTopicPages = null;
         try {
-            discussionTopicPages = ((CanvasLmsClient) getDefaultClient()).courses()
+            discussionTopicPages = ((CanvasLmsClient) getDefaultClient())
+                    .courses()
                     .discussionTopics(courseId)
                     .list()
                     .executePagination();

@@ -85,51 +85,58 @@ public class FacebookStructureReader implements IServiceStructureReader {
                 "Required parameter id must be specified.");
         Preconditions.checkArgument(!id.isEmpty()
                 , "Required parameter id may not be empty.");
-        Preconditions.checkArgument(-1 != id.lastIndexOf(':'),
-                "Parameter id has the wrong format.");
 
-        String fbId = id.substring(id.lastIndexOf(':') + 1);
+        int seperatorIndex = id.lastIndexOf(FacebookSiocConverter.ID_SEPERATOR);
+        if (-1 != seperatorIndex) {
+            String fbId = id.substring(seperatorIndex + 1);
 
-        if (id.startsWith("wall:")) {
-            URI uri = Builder.createURI(serviceEndpoint + "/wall/" + fbId);
+            if (id.startsWith(FacebookSiocConverter.WALL_ID_PREFIX)) {
+                URI uri = Builder.createURI(
+                        serviceEndpoint
+                                + FacebookSiocConverter.WALL_URI_PATH
+                                + fbId);
 
-            if (Forum.hasInstance(model, uri)) {
-                return Forum.getInstance(model, uri);
-            } else {
-                try {
-                    // check if this is a valid user id.
-                    // there should be an exception if not.
-                    clientWrapper.getClient().fetchObject("/" + fbId, FacebookType.class);
-                } catch (FacebookException e) {
-                    FacebookConnector.handleFacebookException(e);
+                if (Forum.hasInstance(model, uri)) {
+                    return Forum.getInstance(model, uri);
+                } else {
+                    try {
+                        // check if this is a valid user id.
+                        // there should be an exception if not.
+                        clientWrapper.getClient().fetchObject("/" + fbId, FacebookType.class);
+                    } catch (FacebookException e) {
+                        FacebookConnector.handleFacebookException(e);
+                    }
+
+                    return FacebookSiocConverter.createSiocForum(
+                            connector,
+                            clientWrapper.getUser());
                 }
+            } else if (id.startsWith(FacebookSiocConverter.GROUP_ID_PREFIX)) {
+                URI uri = Builder.createURI(
+                        serviceEndpoint
+                                + FacebookSiocConverter.GROUP_URI_PATH
+                                + fbId);
 
-                Forum wall = new Forum(model, uri, true);
-                wall.setId("wall:" + clientWrapper.getUser().getId());
-                wall.setName(clientWrapper.getUser().getName() + "'s Wall");
+                if (Forum.hasInstance(model, uri)) {
+                    return Forum.getInstance(model, uri);
+                } else {
+                    Group group = null;
 
-                wall.setHost(getSite());
-                getSite().setHostOf(wall);
-                return wall;
-            }
-        } else if (id.startsWith("group:")) {
-            URI uri = Builder.createURI(serviceEndpoint + "/group/" + fbId);
+                    try {
+                        group = clientWrapper.getClient().fetchObject(
+                                fbId,
+                                Group.class,
+                                Parameter.with(FacebookApiConstants.PARAM_FIELDS,
+                                        FacebookApiConstants.FIELD_ID + ","
+                                                + FacebookApiConstants.FIELD_NAME + ","
+                                                + FacebookApiConstants.FIELD_DESCRIPTION));
 
-            if (Forum.hasInstance(model, uri)) {
-                return Forum.getInstance(model, uri);
-            } else {
-                Group group = null;
+                    } catch (FacebookException e) {
+                        FacebookConnector.handleFacebookException(e);
+                    }
 
-                try {
-                    group = clientWrapper.getClient().fetchObject(
-                            fbId,
-                            Group.class,
-                            Parameter.with("fields", "name,id,description,updated_time"));
-                } catch (FacebookException e) {
-                    FacebookConnector.handleFacebookException(e);
+                    return FacebookSiocConverter.createSiocForum(connector, group);
                 }
-
-                return FacebookSiocConverter.createSiocForum(connector, group);
             }
         }
 
@@ -141,13 +148,18 @@ public class FacebookStructureReader implements IServiceStructureReader {
         List<Forum> results = Lists.newArrayList();
 
         // add the default users wall
-        results.add(getForum("wall:" + clientWrapper.getUser().getId()));
+        results.add(getForum(FacebookSiocConverter.WALL_ID_PREFIX
+                + clientWrapper.getUser().getId()));
 
         Connection<Group> groupsConnections = null;
         try {
-            groupsConnections = clientWrapper.getClient().fetchConnection("me/groups",
-                    Group.class, Parameter.with("fields",
-                            "name,id,description,updated_time"));
+            groupsConnections = clientWrapper.getClient().fetchConnection(
+                    "me/groups",
+                    Group.class,
+                    Parameter.with(FacebookApiConstants.PARAM_FIELDS,
+                            FacebookApiConstants.FIELD_ID + ","
+                                    + FacebookApiConstants.FIELD_NAME + ","
+                                    + FacebookApiConstants.FIELD_DESCRIPTION));
         } catch (FacebookException e) {
             FacebookConnector.handleFacebookException(e);
         }

@@ -68,8 +68,8 @@ public class FacebookPostReader implements IPostReader {
                 container.toString().startsWith(endpointUri) &&
                 RdfUtils.isType(container.getModel(), container.getResource(), Forum.RDFS_CLASS) &&
                 container.hasId() &&
-                (container.getId().startsWith("wall:") ||
-                container.getId().startsWith("group:"));
+                (container.getId().startsWith(FacebookSiocConverter.WALL_ID_PREFIX) ||
+                container.getId().startsWith(FacebookSiocConverter.GROUP_ID_PREFIX));
     }
 
     @Override
@@ -85,19 +85,20 @@ public class FacebookPostReader implements IPostReader {
                 "This container has no posts at this service");
 
         String containerId = container.getId();
-        String id = containerId.substring(containerId.lastIndexOf(":") + 1);
+        String id = containerId.substring(
+                containerId.lastIndexOf(FacebookSiocConverter.ID_SEPERATOR) + 1);
 
         Parameter paramSince = Parameter.with(
-                "since",
+                FacebookApiConstants.PARAM_SINCE,
                 (null != since) ? (since.getTime() / 1000L) : (0));
         Parameter paramLimit = Parameter.with(
-                "limit",
+                FacebookApiConstants.PARAM_LIMIT,
                 (0 < limit || limit < 25) ? (limit) : (25));
 
         Connection<JsonObject> feed = null;
         try {
             feed = clientWrapper.getClient().fetchConnection(
-                    id + "/" + FacebookSiocConverter.CONNECTION_FEED,
+                    id + "/" + FacebookApiConstants.CONNECTION_FEED,
                     JsonObject.class,
                     paramSince,
                     paramLimit);
@@ -127,7 +128,7 @@ public class FacebookPostReader implements IPostReader {
         return null != post &&
                 post.toString().startsWith(endpointUri) &&
                 post.hasId() &&
-                post.getId().startsWith("post:");
+                post.getId().startsWith(FacebookSiocConverter.POST_ID_PREFIX);
     }
 
     @Override
@@ -139,19 +140,19 @@ public class FacebookPostReader implements IPostReader {
                 "This parentPost has no replies at this service.");
 
         String postId = parentPost.getId();
-        String id = postId.substring(postId.lastIndexOf(":") + 1);
+        String id = postId.substring(postId.lastIndexOf(FacebookSiocConverter.ID_SEPERATOR) + 1);
 
         Parameter paramSince = Parameter.with(
-                "since",
+                FacebookApiConstants.PARAM_SINCE,
                 (null != since) ? (since.getTime() / 1000L) : (0));
         Parameter paramLimit = Parameter.with(
-                "limit",
+                FacebookApiConstants.PARAM_LIMIT,
                 (0 < limit || limit < 25) ? (limit) : (25));
 
         Connection<JsonObject> feed = null;
         try {
             feed = clientWrapper.getClient().fetchConnection(
-                    id + "/" + FacebookSiocConverter.CONNECTION_COMMENTS,
+                    id + "/" + FacebookApiConstants.CONNECTION_COMMENTS,
                     JsonObject.class,
                     paramSince,
                     paramLimit);
@@ -175,5 +176,4 @@ public class FacebookPostReader implements IPostReader {
 
         return results;
     }
-
 }

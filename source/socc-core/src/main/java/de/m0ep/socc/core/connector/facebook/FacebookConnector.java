@@ -50,6 +50,8 @@ public class FacebookConnector extends AbstractConnector {
 
     private IPostReader postReader;
 
+    private IPostWriter postWriter;
+
     public FacebookConnector(String id, ISoccContext context, UserAccount defaultUserAccount,
             Service service) {
         super(id, context, defaultUserAccount, service);
@@ -84,8 +86,10 @@ public class FacebookConnector extends AbstractConnector {
 
     @Override
     public IPostWriter postWriter() {
-        // TODO Auto-generated method stub
-        return null;
+        if (null == postWriter) {
+            postWriter = new FacebookPostWriter(this);
+        }
+        return postWriter;
     }
 
     @Override

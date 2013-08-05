@@ -115,7 +115,7 @@ public class YoutubePostReader implements IPostReader {
             } catch (com.google.gdata.util.AuthenticationException e) {
                 throw new AuthenticationException(e);
             } catch (ServiceException e) {
-                Throwables.propagate(e);
+                throw Throwables.propagate(e);
             } finally {
                 nextFeedUri = null;
             }
@@ -194,7 +194,7 @@ public class YoutubePostReader implements IPostReader {
             } catch (com.google.gdata.util.AuthenticationException e) {
                 throw new AuthenticationException(e);
             } catch (ServiceException e) {
-                Throwables.propagate(e);
+                throw Throwables.propagate(e);
             } finally {
                 nextFeedUri = null;
             }

@@ -1,14 +1,32 @@
+/*
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 package de.m0ep.socc.core.connector.facebook;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.rdfs.sioc.UserAccount;
 import org.rdfs.sioc.services.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.restfb.DefaultFacebookClient;
 
 import de.m0ep.sioc.service.auth.AccessToken;
 import de.m0ep.sioc.service.auth.Authentication;
@@ -19,14 +37,19 @@ import de.m0ep.socc.core.connector.AbstractServiceClientManager;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 public class FacebookClientManaget extends AbstractServiceClientManager {
-    private static final Logger LOG = LoggerFactory.getLogger(FacebookClientManaget.class);
-
     private ClientId clientId;
     private ClientSecret clientSecret;
 
     public FacebookClientManaget(Service service, UserAccount defaultUserAccount) throws Exception {
         super(service, defaultUserAccount);
-        extractServiceAuthentication();
+    }
+
+    public ClientId getClientId() {
+        return clientId;
+    }
+
+    public ClientSecret getClientSecret() {
+        return clientSecret;
     }
 
     @Override
@@ -72,20 +95,7 @@ public class FacebookClientManaget extends AbstractServiceClientManager {
         Preconditions.checkArgument(null != accessToken,
                 "The authentication of the parameter userAccount has no accesstoken credential.");
 
-        try {
-            DefaultFacebookClient client = new DefaultFacebookClient();
-            com.restfb.FacebookClient.AccessToken extendedToken = client.obtainExtendedAccessToken(
-                    clientId.getValue(),
-                    clientSecret.getValue(),
-                    accessToken.getValue());
-
-            // update accessToken
-            accessToken.setValue(extendedToken.getAccessToken());
-        } catch (Exception e) {
-            LOG.warn("Failed to obtain an extended accesstoken: {}", e.getMessage());
-        }
-
-        return new DefaultFacebookClient(accessToken.getValue());
+        return new FacebookClientWrapper(clientId, clientSecret, accessToken);
     }
 
     private void extractServiceAuthentication() {

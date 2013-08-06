@@ -38,41 +38,48 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class Moodle2ServiceStructureReader extends AbstractConnectorIOComponent implements
+public class Moodle2ServiceStructureReader extends
+        AbstractConnectorIOComponent<Moodle2Connector>
+        implements
         IStructureReader {
+
+    private Moodle2ClientWrapper defaultClient;
 
     public Moodle2ServiceStructureReader(Moodle2Connector connector) {
         super(connector);
+        this.defaultClient = connector.getServiceClientManager()
+                .getDefaultClient();
     }
 
     @Override
     public Site getSite() {
-        if (!Site.hasInstance(getModel(), serviceEndpoint)) {
-            Site result = new Site(getModel(), serviceEndpoint, true);
-            result.setName("Moolde LMS (" + serviceEndpoint.toString() + ")");
+        if (!Site.hasInstance(getModel(), getServiceEndpoint())) {
+            Site result = new Site(getModel(), getServiceEndpoint(), true);
+            result.setName("Moolde LMS (" + getServiceEndpoint() + ")");
             return result;
         }
 
-        return Site.getInstance(connector.getContext().getModel(), serviceEndpoint);
+        return Site.getInstance(getModel(), getServiceEndpoint());
     }
 
     @Override
-    public Forum getForum(final String id) throws NotFoundException, AuthenticationException,
+    public Forum getForum(final String id) throws NotFoundException,
+            AuthenticationException,
             IOException {
         Preconditions.checkNotNull(id,
                 "Required parameter id must be specified.");
         Preconditions.checkArgument(!id.isEmpty(),
                 "Required parameter id may not be empty.");
 
-        ForumRecord[] forumRecordArray = ((Moodle2ClientWrapper) getDefaultClient()).callMethod(
+        ForumRecord[] forumRecordArray = defaultClient.callMethod(
                 new Callable<ForumRecord[]>() {
                     @Override
                     public ForumRecord[] call() throws Exception {
-                        return ((Moodle2ClientWrapper) getDefaultClient())
+                        return defaultClient
                                 .getBindingStub()
                                 .get_all_forums(
-                                        ((Moodle2ClientWrapper) getDefaultClient()).getAuthClient(),
-                                        ((Moodle2ClientWrapper) getDefaultClient()).getSessionKey(),
+                                        defaultClient.getAuthClient(),
+                                        defaultClient.getSessionKey(),
                                         "id",
                                         id);
                     }
@@ -80,7 +87,7 @@ public class Moodle2ServiceStructureReader extends AbstractConnectorIOComponent 
 
         if (null != forumRecordArray && 0 < forumRecordArray.length) {
             return Moodle2SiocConverter.createSiocForum(
-                    (Moodle2Connector) connector,
+                    getConnector(),
                     forumRecordArray[0]);
         }
 
@@ -91,15 +98,15 @@ public class Moodle2ServiceStructureReader extends AbstractConnectorIOComponent 
     public List<Forum> listForums() throws AuthenticationException, IOException {
         List<Forum> result = Lists.newArrayList();
 
-        ForumRecord[] forumRecordArray = ((Moodle2ClientWrapper) getDefaultClient())
+        ForumRecord[] forumRecordArray = defaultClient
                 .callMethod(new Callable<ForumRecord[]>() {
                     @Override
                     public ForumRecord[] call() throws Exception {
-                        return ((Moodle2ClientWrapper) getDefaultClient())
+                        return defaultClient
                                 .getBindingStub()
                                 .get_all_forums(
-                                        ((Moodle2ClientWrapper) getDefaultClient()).getAuthClient(),
-                                        ((Moodle2ClientWrapper) getDefaultClient()).getSessionKey(),
+                                        defaultClient.getAuthClient(),
+                                        defaultClient.getSessionKey(),
                                         "",
                                         "");
                     }
@@ -109,7 +116,7 @@ public class Moodle2ServiceStructureReader extends AbstractConnectorIOComponent 
 
             for (ForumRecord forumRecord : forumRecordArray) {
                 result.add(Moodle2SiocConverter.createSiocForum(
-                        (Moodle2Connector) connector,
+                        getConnector(),
                         forumRecord));
             }
         }
@@ -118,7 +125,8 @@ public class Moodle2ServiceStructureReader extends AbstractConnectorIOComponent 
     }
 
     @Override
-    public Thread getThread(String id, Container parent) throws NotFoundException,
+    public Thread getThread(String id, Container parent)
+            throws NotFoundException,
             AuthenticationException, IOException {
         Preconditions.checkNotNull(id,
                 "Required parameter id must be specified.");
@@ -126,9 +134,11 @@ public class Moodle2ServiceStructureReader extends AbstractConnectorIOComponent 
                 "Required parameter id may not be empty.");
         Preconditions.checkNotNull(parent,
                 "Required parameter parent must be specified.");
-        Preconditions.checkArgument(RdfUtils.isType(parent.getModel(), parent, Forum.RDFS_CLASS),
+        Preconditions.checkArgument(RdfUtils.isType(parent.getModel(), parent,
+                Forum.RDFS_CLASS),
                 "The parameter parent is not sioc:Forum");
-        Preconditions.checkArgument(parent.toString().startsWith(serviceEndpoint.toString()),
+        Preconditions.checkArgument(parent.toString().startsWith(
+                getServiceEndpoint().toString()),
                 "The parent is no moodle forum.");
         Preconditions.checkArgument(parent.hasId(),
                 "The parent has no id.");
@@ -149,15 +159,14 @@ public class Moodle2ServiceStructureReader extends AbstractConnectorIOComponent 
                     "The parent id is invalid: was " + parent.getId());
         }
 
-        ForumDiscussionRecord[] discussionRecordArray = ((Moodle2ClientWrapper) getDefaultClient())
+        ForumDiscussionRecord[] discussionRecordArray = defaultClient
                 .callMethod(new Callable<ForumDiscussionRecord[]>() {
                     @Override
                     public ForumDiscussionRecord[] call() throws Exception {
-                        return ((Moodle2ClientWrapper) getDefaultClient())
-                                .getBindingStub()
+                        return defaultClient.getBindingStub()
                                 .get_forum_discussions(
-                                        ((Moodle2ClientWrapper) getDefaultClient()).getAuthClient(),
-                                        ((Moodle2ClientWrapper) getDefaultClient()).getSessionKey(),
+                                        defaultClient.getAuthClient(),
+                                        defaultClient.getSessionKey(),
                                         forumId,
                                         9999);
                     }
@@ -167,7 +176,7 @@ public class Moodle2ServiceStructureReader extends AbstractConnectorIOComponent 
             for (ForumDiscussionRecord discussionRecord : discussionRecordArray) {
                 if (threadId == discussionRecord.getId()) {
                     return Moodle2SiocConverter.createSiocThread(
-                            (Moodle2Connector) connector,
+                            getConnector(),
                             discussionRecord,
                             Forum.getInstance(
                                     parent.getModel(),
@@ -180,12 +189,15 @@ public class Moodle2ServiceStructureReader extends AbstractConnectorIOComponent 
     }
 
     @Override
-    public List<Thread> listThreads(Container parent) throws AuthenticationException, IOException {
+    public List<Thread> listThreads(Container parent)
+            throws AuthenticationException, IOException {
         Preconditions.checkNotNull(parent,
                 "Required parameter parent must be specified.");
-        Preconditions.checkArgument(RdfUtils.isType(parent.getModel(), parent, Forum.RDFS_CLASS),
+        Preconditions.checkArgument(RdfUtils.isType(parent.getModel(), parent,
+                Forum.RDFS_CLASS),
                 "The parameter parent is not sioc:Forum");
-        Preconditions.checkArgument(parent.toString().startsWith(serviceEndpoint.toString()),
+        Preconditions.checkArgument(parent.toString().startsWith(
+                getServiceEndpoint().toString()),
                 "The parent is no moodle forum.");
         Preconditions.checkArgument(parent.hasId(),
                 "The parent has no id.");
@@ -200,16 +212,16 @@ public class Moodle2ServiceStructureReader extends AbstractConnectorIOComponent 
                     "The parent id is invalid: was " + parent.getId());
         }
 
-        ForumDiscussionRecord[] discussionRecordArray = ((Moodle2ClientWrapper) getDefaultClient())
+        ForumDiscussionRecord[] discussionRecordArray = defaultClient
                 .callMethod(
                 new Callable<ForumDiscussionRecord[]>() {
                     @Override
                     public ForumDiscussionRecord[] call() throws Exception {
-                        return ((Moodle2ClientWrapper) getDefaultClient())
+                        return defaultClient
                                 .getBindingStub()
                                 .get_forum_discussions(
-                                        ((Moodle2ClientWrapper) getDefaultClient()).getAuthClient(),
-                                        ((Moodle2ClientWrapper) getDefaultClient()).getSessionKey(),
+                                        defaultClient.getAuthClient(),
+                                        defaultClient.getSessionKey(),
                                         forumId,
                                         9999);
                     }
@@ -218,7 +230,7 @@ public class Moodle2ServiceStructureReader extends AbstractConnectorIOComponent 
         if (null != discussionRecordArray && 0 < discussionRecordArray.length) {
             for (ForumDiscussionRecord discussionRecord : discussionRecordArray) {
                 result.add(Moodle2SiocConverter.createSiocThread(
-                        (Moodle2Connector) connector,
+                        getConnector(),
                         discussionRecord,
                         Forum.getInstance(
                                 parent.getModel(),

@@ -10,28 +10,28 @@ import org.rdfs.sioc.services.Service;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
-public abstract class AbstractServiceClientManager implements IServiceClientManager {
+public abstract class AbstractServiceClientManager<T> implements
+        IServiceClientManager<T> {
     private Service service;
-    private Object defaultClient;
-    private Map<Integer, Object> clientMap;
+    private T defaultClient;
+    private Map<Integer, T> clientMap;
 
-    public AbstractServiceClientManager(Service service) {
-        this.service = Preconditions.checkNotNull(service,
-                "Required parameter service must be specified.");
-        this.clientMap = Maps.newHashMap();
-    }
-
-    public AbstractServiceClientManager(Service service, UserAccount defaultUserAccount)
+    public AbstractServiceClientManager(Service service,
+            UserAccount defaultUserAccount)
             throws Exception {
-        this(service);
+        Preconditions.checkNotNull(service,
+                "Required parameter service must be specified.");
         Preconditions.checkNotNull(defaultUserAccount,
                 "Required parameter defaultUserAccount must be specified.");
+
+        init();
         this.defaultClient = createClientFromAccount(defaultUserAccount);
     }
+
+    protected abstract void init();
 
     @Override
     public Service getService() {
@@ -44,13 +44,13 @@ public abstract class AbstractServiceClientManager implements IServiceClientMana
     }
 
     @Override
-    public void setDefaultClient(Object client) {
+    public void setDefaultClient(T client) {
         this.defaultClient = Preconditions.checkNotNull(client,
                 "Required parameter client must be specified.");
     }
 
     @Override
-    public Object getDefaultClient() {
+    public T getDefaultClient() {
         Preconditions.checkState(null != defaultClient,
                 "No default client set.");
 
@@ -58,7 +58,7 @@ public abstract class AbstractServiceClientManager implements IServiceClientMana
     }
 
     @Override
-    public void add(UserAccount userAccount, Object client) {
+    public void add(UserAccount userAccount, T client) {
         Preconditions.checkNotNull(userAccount,
                 "Required parameter userAccount must be specified.");
         Preconditions.checkArgument(userAccount.hasAccountName(),
@@ -91,12 +91,12 @@ public abstract class AbstractServiceClientManager implements IServiceClientMana
     }
 
     @Override
-    public List<Object> getAll() {
+    public List<T> getAll() {
         return Lists.newArrayList(clientMap.values());
     }
 
     @Override
-    public Object get(UserAccount userAccount) throws NotFoundException {
+    public T get(UserAccount userAccount) throws NotFoundException {
         Preconditions.checkNotNull(userAccount,
                 "Required parameter userAccount must be specified.");
         Preconditions.checkArgument(userAccount.hasAccountName(),
@@ -104,7 +104,7 @@ public abstract class AbstractServiceClientManager implements IServiceClientMana
         Preconditions.checkArgument(userAccount.hasAccountServiceHomepage(),
                 "The parameter userAccount has no accountServiceHomepage.");
 
-        Object result = clientMap.get(generateKey(userAccount));
+        T result = clientMap.get(generateKey(userAccount));
 
         if (null == result) {
             throw new NotFoundException("No client found for " + userAccount);

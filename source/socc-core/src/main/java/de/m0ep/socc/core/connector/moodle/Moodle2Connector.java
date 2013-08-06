@@ -18,10 +18,11 @@ import de.m0ep.socc.core.connector.IServiceClientManager;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
 public class Moodle2Connector extends AbstractConnector {
-    private static final Logger LOG = LoggerFactory.getLogger(Moodle2Connector.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(Moodle2Connector.class);
 
     private URI serviceEndpointUri;
-    private IServiceClientManager serviceClientManager;
+    private IServiceClientManager<Moodle2ClientWrapper> serviceClientManager;
 
     private IStructureReader serviceStructureReader;
     private IPostReader postReader;
@@ -31,19 +32,22 @@ public class Moodle2Connector extends AbstractConnector {
         super(context, config);
     }
 
-    public Moodle2Connector(String id, ISoccContext context, UserAccount defaultUserAccount,
+    public Moodle2Connector(String id, ISoccContext context,
+            UserAccount defaultUserAccount,
             Service service) {
         super(id, context, defaultUserAccount, service);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public IServiceClientManager getServiceClientManager() {
+    public IServiceClientManager<Moodle2ClientWrapper> getServiceClientManager() {
         return serviceClientManager;
     }
 
     @Override
     public IStructureReader getStructureReader() {
-        Preconditions.checkState(isInitialized(), "Connector was not initialized");
+        Preconditions.checkState(isInitialized(),
+                "Connector was not initialized");
 
         if (null == serviceStructureReader) {
             serviceStructureReader = new Moodle2ServiceStructureReader(this);
@@ -54,7 +58,8 @@ public class Moodle2Connector extends AbstractConnector {
 
     @Override
     public IPostReader getPostReader() {
-        Preconditions.checkState(isInitialized(), "Connector was not initialized");
+        Preconditions.checkState(isInitialized(),
+                "Connector was not initialized");
 
         if (null == postReader) {
             postReader = new Moodle2PostReader(this);
@@ -65,7 +70,8 @@ public class Moodle2Connector extends AbstractConnector {
 
     @Override
     public IPostWriter getPostWriter() {
-        Preconditions.checkState(isInitialized(), "Connector was not initialized");
+        Preconditions.checkState(isInitialized(),
+                "Connector was not initialized");
 
         if (null == postWriter) {
             postWriter = new Moodle2PostWriter(this);
@@ -81,12 +87,15 @@ public class Moodle2Connector extends AbstractConnector {
                 "The service contains no required serviceEndpoint.");
         serviceEndpointUri = getService().getServiceEndpoint().asURI();
 
-        LOG.info("Create Moodle connector with endpoint at {}.", serviceEndpointUri);
+        LOG.info("Create Moodle connector with endpoint at {}.",
+                serviceEndpointUri);
 
         try {
-            serviceClientManager = new Moodle2ClientManager(getService(), getDefaultUserAccount());
+            serviceClientManager = new Moodle2ClientManager(getService(),
+                    getDefaultUserAccount());
         } catch (Exception e) {
-            throw new AuthenticationException("Failed to create and login default client.", e);
+            throw new AuthenticationException(
+                    "Failed to create and login default client.", e);
         }
 
         serviceStructureReader = new Moodle2ServiceStructureReader(this);

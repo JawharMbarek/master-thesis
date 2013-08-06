@@ -23,8 +23,10 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements
+public class CanvasLmsPostWriter extends
+        AbstractConnectorIOComponent<CanvasLmsConnector> implements
         IPostWriter {
+
     public CanvasLmsPostWriter(final CanvasLmsConnector connector) {
         super(connector);
     }
@@ -77,19 +79,20 @@ public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements
 
         UserAccount creatorAccount = post.getCreator();
         Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
-                connector, creatorAccount);
+                getConnector(),
+                creatorAccount);
 
         CanvasLmsClient client = null;
         if (null != creatorPerson) {
             UserAccount serviceAccount = PostWriterUtils
                     .getServiceAccountOfPersonOrNull(
-                            connector,
+                            getConnector(),
                             creatorPerson,
-                            connector.getService().getServiceEndpoint().asURI());
+                            getServiceEndpoint());
             if (null != serviceAccount) {
                 client = (CanvasLmsClient) PostWriterUtils
                         .getClientOfServiceAccountOrNull(
-                                connector,
+                                getConnector(),
                                 serviceAccount);
             }
         }
@@ -97,7 +100,7 @@ public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements
         String content = post.getContent();
         if (null == client) { // No client found, get default one an adapt
                               // message content
-            client = (CanvasLmsClient) connector.getServiceClientManager()
+            client = getConnector().getServiceClientManager()
                     .getDefaultClient();
             content = PostWriterUtils.createContentOfUnknownAccount(
                     post,
@@ -124,7 +127,7 @@ public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements
 
         if (null != resultEntry) {
             Post resultPost = CanvasLmsSiocConverter.createSiocPost(
-                    (CanvasLmsConnector) connector,
+                    getConnector(),
                     resultEntry,
                     container);
 
@@ -195,19 +198,20 @@ public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements
 
         UserAccount creatorAccount = replyPost.getCreator();
         Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
-                connector, creatorAccount);
+                getConnector(),
+                creatorAccount);
 
         CanvasLmsClient client = null;
         if (null != creatorPerson) {
             UserAccount serviceAccount = PostWriterUtils
                     .getServiceAccountOfPersonOrNull(
-                            connector,
+                            getConnector(),
                             creatorPerson,
-                            connector.getService().getServiceEndpoint().asURI());
+                            getServiceEndpoint());
             if (null != serviceAccount) {
                 client = (CanvasLmsClient) PostWriterUtils
                         .getClientOfServiceAccountOrNull(
-                                connector,
+                                getConnector(),
                                 serviceAccount);
             }
         }
@@ -215,7 +219,7 @@ public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements
         String content = replyPost.getContent();
         if (null == client) { // No client found, get default one an adapt
                               // message content
-            client = (CanvasLmsClient) connector.getServiceClientManager()
+            client = getConnector().getServiceClientManager()
                     .getDefaultClient();
             content = PostWriterUtils.createContentOfUnknownAccount(
                     replyPost,
@@ -240,7 +244,7 @@ public class CanvasLmsPostWriter extends AbstractConnectorIOComponent implements
 
         if (null != resultEntry) {
             Post resultPost = CanvasLmsSiocConverter.createSiocPost(
-                    (CanvasLmsConnector) connector,
+                    getConnector(),
                     resultEntry,
                     container);
 

@@ -22,7 +22,8 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class Moodle2PostWriter extends AbstractConnectorIOComponent implements IPostWriter {
+public class Moodle2PostWriter extends
+        AbstractConnectorIOComponent<Moodle2Connector> implements IPostWriter {
 
     private Map<Integer, Integer> firstPostIdMap = new HashMap<Integer, Integer>();
 
@@ -32,15 +33,23 @@ public class Moodle2PostWriter extends AbstractConnectorIOComponent implements I
 
     @Override
     public boolean canPostTo(Container container) {
-        return null != container &&
-                RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS) &&
-                container.toString().startsWith(getServiceEndpoint().toString()) &&
-                container.hasParent() &&
-                container.getParent().toString().startsWith(getServiceEndpoint().toString());
+        return null != container
+                &&
+                RdfUtils.isType(container.getModel(), container,
+                        Thread.RDFS_CLASS)
+                &&
+                container.toString()
+                        .startsWith(getServiceEndpoint().toString())
+                &&
+                container.hasParent()
+                &&
+                container.getParent().toString().startsWith(
+                        getServiceEndpoint().toString());
     }
 
     @Override
-    public void writePost(Post post, Container container) throws AuthenticationException,
+    public void writePost(Post post, Container container)
+            throws AuthenticationException,
             IOException {
         Preconditions.checkNotNull(post,
                 "Required parameter post must be specified.");
@@ -61,25 +70,29 @@ public class Moodle2PostWriter extends AbstractConnectorIOComponent implements I
         }
 
         UserAccount creatorAccount = post.getCreator();
-        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(connector, creatorAccount);
+        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
+                getConnector(), creatorAccount);
 
         Moodle2ClientWrapper client = null;
         if (null != creatorPerson) {
-            UserAccount serviceAccount = PostWriterUtils.getServiceAccountOfPersonOrNull(
-                    connector,
-                    creatorPerson,
-                    connector.getService().getServiceEndpoint().asURI());
+            UserAccount serviceAccount = PostWriterUtils
+                    .getServiceAccountOfPersonOrNull(
+                            getConnector(),
+                            creatorPerson,
+                            getServiceEndpoint());
             if (null != serviceAccount) {
-                client = (Moodle2ClientWrapper) PostWriterUtils.getClientOfServiceAccountOrNull(
-                        connector,
-                        serviceAccount);
+                client = (Moodle2ClientWrapper) PostWriterUtils
+                        .getClientOfServiceAccountOrNull(
+                                getConnector(),
+                                serviceAccount);
             }
         }
 
         String content = post.getContent();
         if (null == client) { // No client found, get default one an adapt
                               // message content
-            client = (Moodle2ClientWrapper) connector.getServiceClientManager().getDefaultClient();
+            client = getConnector().getServiceClientManager()
+                    .getDefaultClient();
             content = PostWriterUtils.createContentOfUnknownAccount(
                     post,
                     creatorAccount,
@@ -98,11 +111,12 @@ public class Moodle2PostWriter extends AbstractConnectorIOComponent implements I
                     .callMethod(new Callable<ForumPostRecord[]>() {
                         @Override
                         public ForumPostRecord[] call() throws Exception {
-                            return callingClient.getBindingStub().get_forum_posts(
-                                    callingClient.getAuthClient(),
-                                    callingClient.getSessionKey(),
-                                    discussionId,
-                                    1);
+                            return callingClient.getBindingStub()
+                                    .get_forum_posts(
+                                            callingClient.getAuthClient(),
+                                            callingClient.getSessionKey(),
+                                            discussionId,
+                                            1);
                         }
                     });
 
@@ -116,7 +130,8 @@ public class Moodle2PostWriter extends AbstractConnectorIOComponent implements I
 
         if (-1 != firstPostId) {
             // create Moodle post data
-            final ForumPostDatum postDatum = new ForumPostDatum(client.getBindingStub()
+            final ForumPostDatum postDatum = new ForumPostDatum(client
+                    .getBindingStub()
                     .getNAMESPACE());
             postDatum.setMessage(content);
             postDatum.setMessage(post.getContent());
@@ -133,11 +148,12 @@ public class Moodle2PostWriter extends AbstractConnectorIOComponent implements I
                     .callMethod(new Callable<ForumPostRecord[]>() {
                         @Override
                         public ForumPostRecord[] call() throws Exception {
-                            return callingClient.getBindingStub().forum_add_reply(
-                                    callingClient.getAuthClient(),
-                                    callingClient.getSessionKey(),
-                                    firstPostId,
-                                    postDatum);
+                            return callingClient.getBindingStub()
+                                    .forum_add_reply(
+                                            callingClient.getAuthClient(),
+                                            callingClient.getSessionKey(),
+                                            firstPostId,
+                                            postDatum);
                         }
                     });
 
@@ -145,7 +161,7 @@ public class Moodle2PostWriter extends AbstractConnectorIOComponent implements I
                 int numChildren = postRecordArray[0].getChildren().length;
                 ForumPostRecord postRecord = postRecordArray[0].getChildren()[numChildren - 1];
                 Post addedPost = Moodle2SiocConverter.createSiocPost(
-                        (Moodle2Connector) connector,
+                        getConnector(),
                         postRecord,
                         container);
 
@@ -163,7 +179,8 @@ public class Moodle2PostWriter extends AbstractConnectorIOComponent implements I
     }
 
     @Override
-    public void writeReply(Post replyPost, Post parentPost) throws AuthenticationException,
+    public void writeReply(Post replyPost, Post parentPost)
+            throws AuthenticationException,
             IOException {
         Preconditions.checkNotNull(replyPost,
                 "Required parameter replyPost must be specified.");
@@ -177,29 +194,34 @@ public class Moodle2PostWriter extends AbstractConnectorIOComponent implements I
             postId = Integer.parseInt(parentPost.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
-                    "The id of the parentPost is invalid: was " + parentPost.getId());
+                    "The id of the parentPost is invalid: was "
+                            + parentPost.getId());
         }
 
         UserAccount creatorAccount = replyPost.getCreator();
-        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(connector, creatorAccount);
+        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
+                getConnector(), creatorAccount);
 
         Moodle2ClientWrapper client = null;
         if (null != creatorPerson) {
-            UserAccount serviceAccount = PostWriterUtils.getServiceAccountOfPersonOrNull(
-                    connector,
-                    creatorPerson,
-                    connector.getService().getServiceEndpoint().asURI());
+            UserAccount serviceAccount = PostWriterUtils
+                    .getServiceAccountOfPersonOrNull(
+                            getConnector(),
+                            creatorPerson,
+                            getServiceEndpoint());
             if (null != serviceAccount) {
-                client = (Moodle2ClientWrapper) PostWriterUtils.getClientOfServiceAccountOrNull(
-                        connector,
-                        serviceAccount);
+                client = (Moodle2ClientWrapper) PostWriterUtils
+                        .getClientOfServiceAccountOrNull(
+                                getConnector(),
+                                serviceAccount);
             }
         }
 
         String content = replyPost.getContent();
         if (null == client) { // No client found, get default one an adapt
                               // message content
-            client = (Moodle2ClientWrapper) connector.getServiceClientManager().getDefaultClient();
+            client = getConnector().getServiceClientManager()
+                    .getDefaultClient();
             content = PostWriterUtils.createContentOfUnknownAccount(
                     replyPost,
                     creatorAccount,
@@ -207,7 +229,8 @@ public class Moodle2PostWriter extends AbstractConnectorIOComponent implements I
         }
 
         final Moodle2ClientWrapper finalClient = client;
-        final ForumPostDatum replyDatum = new ForumPostDatum(client.getBindingStub().getNAMESPACE());
+        final ForumPostDatum replyDatum = new ForumPostDatum(client
+                .getBindingStub().getNAMESPACE());
         replyDatum.setMessage(content);
         if (replyPost.hasSubject()) {
             replyDatum.setSubject(replyPost.getSubject());
@@ -215,25 +238,27 @@ public class Moodle2PostWriter extends AbstractConnectorIOComponent implements I
             replyDatum.setSubject(replyPost.getTitle());
         }
 
-        ForumPostRecord[] resultPostRecords = client.callMethod(new Callable<ForumPostRecord[]>() {
-            @Override
-            public ForumPostRecord[] call() throws Exception {
-                return finalClient.getBindingStub().forum_add_reply(
-                        finalClient.getAuthClient(),
-                        finalClient.getSessionKey(),
-                        postId,
-                        replyDatum);
-            }
-        });
+        ForumPostRecord[] resultPostRecords = client
+                .callMethod(new Callable<ForumPostRecord[]>() {
+                    @Override
+                    public ForumPostRecord[] call() throws Exception {
+                        return finalClient.getBindingStub().forum_add_reply(
+                                finalClient.getAuthClient(),
+                                finalClient.getSessionKey(),
+                                postId,
+                                replyDatum);
+                    }
+                });
 
         if (null != resultPostRecords && 0 < resultPostRecords.length) {
-            ForumPostRecord parentPostRecord = findPost(resultPostRecords, postId);
+            ForumPostRecord parentPostRecord = findPost(resultPostRecords,
+                    postId);
 
             if (null != parentPostRecord) {
                 int numChildren = parentPostRecord.getChildren().length;
                 ForumPostRecord postRecord = parentPostRecord.getChildren()[numChildren - 1];
                 Post addedPost = Moodle2SiocConverter.createSiocPost(
-                        (Moodle2Connector) connector,
+                        getConnector(),
                         postRecord,
                         parentPost.getContainer());
 
@@ -242,7 +267,8 @@ public class Moodle2PostWriter extends AbstractConnectorIOComponent implements I
         }
     }
 
-    private ForumPostRecord findPost(ForumPostRecord[] postRecordArray, int postId) {
+    private ForumPostRecord findPost(ForumPostRecord[] postRecordArray,
+            int postId) {
         for (ForumPostRecord postRecord : postRecordArray) {
             if (postId == postRecord.getId()) {
                 return postRecord;

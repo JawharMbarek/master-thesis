@@ -29,9 +29,9 @@ import org.rdfs.sioc.services.Service;
 import com.google.common.base.Preconditions;
 
 import de.m0ep.canvas.CanvasLmsClient;
-import de.m0ep.sioc.service.auth.AccessToken;
 import de.m0ep.sioc.service.auth.Authentication;
 import de.m0ep.sioc.service.auth.Credential;
+import de.m0ep.sioc.service.auth.ServicesAuthVocabulary;
 import de.m0ep.socc.core.connector.AbstractServiceClientManager;
 import de.m0ep.socc.core.utils.RdfUtils;
 
@@ -40,7 +40,8 @@ import de.m0ep.socc.core.utils.RdfUtils;
  * 
  * @author Florian Müller
  */
-public class CanvasLmsClientManager extends AbstractServiceClientManager {
+public class CanvasLmsClientManager extends
+        AbstractServiceClientManager<CanvasLmsClient> {
 
     /**
      * Constructs a new {@link CanvasLmsClientManager} for a
@@ -57,6 +58,10 @@ public class CanvasLmsClientManager extends AbstractServiceClientManager {
         super(service, defaultUserAccount);
     }
 
+    @Override
+    protected void init() {
+    }
+
     /**
      * Creates a new {@link CanvasLmsClient} for the given
      * <code>userAccount</code>.
@@ -69,7 +74,7 @@ public class CanvasLmsClientManager extends AbstractServiceClientManager {
      *             Thrown if has missing parameters to create a client.
      */
     @Override
-    public Object createClientFromAccount(final UserAccount userAccount)
+    public CanvasLmsClient createClientFromAccount(final UserAccount userAccount)
             throws Exception {
         Preconditions.checkNotNull(userAccount,
                 "Required parameter userAccount must be specified.");
@@ -96,7 +101,7 @@ public class CanvasLmsClientManager extends AbstractServiceClientManager {
             if (RdfUtils.isType(
                     credential.getModel(),
                     credential.getResource(),
-                    AccessToken.RDFS_CLASS)
+                    ServicesAuthVocabulary.AccessToken)
                     && credential.hasValue()) {
                 return new CanvasLmsClient(
                         getService().getServiceEndpoint().toString(),

@@ -1,0 +1,702 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"User",
+				"Username"
+			],
+			[
+				"rdf",
+				"rdf:value"
+			],
+			[
+				"has_",
+				"has_credential"
+			],
+			[
+				"sioca",
+				"siocsa:has"
+			],
+			[
+				"sioc",
+				"siocsa"
+			],
+			[
+				"foaf",
+				"foaf:account"
+			],
+			[
+				"http",
+				"https://youtube"
+			],
+			[
+				"acc",
+				"accountServiceHomepage"
+			],
+			[
+				"sec",
+				"sec	Section"
+			],
+			[
+				"include",
+				"include  (function)"
+			],
+			[
+				"margin",
+				"margin-right"
+			],
+			[
+				"post",
+				"position:   (property)"
+			],
+			[
+				"z-",
+				"z-index:   (property)"
+			],
+			[
+				"sr",
+				"src=  (attribute)"
+			],
+			[
+				"en",
+				"enquote	enquote"
+			],
+			[
+				"ca",
+				"chapter"
+			],
+			[
+				"fig",
+				"figure	Figure"
+			],
+			[
+				"fi",
+				"figure	Figure"
+			],
+			[
+				"JAVA",
+				"JAVA_HOME"
+			],
+			[
+				"M2",
+				"M2_HOME"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "content/requirementanalysis.tex",
+			"settings":
+			{
+				"buffer_size": 2398,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"xml",
+				"Set Syntax: XML"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"",
+				"Auto indent"
+			],
+			[
+				"spar",
+				"Set Syntax: SPARQL"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"php",
+				"Set Syntax: PHP"
+			],
+			[
+				"in",
+				"Auto indent"
+			],
+			[
+				"json",
+				"Indent JSON"
+			],
+			[
+				"jsp",
+				"Pretty JSON: Reformat (Pretty Print) JSON"
+			],
+			[
+				"indent",
+				"Auto indent"
+			],
+			[
+				"enqu",
+				"Snippet: enquote"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"pa",
+				"Package Control: Install Package"
+			],
+			[
+				"jso",
+				"Set Syntax: JSON"
+			],
+			[
+				"p",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 153.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/florian/.config/sublime-text-2/Packages/User/Preferences.sublime-settings",
+		"/home/florian/Develop/uni/master-thesis/source/socc-core/src/main/java/de/m0ep/socc/core/connector/canvaslms/CanvasLmsServiceStructureReader.java",
+		"/home/florian/Develop/games/potjam4/src/main/resources/maps/test.tmx",
+		"/home/florian/Develop/games/potjam3/src/de/m0ep/potjam/graphics/Color.java",
+		"/home/florian/Dropbox/eclipse/codestyle.xml",
+		"/home/florian/Downloads/slick/readme.txt",
+		"/home/florian/Downloads/slick/build.xml",
+		"/home/florian/Develop/games/potjam3/src/de/m0ep/potjam/graphics/SpriteSheet.java",
+		"/home/florian/Downloads/tiled-master/util/java/libtiled-java/README",
+		"/home/florian/Develop/games/potjam4/.gitignore",
+		"/home/florian/bin/git-hack",
+		"/home/florian/bin/git-chop",
+		"/home/florian/Develop/games/potjam4/.classpath",
+		"/home/florian/Develop/games/potjam4/pom.xml",
+		"/home/florian/Develop/games/potjam4/LICENSE",
+		"/home/florian/Develop/games/potjam3/src/de/m0ep/potjam/POTJam3Component.java",
+		"/home/florian/Dropbox/Pictures/Icons/led-icons/1license.txt",
+		"/home/florian/Drive/Uni/Master-Thesis/Ontologies/sioc-service-auth.owl",
+		"/home/florian/Develop/uni/master-thesis/resources/ontologies/soccconfig.owl",
+		"/home/florian/Develop/games/potjam3/src/de/m0ep/potjam/InputHandler.java",
+		"/home/florian/Develop/games/potjam4/.project",
+		"/home/florian/Music/moodbar.sh",
+		"/home/florian/Desktop/playlist_feed",
+		"/home/florian/Desktop/comments_feed",
+		"/home/florian/Desktop/comments",
+		"/home/florian/Desktop/playlists",
+		"/home/florian/Desktop/PLP81kTs6Uoi3qPR7a2_jP90XyjT23Ylvy?v=2",
+		"/home/florian/Dropbox/socc.sparql",
+		"/home/florian/Desktop/comments.1",
+		"/home/florian/Desktop/uploads?v=2",
+		"/home/florian/Dropbox/Studium/2012 WiSe/Masterarbeit/moodlews_errors.txt",
+		"/home/florian/Downloads/loom-1_1_2243-cc5c829787-examples/Pong/assets/gfx/pongSprites.plist",
+		"/home/florian/Downloads/loom-1_1_2243-cc5c829787-examples/Pong/src/Pong.ls",
+		"/home/florian/Downloads/loom-1_1_2243-cc5c829787-examples/Pong/src/PongPaddleMover.ls",
+		"/home/florian/Develop/uni/master-thesis/thesis/content/introduction.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/thesis.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/content/relatedwork.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/content/requirementanalysis.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/content/design.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/content/implementation.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/content/conclusion.tex",
+		"/home/florian/.config/sublime-text-2/Packages/User/SideBarEnhancements/Open With/Side Bar.sublime-menu",
+		"/var/www/blog/lib/Slim/Helper/Set.php",
+		"/var/www/blog/lib/Slim/Slim.php",
+		"/var/www/blog/.htaccess",
+		"/var/www/blog/templates/basic/index.php",
+		"/var/www/blog/settings.php",
+		"/var/www/blog/index.php",
+		"/var/www/blog/Slim/Slim.php",
+		"/home/florian/.config/sublime-text-2/Packages/User/SublimeCodeIntel.sublime-settings",
+		"/home/florian/.config/sublime-text-2/Packages/SublimeCodeIntel/SublimeCodeIntel.sublime-settings",
+		"/var/www/blog/res/css/font-awesome.css",
+		"/var/www/blog/robots.txt",
+		"/var/www/blog/config.php",
+		"/home/florian/Downloads/blog/index.php",
+		"/run/user/florian/gvfs/ftp:host=m0ep.de,user=w00e7281/pear.php",
+		"/run/user/florian/gvfs/ftp:host=m0ep.de,user=w00e7281/blog/dropplets/config/config-settings.php",
+		"/home/florian/Develop/web/m0ep.de blog/config.php",
+		"/home/florian/Develop/web/m0ep.de blog/index.php",
+		"/home/florian/Develop/web/m0ep.de blog/blp_index.html",
+		"/home/florian/Develop/web/m0ep.de blog/index.html",
+		"/home/florian/.config/sublime-text-2/Packages/Default/Default (Linux).sublime-keymap",
+		"/home/florian/Develop/web/m0ep.de blog/humans.txt",
+		"/home/florian/Develop/web/m0ep.de blog/doc/extend.md",
+		"/home/florian/Develop/web/m0ep.de blog/CONTRIBUTING.md",
+		"/home/florian/Downloads/blog/dropplets/index.php",
+		"/home/florian/Downloads/blog/templates/panels/post.php",
+		"/home/florian/Downloads/blog/templates/simple/posts.php",
+		"/home/florian/Develop/web/m0ep.de blog/.gitattributes",
+		"/home/florian/Downloads/blog/dropplets/plugins/markdown.php",
+		"/home/florian/Downloads/blog/dashboard/index.php",
+		"/home/florian/Downloads/blog/dropplets/config/submit-template.php",
+		"/home/florian/Downloads/blog/dropplets/config/submit-settings.php",
+		"/home/florian/Downloads/blog/dropplets/plugins/phpass-0.3/PasswordHash.php",
+		"/home/florian/Downloads/blog/dropplets/config/config-template.php",
+		"/run/user/florian/gvfs/ftp:host=m0ep.de,user=w00e7281/map/index.html",
+		"/run/user/florian/gvfs/ftp:host=m0ep.de,user=w00e7281/map/css/main.css",
+		"/var/www/map/index.html",
+		"/var/www/map/css/main.css",
+		"/var/www/map/js/main.js",
+		"/var/www/map/css/leaflet.draw.css",
+		"/home/florian/Downloads/addyosmani-jquery-ui-bootstrap-71f2e47/index.html",
+		"/var/www/map/js/vendor/leaflet.draw.js",
+		"/var/www/map/css/leaflet.css",
+		"/home/florian/Downloads/Leaflet-0.6.2/README.md",
+		"/run/user/florian/gvfs/ftp:host=m0ep.de,user=w00e7281/sioc.rdf",
+		"/home/florian/Desktop/<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+		"/home/florian/Develop/uni/master-thesis/thesis/preamble/packages.tex",
+		"/home/florian/.config/sublime-text-2/Packages/User/Latex/enquote.sublime-snippet",
+		"/home/florian/Develop/uni/master-thesis/thesis/pages/glossary.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/missfont.log",
+		"/home/florian/.texmf-config/updmap.d/20tex-tudfonts.cfg",
+		"/home/florian/Develop/uni/master-thesis/thesis/content/requirementanalysis.log",
+		"/home/florian/.config/sublime-text-2/Packages/Default/Preferences.sublime-settings",
+		"/home/florian/Develop/uni/master-thesis/thesis/pages/bibliography.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/pages/solemn_declaration.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/pages/frontpage.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/pages/appendix.tex",
+		"/home/florian/.config/sublime-text-2/Packages/User/LaTeX.sublime-settings",
+		"/home/florian/Develop/uni/master-thesis/thesis/pages/tableofcontents.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/preamble/commands.tex",
+		"/home/florian/.config/sublime-text-2/Packages/User/Default (Linux).sublime-keymap",
+		"/home/florian/Develop/uni/master-thesis/thesis/pages/abstract.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/preamble/docclass.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/preamble/settings.tex",
+		"/home/florian/.config/sublime-text-2/Packages/SideBarEnhancements/messages/11.13.2012.1305.0.txt",
+		"/home/florian/Develop/ontologies/TOSM.owl",
+		"/home/florian/Develop/ontologies/ns",
+		"/home/florian/Desktop/soccconfig.owl",
+		"/home/florian/.local/share/applications/protege.desktop",
+		"/home/florian/bin/eclipse/eclipse.ini",
+		"/home/florian/.m2/settings.xml",
+		"/home/florian/Downloads/rdfreactor.runtime-4.8.3-sources/org/ontoware/rdfreactor/runtime/ReactorRuntimeEntity.java",
+		"/home/florian/Downloads/rdf2go.api-4.8.3-sources/org/ontoware/rdf2go/model/node/Resource.java",
+		"/home/florian/Downloads/rdf2go.api-4.8.3-sources/org/ontoware/rdf2go/model/node/Node.java",
+		"/home/florian/Downloads/rdf2go.api-4.8.3-sources/org/ontoware/rdf2go/model/node/impl/ResourceImpl.java",
+		"/home/florian/Downloads/rdf2go.api-4.8.3-sources/org/ontoware/rdf2go/model/node/URI.java",
+		"/home/florian/Downloads/rdf2go.api-4.8.3-sources/org/ontoware/rdf2go/model/node/impl/URIImpl.java",
+		"/home/florian/Downloads/rdfreactor.runtime-4.8.3-sources/org/ontoware/rdfreactor/runtime/Base.java",
+		"/home/florian/.local/share/applications/mendeleydesktop.desktop",
+		"/home/florian/.local/share/applications/modelio.desktop",
+		"/home/florian/Desktop/canvas-json/error.json",
+		"/home/florian/Desktop/canvas-json/entries2.json",
+		"/home/florian/Desktop/canvas-json/courses.json",
+		"/home/florian/Desktop/canvas-json/entry.json",
+		"/home/florian/Desktop/canvas-json/discussiontopic.json",
+		"/home/florian/.local/share/applications/Eclipse-62546226-ce8b-11e2-86e5-485d606de500.desktop",
+		"/home/florian/Desktop/Hohpe_EIP_camel_OpenOffice.svg"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"katateochi</accountName",
+			"UserAccount",
+			"http://www.youtube.com/user/katateochi",
+			"rdf:about=\"http://www.youtube.com/user/katateochi",
+			"http://www.youtube.com/user/katateochi",
+			"http://www.youtube.com/comment/ucrCNGcMyO03I_MFUXkKauYogQos3bqXw2aKNCSTZrE",
+			"fetched",
+			"<user/socc-bot/youtube/direct/username> a siocsa:Username;\n        rdf:value \"\".",
+			"    \n",
+			"rewrite",
+			"line",
+			"image/",
+			"marker-sh",
+			"\\u00fc",
+			"\\u003E",
+			"\\u003C",
+			"UserAccount",
+			"Useraccount",
+			"\n",
+			"enumerate",
+			"}\n",
+			"line",
+			"select_line",
+			"line",
+			"wrap",
+			"Person",
+			"Configuration",
+			"Icon[en_US]=/home/florian/bin/modelio/modelio\nName[en_US]=Eclipse"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"ü",
+			">",
+			"<",
+			"ConnectorCfg"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "content/requirementanalysis.tex",
+					"settings":
+					{
+						"buffer_size": 2398,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1834,
+								1834
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 3.0,
+									"codeintel_scan_files_in_project": true,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": true,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"incomplete_sync": null,
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"remote_loading": false,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"synced": false,
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 128.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 35.0
+	},
+	"input":
+	{
+		"height": 35.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 112.0
+	},
+	"output.sftp":
+	{
+		"height": 0.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"p",
+				"preamble/packages.tex"
+			],
+			[
+				"thes",
+				"thesis.tex"
+			],
+			[
+				"design",
+				"content/design.tex"
+			],
+			[
+				"comma",
+				"preamble/commands.tex"
+			],
+			[
+				"pack",
+				"preamble/packages.tex"
+			],
+			[
+				"doc",
+				"preamble/docclass.tex"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 264.0,
+	"status_bar_visible": true
+}

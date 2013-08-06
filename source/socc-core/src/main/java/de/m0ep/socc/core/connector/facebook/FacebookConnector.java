@@ -42,17 +42,16 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
 public class FacebookConnector extends AbstractConnector {
-    public static final URI URI_SERVICE_ENDPOINT = Builder.createURI("https://www.facebook.com");
+    public static final URI URI_SERVICE_ENDPOINT = Builder
+            .createURI("https://www.facebook.com");
 
-    private IServiceClientManager clientManager;
-
+    private IServiceClientManager<FacebookClientWrapper> clientManager;
     private IStructureReader serviceStructureReader;
-
     private IPostReader postReader;
-
     private IPostWriter postWriter;
 
-    public FacebookConnector(String id, ISoccContext context, UserAccount defaultUserAccount,
+    public FacebookConnector(String id, ISoccContext context,
+            UserAccount defaultUserAccount,
             Service service) {
         super(id, context, defaultUserAccount, service);
     }
@@ -61,8 +60,9 @@ public class FacebookConnector extends AbstractConnector {
         super(context, config);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public IServiceClientManager getServiceClientManager() {
+    public IServiceClientManager<FacebookClientWrapper> getServiceClientManager() {
         return clientManager;
     }
 
@@ -97,7 +97,8 @@ public class FacebookConnector extends AbstractConnector {
         getService().setServiceEndpoint(URI_SERVICE_ENDPOINT);
 
         try {
-            clientManager = new FacebookClientManaget(getService(), getDefaultUserAccount());
+            clientManager = new FacebookClientManager(getService(),
+                    getDefaultUserAccount());
         } catch (Exception e) {
             Throwables.propagateIfInstanceOf(e, IOException.class);
             Throwables.propagateIfInstanceOf(e, AuthenticationException.class);
@@ -113,7 +114,8 @@ public class FacebookConnector extends AbstractConnector {
         setInitialized(false);
     }
 
-    public static void handleFacebookException(FacebookException e) throws AuthenticationException,
+    public static void handleFacebookException(FacebookException e)
+            throws AuthenticationException,
             NotFoundException, IOException {
         if (e instanceof FacebookOAuthException) {
             FacebookOAuthException fae = (FacebookOAuthException) e;
@@ -139,7 +141,8 @@ public class FacebookConnector extends AbstractConnector {
                 case 455: // A session key must be specified when request is
                           // signed
                     // with a session secret
-                    throw new AuthenticationException(fae.getErrorMessage(), fae);
+                    throw new AuthenticationException(fae.getErrorMessage(),
+                            fae);
                 case 803: // Specified object cannot be found
                     throw new NotFoundException("Not found", fae);
             }

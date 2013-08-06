@@ -34,7 +34,8 @@ import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
 public final class PostWriterUtils {
-    private static final Logger LOG = LoggerFactory.getLogger(PostWriterUtils.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(PostWriterUtils.class);
 
     /**
      * Private constructor, because this class has only static methods.
@@ -42,7 +43,8 @@ public final class PostWriterUtils {
     private PostWriterUtils() {
     }
 
-    public static String createContentOfUnknownAccount(Post post, UserAccount creatorAccount,
+    public static String createContentOfUnknownAccount(Post post,
+            UserAccount creatorAccount,
             Person creatorPerson) {
         String creator = creatorAccount.toString();
 
@@ -79,7 +81,8 @@ public final class PostWriterUtils {
                 try {
                     Object client = connector.getServiceClientManager()
                             .createClientFromAccount(serviceAccount);
-                    connector.getServiceClientManager().add(serviceAccount, client);
+                    connector.getServiceClientManager().add(serviceAccount,
+                            client);
                     return client;
                 } catch (Exception e) {
                     LOG.debug("Failed to create client form userAccount "
@@ -96,7 +99,8 @@ public final class PostWriterUtils {
         return null;
     }
 
-    public static UserAccount getServiceAccountOfPersonOrNull(IConnector connector,
+    public static UserAccount getServiceAccountOfPersonOrNull(
+            IConnector connector,
             Person creatorPerson,
             URI serviceEndpoint) {
         try {
@@ -112,7 +116,8 @@ public final class PostWriterUtils {
         }
     }
 
-    public static Person getPersonOfCreatorOrNull(IConnector connector, UserAccount creatorAccount) {
+    public static Person getPersonOfCreatorOrNull(IConnector connector,
+            UserAccount creatorAccount) {
         if (creatorAccount.hasAccountOf()) {
             return Person.getInstance(
                     connector.getContext().getModel(),

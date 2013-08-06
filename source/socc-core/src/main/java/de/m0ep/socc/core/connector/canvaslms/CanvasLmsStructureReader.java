@@ -53,8 +53,12 @@ import de.m0ep.socc.core.utils.RdfUtils;
  * 
  * @author Florian Müller
  */
-public class CanvasLmsStructureReader extends AbstractConnectorIOComponent
+public class CanvasLmsStructureReader extends
+        AbstractConnectorIOComponent<CanvasLmsConnector>
         implements IStructureReader {
+
+    private CanvasLmsClient defaultClient;
+
     /**
      * Constructs a new {@link CanvasLmsStructureReader} for the given
      * {@link CanvasLmsConnector}.
@@ -63,6 +67,9 @@ public class CanvasLmsStructureReader extends AbstractConnectorIOComponent
      */
     public CanvasLmsStructureReader(final CanvasLmsConnector connector) {
         super(connector);
+
+        this.defaultClient = connector.getServiceClientManager()
+                .getDefaultClient();
     }
 
     @Override
@@ -95,11 +102,11 @@ public class CanvasLmsStructureReader extends AbstractConnectorIOComponent
         }
 
         try {
-            Course course = ((CanvasLmsClient) getDefaultClient()).courses()
+            Course course = defaultClient.courses()
                     .get(courseId)
                     .execute();
             return CanvasLmsSiocConverter.createSiocForum(
-                    (CanvasLmsConnector) connector,
+                    getConnector(),
                     course);
         } catch (CanvasLmsException e) {
             if (e instanceof NetworkException) {
@@ -120,7 +127,7 @@ public class CanvasLmsStructureReader extends AbstractConnectorIOComponent
         List<Forum> result = Lists.newArrayList();
 
         try {
-            coursePages = ((CanvasLmsClient) getDefaultClient()).courses()
+            coursePages = defaultClient.courses()
                     .list()
                     .executePagination();
         } catch (CanvasLmsException e) {
@@ -139,7 +146,7 @@ public class CanvasLmsStructureReader extends AbstractConnectorIOComponent
             for (List<Course> courses : coursePages) {
                 for (Course course : courses) {
                     result.add(CanvasLmsSiocConverter.createSiocForum(
-                            (CanvasLmsConnector) connector,
+                            getConnector(),
                             course));
                 }
             }
@@ -185,14 +192,13 @@ public class CanvasLmsStructureReader extends AbstractConnectorIOComponent
         }
 
         try {
-            DiscussionTopic discussionTopic = ((CanvasLmsClient) getDefaultClient())
-                    .courses()
+            DiscussionTopic discussionTopic = defaultClient.courses()
                     .discussionTopics(courseId)
                     .get(topicId)
                     .execute();
 
             return CanvasLmsSiocConverter.createSiocThread(
-                    (CanvasLmsConnector) connector,
+                    getConnector(),
                     discussionTopic,
                     parentForum);
         } catch (CanvasLmsException e) {
@@ -233,8 +239,7 @@ public class CanvasLmsStructureReader extends AbstractConnectorIOComponent
 
         Pagination<DiscussionTopic> discussionTopicPages = null;
         try {
-            discussionTopicPages = ((CanvasLmsClient) getDefaultClient())
-                    .courses()
+            discussionTopicPages = defaultClient.courses()
                     .discussionTopics(courseId)
                     .list()
                     .executePagination();
@@ -257,7 +262,7 @@ public class CanvasLmsStructureReader extends AbstractConnectorIOComponent
             for (List<DiscussionTopic> topics : discussionTopicPages) {
                 for (DiscussionTopic discussionTopic : topics) {
                     result.add(CanvasLmsSiocConverter.createSiocThread(
-                            (CanvasLmsConnector) connector,
+                            getConnector(),
                             discussionTopic,
                             parentForum));
                 }

@@ -21,18 +21,28 @@ import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class Moodle2PostReader extends AbstractConnectorIOComponent implements IPostReader {
-    private static final Logger LOG = LoggerFactory.getLogger(Moodle2PostReader.class);
+public class Moodle2PostReader extends
+        AbstractConnectorIOComponent<Moodle2Connector> implements IPostReader {
+    private static final Logger LOG = LoggerFactory
+            .getLogger(Moodle2PostReader.class);
+
+    private Moodle2ClientWrapper defaultClient;
 
     public Moodle2PostReader(Moodle2Connector connector) {
         super(connector);
+        this.defaultClient = connector.getServiceClientManager()
+                .getDefaultClient();
     }
 
     @Override
     public boolean containsPosts(final Container container) {
-        return null != container &&
-                RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS) &&
-                container.toString().startsWith(getServiceEndpoint().toString());
+        return null != container
+                &&
+                RdfUtils.isType(container.getModel(), container,
+                        Thread.RDFS_CLASS)
+                &&
+                container.toString()
+                        .startsWith(getServiceEndpoint().toString());
     }
 
     @Override
@@ -47,25 +57,27 @@ public class Moodle2PostReader extends AbstractConnectorIOComponent implements I
                 "Required parameter container must be specified.");
         Preconditions.checkArgument(containsPosts(container),
                 "The container contains no post at this connector.");
-        Preconditions.checkArgument(container.hasId(), "The container has no id.");
+        Preconditions.checkArgument(container.hasId(),
+                "The container has no id.");
 
         final int discussionId;
         try {
             discussionId = Integer.parseInt(container.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
-                    "The id of the container is invalid: was " + container.getId());
+                    "The id of the container is invalid: was "
+                            + container.getId());
         }
 
-        ForumPostRecord[] postRecordArray = ((Moodle2ClientWrapper) getDefaultClient())
+        ForumPostRecord[] postRecordArray = defaultClient
                 .callMethod(new Callable<ForumPostRecord[]>() {
                     @Override
                     public ForumPostRecord[] call() throws Exception {
-                        return ((Moodle2ClientWrapper) getDefaultClient())
+                        return defaultClient
                                 .getBindingStub()
                                 .get_forum_posts(
-                                        ((Moodle2ClientWrapper) getDefaultClient()).getAuthClient(),
-                                        ((Moodle2ClientWrapper) getDefaultClient()).getSessionKey(),
+                                        defaultClient.getAuthClient(),
+                                        defaultClient.getSessionKey(),
                                         discussionId,
                                         (int) limit);
                     }
@@ -88,13 +100,15 @@ public class Moodle2PostReader extends AbstractConnectorIOComponent implements I
     }
 
     @Override
-    public List<Post> readNewReplies(final Date lastReplyDate, final long limit,
+    public List<Post> readNewReplies(final Date lastReplyDate,
+            final long limit,
             final Post parentPost)
             throws AuthenticationException, IOException {
         Preconditions.checkNotNull(parentPost,
                 "Required parameter parentPost must be specified.");
-        Preconditions.checkArgument(containsReplies(parentPost),
-                "The parameter parentPost contains no replies at this connector.");
+        Preconditions
+                .checkArgument(containsReplies(parentPost),
+                        "The parameter parentPost contains no replies at this connector.");
         Preconditions.checkArgument(parentPost.hasId(),
                 "The parentPost has no id.");
 
@@ -107,7 +121,8 @@ public class Moodle2PostReader extends AbstractConnectorIOComponent implements I
             discussionId = Integer.parseInt(container.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
-                    "The id of the container is invalid: was " + container.getId());
+                    "The id of the container is invalid: was "
+                            + container.getId());
         }
 
         final int postId;
@@ -115,18 +130,19 @@ public class Moodle2PostReader extends AbstractConnectorIOComponent implements I
             postId = Integer.parseInt(parentPost.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
-                    "The id of the parentPost is invalid: was " + parentPost.getId());
+                    "The id of the parentPost is invalid: was "
+                            + parentPost.getId());
         }
 
-        ForumPostRecord[] postRecordArray = ((Moodle2ClientWrapper) getDefaultClient()).callMethod(
+        ForumPostRecord[] postRecordArray = defaultClient.callMethod(
                 new Callable<ForumPostRecord[]>() {
                     @Override
                     public ForumPostRecord[] call() throws Exception {
-                        return ((Moodle2ClientWrapper) getDefaultClient())
+                        return defaultClient
                                 .getBindingStub()
                                 .get_forum_posts(
-                                        ((Moodle2ClientWrapper) getDefaultClient()).getAuthClient(),
-                                        ((Moodle2ClientWrapper) getDefaultClient()).getSessionKey(),
+                                        defaultClient.getAuthClient(),
+                                        defaultClient.getSessionKey(),
                                         discussionId,
                                         (int) limit);
                     }
@@ -142,14 +158,16 @@ public class Moodle2PostReader extends AbstractConnectorIOComponent implements I
                     addPosts(result, children, lastReplyDate, limit, container);
                 }
             } else {
-                LOG.warn("No post found in thread {} with id {} to read replies from.",
+                LOG.warn(
+                        "No post found in thread {} with id {} to read replies from.",
                         discussionId, postId);
             }
         }
         return result;
     }
 
-    private void addPosts(List<Post> result, final ForumPostRecord[] postRecordArray,
+    private void addPosts(List<Post> result,
+            final ForumPostRecord[] postRecordArray,
             final Date lastPostDate, final long limit, final Container container) {
 
         for (ForumPostRecord postRecord : postRecordArray) {
@@ -157,7 +175,8 @@ public class Moodle2PostReader extends AbstractConnectorIOComponent implements I
 
             ForumPostRecord[] children = postRecord.getChildren();
             if (null != children && 0 < children.length) {
-                addPosts(result, postRecord.getChildren(), lastPostDate, limit, container);
+                addPosts(result, postRecord.getChildren(), lastPostDate, limit,
+                        container);
             }
         }
     }
@@ -172,13 +191,14 @@ public class Moodle2PostReader extends AbstractConnectorIOComponent implements I
 
         if (null == lastPostDate || createdDate.after(lastPostDate)) {
             result.add(Moodle2SiocConverter.createSiocPost(
-                    (Moodle2Connector) connector,
+                    getConnector(),
                     postRecord,
                     container));
         }
     }
 
-    private ForumPostRecord findPost(ForumPostRecord[] postRecordArray, int postId) {
+    private ForumPostRecord findPost(ForumPostRecord[] postRecordArray,
+            int postId) {
         for (ForumPostRecord postRecord : postRecordArray) {
             if (postId == postRecord.getId()) {
                 return postRecord;

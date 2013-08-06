@@ -1,8 +1,7 @@
 
 package de.m0ep.socc.core.connector;
 
+public interface IConnectorIOComponent<T extends IConnector> {
 
-public interface IConnectorIOComponent {
-
-    public abstract IConnector getConnector();
+    public abstract T getConnector();
 }

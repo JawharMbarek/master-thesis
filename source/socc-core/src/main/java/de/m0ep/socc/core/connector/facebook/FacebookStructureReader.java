@@ -41,36 +41,37 @@ import com.restfb.types.FacebookType;
 import com.restfb.types.Group;
 
 import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
-import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
-public class FacebookStructureReader extends AbstractConnectorIOComponent implements
+public class FacebookStructureReader extends
+        AbstractConnectorIOComponent<FacebookConnector>
+        implements
         IStructureReader {
+
+    private FacebookClientWrapper defaultClient;
 
     public FacebookStructureReader(FacebookConnector connector) {
         super(connector);
-    }
-
-    @Override
-    public IConnector getConnector() {
-        return connector;
+        this.defaultClient = connector.getServiceClientManager()
+                .getDefaultClient();
     }
 
     @Override
     public Site getSite() {
-        if (!Site.hasInstance(getModel(), serviceEndpoint)) {
-            Site result = new Site(getModel(), serviceEndpoint, true);
+        if (!Site.hasInstance(getModel(), getServiceEndpoint())) {
+            Site result = new Site(getModel(), getServiceEndpoint(), true);
             result.setName("Facebook");
             return result;
         }
 
-        return Site.getInstance(getModel(), serviceEndpoint);
+        return Site.getInstance(getModel(), getServiceEndpoint());
     }
 
     @Override
-    public Forum getForum(String id) throws NotFoundException, AuthenticationException, IOException {
+    public Forum getForum(String id) throws NotFoundException,
+            AuthenticationException, IOException {
         Preconditions.checkNotNull(id,
                 "Required parameter id must be specified.");
         Preconditions.checkArgument(!id.isEmpty()
@@ -82,7 +83,7 @@ public class FacebookStructureReader extends AbstractConnectorIOComponent implem
 
             if (id.startsWith(FacebookSiocConverter.WALL_ID_PREFIX)) {
                 URI uri = Builder.createURI(
-                        serviceEndpoint
+                        getServiceEndpoint()
                                 + FacebookSiocConverter.WALL_URI_PATH
                                 + fbId);
 
@@ -92,19 +93,19 @@ public class FacebookStructureReader extends AbstractConnectorIOComponent implem
                     try {
                         // check if this is a valid user id.
                         // there should be an exception if not.
-                        ((FacebookClientWrapper) getDefaultClient()).getClient().fetchObject(
+                        defaultClient.getClient().fetchObject(
                                 "/" + fbId, FacebookType.class);
                     } catch (FacebookException e) {
                         FacebookConnector.handleFacebookException(e);
                     }
 
                     return FacebookSiocConverter.createSiocForum(
-                            (FacebookConnector) connector,
-                            ((FacebookClientWrapper) getDefaultClient()).getUser());
+                            getConnector(),
+                            defaultClient.getUser());
                 }
             } else if (id.startsWith(FacebookSiocConverter.GROUP_ID_PREFIX)) {
                 URI uri = Builder.createURI(
-                        serviceEndpoint
+                        getServiceEndpoint()
                                 + FacebookSiocConverter.GROUP_URI_PATH
                                 + fbId);
 
@@ -114,21 +115,25 @@ public class FacebookStructureReader extends AbstractConnectorIOComponent implem
                     Group group = null;
 
                     try {
-                        group = ((FacebookClientWrapper) getDefaultClient()).getClient()
+                        group = defaultClient
+                                .getClient()
                                 .fetchObject(
                                         fbId,
                                         Group.class,
-                                        Parameter.with(FacebookApiConstants.PARAM_FIELDS,
-                                                FacebookApiConstants.FIELD_ID + ","
-                                                        + FacebookApiConstants.FIELD_NAME + ","
-                                                        + FacebookApiConstants.FIELD_DESCRIPTION));
+                                        Parameter
+                                                .with(FacebookApiConstants.PARAM_FIELDS,
+                                                        FacebookApiConstants.FIELD_ID
+                                                                + ","
+                                                                + FacebookApiConstants.FIELD_NAME
+                                                                + ","
+                                                                + FacebookApiConstants.FIELD_DESCRIPTION));
 
                     } catch (FacebookException e) {
                         FacebookConnector.handleFacebookException(e);
                     }
 
                     return FacebookSiocConverter.createSiocForum(
-                            (FacebookConnector) connector,
+                            getConnector(),
                             group);
                 }
             }
@@ -143,18 +148,22 @@ public class FacebookStructureReader extends AbstractConnectorIOComponent implem
 
         // add the default users wall
         results.add(getForum(FacebookSiocConverter.WALL_ID_PREFIX
-                + ((FacebookClientWrapper) getDefaultClient()).getUser().getId()));
+                + defaultClient.getUser().getId()));
 
         Connection<Group> groupsConnections = null;
         try {
-            groupsConnections = ((FacebookClientWrapper) getDefaultClient()).getClient()
+            groupsConnections = defaultClient
+                    .getClient()
                     .fetchConnection(
                             "me/groups",
                             Group.class,
-                            Parameter.with(FacebookApiConstants.PARAM_FIELDS,
-                                    FacebookApiConstants.FIELD_ID + ","
-                                            + FacebookApiConstants.FIELD_NAME + ","
-                                            + FacebookApiConstants.FIELD_DESCRIPTION));
+                            Parameter
+                                    .with(FacebookApiConstants.PARAM_FIELDS,
+                                            FacebookApiConstants.FIELD_ID
+                                                    + ","
+                                                    + FacebookApiConstants.FIELD_NAME
+                                                    + ","
+                                                    + FacebookApiConstants.FIELD_DESCRIPTION));
         } catch (FacebookException e) {
             FacebookConnector.handleFacebookException(e);
         }
@@ -162,7 +171,7 @@ public class FacebookStructureReader extends AbstractConnectorIOComponent implem
         for (List<Group> list : groupsConnections) {
             for (Group group : list) {
                 results.add(FacebookSiocConverter.createSiocForum(
-                        (FacebookConnector) connector,
+                        getConnector(),
                         group));
             }
         }
@@ -171,14 +180,18 @@ public class FacebookStructureReader extends AbstractConnectorIOComponent implem
     }
 
     @Override
-    public Thread getThread(String id, Container parent) throws NotFoundException,
+    public Thread getThread(String id, Container parent)
+            throws NotFoundException,
             AuthenticationException, IOException {
-        throw new UnsupportedOperationException("Facbook has nothing like 'threads'.");
+        throw new UnsupportedOperationException(
+                "Facbook has nothing like 'threads'.");
     }
 
     @Override
-    public List<Thread> listThreads(Container parent) throws AuthenticationException, IOException {
-        throw new UnsupportedOperationException("Facbook has nothing like 'threads'.");
+    public List<Thread> listThreads(Container parent)
+            throws AuthenticationException, IOException {
+        throw new UnsupportedOperationException(
+                "Facbook has nothing like 'threads'.");
     }
 
 }

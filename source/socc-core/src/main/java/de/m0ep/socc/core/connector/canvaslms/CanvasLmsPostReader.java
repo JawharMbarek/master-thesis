@@ -49,14 +49,19 @@ import de.m0ep.socc.core.utils.RdfUtils;
 /**
  * @author Florian Müller
  */
-public class CanvasLmsPostReader extends AbstractConnectorIOComponent implements
+public class CanvasLmsPostReader extends
+        AbstractConnectorIOComponent<CanvasLmsConnector> implements
         IPostReader {
+
+    private CanvasLmsClient defaultClient;
 
     /**
      * @param connector
      */
     public CanvasLmsPostReader(final CanvasLmsConnector connector) {
         super(connector);
+        this.defaultClient = connector.getServiceClientManager()
+                .getDefaultClient();
     }
 
     @Override
@@ -113,7 +118,7 @@ public class CanvasLmsPostReader extends AbstractConnectorIOComponent implements
 
         Pagination<Entry> entryPages = null;
         try {
-            entryPages = ((CanvasLmsClient) getDefaultClient()).courses()
+            entryPages = defaultClient.courses()
                     .discussionTopics(courseId)
                     .entries(topicId)
                     .list()
@@ -140,7 +145,7 @@ public class CanvasLmsPostReader extends AbstractConnectorIOComponent implements
                     }
 
                     result.add(CanvasLmsSiocConverter.createSiocPost(
-                            (CanvasLmsConnector) connector,
+                            getConnector(),
                             entry,
                             container));
 
@@ -221,7 +226,7 @@ public class CanvasLmsPostReader extends AbstractConnectorIOComponent implements
 
         Pagination<Entry> replyPages = null;
         try {
-            replyPages = ((CanvasLmsClient) getDefaultClient()).courses()
+            replyPages = defaultClient.courses()
                     .discussionTopics(courseId)
                     .entries(topicId)
                     .listReplies(entryId)
@@ -248,7 +253,7 @@ public class CanvasLmsPostReader extends AbstractConnectorIOComponent implements
                     }
 
                     result.add(CanvasLmsSiocConverter.createSiocPost(
-                            (CanvasLmsConnector) connector,
+                            getConnector(),
                             entry,
                             container));
 

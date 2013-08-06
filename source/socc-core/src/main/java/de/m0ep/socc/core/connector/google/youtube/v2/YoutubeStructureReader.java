@@ -50,33 +50,42 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class YoutubeStructureReader extends AbstractConnectorIOComponent implements
+public class YoutubeStructureReader extends
+        AbstractConnectorIOComponent<YoutubeConnector> implements
         IStructureReader {
+
+    private YoutubeClientWrapper defaultClient;
 
     private Forum playlists;
     private Forum uploads;
 
     public YoutubeStructureReader(YoutubeConnector connector) {
         super(connector);
+        this.defaultClient = connector.getServiceClientManager()
+                .getDefaultClient();
 
         URI playlistsUri = Builder.createURI(
-                serviceEndpoint
+                getServiceEndpoint()
                         + YoutubeSiocConverter.PLAYLISTS_URI_PATH
-                        + ((YoutubeClientWrapper) getDefaultClient()).getUserProfile()
+                        + defaultClient
+                                .getUserProfile()
                                 .getUsername());
 
         if (!Forum.hasInstance(getModel(), playlistsUri)) {
             this.playlists = new Forum(getModel(), playlistsUri, true);
             this.playlists.setId(
                     YoutubeSiocConverter.PLAYLISTS_ID_PREFIX
-                            + ((YoutubeClientWrapper) getDefaultClient()).getUserProfile()
+                            + defaultClient
+                                    .getUserProfile()
                                     .getUsername());
-            this.playlists.setName(
-                    (Strings.nullToEmpty(((YoutubeClientWrapper) getDefaultClient())
+            this.playlists
+                    .setName(
+                    (Strings.nullToEmpty(defaultClient
                             .getUserProfile().getFirstName())
                             + " "
-                            + Strings.nullToEmpty(((YoutubeClientWrapper) getDefaultClient())
-                                    .getUserProfile().getLastName())
+                            + Strings
+                                    .nullToEmpty(defaultClient
+                                            .getUserProfile().getLastName())
                             + "'s Playlists").trim());
             this.playlists.setNumThreads(0);
 
@@ -88,23 +97,27 @@ public class YoutubeStructureReader extends AbstractConnectorIOComponent impleme
         }
 
         URI uploadsUri = Builder.createURI(
-                serviceEndpoint
+                getServiceEndpoint()
                         + YoutubeSiocConverter.UPLOADS_URI_PATH
-                        + ((YoutubeClientWrapper) getDefaultClient()).getUserProfile()
+                        + defaultClient
+                                .getUserProfile()
                                 .getUsername());
 
         if (!Forum.hasInstance(getModel(), uploadsUri)) {
             this.uploads = new Forum(getModel(), uploadsUri, true);
             this.uploads.setId(
                     YoutubeSiocConverter.UPLOADS_ID_PREFIX
-                            + ((YoutubeClientWrapper) getDefaultClient()).getUserProfile()
+                            + defaultClient
+                                    .getUserProfile()
                                     .getUsername());
-            this.uploads.setName(
-                    (Strings.nullToEmpty(((YoutubeClientWrapper) getDefaultClient())
+            this.uploads
+                    .setName(
+                    (Strings.nullToEmpty(defaultClient
                             .getUserProfile().getFirstName())
                             + " "
-                            + Strings.nullToEmpty(((YoutubeClientWrapper) getDefaultClient())
-                                    .getUserProfile().getLastName())
+                            + Strings
+                                    .nullToEmpty(defaultClient
+                                            .getUserProfile().getLastName())
                             + "'s Uploads").trim());
             this.uploads.setNumItems(0);
 
@@ -118,10 +131,10 @@ public class YoutubeStructureReader extends AbstractConnectorIOComponent impleme
 
     @Override
     public Site getSite() {
-        Site result = Site.getInstance(getModel(), serviceEndpoint);
+        Site result = Site.getInstance(getModel(), getServiceEndpoint());
 
         if (null == result) {
-            result = new Site(getModel(), serviceEndpoint, true);
+            result = new Site(getModel(), getServiceEndpoint(), true);
             result.setName("Youtube");
         }
 
@@ -129,7 +142,8 @@ public class YoutubeStructureReader extends AbstractConnectorIOComponent impleme
     }
 
     @Override
-    public Forum getForum(String id) throws NotFoundException, AuthenticationException, IOException {
+    public Forum getForum(String id) throws NotFoundException,
+            AuthenticationException, IOException {
         Preconditions.checkNotNull(id,
                 "Required parameter id must be specified.");
         Preconditions.checkArgument(!id.isEmpty(),
@@ -150,7 +164,8 @@ public class YoutubeStructureReader extends AbstractConnectorIOComponent impleme
     }
 
     @Override
-    public Thread getThread(String id, Container parent) throws NotFoundException,
+    public Thread getThread(String id, Container parent)
+            throws NotFoundException,
             AuthenticationException, IOException {
         Preconditions.checkNotNull(id,
                 "Required parameter id must be specified.");
@@ -170,23 +185,26 @@ public class YoutubeStructureReader extends AbstractConnectorIOComponent impleme
                 "The parent is no Playlist forum");
 
         String userId = parent.getId().split(YoutubeSiocConverter.ID_SEPERATOR)[1];
-        String playlistUri = UriTemplate.fromTemplate(
-                "http://gdata.youtube.com/feeds/api/users/{userId}/playlists/{playlistId}?v=2")
+        String playlistUri = UriTemplate
+                .fromTemplate(
+                        "http://gdata.youtube.com/feeds/api/users/{userId}/playlists/{playlistId}?v=2")
                 .set("userId", userId)
                 .set("playlistId", id)
                 .expand(); // FIXME: magic strings
 
         PlaylistLinkEntry playlistEntry = null;
         try {
-            ((YoutubeConnector) connector).waitForCooldown();
-            playlistEntry = ((YoutubeClientWrapper) getDefaultClient()).getService().getEntry(
-                    new URL(playlistUri),
-                    PlaylistLinkEntry.class);
+            getConnector().waitForCooldown();
+            playlistEntry = defaultClient
+                    .getService().getEntry(
+                            new URL(playlistUri),
+                            PlaylistLinkEntry.class);
         } catch (com.google.gdata.util.AuthenticationException e) {
             throw new AuthenticationException(e);
         } catch (ServiceForbiddenException e) {
             throw new AuthenticationException(
-                    ((YoutubeClientWrapper) getDefaultClient()).getUserProfile().getUsername()
+                    defaultClient
+                            .getUserProfile().getUsername()
                             + " has no access to the youtube service.", e);
         } catch (ResourceNotFoundException e) {
             throw new NotFoundException("No thread found with id " + id);
@@ -196,7 +214,7 @@ public class YoutubeStructureReader extends AbstractConnectorIOComponent impleme
 
         if (null != playlistEntry) {
             Thread result = YoutubeSiocConverter.createSiocThread(
-                    (YoutubeConnector) connector,
+                    getConnector(),
                     playlistEntry,
                     Forum.getInstance(parent.getModel(), parent.getResource()));
 
@@ -207,26 +225,32 @@ public class YoutubeStructureReader extends AbstractConnectorIOComponent impleme
     }
 
     @Override
-    public List<Thread> listThreads(Container parent) throws AuthenticationException, IOException {
+    public List<Thread> listThreads(Container parent)
+            throws AuthenticationException, IOException {
         Preconditions.checkNotNull(parent,
                 "Required parameter parent must be specified.");
-        Preconditions.checkArgument(parent.getResource().equals(playlists.getResource()),
+        Preconditions.checkArgument(parent.getResource().equals(
+                playlists.getResource()),
                 "Only the playlists forum contains threads");
 
-        String nextFeed = UriTemplate.fromTemplate(
-                "https://gdata.youtube.com/feeds/api/users/{userId}/playlists?v=2")
-                .set("userId", ((YoutubeClientWrapper) getDefaultClient()).getUserProfile()
-                        .getUsername())
+        String nextFeed = UriTemplate
+                .fromTemplate(
+                        "https://gdata.youtube.com/feeds/api/users/{userId}/playlists?v=2")
+                .set("userId",
+                        defaultClient
+                                .getUserProfile()
+                                .getUsername())
                 .expand(); // FIXME: magic strings
 
         List<Thread> results = Lists.newArrayList();
         do {
             PlaylistLinkFeed playlistFeed = null;
             try {
-                ((YoutubeConnector) connector).waitForCooldown();
-                playlistFeed = ((YoutubeClientWrapper) getDefaultClient()).getService().getFeed(
-                        new URL(nextFeed),
-                        PlaylistLinkFeed.class);
+                getConnector().waitForCooldown();
+                playlistFeed = defaultClient
+                        .getService().getFeed(
+                                new URL(nextFeed),
+                                PlaylistLinkFeed.class);
             } catch (com.google.gdata.util.AuthenticationException e) {
                 throw new AuthenticationException(e);
             } catch (ServiceException e) {
@@ -236,9 +260,10 @@ public class YoutubeStructureReader extends AbstractConnectorIOComponent impleme
             }
 
             if (null != playlistFeed) {
-                for (PlaylistLinkEntry playlistEntry : playlistFeed.getEntries()) {
+                for (PlaylistLinkEntry playlistEntry : playlistFeed
+                        .getEntries()) {
                     results.add(YoutubeSiocConverter.createSiocThread(
-                            (YoutubeConnector) connector,
+                            getConnector(),
                             playlistEntry,
                             playlists));
                 }

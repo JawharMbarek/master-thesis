@@ -18,13 +18,14 @@ public class GooglePlusConnector extends AbstractConnector {
         super(context, config);
     }
 
-    public GooglePlusConnector(String id, ISoccContext context, UserAccount defaultUserAccount,
+    public GooglePlusConnector(String id, ISoccContext context,
+            UserAccount defaultUserAccount,
             Service service) {
         super(id, context, defaultUserAccount, service);
     }
 
     @Override
-    public IServiceClientManager getServiceClientManager() {
+    public IServiceClientManager<Object> getServiceClientManager() {
         // TODO Auto-generated method stub
         return null;
     }

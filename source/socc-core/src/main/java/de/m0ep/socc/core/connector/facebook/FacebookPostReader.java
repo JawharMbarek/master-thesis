@@ -42,20 +42,34 @@ import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
-public class FacebookPostReader extends AbstractConnectorIOComponent implements IPostReader {
+public class FacebookPostReader extends
+        AbstractConnectorIOComponent<FacebookConnector> implements IPostReader {
+
+    private FacebookClientWrapper defaultClient;
 
     public FacebookPostReader(FacebookConnector connector) {
         super(connector);
+
+        this.defaultClient = connector.getServiceClientManager()
+                .getDefaultClient();
     }
 
     @Override
     public boolean containsPosts(Container container) {
-        return null != container &&
-                container.toString().startsWith(getServiceEndpoint().toString()) &&
-                RdfUtils.isType(container.getModel(), container.getResource(), Forum.RDFS_CLASS) &&
-                container.hasId() &&
-                (container.getId().startsWith(FacebookSiocConverter.WALL_ID_PREFIX) ||
-                container.getId().startsWith(FacebookSiocConverter.GROUP_ID_PREFIX));
+        return null != container
+                &&
+                container.toString()
+                        .startsWith(getServiceEndpoint().toString())
+                &&
+                RdfUtils.isType(container.getModel(), container.getResource(),
+                        Forum.RDFS_CLASS)
+                &&
+                container.hasId()
+                &&
+                (container.getId().startsWith(
+                        FacebookSiocConverter.WALL_ID_PREFIX) ||
+                container.getId().startsWith(
+                        FacebookSiocConverter.GROUP_ID_PREFIX));
     }
 
     @Override
@@ -71,7 +85,8 @@ public class FacebookPostReader extends AbstractConnectorIOComponent implements 
                 "This container has no posts at this service");
 
         String containerId = container.getId();
-        String id = containerId.substring(
+        String id = containerId
+                .substring(
                 containerId.lastIndexOf(FacebookSiocConverter.ID_SEPERATOR) + 1);
 
         Parameter paramSince = Parameter.with(
@@ -83,7 +98,7 @@ public class FacebookPostReader extends AbstractConnectorIOComponent implements 
 
         Connection<JsonObject> feed = null;
         try {
-            feed = ((FacebookClientWrapper) getDefaultClient()).getClient().fetchConnection(
+            feed = defaultClient.getClient().fetchConnection(
                     id + "/" + FacebookApiConstants.CONNECTION_FEED,
                     JsonObject.class,
                     paramSince,
@@ -98,7 +113,7 @@ public class FacebookPostReader extends AbstractConnectorIOComponent implements 
                 for (JsonObject object : objectList) {
                     if (0 > limit || limit > results.size()) {
                         results.add(FacebookSiocConverter.createSiocPost(
-                                (FacebookConnector) connector,
+                                getConnector(),
                                 object,
                                 container));
                     }
@@ -111,11 +126,15 @@ public class FacebookPostReader extends AbstractConnectorIOComponent implements 
 
     @Override
     public boolean containsReplies(Post post) {
-        return null != post &&
-                post.toString().startsWith(getServiceEndpoint().toString()) &&
-                post.hasId() &&
+        return null != post
+                &&
+                post.toString().startsWith(getServiceEndpoint().toString())
+                &&
+                post.hasId()
+                &&
                 (post.getId().startsWith(FacebookSiocConverter.POST_ID_PREFIX) ||
-                post.getId().startsWith(FacebookSiocConverter.COMMENT_ID_PREFIX));
+                post.getId()
+                        .startsWith(FacebookSiocConverter.COMMENT_ID_PREFIX));
     }
 
     @Override
@@ -127,7 +146,8 @@ public class FacebookPostReader extends AbstractConnectorIOComponent implements 
                 "This parentPost has no replies at this service.");
 
         String postId = parentPost.getId();
-        String id = postId.substring(postId.lastIndexOf(FacebookSiocConverter.ID_SEPERATOR) + 1);
+        String id = postId.substring(postId
+                .lastIndexOf(FacebookSiocConverter.ID_SEPERATOR) + 1);
 
         List<Parameter> params = Lists.newArrayList();
 
@@ -158,7 +178,7 @@ public class FacebookPostReader extends AbstractConnectorIOComponent implements 
 
         Connection<JsonObject> feed = null;
         try {
-            feed = ((FacebookClientWrapper) getDefaultClient()).getClient().fetchConnection(
+            feed = defaultClient.getClient().fetchConnection(
                     id + "/" + FacebookApiConstants.CONNECTION_COMMENTS,
                     JsonObject.class,
                     params.toArray(new Parameter[params.size()]));
@@ -172,7 +192,7 @@ public class FacebookPostReader extends AbstractConnectorIOComponent implements 
                 for (JsonObject object : objectList) {
                     if (0 > limit || limit > results.size()) {
                         results.add(FacebookSiocConverter.createSiocComment(
-                                (FacebookConnector) connector,
+                                getConnector(),
                                 object,
                                 parentPost));
                     }

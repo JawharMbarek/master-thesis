@@ -8,7 +8,7 @@ import org.rdfs.sioc.services.Service;
 
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
-public interface IServiceClientManager {
+public interface IServiceClientManager<T> {
 
     /**
      * Returns the set service.
@@ -18,8 +18,8 @@ public interface IServiceClientManager {
     /**
      * Sets the Service.
      * 
-     * @throws NullPointerException Thrown if <code>service</code> is
-     *             <code>null</code>.
+     * @throws NullPointerException
+     *             Thrown if <code>service</code> is <code>null</code>.
      */
     public void setService(Service service);
 
@@ -28,36 +28,38 @@ public interface IServiceClientManager {
      * found.
      * 
      * @param client
-     * @throws NullPointerException Thrown if <code>client</code> is
-     *             <code>null</code>.
+     * @throws NullPointerException
+     *             Thrown if <code>client</code> is <code>null</code>.
      */
-    public void setDefaultClient(Object client);
+    public void setDefaultClient(T client);
 
     /**
      * Returns the default client.
      */
-    public Object getDefaultClient();
+    public T getDefaultClient();
 
     /**
      * Creates a new client from a given {@link UserAccount}.
      * 
      * @param userAccount
-     * @throws NullPointerException Thrown if <code>userAccount</code> is
-     *             <code>null</code>.
-     * @throws IllegalArgumentException Thrown if <code>userAccount</code> has
-     *             invalid properties to create a client.
+     * @throws NullPointerException
+     *             Thrown if <code>userAccount</code> is <code>null</code>.
+     * @throws IllegalArgumentException
+     *             Thrown if <code>userAccount</code> has invalid properties to
+     *             create a client.
      */
-    public Object createClientFromAccount(UserAccount userAccount) throws Exception;
+    public T createClientFromAccount(UserAccount userAccount) throws Exception;
 
     /**
      * Adds a new client with a corresponding {@link UserAccount}.
      * 
      * @param client
      * @param userAccount
-     * @throws NullPointerException Thrown if <code>userAccount</code> or
-     *             <code>client</code> are <code>null</code>.
+     * @throws NullPointerException
+     *             Thrown if <code>userAccount</code> or <code>client</code> are
+     *             <code>null</code>.
      */
-    public void add(UserAccount userAccount, Object client);
+    public void add(UserAccount userAccount, T client);
 
     /**
      * Removes the client who belongs to this {@link UserAccount}.
@@ -69,18 +71,18 @@ public interface IServiceClientManager {
     /**
      * Returns a {@link List} of all clients without the default client.
      */
-    public List<Object> getAll();
+    public List<T> getAll();
 
     /**
      * Returns the client that belong to the provided {@link UserAccount}.
      * 
      * @param userAccount
-     * @throws NullPointerException Thrown if <code>userAccount</code> was
-     *             <code>null</code>;
-     * @throws NotFoundException Thrown if no client is found for this
-     *             {@link UserAccount}.
+     * @throws NullPointerException
+     *             Thrown if <code>userAccount</code> was <code>null</code>;
+     * @throws NotFoundException
+     *             Thrown if no client is found for this {@link UserAccount}.
      */
-    public Object get(UserAccount userAccount) throws NotFoundException;
+    public T get(UserAccount userAccount) throws NotFoundException;
 
     /**
      * Returns true if there is a client for the given {@link UserAccount},

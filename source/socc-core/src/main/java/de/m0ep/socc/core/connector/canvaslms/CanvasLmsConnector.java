@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
+import de.m0ep.canvas.CanvasLmsClient;
 import de.m0ep.socc.config.ConnectorCfg;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.AbstractConnector;
@@ -45,7 +46,7 @@ public class CanvasLmsConnector extends AbstractConnector {
     private static final Logger LOG = LoggerFactory
             .getLogger(CanvasLmsConnector.class);
 
-    private IServiceClientManager clientManager;
+    private IServiceClientManager<CanvasLmsClient> clientManager;
     private IStructureReader serviceStructureReader;
     private IPostReader postReader;
     private IPostWriter postWriter;
@@ -68,8 +69,9 @@ public class CanvasLmsConnector extends AbstractConnector {
         super(id, context, defaultUserAccount, service);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public IServiceClientManager getServiceClientManager() {
+    public IServiceClientManager<CanvasLmsClient> getServiceClientManager() {
         return clientManager;
     }
 

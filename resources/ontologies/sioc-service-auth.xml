@@ -56,20 +56,18 @@
     </owl:Class>
 
     <owl:Class rdf:about="http://www.m0ep.de/sioc-service-auth#AccessToken">
-        <rdfs:subClassOf rdf:resource="rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
+        <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
     </owl:Class>
 
 
     <owl:Class rdf:about="http://www.m0ep.de/sioc-service-auth#ClientId">
-        <rdfs:subClassOf rdf:resource="rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
+        <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
     </owl:Class>
 
 
     <owl:Class rdf:about="http://www.m0ep.de/sioc-service-auth#ClientSecret">
-        <rdfs:subClassOf rdf:resource="rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
+        <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
     </owl:Class>
-
-    
 
 
     <owl:Class rdf:about="http://purl.oclc.org/NET/WebApiAuthentication#Direct">

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
+        <uri id="Automatically generated entry, Timestamp=1375888170260" name="http://www.m0ep.de/ontologies/2013/soccconfig" uri="soccconfig.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1375888170260" name="http://www.m0ep.de/sioc-service-auth" uri="sioc-service-auth.xml"/>
+    </group>
+</catalog>

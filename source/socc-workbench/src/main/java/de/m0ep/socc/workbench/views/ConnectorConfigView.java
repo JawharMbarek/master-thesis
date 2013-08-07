@@ -29,17 +29,17 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.xmlns.foaf.Person;
 
+import de.m0ep.sioc.service.auth.Service;
 import de.m0ep.sioc.service.auth.UserAccount;
 import de.m0ep.socc.config.ConnectorConfig;
-import de.m0ep.socc.core.connector.canvaslms.CanvasLmsConnector;
-import de.m0ep.socc.core.connector.facebook.FacebookConnector;
-import de.m0ep.socc.core.connector.google.youtube.v2.YoutubeConnector;
-import de.m0ep.socc.core.connector.moodle.Moodle2Connector;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.UserAccountUtils;
 import de.m0ep.socc.workbench.controller.ConnectorConfigController;
 
 public class ConnectorConfigView extends JDialog {
+    public static final String ACTION_CMD_DELETE_CONNECTOR_CONFIG = "action_cmd_delete_connector_config";
+    public static final String ACTION_CMD_ADD_CONNECTOR_CONFIG = "action_cmd_add_connector_config";
+    public static final String ACTION_CMD_URI_GENERATE = "action_cmd_uri_generate";
     public static final String ACTION_CMD_VIEW_SAVE = "action_cmd_view_save";
     public static final String ACTION_CMD_VIEW_CLOSE = "action_cmd_view_close";
 
@@ -55,8 +55,9 @@ public class ConnectorConfigView extends JDialog {
     private JTextField txtRdfUri;
     private JTextField txtId;
 
-    private JComboBox<ConnectorClassListEntry<?>> cboxConnectorClass;
+    private JComboBox<ConnectorClassListEntry> cboxConnectorClass;
     private JComboBox<UserAccountListEntry> cboxDefaultUserAccount;
+    private JComboBox<ServiceListEntry> cboxServices;
 
     private JList<ConnectorConfigListEntry> connectorConfigList;
 
@@ -106,13 +107,15 @@ public class ConnectorConfigView extends JDialog {
                         FormFactory.DEFAULT_ROWSPEC,
                         FormFactory.RELATED_GAP_ROWSPEC,
                         FormFactory.DEFAULT_ROWSPEC,
+                        FormFactory.RELATED_GAP_ROWSPEC,
+                        FormFactory.DEFAULT_ROWSPEC,
                         RowSpec.decode( "default:grow" ),
                         FormFactory.DEFAULT_ROWSPEC, } ) );
 
         connectorConfigList = new JList<ConnectorConfigListEntry>(
                 new DefaultListModel<ConnectorConfigListEntry>() );
         connectorConfigListScrollPane = new JScrollPane( connectorConfigList );
-        contentPanel.add( connectorConfigListScrollPane, "2, 2, 1, 8, fill, fill" );
+        contentPanel.add( connectorConfigListScrollPane, "2, 2, 1, 10, fill, fill" );
 
         JLabel lblRdfUri = new JLabel( "RDF Uri:" );
         contentPanel.add( lblRdfUri, "4, 2, right, default" );
@@ -121,7 +124,8 @@ public class ConnectorConfigView extends JDialog {
         contentPanel.add( txtRdfUri, "6, 2, fill, default" );
         txtRdfUri.setColumns( 10 );
 
-        btnGenerateUri = new JButton( "Random" );
+        btnGenerateUri = new JButton( "Gen" );
+        btnGenerateUri.setActionCommand( ACTION_CMD_URI_GENERATE );
         contentPanel.add( btnGenerateUri, "8, 2" );
 
         JLabel lblId = new JLabel( "Id:" );
@@ -134,14 +138,8 @@ public class ConnectorConfigView extends JDialog {
         JLabel lblConnectorClass = new JLabel( "Connector:" );
         contentPanel.add( lblConnectorClass, "4, 6, right, default" );
 
-        cboxConnectorClass = new JComboBox<ConnectorClassListEntry<?>>(
-                new DefaultComboBoxModel<>(
-                        new ConnectorClassListEntry<?>[] {
-                                new ConnectorClassListEntry<>( CanvasLmsConnector.class ),
-                                new ConnectorClassListEntry<>( FacebookConnector.class ),
-                                new ConnectorClassListEntry<>( YoutubeConnector.class ),
-                                new ConnectorClassListEntry<>( Moodle2Connector.class )
-                        } ) );
+        cboxConnectorClass = new JComboBox<ConnectorClassListEntry>(
+                new DefaultComboBoxModel<ConnectorClassListEntry>() );
         contentPanel.add( cboxConnectorClass, "6, 6, 3, 1, fill, default" );
 
         JLabel lblDefaultUserAccount = new JLabel( "Default Account:" );
@@ -151,11 +149,19 @@ public class ConnectorConfigView extends JDialog {
                 new DefaultComboBoxModel<UserAccountListEntry>() );
         contentPanel.add( cboxDefaultUserAccount, "6, 8, 3, 1, fill, default" );
 
+        JLabel lblServices = new JLabel( "Service:" );
+        contentPanel.add( lblServices, "4, 10, right, default" );
+
+        cboxServices = new JComboBox<ServiceListEntry>(
+                new DefaultComboBoxModel<ServiceListEntry>() );
+        contentPanel.add( cboxServices, "6, 10, 3, 1, fill, default" );
+
         panel = new JPanel();
-        contentPanel.add( panel, "2, 10, fill, fill" );
+        contentPanel.add( panel, "2, 12, fill, fill" );
         panel.setLayout( new GridLayout( 1, 0, 0, 0 ) );
 
         btnAddConnectorConfig = new JButton();
+        btnAddConnectorConfig.setActionCommand( ACTION_CMD_ADD_CONNECTOR_CONFIG );
         btnAddConnectorConfig.setIcon(
                 new ImageIcon(
                         ConnectorConfigView.class.getResource(
@@ -163,6 +169,7 @@ public class ConnectorConfigView extends JDialog {
         panel.add( btnAddConnectorConfig );
 
         btnDeleteConnectorConfig = new JButton();
+        btnDeleteConnectorConfig.setActionCommand( ACTION_CMD_DELETE_CONNECTOR_CONFIG );
         btnDeleteConnectorConfig.setIcon(
                 new ImageIcon(
                         ConnectorConfigView.class.getResource(
@@ -231,12 +238,16 @@ public class ConnectorConfigView extends JDialog {
         return txtId;
     }
 
-    public JComboBox<ConnectorClassListEntry<?>> getConnectorClassCombobox() {
+    public JComboBox<ConnectorClassListEntry> getConnectorClassCombobox() {
         return cboxConnectorClass;
     }
 
     public JComboBox<UserAccountListEntry> getDefaultUserAccountCombobox() {
         return cboxDefaultUserAccount;
+    }
+
+    public JComboBox<ServiceListEntry> getServicesCombobox() {
+        return cboxServices;
     }
 
     public JList<ConnectorConfigListEntry> getConnectorConfigList() {
@@ -247,15 +258,15 @@ public class ConnectorConfigView extends JDialog {
         return connectorConfigListScrollPane;
     }
 
-    public static class ConnectorClassListEntry<T> {
-        private Class<T> clazz;
+    public static class ConnectorClassListEntry {
+        private Class<?> clazz;
 
-        public ConnectorClassListEntry( Class<T> clazz ) {
+        public ConnectorClassListEntry( Class<?> clazz ) {
             this.clazz = Preconditions.checkNotNull( clazz,
                     "Required parameter clazz must be specified." );
         }
 
-        public Class<T> getClazz() {
+        public Class<?> getClazz() {
             return clazz;
         }
 
@@ -274,7 +285,7 @@ public class ConnectorConfigView extends JDialog {
                 return false;
             }
 
-            ConnectorClassListEntry<?> other = (ConnectorClassListEntry<?>) obj;
+            ConnectorClassListEntry other = (ConnectorClassListEntry) obj;
 
             return Objects.equal( this.clazz, other.clazz );
         }
@@ -342,10 +353,6 @@ public class ConnectorConfigView extends JDialog {
     public static class UserAccountListEntry {
         private UserAccount userAccount;
 
-        private String personName;
-        private String accountName;
-        private String accountServiceHomepage;
-
         public UserAccountListEntry( final Model model, final Resource resource ) {
             Preconditions.checkNotNull( resource,
                     "Required parameter resource must be specified." );
@@ -397,6 +404,32 @@ public class ConnectorConfigView extends JDialog {
                         + " )";
             } catch (NotFoundException e) {
                 return userAccount.getName() + "@" + userAccount.getAccountServiceHomepage();
+            }
+        }
+    }
+
+    public static class ServiceListEntry {
+        private Service service;
+
+        public ServiceListEntry( final Model model, final Resource resource ) {
+            this.service = Service.getInstance( model, resource );
+        }
+
+        public Service getService() {
+            return service;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode( service, service.getName(), service.getServiceEndpoint() );
+        }
+
+        @Override
+        public String toString() {
+            if (service.hasName()) {
+                return service.getName();
+            } else {
+                return "Service @ " + service.getServiceEndpoint();
             }
         }
     }

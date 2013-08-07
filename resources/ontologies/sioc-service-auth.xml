@@ -1,16 +1,44 @@
 <?xml version="1.0"?>
+<!--
+    Author:     Florian Mueller
+    Date:       2013-08-07
+    Version:    2.0
+-->
 
-<rdf:RDF xmlns="http://www.m0ep.de/sioc-service-auth#"
-     xml:base="http://www.m0ep.de/sioc-service-auth"
-     xmlns:sioc="http://rdfs.org/sioc/ns#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:dcterms="http://purl.org/dc/terms/"
-     xmlns:sioc_services="http://rdfs.org/sioc/services#"
-     xmlns:waa="http://purl.oclc.org/NET/WebApiAuthentication#">
+<!DOCTYPE RDF [
+    <!ENTITY sioc "http://rdfs.org/sioc/ns#" >
+    <!ENTITY dcterms "http://purl.org/dc/terms/" >
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY sioc_services "http://rdfs.org/sioc/services#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY waa "http://purl.oclc.org/NET/WebApiAuthentication#" >
+]>
+<rdf:RDF 
+    xml:base="http://www.m0ep.de/sioc/services/auth#" 
+    xmlns="http://www.m0ep.de/sioc/services/auth#" 
+    xmlns:dcterms="http://purl.org/dc/terms/" 
+    xmlns:owl="http://www.w3.org/2002/07/owl#" 
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
+    xmlns:sioc="http://rdfs.org/sioc/ns#" 
+    xmlns:siocs="http://rdfs.org/sioc/services#" 
+    xmlns:waa="http://purl.oclc.org/NET/WebApiAuthentication#" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
 
+    <owl:Ontology 
+        rdf:about="http://www.m0ep.de/sioc/services/auth#" 
+        rdf:type="http://www.w3.org/2002/07/owl#Thing">
+        <dcterms:title>SIOC Service Authentication Module</dcterms:title>
+        <dcterms:description>
+            Extends the SIOC Core and Service Module to add information about authentication mechanisms and their required credentials. It reuses some parts from the WebApiAuthentication Ontology.
+        </dcterms:description>
+        <rdfs:seeAlso rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#"/>
+        <rdfs:seeAlso rdf:resource="http://rdfs.org/sioc/services#"/>
+
+        <owl:imports rdf:resource="http://rdfs.org/sioc/services#"/>
+    </owl:Ontology>
 
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -20,25 +48,32 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
+    <!-- http://purl.oclc.org/NET/WebApiAuthentication#hasInputCredentials -->
+    <owl:ObjectProperty 
+        rdf:about="http://purl.oclc.org/NET/WebApiAuthentication#hasInputCredentials">
+        <owl:equivalentProperty 
+            rdf:resource="http://www.m0ep.de/sioc/services/auth#has_credentials"/>
+    </owl:ObjectProperty>
 
-
-    <owl:ObjectProperty rdf:about="http://www.m0ep.de/sioc-service-auth#require_authentication">
-        <rdfs:range rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism"/>
+    <!-- http://www.m0ep.de/sioc/services/auth#serviceAuthentication -->
+    <owl:ObjectProperty rdf:about="http://www.m0ep.de/sioc/services/auth#serviceAuthentication">
+        <rdfs:range 
+            rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism"/>
         <rdfs:domain rdf:resource="http://rdfs.org/sioc/services#Service"/>
     </owl:ObjectProperty>
 
-
-
-    <owl:ObjectProperty rdf:about="http://www.m0ep.de/sioc-service-auth#has_authentication">
-        <rdfs:range rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism"/>
+    <!-- http://www.m0ep.de/sioc/services/auth#accountAuthentication -->
+    <owl:ObjectProperty rdf:about="http://www.m0ep.de/sioc/services/auth#accountAuthentication">
+        <rdfs:range 
+            rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism"/>
         <rdfs:domain rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
     </owl:ObjectProperty>
 
-
-
-    <owl:ObjectProperty rdf:about="http://www.m0ep.de/sioc-service-auth#has_credentials">
+    <!-- http://www.m0ep.de/sioc/services/auth#credentials -->
+    <owl:ObjectProperty rdf:about="http://www.m0ep.de/sioc/services/auth#credentials">
+        <rdfs:domain 
+            rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism"/>
         <rdfs:range rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
-        <rdfs:domain rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism"/>
     </owl:ObjectProperty>
 
     <!-- 
@@ -49,58 +84,69 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
-
-
+    <!-- http://purl.oclc.org/NET/WebApiAuthentication#APIKey -->
     <owl:Class rdf:about="http://purl.oclc.org/NET/WebApiAuthentication#APIKey">
         <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
     </owl:Class>
 
-    <owl:Class rdf:about="http://www.m0ep.de/sioc-service-auth#AccessToken">
-        <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
-    </owl:Class>
+    <!-- http://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism -->
+    <owl:Class rdf:about="http://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism"/>
 
+    <!-- http://purl.oclc.org/NET/WebApiAuthentication#Credentials -->
+    <owl:Class rdf:about="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
 
-    <owl:Class rdf:about="http://www.m0ep.de/sioc-service-auth#ClientId">
-        <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
-    </owl:Class>
-
-
-    <owl:Class rdf:about="http://www.m0ep.de/sioc-service-auth#ClientSecret">
-        <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
-    </owl:Class>
-
-
+    <!-- http://purl.oclc.org/NET/WebApiAuthentication#Direct -->
     <owl:Class rdf:about="http://purl.oclc.org/NET/WebApiAuthentication#Direct">
-        <rdfs:subClassOf rdf:resource="hhttp://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism"/>
+        <rdfs:subClassOf 
+            rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism"/>
     </owl:Class>
-    
 
-
+    <!-- http://purl.oclc.org/NET/WebApiAuthentication#OAuth -->
     <owl:Class rdf:about="http://purl.oclc.org/NET/WebApiAuthentication#OAuth">
-        <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism"/>
+        <rdfs:subClassOf 
+            rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism"/>
     </owl:Class>
-    
 
-
+    <!-- http://purl.oclc.org/NET/WebApiAuthentication#Password -->
     <owl:Class rdf:about="http://purl.oclc.org/NET/WebApiAuthentication#Password">
         <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
     </owl:Class>
-    
 
-
-    <owl:Class rdf:about="http://www.m0ep.de/sioc-service-auth#RefreshToken">
-        <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
-    </owl:Class>
-    
-
-
+    <!-- http://purl.oclc.org/NET/WebApiAuthentication#Username -->
     <owl:Class rdf:about="http://purl.oclc.org/NET/WebApiAuthentication#Username">
         <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
     </owl:Class>
-    
 
+    <!-- http://www.m0ep.de/sioc/services/auth#AccessToken -->
+    <owl:Class rdf:about="http://www.m0ep.de/sioc/services/auth#AccessToken">
+        <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
+        <owl:equivalentClass 
+            rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#OauthToken"/>
+    </owl:Class>
 
-    <owl:Class rdf:about="http://www.m0ep.de/sioc-service-auth#WebAPI">
-        <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism"/>
+    <!-- http://www.m0ep.de/sioc/services/auth#ClientId -->
+    <owl:Class rdf:about="http://www.m0ep.de/sioc/services/auth#ClientId">
+        <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
+        <owl:equivalentClass 
+            rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#OauthConsumerKey"/>
+    </owl:Class>
+
+    <!-- http://www.m0ep.de/sioc/services/auth#ClientSecret -->
+    <owl:Class rdf:about="http://www.m0ep.de/sioc/services/auth#ClientSecret">
+        <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
+        <owl:equivalentClass 
+            rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#OauthConsumerSecret"/>
+    </owl:Class>
+
+    <!-- http://www.m0ep.de/sioc/services/auth#RefreshToken -->
+    <owl:Class rdf:about="http://www.m0ep.de/sioc/services/auth#RefreshToken">
+        <rdfs:subClassOf rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Credentials"/>
+    </owl:Class>
+
+    <!-- http://www.m0ep.de/sioc/services/auth#WebAPI -->
+    <owl:Class rdf:about="http://www.m0ep.de/sioc/services/auth#WebAPI">
+        <rdfs:subClassOf 
+            rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#AuthenticationMechanism"/>
     </owl:Class>
 </rdf:RDF>
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->

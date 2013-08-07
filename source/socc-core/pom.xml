@@ -6,6 +6,10 @@
 	<version>0.0.1</version>
 	<name>'Social Online Community Connector' Core Components</name>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
 	<licenses>
 		<license>
 			<name>The MIT License</name>

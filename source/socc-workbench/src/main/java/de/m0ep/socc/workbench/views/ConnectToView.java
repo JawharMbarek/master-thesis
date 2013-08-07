@@ -18,7 +18,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class ConnectToDialogView extends JDialog {
+public class ConnectToView extends JDialog {
     private static final long serialVersionUID = 1L;
 
     public static final String CMD_OK = "ok";
@@ -37,19 +37,23 @@ public class ConnectToDialogView extends JDialog {
     /**
      * Create the dialog.
      */
-    public ConnectToDialogView() {
-        setTitle("Connect to ...");
-        setBounds(100, 100, 450, 215);
-        getContentPane().setLayout(new BorderLayout());
-        contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        getContentPane().add(contentPanel, BorderLayout.CENTER);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    public ConnectToView() {
+        initView();
+    }
 
-        contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
+    private void initView() {
+        setTitle( "Connect to ..." );
+        setBounds( 100, 100, 450, 215 );
+        getContentPane().setLayout( new BorderLayout() );
+        contentPanel.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
+        getContentPane().add( contentPanel, BorderLayout.CENTER );
+        setDefaultCloseOperation( DISPOSE_ON_CLOSE );
+
+        contentPanel.setLayout( new FormLayout( new ColumnSpec[] {
                 FormFactory.RELATED_GAP_COLSPEC,
                 FormFactory.DEFAULT_COLSPEC,
                 FormFactory.RELATED_GAP_COLSPEC,
-                ColumnSpec.decode("default:grow"),
+                ColumnSpec.decode( "default:grow" ),
         },
                 new RowSpec[] {
                         FormFactory.RELATED_GAP_ROWSPEC,
@@ -62,60 +66,60 @@ public class ConnectToDialogView extends JDialog {
                         FormFactory.DEFAULT_ROWSPEC,
                         FormFactory.RELATED_GAP_ROWSPEC,
                         FormFactory.DEFAULT_ROWSPEC,
-                }));
+                } ) );
 
-        JLabel lblServerUri = new JLabel("Server Uri:");
-        contentPanel.add(lblServerUri, "2, 2, right, default");
+        JLabel lblServerUri = new JLabel( "Server Uri:" );
+        contentPanel.add( lblServerUri, "2, 2, right, default" );
 
         txtServerUri = new JTextField();
-        contentPanel.add(txtServerUri, "4, 2, fill, default");
-        txtServerUri.setColumns(10);
+        contentPanel.add( txtServerUri, "4, 2, fill, default" );
+        txtServerUri.setColumns( 10 );
 
-        JLabel lblRepositoryId = new JLabel("Repository Id:");
-        contentPanel.add(lblRepositoryId, "2, 4, right, default");
+        JLabel lblRepositoryId = new JLabel( "Repository Id:" );
+        contentPanel.add( lblRepositoryId, "2, 4, right, default" );
 
         txtRespositoryid = new JTextField();
-        contentPanel.add(txtRespositoryid, "4, 4, fill, default");
-        txtRespositoryid.setColumns(10);
+        contentPanel.add( txtRespositoryid, "4, 4, fill, default" );
+        txtRespositoryid.setColumns( 10 );
 
-        chckbxAnonymousLogin = new JCheckBox("Is anonymous login");
-        contentPanel.add(chckbxAnonymousLogin, "4, 6");
+        chckbxAnonymousLogin = new JCheckBox( "Is anonymous login" );
+        contentPanel.add( chckbxAnonymousLogin, "4, 6" );
 
-        JLabel lblUsername = new JLabel("Username:");
-        contentPanel.add(lblUsername, "2, 8, right, default");
+        JLabel lblUsername = new JLabel( "Username:" );
+        contentPanel.add( lblUsername, "2, 8, right, default" );
 
         txtUsername = new JTextField();
-        contentPanel.add(txtUsername, "4, 8, fill, default");
-        txtUsername.setColumns(10);
+        contentPanel.add( txtUsername, "4, 8, fill, default" );
+        txtUsername.setColumns( 10 );
 
-        JLabel lblPassword = new JLabel("Password:");
-        contentPanel.add(lblPassword, "2, 10, right, default");
+        JLabel lblPassword = new JLabel( "Password:" );
+        contentPanel.add( lblPassword, "2, 10, right, default" );
 
         pwdPassword = new JPasswordField();
-        contentPanel.add(pwdPassword, "4, 10, fill, default");
+        contentPanel.add( pwdPassword, "4, 10, fill, default" );
 
         JPanel buttonPane = new JPanel();
-        buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        getContentPane().add(buttonPane, BorderLayout.SOUTH);
+        buttonPane.setLayout( new FlowLayout( FlowLayout.RIGHT ) );
+        getContentPane().add( buttonPane, BorderLayout.SOUTH );
 
-        okButton = new JButton("OK");
-        okButton.setActionCommand(CMD_OK);
-        buttonPane.add(okButton);
-        getRootPane().setDefaultButton(okButton);
+        okButton = new JButton( "OK" );
+        okButton.setActionCommand( CMD_OK );
+        buttonPane.add( okButton );
+        getRootPane().setDefaultButton( okButton );
 
-        cancelButton = new JButton("Cancel");
-        cancelButton.setActionCommand(CMD_CANCEL);
-        buttonPane.add(cancelButton);
+        cancelButton = new JButton( "Cancel" );
+        cancelButton.setActionCommand( CMD_CANCEL );
+        buttonPane.add( cancelButton );
     }
 
     public void showView() {
-        setModal(true);
-        setModalityType(ModalityType.APPLICATION_MODAL);
-        setVisible(true);
+        setModal( true );
+        setModalityType( ModalityType.APPLICATION_MODAL );
+        setVisible( true );
     }
 
     public void exitView() {
-        setVisible(false);
+        setVisible( false );
         dispose();
     }
 

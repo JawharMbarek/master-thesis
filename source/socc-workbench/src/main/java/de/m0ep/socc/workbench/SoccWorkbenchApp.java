@@ -9,25 +9,34 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.util.Builder;
 import org.openrdf.rdf2go.RepositoryModel;
 import org.openrdf.repository.http.HTTPRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.xmlns.foaf.Person;
+
 import de.m0ep.socc.workbench.controller.ConnectToController;
+import de.m0ep.socc.workbench.controller.ConnectorConfigController;
 import de.m0ep.socc.workbench.models.RDFStoreConnection;
+import de.m0ep.socc.workbench.views.ConnectorConfigView;
 
 public class SoccWorkbenchApp implements ActionListener {
     private static final Logger LOG = LoggerFactory.getLogger( SoccWorkbenchApp.class );
-    private static final String CMD_CONNECT_TO = "cmd_connect_to";
+
+    private static final String ACTION_CMD_MENU_CONNECTORS_CONFIG = "action_cmd_menu_connectors_config";
+    private static final String ACTION_CMD_MENU_CONNECT_TO = "action_cmd_menu_connect_to";
 
     private JFrame frame;
     private Model model;
     private JMenuBar menuBar;
     private JMenu mnSocc;
     private JMenuItem mntmConnectTo;
+    private JMenuItem mntmConnectors;
 
     /**
      * Launch the application.
@@ -56,7 +65,7 @@ public class SoccWorkbenchApp implements ActionListener {
      * Create the application.
      */
     public SoccWorkbenchApp() {
-        initialize();
+        initView();
 
     }
 
@@ -69,9 +78,9 @@ public class SoccWorkbenchApp implements ActionListener {
     }
 
     public void setModel( Model model ) {
-        if (null != model && model.isOpen()) {
-            model.close();
-            model = null;
+        if (null != this.model && this.model.isOpen()) {
+            this.model.close();
+            this.model = null;
         }
 
         this.model = model;
@@ -80,7 +89,7 @@ public class SoccWorkbenchApp implements ActionListener {
     /**
      * Initialize the contents of the frame.
      */
-    private void initialize() {
+    private void initView() {
         frame = new JFrame();
         frame.setBounds( 100, 100, 450, 300 );
         frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
@@ -92,9 +101,14 @@ public class SoccWorkbenchApp implements ActionListener {
         menuBar.add( mnSocc );
 
         mntmConnectTo = new JMenuItem( "Connect to..." );
-        mntmConnectTo.setActionCommand( CMD_CONNECT_TO );
+        mntmConnectTo.setActionCommand( ACTION_CMD_MENU_CONNECT_TO );
         mntmConnectTo.addActionListener( this );
         mnSocc.add( mntmConnectTo );
+
+        mntmConnectors = new JMenuItem( "Connectors..." );
+        mntmConnectors.setActionCommand( ACTION_CMD_MENU_CONNECTORS_CONFIG );
+        mntmConnectors.addActionListener( this );
+        mnSocc.add( mntmConnectors );
     }
 
     public void shutdown() {
@@ -110,7 +124,7 @@ public class SoccWorkbenchApp implements ActionListener {
     public void actionPerformed( ActionEvent e ) {
         String cmd = e.getActionCommand();
 
-        if (CMD_CONNECT_TO.equals( cmd )) {
+        if (ACTION_CMD_MENU_CONNECT_TO.equals( cmd )) {
             final ConnectToController mcp = new ConnectToController();
             mcp.setOnOk( new Runnable() {
                 @Override
@@ -129,10 +143,25 @@ public class SoccWorkbenchApp implements ActionListener {
                     repositoryModel.open();
                     setModel( repositoryModel );
 
+                    Person person = Person.getInstance(
+                            repositoryModel,
+                            Builder.createURI( "http://www.m0ep.de/socc/user/florian" ) );
+
+                    LOG.debug( person.getName() );
                     LOG.debug( "Open remote repository at {}", repository.getRepositoryURL() );
                 }
             } );
             mcp.run();
+        } else if (ACTION_CMD_MENU_CONNECTORS_CONFIG.equals( cmd )) {
+            if (null == getModel()) {
+                JOptionPane.showMessageDialog( frame, "Not connected to a repository." );
+                return;
+            }
+
+            ConnectorConfigView view = ConnectorConfigView.create(
+                    new ConnectorConfigController(),
+                    getModel() );
+            view.showView();
         }
     }
 }

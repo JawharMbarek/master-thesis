@@ -1,0 +1,218 @@
+BASE <http://www.m0ep.de/socc/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX sioc: <http://rdfs.org/sioc/ns#>
+PREFIX siocs: <http://rdfs.org/sioc/services#>
+PREFIX siocsa: <http://www.m0ep.de/sioc-service-auth#>
+PREFIX socccfg: <http://www.m0ep.de/ontologies/2013/soccconfig#>
+
+INSERT DATA {
+
+    # Service Canvas LMS 
+    <service/canvas-test> a siocs:Service;
+        siocs:serviceEndoint <https://canvas.instructure.com>;
+        siocs:serciceDefinition "Canvas LMS Test Server" .
+
+    # Service Moodle
+
+    <service/moodle-test> a siocs:Service;
+        siocs:serviceEndoint <http://localhost/moodle>;
+        siocs:serciceDefinition "Moodle LMS Test Server" .
+
+    # Service Google Plus
+
+    <service/googleplus> a siocs:Service;
+        siocs:serviceEndoint <https://plus.google.com>;
+        siocs:serciceDefinition "Google Plus";
+        siocsa:has_authentication <service/googleplus/oauth> .
+
+    <service/googleplus/oauth> a siocsa:OAuth;
+        siocsa:has_credential <service/googleplus/oauth/clientid>;
+        siocsa:has_authentication <service/googleplus/oauth/clientsecret> .
+
+    <service/googleplus/oauth/clientid> a siocsa:ClientId;
+        rdf:value "733024832603-patciplam4cqq0dnv7a5qdhuq262n6ia.apps.googleusercontent.com".
+
+    <service/googleplus/oauth/clientsecret> a siocsa:ClientSecret;
+        rdf:value "LckucP4MA1jJsZQKjk9okhAu".
+
+    # Service Facebook
+
+    <service/facebook> a siocs:Service;
+        siocs:serviceEndoint <https://facebook.com>;
+        siocs:serciceDefinition "Facebook";
+        siocsa:has_authentication <service/facebook/oauth> .
+
+    <service/facebook/oauth> a siocsa:OAuth;
+        siocsa:has_credential <service/facebook/oauth/clientid>;
+        siocsa:has_authentication <service/facebook/oauth/clientsecret> .
+
+    <service/facebook/oauth/clientid> a siocsa:ClientId;
+        rdf:value "218182098322396".
+
+    <service/facebook/oauth/clientsecret> a siocsa:ClientSecret;
+        rdf:value "f4ed27b621c0f6476c2741f7cf9c4dc5".
+
+    # Service Youtube
+
+    <service/youtube> a siocs:Service;
+        siocs:serviceEndoint <https://youtube.com>;
+        siocs:serviceDefinition "Youtube";
+        siocsa:has_authentication <service/youtube/webapi> .
+
+    <service/youtube/webapi> a siocsa:WebApi;
+        siocsa:has_credential <service/youtube/webapi/apikey>.
+
+    <service/youtube/webapi/apikey> a siocsa:APIKey;
+        rdf:value "AI39si48dEjhAE9RrY6w1HnlmyrUUTDt-xssOKkEEcpOIMD1gFcQ-0Xv40YNl-H1MxFzGzbHih4ootWo1cRrPH9gV-5UdazEbQ".
+
+    ##########################################################
+
+    # User SOCC Bot
+
+    <user/socc-bot> a foaf:Person;
+        foaf:nick "socc-bot";
+        foaf:name "Socc Bot";
+        foaf:account <user/socc-bot/moodle>;
+        foaf:account <user/socc-bot/canvaslms>;
+        foaf:account <user/socc-bot/youtube>.
+
+    # User SOCC Bot Account Moodle
+
+    <user/socc-bot/moodle> a sioc:UserAccount;
+        foaf:accountName "socc-bot";
+        foaf:accountServiceHomepage <http://localhost/~florian/moodle>;
+        siocsa:has_authentication <user/socc-bot/moodle/direct> .
+
+    <user/socc-bot/moodle/direct> a siocsa:Direct;
+        siocsa:has_credential <user/socc-bot/moodle/direct/username>;
+        siocsa:has_credential <user/socc-bot/moodle/direct/password> .
+
+    <user/socc-bot/moodle/direct/username> a siocsa:Username;
+        rdf:value "socc-bot" .
+
+    <user/socc-bot/moodle/direct/password> a siocsa:Password;
+        rdf:value "socc-bot_pwd" .
+
+    # User SOCC Bot Account Canvas LMS
+
+    <user/socc-bot/canvaslms> a sioc:UserAccount;
+        foaf:accountName "3478501";
+        foaf:accountServiceHomepage <https://canvas.instructure.com>;
+        siocsa:has_authentication <user/socc-bot/canvaslms/oauth> .
+
+    <user/socc-bot/canvaslms/oauth> a siocsa:OAuth;
+        siocsa:has_credential <user/socc-bot/canvaslms/oauth/accesstoken> .
+
+    <user/socc-bot/canvaslms/oauth/accesstoken> a siocsa:AccessToken;
+        rdf:value "7~LUpV7B3lJYadvZ2sHlpJiTcyJ6HaduVb3Ho8YjBNXSdIE4AEFzLFfORcOHRHh1fU" .
+
+    # User SOCC Bot Account Youtube
+
+    <user/socc-bot/youtube> a sioc:UserAccount;
+        foaf:accountName "tkhiwis@gmail.com";
+        foaf:accountServiceHomepage <http://www.youtube.com>;
+        siocsa:has_authentication <user/socc-bot/youtube/direct>.
+
+    <user/socc-bot/youtube/direct> a siocsa:Direct;
+        siocsa:has_credential <user/socc-bot/youtube/direct/username>;
+        siocsa:has_credential <user/socc-bot/youtube/direct/password>.
+
+    <user/socc-bot/youtube/direct/username> a siocsa:Username;
+        rdf:value "tkhiwis@gmail.com".
+
+    <user/socc-bot/youtube/direct/password> a siocsa:Password;
+        rdf:value "turing123".
+
+
+    ##########################################################
+
+    # User Florian
+
+
+    <user/florian> a foaf:Person;
+        foaf:nick "m0ep";
+        foaf:name "Florian Müller";
+        foaf:account <user/florian/canvas>;
+        foaf:account <user/florian/googleplus>; 
+        foaf:account <user/florian/facebook>;
+        foaf:account <user/florian/youtube>;
+        foaf:account <user/florian/moodle>.
+
+    # User Florian Account Canvas LMS
+
+    <user/florian/canvas> a sioc:UserAccount;
+        foaf:accountName "3457836";
+        foaf:accountServiceHomepage <https://canvas.instructure.com>;
+        siocsa:has_authentication <user/florian/canvas/oauth> .
+
+    <user/florian/canvas/oauth> a siocsa:OAuth;
+        siocsa:has_credential <user/florian/canvas/oauth/accesstoken> .
+
+    <user/florian/canvas/oauth/accesstoken> a siocsa:AccessToken;
+        rdf:value "7~LUpV7B3lJYadvZ2sHlpJiTcyJ6HaduVb3Ho8YjBNXSdIE4AEFzLFfORcOHRHh1fU" .
+
+    # User Florian Account Google Plus
+
+    <user/florian/googleplus> a sioc:UserAccount;
+        foaf:accountName "111006860599162359588";
+        foaf:accountServiceHomepage <https://plus.google.com>;
+        siocsa:has_authentication <user/florian/googleplus/oauth> .
+
+    <user/florian/googleplus/oauth> a siocsa:OAuth;
+        siocsa:has_credential <user/florian/googleplus/oauth/accesstoken>;
+        siocsa:has_credential <user/florian/googleplus/oauth/refreshtoken> .
+
+    <user/florian/googleplus/oauth/accesstoken> a siocsa:AccessToken;
+        rdf:value "ya29.AHES6ZTQADJwz1jLzgACCny1r9A9u9SqjbeOm9JLm_RzvgEPER0" .
+
+    <user/florian/googleplus/oauth/refreshtoken> a siocsa:RefreshToken;
+        rdf:value "1/Qsc2kHvKM5g-t_GyrFIF54RvXmCMU5AM3ezxrHdRjBI" .
+
+    # User Florian Account Youtube
+
+    <user/florian/youtube> a sioc:UserAccount;
+        foaf:accountName "m0eper";
+        foaf:accountServiceHomepage <https://youtube.com>;
+        siocsa:has_authentication <user/florian/youtube/oauth> .
+
+    <user/florian/youtube/direct> a siocsa:Direct;
+        siocsa:has_credential <user/florian/youtube/direct/username>;
+        siocsa:has_credential <user/florian/youtube/direct/password> .
+
+    <user/florian/youtube/direct/username> a siocsa:Username;
+        rdf:value "email.mufl" .
+
+    <user/florian/youtube/direct/password> a siocsa:Password;
+        rdf:value "email.mufl.net" .
+
+    # User Florian Account Moodle
+
+    <user/florian/moodle> a sioc:UserAccount;
+        foaf:accountName "m0ep";
+        foaf:accountServiceHomepage <http://localhost/~florian/moodle>;
+        siocsa:has_authentication <user/florian/moodle/direct> .
+
+    <user/florian/moodle/direct> a siocsa:Direct;
+        siocsa:has_credential <user/florian/moodle/direct/username>;
+        siocsa:has_credential <user/florian/moodle/direct/password> .
+
+    <user/florian/moodle/direct/username> a siocsa:Username;
+        rdf:value "m0ep" .
+
+    <user/florian/moodle/direct/password> a siocsa:Password;
+        rdf:value "m0eper" .
+
+    ##########################################################
+
+    # Connectors
+
+    <connector/canvaslms-test> a socccfg:ConnectorConfig;
+        socccfg:connectorClass "de.m0ep.socc.core.connector.canvaslms.CanvasLmsConnector";
+        socccfg:id "canvaslms-test";
+        socccfg:defaultUser <user/socc-bot/canvaslms>;
+        socccfg:service <service/canvas-test> .
+
+    ##########################################################
+}

@@ -23,7 +23,7 @@ public class ConnectToController implements ActionListener {
     private Runnable cancelListener;
 
     public ConnectToController() {
-        model = new RDFStoreConnection( "http://localhost:8080/openrdf-workbench", "master-thesis" );
+        model = new RDFStoreConnection( "http://localhost:8080/openrdf-sesame", "master-thesis" );
         view = new ConnectToView();
 
         view.getAnonymousLogin().setSelected( true );

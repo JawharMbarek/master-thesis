@@ -59,7 +59,7 @@
 
     <owl:ObjectProperty rdf:about="http://www.m0ep.de/ontologies/2013/soccconfig#defaultUser">
         <rdfs:range rdf:resource="&sioc;UserAccount"/>
-        <rdfs:domain rdf:resource="http://www.m0ep.de/ontologies/2013/soccconfig#ConnectorCfg"/>
+        <rdfs:domain rdf:resource="http://www.m0ep.de/ontologies/2013/soccconfig#ConnectorConfig"/>
     </owl:ObjectProperty>
     
 
@@ -86,7 +86,7 @@
     <!-- http://www.m0ep.de/ontologies/2013/soccconfig#connectorClass -->
 
     <owl:DatatypeProperty rdf:about="http://www.m0ep.de/ontologies/2013/soccconfig#connectorClass">
-        <rdfs:domain rdf:resource="http://www.m0ep.de/ontologies/2013/soccconfig#ConnectorCfg"/>
+        <rdfs:domain rdf:resource="http://www.m0ep.de/ontologies/2013/soccconfig#ConnectorConfig"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
@@ -95,7 +95,7 @@
     <!-- http://www.m0ep.de/ontologies/2013/soccconfig#id -->
 
     <owl:DatatypeProperty rdf:about="http://www.m0ep.de/ontologies/2013/soccconfig#id">
-        <rdfs:domain rdf:resource="http://www.m0ep.de/ontologies/2013/soccconfig#ConnectorCfg"/>
+        <rdfs:domain rdf:resource="http://www.m0ep.de/ontologies/2013/soccconfig#ConnectorConfig"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
@@ -124,9 +124,9 @@
     
 
 
-    <!-- http://www.m0ep.de/ontologies/2013/soccconfig#ConnectorCfg -->
+    <!-- http://www.m0ep.de/ontologies/2013/soccconfig#ConnectorConfig -->
 
-    <owl:Class rdf:about="http://www.m0ep.de/ontologies/2013/soccconfig#ConnectorCfg"/>
+    <owl:Class rdf:about="http://www.m0ep.de/ontologies/2013/soccconfig#ConnectorConfig"/>
 </rdf:RDF>
 
 

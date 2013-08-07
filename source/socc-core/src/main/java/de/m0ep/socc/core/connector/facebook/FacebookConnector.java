@@ -34,7 +34,7 @@ import com.restfb.exception.FacebookException;
 import com.restfb.exception.FacebookNetworkException;
 import com.restfb.exception.FacebookOAuthException;
 
-import de.m0ep.socc.config.ConnectorCfg;
+import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.AbstractConnector;
 import de.m0ep.socc.core.connector.IServiceClientManager;
@@ -56,7 +56,7 @@ public class FacebookConnector extends AbstractConnector {
         super(id, context, defaultUserAccount, service);
     }
 
-    public FacebookConnector(ISoccContext context, ConnectorCfg config) {
+    public FacebookConnector(ISoccContext context, ConnectorConfig config) {
         super(context, config);
     }
 

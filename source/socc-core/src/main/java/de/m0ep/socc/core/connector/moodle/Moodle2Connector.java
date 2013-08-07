@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import de.m0ep.socc.config.ConnectorCfg;
+import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.AbstractConnector;
 import de.m0ep.socc.core.connector.IServiceClientManager;
@@ -28,7 +28,7 @@ public class Moodle2Connector extends AbstractConnector {
     private IPostReader postReader;
     private IPostWriter postWriter;
 
-    public Moodle2Connector(ISoccContext context, ConnectorCfg config) {
+    public Moodle2Connector(ISoccContext context, ConnectorConfig config) {
         super(context, config);
     }
 

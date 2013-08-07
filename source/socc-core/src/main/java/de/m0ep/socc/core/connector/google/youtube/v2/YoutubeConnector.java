@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
-import de.m0ep.socc.config.ConnectorCfg;
+import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.AbstractConnector;
 import de.m0ep.socc.core.connector.IServiceClientManager;
@@ -59,7 +59,7 @@ public class YoutubeConnector extends AbstractConnector {
         super(id, context, defaultUserAccount, service);
     }
 
-    public YoutubeConnector(ISoccContext context, ConnectorCfg config) {
+    public YoutubeConnector(ISoccContext context, ConnectorConfig config) {
         super(context, config);
     }
 

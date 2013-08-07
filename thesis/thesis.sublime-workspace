@@ -112,19 +112,11 @@
 	"buffers":
 	[
 		{
-			"file": "thesis.tex",
+			"file": "/home/florian/Downloads/services.rdfs",
 			"settings":
 			{
-				"buffer_size": 582,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "content/anforderungsanalyse.tex",
-			"settings":
-			{
-				"buffer_size": 4918,
-				"line_ending": "Unix"
+				"buffer_size": 5513,
+				"line_ending": "Windows"
 			}
 		}
 	],
@@ -220,6 +212,9 @@
 	},
 	"file_history":
 	[
+		"/home/florian/Develop/uni/master-thesis/thesis/content/anforderungsanalyse.tex",
+		"/home/florian/Develop/uni/master-thesis/thesis/thesis.tex",
+		"/home/florian/Develop/uni/master-thesis/source/.metadata/.log",
 		"/home/florian/Develop/uni/master-thesis/thesis/preamble/packages.tex",
 		"/home/florian/Develop/uni/master-thesis/thesis/pages/solemn_declaration.tex",
 		"/home/florian/Develop/uni/master-thesis/thesis/preamble/docclass.tex",
@@ -271,7 +266,6 @@
 		"/home/florian/Downloads/loom-1_1_2243-cc5c829787-examples/Pong/src/Pong.ls",
 		"/home/florian/Downloads/loom-1_1_2243-cc5c829787-examples/Pong/src/PongPaddleMover.ls",
 		"/home/florian/Develop/uni/master-thesis/thesis/content/introduction.tex",
-		"/home/florian/Develop/uni/master-thesis/thesis/thesis.tex",
 		"/home/florian/.config/sublime-text-2/Packages/User/SideBarEnhancements/Open With/Side Bar.sublime-menu",
 		"/var/www/blog/lib/Slim/Helper/Set.php",
 		"/var/www/blog/lib/Slim/Slim.php",
@@ -345,9 +339,7 @@
 		"/home/florian/Downloads/rdf2go.api-4.8.3-sources/org/ontoware/rdf2go/model/node/URI.java",
 		"/home/florian/Downloads/rdf2go.api-4.8.3-sources/org/ontoware/rdf2go/model/node/impl/URIImpl.java",
 		"/home/florian/Downloads/rdfreactor.runtime-4.8.3-sources/org/ontoware/rdfreactor/runtime/Base.java",
-		"/home/florian/.local/share/applications/mendeleydesktop.desktop",
-		"/home/florian/.local/share/applications/modelio.desktop",
-		"/home/florian/Desktop/canvas-json/error.json"
+		"/home/florian/.local/share/applications/mendeleydesktop.desktop"
 	],
 	"find":
 	{
@@ -416,53 +408,23 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "thesis.tex",
+					"file": "/home/florian/Downloads/services.rdfs",
 					"settings":
 					{
-						"buffer_size": 582,
+						"buffer_size": 5513,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								498,
-								498
-							]
-						],
-						"settings":
-						{
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/LaTeX/LaTeX.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "content/anforderungsanalyse.tex",
-					"settings":
-					{
-						"buffer_size": 4918,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4637,
-								4637
+								0,
+								0
 							]
 						],
 						"settings":
@@ -473,108 +435,6 @@
 								"README",
 								"FIXME"
 							],
-							"codeintel": true,
-							"codeintel_config":
-							{
-								"JavaScript":
-								{
-									"codeintel_max_recursive_dir_depth": 3.0,
-									"codeintel_scan_files_in_project": true,
-									"javascriptExtraPaths":
-									[
-									]
-								},
-								"PHP":
-								{
-									"codeintel_max_recursive_dir_depth": 5.0,
-									"codeintel_scan_files_in_project": true,
-									"phpExtraPaths":
-									[
-									]
-								},
-								"Python":
-								{
-									"env":
-									{
-									}
-								}
-							},
-							"codeintel_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_live": true,
-							"codeintel_live_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_max_recursive_dir_depth": 10.0,
-							"codeintel_scan_exclude_dir":
-							{
-								"JavaScript":
-								[
-									"/build/",
-									"/min/"
-								]
-							},
-							"codeintel_scan_files_in_project": true,
-							"codeintel_selected_catalogs":
-							[
-								"PyWin32",
-								"jQuery",
-								"Rails"
-							],
-							"codeintel_snippets": true,
-							"codeintel_syntax_map":
-							{
-								"Python Django": "Python"
-							},
 							"csslint_options":
 							{
 								"adjoining-classes": "warning",
@@ -638,7 +498,6 @@
 							],
 							"pyflakes_ignore_import_*": true,
 							"remote_loading": false,
-							"sublime_auto_complete": true,
 							"sublimelinter": true,
 							"sublimelinter_delay": 2.0,
 							"sublimelinter_disable":
@@ -662,10 +521,12 @@
 							},
 							"sublimelinter_wrap_find": true,
 							"synced": false,
-							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 974.0,
+						"translation.y": 1408.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

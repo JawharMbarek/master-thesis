@@ -24,7 +24,7 @@ import de.m0ep.sioc.service.auth.AccessToken;
 import de.m0ep.sioc.service.auth.OAuth;
 import de.m0ep.sioc.service.auth.Service;
 import de.m0ep.sioc.service.auth.UserAccount;
-import de.m0ep.socc.config.ConnectorCfg;
+import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.SoccContext;
 import de.m0ep.socc.core.connector.canvaslms.CanvasLmsConnector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
@@ -66,7 +66,7 @@ public class CanvasLmsConnectorTestApp {
         service.setServiceEndpoint(Builder.createURI(rootUri));
         service.setServiceDefinition(Builder.createPlainliteral("Canvas LMS Service"));
 
-        ConnectorCfg config = new ConnectorCfg(model, true);
+        ConnectorConfig config = new ConnectorConfig(model, true);
         config.setId("canvas-test");
         config.setDefaultUser(defaultUserAccount);
         config.setService(service);

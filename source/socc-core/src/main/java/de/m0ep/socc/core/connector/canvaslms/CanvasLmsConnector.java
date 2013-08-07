@@ -33,7 +33,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
 import de.m0ep.canvas.CanvasLmsClient;
-import de.m0ep.socc.config.ConnectorCfg;
+import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.AbstractConnector;
 import de.m0ep.socc.core.connector.IServiceClientManager;
@@ -52,14 +52,14 @@ public class CanvasLmsConnector extends AbstractConnector {
     private IPostWriter postWriter;
 
     /**
-     * Constructs a new {@link CanvasLmsConnector} from a {@link ConnectorCfg}
+     * Constructs a new {@link CanvasLmsConnector} from a {@link ConnectorConfig}
      * and a given {@link ISoccContext}.
      * 
      * @param context
      * @param config
      */
     public CanvasLmsConnector(final ISoccContext context,
-            final ConnectorCfg config) {
+            final ConnectorConfig config) {
         super(context, config);
     }
 

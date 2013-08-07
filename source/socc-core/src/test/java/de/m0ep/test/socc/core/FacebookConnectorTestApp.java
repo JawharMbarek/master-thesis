@@ -47,7 +47,7 @@ import de.m0ep.sioc.service.auth.ClientSecret;
 import de.m0ep.sioc.service.auth.OAuth;
 import de.m0ep.sioc.service.auth.Service;
 import de.m0ep.sioc.service.auth.UserAccount;
-import de.m0ep.socc.config.ConnectorCfg;
+import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.SoccContext;
 import de.m0ep.socc.core.connector.IConnector;
@@ -106,7 +106,7 @@ public class FacebookConnectorTestApp {
 
         /*********************************/
 
-        ConnectorCfg config = new ConnectorCfg(model, true);
+        ConnectorConfig config = new ConnectorConfig(model, true);
         config.setId("youtube-test");
         config.setDefaultUser(userAccount);
         config.setService(service);

@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.rdfs.sioc.UserAccount;
 import org.rdfs.sioc.services.Service;
 
-import de.m0ep.socc.config.ConnectorCfg;
+import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.AbstractConnector;
 import de.m0ep.socc.core.connector.IServiceClientManager;
@@ -14,7 +14,7 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 
 public class GooglePlusConnector extends AbstractConnector {
 
-    public GooglePlusConnector(ISoccContext context, ConnectorCfg config) {
+    public GooglePlusConnector(ISoccContext context, ConnectorConfig config) {
         super(context, config);
     }
 

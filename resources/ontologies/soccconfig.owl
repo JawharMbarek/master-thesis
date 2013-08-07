@@ -2,10 +2,10 @@
 
 
 <!DOCTYPE rdf:RDF [
+    <!ENTITY sioc "http://rdfs.org/sioc/ns#" >
     <!ENTITY foaf "http://xmlns.com/foaf/0.1/" >
     <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
     <!ENTITY services "http://rdfs.org/sioc/services#" >
-    <!ENTITY sioc "http://rdfs.org/sioc/ns#" >
     <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
     <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
     <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
@@ -14,14 +14,33 @@
 
 <rdf:RDF xmlns="http://www.m0ep.de/ontologies/2013/soccconfig#"
      xml:base="http://www.m0ep.de/ontologies/2013/soccconfig"
+     xmlns:sioc="http://rdfs.org/sioc/ns#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:services="http://rdfs.org/sioc/services#"
-     xmlns:sioc="http://rdfs.org/sioc/ns#"
      xmlns:foaf="http://xmlns.com/foaf/0.1/"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <owl:Ontology rdf:about="http://www.m0ep.de/ontologies/2013/soccconfig"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.m0ep.de/ontologies/2013/soccconfig#service -->
+
+    <owl:AnnotationProperty rdf:about="http://www.m0ep.de/ontologies/2013/soccconfig#service">
+        <rdfs:domain rdf:resource="http://www.m0ep.de/ontologies/2013/soccconfig#rdfs"/>
+    </owl:AnnotationProperty>
     
 
 
@@ -39,8 +58,8 @@
     <!-- http://www.m0ep.de/ontologies/2013/soccconfig#defaultUser -->
 
     <owl:ObjectProperty rdf:about="http://www.m0ep.de/ontologies/2013/soccconfig#defaultUser">
+        <rdfs:range rdf:resource="&sioc;UserAccount"/>
         <rdfs:domain rdf:resource="http://www.m0ep.de/ontologies/2013/soccconfig#ConnectorCfg"/>
-        <rdfs:range rdf:resource="&sioc;UserAccount" />
     </owl:ObjectProperty>
     
 
@@ -48,8 +67,7 @@
     <!-- http://www.m0ep.de/ontologies/2013/soccconfig#service -->
 
     <owl:ObjectProperty rdf:about="http://www.m0ep.de/ontologies/2013/soccconfig#service">
-        <rdfs:domain rdf:resource="http://www.m0ep.de/ontologies/2013/soccconfig#rdfs"/>
-        <ConnectorCfg:range rdf:resource="&services;Service" />
+        <rdfs:range rdf:resource="&services;Service"/>
     </owl:ObjectProperty>
     
 
@@ -62,6 +80,15 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
+    
+
+
+    <!-- http://www.m0ep.de/ontologies/2013/soccconfig#connectorClass -->
+
+    <owl:DatatypeProperty rdf:about="http://www.m0ep.de/ontologies/2013/soccconfig#connectorClass">
+        <rdfs:domain rdf:resource="http://www.m0ep.de/ontologies/2013/soccconfig#ConnectorCfg"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
     
 
 
@@ -82,6 +109,18 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
+    
+
+
+    <!-- http://rdfs.org/sioc/ns#UserAccount -->
+
+    <owl:Class rdf:about="&sioc;UserAccount"/>
+    
+
+
+    <!-- http://rdfs.org/sioc/services#Service -->
+
+    <owl:Class rdf:about="&services;Service"/>
     
 
 

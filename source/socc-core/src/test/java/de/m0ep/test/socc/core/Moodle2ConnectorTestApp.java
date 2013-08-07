@@ -18,7 +18,7 @@ import de.m0ep.sioc.service.auth.Password;
 import de.m0ep.sioc.service.auth.Service;
 import de.m0ep.sioc.service.auth.UserAccount;
 import de.m0ep.sioc.service.auth.Username;
-import de.m0ep.socc.config.ConnectorCfg;
+import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.SoccContext;
 import de.m0ep.socc.core.connector.moodle.Moodle2Connector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
@@ -56,7 +56,7 @@ public class Moodle2ConnectorTestApp {
         service.setServiceEndpoint(Builder.createURI(rootUri));
         service.setServiceDefinition(Builder.createPlainliteral("Moodle LMS Service"));
 
-        ConnectorCfg config = new ConnectorCfg(model, true);
+        ConnectorConfig config = new ConnectorConfig(model, true);
         config.setId("moodle-test");
         config.setDefaultUser(defaultUserAccount);
         config.setService(service);

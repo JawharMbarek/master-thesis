@@ -60,13 +60,16 @@ public class FacebookStructureReader extends
 
     @Override
     public Site getSite() {
-        if (!Site.hasInstance(getModel(), getServiceEndpoint())) {
-            Site result = new Site(getModel(), getServiceEndpoint(), true);
-            result.setName("Facebook");
-            return result;
+        Site result = null;
+        if (Site.hasInstance(getModel(), getServiceEndpoint())) {
+            result = Site.getInstance(getModel(), getServiceEndpoint());
+        } else {
+            result = new Site(getModel(), getServiceEndpoint(), true);
         }
 
-        return Site.getInstance(getModel(), getServiceEndpoint());
+        result.setName("Facebook");
+
+        return result;
     }
 
     @Override

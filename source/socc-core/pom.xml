@@ -149,6 +149,16 @@
 			<artifactId>restfb</artifactId>
 			<version>1.6.12</version>
 		</dependency>
+		<dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-jackson2</artifactId>
+            <version>1.16.0-rc</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-plus</artifactId>
+            <version>v1-rev86-1.16.0-rc</version>
+        </dependency>
 	</dependencies>
 
 	<build>

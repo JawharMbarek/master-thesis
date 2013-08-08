@@ -58,6 +58,7 @@
     
     <!-- http://www.m0ep.de/socc/config#service -->
     <owl:ObjectProperty rdf:about="http://www.m0ep.de/socc/config#service">
+        <rdfs:domain rdf:resource="http://www.m0ep.de/socc/config#ConnectorConfig"/>
         <rdfs:range rdf:resource="&siocs;Service"/>
     </owl:ObjectProperty>
     

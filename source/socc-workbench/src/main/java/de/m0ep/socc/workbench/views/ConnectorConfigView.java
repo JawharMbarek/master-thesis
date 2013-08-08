@@ -29,8 +29,8 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.xmlns.foaf.Person;
 
-import de.m0ep.sioc.service.auth.Service;
-import de.m0ep.sioc.service.auth.UserAccount;
+import de.m0ep.sioc.services.auth.Service;
+import de.m0ep.sioc.services.auth.UserAccount;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.UserAccountUtils;
@@ -317,7 +317,7 @@ public class ConnectorConfigView extends JDialog {
             return Objects.hashCode( connectorConfig,
                     connectorConfig.getId(),
                     connectorConfig.getConnectorClass(),
-                    connectorConfig.getDefaultUser() );
+                    connectorConfig.getDefaultUserAccount() );
         }
 
         @Override
@@ -340,8 +340,8 @@ public class ConnectorConfigView extends JDialog {
                             this.connectorConfig.getConnectorClass(),
                             other.connectorConfig.getConnectorClass() )
                     && Objects.equal(
-                            this.connectorConfig.getDefaultUser(),
-                            other.connectorConfig.getDefaultUser() );
+                            this.connectorConfig.getDefaultUserAccount(),
+                            other.connectorConfig.getDefaultUserAccount() );
         }
 
         @Override

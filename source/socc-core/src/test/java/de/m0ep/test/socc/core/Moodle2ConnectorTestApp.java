@@ -13,11 +13,11 @@ import org.rdfs.sioc.Thread;
 
 import com.xmlns.foaf.Person;
 
-import de.m0ep.sioc.service.auth.Direct;
-import de.m0ep.sioc.service.auth.Password;
-import de.m0ep.sioc.service.auth.Service;
-import de.m0ep.sioc.service.auth.UserAccount;
-import de.m0ep.sioc.service.auth.Username;
+import de.m0ep.sioc.services.auth.Direct;
+import de.m0ep.sioc.services.auth.Password;
+import de.m0ep.sioc.services.auth.Service;
+import de.m0ep.sioc.services.auth.UserAccount;
+import de.m0ep.sioc.services.auth.Username;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.SoccContext;
 import de.m0ep.socc.core.connector.moodle.Moodle2Connector;
@@ -25,7 +25,8 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 
 public class Moodle2ConnectorTestApp {
 
-    public static void main(String[] args) throws AuthenticationException, IOException {
+    public static void main(String[] args) throws AuthenticationException,
+            IOException {
         String rootUri = "http://localhost/moodle";
 
         Model model = RDF2Go.getModelFactory().createModel();
@@ -39,13 +40,14 @@ public class Moodle2ConnectorTestApp {
         password.setValue("admin");
 
         Direct direct = new Direct(model, true);
-        direct.addCredential(username);
-        direct.addCredential(password);
+        direct.addCredentials(username);
+        direct.addCredentials(password);
 
         UserAccount defaultUserAccount = new UserAccount(model, true);
         defaultUserAccount.setAccountName("2");
-        defaultUserAccount.setAccountServiceHomepage(Builder.createURI(rootUri));
-        defaultUserAccount.setAuthentication(direct);
+        defaultUserAccount
+                .setAccountServiceHomepage(Builder.createURI(rootUri));
+        defaultUserAccount.setAccountAuthentication(direct);
 
         Person defaultPerson = new Person(model, true);
         defaultPerson.setName("Admin User");
@@ -54,11 +56,12 @@ public class Moodle2ConnectorTestApp {
 
         Service service = new Service(model, true);
         service.setServiceEndpoint(Builder.createURI(rootUri));
-        service.setServiceDefinition(Builder.createPlainliteral("Moodle LMS Service"));
+        service.setServiceDefinition(Builder
+                .createPlainliteral("Moodle LMS Service"));
 
         ConnectorConfig config = new ConnectorConfig(model, true);
         config.setId("moodle-test");
-        config.setDefaultUser(defaultUserAccount);
+        config.setDefaultUserAccount(defaultUserAccount);
         config.setService(service);
 
         Post replyPost = new Post(model, true);
@@ -78,12 +81,14 @@ public class Moodle2ConnectorTestApp {
         for (Forum forum : forums) {
             System.out.println(forum.getName() + " " + forum);
 
-            List<Thread> threads = connector.getStructureReader().listThreads(forum);
+            List<Thread> threads = connector.getStructureReader().listThreads(
+                    forum);
             for (Thread thread : threads) {
                 System.out.println(thread.getName() + " " + thread);
                 connector.getPostWriter().writePost(replyPost, thread);
 
-                List<Post> posts = connector.getPostReader().readNewPosts(null, -1, thread);
+                List<Post> posts = connector.getPostReader().readNewPosts(null,
+                        -1, thread);
 
                 for (Post post : posts) {
                     System.out.println(post.getContent() + " " + post);
@@ -93,8 +98,11 @@ public class Moodle2ConnectorTestApp {
 
         System.out.println();
         System.out.println("read replies");
-        List<Post> posts = connector.getPostReader().readNewReplies(null, -1,
-                Post.getInstance(model, Builder.createURI("http://localhost/moodle/post/1")));
+        List<Post> posts = connector.getPostReader().readNewReplies(
+                null,
+                -1,
+                Post.getInstance(model, Builder
+                        .createURI("http://localhost/moodle/post/1")));
         for (Post post : posts) {
             System.out.println(post.getContent() + " " + post);
         }

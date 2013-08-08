@@ -28,12 +28,12 @@ import org.rdfs.sioc.services.Service;
 
 import com.google.common.base.Preconditions;
 
-import de.m0ep.sioc.service.auth.AccessToken;
-import de.m0ep.sioc.service.auth.Authentication;
-import de.m0ep.sioc.service.auth.ClientId;
-import de.m0ep.sioc.service.auth.ClientSecret;
-import de.m0ep.sioc.service.auth.Credential;
-import de.m0ep.sioc.service.auth.ServicesAuthVocabulary;
+import de.m0ep.sioc.services.auth.AccessToken;
+import de.m0ep.sioc.services.auth.AuthenticationMechanism;
+import de.m0ep.sioc.services.auth.ClientId;
+import de.m0ep.sioc.services.auth.ClientSecret;
+import de.m0ep.sioc.services.auth.Credentials;
+import de.m0ep.sioc.services.auth.ServicesAuthVocabulary;
 import de.m0ep.socc.core.connector.AbstractServiceClientManager;
 import de.m0ep.socc.core.utils.RdfUtils;
 
@@ -59,23 +59,24 @@ public class FacebookClientManager extends
     protected void init() {
         clientId = null;
         clientSecret = null;
-        de.m0ep.sioc.service.auth.Service authService =
-                de.m0ep.sioc.service.auth.Service.getInstance(
+        de.m0ep.sioc.services.auth.Service authService =
+                de.m0ep.sioc.services.auth.Service.getInstance(
                         getService().getModel(),
                         getService().getResource());
 
-        Preconditions.checkArgument(authService.hasAuthentication(),
+        Preconditions.checkArgument(authService.hasServiceAuthentication(),
                 "The parameter service has no authentication.");
 
-        Authentication authentication = authService.getAuthentication();
-        Preconditions.checkArgument(authentication.hasCredential(),
+        AuthenticationMechanism authentication = authService
+                .getServiceAuthentication();
+        Preconditions.checkArgument(authentication.hasCredentials(),
                 "The service authentication has no credentials.");
 
-        ClosableIterator<Credential> credIter = authentication
-                .getAllCredential();
+        ClosableIterator<Credentials> credIter = authentication
+                .getAllCredentials();
         try {
             while (credIter.hasNext()) {
-                Credential credential = (Credential) credIter.next();
+                Credentials credential = (Credentials) credIter.next();
 
                 if (credential.hasValue()) {
                     if (RdfUtils.isType(
@@ -114,25 +115,26 @@ public class FacebookClientManager extends
         Preconditions.checkState(null != clientSecret,
                 "Client secret missing.");
 
-        de.m0ep.sioc.service.auth.UserAccount authAccount =
-                de.m0ep.sioc.service.auth.UserAccount.getInstance(
+        de.m0ep.sioc.services.auth.UserAccount authAccount =
+                de.m0ep.sioc.services.auth.UserAccount.getInstance(
                         userAccount.getModel(),
                         userAccount.getResource());
 
-        Preconditions.checkArgument(authAccount.hasAuthentication(),
+        Preconditions.checkArgument(authAccount.hasAccountAuthentication(),
                 "The paramater userAccount has no authentication");
 
-        Authentication authentication = authAccount.getAuthentication();
-        Preconditions.checkArgument(authentication.hasCredential(),
+        AuthenticationMechanism authentication = authAccount
+                .getAccountAuthentication();
+        Preconditions.checkArgument(authentication.hasCredentials(),
                 "The authentication of the parameter userAccount " +
                         "has no credentials");
 
         AccessToken accessToken = null;
-        ClosableIterator<Credential> credIter = authentication
-                .getAllCredential();
+        ClosableIterator<Credentials> credIter = authentication
+                .getAllCredentials();
         try {
             while (credIter.hasNext()) {
-                Credential credential = (Credential) credIter.next();
+                Credentials credential = (Credentials) credIter.next();
 
                 if (credential.hasValue()) {
                     if (RdfUtils.isType(

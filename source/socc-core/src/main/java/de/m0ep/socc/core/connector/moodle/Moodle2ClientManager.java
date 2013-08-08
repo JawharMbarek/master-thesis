@@ -7,11 +7,11 @@ import org.rdfs.sioc.services.Service;
 
 import com.google.common.base.Preconditions;
 
-import de.m0ep.sioc.service.auth.Authentication;
-import de.m0ep.sioc.service.auth.Credential;
-import de.m0ep.sioc.service.auth.Password;
-import de.m0ep.sioc.service.auth.ServicesAuthVocabulary;
-import de.m0ep.sioc.service.auth.Username;
+import de.m0ep.sioc.services.auth.AuthenticationMechanism;
+import de.m0ep.sioc.services.auth.Credentials;
+import de.m0ep.sioc.services.auth.Password;
+import de.m0ep.sioc.services.auth.ServicesAuthVocabulary;
+import de.m0ep.sioc.services.auth.Username;
 import de.m0ep.socc.core.connector.AbstractServiceClientManager;
 import de.m0ep.socc.core.utils.RdfUtils;
 
@@ -30,25 +30,26 @@ public class Moodle2ClientManager extends
     @Override
     public Moodle2ClientWrapper createClientFromAccount(UserAccount userAccount)
             throws Exception {
-        de.m0ep.sioc.service.auth.UserAccount authUserAccount =
-                de.m0ep.sioc.service.auth.UserAccount.getInstance(
+        de.m0ep.sioc.services.auth.UserAccount authUserAccount =
+                de.m0ep.sioc.services.auth.UserAccount.getInstance(
                         userAccount.getModel(),
                         userAccount.getResource());
 
-        Preconditions.checkArgument(authUserAccount.hasAuthentication(),
+        Preconditions.checkArgument(authUserAccount.hasAccountAuthentication(),
                 "The defaultUserAccount has no required authentication data.");
-        Authentication authentication = authUserAccount.getAuthentication();
+        AuthenticationMechanism authentication = authUserAccount
+                .getAccountAuthentication();
 
         Preconditions
-                .checkArgument(authentication.hasCredential(),
+                .checkArgument(authentication.hasCredentials(),
                         "The defaultUserAccount authentication has no required credentials");
-        ClosableIterator<Credential> credentialIter = authentication
-                .getAllCredential();
+        ClosableIterator<Credentials> credentialIter = authentication
+                .getAllCredentials();
 
         Username username = null;
         Password password = null;
         while (credentialIter.hasNext()) {
-            Credential credential = (Credential) credentialIter.next();
+            Credentials credential = (Credentials) credentialIter.next();
 
             if (RdfUtils.isType(
                     credential.getModel(),

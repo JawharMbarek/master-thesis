@@ -40,13 +40,12 @@ import org.rdfs.sioc.Post;
 import com.google.common.collect.Lists;
 import com.xmlns.foaf.Person;
 
-import de.m0ep.sioc.service.auth.AccessToken;
-import de.m0ep.sioc.service.auth.Authentication;
-import de.m0ep.sioc.service.auth.ClientId;
-import de.m0ep.sioc.service.auth.ClientSecret;
-import de.m0ep.sioc.service.auth.OAuth;
-import de.m0ep.sioc.service.auth.Service;
-import de.m0ep.sioc.service.auth.UserAccount;
+import de.m0ep.sioc.services.auth.AccessToken;
+import de.m0ep.sioc.services.auth.ClientId;
+import de.m0ep.sioc.services.auth.ClientSecret;
+import de.m0ep.sioc.services.auth.OAuth;
+import de.m0ep.sioc.services.auth.Service;
+import de.m0ep.sioc.services.auth.UserAccount;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.SoccContext;
@@ -61,7 +60,8 @@ public class FacebookConnectorTestApp {
      * @throws IOException
      * @throws AuthenticationException
      */
-    public static void main(String[] args) throws AuthenticationException, IOException {
+    public static void main(String[] args) throws AuthenticationException,
+            IOException {
         URI serviceEndpointUri = Builder.createURI("https://www.facebook.com");
 
         Model model = RDF2Go.getModelFactory().createModel();
@@ -72,16 +72,16 @@ public class FacebookConnectorTestApp {
         Service service = new Service(model, true);
         service.setServiceEndpoint(serviceEndpointUri);
 
-        Authentication serviceAuth = new OAuth(model, true);
-        service.setAuthentication(serviceAuth);
+        OAuth serviceAuth = new OAuth(model, true);
+        service.setServiceAuthentication(serviceAuth);
 
         ClientId clientId = new ClientId(model, true);
         clientId.setValue("218182098322396");
-        serviceAuth.addCredential(clientId);
+        serviceAuth.addCredentials(clientId);
 
         ClientSecret clientSecret = new ClientSecret(model, true);
         clientSecret.setValue("f4ed27b621c0f6476c2741f7cf9c4dc5");
-        serviceAuth.addCredential(clientSecret);
+        serviceAuth.addCredentials(clientSecret);
 
         /*********************************/
 
@@ -94,21 +94,23 @@ public class FacebookConnectorTestApp {
         defaultPerson.addAccount(userAccount);
         userAccount.setAccountOf(defaultPerson);
 
-        Authentication userAuth = new OAuth(model, true);
-        userAccount.setAuthentication(userAuth);
+        OAuth userAuth = new OAuth(model, true);
+        userAccount.setAccountAuthentication(userAuth);
 
         AccessToken accessToken = new AccessToken(model, true);
         accessToken
-                .setValue("CAADGb3p3g9wBANQpIOfeJjlO6WcgyILAE39y6YMECzuiM6xJB3HG5oAMetr0nQ3FdRfh" +
-                        "ysngrNmRysSVAcPQiWPPXd2q9ZBZBNf7kqd4IQnyg1BRZAEvABiUhpkxFlAMhVgn44J2mFN" +
+                .setValue("CAADGb3p3g9wBANQpIOfeJjlO6WcgyILAE39y6YMECzuiM6xJB3HG5oAMetr0nQ3FdRfh"
+                        +
+                        "ysngrNmRysSVAcPQiWPPXd2q9ZBZBNf7kqd4IQnyg1BRZAEvABiUhpkxFlAMhVgn44J2mFN"
+                        +
                         "pkgdDgUT");
-        userAuth.addCredential(accessToken);
+        userAuth.addCredentials(accessToken);
 
         /*********************************/
 
         ConnectorConfig config = new ConnectorConfig(model, true);
         config.setId("youtube-test");
-        config.setDefaultUser(userAccount);
+        config.setDefaultUserAccount(userAccount);
         config.setService(service);
 
         Post replyPost = new Post(model, true);

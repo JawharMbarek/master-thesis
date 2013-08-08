@@ -29,9 +29,9 @@ import org.rdfs.sioc.services.Service;
 import com.google.common.base.Preconditions;
 
 import de.m0ep.canvas.CanvasLmsClient;
-import de.m0ep.sioc.service.auth.Authentication;
-import de.m0ep.sioc.service.auth.Credential;
-import de.m0ep.sioc.service.auth.ServicesAuthVocabulary;
+import de.m0ep.sioc.services.auth.AuthenticationMechanism;
+import de.m0ep.sioc.services.auth.Credentials;
+import de.m0ep.sioc.services.auth.ServicesAuthVocabulary;
 import de.m0ep.socc.core.connector.AbstractServiceClientManager;
 import de.m0ep.socc.core.utils.RdfUtils;
 
@@ -79,24 +79,25 @@ public class CanvasLmsClientManager extends
         Preconditions.checkNotNull(userAccount,
                 "Required parameter userAccount must be specified.");
 
-        de.m0ep.sioc.service.auth.UserAccount authUserAccount =
-                de.m0ep.sioc.service.auth.UserAccount.getInstance(
+        de.m0ep.sioc.services.auth.UserAccount authUserAccount =
+                de.m0ep.sioc.services.auth.UserAccount.getInstance(
                         userAccount.getModel(),
                         userAccount.getResource());
 
         Preconditions.checkArgument(
-                authUserAccount.hasAuthentication(),
+                authUserAccount.hasAccountAuthentication(),
                 "The userAccount has no authentication data.");
-        Authentication authentication = authUserAccount.getAuthentication();
+        AuthenticationMechanism authentication = authUserAccount
+                .getAccountAuthentication();
 
         Preconditions.checkArgument(
-                authentication.hasCredential(),
+                authentication.hasCredentials(),
                 "The authentication has no credentials");
-        ClosableIterator<Credential> credentialIter = authentication
-                .getAllCredential();
+        ClosableIterator<Credentials> credentialIter = authentication
+                .getAllCredentials();
 
         while (credentialIter.hasNext()) {
-            Credential credential = (Credential) credentialIter.next();
+            Credentials credential = (Credentials) credentialIter.next();
 
             if (RdfUtils.isType(
                     credential.getModel(),

@@ -30,12 +30,12 @@ import org.rdfs.sioc.services.Service;
 
 import com.google.common.base.Preconditions;
 
-import de.m0ep.sioc.service.auth.APIKey;
-import de.m0ep.sioc.service.auth.Authentication;
-import de.m0ep.sioc.service.auth.Credential;
-import de.m0ep.sioc.service.auth.Password;
-import de.m0ep.sioc.service.auth.ServicesAuthVocabulary;
-import de.m0ep.sioc.service.auth.Username;
+import de.m0ep.sioc.services.auth.APIKey;
+import de.m0ep.sioc.services.auth.AuthenticationMechanism;
+import de.m0ep.sioc.services.auth.Credentials;
+import de.m0ep.sioc.services.auth.Password;
+import de.m0ep.sioc.services.auth.ServicesAuthVocabulary;
+import de.m0ep.sioc.services.auth.Username;
 import de.m0ep.socc.core.connector.AbstractServiceClientManager;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
@@ -76,23 +76,24 @@ public class YoutubeClientManager extends
         Preconditions.checkArgument(getService().hasServiceEndpoint(),
                 "The parameter service has no serviceEndpoint.");
 
-        de.m0ep.sioc.service.auth.Service authService = de.m0ep.sioc.service.auth.Service
+        de.m0ep.sioc.services.auth.Service authService = de.m0ep.sioc.services.auth.Service
                 .getInstance(
                         getService().getModel(),
                         getService().getResource());
 
-        Preconditions.checkArgument(authService.hasAuthentication(),
+        Preconditions.checkArgument(authService.hasServiceAuthentication(),
                 "The parameter service has no authentication.");
 
-        Authentication authentication = authService.getAuthentication();
-        Preconditions.checkArgument(authentication.hasCredential(),
+        AuthenticationMechanism authentication = authService
+                .getServiceAuthentication();
+        Preconditions.checkArgument(authentication.hasCredentials(),
                 "The service authentication has no credentials.");
 
-        ClosableIterator<Credential> credIter = authentication
-                .getAllCredential();
+        ClosableIterator<Credentials> credIter = authentication
+                .getAllCredentials();
         try {
             while (credIter.hasNext()) {
-                Credential credential = (Credential) credIter.next();
+                Credentials credential = (Credentials) credIter.next();
 
                 if (RdfUtils.isType(
                         credential.getModel(),
@@ -118,27 +119,28 @@ public class YoutubeClientManager extends
         Preconditions.checkState(null != apiKey,
                 "API key missing.");
 
-        de.m0ep.sioc.service.auth.UserAccount authUserAccount =
-                de.m0ep.sioc.service.auth.UserAccount.getInstance(
+        de.m0ep.sioc.services.auth.UserAccount authUserAccount =
+                de.m0ep.sioc.services.auth.UserAccount.getInstance(
                         userAccount.getModel(),
                         userAccount.getResource());
 
         Preconditions.checkArgument(
-                authUserAccount.hasAuthentication(),
+                authUserAccount.hasAccountAuthentication(),
                 "The defaultUserAccount has no required authentication data.");
-        Authentication authentication = authUserAccount.getAuthentication();
+        AuthenticationMechanism authentication = authUserAccount
+                .getAccountAuthentication();
 
         Preconditions
                 .checkArgument(
-                        authentication.hasCredential(),
+                        authentication.hasCredentials(),
                         "The defaultUserAccount authentication has no required credentials");
-        ClosableIterator<Credential> credentialIter = authentication
-                .getAllCredential();
+        ClosableIterator<Credentials> credentialIter = authentication
+                .getAllCredentials();
 
         Username username = null;
         Password password = null;
         while (credentialIter.hasNext()) {
-            Credential credential = (Credential) credentialIter.next();
+            Credentials credential = (Credentials) credentialIter.next();
 
             if (RdfUtils.isType(
                     credential.getModel(),

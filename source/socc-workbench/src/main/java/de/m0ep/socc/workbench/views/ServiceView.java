@@ -25,7 +25,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-import de.m0ep.sioc.service.auth.Service;
+import de.m0ep.sioc.services.auth.Service;
 
 public class ServiceView extends JDialog {
     public static final String ACTION_CMD_SERVICE_LIST_ADD = "action_cmd_service_list_add";

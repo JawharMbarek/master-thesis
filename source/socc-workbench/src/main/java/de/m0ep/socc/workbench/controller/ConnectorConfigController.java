@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import de.m0ep.sioc.service.auth.Service;
+import de.m0ep.sioc.services.auth.Service;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.connector.canvaslms.CanvasLmsConnector;
 import de.m0ep.socc.core.connector.facebook.FacebookConnector;
@@ -143,7 +143,8 @@ public class ConnectorConfigController implements ActionListener {
                         UserAccountListEntry accountEntry = view.getDefaultUserAccountCombobox()
                                 .getItemAt( i );
 
-                        if (accountEntry.getUserAccount().equals( connectorConfig.getDefaultUser() )) {
+                        if (accountEntry.getUserAccount().equals(
+                                connectorConfig.getDefaultUserAccount() )) {
                             view.getDefaultUserAccountCombobox().setSelectedIndex( i );
                             break;
                         }
@@ -259,7 +260,7 @@ public class ConnectorConfigController implements ActionListener {
                         .getSelectedItem();
 
                 cfg.setId( view.getIdTextfield().getText() );
-                cfg.setDefaultUser( account.getUserAccount() );
+                cfg.setDefaultUserAccount( account.getUserAccount() );
                 cfg.setConnectorClass( clazz.getClazz().getName() );
                 cfg.setService( service.getService() );
             }

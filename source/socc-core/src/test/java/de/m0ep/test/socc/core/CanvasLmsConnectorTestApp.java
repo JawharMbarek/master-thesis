@@ -20,10 +20,10 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
 import com.xmlns.foaf.Person;
 
-import de.m0ep.sioc.service.auth.AccessToken;
-import de.m0ep.sioc.service.auth.OAuth;
-import de.m0ep.sioc.service.auth.Service;
-import de.m0ep.sioc.service.auth.UserAccount;
+import de.m0ep.sioc.services.auth.AccessToken;
+import de.m0ep.sioc.services.auth.OAuth;
+import de.m0ep.sioc.services.auth.Service;
+import de.m0ep.sioc.services.auth.UserAccount;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.SoccContext;
 import de.m0ep.socc.core.connector.canvaslms.CanvasLmsConnector;
@@ -52,10 +52,10 @@ public class CanvasLmsConnectorTestApp {
         accessToken.setValue(oAuthToken);
 
         OAuth oAuth = new OAuth(model, true);
-        oAuth.addCredential(accessToken);
+        oAuth.addCredentials(accessToken);
 
         UserAccount defaultUserAccount = new UserAccount(model, true);
-        defaultUserAccount.setAuthentication(oAuth);
+        defaultUserAccount.setAccountAuthentication(oAuth);
 
         Person defaultPerson = new Person(model, true);
         defaultPerson.setName("dafault");
@@ -64,11 +64,12 @@ public class CanvasLmsConnectorTestApp {
 
         Service service = new Service(model, true);
         service.setServiceEndpoint(Builder.createURI(rootUri));
-        service.setServiceDefinition(Builder.createPlainliteral("Canvas LMS Service"));
+        service.setServiceDefinition(Builder
+                .createPlainliteral("Canvas LMS Service"));
 
         ConnectorConfig config = new ConnectorConfig(model, true);
         config.setId("canvas-test");
-        config.setDefaultUser(defaultUserAccount);
+        config.setDefaultUserAccount(defaultUserAccount);
         config.setService(service);
 
         CanvasLmsConnector connector = new CanvasLmsConnector(context, config);
@@ -104,7 +105,8 @@ public class CanvasLmsConnectorTestApp {
 
                         List<Post> posts = null;
                         try {
-                            posts = connector.getPostReader().readNewPosts(null, -1, thread);
+                            posts = connector.getPostReader().readNewPosts(
+                                    null, -1, thread);
                         } catch (AuthenticationException | IOException e) {
                             e.printStackTrace();
                         }
@@ -151,8 +153,10 @@ public class CanvasLmsConnectorTestApp {
             toStringHelper.add(
                     "creator",
                     Objects.toStringHelper("UserAccount")
-                            .add("uri", post.getCreator().getResource().toString())
-                            .add("accountName", post.getCreator().getAccountName())
+                            .add("uri",
+                                    post.getCreator().getResource().toString())
+                            .add("accountName",
+                                    post.getCreator().getAccountName())
                             .toString());
         }
 

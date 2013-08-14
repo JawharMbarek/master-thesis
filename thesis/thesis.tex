@@ -39,7 +39,11 @@
 		\input{pages/frontpage}
 		\input{pages/solemn_declaration}
 		\input{pages/abstract}
-		\input{pages/tableofcontents}
+		\cleardoublepage
+		\tableofcontents
+		\listoffigures
+		\listoftables
+		\cleardoublepage
 	
 	\pagenumbering{arabic}
 		\listoftodos
@@ -50,11 +54,10 @@
 		\input{content/design}
 		\input{content/implementierung}
 		\input{content/abschluss}
+		\cleardoublepage
 
 	\appendix
 		\input{pages/bibliography}
-		\listoffigures
-		\listoftables
 	    \input{pages/appendix}
 
 \end{document}

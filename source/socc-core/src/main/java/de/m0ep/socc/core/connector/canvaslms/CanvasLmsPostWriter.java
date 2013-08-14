@@ -70,9 +70,9 @@ public class CanvasLmsPostWriter extends
                             + parentContainer.getId());
         }
 
-        long topicId;
+        long discussionId;
         try {
-            topicId = Long.parseLong(container.getId());
+            discussionId = Long.parseLong(container.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
                     "The id of the container is invalid: was "
@@ -114,7 +114,7 @@ public class CanvasLmsPostWriter extends
         try {
             resultEntry = client.courses()
                     .discussionTopics(courseId)
-                    .entries(topicId)
+                    .entries(discussionId)
                     .post(content)
                     .execute();
         } catch (CanvasLmsException e) {
@@ -128,10 +128,18 @@ public class CanvasLmsPostWriter extends
         }
 
         if (null != resultEntry) {
+            Post initPost = Post.getInstance(
+                    getModel(),
+                    CanvasLmsSiocConverter.createTopicPostUri(
+                            getServiceEndpoint(),
+                            courseId,
+                            discussionId));
+
             Post resultPost = CanvasLmsSiocConverter.createSiocPost(
                     getConnector(),
                     resultEntry,
-                    container);
+                    container,
+                    initPost);
 
             resultPost.addSibling(post);
             post.addSibling(resultPost);
@@ -184,9 +192,9 @@ public class CanvasLmsPostWriter extends
                             + parentContainer.getId());
         }
 
-        long topicId;
+        long discussionId;
         try {
-            topicId = Long.parseLong(container.getId());
+            discussionId = Long.parseLong(container.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
                     "The id of the container is invalid: was "
@@ -237,7 +245,7 @@ public class CanvasLmsPostWriter extends
         try {
             resultEntry = client.courses()
                     .discussionTopics(courseId)
-                    .entries(topicId)
+                    .entries(discussionId)
                     .postReply(content, entryId)
                     .execute();
         } catch (NetworkException e) {
@@ -249,10 +257,18 @@ public class CanvasLmsPostWriter extends
         }
 
         if (null != resultEntry) {
+            Post initPost = Post.getInstance(
+                    getModel(),
+                    CanvasLmsSiocConverter.createTopicPostUri(
+                            getServiceEndpoint(),
+                            courseId,
+                            discussionId));
+
             Post resultPost = CanvasLmsSiocConverter.createSiocPost(
                     getConnector(),
                     resultEntry,
-                    container);
+                    container,
+                    initPost);
 
             resultPost.addSibling(replyPost);
             replyPost.addSibling(resultPost);

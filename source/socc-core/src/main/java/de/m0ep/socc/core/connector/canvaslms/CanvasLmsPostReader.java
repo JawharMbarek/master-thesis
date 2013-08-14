@@ -134,6 +134,13 @@ public class CanvasLmsPostReader extends
             throw Throwables.propagate(e);
         }
 
+        Post initPost = Post.getInstance(
+                getModel(),
+                CanvasLmsSiocConverter.createTopicPostUri(
+                        getServiceEndpoint(),
+                        courseId,
+                        topicId));
+
         List<Post> result = Lists.newArrayList();
         if (null != entryPages) {
             for (List<Entry> entries : entryPages) {
@@ -141,10 +148,13 @@ public class CanvasLmsPostReader extends
                     if (0 > limit || limit < result.size()) {
                         Date createdDate = entry.getCreatedAt();
                         if (null == since || createdDate.after(since)) {
-                            result.add(CanvasLmsSiocConverter.createSiocPost(
-                                    getConnector(),
-                                    entry,
-                                    container));
+                            result.add(CanvasLmsSiocConverter
+                                    .createSiocPost(
+                                            getConnector(),
+                                            entry,
+                                            container,
+                                            initPost
+                                    ));
                         } else {
                             // abort, because entries are sorted by
                             // 'newest first'
@@ -251,7 +261,8 @@ public class CanvasLmsPostReader extends
                             result.add(CanvasLmsSiocConverter.createSiocPost(
                                     getConnector(),
                                     entry,
-                                    container));
+                                    container,
+                                    post));
                         } else {
                             return result;
                         }

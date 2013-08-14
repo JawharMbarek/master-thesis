@@ -47,6 +47,7 @@ import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.utils.SiocUtils;
 
 /**
  * Structure reader for the CanvasLMS.
@@ -145,9 +146,10 @@ public class CanvasLmsStructureReader extends
         if (null != coursePages) {
             for (List<Course> courses : coursePages) {
                 for (Course course : courses) {
-                    result.add(CanvasLmsSiocConverter.createSiocForum(
-                            getConnector(),
-                            course));
+                    result.add(
+                            CanvasLmsSiocConverter.createSiocForum(
+                                    getConnector(),
+                                    course));
                 }
             }
         }
@@ -156,23 +158,30 @@ public class CanvasLmsStructureReader extends
     }
 
     @Override
-    public Thread getThread(String id, Container contaienr)
+    public Thread getThread(String id, Container container)
             throws NotFoundException,
             AuthenticationException, IOException {
         Preconditions.checkNotNull(id,
                 "Required parameter id must be specified.");
         Preconditions.checkArgument(!id.isEmpty(),
                 "Required parameter id may not be empty.");
-        Preconditions.checkNotNull(contaienr,
-                "Required parameter parent must be specified.");
-        Preconditions.checkArgument(contaienr.hasId(),
-                "Required parameter parent has no id.");
-        Preconditions.checkArgument(RdfUtils.isType(getModel(), contaienr,
-                SIOCVocabulary.Forum),
-                "Required parameter parent is no SIOC Forum.");
 
-        Forum parentForum = Forum.getInstance(getModel(), contaienr
-                .getResource());
+        Preconditions.checkNotNull(container,
+                "Required parameter parent must be specified.");
+        Preconditions.checkArgument(
+                RdfUtils.isType(
+                        container,
+                        SIOCVocabulary.Forum),
+                "Required parameter container is no SIOC Forum.");
+        Preconditions.checkArgument(
+                SiocUtils.isContainerOfSite(
+                        container,
+                        getServiceEndpoint()),
+                "The parameter container has no moodle forums threads.");
+        Preconditions.checkArgument(container.hasId(),
+                "Required parameter container has no id.");
+
+        Forum parentForum = SiocUtils.asForum(container);
 
         long topicId;
         try {
@@ -219,14 +228,21 @@ public class CanvasLmsStructureReader extends
             throws AuthenticationException,
             IOException {
         Preconditions.checkNotNull(container,
-                "Required parameter parent must be specified.");
+                "Required parameter container must be specified.");
+        Preconditions.checkArgument(
+                RdfUtils.isType(
+                        container,
+                        SIOCVocabulary.Forum),
+                "Required parameter container is no SIOC Forum.");
+        Preconditions.checkArgument(
+                SiocUtils.isContainerOfSite(
+                        container,
+                        getServiceEndpoint()),
+                "The container is no CanvasLMS forum");
         Preconditions.checkArgument(container.hasId(),
-                "Required parameter parent has no id.");
-        Preconditions.checkArgument(RdfUtils.isType(getModel(), container,
-                SIOCVocabulary.Forum),
-                "Required parameter parent is no SIOC Forum.");
-        Forum parentForum = Forum.getInstance(getModel(), container
-                .getResource());
+                "Required parameter container has no id.");
+
+        Forum parentForum = SiocUtils.asForum(container);
 
         long courseId;
         try {

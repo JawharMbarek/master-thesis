@@ -37,15 +37,16 @@ import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.utils.SiocUtils;
 
-public class Moodle2ServiceStructureReader extends
+public class Moodle2StructureReader extends
         AbstractConnectorIOComponent<Moodle2Connector>
         implements
         IStructureReader {
 
     private Moodle2ClientWrapper defaultClient;
 
-    public Moodle2ServiceStructureReader(Moodle2Connector connector) {
+    public Moodle2StructureReader(Moodle2Connector connector) {
         super(connector);
         this.defaultClient = connector.getServiceClientManager()
                 .getDefaultClient();
@@ -113,7 +114,6 @@ public class Moodle2ServiceStructureReader extends
                 });
 
         if (null != forumRecordArray && 0 < forumRecordArray.length) {
-
             for (ForumRecord forumRecord : forumRecordArray) {
                 result.add(Moodle2SiocConverter.createSiocForum(
                         getConnector(),
@@ -132,16 +132,21 @@ public class Moodle2ServiceStructureReader extends
                 "Required parameter id must be specified.");
         Preconditions.checkArgument(!id.isEmpty(),
                 "Required parameter id may not be empty.");
+
         Preconditions.checkNotNull(parent,
                 "Required parameter parent must be specified.");
-        Preconditions.checkArgument(RdfUtils.isType(parent.getModel(), parent,
-                Forum.RDFS_CLASS),
+        Preconditions.checkArgument(
+                RdfUtils.isType(
+                        parent,
+                        Forum.RDFS_CLASS),
                 "The parameter parent is not sioc:Forum");
-        Preconditions.checkArgument(parent.toString().startsWith(
-                getServiceEndpoint().toString()),
-                "The parent is no moodle forum.");
+        Preconditions.checkArgument(
+                SiocUtils.isContainerOfSite(
+                        parent,
+                        getServiceEndpoint()),
+                "The parameter parent is no moodle forum.");
         Preconditions.checkArgument(parent.hasId(),
-                "The parent has no id.");
+                "The parameter parent has no id.");
 
         final int threadId;
         try {
@@ -156,7 +161,8 @@ public class Moodle2ServiceStructureReader extends
             forumId = Integer.parseInt(parent.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
-                    "The parent id is invalid: was " + parent.getId());
+                    "The id of the parameter parent is invalid: was "
+                            + parent.getId());
         }
 
         ForumDiscussionRecord[] discussionRecordArray = defaultClient
@@ -178,9 +184,7 @@ public class Moodle2ServiceStructureReader extends
                     return Moodle2SiocConverter.createSiocThread(
                             getConnector(),
                             discussionRecord,
-                            Forum.getInstance(
-                                    parent.getModel(),
-                                    parent.getResource()));
+                            SiocUtils.asForum(parent));
                 }
             }
         }
@@ -193,11 +197,15 @@ public class Moodle2ServiceStructureReader extends
             throws AuthenticationException, IOException {
         Preconditions.checkNotNull(parent,
                 "Required parameter parent must be specified.");
-        Preconditions.checkArgument(RdfUtils.isType(parent.getModel(), parent,
-                Forum.RDFS_CLASS),
+        Preconditions.checkArgument(
+                RdfUtils.isType(
+                        parent,
+                        Forum.RDFS_CLASS),
                 "The parameter parent is not sioc:Forum");
-        Preconditions.checkArgument(parent.toString().startsWith(
-                getServiceEndpoint().toString()),
+        Preconditions.checkArgument(
+                SiocUtils.isContainerOfSite(
+                        parent,
+                        getServiceEndpoint()),
                 "The parent is no moodle forum.");
         Preconditions.checkArgument(parent.hasId(),
                 "The parent has no id.");
@@ -232,9 +240,7 @@ public class Moodle2ServiceStructureReader extends
                 result.add(Moodle2SiocConverter.createSiocThread(
                         getConnector(),
                         discussionRecord,
-                        Forum.getInstance(
-                                parent.getModel(),
-                                parent.getResource())));
+                        SiocUtils.asForum(parent)));
             }
         }
 

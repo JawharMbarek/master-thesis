@@ -45,6 +45,7 @@ import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.utils.SiocUtils;
 
 /**
  * @author Florian Müller
@@ -66,37 +67,35 @@ public class CanvasLmsPostReader extends
 
     @Override
     public boolean containsPosts(final Container container) {
-        Preconditions.checkNotNull(container,
-                "Required parameter container must be specified.");
-
-        return RdfUtils.isType(container.getModel(), container,
-                Thread.RDFS_CLASS)
-                && container.toString().startsWith(
-                        getServiceEndpoint().toString())
-                && container.hasParent()
-                && container.getParent().toString().startsWith(
-                        getServiceEndpoint().toString());
+        return null != container
+                && RdfUtils.isType(
+                        container,
+                        Thread.RDFS_CLASS)
+                && SiocUtils.isContainerOfSite(
+                        container,
+                        getServiceEndpoint());
     }
 
     @Override
     public List<Post> readNewPosts(final Date since, final long limit,
             final Container container)
             throws AuthenticationException, IOException {
-        Preconditions.checkArgument(
-                containsPosts(container),
-                "The container contains no posts on this service.");
-        Preconditions.checkArgument(
-                container.hasId(),
-                "The container has no id.");
-        Preconditions.checkArgument(
-                container.getParent().hasId(),
-                "The parent of the container has no id.");
-
-        Container parentContainer = container.getParent();
-
         if (0 == limit) {
             return Lists.newArrayList();
         }
+
+        Preconditions.checkNotNull(container,
+                "Required parameter container must be specified.");
+        Preconditions.checkArgument(containsPosts(container),
+                "The container contains no posts on this service.");
+        Preconditions.checkArgument(container.hasId(),
+                "The parameter container has no id.");
+        Preconditions.checkArgument(container.hasParent(),
+                "The parameter container has no required parent container.");
+
+        Container parentContainer = container.getParent();
+        Preconditions.checkArgument(parentContainer.hasId(),
+                "The parent container has no id.");
 
         long courseId;
         try {
@@ -139,17 +138,20 @@ public class CanvasLmsPostReader extends
         if (null != entryPages) {
             for (List<Entry> entries : entryPages) {
                 for (Entry entry : entries) {
-                    if (null != since
-                            && since.before(entry.getCreatedAt())) {
-                        return result;
-                    }
-
-                    result.add(CanvasLmsSiocConverter.createSiocPost(
-                            getConnector(),
-                            entry,
-                            container));
-
-                    if (0 < limit && limit == result.size()) {
+                    if (0 > limit || limit < result.size()) {
+                        Date createdDate = entry.getCreatedAt();
+                        if (null == since || createdDate.after(since)) {
+                            result.add(CanvasLmsSiocConverter.createSiocPost(
+                                    getConnector(),
+                                    entry,
+                                    container));
+                        } else {
+                            // abort, because entries are sorted by
+                            // 'newest first'
+                            return result;
+                        }
+                    } else {
+                        // limit reached
                         return result;
                     }
                 }
@@ -161,41 +163,37 @@ public class CanvasLmsPostReader extends
 
     @Override
     public boolean containsReplies(final Post post) {
-        Preconditions.checkNotNull(post,
-                "Required parameter parent must be specified.");
-
-        return post.toString().startsWith(getServiceEndpoint().toString())
+        return null != post
                 && post.hasContainer()
                 && containsPosts(post.getContainer());
     }
 
     @Override
     public List<Post> readNewReplies(final Date since, final long limit,
-            final Post parentPost)
+            final Post post)
             throws AuthenticationException, IOException {
-        Preconditions.checkNotNull(
-                parentPost,
-                "Required parameter parentPost must be specified.");
-        Preconditions.checkArgument(
-                containsReplies(parentPost),
-                "The parentPost contains no replies on this service.");
-        Preconditions.checkArgument(
-                parentPost.hasId(),
-                "Required parameter parentPost has no id.");
-        Preconditions.checkArgument(
-                parentPost.getContainer().hasId(),
-                "The container of the parentPost has no id.");
-        Preconditions
-                .checkArgument(
-                        parentPost.getContainer().getParent().hasId(),
-                        "The parent container of the container of the parentPost has no id.");
-
-        Container container = parentPost.getContainer();
-        Container parentContainer = container.getParent();
-
         if (0 == limit) {
             return Lists.newArrayList();
         }
+
+        Preconditions.checkNotNull(post,
+                "Required parameter post must be specified.");
+        Preconditions.checkArgument(containsReplies(post),
+                "The post contains no replies on this service.");
+        Preconditions.checkArgument(post.hasId(),
+                "Required parameter post has no id.");
+        Preconditions.checkArgument(post.hasContainer(),
+                "The paramater post has no container.");
+
+        Container container = post.getContainer();
+        Preconditions.checkArgument(container.hasId(),
+                "The container of the post has no id.");
+        Preconditions.checkArgument(container.hasParent(),
+                "The container of post has no parent");
+
+        Container parentContainer = container.getParent();
+        Preconditions.checkArgument(parentContainer.hasId(),
+                "The parent of post container has no id.");
 
         long courseId;
         try {
@@ -217,7 +215,7 @@ public class CanvasLmsPostReader extends
 
         long entryId;
         try {
-            entryId = Long.parseLong(parentPost.getId());
+            entryId = Long.parseLong(post.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
                     "The id of the parentPost is invalid: was "
@@ -247,17 +245,17 @@ public class CanvasLmsPostReader extends
         if (null != replyPages) {
             for (List<Entry> entries : replyPages) {
                 for (Entry entry : entries) {
-                    if (null != since
-                            && since.before(entry.getCreatedAt())) {
-                        return result;
-                    }
-
-                    result.add(CanvasLmsSiocConverter.createSiocPost(
-                            getConnector(),
-                            entry,
-                            container));
-
-                    if (0 < limit && limit == result.size()) {
+                    if (0 > limit || limit < result.size()) {
+                        Date createdDate = entry.getCreatedAt();
+                        if (null == since || createdDate.after(since)) {
+                            result.add(CanvasLmsSiocConverter.createSiocPost(
+                                    getConnector(),
+                                    entry,
+                                    container));
+                        } else {
+                            return result;
+                        }
+                    } else {
                         return result;
                     }
                 }

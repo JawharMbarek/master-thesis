@@ -34,6 +34,7 @@ import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.Variable;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
 import org.ontoware.rdf2go.vocabulary.RDF;
+import org.ontoware.rdfreactor.runtime.ReactorRuntimeEntity;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -107,8 +108,10 @@ public final class RdfUtils {
      * @return
      */
     public static List<URI> getTypes(final Model model, final Resource resource) {
-        Preconditions.checkNotNull(model, "Required parameter model must be specified.");
-        Preconditions.checkNotNull(resource, "Required parameter resource must be specified.");
+        Preconditions.checkNotNull(model,
+                "Required parameter model must be specified.");
+        Preconditions.checkNotNull(resource,
+                "Required parameter resource must be specified.");
 
         List<URI> result = Lists.newArrayList();
         ClosableIterator<Statement> stmtIter = model.findStatements(
@@ -136,10 +139,14 @@ public final class RdfUtils {
      * @param resource
      * @param type
      */
-    public static boolean isType(final Model model, final Resource resource, final URI type) {
-        Preconditions.checkNotNull(model, "Required parameter model must be specified.");
-        Preconditions.checkNotNull(resource, "Required parameter resource must be specified.");
-        Preconditions.checkNotNull(type, "Required parameter type must be specified.");
+    public static boolean isType(final Model model, final Resource resource,
+            final URI type) {
+        Preconditions.checkNotNull(model,
+                "Required parameter model must be specified.");
+        Preconditions.checkNotNull(resource,
+                "Required parameter resource must be specified.");
+        Preconditions.checkNotNull(type,
+                "Required parameter type must be specified.");
 
         ClosableIterator<Statement> stmtIter = model.findStatements(
                 resource,
@@ -159,5 +166,18 @@ public final class RdfUtils {
         }
 
         return false;
+    }
+
+    /**
+     * Checks if a subclass of {@link ReactorRuntimeEntity} is a specific
+     * <code>type</code>.
+     * 
+     * @param model
+     * @param resource
+     * @param type
+     */
+    public static <T extends ReactorRuntimeEntity> boolean isType(
+            final T entity, final URI type) {
+        return isType(entity.getModel(), entity.getResource(), type);
     }
 }

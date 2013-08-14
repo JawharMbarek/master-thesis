@@ -22,6 +22,7 @@ import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.utils.SiocUtils;
 
 public class CanvasLmsPostWriter extends
         AbstractConnectorIOComponent<CanvasLmsConnector> implements
@@ -33,17 +34,14 @@ public class CanvasLmsPostWriter extends
 
     @Override
     public boolean canPostTo(Container container) {
-        Preconditions.checkNotNull(container,
-                "Required parameter container must be specified.");
-
-        return container.toString().startsWith(getServiceEndpoint().toString())
+        return null != container
                 && RdfUtils.isType(
                         container.getModel(),
                         container,
                         Thread.RDFS_CLASS)
-                && container.hasParent()
-                && container.getParent().toString().startsWith(
-                        getServiceEndpoint().toString());
+                && SiocUtils.isContainerOfSite(
+                        container,
+                        getServiceEndpoint());
     }
 
     @Override
@@ -52,12 +50,16 @@ public class CanvasLmsPostWriter extends
             IOException {
         Preconditions.checkNotNull(container,
                 "Required parameter container must be specified.");
+        Preconditions.checkArgument(canPostTo(container),
+                "Can't write Post to this container at this service.");
         Preconditions.checkArgument(container.hasId(),
                 "The container has no id.");
-        Preconditions.checkArgument(container.getParent().hasId(),
-                "The parent container of the container has no id.");
+        Preconditions.checkArgument(container.hasParent(),
+                "The parameter container has no parent.");
 
         Container parentContainer = container.getParent();
+        Preconditions.checkArgument(parentContainer.hasId(),
+                "The container parent has no id.");
 
         long courseId;
         try {
@@ -138,10 +140,7 @@ public class CanvasLmsPostWriter extends
 
     @Override
     public boolean canReplyTo(Post post) {
-        Preconditions.checkNotNull(post,
-                "Required parameter post must be specified.");
-
-        return post.toString().startsWith(getServiceEndpoint().toString())
+        return null != post
                 && post.hasContainer()
                 && canPostTo(post.getContainer());
     }
@@ -159,15 +158,22 @@ public class CanvasLmsPostWriter extends
 
         Preconditions.checkNotNull(parentPost,
                 "Required parameter parentPost must be specified.");
+        Preconditions.checkArgument(canReplyTo(parentPost),
+                "Can't write a reply to the parentPost at this service.");
         Preconditions.checkArgument(parentPost.hasId(),
                 "The parentPost has no id.");
         Preconditions.checkArgument(parentPost.hasContainer(),
                 "The parentPost has no container");
-        Preconditions.checkArgument(canReplyTo(parentPost),
-                "Writing a reply to the parentpost is not possible.");
 
         Container container = parentPost.getContainer();
+        Preconditions.checkArgument(container.hasId(),
+                "The container of the parentPost has no id");
+        Preconditions.checkArgument(container.hasParent(),
+                "The container of the parentPost has no required parent");
+
         Container parentContainer = container.getParent();
+        Preconditions.checkArgument(parentContainer.hasId(),
+                "The parent of the parentPost container has no id.");
 
         long courseId;
         try {
@@ -217,7 +223,7 @@ public class CanvasLmsPostWriter extends
         }
 
         String content = replyPost.getContent();
-        if (null == client) { // No client found, get default one an adapt
+        if (null == client) { // No client found, get default one an modify
                               // message content
             client = getConnector().getServiceClientManager()
                     .getDefaultClient();

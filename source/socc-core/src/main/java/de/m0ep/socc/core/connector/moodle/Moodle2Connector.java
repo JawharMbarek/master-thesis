@@ -50,7 +50,7 @@ public class Moodle2Connector extends AbstractConnector {
                 "Connector was not initialized");
 
         if (null == serviceStructureReader) {
-            serviceStructureReader = new Moodle2ServiceStructureReader(this);
+            serviceStructureReader = new Moodle2StructureReader(this);
         }
 
         return serviceStructureReader;
@@ -98,7 +98,7 @@ public class Moodle2Connector extends AbstractConnector {
                     "Failed to create and login default client.", e);
         }
 
-        serviceStructureReader = new Moodle2ServiceStructureReader(this);
+        serviceStructureReader = new Moodle2StructureReader(this);
         setInitialized(true);
     }
 

@@ -1,4 +1,3 @@
-
 package de.m0ep.socc.core.connector.moodle;
 
 import java.io.IOException;
@@ -20,200 +19,210 @@ import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.utils.SiocUtils;
 
 public class Moodle2PostReader extends
         AbstractConnectorIOComponent<Moodle2Connector> implements IPostReader {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(Moodle2PostReader.class);
+	private static final Logger LOG = LoggerFactory
+	        .getLogger( Moodle2PostReader.class );
 
-    private Moodle2ClientWrapper defaultClient;
+	private final Moodle2ClientWrapper defaultClient;
 
-    public Moodle2PostReader(Moodle2Connector connector) {
-        super(connector);
-        this.defaultClient = connector.getServiceClientManager()
-                .getDefaultClient();
-    }
+	public Moodle2PostReader( Moodle2Connector connector ) {
+		super( connector );
+		this.defaultClient = connector.getServiceClientManager()
+		        .getDefaultClient();
+	}
 
-    @Override
-    public boolean containsPosts(final Container container) {
-        return null != container
-                &&
-                RdfUtils.isType(container.getModel(), container,
-                        Thread.RDFS_CLASS)
-                &&
-                container.toString()
-                        .startsWith(getServiceEndpoint().toString());
-    }
+	@Override
+	public boolean containsPosts( final Container container ) {
+		return null != container
+		        && RdfUtils.isType( container.getModel(), container, Thread.RDFS_CLASS )
+		        && SiocUtils.isContainerOfSite( container, getServiceEndpoint() );
+	}
 
-    @Override
-    public List<Post> readNewPosts(final Date lastPostDate, final long limit,
-            final Container container)
-            throws AuthenticationException, IOException {
-        if (0 == limit) {
-            return Lists.newArrayList();
-        }
+	@Override
+	public List<Post> readNewPosts( final Date since, final long limit,
+	        final Container container )
+	        throws AuthenticationException, IOException {
+		if ( 0 == limit ) {
+			return Lists.newArrayList();
+		}
 
-        Preconditions.checkNotNull(container,
-                "Required parameter container must be specified.");
-        Preconditions.checkArgument(containsPosts(container),
-                "The container contains no post at this connector.");
-        Preconditions.checkArgument(container.hasId(),
-                "The container has no id.");
+		Preconditions.checkNotNull( container,
+		        "Required parameter container must be specified." );
+		Preconditions.checkArgument( containsPosts( container ),
+		        "The container contains no post at this connector." );
+		Preconditions.checkArgument( container.hasId(),
+		        "The container has no id." );
 
-        final int discussionId;
-        try {
-            discussionId = Integer.parseInt(container.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The id of the container is invalid: was "
-                            + container.getId());
-        }
+		final int discussionId;
+		try {
+			discussionId = Integer.parseInt( container.getId() );
+		} catch ( NumberFormatException e ) {
+			throw new IllegalArgumentException(
+			        "The id of the container is invalid: was "
+			                + container.getId() );
+		}
 
-        ForumPostRecord[] postRecordArray = defaultClient
-                .callMethod(new Callable<ForumPostRecord[]>() {
-                    @Override
-                    public ForumPostRecord[] call() throws Exception {
-                        return defaultClient
-                                .getBindingStub()
-                                .get_forum_posts(
-                                        defaultClient.getAuthClient(),
-                                        defaultClient.getSessionKey(),
-                                        discussionId,
-                                        (int) limit);
-                    }
-                });
+		ForumPostRecord[] postRecordArray = defaultClient
+		        .callMethod( new Callable<ForumPostRecord[]>() {
+			        @Override
+			        public ForumPostRecord[] call() throws Exception {
+				        return defaultClient
+				                .getBindingStub()
+				                .get_forum_posts(
+				                        defaultClient.getAuthClient(),
+				                        defaultClient.getSessionKey(),
+				                        discussionId,
+				                        (int) limit );
+			        }
+		        } );
 
-        List<Post> result = Lists.newArrayList();
-        if (null != postRecordArray && 0 < postRecordArray.length) {
-            addPosts(result, postRecordArray, lastPostDate, limit, container);
-        }
+		List<Post> result = Lists.newArrayList();
+		if ( null != postRecordArray && 0 < postRecordArray.length ) {
+			result.addAll(
+			        createPosts(
+			                since,
+			                limit,
+			                Thread.getInstance(
+			                        container.getModel(),
+			                        container.getResource() ),
+			                null,
+			                postRecordArray ) );
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
-    public boolean containsReplies(final Post post) {
-        return null != post &&
-                post.toString().startsWith(getServiceEndpoint().toString()) &&
-                post.hasContainer() &&
-                containsPosts(post.getContainer());
-    }
+	@Override
+	public boolean containsReplies( final Post post ) {
+		return null != post &&
+		        post.hasContainer() &&
+		        containsPosts( post.getContainer() );
+	}
 
-    @Override
-    public List<Post> readNewReplies(final Date lastReplyDate,
-            final long limit,
-            final Post parentPost)
-            throws AuthenticationException, IOException {
-        Preconditions.checkNotNull(parentPost,
-                "Required parameter parentPost must be specified.");
-        Preconditions
-                .checkArgument(containsReplies(parentPost),
-                        "The parameter parentPost contains no replies at this connector.");
-        Preconditions.checkArgument(parentPost.hasId(),
-                "The parentPost has no id.");
+	@Override
+	public List<Post> readNewReplies( final Date since, final long limit, final Post parentPost )
+	        throws AuthenticationException, IOException {
+		Preconditions.checkNotNull( parentPost,
+		        "Required parameter parentPost must be specified." );
+		Preconditions.checkArgument( containsReplies( parentPost ),
+		        "The parameter parentPost contains no replies at this connector." );
+		Preconditions.checkArgument( parentPost.hasId(),
+		        "The parentPost has no id." );
 
-        Container container = parentPost.getContainer();
-        Preconditions.checkArgument(container.hasId(),
-                "The container of the parentPost has no id");
+		Container container = parentPost.getContainer();
+		Preconditions.checkArgument( container.hasId(),
+		        "The container of the parentPost has no id" );
 
-        final int discussionId;
-        try {
-            discussionId = Integer.parseInt(container.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The id of the container is invalid: was "
-                            + container.getId());
-        }
+		final int discussionId;
+		try {
+			discussionId = Integer.parseInt( container.getId() );
+		} catch ( NumberFormatException e ) {
+			throw new IllegalArgumentException(
+			        "The id of the container is invalid: was "
+			                + container.getId() );
+		}
 
-        final int postId;
-        try {
-            postId = Integer.parseInt(parentPost.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The id of the parentPost is invalid: was "
-                            + parentPost.getId());
-        }
+		final int postId;
+		try {
+			postId = Integer.parseInt( parentPost.getId() );
+		} catch ( NumberFormatException e ) {
+			throw new IllegalArgumentException(
+			        "The id of the parentPost is invalid: was "
+			                + parentPost.getId() );
+		}
 
-        ForumPostRecord[] postRecordArray = defaultClient.callMethod(
-                new Callable<ForumPostRecord[]>() {
-                    @Override
-                    public ForumPostRecord[] call() throws Exception {
-                        return defaultClient
-                                .getBindingStub()
-                                .get_forum_posts(
-                                        defaultClient.getAuthClient(),
-                                        defaultClient.getSessionKey(),
-                                        discussionId,
-                                        (int) limit);
-                    }
-                });
+		ForumPostRecord[] postRecordArray = defaultClient.callMethod(
+		        new Callable<ForumPostRecord[]>() {
+			        @Override
+			        public ForumPostRecord[] call() throws Exception {
+				        return defaultClient.getBindingStub()
+				                .get_forum_posts(
+				                        defaultClient.getAuthClient(),
+				                        defaultClient.getSessionKey(),
+				                        discussionId,
+				                        (int) limit );
+			        }
+		        } );
 
-        List<Post> result = Lists.newArrayList();
-        if (null != postRecordArray && 0 < postRecordArray.length) {
-            ForumPostRecord postRecord = findPost(postRecordArray, postId);
+		List<Post> result = Lists.newArrayList();
+		if ( null != postRecordArray && 0 < postRecordArray.length ) {
+			ForumPostRecord postRecord = findPostRecordWithId( postRecordArray, postId );
 
-            if (null != postRecord) {
-                ForumPostRecord[] children = postRecord.getChildren();
-                if (null != children && 0 < children.length) {
-                    addPosts(result, children, lastReplyDate, limit, container);
-                }
-            } else {
-                LOG.warn(
-                        "No post found in thread {} with id {} to read replies from.",
-                        discussionId, postId);
-            }
-        }
-        return result;
-    }
+			if ( null != postRecord ) {
+				ForumPostRecord[] children = postRecord.getChildren();
+				if ( null != children && 0 < children.length ) {
+					result.addAll(
+					        createPosts(
+					                since,
+					                limit,
+					                Thread.getInstance(
+					                        container.getModel(),
+					                        container.getResource() ),
+					                parentPost,
+					                children ) );
+				}
+			} else {
+				LOG.warn(
+				        "No post found in thread {} with id {} to read replies from.",
+				        discussionId, postId );
+			}
+		}
 
-    private void addPosts(List<Post> result,
-            final ForumPostRecord[] postRecordArray,
-            final Date lastPostDate, final long limit, final Container container) {
+		return result;
+	}
 
-        for (ForumPostRecord postRecord : postRecordArray) {
-            addPost(result, postRecord, lastPostDate, limit, container);
+	private List<Post> createPosts( final Date since, final long limit, final Thread container,
+	        final Post parentPost, final ForumPostRecord[] postRecordArray )
+	        throws AuthenticationException, IOException {
 
-            ForumPostRecord[] children = postRecord.getChildren();
-            if (null != children && 0 < children.length) {
-                addPosts(result, postRecord.getChildren(), lastPostDate, limit,
-                        container);
-            }
-        }
-    }
+		List<Post> results = Lists.newArrayList();
 
-    private void addPost(List<Post> result, final ForumPostRecord postRecord,
-            final Date lastPostDate, final long limit, final Container container) {
-        if (0 < limit && limit <= result.size()) {
-            return;
-        }
+		for ( ForumPostRecord postRecord : postRecordArray ) {
 
-        Date createdDate = new Date(postRecord.getCreated() * 1000L);
+			if ( 0 > limit || limit < results.size() ) {
+				Post post = Moodle2SiocConverter.createSiocPost(
+				        getConnector(),
+				        postRecord,
+				        container,
+				        parentPost );
+				results.add( post );
 
-        if (null == lastPostDate || createdDate.after(lastPostDate)) {
-            result.add(Moodle2SiocConverter.createSiocPost(
-                    getConnector(),
-                    postRecord,
-                    container));
-        }
-    }
+				ForumPostRecord[] children = postRecord.getChildren();
+				if ( null != children && 0 < children.length ) {
+					createPosts(
+					        since,
+					        ( 0 > limit )
+					                ? -1
+					                : Math.max( limit - results.size(), 0 ),
+					        container,
+					        post,
+					        postRecord.getChildren() );
+				}
+			}
+		}
 
-    private ForumPostRecord findPost(ForumPostRecord[] postRecordArray,
-            int postId) {
-        for (ForumPostRecord postRecord : postRecordArray) {
-            if (postId == postRecord.getId()) {
-                return postRecord;
-            }
+		return results;
+	}
 
-            ForumPostRecord[] children = postRecord.getChildren();
-            if (null != children && 0 < children.length) {
-                ForumPostRecord result = findPost(children, postId);
+	private ForumPostRecord findPostRecordWithId( ForumPostRecord[] postRecordArray, int postId ) {
+		for ( ForumPostRecord postRecord : postRecordArray ) {
+			if ( postId == postRecord.getId() ) {
+				return postRecord;
+			}
 
-                if (null != result) {
-                    return result;
-                }
-            }
-        }
+			ForumPostRecord[] children = postRecord.getChildren();
+			if ( null != children && 0 < children.length ) {
+				ForumPostRecord result = findPostRecordWithId( children, postId );
 
-        return null;
-    }
+				if ( null != result ) {
+					return result;
+				}
+			}
+		}
+
+		return null;
+	}
 }

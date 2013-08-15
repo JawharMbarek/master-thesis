@@ -25,6 +25,7 @@ package de.m0ep.socc.core.connector.facebook;
 import java.util.Date;
 
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.node.Node;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.Builder;
 import org.rdfs.sioc.Container;
@@ -33,6 +34,8 @@ import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.UserAccount;
 
+import com.damnhandy.uri.template.UriTemplate;
+import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.common.base.Preconditions;
 import com.restfb.json.JsonObject;
 import com.restfb.types.Group;
@@ -41,7 +44,7 @@ import com.xmlns.foaf.Person;
 
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.DateUtils;
-import de.m0ep.socc.core.utils.StringUtils;
+import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.UserAccountUtils;
 
 public class FacebookSiocConverter {
@@ -56,8 +59,16 @@ public class FacebookSiocConverter {
     static final String COMMENT_ID_PREFIX = "comment" + ID_SEPERATOR;
     static final String COMMENT_URI_PATH = "/comment/";
 
-    public static Forum createSiocForum(FacebookConnector connector, User user) {
-        URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
+    public static Forum createSiocForum(
+            final FacebookConnector connector,
+            final User user) {
+        Preconditions.checkNotNull(connector,
+                "Required parameter connector must be specified.");
+        Preconditions.checkNotNull(user,
+                "Required parameter user must be specified.");
+
+        URI serviceEndpoint = connector.getService().getServiceEndpoint()
+                .asURI();
         Model model = connector.getContext().getModel();
         URI uri = Builder.createURI(
                 serviceEndpoint
@@ -71,117 +82,158 @@ public class FacebookSiocConverter {
         Forum result = new Forum(model, uri, true);
         result.setId(FacebookSiocConverter.WALL_ID_PREFIX + user.getId());
         result.setName(user.getName() + "'s Wall");
+        result.setNumItems(0);
 
         Site site = connector.getStructureReader().getSite();
         result.setHost(site);
         site.setHostOf(result);
-        result.setNumItems(0);
 
         return result;
     }
 
-    public static Forum createSiocForum(FacebookConnector connector, Group group) {
-        URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
+    public static Forum createSiocForum(
+            final FacebookConnector connector,
+            final Group group) {
+        Preconditions.checkNotNull(connector,
+                "Required parameter connector must be specified.");
+        Preconditions.checkNotNull(group,
+                "Required parameter group must be specified.");
+
         Model model = connector.getContext().getModel();
+        URI uri = FacebookSiocConverter.createSiocUri(group.getId());
 
-        URI uri = Builder.createURI(serviceEndpoint + GROUP_URI_PATH + group.getId());
-
-        Forum result;
-        if (Forum.hasInstance(model, uri)) {
-            result = Forum.getInstance(model, uri);
-        } else {
-            result = new Forum(model, uri, true);
+        if (!Forum.hasInstance(model, uri)) {
+            Forum result = new Forum(model, uri, true);
             result.setId(GROUP_ID_PREFIX + group.getId());
+            result.setName(group.getName());
+            result.setDescription(Strings.nullToEmpty(group.getDescription()));
+            result.setNumItems(0);
 
             Site site = connector.getStructureReader().getSite();
             result.setHost(site);
-            site.setHostOf(result);
+            site.addHostOf(result);
         }
 
-        result.setName(group.getName());
-
-        if (null != group.getDescription()) {
-            result.setDescription(group.getDescription());
-        }
-
-        Site site = connector.getStructureReader().getSite();
-        result.setHost(site);
-        site.addHostOf(result);
-        result.setNumItems(0);
-
-        return result;
+        return Forum.getInstance(model, uri);
     }
 
-    public static Post createSiocPost(FacebookConnector connector, JsonObject object,
-            Container container) {
+    public static Post createSiocPost(
+            final FacebookConnector connector,
+            final JsonObject object,
+            final Container container,
+            final Post parentPost) {
         Preconditions.checkNotNull(connector,
                 "Required parameter connector must be specified.");
         Preconditions.checkNotNull(object,
                 "Required parameter object must be specified.");
         Preconditions.checkNotNull(container,
                 "Required parameter container must be specified.");
-        Preconditions.checkArgument(object.has("id"),
-                "JSON object contains no id.");
+        Preconditions.checkNotNull(parentPost,
+                "Required parameter parentPost must be specified.");
 
         Model model = connector.getContext().getModel();
-        URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
-        URI uri = Builder.createURI(
-                serviceEndpoint
-                        + POST_URI_PATH
-                        + object.getString(FacebookApiConstants.FIELD_ID));
+        URI serviceEndpoint = connector.getService().getServiceEndpoint()
+                .asURI();
+        URI uri = createSiocUri(object.getString(FacebookApiConstants.FIELD_ID));
 
-        Post result = (Post.hasInstance(model, uri)) ?
-                (Post.getInstance(model, uri)) :
-                (new Post(model, uri, true));
+        Post result;
+        if (Post.hasInstance(model, uri)) {
+            result = Post.getInstance(model, uri);
 
-        if (object.has(FacebookApiConstants.FIELD_ID)) {
-            result.setId(POST_ID_PREFIX + object.getString(FacebookApiConstants.FIELD_ID));
-        }
+            if (object.has(FacebookApiConstants.FIELD_UPDATED_TIME)) {
+                Date modifiedDate = com.restfb.util.DateUtils
+                        .toDateFromLongFormat(
+                        object.getString(FacebookApiConstants.FIELD_UPDATED_TIME));
+                Node modifiedNode = Builder.createPlainliteral(
+                        DateUtils.formatISO8601(modifiedDate));
 
-        if (object.has(FacebookApiConstants.FIELD_FROM)) {
+                if (!result.hasModified(modifiedNode)) {
+                    result.removeAllAttachments();
+                    setPostCoreProperties(result, object);
+                    result.setModified(modifiedNode);
+                }
+            }
+        } else {
+            result = new Post(model, uri, true);
+
+            result.setId(POST_ID_PREFIX
+                    + object.getString(FacebookApiConstants.FIELD_ID));
+
             String creatorId = object.getJsonObject(
                     FacebookApiConstants.FIELD_FROM)
                     .getString(FacebookApiConstants.FIELD_ID);
 
             // check if we already know the author, else create a new
             // UserAccount + Person
-            UserAccount creator = null;
             try {
-                creator = UserAccountUtils.findUserAccount(
+                result.setCreator(UserAccountUtils.findUserAccount(
                         connector.getContext().getModel(),
                         creatorId,
-                        serviceEndpoint);
+                        serviceEndpoint));
             } catch (NotFoundException e) {
-                creator = createSiocUserAccount(
+                result.setCreator(createSiocUserAccount(
                         connector,
-                        object.getJsonObject(FacebookApiConstants.FIELD_FROM));
+                        object.getJsonObject(FacebookApiConstants.FIELD_FROM)));
             }
 
-            result.setCreator(creator);
+            if (object.has(FacebookApiConstants.FIELD_CREATED_TIME)) {
+                Date date = com.restfb.util.DateUtils
+                        .toDateFromLongFormat(
+                        object.getString(FacebookApiConstants.FIELD_CREATED_TIME));
+                result.setCreated(DateUtils.formatISO8601(date));
+            }
+
+            if (object.has(FacebookApiConstants.FIELD_UPDATED_TIME)) {
+                Date date = com.restfb.util.DateUtils
+                        .toDateFromLongFormat(
+                        object.getString(FacebookApiConstants.FIELD_UPDATED_TIME));
+                result.setModified(DateUtils.formatISO8601(date));
+            }
+
+            setPostCoreProperties(result, object);
+
+            result.setContainer(container);
+            container.addContainerOf(result);
+            SiocUtils.incNumItems(container);
+
+            if (null != parentPost) {
+                result.setReplyOf(parentPost);
+                parentPost.addReply(result);
+                SiocUtils.incNumReplies(parentPost);
+            }
         }
 
-        String content = "";
-        if (object.has(FacebookApiConstants.FIELD_STORY)) {
-            content = object.getString(FacebookApiConstants.FIELD_STORY);
-        } else if (object.has(FacebookApiConstants.FIELD_MESSAGE)) {
-            content = object.getString(FacebookApiConstants.FIELD_MESSAGE);
+        return result;
+    }
+
+    private static void setPostCoreProperties(
+            final Post result,
+            final JsonObject object) {
+        Preconditions.checkNotNull(result,
+                "Required parameter result must be specified.");
+        Preconditions.checkNotNull(object,
+                "Required parameter object must be specified.");
+
+        // content
+        if (object.has(FacebookApiConstants.FIELD_MESSAGE)) {
+            result.setContent(
+                    object.getString(FacebookApiConstants.FIELD_MESSAGE));
+        } else if (object.has(FacebookApiConstants.FIELD_DESCRIPTION)) {
+            result.setContent(
+                    object.getString(FacebookApiConstants.FIELD_DESCRIPTION));
+        } else if (object.has(FacebookApiConstants.FIELD_STORY)) {
+            result.setContent(
+                    object.getString(FacebookApiConstants.FIELD_STORY));
         }
 
-        result.setContent(StringUtils.stripHTML(content));
-
+        // title
         if (object.has(FacebookApiConstants.FIELD_NAME)) {
-            result.setName(object.getString(FacebookApiConstants.FIELD_NAME));
-        }
-
-        if (object.has(FacebookApiConstants.FIELD_CAPTION)) {
+            result.setTitle(object.getString(FacebookApiConstants.FIELD_NAME));
+        } else if (object.has(FacebookApiConstants.FIELD_CAPTION)) {
             result.setTitle(FacebookApiConstants.FIELD_CAPTION);
         }
 
-        if (object.has(FacebookApiConstants.FIELD_DESCRIPTION)) {
-            result.setDescription(object
-                    .getString(FacebookApiConstants.FIELD_DESCRIPTION));
-        }
-
+        // attachment
         if (object.has(FacebookApiConstants.FIELD_LINK)) {
             result.setAttachment(
                     Builder.createURI(
@@ -190,117 +242,13 @@ public class FacebookSiocConverter {
             result.setAttachment(
                     Builder.createURI(
                             object.getString(FacebookApiConstants.FIELD_SOURCE)));
-        }
-
-        if (object.has(FacebookApiConstants.FIELD_CREATED_TIME)) {
-            Date date = com.restfb.util.DateUtils.toDateFromLongFormat(
-                    object.getString(FacebookApiConstants.FIELD_CREATED_TIME));
-            result.setCreated(DateUtils.formatISO8601(date));
-        }
-
-        if (object.has(FacebookApiConstants.FIELD_UPDATED_TIME)) {
-            Date date = com.restfb.util.DateUtils.toDateFromLongFormat(
-                    object.getString(FacebookApiConstants.FIELD_UPDATED_TIME));
-            result.setModified(DateUtils.formatISO8601(date));
-        }
-
-        result.setContainer(container);
-        container.addContainerOf(result);
-        container.setNumItems(
-                (container.hasNumItems()) ?
-                        (container.getNumItems() + 1) :
-                        (1));
-
-        return result;
-    }
-
-    private static UserAccount createSiocUserAccount(FacebookConnector connector,
-            JsonObject jsonObject) {
-        String userId = jsonObject.getString(FacebookApiConstants.FIELD_ID);
-        URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
-        URI userUri = Builder.createURI(
-                serviceEndpoint.toString()
-                        + USER_URI_PATH
-                        + userId);
-
-        UserAccount result = new UserAccount(connector.getContext().getModel(), userUri, true);
-        result.setId(userId);
-        result.setAccountName(userId);
-        result.setAccountServiceHomepage(serviceEndpoint);
-        result.addSeeAlso(Builder.createURI(serviceEndpoint + "/" + userId));
-
-        // create a new Person for unknown account.
-        Person person = new Person(connector.getContext().getModel(), true);
-        person.setName(jsonObject.getString(FacebookApiConstants.FIELD_NAME));
-        person.addAccount(result);
-        result.setAccountOf(person);
-
-        return result;
-    }
-
-    public static Post createSiocComment(FacebookConnector connector, JsonObject object,
-            Post parentPost) {
-
-        Model model = connector.getContext().getModel();
-        URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
-        URI uri = Builder.createURI(
-                serviceEndpoint
-                        + COMMENT_URI_PATH
-                        + object.getString(FacebookApiConstants.FIELD_ID));
-
-        Post result = (Post.hasInstance(model, uri)) ?
-                (Post.getInstance(model, uri)) :
-                (new Post(model, uri, true));
-
-        if (object.has(FacebookApiConstants.FIELD_ID)) {
-            result.setId(COMMENT_ID_PREFIX + object.getString(FacebookApiConstants.FIELD_ID));
-        }
-
-        if (object.has(FacebookApiConstants.FIELD_FROM)) {
-            JsonObject from = object.getJsonObject(FacebookApiConstants.FIELD_FROM);
-            String creatorId = from.getString(FacebookApiConstants.FIELD_ID);
-
-            // check if we already know the author, else create a new
-            // UserAccount + Person
-            UserAccount creator = null;
-            try {
-                creator = UserAccountUtils.findUserAccount(
-                        connector.getContext().getModel(),
-                        creatorId,
-                        serviceEndpoint);
-            } catch (NotFoundException e) {
-                creator = createSiocUserAccount(
-                        connector,
-                        object.getJsonObject(FacebookApiConstants.FIELD_FROM));
-            }
-
-            result.setCreator(creator);
-        }
-
-        String content = "";
-        if (object.has(FacebookApiConstants.FIELD_MESSAGE)) {
-            content = object.getString(FacebookApiConstants.FIELD_MESSAGE);
-        }
-
-        result.setContent(StringUtils.stripHTML(content));
-
-        if (object.has(FacebookApiConstants.FIELD_CREATED_TIME)) {
-            Date date = com.restfb.util.DateUtils.toDateFromLongFormat(
-                    object.getString(FacebookApiConstants.FIELD_CREATED_TIME));
-            result.setCreated(DateUtils.formatISO8601(date));
-        }
-
-        if (parentPost.hasContainer()) {
-            Container container = parentPost.getContainer();
-            result.setContainer(container);
-            container.addContainerOf(result);
-        }
-
-        if (object.has(FacebookApiConstants.FIELD_ATTACHMENT)) {
-            JsonObject attachment = object.getJsonObject(FacebookApiConstants.FIELD_ATTACHMENT);
+        } else if (object.has(FacebookApiConstants.FIELD_ATTACHMENT)) {
+            JsonObject attachment = object
+                    .getJsonObject(FacebookApiConstants.FIELD_ATTACHMENT);
 
             if (attachment.has(FacebookApiConstants.FIELD_TARGET)) {
-                JsonObject target = attachment.getJsonObject(FacebookApiConstants.FIELD_TARGET);
+                JsonObject target = attachment
+                        .getJsonObject(FacebookApiConstants.FIELD_TARGET);
                 if (target.has(FacebookApiConstants.FIELD_URL)) {
                     result.addAttachment(
                             Builder.createURI(
@@ -309,17 +257,52 @@ public class FacebookSiocConverter {
             } else if (attachment.has(FacebookApiConstants.FIELD_URL)) {
                 result.addAttachment(
                         Builder.createURI(
-                                attachment.getString(FacebookApiConstants.FIELD_URL)));
+                                attachment
+                                        .getString(FacebookApiConstants.FIELD_URL)));
             }
         }
+    }
 
-        result.setReplyOf(parentPost);
-        parentPost.addReply(result);
-        parentPost.setNumReplies(
-                (parentPost.hasNumReplies()) ?
-                        (parentPost.getNumReplies() + 1) :
-                        (1));
+    public static UserAccount createSiocUserAccount(
+            final FacebookConnector connector,
+            final JsonObject jsonObject) {
+        Preconditions.checkNotNull(connector,
+                "Required parameter connector must be specified.");
+        Preconditions.checkNotNull(jsonObject,
+                "Required parameter jsonObject must be specified.");
+
+        Model model = connector.getContext().getModel();
+        URI serviceEndpoint = connector.getService()
+                .getServiceEndpoint()
+                .asURI();
+        String id = jsonObject.getString(FacebookApiConstants.FIELD_ID);
+        URI uri = createSiocUri(id);
+
+        UserAccount result = new UserAccount(model, uri, true);
+        result.setId(id);
+        result.setName(jsonObject.getString(FacebookApiConstants.FIELD_NAME));
+        result.setAccountName(id);
+        result.setAccountServiceHomepage(serviceEndpoint);
+
+        // create a new Person for unknown account.
+        Person person = new Person(model, true);
+        person.setName(jsonObject.getString(FacebookApiConstants.FIELD_NAME));
+
+        person.addAccount(result);
+        result.setAccountOf(person);
 
         return result;
+    }
+
+    public static URI createSiocUri(final String id) {
+        Preconditions.checkNotNull(id,
+                "Required parameter id must be specified.");
+        Preconditions.checkArgument(!id.isEmpty(),
+                "Required parameter id may not be empty.");
+
+        return Builder.createURI(
+                UriTemplate.fromTemplate("https://www.facebook.com/{id}")
+                        .set("id", id)
+                        .expand());
     }
 }

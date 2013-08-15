@@ -32,6 +32,7 @@ public final class FacebookApiConstants {
     // Connection names
     static final String CONNECTION_COMMENTS = "comments";
     static final String CONNECTION_FEED = "feed";
+    static final String CONNECTION_GROUPS = "groups";
 
     // JSON Fields
     static final String FIELD_ATTACHMENT = "attachment";
@@ -42,11 +43,13 @@ public final class FacebookApiConstants {
     static final String FIELD_DATA = "data";
     static final String FIELD_DESCRIPTION = "description";
     static final String FIELD_FROM = "from";
+    static final String FIELD_GENDER = "gender";
     static final String FIELD_ID = "id";
     static final String FIELD_LINK = "link";
     static final String FIELD_MESSAGE = "message";
     static final String FIELD_METADATA = "metadata";
     static final String FIELD_NAME = "name";
+    static final String FIELD_OWNER = "owner";
     static final String FIELD_PARENT = "parent";
     static final String FIELD_SOURCE = "source";
     static final String FIELD_STORY = "story";
@@ -59,6 +62,29 @@ public final class FacebookApiConstants {
     static final String PARAM_LIMIT = "limit";
     static final String PARAM_SINCE = "since";
     static final String PARAM_FIELDS = "fields";
+
+    // Request fields lists
+    static final String FIELDS_GROUP = FIELD_ID + ","
+            + FIELD_NAME + ","
+            + FIELD_DESCRIPTION;
+
+    static final String FIELDS_POST = FIELD_ID + ","
+            + FIELD_FROM + ","
+            + FIELD_MESSAGE + ","
+            + FIELD_STORY + ","
+            + FIELD_NAME + ","
+            + FIELD_CAPTION + ","
+            + FIELD_LINK + ","
+            + FIELD_SOURCE + ","
+            + FIELD_CREATED_TIME + ","
+            + FIELD_UPDATED_TIME + ","
+            + FIELD_DESCRIPTION;
+
+    static final String FIELDS_COMMENT = FIELD_ID + ","
+            + FIELD_FROM + ","
+            + FIELD_MESSAGE + ","
+            + FIELD_CREATED_TIME + ","
+            + FIELD_ATTACHMENT;
 
     // Prevent object creation.
     private FacebookApiConstants() {

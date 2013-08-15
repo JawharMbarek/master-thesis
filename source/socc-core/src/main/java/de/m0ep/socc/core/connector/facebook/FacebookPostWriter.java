@@ -27,11 +27,12 @@ import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.utils.SiocUtils;
 
 public class FacebookPostWriter extends
         AbstractConnectorIOComponent<FacebookConnector> implements IPostWriter {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(FacebookPostWriter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(
+            FacebookPostWriter.class);
 
     public FacebookPostWriter(FacebookConnector connector) {
         super(connector);
@@ -40,19 +41,8 @@ public class FacebookPostWriter extends
     @Override
     public boolean canPostTo(Container container) {
         return null != container
-                &&
-                RdfUtils.isType(container.getModel(), container.getResource(),
-                        Forum.RDFS_CLASS)
-                &&
-                container.toString()
-                        .startsWith(getServiceEndpoint().toString())
-                &&
-                container.hasId()
-                &&
-                (container.getId().startsWith(
-                        FacebookSiocConverter.WALL_ID_PREFIX) ||
-                container.getId().startsWith(
-                        FacebookSiocConverter.GROUP_ID_PREFIX));
+                && RdfUtils.isType(container, Forum.RDFS_CLASS)
+                && SiocUtils.isContainerOfSite(container, getServiceEndpoint());
     }
 
     @Override
@@ -61,19 +51,22 @@ public class FacebookPostWriter extends
             IOException {
         Preconditions.checkNotNull(post,
                 "Required parameter post must be specified.");
+        Preconditions.checkArgument(post.hasCreator(),
+                "The parameter post has no creator.");
+        Preconditions.checkArgument(post.hasContent(),
+                "The parameter post has no content.");
+
         Preconditions.checkNotNull(container,
                 "Required parameter container must be specified.");
         Preconditions.checkArgument(canPostTo(container),
                 "Can't write a post to this container at this service.");
-
-        String containerSiocId = container.getId();
-        String containerFbId = containerSiocId.substring(
-                containerSiocId.lastIndexOf(
-                        FacebookSiocConverter.ID_SEPERATOR) + 1);
+        Preconditions.checkArgument(container.hasId(),
+                "The parameter container has no id.");
 
         UserAccount creatorAccount = post.getCreator();
         Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
-                getConnector(), creatorAccount);
+                getConnector(),
+                creatorAccount);
 
         FacebookClientWrapper client = null;
         if (null != creatorPerson) {
@@ -81,8 +74,7 @@ public class FacebookPostWriter extends
                     .getServiceAccountOfPersonOrNull(
                             getConnector(),
                             creatorPerson,
-                            getConnector().getService().getServiceEndpoint()
-                                    .asURI());
+                            getServiceEndpoint());
             if (null != serviceAccount) {
                 client = (FacebookClientWrapper) PostWriterUtils
                         .getClientOfServiceAccountOrNull(
@@ -127,7 +119,9 @@ public class FacebookPostWriter extends
         FacebookType result = null;
         try {
             result = client.getClient().publish(
-                    containerFbId + "/" + FacebookApiConstants.CONNECTION_FEED,
+                    container.getId()
+                            + "/"
+                            + FacebookApiConstants.CONNECTION_FEED,
                     FacebookType.class,
                     params.toArray(new Parameter[params.size()]));
         } catch (FacebookException e) {
@@ -150,7 +144,9 @@ public class FacebookPostWriter extends
                 Post addedPost = FacebookSiocConverter.createSiocPost(
                         getConnector(),
                         object,
-                        container);
+                        container,
+                        null);
+
                 addedPost.setSibling(post);
                 post.addSibling(addedPost);
             }
@@ -160,13 +156,8 @@ public class FacebookPostWriter extends
     @Override
     public boolean canReplyTo(Post post) {
         return null != post
-                &&
-                post.toString().startsWith(getServiceEndpoint().toString())
-                &&
-                post.hasId()
-                &&
-                (post.getId().startsWith(FacebookSiocConverter.POST_ID_PREFIX) ||
-                post.getId().startsWith(FacebookSiocConverter.COMMENT_URI_PATH));
+                && post.hasContainer()
+                && canPostTo(post.getContainer());
     }
 
     @Override
@@ -175,15 +166,17 @@ public class FacebookPostWriter extends
             IOException {
         Preconditions.checkNotNull(replyPost,
                 "Required parameter replyPost must be specified.");
+        Preconditions.checkArgument(replyPost.hasCreator(),
+                "The parameter replyPost has no creator.");
+        Preconditions.checkArgument(replyPost.hasContent(),
+                "The parameter replyPost has no content.");
+
         Preconditions.checkNotNull(parentPost,
                 "Required parameter parentPost must be specified.");
         Preconditions.checkArgument(canReplyTo(parentPost),
                 "Can't write a reply to this parenPost at this service.");
-
-        String parentSiocId = parentPost.getId();
-        String parentFbId = parentSiocId.substring(
-                parentSiocId.lastIndexOf(
-                        FacebookSiocConverter.ID_SEPERATOR) + 1);
+        Preconditions.checkArgument(parentPost.hasId(),
+                "The parameter parentPost has no id.");
 
         UserAccount creatorAccount = replyPost.getCreator();
         Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
@@ -196,8 +189,7 @@ public class FacebookPostWriter extends
                     .getServiceAccountOfPersonOrNull(
                             getConnector(),
                             creatorPerson,
-                            getConnector().getService().getServiceEndpoint()
-                                    .asURI());
+                            getServiceEndpoint());
             if (null != serviceAccount) {
                 client = (FacebookClientWrapper) PostWriterUtils
                         .getClientOfServiceAccountOrNull(
@@ -217,6 +209,7 @@ public class FacebookPostWriter extends
                     creatorPerson);
         }
 
+        // can only send a message -> add attachments to the content.
         ClosableIterator<Thing> attachIter = replyPost.getAllAttachments();
         try {
             while (attachIter.hasNext()) {
@@ -228,36 +221,40 @@ public class FacebookPostWriter extends
             attachIter.close();
         }
 
-        FacebookType result = null;
+        FacebookType fbResult = null;
         try {
-            result = client.getClient()
-                    .publish(
-                            parentFbId + "/"
-                                    + FacebookApiConstants.CONNECTION_COMMENTS,
+            fbResult = client.getClient()
+                    .publish(parentPost.getId()
+                            + "/"
+                            + FacebookApiConstants.CONNECTION_COMMENTS,
                             FacebookType.class,
-                            Parameter.with(FacebookApiConstants.FIELD_MESSAGE,
+                            Parameter.with(
+                                    FacebookApiConstants.FIELD_MESSAGE,
                                     content));
         } catch (FacebookException e) {
             FacebookConnector.handleFacebookException(e);
         }
 
-        if (null != result && null != result.getId()) {
-            LOG.debug("Successfully writen reply {} to post {}.", replyPost,
+        if (null != fbResult && null != fbResult.getId()) {
+            LOG.debug("Successfully writen reply {} to post {}.",
+                    replyPost,
                     parentPost);
 
             JsonObject object = null;
             try {
                 object = client.getClient().fetchObject(
-                        result.getId(),
+                        fbResult.getId(),
                         JsonObject.class);
             } catch (FacebookException e) {
                 FacebookConnector.handleFacebookException(e);
             }
             if (null != object) {
-                Post addedPost = FacebookSiocConverter.createSiocComment(
+                Post addedPost = FacebookSiocConverter.createSiocPost(
                         getConnector(),
                         object,
+                        parentPost.getContainer(),
                         parentPost);
+
                 addedPost.setSibling(replyPost);
                 replyPost.addSibling(addedPost);
             }

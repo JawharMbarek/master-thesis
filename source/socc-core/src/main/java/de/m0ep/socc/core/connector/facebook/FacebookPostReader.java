@@ -41,6 +41,7 @@ import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.utils.SiocUtils;
 
 public class FacebookPostReader extends
         AbstractConnectorIOComponent<FacebookConnector> implements IPostReader {
@@ -57,19 +58,8 @@ public class FacebookPostReader extends
     @Override
     public boolean containsPosts(Container container) {
         return null != container
-                &&
-                container.toString()
-                        .startsWith(getServiceEndpoint().toString())
-                &&
-                RdfUtils.isType(container.getModel(), container.getResource(),
-                        Forum.RDFS_CLASS)
-                &&
-                container.hasId()
-                &&
-                (container.getId().startsWith(
-                        FacebookSiocConverter.WALL_ID_PREFIX) ||
-                container.getId().startsWith(
-                        FacebookSiocConverter.GROUP_ID_PREFIX));
+                && SiocUtils.isContainerOfSite(container, getServiceEndpoint())
+                && RdfUtils.isType(container, Forum.RDFS_CLASS);
     }
 
     @Override
@@ -83,26 +73,31 @@ public class FacebookPostReader extends
                 "Required parameter container must be specified.");
         Preconditions.checkArgument(containsPosts(container),
                 "This container has no posts at this service");
-
-        String containerId = container.getId();
-        String id = containerId
-                .substring(
-                containerId.lastIndexOf(FacebookSiocConverter.ID_SEPERATOR) + 1);
+        Preconditions.checkArgument(container.hasId(),
+                "The container has no id.");
 
         Parameter paramSince = Parameter.with(
                 FacebookApiConstants.PARAM_SINCE,
                 (null != since) ? (since.getTime() / 1000L) : (0));
+
         Parameter paramLimit = Parameter.with(
                 FacebookApiConstants.PARAM_LIMIT,
                 (0 < limit || limit < 25) ? (limit) : (25));
 
+        Parameter paramFields = Parameter.with(
+                FacebookApiConstants.PARAM_FIELDS,
+                FacebookApiConstants.FIELDS_COMMENT);
+
         Connection<JsonObject> feed = null;
         try {
             feed = defaultClient.getClient().fetchConnection(
-                    id + "/" + FacebookApiConstants.CONNECTION_FEED,
+                    container.getId()
+                            + "/"
+                            + FacebookApiConstants.CONNECTION_FEED,
                     JsonObject.class,
                     paramSince,
-                    paramLimit);
+                    paramLimit,
+                    paramFields);
         } catch (FacebookException e) {
             FacebookConnector.handleFacebookException(e);
         }
@@ -115,7 +110,8 @@ public class FacebookPostReader extends
                         results.add(FacebookSiocConverter.createSiocPost(
                                 getConnector(),
                                 object,
-                                container));
+                                container,
+                                null));
                     }
                 }
             }
@@ -127,14 +123,8 @@ public class FacebookPostReader extends
     @Override
     public boolean containsReplies(Post post) {
         return null != post
-                &&
-                post.toString().startsWith(getServiceEndpoint().toString())
-                &&
-                post.hasId()
-                &&
-                (post.getId().startsWith(FacebookSiocConverter.POST_ID_PREFIX) ||
-                post.getId()
-                        .startsWith(FacebookSiocConverter.COMMENT_ID_PREFIX));
+                && post.hasContainer()
+                && containsPosts(post.getContainer());
     }
 
     @Override
@@ -144,44 +134,30 @@ public class FacebookPostReader extends
                 "Required parameter parentPost must be specified.");
         Preconditions.checkArgument(containsReplies(parentPost),
                 "This parentPost has no replies at this service.");
+        Preconditions.checkArgument(parentPost.hasId(),
+                "The parameter parentPost has no id.");
 
-        String postId = parentPost.getId();
-        String id = postId.substring(postId
-                .lastIndexOf(FacebookSiocConverter.ID_SEPERATOR) + 1);
+        Parameter paramSince = Parameter.with(
+                FacebookApiConstants.PARAM_SINCE,
+                (null != since) ? (since.getTime() / 1000L) : (0));
+        Parameter paramLimit = Parameter.with(
+                FacebookApiConstants.PARAM_LIMIT,
+                (0 < limit || limit < 25) ? (limit) : (25));
 
-        List<Parameter> params = Lists.newArrayList();
-
-        if (null != since) {
-            params.add(
-                    Parameter.with(
-                            FacebookApiConstants.PARAM_SINCE,
-                            since.getTime() / 1000L));
-        }
-
-        if (0 < limit || limit < 25) {
-            params.add(
-                    Parameter.with(
-                            FacebookApiConstants.PARAM_LIMIT,
-                            limit));
-        }
-
-        params.add(
-                Parameter.with(
-                        FacebookApiConstants.PARAM_FIELDS,
-                        FacebookApiConstants.FIELD_ID + ","
-                                + FacebookApiConstants.FIELD_FROM + ","
-                                + FacebookApiConstants.FIELD_MESSAGE + ","
-                                + FacebookApiConstants.FIELD_CREATED_TIME + ","
-                                + FacebookApiConstants.FIELD_PARENT + ","
-                                + FacebookApiConstants.FIELD_ATTACHMENT
-                        ));
+        Parameter paramFields = Parameter.with(
+                FacebookApiConstants.PARAM_FIELDS,
+                FacebookApiConstants.FIELDS_COMMENT);
 
         Connection<JsonObject> feed = null;
         try {
             feed = defaultClient.getClient().fetchConnection(
-                    id + "/" + FacebookApiConstants.CONNECTION_COMMENTS,
+                    parentPost.getId()
+                            + "/"
+                            + FacebookApiConstants.CONNECTION_COMMENTS,
                     JsonObject.class,
-                    params.toArray(new Parameter[params.size()]));
+                    paramSince,
+                    paramLimit,
+                    paramFields);
         } catch (FacebookException e) {
             FacebookConnector.handleFacebookException(e);
         }
@@ -191,9 +167,10 @@ public class FacebookPostReader extends
             for (List<JsonObject> objectList : feed) {
                 for (JsonObject object : objectList) {
                     if (0 > limit || limit > results.size()) {
-                        results.add(FacebookSiocConverter.createSiocComment(
+                        results.add(FacebookSiocConverter.createSiocPost(
                                 getConnector(),
                                 object,
+                                parentPost.getContainer(),
                                 parentPost));
                     }
                 }

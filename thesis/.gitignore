@@ -25,3 +25,5 @@
 *.sublime-project
 *.sublime-workspace
 *.fdb_latexmk
+*.lod
+*.tdo

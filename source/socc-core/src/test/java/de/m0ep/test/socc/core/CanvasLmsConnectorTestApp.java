@@ -33,8 +33,11 @@ public class CanvasLmsConnectorTestApp {
 
     /**
      * @param args
+     * @throws IOException
+     * @throws AuthenticationException
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws AuthenticationException,
+            IOException {
         String rootUri = "https://canvas.instructure.com";
 
         // florian.mueller@stud.tu-darmstadt.de

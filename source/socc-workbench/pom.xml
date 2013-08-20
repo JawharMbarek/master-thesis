@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>de.m0ep.socc</groupId>
 			<artifactId>socc-core</artifactId>
-			<version>0.0.1</version>
+			<version>0.7</version>
 		</dependency>
 		<dependency>
 			<groupId>com.jgoodies</groupId>

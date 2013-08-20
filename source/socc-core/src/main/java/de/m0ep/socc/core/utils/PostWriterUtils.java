@@ -81,13 +81,13 @@ public final class PostWriterUtils {
                 try {
                     Object client = connector.getServiceClientManager()
                             .createClientFromAccount(serviceAccount);
+
                     connector.getServiceClientManager().add(serviceAccount,
                             client);
                     return client;
                 } catch (Exception e) {
                     LOG.debug("Failed to create client form userAccount "
-                            + connector.getService().getServiceEndpoint(),
-                            e);
+                            + connector.getService().getServiceEndpoint());
                 }
             }
         } catch (NullPointerException | IllegalArgumentException e) {

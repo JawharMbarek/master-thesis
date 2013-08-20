@@ -25,6 +25,7 @@ package de.m0ep.socc.core;
 import org.ontoware.rdf2go.model.Model;
 
 import de.m0ep.socc.core.acl.IAccessControl;
+import de.m0ep.socc.core.connector.IConnector;
 
 public interface ISoccContext {
     /**
@@ -37,4 +38,13 @@ public interface ISoccContext {
      * Returns an {@link IAccessControl} instance.
      */
     public IAccessControl getAccessControl();
+
+    /**
+     * Returns a {@link IConnector} with the given id
+     * 
+     * @param id
+     *            Id of the connector that should be returned.
+     * @return Returns a {@link IConnector} or <code>null</code>.
+     */
+    public IConnector getConnector(String id);
 }

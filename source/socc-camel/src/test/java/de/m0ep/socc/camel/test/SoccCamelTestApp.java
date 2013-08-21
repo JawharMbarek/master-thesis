@@ -6,7 +6,12 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.util.Builder;
+import org.ontoware.rdf2go.util.RDFTool;
+import org.rdfs.sioc.Forum;
+import org.rdfs.sioc.Post;
+import org.rdfs.sioc.Site;
 import org.rdfs.sioc.services.Thing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +38,7 @@ public class SoccCamelTestApp {
      * @throws AuthenticationException
      */
     public static void main( String[] args ) throws AuthenticationException, IOException {
-        Model model = RDF2Go.getModelFactory().createModel();
+        final Model model = RDF2Go.getModelFactory().createModel();
         model.open();
         initModel( model );
 
@@ -51,6 +56,9 @@ public class SoccCamelTestApp {
                         LOG.debug( e.getMessage(), e );
                     }
                 }
+
+                System.out.println( RDFTool.modelToString( model, Syntax.Turtle ) );
+                model.close();
             }
         } ) );
 
@@ -62,8 +70,8 @@ public class SoccCamelTestApp {
         }
 
         RouteDefinition rd = new RouteDefinition()
-                .from( "socc://canvas-test/798152/1424406?delay=5000" )
-                .to( "socc://canvas-test/798152/1440785" );
+                .from( "socc://canvas-test/798152/1440784?delay=10000" )
+                .to( "socc://canvas-test/798152/1440783" );
         try {
             camelContext.addRouteDefinition( rd );
         } catch ( Exception e ) {
@@ -124,10 +132,54 @@ public class SoccCamelTestApp {
         person.addAccount( userAccount );
         userAccount.setAccountOf( person );
 
+        AccessToken accessToken2 = new AccessToken( model, true );
+        accessToken2.setValue(
+                "7~45nTvodrOtuaDNbsjParF4vMd4xqljGD76LLoeTVbxyg8d2ECHN55KEsL1045G5V" );
+
+        OAuth oAuth2 = new OAuth( model, true );
+        oAuth2.addCredentials( accessToken2 );
+
+        UserAccount userAccount2 = new UserAccount( model, true );
+        userAccount2.setAccountName( "3457836" );
+        userAccount2.setAccountServiceHomepage( service.getServiceEndpoint() );
+        userAccount2.setAccountAuthentication( oAuth2 );
+        Thing.setService( model, userAccount2, service );
+
+        Person person2 = new Person( model, true );
+        person2.setName( "Florian" );
+        person2.addAccount( userAccount2 );
+        userAccount2.setAccountOf( person2 );
+
         ConnectorConfig config = new ConnectorConfig( model, true );
         config.setId( "canvas-test" );
         config.setDefaultUserAccount( defaultUserAccount );
         config.setService( service );
         config.setConnectorClass( CanvasLmsConnector.class.getName() );
+
+        Site site = new Site( model, service.getServiceEndpoint(), true );
+
+        Forum forum = new Forum(
+                model,
+                "https://canvas.instructure.com/courses/798152",
+                true );
+        forum.setId( "798152" );
+        site.setHostOf( forum );
+        forum.setHost( site );
+
+        org.rdfs.sioc.Thread thread = new org.rdfs.sioc.Thread(
+                model,
+                "https://canvas.instructure.com/courses/798152/discussion_topics/1440785",
+                true );
+        thread.setId( "1440785" );
+        forum.setParentOf( thread );
+        thread.setParent( forum );
+
+        Post post = new Post(
+                model,
+                "https://canvas.instructure.com/courses/798152/discussion_topics/1440785/entries/3167309",
+                true );
+        post.setId( "3167309" );
+        thread.setContainerOf( post );
+        post.setContainer( thread );
     }
 }

@@ -32,16 +32,17 @@ import com.google.gdata.client.youtube.YouTubeService;
 import com.google.gdata.data.youtube.UserProfileEntry;
 import com.google.gdata.util.ServiceException;
 
-import de.m0ep.sioc.service.auth.APIKey;
-import de.m0ep.sioc.service.auth.Password;
-import de.m0ep.sioc.service.auth.Username;
+import de.m0ep.sioc.services.auth.APIKey;
+import de.m0ep.sioc.services.auth.Password;
+import de.m0ep.sioc.services.auth.Username;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
 public class YoutubeClientWrapper {
     private YouTubeService service;
     private UserProfileEntry userProfile;
 
-    public YoutubeClientWrapper(APIKey apiKey, Username username, Password password)
+    public YoutubeClientWrapper(APIKey apiKey, Username username,
+            Password password)
             throws AuthenticationException, IOException {
         Preconditions.checkNotNull(apiKey,
                 "Required parameter apiKey must be specified.");
@@ -67,9 +68,11 @@ public class YoutubeClientWrapper {
         }
 
         try {
-            this.userProfile = this.service.getEntry(
-                    new URL("http://gdata.youtube.com/feeds/api/users/default?v=2"),
-                    UserProfileEntry.class);
+            this.userProfile = this.service
+                    .getEntry(
+                            new URL(
+                                    "http://gdata.youtube.com/feeds/api/users/default?v=2"),
+                            UserProfileEntry.class);
         } catch (MalformedURLException | ServiceException e) {
             Throwables.propagate(e);
         }

@@ -3,8 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.m0ep.socc</groupId>
 	<artifactId>socc-core</artifactId>
-	<version>0.0.1</version>
+	<version>0.7</version>
 	<name>'Social Online Community Connector' Core Components</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
 	<licenses>
 		<license>
@@ -145,6 +149,16 @@
 			<artifactId>restfb</artifactId>
 			<version>1.6.12</version>
 		</dependency>
+		<dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-jackson2</artifactId>
+            <version>1.16.0-rc</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-plus</artifactId>
+            <version>v1-rev86-1.16.0-rc</version>
+        </dependency>
 	</dependencies>
 
 	<build>

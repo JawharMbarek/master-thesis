@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+	xmlns:waa="http://purl.oclc.org/NET/WebApiAuthentication#"
+	xmlns:siocsa="http://www.m0ep.de/sioc/services/auth#"
+	xmlns:siocs="http://rdfs.org/sioc/services#"
+	xmlns:sioc="http://rdfs.org/sioc/ns#"
+	xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns:socc-cfg="http://www.m0ep.de/socc/config#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/service/canvas-test">
+	<rdf:type rdf:resource="http://rdfs.org/sioc/services#Service"/>
+	<siocs:serviceEndoint rdf:resource="https://canvas.instructure.com"/>
+	<siocs:serciceDefinition>Canvas LMS Test Server</siocs:serciceDefinition>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/service/moodle-test">
+	<rdf:type rdf:resource="http://rdfs.org/sioc/services#Service"/>
+	<siocs:serviceEndoint rdf:resource="http://localhost/moodle"/>
+	<siocs:serciceDefinition>Moodle LMS Test Server</siocs:serciceDefinition>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/service/googleplus">
+	<rdf:type rdf:resource="http://rdfs.org/sioc/services#Service"/>
+	<siocs:serviceEndoint rdf:resource="https://plus.google.com"/>
+	<siocs:serciceDefinition>Google Plus</siocs:serciceDefinition>
+	<siocsa:serviceAuthentication rdf:resource="http://www.m0ep.de/socc/service/googleplus/oauth"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/service/googleplus/oauth">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#OAuth"/>
+	<siocsa:serviceAuthentication rdf:resource="http://www.m0ep.de/socc/service/googleplus/oauth/clientsecret"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/service/googleplus/oauth/clientid"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/service/googleplus/oauth/clientid">
+	<rdf:type rdf:resource="http://www.m0ep.de/sioc/services/auth#ClientId"/>
+	<rdf:value>733024832603-patciplam4cqq0dnv7a5qdhuq262n6ia.apps.googleusercontent.com</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/service/googleplus/oauth/clientsecret">
+	<rdf:type rdf:resource="http://www.m0ep.de/sioc/services/auth#ClientSecret"/>
+	<rdf:value>LckucP4MA1jJsZQKjk9okhAu</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/service/facebook">
+	<rdf:type rdf:resource="http://rdfs.org/sioc/services#Service"/>
+	<siocs:serviceEndoint rdf:resource="https://facebook.com"/>
+	<siocs:serciceDefinition>Facebook</siocs:serciceDefinition>
+	<siocsa:serviceAuthentication rdf:resource="http://www.m0ep.de/socc/service/facebook/oauth"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/service/facebook/oauth">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#OAuth"/>
+	<siocsa:serviceAuthentication rdf:resource="http://www.m0ep.de/socc/service/facebook/oauth/clientsecret"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/service/facebook/oauth/clientid"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/service/facebook/oauth/clientid">
+	<rdf:type rdf:resource="http://www.m0ep.de/sioc/services/auth#ClientId"/>
+	<rdf:value>218182098322396</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/service/facebook/oauth/clientsecret">
+	<rdf:type rdf:resource="http://www.m0ep.de/sioc/services/auth#ClientSecret"/>
+	<rdf:value>f4ed27b621c0f6476c2741f7cf9c4dc5</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/service/youtube">
+	<rdf:type rdf:resource="http://rdfs.org/sioc/services#Service"/>
+	<siocs:serviceEndoint rdf:resource="https://youtube.com"/>
+	<siocs:serviceDefinition>Youtube</siocs:serviceDefinition>
+	<siocsa:serviceAuthentication rdf:resource="http://www.m0ep.de/socc/service/youtube/webapi"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/service/youtube/webapi">
+	<rdf:type rdf:resource="http://www.m0ep.de/sioc/services/auth#WebApi"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/service/youtube/webapi/apikey"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/service/youtube/webapi/apikey">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#APIKey"/>
+	<rdf:value>AI39si48dEjhAE9RrY6w1HnlmyrUUTDt-xssOKkEEcpOIMD1gFcQ-0Xv40YNl-H1MxFzGzbHih4ootWo1cRrPH9gV-5UdazEbQ</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/socc-bot">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:nick>socc-bot</foaf:nick>
+	<foaf:name>Socc Bot</foaf:name>
+	<foaf:account rdf:resource="http://www.m0ep.de/socc/user/socc-bot/moodle"/>
+	<foaf:account rdf:resource="http://www.m0ep.de/socc/user/socc-bot/canvaslms"/>
+	<foaf:account rdf:resource="http://www.m0ep.de/socc/user/socc-bot/youtube"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/socc-bot/moodle">
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>socc-bot</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="http://localhost/~florian/moodle"/>
+	<siocsa:accountAuthentication rdf:resource="http://www.m0ep.de/socc/user/socc-bot/moodle/direct"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/socc-bot/canvaslms">
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>3478501</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="https://canvas.instructure.com"/>
+	<siocsa:accountAuthentication rdf:resource="http://www.m0ep.de/socc/user/socc-bot/canvaslms/oauth"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/socc-bot/youtube">
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>tkhiwis@gmail.com</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="http://www.youtube.com"/>
+	<siocsa:accountAuthentication rdf:resource="http://www.m0ep.de/socc/user/socc-bot/youtube/direct"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/socc-bot/moodle/direct">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Direct"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/user/socc-bot/moodle/direct/username"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/user/socc-bot/moodle/direct/password"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/socc-bot/moodle/direct/username">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Username"/>
+	<rdf:value>socc-bot</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/socc-bot/moodle/direct/password">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Password"/>
+	<rdf:value>socc-bot_pwd</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/socc-bot/canvaslms/oauth">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#OAuth"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/user/socc-bot/canvaslms/oauth/accesstoken"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/socc-bot/canvaslms/oauth/accesstoken">
+	<rdf:type rdf:resource="http://www.m0ep.de/sioc/services/auth#AccessToken"/>
+	<rdf:value>7~LUpV7B3lJYadvZ2sHlpJiTcyJ6HaduVb3Ho8YjBNXSdIE4AEFzLFfORcOHRHh1fU</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/socc-bot/youtube/direct">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Direct"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/user/socc-bot/youtube/direct/username"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/user/socc-bot/youtube/direct/password"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/socc-bot/youtube/direct/username">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Username"/>
+	<rdf:value>tkhiwis@gmail.com</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/socc-bot/youtube/direct/password">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Password"/>
+	<rdf:value>turing123</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:nick>m0ep</foaf:nick>
+	<foaf:name>Florian Müller</foaf:name>
+	<foaf:account rdf:resource="http://www.m0ep.de/socc/user/florian/canvas"/>
+	<foaf:account rdf:resource="http://www.m0ep.de/socc/user/florian/googleplus"/>
+	<foaf:account rdf:resource="http://www.m0ep.de/socc/user/florian/facebook"/>
+	<foaf:account rdf:resource="http://www.m0ep.de/socc/user/florian/youtube"/>
+	<foaf:account rdf:resource="http://www.m0ep.de/socc/user/florian/moodle"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/canvas">
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>3457836</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="https://canvas.instructure.com"/>
+	<siocsa:accountAuthentication rdf:resource="http://www.m0ep.de/socc/user/florian/canvas/oauth"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/googleplus">
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>111006860599162359588</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="https://plus.google.com"/>
+	<siocsa:accountAuthentication rdf:resource="http://www.m0ep.de/socc/user/florian/googleplus/oauth"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/youtube">
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>m0eper</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="https://youtube.com"/>
+	<siocsa:accountAuthentication rdf:resource="http://www.m0ep.de/socc/user/florian/youtube/direct"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/moodle">
+	<rdf:type rdf:resource="http://rdfs.org/sioc/ns#UserAccount"/>
+	<foaf:accountName>m0ep</foaf:accountName>
+	<foaf:accountServiceHomepage rdf:resource="http://localhost/~florian/moodle"/>
+	<siocsa:accountAuthentication rdf:resource="http://www.m0ep.de/socc/user/florian/moodle/direct"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/canvas/oauth">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#OAuth"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/user/florian/canvas/oauth/accesstoken"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/canvas/oauth/accesstoken">
+	<rdf:type rdf:resource="http://www.m0ep.de/sioc/services/auth#AccessToken"/>
+	<rdf:value>7~LUpV7B3lJYadvZ2sHlpJiTcyJ6HaduVb3Ho8YjBNXSdIE4AEFzLFfORcOHRHh1fU</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/googleplus/oauth">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#OAuth"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/user/florian/googleplus/oauth/accesstoken"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/user/florian/googleplus/oauth/refreshtoken"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/googleplus/oauth/accesstoken">
+	<rdf:type rdf:resource="http://www.m0ep.de/sioc/services/auth#AccessToken"/>
+	<rdf:value>ya29.AHES6ZTQADJwz1jLzgACCny1r9A9u9SqjbeOm9JLm_RzvgEPER0</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/googleplus/oauth/refreshtoken">
+	<rdf:type rdf:resource="http://www.m0ep.de/sioc/services/auth#RefreshToken"/>
+	<rdf:value>1/Qsc2kHvKM5g-t_GyrFIF54RvXmCMU5AM3ezxrHdRjBI</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/youtube/direct">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Direct"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/user/florian/youtube/direct/username"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/user/florian/youtube/direct/password"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/youtube/direct/username">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Username"/>
+	<rdf:value>email.mufl</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/youtube/direct/password">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Password"/>
+	<rdf:value>email.mufl.net</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/moodle/direct">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Direct"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/user/florian/moodle/direct/username"/>
+	<siocsa:credentials rdf:resource="http://www.m0ep.de/socc/user/florian/moodle/direct/password"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/moodle/direct/username">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Username"/>
+	<rdf:value>m0ep</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/user/florian/moodle/direct/password">
+	<rdf:type rdf:resource="http://purl.oclc.org/NET/WebApiAuthentication#Password"/>
+	<rdf:value>m0eper</rdf:value>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://www.m0ep.de/socc/connector/canvaslms-test">
+	<rdf:type rdf:resource="http://www.m0ep.de/socc/config#ConnectorConfig"/>
+	<socc-cfg:connectorClass>de.m0ep.socc.core.connector.canvaslms.CanvasLmsConnector</socc-cfg:connectorClass>
+	<socc-cfg:id>canvaslms-test</socc-cfg:id>
+	<socc-cfg:defaultUserAccount rdf:resource="http://www.m0ep.de/socc/user/socc-bot/canvaslms"/>
+	<socc-cfg:service rdf:resource="http://www.m0ep.de/socc/service/canvas-test"/>
+</rdf:Description>
+
+</rdf:RDF>

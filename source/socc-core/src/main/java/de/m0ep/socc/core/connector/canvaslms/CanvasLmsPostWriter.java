@@ -7,6 +7,8 @@ import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -17,51 +19,51 @@ import de.m0ep.canvas.exceptions.AuthorizationException;
 import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.exceptions.NetworkException;
 import de.m0ep.canvas.model.Entry;
-import de.m0ep.socc.core.connector.IConnector;
+import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.utils.SiocUtils;
 
-public class CanvasLmsPostWriter implements IPostWriter {
-    private CanvasLmsConnector connector;
-    private String serviceEndpoint;
+public class CanvasLmsPostWriter extends
+        AbstractConnectorIOComponent<CanvasLmsConnector> implements
+        IPostWriter {
+    private static final Logger LOG = LoggerFactory
+            .getLogger(CanvasLmsPostWriter.class);
 
     public CanvasLmsPostWriter(final CanvasLmsConnector connector) {
-        this.connector = Preconditions.checkNotNull(
-                connector,
-                "Required parameter connector must be specified.");
-
-        this.serviceEndpoint = connector.getService().getServiceEndpoint().toString();
-    }
-
-    @Override
-    public IConnector getConnector() {
-        return connector;
+        super(connector);
     }
 
     @Override
     public boolean canPostTo(Container container) {
-        Preconditions.checkNotNull(container,
-                "Required parameter container must be specified.");
-
-        return container.toString().startsWith(serviceEndpoint) &&
-                RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS) &&
-                container.hasParent() &&
-                container.getParent().toString().startsWith(serviceEndpoint);
+        return null != container
+                && RdfUtils.isType(
+                        container.getModel(),
+                        container,
+                        Thread.RDFS_CLASS)
+                && SiocUtils.isContainerOfSite(
+                        container,
+                        getServiceEndpoint());
     }
 
     @Override
-    public void writePost(Post post, Container container) throws AuthenticationException,
+    public void writePost(Post post, Container container)
+            throws AuthenticationException,
             IOException {
         Preconditions.checkNotNull(container,
                 "Required parameter container must be specified.");
+        Preconditions.checkArgument(canPostTo(container),
+                "Can't write Post to this container at this service.");
         Preconditions.checkArgument(container.hasId(),
                 "The container has no id.");
-        Preconditions.checkArgument(container.getParent().hasId(),
-                "The parent container of the container has no id.");
+        Preconditions.checkArgument(container.hasParent(),
+                "The parameter container has no parent.");
 
         Container parentContainer = container.getParent();
+        Preconditions.checkArgument(parentContainer.hasId(),
+                "The container parent has no id.");
 
         long courseId;
         try {
@@ -72,9 +74,9 @@ public class CanvasLmsPostWriter implements IPostWriter {
                             + parentContainer.getId());
         }
 
-        long topicId;
+        long discussionId;
         try {
-            topicId = Long.parseLong(container.getId());
+            discussionId = Long.parseLong(container.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
                     "The id of the container is invalid: was "
@@ -82,25 +84,30 @@ public class CanvasLmsPostWriter implements IPostWriter {
         }
 
         UserAccount creatorAccount = post.getCreator();
-        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(connector, creatorAccount);
+        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
+                getConnector(),
+                creatorAccount);
 
         CanvasLmsClient client = null;
         if (null != creatorPerson) {
-            UserAccount serviceAccount = PostWriterUtils.getServiceAccountOfPersonOrNull(
-                    connector,
-                    creatorPerson,
-                    connector.getService().getServiceEndpoint().asURI());
+            UserAccount serviceAccount = PostWriterUtils
+                    .getServiceAccountOfPersonOrNull(
+                            getConnector(),
+                            creatorPerson,
+                            getServiceEndpoint());
             if (null != serviceAccount) {
-                client = (CanvasLmsClient) PostWriterUtils.getClientOfServiceAccountOrNull(
-                        connector,
-                        serviceAccount);
+                client = (CanvasLmsClient) PostWriterUtils
+                        .getClientOfServiceAccountOrNull(
+                                getConnector(),
+                                serviceAccount);
             }
         }
 
         String content = post.getContent();
         if (null == client) { // No client found, get default one an adapt
                               // message content
-            client = (CanvasLmsClient) connector.getServiceClientManager().getDefaultClient();
+            client = getConnector().getServiceClientManager()
+                    .getDefaultClient();
             content = PostWriterUtils.createContentOfUnknownAccount(
                     post,
                     creatorAccount,
@@ -111,7 +118,7 @@ public class CanvasLmsPostWriter implements IPostWriter {
         try {
             resultEntry = client.courses()
                     .discussionTopics(courseId)
-                    .entries(topicId)
+                    .entries(discussionId)
                     .post(content)
                     .execute();
         } catch (CanvasLmsException e) {
@@ -121,14 +128,22 @@ public class CanvasLmsPostWriter implements IPostWriter {
                 throw new AuthenticationException(e);
             }
 
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
 
         if (null != resultEntry) {
+            Post initPost = Post.getInstance(
+                    getModel(),
+                    CanvasLmsSiocConverter.createTopicPostUri(
+                            getServiceEndpoint(),
+                            courseId,
+                            discussionId));
+
             Post resultPost = CanvasLmsSiocConverter.createSiocPost(
-                    connector,
+                    getConnector(),
                     resultEntry,
-                    container);
+                    container,
+                    initPost);
 
             resultPost.addSibling(post);
             post.addSibling(resultPost);
@@ -137,15 +152,14 @@ public class CanvasLmsPostWriter implements IPostWriter {
 
     @Override
     public boolean canReplyTo(Post post) {
-        Preconditions.checkNotNull(post, "Required parameter post must be specified.");
-
-        return post.toString().startsWith(serviceEndpoint) &&
-                post.hasContainer() &&
-                canPostTo(post.getContainer());
+        return null != post
+                && post.hasContainer()
+                && canPostTo(post.getContainer());
     }
 
     @Override
-    public void writeReply(Post replyPost, Post parentPost) throws AuthenticationException,
+    public void writeReply(Post replyPost, Post parentPost)
+            throws AuthenticationException,
             IOException {
         Preconditions.checkNotNull(replyPost,
                 "Required parameter replyPost must be specified.");
@@ -156,15 +170,22 @@ public class CanvasLmsPostWriter implements IPostWriter {
 
         Preconditions.checkNotNull(parentPost,
                 "Required parameter parentPost must be specified.");
+        Preconditions.checkArgument(canReplyTo(parentPost),
+                "Can't write a reply to the parentPost at this service.");
         Preconditions.checkArgument(parentPost.hasId(),
                 "The parentPost has no id.");
         Preconditions.checkArgument(parentPost.hasContainer(),
                 "The parentPost has no container");
-        Preconditions.checkArgument(canReplyTo(parentPost),
-                "Writing a reply to the parentpost is not possible.");
 
         Container container = parentPost.getContainer();
+        Preconditions.checkArgument(container.hasId(),
+                "The container of the parentPost has no id");
+        Preconditions.checkArgument(container.hasParent(),
+                "The container of the parentPost has no required parent");
+
         Container parentContainer = container.getParent();
+        Preconditions.checkArgument(parentContainer.hasId(),
+                "The parent of the parentPost container has no id.");
 
         long courseId;
         try {
@@ -175,9 +196,9 @@ public class CanvasLmsPostWriter implements IPostWriter {
                             + parentContainer.getId());
         }
 
-        long topicId;
+        long discussionId;
         try {
-            topicId = Long.parseLong(container.getId());
+            discussionId = Long.parseLong(container.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
                     "The id of the container is invalid: was "
@@ -194,25 +215,32 @@ public class CanvasLmsPostWriter implements IPostWriter {
         }
 
         UserAccount creatorAccount = replyPost.getCreator();
-        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(connector, creatorAccount);
+        Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
+                getConnector(),
+                creatorAccount);
 
         CanvasLmsClient client = null;
         if (null != creatorPerson) {
-            UserAccount serviceAccount = PostWriterUtils.getServiceAccountOfPersonOrNull(
-                    connector,
-                    creatorPerson,
-                    connector.getService().getServiceEndpoint().asURI());
+            UserAccount serviceAccount = PostWriterUtils
+                    .getServiceAccountOfPersonOrNull(
+                            getConnector(),
+                            creatorPerson,
+                            getServiceEndpoint());
             if (null != serviceAccount) {
-                client = (CanvasLmsClient) PostWriterUtils.getClientOfServiceAccountOrNull(
-                        connector,
-                        serviceAccount);
+                client = (CanvasLmsClient) PostWriterUtils
+                        .getClientOfServiceAccountOrNull(
+                                getConnector(),
+                                serviceAccount);
             }
         }
 
         String content = replyPost.getContent();
-        if (null == client) { // No client found, get default one an adapt
+        if (null == client) { // No client found, get default one an modify
                               // message content
-            client = (CanvasLmsClient) connector.getServiceClientManager().getDefaultClient();
+            LOG.debug("no client found  use dafault.");
+
+            client = getConnector().getServiceClientManager()
+                    .getDefaultClient();
             content = PostWriterUtils.createContentOfUnknownAccount(
                     replyPost,
                     creatorAccount,
@@ -223,7 +251,7 @@ public class CanvasLmsPostWriter implements IPostWriter {
         try {
             resultEntry = client.courses()
                     .discussionTopics(courseId)
-                    .entries(topicId)
+                    .entries(discussionId)
                     .postReply(content, entryId)
                     .execute();
         } catch (NetworkException e) {
@@ -231,14 +259,22 @@ public class CanvasLmsPostWriter implements IPostWriter {
         } catch (AuthorizationException e) {
             throw new AuthenticationException(e);
         } catch (CanvasLmsException e) {
-            Throwables.propagate(e);
+            throw Throwables.propagate(e);
         }
 
         if (null != resultEntry) {
+            Post initPost = Post.getInstance(
+                    getModel(),
+                    CanvasLmsSiocConverter.createTopicPostUri(
+                            getServiceEndpoint(),
+                            courseId,
+                            discussionId));
+
             Post resultPost = CanvasLmsSiocConverter.createSiocPost(
-                    connector,
+                    getConnector(),
                     resultEntry,
-                    container);
+                    container,
+                    initPost);
 
             resultPost.addSibling(replyPost);
             replyPost.addSibling(resultPost);

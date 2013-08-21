@@ -19,14 +19,13 @@ import org.rdfs.sioc.Post;
 import com.google.common.collect.Lists;
 import com.xmlns.foaf.Person;
 
-import de.m0ep.sioc.service.auth.APIKey;
-import de.m0ep.sioc.service.auth.Authentication;
-import de.m0ep.sioc.service.auth.Password;
-import de.m0ep.sioc.service.auth.Service;
-import de.m0ep.sioc.service.auth.UserAccount;
-import de.m0ep.sioc.service.auth.Username;
-import de.m0ep.sioc.service.auth.WebAPI;
-import de.m0ep.socc.config.ConnectorCfg;
+import de.m0ep.sioc.services.auth.APIKey;
+import de.m0ep.sioc.services.auth.Password;
+import de.m0ep.sioc.services.auth.Service;
+import de.m0ep.sioc.services.auth.UserAccount;
+import de.m0ep.sioc.services.auth.Username;
+import de.m0ep.sioc.services.auth.WebAPI;
+import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.SoccContext;
 import de.m0ep.socc.core.connector.IConnector;
@@ -43,7 +42,8 @@ public class YoutubeV2ConnectorTestApp {
      * @throws AuthenticationException
      * @throws NotFoundException
      */
-    public static void main(String[] args) throws NotFoundException, AuthenticationException,
+    public static void main(String[] args) throws NotFoundException,
+            AuthenticationException,
             IOException {
         URI serviceEndpointUri = Builder.createURI("http://www.youtube.com");
 
@@ -55,12 +55,12 @@ public class YoutubeV2ConnectorTestApp {
         Service service = new Service(model, true);
         service.setServiceEndpoint(serviceEndpointUri);
 
-        Authentication serviceAuth = new WebAPI(model, true);
-        service.setAuthentication(serviceAuth);
+        WebAPI serviceAuth = new WebAPI(model, true);
+        service.setServiceAuthentication(serviceAuth);
 
         APIKey apiKey = new APIKey(model, true);
         apiKey.setValue("AI39si48dEjhAE9RrY6w1HnlmyrUUTDt-xssOKkEEcpOIMD1gFcQ-0Xv40YNl-H1MxFzGzbHih4ootWo1cRrPH9gV-5UdazEbQ");
-        serviceAuth.addCredential(apiKey);
+        serviceAuth.addCredentials(apiKey);
 
         /*********************************/
 
@@ -73,16 +73,16 @@ public class YoutubeV2ConnectorTestApp {
         defaultPerson.addAccount(userAccount);
         userAccount.setAccountOf(defaultPerson);
 
-        Authentication userAuth = new WebAPI(model, true);
-        userAccount.setAuthentication(userAuth);
+        WebAPI userAuth = new WebAPI(model, true);
+        userAccount.setAccountAuthentication(userAuth);
 
         Username username = new Username(model, true);
         username.setValue("tkhiwis@gmail.com");
-        userAuth.addCredential(username);
+        userAuth.addCredentials(username);
 
         Password password = new Password(model, true);
         password.setValue("turing123");
-        userAuth.addCredential(password);
+        userAuth.addCredentials(password);
 
         /*********************************/
 
@@ -95,22 +95,22 @@ public class YoutubeV2ConnectorTestApp {
         m0eperPerson.addAccount(m0eperAccount);
         m0eperAccount.setAccountOf(m0eperPerson);
 
-        Authentication m0eperAuth = new WebAPI(model, true);
-        m0eperAccount.setAuthentication(m0eperAuth);
+        WebAPI m0eperAuth = new WebAPI(model, true);
+        m0eperAccount.setAccountAuthentication(m0eperAuth);
 
         Username m0eperUsername = new Username(model, true);
         m0eperUsername.setValue("email.mufl@gmail.com");
-        m0eperAuth.addCredential(m0eperUsername);
+        m0eperAuth.addCredentials(m0eperUsername);
 
         Password m0eperPassword = new Password(model, true);
         m0eperPassword.setValue("email.mufl.net");
-        m0eperAuth.addCredential(m0eperPassword);
+        m0eperAuth.addCredentials(m0eperPassword);
 
         /*********************************/
 
-        ConnectorCfg config = new ConnectorCfg(model, true);
+        ConnectorConfig config = new ConnectorConfig(model, true);
         config.setId("youtube-test");
-        config.setDefaultUser(userAccount);
+        config.setDefaultUserAccount(userAccount);
         config.setService(service);
 
         Post replyPost = new Post(model, true);
@@ -120,15 +120,18 @@ public class YoutubeV2ConnectorTestApp {
         IConnector connector = new YoutubeConnector(context, config);
         connector.initialize();
 
-        List<Forum> forums = connector.serviceStructureReader().listForums();
+        List<Forum> forums = connector.getStructureReader().listForums();
         for (Forum forum : forums) {
             System.err.println(forum + " " + forum.getId());
-            if (forum.getId().startsWith(YoutubeSiocConverter.PLAYLISTS_ID_PREFIX)) {
-                List<Post> posts = connector.postReader().readNewPosts(null, -1, forum);
+            if (forum.getId().startsWith(
+                    YoutubeSiocConverter.PLAYLISTS_ID_PREFIX)) {
+                List<Post> posts = connector.getPostReader().readNewPosts(null,
+                        -1, forum);
                 for (Post post : posts) {
-                    List<Post> replies = connector.postReader().readNewReplies(null, -1, post);
+                    List<Post> replies = connector.getPostReader()
+                            .readNewReplies(null, -1, post);
                     for (Post reply : replies) {
-                        connector.postWriter().writeReply(replyPost, reply);
+                        connector.getPostWriter().writeReply(replyPost, reply);
                         System.err.println(reply.getContent() + " " + reply);
                     }
                 }

@@ -1,3 +1,24 @@
+/*
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 package de.m0ep.socc.core.connector.canvaslms;
 
@@ -10,6 +31,7 @@ import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Thread;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 import de.m0ep.canvas.CanvasLmsClient;
@@ -18,58 +40,62 @@ import de.m0ep.canvas.exceptions.AuthorizationException;
 import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.exceptions.NetworkException;
 import de.m0ep.canvas.model.Entry;
-import de.m0ep.socc.core.connector.IConnector;
+import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.utils.SiocUtils;
 
-public class CanvasLmsPostReader implements IConnector.IPostReader {
-    private CanvasLmsConnector connector;
-    private CanvasLmsClient client;
-    private String serviceEndpoint;
+/**
+ * @author Florian Müller
+ */
+public class CanvasLmsPostReader extends
+        AbstractConnectorIOComponent<CanvasLmsConnector> implements
+        IPostReader {
 
+    private CanvasLmsClient defaultClient;
+
+    /**
+     * @param connector
+     */
     public CanvasLmsPostReader(final CanvasLmsConnector connector) {
-        this.connector = Preconditions.checkNotNull(
-                connector,
-                "Required parameter connector must be specified.");
-
-        this.client = (CanvasLmsClient) connector.getServiceClientManager().getDefaultClient();
-        this.serviceEndpoint = connector.getService().getServiceEndpoint().toString();
+        super(connector);
+        this.defaultClient = connector.getServiceClientManager()
+                .getDefaultClient();
     }
 
     @Override
-    public IConnector getConnector() {
-        return connector;
+    public boolean containsPosts(final Container container) {
+        return null != container
+                && RdfUtils.isType(
+                        container,
+                        Thread.RDFS_CLASS)
+                && SiocUtils.isContainerOfSite(
+                        container,
+                        getServiceEndpoint());
     }
 
     @Override
-    public boolean containsPosts(Container container) {
-        Preconditions.checkNotNull(container, "Required parameter container must be specified.");
-
-        return RdfUtils.isType(container.getModel(), container, Thread.RDFS_CLASS) &&
-                container.toString().startsWith(serviceEndpoint) &&
-                container.hasParent() &&
-                container.getParent().toString().startsWith(serviceEndpoint);
-    }
-
-    @Override
-    public List<Post> readNewPosts(Date lastPostDate, long limit, Container container)
+    public List<Post> readNewPosts(final Date since, final long limit,
+            final Container container)
             throws AuthenticationException, IOException {
-        Preconditions.checkArgument(
-                containsPosts(container),
-                "The container contains no posts on this service.");
-        Preconditions.checkArgument(
-                container.hasId(),
-                "The container has no id.");
-        Preconditions.checkArgument(
-                container.getParent().hasId(),
-                "The parent of the container has no id.");
-
-        Container parentContainer = container.getParent();
-
         if (0 == limit) {
             return Lists.newArrayList();
         }
+
+        Preconditions.checkNotNull(container,
+                "Required parameter container must be specified.");
+        Preconditions.checkArgument(containsPosts(container),
+                "The container contains no posts on this service.");
+        Preconditions.checkArgument(container.hasId(),
+                "The parameter container has no id.");
+        Preconditions.checkArgument(container.hasParent(),
+                "The parameter container has no required parent container.");
+
+        Container parentContainer = container.getParent();
+        Preconditions.checkArgument(parentContainer.hasId(),
+                "The parent container has no id.");
 
         long courseId;
         try {
@@ -91,7 +117,7 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
 
         Pagination<Entry> entryPages = null;
         try {
-            entryPages = client.courses()
+            entryPages = defaultClient.courses()
                     .discussionTopics(courseId)
                     .entries(topicId)
                     .list()
@@ -105,21 +131,37 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
                 throw new NotFoundException(e);
             }
 
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
+
+        Post initPost = Post.getInstance(
+                getModel(),
+                CanvasLmsSiocConverter.createTopicPostUri(
+                        getServiceEndpoint(),
+                        courseId,
+                        topicId));
 
         List<Post> result = Lists.newArrayList();
         if (null != entryPages) {
             for (List<Entry> entries : entryPages) {
                 for (Entry entry : entries) {
-                    if (null != lastPostDate && lastPostDate.before(entry.getCreatedAt())) {
-                        return result;
-                    }
-
-                    result.add(CanvasLmsSiocConverter.createSiocPost(connector, entry,
-                            container));
-
-                    if (0 < limit && limit == result.size()) {
+                    if (0 > limit || limit < result.size()) {
+                        Date createdDate = entry.getCreatedAt();
+                        if (null == since || createdDate.after(since)) {
+                            result.add(CanvasLmsSiocConverter
+                                    .createSiocPost(
+                                            getConnector(),
+                                            entry,
+                                            container,
+                                            initPost
+                                    ));
+                        } else {
+                            // abort, because entries are sorted by
+                            // 'newest first'
+                            return result;
+                        }
+                    } else {
+                        // limit reached
                         return result;
                     }
                 }
@@ -130,39 +172,38 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
     }
 
     @Override
-    public boolean containsReplies(Post post) {
-        Preconditions.checkNotNull(post, "Required parameter parent must be specified.");
-
-        return post.toString().startsWith(serviceEndpoint) &&
-                post.hasContainer() &&
-                containsPosts(post.getContainer());
+    public boolean containsReplies(final Post post) {
+        return null != post
+                && post.hasContainer()
+                && containsPosts(post.getContainer());
     }
 
     @Override
-    public List<Post> readNewReplies(Date lastReplyDate, long limit, Post parentPost)
+    public List<Post> readNewReplies(final Date since, final long limit,
+            final Post post)
             throws AuthenticationException, IOException {
-        Preconditions.checkNotNull(
-                parentPost,
-                "Required parameter parentPost must be specified.");
-        Preconditions.checkArgument(
-                containsReplies(parentPost),
-                "The parentPost contains no replies on this service.");
-        Preconditions.checkArgument(
-                parentPost.hasId(),
-                "Required parameter parentPost has no id.");
-        Preconditions.checkArgument(
-                parentPost.getContainer().hasId(),
-                "The container of the parentPost has no id.");
-        Preconditions.checkArgument(
-                parentPost.getContainer().getParent().hasId(),
-                "The parent container of the container of the parentPost has no id.");
-
-        Container container = parentPost.getContainer();
-        Container parentContainer = container.getParent();
-
         if (0 == limit) {
             return Lists.newArrayList();
         }
+
+        Preconditions.checkNotNull(post,
+                "Required parameter post must be specified.");
+        Preconditions.checkArgument(containsReplies(post),
+                "The post contains no replies on this service.");
+        Preconditions.checkArgument(post.hasId(),
+                "Required parameter post has no id.");
+        Preconditions.checkArgument(post.hasContainer(),
+                "The paramater post has no container.");
+
+        Container container = post.getContainer();
+        Preconditions.checkArgument(container.hasId(),
+                "The container of the post has no id.");
+        Preconditions.checkArgument(container.hasParent(),
+                "The container of post has no parent");
+
+        Container parentContainer = container.getParent();
+        Preconditions.checkArgument(parentContainer.hasId(),
+                "The parent of post container has no id.");
 
         long courseId;
         try {
@@ -184,7 +225,7 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
 
         long entryId;
         try {
-            entryId = Long.parseLong(parentPost.getId());
+            entryId = Long.parseLong(post.getId());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
                     "The id of the parentPost is invalid: was "
@@ -193,7 +234,7 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
 
         Pagination<Entry> replyPages = null;
         try {
-            replyPages = client.courses()
+            replyPages = defaultClient.courses()
                     .discussionTopics(courseId)
                     .entries(topicId)
                     .listReplies(entryId)
@@ -207,21 +248,25 @@ public class CanvasLmsPostReader implements IConnector.IPostReader {
                 throw new NotFoundException(e);
             }
 
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
 
         List<Post> result = Lists.newArrayList();
         if (null != replyPages) {
             for (List<Entry> entries : replyPages) {
                 for (Entry entry : entries) {
-                    if (null != lastReplyDate && lastReplyDate.before(entry.getCreatedAt())) {
-                        return result;
-                    }
-
-                    result.add(CanvasLmsSiocConverter.createSiocPost(connector, entry,
-                            container));
-
-                    if (0 < limit && limit == result.size()) {
+                    if (0 > limit || limit < result.size()) {
+                        Date createdDate = entry.getCreatedAt();
+                        if (null == since || createdDate.after(since)) {
+                            result.add(CanvasLmsSiocConverter.createSiocPost(
+                                    getConnector(),
+                                    entry,
+                                    container,
+                                    post));
+                        } else {
+                            return result;
+                        }
+                    } else {
                         return result;
                     }
                 }

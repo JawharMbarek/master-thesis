@@ -5,6 +5,10 @@
 	<artifactId>rdf2go-soccconfig</artifactId>
 	<version>0.0.1</version>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>de.m0ep.rdf2go</groupId>

@@ -27,7 +27,7 @@ import org.rdfs.sioc.services.Service;
 
 import com.google.common.base.Preconditions;
 
-import de.m0ep.socc.config.ConnectorCfg;
+import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 
 /**
@@ -52,7 +52,7 @@ public abstract class AbstractConnector implements IConnector {
     }
 
     /**
-     * Constructs a new instance from a {@link ConnectorCfg}.
+     * Constructs a new instance from a {@link ConnectorConfig}.
      * 
      * @param context
      * @param config
@@ -62,21 +62,24 @@ public abstract class AbstractConnector implements IConnector {
      *             Thrown if <code>config</code> contains no <code>id</code>,
      *             <code>defaultUser</code> or <code>service</code>.
      */
-    public AbstractConnector(final ISoccContext context, final ConnectorCfg config) {
+    public AbstractConnector(final ISoccContext context,
+            final ConnectorConfig config) {
         this();
         this.context = Preconditions.checkNotNull(
                 context,
                 "Required parameter context must be specified.");
 
-        Preconditions.checkNotNull(config, "Required parameter config must be specified.");
+        Preconditions.checkNotNull(config,
+                "Required parameter config must be specified.");
 
-        Preconditions.checkArgument(config.hasId(), "Provides parameter config contains no id.");
+        Preconditions.checkArgument(config.hasId(),
+                "Provides parameter config contains no id.");
         this.id = config.getId();
 
         Preconditions.checkArgument(
-                config.hasDefaultUser(),
+                config.hasDefaultUserAccount(),
                 "Provided parameter config contains no default UserAccount.");
-        this.defaultUserAccount = config.getDefaultUser();
+        this.defaultUserAccount = config.getDefaultUserAccount();
 
         Preconditions.checkArgument(config.hasService(),
                 "Provided parameter config contains no service");

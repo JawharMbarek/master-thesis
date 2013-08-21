@@ -42,6 +42,10 @@
 
 	<!-- Repositories -->
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
 	<repositories>
 		<!-- The repository for service specific Google client libraries. See http://code.google.com/p/google-api-java-client/wiki/APIs#Maven_support 
 			for more information -->

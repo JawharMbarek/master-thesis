@@ -34,41 +34,45 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
-import de.m0ep.socc.config.ConnectorCfg;
+import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.AbstractConnector;
 import de.m0ep.socc.core.connector.IServiceClientManager;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
 public class YoutubeConnector extends AbstractConnector {
-    private static final Logger LOG = LoggerFactory.getLogger(YoutubeConnector.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(YoutubeConnector.class);
 
     private URI serviceEndpoint = Builder.createURI("http://www.youtube.com");
 
-    private IServiceClientManager serviceClientManager;
-    private IServiceStructureReader serviceStructureReader;
+    private IServiceClientManager<YoutubeClientWrapper> serviceClientManager;
+    private IStructureReader serviceStructureReader;
     private IPostReader postReader;
     private IPostWriter postWriter;
 
     private long lastServiceRequest = 0;
 
-    private YoutubeConnector(String id, ISoccContext context, UserAccount defaultUserAccount,
+    private YoutubeConnector(String id, ISoccContext context,
+            UserAccount defaultUserAccount,
             Service service) {
         super(id, context, defaultUserAccount, service);
     }
 
-    public YoutubeConnector(ISoccContext context, ConnectorCfg config) {
+    public YoutubeConnector(ISoccContext context, ConnectorConfig config) {
         super(context, config);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public IServiceClientManager getServiceClientManager() {
+    public IServiceClientManager<YoutubeClientWrapper> getServiceClientManager() {
         return serviceClientManager;
     }
 
     @Override
-    public IServiceStructureReader serviceStructureReader() {
-        Preconditions.checkState(isInitialized(), "Connector was not initialized");
+    public IStructureReader getStructureReader() {
+        Preconditions.checkState(isInitialized(),
+                "Connector was not initialized");
 
         if (null == serviceStructureReader) {
             serviceStructureReader = new YoutubeStructureReader(this);
@@ -78,8 +82,9 @@ public class YoutubeConnector extends AbstractConnector {
     }
 
     @Override
-    public IPostReader postReader() {
-        Preconditions.checkState(isInitialized(), "Connector was not initialized");
+    public IPostReader getPostReader() {
+        Preconditions.checkState(isInitialized(),
+                "Connector was not initialized");
         if (null == postReader) {
             postReader = new YoutubePostReader(this);
         }
@@ -88,8 +93,9 @@ public class YoutubeConnector extends AbstractConnector {
     }
 
     @Override
-    public IPostWriter postWriter() {
-        Preconditions.checkState(isInitialized(), "Connector was not initialized");
+    public IPostWriter getPostWriter() {
+        Preconditions.checkState(isInitialized(),
+                "Connector was not initialized");
 
         if (null == postWriter) {
             postWriter = new YoutubePostWriter(this);
@@ -103,7 +109,8 @@ public class YoutubeConnector extends AbstractConnector {
         getService().setServiceEndpoint(serviceEndpoint);
 
         try {
-            serviceClientManager = new YoutubeClientManager(getService(), getDefaultUserAccount());
+            serviceClientManager = new YoutubeClientManager(getService(),
+                    getDefaultUserAccount());
         } catch (Exception e) {
             Throwables.propagateIfInstanceOf(e, AuthenticationException.class);
             Throwables.propagateIfInstanceOf(e, IOException.class);
@@ -118,6 +125,7 @@ public class YoutubeConnector extends AbstractConnector {
     @Override
     public void shutdown() {
         serviceClientManager.clear();
+        setInitialized(false);
     }
 
     public synchronized void waitForCooldown() {

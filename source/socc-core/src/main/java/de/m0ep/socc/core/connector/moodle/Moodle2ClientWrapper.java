@@ -1,4 +1,3 @@
-
 package de.m0ep.socc.core.connector.moodle;
 
 import java.io.IOException;
@@ -16,128 +15,129 @@ import de.m0ep.moodlews.soap.Mdl_soapserverBindingStub;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
 public class Moodle2ClientWrapper {
-    private static final Logger LOG = LoggerFactory.getLogger(Moodle2ClientWrapper.class);
+	private static final Logger LOG = LoggerFactory.getLogger( Moodle2ClientWrapper.class );
 
-    private static final String MOODLEWS_PATH = "/wspp/service_pp2.php";
-    private static final String MOODLE_WSDL_POSTFIX = "/wspp/wsdl2";
+	private static final String MOODLEWS_PATH = "/wspp/service_pp2.php";
+	private static final String MOODLE_WSDL_POSTFIX = "/wspp/wsdl2";
 
-    private Mdl_soapserverBindingStub bindingStub;
-    private String username;
-    private String password;
-    private int authClient;
-    private String sessionKey;
+	private final Mdl_soapserverBindingStub bindingStub;
+	private final String username;
+	private final String password;
+	private int authClient;
+	private String sessionKey;
 
-    public Moodle2ClientWrapper(URI serviceEndpoint, String username, String password)
-            throws AuthenticationException, IOException {
-        this.bindingStub = new Mdl_soapserverBindingStub(
-                serviceEndpoint.toString() + MOODLEWS_PATH,
-                serviceEndpoint.toString() + MOODLE_WSDL_POSTFIX,
-                false);
-        this.username = username;
-        this.password = password;
+	public Moodle2ClientWrapper( URI serviceEndpoint, String username, String password )
+	        throws AuthenticationException, IOException {
+		this.bindingStub = new Mdl_soapserverBindingStub(
+		        serviceEndpoint.toString() + MOODLEWS_PATH,
+		        serviceEndpoint.toString() + MOODLE_WSDL_POSTFIX,
+		        false );
+		this.username = username;
+		this.password = password;
 
-        tryLogin();
-    }
+		tryLogin();
+	}
 
-    public Mdl_soapserverBindingStub getBindingStub() {
-        return bindingStub;
-    }
+	public Mdl_soapserverBindingStub getBindingStub() {
+		return bindingStub;
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	public String getUsername() {
+		return username;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public int getAuthClient() {
-        return authClient;
-    }
+	public int getAuthClient() {
+		return authClient;
+	}
 
-    public String getSessionKey() {
-        return sessionKey;
-    }
+	public String getSessionKey() {
+		return sessionKey;
+	}
 
-    /**
-     * Calls a {@link Callable} with a MoodleWS function and tries to relogin if
-     * the usersession is expired.
-     * 
-     * @param callable {@link Callable} with MoodleWS function call.
-     * @return Result of the {@link Callable}.
-     */
-    public <T> T callMethod(final Callable<T> callable)
-            throws IOException, AuthenticationException {
-        Preconditions.checkNotNull(callable, "callable can not be null");
-        T result = null;
+	/**
+	 * Calls a {@link Callable} with a MoodleWS function and tries to relogin if
+	 * the usersession is expired.
+	 * 
+	 * @param callable
+	 *            {@link Callable} with MoodleWS function call.
+	 * @return Result of the {@link Callable}.
+	 */
+	public <T> T callMethod( final Callable<T> callable )
+	        throws IOException, AuthenticationException {
+		Preconditions.checkNotNull( callable, "callable can not be null" );
+		T result = null;
 
-        try {
-            result = callable.call();
+		try {
+			result = callable.call();
 
-            if (null == result) {
-                if (!isMoodleWSRunning()) {
-                    throw new IOException("No connection to " + bindingStub.getURL());
-                }
+			if ( null == result ) {
+				if ( !isMoodleWSRunning() ) {
+					throw new IOException( "No connection to " + bindingStub.getURL() );
+				}
 
-                if (isSessionMaybeExpired()) {
-                    LOG.debug("try relogin and call method again");
-                    tryLogin();
-                    result = callable.call();
-                }
-            }
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
+				if ( isSessionMaybeExpired() ) {
+					LOG.debug( "try relogin and call method again" );
+					tryLogin();
+					result = callable.call();
+				}
+			}
+		} catch ( Exception e ) {
+			throw new IOException( e );
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    /**
-     * Check if the moodle webservice is running.
-     * 
-     * @return Returns true if MoodleWS is running, false otherwise.
-     */
-    private boolean isMoodleWSRunning() {
-        if (null == bindingStub)
-            return false;
+	/**
+	 * Check if the moodle webservice is running.
+	 * 
+	 * @return Returns true if MoodleWS is running, false otherwise.
+	 */
+	private boolean isMoodleWSRunning() {
+		if ( null == bindingStub )
+			return false;
 
-        try {
-            new URL(bindingStub.getURL()).openConnection().connect();
-        } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
-            return false;
-        }
+		try {
+			new URL( bindingStub.getURL() ).openConnection().connect();
+		} catch ( IOException e ) {
+			LOG.warn( e.getMessage(), e );
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * @return Returns true if the webservice session in Moodle is maybe expired
-     */
-    private boolean isSessionMaybeExpired() {
-        return 0 == bindingStub.get_my_id(authClient, sessionKey);
-    }
+	/**
+	 * @return Returns true if the webservice session in Moodle is maybe expired
+	 */
+	private boolean isSessionMaybeExpired() {
+		return 0 == bindingStub.get_my_id( authClient, sessionKey );
+	}
 
-    /**
-     * Tries to login to Moodle.
-     */
-    private void tryLogin() throws IOException, AuthenticationException {
-        if (null != sessionKey)
-            bindingStub.logout(authClient, sessionKey);
+	/**
+	 * Tries to login to Moodle.
+	 */
+	private void tryLogin() throws IOException, AuthenticationException {
+		if ( null != sessionKey ) {
+			bindingStub.logout( authClient, sessionKey );
+		}
 
-        LoginReturn login = bindingStub.login(username, password);
+		LoginReturn login = bindingStub.login( username, password );
+		if ( null == login ) {
+			if ( isMoodleWSRunning() ) {
+				throw new AuthenticationException(
+				        "Maybe the login parameter are invalid or there" +
+				                " is no MoodleWS webservice." );
+			}
 
-        if (null == login) {
-            if (isMoodleWSRunning()) {
-                throw new AuthenticationException(
-                        "Maybe the login parameter are invalid or there" +
-                                " is no MoodleWS webservice.");
-            }
+			throw new IOException( "Connection to " + bindingStub.getURL() + " failed." );
+		}
 
-            throw new IOException("Connection to " + bindingStub.getURL() + " failed.");
-        }
-
-        this.authClient = login.getClient();
-        this.sessionKey = login.getSessionkey();
-    }
+		this.authClient = login.getClient();
+		this.sessionKey = login.getSessionkey();
+	}
 }

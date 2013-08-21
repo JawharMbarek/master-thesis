@@ -27,20 +27,19 @@ public class RDFStoreConnection extends Model {
         this.password = null;
     }
 
-    public RDFStoreConnection(String serverUrl, String repositoryId) {
+    public RDFStoreConnection( String serverUrl, String repositoryId ) {
+        this();
         this.serverUri = serverUrl;
         this.repositoryId = repositoryId;
         this.anonymousLogin = true;
-        this.username = null;
-        this.password = null;
     }
 
     public String getServerUri() {
         return serverUri;
     }
 
-    public void setServerUri(String serverUri) {
-        firePropertyChange("serverUri", this.serverUri, serverUri);
+    public void setServerUri( String serverUri ) {
+        firePropertyChange( "serverUri", this.serverUri, serverUri );
         this.serverUri = serverUri;
     }
 
@@ -48,8 +47,8 @@ public class RDFStoreConnection extends Model {
         return repositoryId;
     }
 
-    public void setRepositoryId(String repositoryId) {
-        firePropertyChange("repositoryId", this.repositoryId, repositoryId);
+    public void setRepositoryId( String repositoryId ) {
+        firePropertyChange( "repositoryId", this.repositoryId, repositoryId );
         this.repositoryId = repositoryId;
     }
 
@@ -57,8 +56,8 @@ public class RDFStoreConnection extends Model {
         return anonymousLogin;
     }
 
-    public void setAnonymousLogin(boolean isAnonymousLogin) {
-        firePropertyChange("anonymousLogin", this.anonymousLogin, isAnonymousLogin);
+    public void setAnonymousLogin( boolean isAnonymousLogin ) {
+        firePropertyChange( "anonymousLogin", this.anonymousLogin, isAnonymousLogin );
         this.anonymousLogin = isAnonymousLogin;
     }
 
@@ -66,8 +65,8 @@ public class RDFStoreConnection extends Model {
         return username;
     }
 
-    public void setUsername(String username) {
-        firePropertyChange("username", this.username, username);
+    public void setUsername( String username ) {
+        firePropertyChange( "username", this.username, username );
         this.username = username;
     }
 
@@ -75,18 +74,18 @@ public class RDFStoreConnection extends Model {
         return password;
     }
 
-    public void setPassword(String password) {
-        firePropertyChange("password", this.password, password);
+    public void setPassword( String password ) {
+        firePropertyChange( "password", this.password, password );
         this.password = password;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(serverUri, repositoryId, anonymousLogin, username, password);
+        return Objects.hashCode( serverUri, repositoryId, anonymousLogin, username, password );
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals( Object obj ) {
         if (null == obj) {
             return false;
         }
@@ -101,20 +100,20 @@ public class RDFStoreConnection extends Model {
 
         RDFStoreConnection other = (RDFStoreConnection) obj;
 
-        return Objects.equal(this.serverUri, other.serverUri) &&
-                Objects.equal(this.repositoryId, other.repositoryId) &&
-                Objects.equal(this.anonymousLogin, other.anonymousLogin) &&
-                Objects.equal(this.username, other.username) &&
-                Objects.equal(this.password, other.password);
+        return Objects.equal( this.serverUri, other.serverUri ) &&
+                Objects.equal( this.repositoryId, other.repositoryId ) &&
+                Objects.equal( this.anonymousLogin, other.anonymousLogin ) &&
+                Objects.equal( this.username, other.username ) &&
+                Objects.equal( this.password, other.password );
     }
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-                .add("serverUri", serverUri)
-                .add("repositoryId", repositoryId)
-                .add("isAnonymousLogin", anonymousLogin)
-                .add("username", username)
+        return Objects.toStringHelper( this )
+                .add( "serverUri", serverUri )
+                .add( "repositoryId", repositoryId )
+                .add( "isAnonymousLogin", anonymousLogin )
+                .add( "username", username )
                 .toString();
     }
 

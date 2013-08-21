@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<rdf:RDF
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns="http://www.owl-ontologies.com/Ontology1278065549.owl#"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+xml:base="http://purl.oclc.org/NET/WebApiAuthentication#">
+
+<rdf:Description rdf:ID="Service">
+  <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Service</rdfs:label>
+</rdf:Description>
+
+<rdf:Description rdf:ID="Operation">
+  <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Operation</rdfs:label>
+</rdf:Description>
+
+  <rdf:Description rdf:ID="AuthenticationMechanism">
+   <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AuthenticationMechanism</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="TransmissionMedium">
+   <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TransmissionMedium</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="ServiceAuthentication">
+  <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ServiceAuthentication</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="Credentials">
+   <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Credentials</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="HTTPBasic">
+   <rdfs:subClassOf rdf:resource="#AuthenticationMechanism"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">HTTPBasic</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="SessionBased">
+   <rdfs:subClassOf rdf:resource="#AuthenticationMechanism"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SessionBased</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="Direct">
+   <rdfs:subClassOf rdf:resource="#AuthenticationMechanism"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Direct</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="HTTPDigest">
+   <rdfs:subClassOf rdf:resource="#AuthenticationMechanism"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">HTTPDigest</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="OAuth">
+   <rdfs:subClassOf rdf:resource="#AuthenticationMechanism"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">OAuth</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="WebAPIOperation">
+   <rdfs:subClassOf rdf:resource="#AuthenticationMechanism"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">WebAPIOperation</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="wayOfSendingInformation">
+   <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Property"/>
+   <rdfs:domain rdf:resource="#AuthenticationMechanism"/>
+   <rdfs:range rdf:resource="#TransmissionMedium"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">wayOfSendingInformation</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="requiresAuthentication">
+   <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Property"/>
+   <rdfs:domain rdf:resource="#Service"/>
+   <rdfs:range rdf:resource="#ServiceAuthentication"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">requiresAuthentication</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="hasOperation">
+   <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Property"/>
+   <rdfs:domain rdf:resource="#Service"/>
+   <rdfs:range rdf:resource="#Operation"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasOperation</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="hasAuthenticationMechanism">
+   <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Property"/>
+   <rdfs:domain rdf:resource="#Operation"/>
+   <rdfs:range rdf:resource="#waa_AuthenticationMechanism"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasAuthenticationMechanism</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="hasInputCredentials">
+   <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Property"/>
+   <rdfs:domain rdf:resource="#AuthenticationMechanism"/>
+   <rdfs:range rdf:resource="#Credentials"/>
+   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasInputCredentials</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="composedOf">
+  <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Property"/>
+  <rdfs:domain rdf:resource="#Credentials"/>
+  <rdfs:range rdf:resource="#Credentials"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">composedOf</rdfs:label>
+  </rdf:Description>
+  <Credentials rdf:ID="Password"/>
+  <Credentials rdf:ID="SessionId"/>
+  <Credentials rdf:ID="Username"/>
+  <Credentials rdf:ID="Token"/>
+  <Credentials rdf:ID="API_Key"/>
+  <Credentials rdf:ID="OAuthCredentials"/>
+  <HTTPBasic rdf:ID="httpBasic">
+   <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Default instance for HTTPBasic</rdfs:comment>
+  </HTTPBasic>
+  <SessionBased rdf:ID="sessionBased">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Default instance for SessionBased</rdfs:comment>
+   </SessionBased>
+   <Direct rdf:ID="direct">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Default instance for Direct</rdfs:comment>
+   </Direct>
+   <OAuth rdf:ID="oAuth">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Default instance for OAuth</rdfs:comment>
+   </OAuth>
+   <WebAPIOperation rdf:ID="webAPIOperation">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Default instance for WebAPIOperation</rdfs:comment>
+   </WebAPIOperation>
+   <HTTPDigest rdf:ID="httpDigest">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Default instance for HTTPDigest</rdfs:comment>
+   </HTTPDigest> 
+   <ServiceAuthentication rdf:ID="All"/>
+   <ServiceAuthentication rdf:ID="None"/>
+   <ServiceAuthentication rdf:ID="Some"/>   
+   <TransmissionMedium rdf:ID="ViaHTTPHeader"/>
+   <TransmissionMedium rdf:ID="ViaURI"/>
+</rdf:RDF>
+

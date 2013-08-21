@@ -87,6 +87,7 @@ public final class CanvasLmsSiocConverter {
 
             Post initPost = createTopicInitialPost(
                     connector,
+                    result,
                     discussionTopic,
                     courseId);
 
@@ -101,7 +102,7 @@ public final class CanvasLmsSiocConverter {
     }
 
     public static Post createTopicInitialPost(CanvasLmsConnector connector,
-            DiscussionTopic discussionTopic, long courseId) {
+            Container container, DiscussionTopic discussionTopic, long courseId) {
         Model model = connector.getContext().getModel();
         URI serviceEndpoint = connector.getService()
                 .getServiceEndpoint()
@@ -140,6 +141,12 @@ public final class CanvasLmsSiocConverter {
         for (Attachment attachment : discussionTopic.getAttachments()) {
             result.addAttachment(Builder.createURI(attachment.getUrl()));
         }
+
+        // update container relation.
+        result.setContainer(container);
+        container.addContainerOf(result);
+        SiocUtils.incNumItems(container);
+        SiocUtils.updateLastItemDate(container, discussionTopic.getPostedAt());
 
         return result;
     }
@@ -226,11 +233,13 @@ public final class CanvasLmsSiocConverter {
             result.setContainer(container);
             container.addContainerOf(result);
             SiocUtils.incNumItems(container);
+            SiocUtils.updateLastItemDate(container, entry.getCreatedAt());
 
             if (null != parentPost) {
                 result.setReplyOf(parentPost);
                 parentPost.addReply(result);
                 SiocUtils.incNumReplies(parentPost);
+                SiocUtils.updateLastReplyDate(parentPost, entry.getCreatedAt());
             }
         }
 

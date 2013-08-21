@@ -19,14 +19,15 @@ import com.google.common.base.Preconditions;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.utils.SiocUtils;
 
-public class SoccContainerPollConsumer extends ScheduledPollConsumer implements ISoccConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger( SoccContainerPollConsumer.class );
+public class SoccPostPollConsumer extends ScheduledPollConsumer implements ISoccPostConsumer {
+    private static final Logger LOG = LoggerFactory.getLogger( SoccPostPollConsumer.class );
 
     private IPostReader postReader;
     private Container container;
+    private Post post;
     private int limit;
 
-    public SoccContainerPollConsumer( Endpoint endpoint, Processor processor ) {
+    public SoccPostPollConsumer( Endpoint endpoint, Processor processor ) {
         super( endpoint, processor );
     }
 
@@ -53,28 +54,29 @@ public class SoccContainerPollConsumer extends ScheduledPollConsumer implements 
     }
 
     @Override
+    public Post getPost() {
+        return post;
+    }
+
+    @Override
+    public void setPost( Post post ) {
+        this.post = Preconditions.checkNotNull( post,
+                "Required parameter post must be specified." );
+    }
+
+    @Override
     public int getLimit() {
         return limit;
     }
 
+    @Override
     public void setLimit( int limit ) {
         this.limit = Math.max( -1, limit );
     }
 
-    @Override
     protected int poll() throws Exception {
-        Date lastItemDate = SiocUtils.getLastItemDate( container );
-        LOG.debug( "Poll posts since='{}' limit='{}' container='{}'",
-                lastItemDate,
-                limit,
-                container );
-
-        List<Post> posts = postReader.readNewPosts(
-                lastItemDate,
-                limit,
-                container );
-
-        LOG.debug( "Polled {} posts.", posts.size() );
+        Date since = SiocUtils.getLastReplyDate( post );
+        List<Post> posts = postReader.readNewReplies( since, limit, post );
 
         for ( Post post : posts ) {
             LOG.debug( "receive message {}", post );

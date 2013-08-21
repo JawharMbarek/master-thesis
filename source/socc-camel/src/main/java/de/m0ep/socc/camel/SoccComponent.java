@@ -12,12 +12,10 @@ import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.client.util.Lists;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.IConnector;
@@ -67,12 +65,9 @@ public class SoccComponent extends DefaultComponent {
         String connectorId = pathElements.remove( 0 );
         IConnector connector = getSoccContext().getConnector( connectorId );
 
-        SoccEndpoint endpoint = new SoccEndpoint(
-                uri,
-                this,
-                connector,
-                ImmutableList.copyOf( pathElements ),
-                Strings.emptyToNull( (String) parameters.remove( "post" ) ) );
+        SoccEndpoint endpoint = new SoccEndpoint( uri, this, connector, pathElements );
+
+        endpoint.configureProperties( parameters );
         endpoint.setConsumerProperties( parameters );
 
         return endpoint;

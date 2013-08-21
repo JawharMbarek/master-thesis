@@ -6,16 +6,21 @@ import org.apache.camel.impl.DefaultProducer;
 import org.ontoware.rdf2go.util.Builder;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 
-public class SoccContainerProducer extends DefaultProducer implements ISoccProducer {
+public class SoccPostProducer extends DefaultProducer implements ISoccPostProducer {
+    private static final Logger LOG = LoggerFactory.getLogger( SoccPostProducer.class );
+
     private IPostWriter postWriter;
     private Container container;
+    private Post post;
 
-    public SoccContainerProducer( Endpoint endpoint ) {
+    public SoccPostProducer( Endpoint endpoint ) {
         super( endpoint );
     }
 
@@ -42,13 +47,25 @@ public class SoccContainerProducer extends DefaultProducer implements ISoccProdu
     }
 
     @Override
+    public Post getPost() {
+        return post;
+    }
+
+    @Override
+    public void setPost( Post post ) {
+        this.post = Preconditions.checkNotNull( post,
+                "Required parameter post must be specified." );
+    }
+
+    @Override
     public void process( Exchange exchange ) throws Exception {
         String body = exchange.getIn().getBody( String.class );
 
-        Post post = Post.getInstance(
+        Post replyPost = Post.getInstance(
                 postWriter.getConnector().getContext().getModel(),
                 Builder.createURI( body ) );
 
-        postWriter.writePost( post, container );
+        postWriter.writeReply( replyPost, post );
+        LOG.debug( "Write reply {} to {} ", replyPost, post );
     }
 }

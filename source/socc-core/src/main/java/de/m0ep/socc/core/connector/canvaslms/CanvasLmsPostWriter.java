@@ -7,6 +7,8 @@ import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -27,6 +29,8 @@ import de.m0ep.socc.core.utils.SiocUtils;
 public class CanvasLmsPostWriter extends
         AbstractConnectorIOComponent<CanvasLmsConnector> implements
         IPostWriter {
+    private static final Logger LOG = LoggerFactory
+            .getLogger(CanvasLmsPostWriter.class);
 
     public CanvasLmsPostWriter(final CanvasLmsConnector connector) {
         super(connector);
@@ -233,6 +237,8 @@ public class CanvasLmsPostWriter extends
         String content = replyPost.getContent();
         if (null == client) { // No client found, get default one an modify
                               // message content
+            LOG.debug("no client found  use dafault.");
+
             client = getConnector().getServiceClientManager()
                     .getDefaultClient();
             content = PostWriterUtils.createContentOfUnknownAccount(

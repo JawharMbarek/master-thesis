@@ -10,9 +10,7 @@ import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
-import org.rdfs.sioc.Forum;
-import org.rdfs.sioc.Post;
-import org.rdfs.sioc.Thread;
+import org.rdfs.sioc.Container;
 
 import com.google.common.collect.Lists;
 import com.xmlns.foaf.Person;
@@ -24,6 +22,7 @@ import de.m0ep.sioc.services.auth.UserAccount;
 import de.m0ep.sioc.services.auth.Username;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.SoccContext;
+import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.connector.moodle.Moodle2Connector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
@@ -67,10 +66,6 @@ public class Moodle2ConnectorTestApp {
 		config.setDefaultUserAccount( defaultUserAccount );
 		config.setService( service );
 
-		Post replyPost = new Post( model, true );
-		replyPost.setContent( "i'm a post!" );
-		replyPost.setCreator( defaultUserAccount );
-
 		Moodle2Connector connector = new Moodle2Connector( context, config );
 
 		try {
@@ -80,35 +75,25 @@ public class Moodle2ConnectorTestApp {
 			return;
 		}
 
-		List<Forum> forums = connector.getStructureReader().listForums();
-		for ( Forum forum : forums ) {
-			System.out.println( forum.getName() + " " + forum );
+		IStructureReader<Moodle2Connector> structureReader = connector.getStructureReader();
 
-			List<Thread> threads = connector.getStructureReader().listThreads(
-			        forum );
-			for ( Thread thread : threads ) {
-				System.out.println( thread.getName() + " " + thread );
-				//connector.getPostWriter().writePost( replyPost, thread );
+		List<Container> forums = structureReader.listContainer();
+		for ( Container forum : forums ) {
+			System.out.println( "URI : " + forum );
+			System.out.println( "ID  : " + forum.getId() );
+			System.out.println( "Name: " + forum.getName() );
+			System.out.println( "----------------------------" );
 
-				List<Post> posts = connector.getPostReader().readNewPosts( null,
-				        -1, thread );
-
-				for ( Post post : posts ) {
-					System.out.println( post.getContent() + " " + post );
-				}
+			List<Container> threads = structureReader.listContainer( forum.asURI() );
+			System.err.println( threads.size() );
+			for ( Container thread : threads ) {
+				System.out.println( "\tURI : " + thread );
+				System.out.println( "\tID  : " + thread.getId() );
+				System.out.println( "\tName: " + thread.getName() );
+				System.out.println( "\t----------------------------" );
 			}
 		}
 
-		System.out.println();
-		System.out.println( "read replies" );
-		List<Post> posts = connector.getPostReader().readNewReplies(
-		        null,
-		        -1,
-		        Post.getInstance( model, Builder
-		                .createURI( "http://localhost/moodle/mod/forum/discuss.php?d=1#p1" ) ) );
-		for ( Post post : posts ) {
-			System.out.println( post.getContent() + " " + post );
-		}
 		printModel( model );
 		model.close();
 	}

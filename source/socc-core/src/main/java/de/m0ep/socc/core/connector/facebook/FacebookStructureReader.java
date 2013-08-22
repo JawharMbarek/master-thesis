@@ -72,6 +72,24 @@ public class FacebookStructureReader extends
 	}
 
 	@Override
+	public Container getContainer( URI uri ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Container> listContainer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Container> listContainer( URI parent ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public Forum getForum( String id ) throws NotFoundException,
 	        AuthenticationException, IOException {
 		Preconditions.checkNotNull( id,

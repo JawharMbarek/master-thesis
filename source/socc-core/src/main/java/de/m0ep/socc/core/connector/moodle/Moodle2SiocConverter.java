@@ -245,31 +245,31 @@ public class Moodle2SiocConverter {
 
 	private static URI createSiocForumUri( URI rootUri, int id ) {
 		return Builder.createURI(
-		        UriTemplate.fromTemplate( rootUri + "/mod/forum/view.php?id={forumId}" )
-		                .set( "forumId", id )
+		        UriTemplate.fromTemplate( rootUri + Moodle2Constants.TEMPLATE_FORUM_URI )
+		                .set( Moodle2Constants.TEMPLATE_VAR_FORUM_ID, id )
 		                .expand() );
 	}
 
 	private static URI createSiocThreadUri( URI rootUri, int id ) {
 		return Builder.createURI(
-		        UriTemplate.fromTemplate( rootUri + "/mod/forum/discuss.php?d={discussionId}" )
-		                .set( "discussionId", id )
+		        UriTemplate.fromTemplate( rootUri + Moodle2Constants.TEMPLATE_DISCUSSION_URI )
+		                .set( Moodle2Constants.TEMPLATE_VAR_DISCUSSION_ID, id )
 		                .expand() );
 	}
 
-	private static URI createSiocPostUri( URI rootUri, int discussionId, int postId ) {
+	private static URI createSiocPostUri( URI rootUri, int discussionId, int entryId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( rootUri
-		                + "/mod/forum/discuss.php?d={discussionId}#p{postId}" )
-		                .set( "discussionId", discussionId )
-		                .set( "postId", postId )
+		                + Moodle2Constants.TEMPLATE_ENTRY_URI )
+		                .set( Moodle2Constants.TEMPLATE_VAR_DISCUSSION_ID, discussionId )
+		                .set( Moodle2Constants.TEMPLATE_VAR_ENTRY_ID, entryId )
 		                .expand() );
 	}
 
 	private static URI createSiocUserUri( URI rootUri, int id ) {
 		return Builder.createURI(
-		        UriTemplate.fromTemplate( rootUri + "/user/profile.php?id={userId}" )
-		                .set( "userId", id )
+		        UriTemplate.fromTemplate( rootUri + Moodle2Constants.TEMPLATE_USER_URI )
+		                .set( Moodle2Constants.TEMPLATE_VAR_USER_ID, id )
 		                .expand() );
 	}
 }

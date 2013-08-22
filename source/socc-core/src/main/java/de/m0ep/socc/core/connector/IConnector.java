@@ -26,11 +26,10 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
-import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Site;
-import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 import org.rdfs.sioc.services.Service;
 
@@ -142,64 +141,58 @@ public interface IConnector {
 		public Site getSite();
 
 		/**
-		 * Returns a {@link Forum} by its <code>id</code>.
+		 * Returns a {@link Container} that is located at the provided
+		 * {@link URI}
 		 * 
-		 * @param id
-		 * @throws NullPointerException
-		 *             Thrown if <code>id</code> is <code>null</code>.
-		 * @throws IllegalArgumentException
-		 *             Thrown if <code>id</code> is empty.
-		 * @throws IOException
-		 *             Thrown if there is a problem with the connection to the
-		 *             service endpoint.
-		 * @throws AuthenticationException
+		 * @param uri
+		 *            {@link URI} to load the {@link Container}.
+		 * 
+		 * @return The {@link Container} at the <code>uri</code>.
+		 * 
 		 * @throws NotFoundException
-		 *             Thrown if there is no {@link Forum} with this
-		 *             <code>id</code> .
+		 *             Thrown if there is no {@link Container} at this
+		 *             <code>uri</code>.
+		 * @throws AuthenticationException
+		 *             Thrown if authentication to the service failed.
+		 * @throws IOException
+		 *             Thrown if there is a problem reading data from the
+		 *             service.
 		 */
-		public Forum getForum( String id ) throws NotFoundException,
+		public Container getContainer( URI uri ) throws
+		        NotFoundException,
 		        AuthenticationException,
 		        IOException;
 
 		/**
-		 * Returns a {@link List} with all {@link Forum}s of this service.
+		 * List all first level {@link Container}s a the service.
 		 * 
-		 * @throws IOException
+		 * @return {@link List} of all found {@link Container}s
 		 * @throws AuthenticationException
+		 *             Thrown if authentication to the service failed.
+		 * @throws IOException
+		 *             Thrown if there is a problem reading data from the
+		 *             service.
 		 */
-		public List<Forum> listForums() throws AuthenticationException,
+		public List<Container> listContainer() throws
+		        AuthenticationException,
 		        IOException;
 
 		/**
-		 * Returns a {@link Thread} by its <code>id</code>.
+		 * List all child {@link Container}s of the parent at the
+		 * <code>parentUri</code>.
 		 * 
-		 * @param id
+		 * @param parentURI
+		 *            The <code>parentUri</code> to search for child
+		 *            {@link Container}s
+		 * @return {@link List} of all found {@link Container}s.
 		 * @throws AuthenticationException
-		 * @throws NullPointerException
-		 *             Thrown if <code>id</code> is <code>null</code>.
-		 * @throws IllegalArgumentException
-		 *             Thrown if <code>id</code> is empty.
+		 *             Thrown if authentication to the service failed.
 		 * @throws IOException
-		 *             Thrown if there is a problem with the connection to the
-		 *             service endpoint.
-		 * @throws NotFoundException
-		 *             Thrown if there is no {@link Thread} with this
-		 *             <code>id</code> .
+		 *             Thrown if there is a problem reading data from the
+		 *             service.
 		 */
-		public Thread getThread( String id, Container container )
-		        throws NotFoundException,
-		        AuthenticationException, IOException;
-
-		/**
-		 * Returns a {@link List} with all {@link Thread}s inside the
-		 * <code>parent</code> {@link Container}.
-		 * 
-		 * @param container
-		 * @throws AuthenticationException
-		 * @throws IOException
-		 */
-		public List<Thread> listThreads( Container container )
-		        throws AuthenticationException,
+		public List<Container> listContainer( URI parentURI ) throws
+		        AuthenticationException,
 		        IOException;
 	}
 

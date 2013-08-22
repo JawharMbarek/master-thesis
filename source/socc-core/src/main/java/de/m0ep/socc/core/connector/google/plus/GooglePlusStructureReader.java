@@ -25,6 +25,7 @@ package de.m0ep.socc.core.connector.google.plus;
 import java.io.IOException;
 import java.util.List;
 
+import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Site;
@@ -73,6 +74,24 @@ public class GooglePlusStructureReader extends
 		result.setName( "Google Plus" );
 
 		return result;
+	}
+
+	@Override
+	public Container getContainer( URI uri ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Container> listContainer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Container> listContainer( URI parent ) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

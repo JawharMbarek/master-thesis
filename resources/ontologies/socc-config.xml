@@ -72,10 +72,10 @@
      -->
 
     
-    <!-- http://www.m0ep.de/socc/config#connectorClass 
+    <!-- http://www.m0ep.de/socc/config#connectorClass Name
         Java class of the connector
     -->
-    <owl:DatatypeProperty rdf:about="http://www.m0ep.de/socc/config#connectorClass">
+    <owl:DatatypeProperty rdf:about="http://www.m0ep.de/socc/config#connectorClassName">
         <rdfs:domain rdf:resource="http://www.m0ep.de/socc/config#ConnectorConfig"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>

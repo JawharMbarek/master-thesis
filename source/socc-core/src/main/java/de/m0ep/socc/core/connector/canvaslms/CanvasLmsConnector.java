@@ -35,18 +35,18 @@ import com.google.common.base.Throwables;
 import de.m0ep.canvas.CanvasLmsClient;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
-import de.m0ep.socc.core.connector.AbstractConnector;
-import de.m0ep.socc.core.connector.IServiceClientManager;
+import de.m0ep.socc.core.connector.DefaultConnector;
+import de.m0ep.socc.core.connector.IClientManager;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
 /**
  * @author Florian Müller
  */
-public class CanvasLmsConnector extends AbstractConnector {
+public class CanvasLmsConnector extends DefaultConnector {
     private static final Logger LOG = LoggerFactory
             .getLogger(CanvasLmsConnector.class);
 
-    private IServiceClientManager<CanvasLmsClient> clientManager;
+    private IClientManager<CanvasLmsClient> clientManager;
     private IStructureReader serviceStructureReader;
     private IPostReader postReader;
     private IPostWriter postWriter;
@@ -71,7 +71,7 @@ public class CanvasLmsConnector extends AbstractConnector {
 
     @SuppressWarnings("unchecked")
     @Override
-    public IServiceClientManager<CanvasLmsClient> getServiceClientManager() {
+    public IClientManager<CanvasLmsClient> getServiceClientManager() {
         return clientManager;
     }
 

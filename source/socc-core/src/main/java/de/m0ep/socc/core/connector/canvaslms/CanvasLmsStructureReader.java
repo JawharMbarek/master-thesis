@@ -42,7 +42,7 @@ import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.exceptions.NetworkException;
 import de.m0ep.canvas.model.Course;
 import de.m0ep.canvas.model.DiscussionTopic;
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
@@ -55,7 +55,7 @@ import de.m0ep.socc.core.utils.SiocUtils;
  * @author Florian Müller
  */
 public class CanvasLmsStructureReader extends
-        AbstractConnectorIOComponent<CanvasLmsConnector>
+        DefaultConnectorIOComponent<CanvasLmsConnector>
         implements IStructureReader {
 
     private CanvasLmsClient defaultClient;

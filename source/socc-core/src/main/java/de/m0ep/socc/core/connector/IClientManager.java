@@ -8,7 +8,7 @@ import org.rdfs.sioc.services.Service;
 
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
-public interface IServiceClientManager<T> {
+public interface IClientManager<T> {
 
     /**
      * Returns the set service.
@@ -93,7 +93,7 @@ public interface IServiceClientManager<T> {
     public boolean contains(UserAccount userAccount);
 
     /**
-     * Clears the {@link IServiceClientManager} and frees all allocated
+     * Clears the {@link IClientManager} and frees all allocated
      * resources.
      */
     public void clear();

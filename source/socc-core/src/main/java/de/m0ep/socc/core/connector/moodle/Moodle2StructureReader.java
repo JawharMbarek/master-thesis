@@ -32,7 +32,7 @@ import com.google.common.collect.Lists;
 
 import de.m0ep.moodlews.soap.ForumDiscussionRecord;
 import de.m0ep.moodlews.soap.ForumRecord;
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
@@ -40,7 +40,7 @@ import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 
 public class Moodle2StructureReader extends
-        AbstractConnectorIOComponent<Moodle2Connector>
+        DefaultConnectorIOComponent<Moodle2Connector>
         implements
         IStructureReader {
 

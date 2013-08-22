@@ -18,7 +18,7 @@ import com.xmlns.foaf.Person;
 
 import de.m0ep.moodlews.soap.ForumPostDatum;
 import de.m0ep.moodlews.soap.ForumPostRecord;
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
@@ -26,7 +26,7 @@ import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 
 public class Moodle2PostWriter extends
-        AbstractConnectorIOComponent<Moodle2Connector> implements IPostWriter {
+        DefaultConnectorIOComponent<Moodle2Connector> implements IPostWriter {
 
     private final Map<Integer, Post> firstPostIdMap = new HashMap<Integer, Post>();
 

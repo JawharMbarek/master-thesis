@@ -13,16 +13,16 @@ import com.google.common.base.Preconditions;
 
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
-import de.m0ep.socc.core.connector.AbstractConnector;
-import de.m0ep.socc.core.connector.IServiceClientManager;
+import de.m0ep.socc.core.connector.DefaultConnector;
+import de.m0ep.socc.core.connector.IClientManager;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
-public class Moodle2Connector extends AbstractConnector {
+public class Moodle2Connector extends DefaultConnector {
     private static final Logger LOG = LoggerFactory
             .getLogger(Moodle2Connector.class);
 
     private URI serviceEndpointUri;
-    private IServiceClientManager<Moodle2ClientWrapper> serviceClientManager;
+    private IClientManager<Moodle2ClientWrapper> serviceClientManager;
 
     private IStructureReader serviceStructureReader;
     private IPostReader postReader;
@@ -40,7 +40,7 @@ public class Moodle2Connector extends AbstractConnector {
 
     @SuppressWarnings("unchecked")
     @Override
-    public IServiceClientManager<Moodle2ClientWrapper> getServiceClientManager() {
+    public IClientManager<Moodle2ClientWrapper> getServiceClientManager() {
         return serviceClientManager;
     }
 

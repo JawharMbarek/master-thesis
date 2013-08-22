@@ -42,13 +42,13 @@ import com.restfb.json.JsonObject;
 import com.restfb.types.Group;
 import com.restfb.types.User;
 
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
 public class FacebookStructureReader extends
-        AbstractConnectorIOComponent<FacebookConnector>
+        DefaultConnectorIOComponent<FacebookConnector>
         implements IStructureReader {
 
     private FacebookClientWrapper defaultClient;

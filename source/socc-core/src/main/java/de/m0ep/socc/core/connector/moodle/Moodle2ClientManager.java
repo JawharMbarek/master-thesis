@@ -11,11 +11,11 @@ import de.m0ep.sioc.services.auth.Credentials;
 import de.m0ep.sioc.services.auth.Password;
 import de.m0ep.sioc.services.auth.ServicesAuthVocabulary;
 import de.m0ep.sioc.services.auth.Username;
-import de.m0ep.socc.core.connector.AbstractServiceClientManager;
+import de.m0ep.socc.core.connector.DefauktClientManager;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 public class Moodle2ClientManager extends
-        AbstractServiceClientManager<Moodle2ClientWrapper> {
+        DefauktClientManager<Moodle2ClientWrapper> {
 
 	public Moodle2ClientManager( Service service, UserAccount defaultUserAccount )
 	        throws Exception {

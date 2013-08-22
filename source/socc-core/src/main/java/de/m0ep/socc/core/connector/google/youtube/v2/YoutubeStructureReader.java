@@ -44,14 +44,14 @@ import com.google.gdata.util.ResourceNotFoundException;
 import com.google.gdata.util.ServiceException;
 import com.google.gdata.util.ServiceForbiddenException;
 
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 public class YoutubeStructureReader extends
-        AbstractConnectorIOComponent<YoutubeConnector> implements
+        DefaultConnectorIOComponent<YoutubeConnector> implements
         IStructureReader {
 
     private YoutubeClientWrapper defaultClient;

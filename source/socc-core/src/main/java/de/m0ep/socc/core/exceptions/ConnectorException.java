@@ -1,5 +1,5 @@
 /*
- * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * The MIT License (MIT) Copyright © 2013 "Florian Mueller"
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the “Software”), to deal
@@ -20,21 +20,33 @@
  * SOFTWARE.
  */
 
-package de.m0ep.socc.core;
+package de.m0ep.socc.core.exceptions;
 
-import org.ontoware.rdf2go.model.Model;
+import java.io.IOException;
 
-import de.m0ep.socc.core.acl.IAccessControl;
+import de.m0ep.socc.core.connector.IConnector;
 
-public interface ISoccContext {
-	/**
-	 * Returns the {@link Model} that is used by the {@link ISoccContext}
-	 * instance.
-	 */
-	public Model getModel();
+/**
+ * Exception that is thrown if there is a problem with a {@link IConnector}.
+ * 
+ * @author "Florian Mueller"
+ * 
+ */
+public class ConnectorException extends IOException {
+	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Returns an {@link IAccessControl} instance.
-	 */
-	public IAccessControl getAccessControl();
+	public ConnectorException() {
+	}
+
+	public ConnectorException( String message ) {
+		super( message );
+	}
+
+	public ConnectorException( Throwable cause ) {
+		super( cause );
+	}
+
+	public ConnectorException( String message, Throwable cause ) {
+		super( message, cause );
+	}
 }

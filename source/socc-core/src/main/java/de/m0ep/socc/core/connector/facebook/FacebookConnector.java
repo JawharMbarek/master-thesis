@@ -36,16 +36,16 @@ import com.restfb.exception.FacebookOAuthException;
 
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
-import de.m0ep.socc.core.connector.AbstractConnector;
-import de.m0ep.socc.core.connector.IServiceClientManager;
+import de.m0ep.socc.core.connector.DefaultConnector;
+import de.m0ep.socc.core.connector.IClientManager;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
-public class FacebookConnector extends AbstractConnector {
+public class FacebookConnector extends DefaultConnector {
     public static final URI URI_SERVICE_ENDPOINT = Builder
             .createURI("https://www.facebook.com");
 
-    private IServiceClientManager<FacebookClientWrapper> clientManager;
+    private IClientManager<FacebookClientWrapper> clientManager;
     private IStructureReader serviceStructureReader;
     private IPostReader postReader;
     private IPostWriter postWriter;
@@ -62,7 +62,7 @@ public class FacebookConnector extends AbstractConnector {
 
     @SuppressWarnings("unchecked")
     @Override
-    public IServiceClientManager<FacebookClientWrapper> getServiceClientManager() {
+    public IClientManager<FacebookClientWrapper> getServiceClientManager() {
         return clientManager;
     }
 

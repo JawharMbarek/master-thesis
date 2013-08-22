@@ -42,13 +42,13 @@ import com.google.gdata.data.youtube.YouTubeNamespace;
 import com.google.gdata.util.ServiceException;
 import com.xmlns.foaf.Person;
 
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 
 public class YoutubePostWriter extends
-        AbstractConnectorIOComponent<YoutubeConnector> implements IPostWriter {
+        DefaultConnectorIOComponent<YoutubeConnector> implements IPostWriter {
     private static final Logger LOG = LoggerFactory
             .getLogger(YoutubePostWriter.class);
 

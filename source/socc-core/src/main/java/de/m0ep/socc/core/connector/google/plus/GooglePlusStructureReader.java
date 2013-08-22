@@ -34,14 +34,14 @@ import com.google.api.services.plus.model.Person;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
 
 public class GooglePlusStructureReader extends
-        AbstractConnectorIOComponent<GooglePlusConnector> implements
+        DefaultConnectorIOComponent<GooglePlusConnector> implements
         IStructureReader {
 
     private GooglePlusClientWrapper defaultClient;

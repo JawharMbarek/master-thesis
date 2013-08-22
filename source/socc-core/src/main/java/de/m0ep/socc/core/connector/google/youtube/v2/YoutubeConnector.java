@@ -36,17 +36,17 @@ import com.google.common.base.Throwables;
 
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
-import de.m0ep.socc.core.connector.AbstractConnector;
-import de.m0ep.socc.core.connector.IServiceClientManager;
+import de.m0ep.socc.core.connector.DefaultConnector;
+import de.m0ep.socc.core.connector.IClientManager;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
-public class YoutubeConnector extends AbstractConnector {
+public class YoutubeConnector extends DefaultConnector {
     private static final Logger LOG = LoggerFactory
             .getLogger(YoutubeConnector.class);
 
     private URI serviceEndpoint = Builder.createURI("http://www.youtube.com");
 
-    private IServiceClientManager<YoutubeClientWrapper> serviceClientManager;
+    private IClientManager<YoutubeClientWrapper> serviceClientManager;
     private IStructureReader serviceStructureReader;
     private IPostReader postReader;
     private IPostWriter postWriter;
@@ -65,7 +65,7 @@ public class YoutubeConnector extends AbstractConnector {
 
     @SuppressWarnings("unchecked")
     @Override
-    public IServiceClientManager<YoutubeClientWrapper> getServiceClientManager() {
+    public IClientManager<YoutubeClientWrapper> getServiceClientManager() {
         return serviceClientManager;
     }
 

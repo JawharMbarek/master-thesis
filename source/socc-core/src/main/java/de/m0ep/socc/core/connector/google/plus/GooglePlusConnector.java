@@ -35,17 +35,17 @@ import com.google.api.client.repackaged.com.google.common.base.Throwables;
 
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
-import de.m0ep.socc.core.connector.AbstractConnector;
-import de.m0ep.socc.core.connector.IServiceClientManager;
+import de.m0ep.socc.core.connector.DefaultConnector;
+import de.m0ep.socc.core.connector.IClientManager;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
-public class GooglePlusConnector extends AbstractConnector {
+public class GooglePlusConnector extends DefaultConnector {
 
     private static final URI URI_SERVICE_ENDPOINT = Builder
             .createURI("https://plus.google.com");
 
-    private IServiceClientManager<GooglePlusClientWrapper> clientManager;
+    private IClientManager<GooglePlusClientWrapper> clientManager;
     private IStructureReader structureReader;
     private IPostReader postReader;
 
@@ -61,7 +61,7 @@ public class GooglePlusConnector extends AbstractConnector {
 
     @SuppressWarnings("unchecked")
     @Override
-    public IServiceClientManager<GooglePlusClientWrapper> getServiceClientManager() {
+    public IClientManager<GooglePlusClientWrapper> getServiceClientManager() {
         return clientManager;
     }
 

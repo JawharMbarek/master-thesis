@@ -37,14 +37,14 @@ import com.restfb.Parameter;
 import com.restfb.exception.FacebookException;
 import com.restfb.json.JsonObject;
 
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 
 public class FacebookPostReader extends
-        AbstractConnectorIOComponent<FacebookConnector> implements IPostReader {
+        DefaultConnectorIOComponent<FacebookConnector> implements IPostReader {
 
     private FacebookClientWrapper defaultClient;
 

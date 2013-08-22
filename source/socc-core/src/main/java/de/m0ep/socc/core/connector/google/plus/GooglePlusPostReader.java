@@ -41,13 +41,13 @@ import com.google.api.services.plus.model.CommentFeed;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 public class GooglePlusPostReader extends
-        AbstractConnectorIOComponent<GooglePlusConnector> implements
+        DefaultConnectorIOComponent<GooglePlusConnector> implements
         IPostReader {
 	private static final Logger LOG = LoggerFactory
 	        .getLogger( GooglePlusPostReader.class );

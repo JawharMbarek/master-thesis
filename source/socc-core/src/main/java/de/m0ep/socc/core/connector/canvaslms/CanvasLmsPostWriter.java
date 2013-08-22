@@ -19,7 +19,7 @@ import de.m0ep.canvas.exceptions.AuthorizationException;
 import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.exceptions.NetworkException;
 import de.m0ep.canvas.model.Entry;
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
@@ -27,7 +27,7 @@ import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 
 public class CanvasLmsPostWriter extends
-        AbstractConnectorIOComponent<CanvasLmsConnector> implements
+        DefaultConnectorIOComponent<CanvasLmsConnector> implements
         IPostWriter {
     private static final Logger LOG = LoggerFactory
             .getLogger(CanvasLmsPostWriter.class);

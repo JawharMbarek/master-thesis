@@ -14,13 +14,13 @@ import com.google.common.collect.Lists;
 
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
-public abstract class AbstractServiceClientManager<T> implements
-        IServiceClientManager<T> {
+public abstract class DefauktClientManager<T> implements
+        IClientManager<T> {
     private Service service;
     private T defaultClient;
     private Map<Integer, T> clientMap = Maps.newHashMap();
 
-    public AbstractServiceClientManager(Service service,
+    public DefauktClientManager(Service service,
             UserAccount defaultUserAccount)
             throws Exception {
         this.service = Preconditions.checkNotNull(service,

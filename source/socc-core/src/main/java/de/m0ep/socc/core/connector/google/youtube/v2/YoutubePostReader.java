@@ -44,13 +44,13 @@ import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.VideoFeed;
 import com.google.gdata.util.ServiceException;
 
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 public class YoutubePostReader extends
-        AbstractConnectorIOComponent<YoutubeConnector> implements
+        DefaultConnectorIOComponent<YoutubeConnector> implements
         IPostReader {
     private static final Logger LOG = LoggerFactory
             .getLogger(YoutubePostReader.class);

@@ -157,7 +157,7 @@ public class GooglePlusPostReader extends
 	}
 
 	@Override
-	public List<Post> readNewReplies( Date since, long limit, Post parentPost )
+	public List<Post> pollRepliesAtPost( Date since, long limit, Post parentPost )
 	        throws AuthenticationException, IOException {
 		if ( 0 == limit ) {
 			return Lists.newArrayList();

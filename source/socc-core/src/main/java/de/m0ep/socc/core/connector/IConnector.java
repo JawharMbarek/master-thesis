@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
@@ -204,77 +205,14 @@ public interface IConnector {
 	 */
 	public static interface IPostReader<T extends IConnector> extends IConnectorIOComponent<T> {
 
-		/**
-		 * Returns true if the provided <code>container</code> contains possibly
-		 * posts, false otherwise.
-		 * 
-		 * @param container
-		 * @throws NullPointerException
-		 *             Thrown if <code>container</code> is <code>null</code>.
-		 */
-		public boolean containsPosts( Container container );
+		public Post readPost( URI uri ) throws
+		        NotFoundException,
+		        AuthenticationException,
+		        IOException;
 
-		/**
-		 * Polls the for new {@link Post}s inside the provided
-		 * <code>container</code>. The result can be limit to a certain amount
-		 * of new Posts by the <code>limit</code> parameter. Use
-		 * <code>limit = -1</code> to return all results.
-		 * 
-		 * @param since
-		 * @param limit
-		 *            Limit results to this number of entries. Use -1 to disable
-		 *            limitation.
-		 * @param container
-		 *            The container to poll.
-		 * @throws AuthenticationException
-		 *             Thrown if there is a problem to authenticate the user
-		 *             account.
-		 * @throws IOException
-		 *             Thrown if there is a problem with the network.
-		 * @throws NullPointerException
-		 *             Thrown if <code>container</code> is <code>null</code>.
-		 * @throws IllegalArgumentException
-		 *             Thrown if <code>container</code> doesn't belong to the
-		 *             connector.
-		 */
-		public List<Post> readNewPosts( Date since, long limit,
-		        Container container )
-		        throws AuthenticationException, IOException;
-
-		/**
-		 * Returns true if a {@link Post} contains possibly some replies, false
-		 * otherwise.
-		 * 
-		 * @param post
-		 * @throws NullPointerException
-		 *             Thrown if <code>parent</code> is <code>null</code>.
-		 */
-		public boolean containsReplies( Post post );
-
-		/**
-		 * Polls for new replies to a provided parent {@link Post}. The result
-		 * can be limit to a certain amount of new Posts by the
-		 * <code>limit</code> parameter. Use <code>limit = -1</code> to return
-		 * all results.
-		 * 
-		 * @param limit
-		 *            Limit results to this number of entries. Use -1 to disable
-		 *            limitation.
-		 * @param parentPost
-		 *            The parent post to poll.
-		 * @throws AuthenticationException
-		 *             Thrown if there is a problem to authenticate the user
-		 *             account.
-		 * @throws IOException
-		 *             Thrown if there is a problem with the network.
-		 * @throws NullPointerException
-		 *             Thrown if <code>parent</code> is <code>null</code>.
-		 * @throws IllegalArgumentException
-		 *             Thrown if <code>parent</code> doesn't belong to the
-		 *             connector.
-		 */
-		public List<Post> readNewReplies( Date since, long limit, Post parentPost )
-		        throws AuthenticationException, IOException;
+		public List<Post> pollPosts( URI sourceUri, Date since, int limit ) throws
+		        AuthenticationException,
+		        IOException;
 	}
 
 	/**
@@ -284,70 +222,9 @@ public interface IConnector {
 	 * @author Florian Müller
 	 */
 	public static interface IPostWriter<T extends IConnector> extends IConnectorIOComponent<T> {
-		/**
-		 * Returns true if it's possible to write to the provided container,
-		 * false otherwise.
-		 * 
-		 * @param container
-		 * @throws NullPointerException
-		 *             Thrown if <code>container</code> is <code>null</code>.
-		 */
-		public boolean canPostTo( Container container );
-
-		/**
-		 * Writes a <code>post</code> to the <code>container</code>
-		 * 
-		 * @param post
-		 *            The {@link Post} that should be written to the
-		 *            {@link Container}.
-		 * @param container
-		 *            The {@link Container} where the {@link Post} should be
-		 *            written to.
-		 * @throws AuthenticationException
-		 *             Thrown if there is a problem to authenticate the user
-		 *             account.
-		 * @throws IOException
-		 *             Thrown if there is a problem with the network.
-		 * @throws NullPointerException
-		 *             Thrown if <code>post</code> or <code>container</code> are
-		 *             <code>null</code>.
-		 * @throws IllegalArgumentException
-		 *             Thrown if <code>post</code> is invalid or
-		 *             <code>container</code> doesn't belong to the connector.
-		 */
-		public void writePost( Post post, Container container )
-		        throws AuthenticationException, IOException;
-
-		/**
-		 * Returns true if it's possible to reply to the provided
-		 * <code>parent</code> {@link Post}, false otherwise.
-		 * 
-		 * @param post
-		 * @throws NullPointerException
-		 *             Thrown if <code>parent</code> is <code>null</code>.
-		 */
-		public boolean canReplyTo( Post post );
-
-		/**
-		 * Writes a <code>reply</code> to a <code>parent</code> post.
-		 * 
-		 * @param replyPost
-		 *            The reply that should be written to the parent post.
-		 * @param parentPost
-		 *            The parent post where the reply should be written to.
-		 * @throws AuthenticationException
-		 *             Thrown if there is a problem to authenticate the user
-		 *             account.
-		 * @throws IOException
-		 *             Thrown if there is a problem with the network.
-		 * @throws NullPointerException
-		 *             Thrown if <code>reply</code> or <code>parent</code> are
-		 *             <code>null</code>.
-		 * @throws IllegalArgumentException
-		 *             Thrown if <code>reply</code> is invalid or
-		 *             <code>parent</code> doesn't belong to the connector.
-		 */
-		public void writeReply( Post replyPost, Post parentPost )
-		        throws AuthenticationException, IOException;
+		public void writePost( URI targetUri, String rdfString, Syntax syntax ) throws
+		        NotFoundException,
+		        AuthenticationException,
+		        IOException;
 	}
 }

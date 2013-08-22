@@ -171,7 +171,7 @@ public class YoutubePostReader extends
 	}
 
 	@Override
-	public List<Post> readNewReplies( Date lastReplyDate, long limit,
+	public List<Post> pollRepliesAtPost( Date lastReplyDate, long limit,
 	        Post parentPost )
 	        throws AuthenticationException, IOException {
 		if ( 0 == limit ) {

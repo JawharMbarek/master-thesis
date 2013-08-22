@@ -2,6 +2,7 @@ package de.m0ep.test.socc.core;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.ontoware.rdf2go.RDF2Go;
@@ -10,9 +11,13 @@ import org.ontoware.rdf2go.model.Statement;
 import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
+import org.purl.dc.terms.DCTermsVocabulary;
 import org.rdfs.sioc.Container;
+import org.rdfs.sioc.Post;
+import org.rdfs.sioc.SIOCVocabulary;
 
 import com.google.common.collect.Lists;
+import com.xmlns.foaf.FOAFVocabulary;
 import com.xmlns.foaf.Person;
 
 import de.m0ep.sioc.services.auth.Direct;
@@ -22,9 +27,12 @@ import de.m0ep.sioc.services.auth.UserAccount;
 import de.m0ep.sioc.services.auth.Username;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.SoccContext;
+import de.m0ep.socc.core.connector.IConnector.IPostReader;
+import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.connector.moodle.Moodle2Connector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
+import de.m0ep.socc.core.utils.RdfUtils;
 
 public class Moodle2ConnectorTestApp {
 
@@ -66,6 +74,12 @@ public class Moodle2ConnectorTestApp {
 		config.setDefaultUserAccount( defaultUserAccount );
 		config.setService( service );
 
+		Post reply = new Post( model, true );
+		reply.setCreator( defaultUserAccount );
+		reply.setContent( "test reply @ " + new Date() );
+
+		String replyN3 = convertPostToRdfXml( reply );
+
 		Moodle2Connector connector = new Moodle2Connector( context, config );
 
 		try {
@@ -76,6 +90,8 @@ public class Moodle2ConnectorTestApp {
 		}
 
 		IStructureReader<Moodle2Connector> structureReader = connector.getStructureReader();
+		IPostReader<Moodle2Connector> postReader = connector.getPostReader();
+		IPostWriter<Moodle2Connector> postWriter = connector.getPostWriter();
 
 		List<Container> forums = structureReader.listContainer();
 		for ( Container forum : forums ) {
@@ -91,11 +107,38 @@ public class Moodle2ConnectorTestApp {
 				System.out.println( "\tID  : " + thread.getId() );
 				System.out.println( "\tName: " + thread.getName() );
 				System.out.println( "\t----------------------------" );
+
+				postWriter.writePost( thread.asURI(), replyN3, Syntax.RdfXml );
+
+				List<Post> posts = postReader.pollPosts( thread.asURI(), null, -1 );
+				for ( Post post : posts ) {
+					System.out.println( "\t\tURI : " + post );
+					System.out.println( "\t\tID  : " + post.getId() );
+					System.out.println( "\t\tText: " + post.getContent() );
+					System.out.println( "\t\tUser: " + post.getCreator() );
+					System.out.println( "\t\t----------------------------" );
+				}
 			}
 		}
 
 		printModel( model );
 		model.close();
+	}
+
+	private static String convertPostToRdfXml( Post reply ) {
+
+		List<Statement> stmts = RdfUtils.getAllStatements( reply.getModel(), reply.getResource() );
+
+		Model tmpModel = RDF2Go.getModelFactory().createModel();
+		tmpModel.open();
+
+		tmpModel.addAll( stmts.iterator() );
+
+		try {
+			return RDFTool.modelToString( tmpModel, Syntax.RdfXml );
+		} finally {
+			tmpModel.close();
+		}
 	}
 
 	private static void printModel( Model model ) {
@@ -104,9 +147,14 @@ public class Moodle2ConnectorTestApp {
 
 		Model writeModel = RDF2Go.getModelFactory().createModel();
 		writeModel.open();
+
+		writeModel.setNamespace( "sioc", SIOCVocabulary.NS_SIOC.toString() );
+		writeModel.setNamespace( "foaf", FOAFVocabulary.NS_FOAF.toString() );
+		writeModel.setNamespace( "dcterms", DCTermsVocabulary.NS_DCTerms.toString() );
+
 		writeModel.addAll( sortedStmts.iterator() );
 
-		System.out.println( RDFTool.modelToString( writeModel, Syntax.RdfXml ) );
+		System.out.println( RDFTool.modelToString( writeModel, Syntax.Turtle ) );
 		writeModel.close();
 	}
 

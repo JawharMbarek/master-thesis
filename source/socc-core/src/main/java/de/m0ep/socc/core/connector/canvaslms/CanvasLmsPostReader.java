@@ -179,7 +179,7 @@ public class CanvasLmsPostReader extends
 	}
 
 	@Override
-	public List<Post> readNewReplies( final Date since, final long limit,
+	public List<Post> pollRepliesAtPost( final Date since, final long limit,
 	        final Post post )
 	        throws AuthenticationException, IOException {
 		if ( 0 == limit ) {

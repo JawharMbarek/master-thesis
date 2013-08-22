@@ -5,14 +5,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.ontoware.aifbcommons.collection.ClosableIterator;
+import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.Syntax;
+import org.ontoware.rdf2go.model.node.Resource;
+import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.Thread;
 import org.rdfs.sioc.UserAccount;
 
 import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.client.repackaged.com.google.common.base.Throwables;
-import com.google.common.base.Preconditions;
 import com.xmlns.foaf.Person;
 
 import de.m0ep.moodlews.soap.ForumPostDatum;
@@ -20,8 +24,8 @@ import de.m0ep.moodlews.soap.ForumPostRecord;
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
+import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
-import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 
 public class Moodle2PostWriter extends
@@ -34,33 +38,39 @@ public class Moodle2PostWriter extends
 	}
 
 	@Override
-	public boolean canPostTo( Container container ) {
-		return null != container
-		        && RdfUtils.isType(
-		                container,
-		                Thread.RDFS_CLASS )
-		        && SiocUtils.isContainerOfSite(
-		                container,
-		                getServiceEndpoint() );
+	public void writePost( URI targetUri, String rdfString, Syntax syntax )
+	        throws NotFoundException, AuthenticationException, IOException {
+
+		Model tmpModel = RDFTool.stringToModel( rdfString, syntax );
+
+		try {
+			ClosableIterator<Resource> postIter = Post.getAllInstances( tmpModel );
+			while ( postIter.hasNext() ) {
+				Resource resource = postIter.next();
+				Post post = Post.getInstance( tmpModel, resource );
+
+				if ( Moodle2SiocUtils.isThreadUri( targetUri, getServiceEndpoint() ) ) {
+					Container targetContainer = getConnector()
+					        .getStructureReader()
+					        .getContainer( targetUri );
+
+					writePost( targetContainer, post );
+				} else if ( Moodle2SiocUtils.isPostUri( targetUri, getServiceEndpoint() ) ) {
+					Post targetPost = getConnector().getPostReader().readPost( targetUri );
+
+					writeReply( targetPost, post );
+				}
+
+			}
+
+		} finally {
+			tmpModel.close();
+		}
 	}
 
-	@Override
-	public void writePost( Post post, Container container )
+	private void writePost( Container container, Post post )
 	        throws AuthenticationException,
 	        IOException {
-		Preconditions.checkNotNull( post,
-		        "Required parameter post must be specified." );
-		Preconditions.checkArgument( post.hasContent(),
-		        "The parameter post has no content" );
-		Preconditions.checkArgument( post.hasCreator(),
-		        "The paramter post has no creator." );
-
-		Preconditions.checkNotNull( container,
-		        "Required parameter container must be specified." );
-		Preconditions.checkArgument( canPostTo( container ),
-		        "Can't write the post to this container" );
-		Preconditions.checkArgument( container.hasId(),
-		        "The container has no id." );
 
 		final int discussionId;
 		try {
@@ -123,7 +133,7 @@ public class Moodle2PostWriter extends
 			        } );
 
 			if ( null != firstPostRecordArray && 0 < firstPostRecordArray.length ) {
-				firstPost = Moodle2SiocConverter.createSiocPost(
+				firstPost = Moodle2SiocUtils.createSiocPost(
 				        getConnector(),
 				        firstPostRecordArray[0],
 				        SiocUtils.asThread( container ),
@@ -166,7 +176,7 @@ public class Moodle2PostWriter extends
 			if ( null != postRecordArray && 0 < postRecordArray.length ) {
 				int numChildren = postRecordArray[0].getChildren().length;
 				ForumPostRecord postRecord = postRecordArray[0].getChildren()[numChildren - 1];
-				Post addedPost = Moodle2SiocConverter.createSiocPost(
+				Post addedPost = Moodle2SiocUtils.createSiocPost(
 				        getConnector(),
 				        postRecord,
 				        SiocUtils.asThread( container ),
@@ -178,38 +188,20 @@ public class Moodle2PostWriter extends
 		}
 	}
 
-	@Override
-	public boolean canReplyTo( Post post ) {
-		return null != post
-		        && post.hasContainer()
-		        && SiocUtils.isContainerOfSite(
-		                post.getContainer(),
-		                getServiceEndpoint() );
-	}
-
-	@Override
-	public void writeReply( Post replyPost, Post parentPost )
+	private void writeReply( Post targetPost, Post post )
 	        throws AuthenticationException,
 	        IOException {
-		Preconditions.checkNotNull( replyPost,
-		        "Required parameter replyPost must be specified." );
-		Preconditions.checkNotNull( parentPost,
-		        "Required parameter parentPost must be specified." );
-		Preconditions.checkArgument( canReplyTo( parentPost ),
-		        "Can't write replies to the parentPost with this connector." );
-		Preconditions.checkArgument( parentPost.hasId(),
-		        "The parameter parentPost has no id." );
 
 		final int postId;
 		try {
-			postId = Integer.parseInt( parentPost.getId() );
+			postId = Integer.parseInt( targetPost.getId() );
 		} catch ( NumberFormatException e ) {
 			throw new IllegalArgumentException(
 			        "The id of the parentPost is invalid: was "
-			                + parentPost.getId() );
+			                + targetPost.getId() );
 		}
 
-		UserAccount creatorAccount = replyPost.getCreator();
+		UserAccount creatorAccount = post.getCreator();
 		Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
 		        getConnector(), creatorAccount );
 
@@ -228,13 +220,13 @@ public class Moodle2PostWriter extends
 			}
 		}
 
-		String content = replyPost.getContent();
+		String content = post.getContent();
 		if ( null == client ) { // No client found, get default one an adapt
 			                    // message content
 			client = getConnector().getServiceClientManager()
 			        .getDefaultClient();
 			content = PostWriterUtils.createContentOfUnknownAccount(
-			        replyPost,
+			        post,
 			        creatorAccount,
 			        creatorPerson );
 		}
@@ -243,7 +235,7 @@ public class Moodle2PostWriter extends
 		final ForumPostDatum replyDatum = new ForumPostDatum( client
 		        .getBindingStub().getNAMESPACE() );
 		replyDatum.setMessage( content );
-		replyDatum.setSubject( Strings.nullToEmpty( replyPost.getTitle() ) );
+		replyDatum.setSubject( Strings.nullToEmpty( post.getTitle() ) );
 
 		ForumPostRecord[] resultPostRecords = client
 		        .callMethod( new Callable<ForumPostRecord[]>() {
@@ -266,15 +258,15 @@ public class Moodle2PostWriter extends
 				int numChildren = parentPostRecord.getChildren().length;
 				ForumPostRecord postRecord = parentPostRecord.getChildren()[numChildren - 1];
 
-				Container container = parentPost.getContainer();
-				Post addedPost = Moodle2SiocConverter.createSiocPost(
+				Container container = targetPost.getContainer();
+				Post addedPost = Moodle2SiocUtils.createSiocPost(
 				        getConnector(),
 				        postRecord,
 				        SiocUtils.asThread( container ),
-				        parentPost );
+				        targetPost );
 
-				addedPost.addSibling( replyPost );
-				replyPost.addSibling( addedPost );
+				addedPost.addSibling( post );
+				post.addSibling( addedPost );
 			}
 		}
 	}

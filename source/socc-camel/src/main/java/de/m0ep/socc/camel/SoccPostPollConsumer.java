@@ -78,7 +78,7 @@ public class SoccPostPollConsumer extends ScheduledPollConsumer implements ISocc
 	@Override
 	protected int poll() throws Exception {
 		Date since = SiocUtils.getLastReplyDate( post );
-		List<Post> posts = postReader.readNewReplies( since, limit, post );
+		List<Post> posts = postReader.pollRepliesAtPost( since, limit, post );
 
 		for ( Post post : posts ) {
 			LOG.debug( "receive message {}", post );

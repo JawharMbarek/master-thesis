@@ -33,7 +33,6 @@ import org.rdfs.sioc.Thread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.m0ep.moodlews.soap.ForumDiscussionRecord;
@@ -42,8 +41,6 @@ import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.utils.RdfUtils;
-import de.m0ep.socc.core.utils.SiocUtils;
 
 public class Moodle2StructureReader extends
         DefaultConnectorIOComponent<Moodle2Connector>
@@ -77,9 +74,9 @@ public class Moodle2StructureReader extends
 			return Container.getInstance( getModel(), uri );
 		}
 
-		if ( isForumUri( uri ) ) {
+		if ( Moodle2SiocUtils.isForumUri( uri, getServiceEndpoint() ) ) {
 			return getForum( uri );
-		} else if ( isThreadUri( uri ) ) {
+		} else if ( Moodle2SiocUtils.isThreadUri( uri, getServiceEndpoint() ) ) {
 			return getThread( uri );
 		}
 
@@ -105,7 +102,7 @@ public class Moodle2StructureReader extends
 
 		if ( null != forumRecordArray && 0 < forumRecordArray.length ) {
 			for ( ForumRecord forumRecord : forumRecordArray ) {
-				result.add( Moodle2SiocConverter.createSiocForum(
+				result.add( Moodle2SiocUtils.createSiocForum(
 				        getConnector(),
 				        forumRecord ) );
 			}
@@ -118,7 +115,7 @@ public class Moodle2StructureReader extends
 	public List<Container> listContainer( URI parent ) throws NumberFormatException,
 	        AuthenticationException, IOException {
 		Matcher matcher = Pattern
-		        .compile( getServiceEndpoint() + Moodle2Constants.REGEX_FORUM_URI )
+		        .compile( getServiceEndpoint() + Moodle2SiocUtils.REGEX_FORUM_URI )
 		        .matcher( parent.toString() );
 
 		List<Container> results = Lists.newArrayList();
@@ -130,7 +127,7 @@ public class Moodle2StructureReader extends
 
 			if ( null != discussions ) {
 				for ( ForumDiscussionRecord discussion : discussions ) {
-					results.add( Moodle2SiocConverter.createSiocThread(
+					results.add( Moodle2SiocUtils.createSiocThread(
 					        getConnector(),
 					        discussion,
 					        parentForum ) );
@@ -149,7 +146,7 @@ public class Moodle2StructureReader extends
 		}
 
 		final Matcher matcher = Pattern
-		        .compile( getServiceEndpoint() + Moodle2Constants.REGEX_FORUM_URI )
+		        .compile( getServiceEndpoint() + Moodle2SiocUtils.REGEX_FORUM_URI )
 		        .matcher( uri.toString() );
 
 		if ( matcher.matches() ) {
@@ -168,12 +165,10 @@ public class Moodle2StructureReader extends
 			        } );
 
 			if ( null != forumRecordArray && 0 < forumRecordArray.length ) {
-				return Moodle2SiocConverter.createSiocForum(
+				return Moodle2SiocUtils.createSiocForum(
 				        getConnector(),
 				        forumRecordArray[0] );
 			}
-		} else {
-			LOG.debug( uri + " is no moodle forum URI." );
 		}
 
 		throw new NotFoundException( "No forum found at the uri " + uri );
@@ -185,7 +180,7 @@ public class Moodle2StructureReader extends
 		}
 
 		Matcher matcher = Pattern
-		        .compile( getServiceEndpoint() + Moodle2Constants.REGEX_DISCUSSION_URI )
+		        .compile( getServiceEndpoint() + Moodle2SiocUtils.REGEX_DISCUSSION_URI )
 		        .matcher( uri.toString() );
 
 		if ( matcher.matches() ) {
@@ -194,7 +189,7 @@ public class Moodle2StructureReader extends
 
 			if ( null != forumArray ) {
 				for ( final ForumRecord forum : forumArray ) {
-					Forum parentForum = Moodle2SiocConverter.createSiocForum(
+					Forum parentForum = Moodle2SiocUtils.createSiocForum(
 					        getConnector(),
 					        forum );
 
@@ -202,7 +197,7 @@ public class Moodle2StructureReader extends
 					if ( null != discussionsArray ) {
 						for ( ForumDiscussionRecord discussion : discussionsArray ) {
 							if ( id == discussion.getId() ) {
-								return Moodle2SiocConverter.createSiocThread(
+								return Moodle2SiocUtils.createSiocThread(
 								        getConnector(),
 								        discussion, parentForum );
 							}
@@ -210,27 +205,9 @@ public class Moodle2StructureReader extends
 					}
 				}
 			}
-		} else {
-			LOG.debug( uri + " is no moodle thread URI." );
 		}
 
 		throw new NotFoundException( "No thread found at the uri " + uri );
-	}
-
-	private boolean isForumUri( URI uri ) {
-		Matcher matcher = Pattern
-		        .compile( getServiceEndpoint() + Moodle2Constants.REGEX_FORUM_URI )
-		        .matcher( uri.toString() );
-
-		return matcher.matches();
-	}
-
-	private boolean isThreadUri( URI uri ) {
-		Matcher matcher = Pattern
-		        .compile( getServiceEndpoint() + Moodle2Constants.REGEX_DISCUSSION_URI )
-		        .matcher( uri.toString() );
-
-		return matcher.matches();
 	}
 
 	private ForumRecord[] loadForums() throws IOException, AuthenticationException {

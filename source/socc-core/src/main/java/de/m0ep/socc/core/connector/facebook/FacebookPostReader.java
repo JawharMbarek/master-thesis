@@ -128,7 +128,7 @@ public class FacebookPostReader extends
 	}
 
 	@Override
-	public List<Post> readNewReplies( Date since, long limit, Post parentPost )
+	public List<Post> pollRepliesAtPost( Date since, long limit, Post parentPost )
 	        throws AuthenticationException, IOException {
 		Preconditions.checkNotNull( parentPost,
 		        "Required parameter parentPost must be specified." );

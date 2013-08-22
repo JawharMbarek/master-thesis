@@ -48,7 +48,7 @@ import de.m0ep.socc.core.utils.RdfUtils;
 
 public class GooglePlusPostReader extends
         DefaultConnectorIOComponent<GooglePlusConnector> implements
-        IPostReader {
+        IPostReader<GooglePlusConnector> {
 	private static final Logger LOG = LoggerFactory
 	        .getLogger( GooglePlusPostReader.class );
 

@@ -52,227 +52,227 @@ import de.m0ep.socc.core.utils.SiocUtils;
  */
 public class CanvasLmsPostReader extends
         DefaultConnectorIOComponent<CanvasLmsConnector> implements
-        IPostReader {
+        IPostReader<CanvasLmsConnector> {
 
-    private CanvasLmsClient defaultClient;
+	private final CanvasLmsClient defaultClient;
 
-    /**
-     * @param connector
-     */
-    public CanvasLmsPostReader(final CanvasLmsConnector connector) {
-        super(connector);
-        this.defaultClient = connector.getServiceClientManager()
-                .getDefaultClient();
-    }
+	/**
+	 * @param connector
+	 */
+	public CanvasLmsPostReader( final CanvasLmsConnector connector ) {
+		super( connector );
+		this.defaultClient = connector.getServiceClientManager()
+		        .getDefaultClient();
+	}
 
-    @Override
-    public boolean containsPosts(final Container container) {
-        return null != container
-                && RdfUtils.isType(
-                        container,
-                        Thread.RDFS_CLASS)
-                && SiocUtils.isContainerOfSite(
-                        container,
-                        getServiceEndpoint());
-    }
+	@Override
+	public boolean containsPosts( final Container container ) {
+		return null != container
+		        && RdfUtils.isType(
+		                container,
+		                Thread.RDFS_CLASS )
+		        && SiocUtils.isContainerOfSite(
+		                container,
+		                getServiceEndpoint() );
+	}
 
-    @Override
-    public List<Post> readNewPosts(final Date since, final long limit,
-            final Container container)
-            throws AuthenticationException, IOException {
-        if (0 == limit) {
-            return Lists.newArrayList();
-        }
+	@Override
+	public List<Post> readNewPosts( final Date since, final long limit,
+	        final Container container )
+	        throws AuthenticationException, IOException {
+		if ( 0 == limit ) {
+			return Lists.newArrayList();
+		}
 
-        Preconditions.checkNotNull(container,
-                "Required parameter container must be specified.");
-        Preconditions.checkArgument(containsPosts(container),
-                "The container contains no posts on this service.");
-        Preconditions.checkArgument(container.hasId(),
-                "The parameter container has no id.");
-        Preconditions.checkArgument(container.hasParent(),
-                "The parameter container has no required parent container.");
+		Preconditions.checkNotNull( container,
+		        "Required parameter container must be specified." );
+		Preconditions.checkArgument( containsPosts( container ),
+		        "The container contains no posts on this service." );
+		Preconditions.checkArgument( container.hasId(),
+		        "The parameter container has no id." );
+		Preconditions.checkArgument( container.hasParent(),
+		        "The parameter container has no required parent container." );
 
-        Container parentContainer = container.getParent();
-        Preconditions.checkArgument(parentContainer.hasId(),
-                "The parent container has no id.");
+		Container parentContainer = container.getParent();
+		Preconditions.checkArgument( parentContainer.hasId(),
+		        "The parent container has no id." );
 
-        long courseId;
-        try {
-            courseId = Long.parseLong(parentContainer.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The id of the containers parent is invalid: was "
-                            + parentContainer.getId());
-        }
+		long courseId;
+		try {
+			courseId = Long.parseLong( parentContainer.getId() );
+		} catch ( NumberFormatException e ) {
+			throw new IllegalArgumentException(
+			        "The id of the containers parent is invalid: was "
+			                + parentContainer.getId() );
+		}
 
-        long topicId;
-        try {
-            topicId = Long.parseLong(container.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The id of the container is invalid: was "
-                            + container.getId());
-        }
+		long topicId;
+		try {
+			topicId = Long.parseLong( container.getId() );
+		} catch ( NumberFormatException e ) {
+			throw new IllegalArgumentException(
+			        "The id of the container is invalid: was "
+			                + container.getId() );
+		}
 
-        Pagination<Entry> entryPages = null;
-        try {
-            entryPages = defaultClient.courses()
-                    .discussionTopics(courseId)
-                    .entries(topicId)
-                    .list()
-                    .executePagination();
-        } catch (CanvasLmsException e) {
-            if (e instanceof NetworkException) {
-                throw new IOException(e);
-            } else if (e instanceof AuthorizationException) {
-                throw new AuthenticationException(e);
-            } else if (e instanceof de.m0ep.canvas.exceptions.NotFoundException) {
-                throw new NotFoundException(e);
-            }
+		Pagination<Entry> entryPages = null;
+		try {
+			entryPages = defaultClient.courses()
+			        .discussionTopics( courseId )
+			        .entries( topicId )
+			        .list()
+			        .executePagination();
+		} catch ( CanvasLmsException e ) {
+			if ( e instanceof NetworkException ) {
+				throw new IOException( e );
+			} else if ( e instanceof AuthorizationException ) {
+				throw new AuthenticationException( e );
+			} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
+				throw new NotFoundException( e );
+			}
 
-            throw Throwables.propagate(e);
-        }
+			throw Throwables.propagate( e );
+		}
 
-        Post initPost = Post.getInstance(
-                getModel(),
-                CanvasLmsSiocConverter.createTopicPostUri(
-                        getServiceEndpoint(),
-                        courseId,
-                        topicId));
+		Post initPost = Post.getInstance(
+		        getModel(),
+		        CanvasLmsSiocConverter.createTopicPostUri(
+		                getServiceEndpoint(),
+		                courseId,
+		                topicId ) );
 
-        List<Post> result = Lists.newArrayList();
-        if (null != entryPages) {
-            for (List<Entry> entries : entryPages) {
-                for (Entry entry : entries) {
-                    if (0 > limit || limit < result.size()) {
-                        Date createdDate = entry.getCreatedAt();
-                        if (null == since || createdDate.after(since)) {
-                            result.add(CanvasLmsSiocConverter
-                                    .createSiocPost(
-                                            getConnector(),
-                                            entry,
-                                            container,
-                                            initPost
-                                    ));
-                        } else {
-                            // abort, because entries are sorted by
-                            // 'newest first'
-                            return result;
-                        }
-                    } else {
-                        // limit reached
-                        return result;
-                    }
-                }
-            }
-        }
+		List<Post> result = Lists.newArrayList();
+		if ( null != entryPages ) {
+			for ( List<Entry> entries : entryPages ) {
+				for ( Entry entry : entries ) {
+					if ( 0 > limit || limit < result.size() ) {
+						Date createdDate = entry.getCreatedAt();
+						if ( null == since || createdDate.after( since ) ) {
+							result.add( CanvasLmsSiocConverter
+							        .createSiocPost(
+							                getConnector(),
+							                entry,
+							                container,
+							                initPost
+							        ) );
+						} else {
+							// abort, because entries are sorted by
+							// 'newest first'
+							return result;
+						}
+					} else {
+						// limit reached
+						return result;
+					}
+				}
+			}
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
-    public boolean containsReplies(final Post post) {
-        return null != post
-                && post.hasContainer()
-                && containsPosts(post.getContainer());
-    }
+	@Override
+	public boolean containsReplies( final Post post ) {
+		return null != post
+		        && post.hasContainer()
+		        && containsPosts( post.getContainer() );
+	}
 
-    @Override
-    public List<Post> readNewReplies(final Date since, final long limit,
-            final Post post)
-            throws AuthenticationException, IOException {
-        if (0 == limit) {
-            return Lists.newArrayList();
-        }
+	@Override
+	public List<Post> readNewReplies( final Date since, final long limit,
+	        final Post post )
+	        throws AuthenticationException, IOException {
+		if ( 0 == limit ) {
+			return Lists.newArrayList();
+		}
 
-        Preconditions.checkNotNull(post,
-                "Required parameter post must be specified.");
-        Preconditions.checkArgument(containsReplies(post),
-                "The post contains no replies on this service.");
-        Preconditions.checkArgument(post.hasId(),
-                "Required parameter post has no id.");
-        Preconditions.checkArgument(post.hasContainer(),
-                "The paramater post has no container.");
+		Preconditions.checkNotNull( post,
+		        "Required parameter post must be specified." );
+		Preconditions.checkArgument( containsReplies( post ),
+		        "The post contains no replies on this service." );
+		Preconditions.checkArgument( post.hasId(),
+		        "Required parameter post has no id." );
+		Preconditions.checkArgument( post.hasContainer(),
+		        "The paramater post has no container." );
 
-        Container container = post.getContainer();
-        Preconditions.checkArgument(container.hasId(),
-                "The container of the post has no id.");
-        Preconditions.checkArgument(container.hasParent(),
-                "The container of post has no parent");
+		Container container = post.getContainer();
+		Preconditions.checkArgument( container.hasId(),
+		        "The container of the post has no id." );
+		Preconditions.checkArgument( container.hasParent(),
+		        "The container of post has no parent" );
 
-        Container parentContainer = container.getParent();
-        Preconditions.checkArgument(parentContainer.hasId(),
-                "The parent of post container has no id.");
+		Container parentContainer = container.getParent();
+		Preconditions.checkArgument( parentContainer.hasId(),
+		        "The parent of post container has no id." );
 
-        long courseId;
-        try {
-            courseId = Long.parseLong(parentContainer.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The id of the containers parent is invalid: was "
-                            + parentContainer.getId());
-        }
+		long courseId;
+		try {
+			courseId = Long.parseLong( parentContainer.getId() );
+		} catch ( NumberFormatException e ) {
+			throw new IllegalArgumentException(
+			        "The id of the containers parent is invalid: was "
+			                + parentContainer.getId() );
+		}
 
-        long topicId;
-        try {
-            topicId = Long.parseLong(container.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The id of the container is invalid: was "
-                            + container.getId());
-        }
+		long topicId;
+		try {
+			topicId = Long.parseLong( container.getId() );
+		} catch ( NumberFormatException e ) {
+			throw new IllegalArgumentException(
+			        "The id of the container is invalid: was "
+			                + container.getId() );
+		}
 
-        long entryId;
-        try {
-            entryId = Long.parseLong(post.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The id of the parentPost is invalid: was "
-                            + container.getId());
-        }
+		long entryId;
+		try {
+			entryId = Long.parseLong( post.getId() );
+		} catch ( NumberFormatException e ) {
+			throw new IllegalArgumentException(
+			        "The id of the parentPost is invalid: was "
+			                + container.getId() );
+		}
 
-        Pagination<Entry> replyPages = null;
-        try {
-            replyPages = defaultClient.courses()
-                    .discussionTopics(courseId)
-                    .entries(topicId)
-                    .listReplies(entryId)
-                    .executePagination();
-        } catch (CanvasLmsException e) {
-            if (e instanceof NetworkException) {
-                throw new IOException(e);
-            } else if (e instanceof AuthorizationException) {
-                throw new AuthenticationException(e);
-            } else if (e instanceof de.m0ep.canvas.exceptions.NotFoundException) {
-                throw new NotFoundException(e);
-            }
+		Pagination<Entry> replyPages = null;
+		try {
+			replyPages = defaultClient.courses()
+			        .discussionTopics( courseId )
+			        .entries( topicId )
+			        .listReplies( entryId )
+			        .executePagination();
+		} catch ( CanvasLmsException e ) {
+			if ( e instanceof NetworkException ) {
+				throw new IOException( e );
+			} else if ( e instanceof AuthorizationException ) {
+				throw new AuthenticationException( e );
+			} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
+				throw new NotFoundException( e );
+			}
 
-            throw Throwables.propagate(e);
-        }
+			throw Throwables.propagate( e );
+		}
 
-        List<Post> result = Lists.newArrayList();
-        if (null != replyPages) {
-            for (List<Entry> entries : replyPages) {
-                for (Entry entry : entries) {
-                    if (0 > limit || limit < result.size()) {
-                        Date createdDate = entry.getCreatedAt();
-                        if (null == since || createdDate.after(since)) {
-                            result.add(CanvasLmsSiocConverter.createSiocPost(
-                                    getConnector(),
-                                    entry,
-                                    container,
-                                    post));
-                        } else {
-                            return result;
-                        }
-                    } else {
-                        return result;
-                    }
-                }
-            }
-        }
+		List<Post> result = Lists.newArrayList();
+		if ( null != replyPages ) {
+			for ( List<Entry> entries : replyPages ) {
+				for ( Entry entry : entries ) {
+					if ( 0 > limit || limit < result.size() ) {
+						Date createdDate = entry.getCreatedAt();
+						if ( null == since || createdDate.after( since ) ) {
+							result.add( CanvasLmsSiocConverter.createSiocPost(
+							        getConnector(),
+							        entry,
+							        container,
+							        post ) );
+						} else {
+							return result;
+						}
+					} else {
+						return result;
+					}
+				}
+			}
+		}
 
-        return result;
-    }
+		return result;
+	}
 }

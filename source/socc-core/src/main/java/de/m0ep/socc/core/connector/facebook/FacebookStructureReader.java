@@ -49,127 +49,127 @@ import de.m0ep.socc.core.exceptions.NotFoundException;
 
 public class FacebookStructureReader extends
         DefaultConnectorIOComponent<FacebookConnector>
-        implements IStructureReader {
+        implements IStructureReader<FacebookConnector> {
 
-    private FacebookClientWrapper defaultClient;
-    private Forum defaultClientWall;
+	private final FacebookClientWrapper defaultClient;
+	private Forum defaultClientWall;
 
-    public FacebookStructureReader(FacebookConnector connector) {
-        super(connector);
-        this.defaultClient = connector.getServiceClientManager()
-                .getDefaultClient();
-    }
+	public FacebookStructureReader( FacebookConnector connector ) {
+		super( connector );
+		this.defaultClient = connector.getServiceClientManager()
+		        .getDefaultClient();
+	}
 
-    @Override
-    public Site getSite() {
-        if (!Site.hasInstance(getModel(), getServiceEndpoint())) {
-            Site result = new Site(getModel(), getServiceEndpoint(), true);
-            result.setName("Facebook");
-            return result;
-        }
+	@Override
+	public Site getSite() {
+		if ( !Site.hasInstance( getModel(), getServiceEndpoint() ) ) {
+			Site result = new Site( getModel(), getServiceEndpoint(), true );
+			result.setName( "Facebook" );
+			return result;
+		}
 
-        return Site.getInstance(getModel(), getServiceEndpoint());
-    }
+		return Site.getInstance( getModel(), getServiceEndpoint() );
+	}
 
-    @Override
-    public Forum getForum(String id) throws NotFoundException,
-            AuthenticationException, IOException {
-        Preconditions.checkNotNull(id,
-                "Required parameter id must be specified.");
-        Preconditions.checkArgument(!id.isEmpty()
-                , "Required parameter id may not be empty.");
+	@Override
+	public Forum getForum( String id ) throws NotFoundException,
+	        AuthenticationException, IOException {
+		Preconditions.checkNotNull( id,
+		        "Required parameter id must be specified." );
+		Preconditions.checkArgument( !id.isEmpty()
+		        , "Required parameter id may not be empty." );
 
-        URI uri = FacebookSiocConverter.createSiocUri(id);
+		URI uri = FacebookSiocConverter.createSiocUri( id );
 
-        if (Forum.hasInstance(getModel(), uri)) {
-            return Forum.getInstance(getModel(), uri);
-        } else {
-            JsonObject object = null;
+		if ( Forum.hasInstance( getModel(), uri ) ) {
+			return Forum.getInstance( getModel(), uri );
+		} else {
+			JsonObject object = null;
 
-            try {
-                object = defaultClient.getClient().fetchObject("/" + id,
-                        JsonObject.class);
-            } catch (FacebookException e) {
-                FacebookConnector.handleFacebookException(e);
-            }
+			try {
+				object = defaultClient.getClient().fetchObject( "/" + id,
+				        JsonObject.class );
+			} catch ( FacebookException e ) {
+				FacebookConnector.handleFacebookException( e );
+			}
 
-            JsonMapper mapper = new DefaultJsonMapper();
+			JsonMapper mapper = new DefaultJsonMapper();
 
-            if (object.has(FacebookApiConstants.FIELD_OWNER)) {
-                // it's (maybe) a group
-                Group group = mapper.toJavaObject(
-                        object.toString(),
-                        Group.class);
+			if ( object.has( FacebookApiConstants.FIELD_OWNER ) ) {
+				// it's (maybe) a group
+				Group group = mapper.toJavaObject(
+				        object.toString(),
+				        Group.class );
 
-                return FacebookSiocConverter.createSiocForum(
-                        getConnector(),
-                        group);
+				return FacebookSiocConverter.createSiocForum(
+				        getConnector(),
+				        group );
 
-            } else if (object.has(FacebookApiConstants.FIELD_GENDER)) {
-                // it's a user
-                User user = mapper.toJavaObject(
-                        object.toString(),
-                        User.class);
+			} else if ( object.has( FacebookApiConstants.FIELD_GENDER ) ) {
+				// it's a user
+				User user = mapper.toJavaObject(
+				        object.toString(),
+				        User.class );
 
-                return FacebookSiocConverter.createSiocForum(
-                        getConnector(),
-                        user);
-            }
-        }
+				return FacebookSiocConverter.createSiocForum(
+				        getConnector(),
+				        user );
+			}
+		}
 
-        throw new NotFoundException("No forum found with id " + id);
-    }
+		throw new NotFoundException( "No forum found with id " + id );
+	}
 
-    @Override
-    public List<Forum> listForums() throws AuthenticationException, IOException {
-        List<Forum> results = Lists.newArrayList();
+	@Override
+	public List<Forum> listForums() throws AuthenticationException, IOException {
+		List<Forum> results = Lists.newArrayList();
 
-        if (null == defaultClientWall) {
-            // create the wall forum of the default client.
-            defaultClientWall = getForum(defaultClient.getUser().getId());
-        }
+		if ( null == defaultClientWall ) {
+			// create the wall forum of the default client.
+			defaultClientWall = getForum( defaultClient.getUser().getId() );
+		}
 
-        // add the default users wall
-        results.add(defaultClientWall);
+		// add the default users wall
+		results.add( defaultClientWall );
 
-        Connection<Group> groupsConnections = null;
-        try {
-            Parameter fields = Parameter.with(
-                    FacebookApiConstants.PARAM_FIELDS,
-                    FacebookApiConstants.FIELDS_GROUP);
+		Connection<Group> groupsConnections = null;
+		try {
+			Parameter fields = Parameter.with(
+			        FacebookApiConstants.PARAM_FIELDS,
+			        FacebookApiConstants.FIELDS_GROUP );
 
-            groupsConnections = defaultClient.getClient().fetchConnection(
-                    "me/" + FacebookApiConstants.CONNECTION_GROUPS,
-                    Group.class,
-                    fields);
-        } catch (FacebookException e) {
-            FacebookConnector.handleFacebookException(e);
-        }
+			groupsConnections = defaultClient.getClient().fetchConnection(
+			        "me/" + FacebookApiConstants.CONNECTION_GROUPS,
+			        Group.class,
+			        fields );
+		} catch ( FacebookException e ) {
+			FacebookConnector.handleFacebookException( e );
+		}
 
-        for (List<Group> list : groupsConnections) {
-            for (Group group : list) {
-                results.add(FacebookSiocConverter.createSiocForum(
-                        getConnector(),
-                        group));
-            }
-        }
+		for ( List<Group> list : groupsConnections ) {
+			for ( Group group : list ) {
+				results.add( FacebookSiocConverter.createSiocForum(
+				        getConnector(),
+				        group ) );
+			}
+		}
 
-        return results;
-    }
+		return results;
+	}
 
-    @Override
-    public Thread getThread(String id, Container parent)
-            throws NotFoundException,
-            AuthenticationException, IOException {
-        throw new UnsupportedOperationException(
-                "Facbook has nothing like 'threads'.");
-    }
+	@Override
+	public Thread getThread( String id, Container parent )
+	        throws NotFoundException,
+	        AuthenticationException, IOException {
+		throw new UnsupportedOperationException(
+		        "Facbook has nothing like 'threads'." );
+	}
 
-    @Override
-    public List<Thread> listThreads(Container parent)
-            throws AuthenticationException, IOException {
-        throw new UnsupportedOperationException(
-                "Facbook has nothing like 'threads'.");
-    }
+	@Override
+	public List<Thread> listThreads( Container parent )
+	        throws AuthenticationException, IOException {
+		throw new UnsupportedOperationException(
+		        "Facbook has nothing like 'threads'." );
+	}
 
 }

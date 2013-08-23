@@ -25,6 +25,7 @@ package de.m0ep.socc.core.utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.RDF2Go;
@@ -202,6 +203,13 @@ public final class RdfUtils {
 		tmpModel.open();
 
 		try {
+			// copy namespaces
+			for ( Entry<String, String> entry : model.getNamespaces().entrySet() ) {
+				String key = entry.getKey();
+				String value = entry.getValue();
+				tmpModel.setNamespace( key, value );
+			}
+
 			List<Statement> statements = getAllStatements( model, resource );
 			tmpModel.addAll( statements.iterator() );
 			return RDFTool.modelToString( tmpModel, syntax );
@@ -226,4 +234,49 @@ public final class RdfUtils {
 		return resourceToString( resource.getModel(), resource.getResource(), syntax );
 	}
 
+	/**
+	 * Converts a RDF2Go {@link Model} to a String. Before conversation the
+	 * statements inside the model will be sorted so that the result will be
+	 * prettier.
+	 * 
+	 * @param model
+	 *            The model to convert.
+	 * @param syntax
+	 *            Format of the output.
+	 * @return Model as a {@link String} in the wanted {@link Syntax}.
+	 */
+	public static String modelToString( final Model model, Syntax syntax ) {
+		Model tmpModel = RDF2Go.getModelFactory().createModel();
+		tmpModel.open();
+
+		try {
+			// copy namespaces
+			for ( Entry<String, String> entry : model.getNamespaces().entrySet() ) {
+				String key = entry.getKey();
+				String value = entry.getValue();
+				tmpModel.setNamespace( key, value );
+			}
+
+			List<Statement> sortedStmts = Lists.newArrayList( model );
+			Collections.sort( sortedStmts );
+			tmpModel.addAll( sortedStmts.iterator() );
+
+			return RDFTool.modelToString( tmpModel, Syntax.Turtle );
+		} finally {
+			tmpModel.close();
+		}
+	}
+
+	/**
+	 * Converts a RDF2Go {@link Model} to a String in RDF/XML format. Before
+	 * conversation the statements inside the model will be sorted so that the
+	 * result will be prettier.
+	 * 
+	 * @param model
+	 *            The model to convert.
+	 * @return Model as a {@link String} in RDF/XML format.
+	 */
+	public static String modelToString( final Model model ) {
+		return modelToString( model, Syntax.RdfXml );
+	}
 }

@@ -308,7 +308,7 @@ public class Moodle2SiocUtils {
 
 	public static URI createSiocUserUri( URI rootUri, int id ) {
 		return Builder.createURI(
-		        UriTemplate.fromTemplate( rootUri + TEMPLATE_USER_URI )
+		        UriTemplate.fromTemplate( rootUri + TEMPLATE_USER_URI + "$" )
 		                .set( TEMPLATE_VAR_USER_ID, id )
 		                .expand() );
 	}
@@ -323,7 +323,7 @@ public class Moodle2SiocUtils {
 	 */
 	public static boolean isPostUri( URI uri, URI serviceEndpoint ) {
 		Pattern pattern = Pattern.compile(
-		        serviceEndpoint + Moodle2SiocUtils.REGEX_ENTRY_URI );
+		        serviceEndpoint + Moodle2SiocUtils.REGEX_ENTRY_URI + "$" );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
 		return matcher.matches();
@@ -339,7 +339,7 @@ public class Moodle2SiocUtils {
 	 */
 	public static boolean isThreadUri( URI uri, URI serviceEndpoint ) {
 		Pattern pattern = Pattern.compile(
-		        serviceEndpoint + Moodle2SiocUtils.REGEX_DISCUSSION_URI );
+		        serviceEndpoint + Moodle2SiocUtils.REGEX_DISCUSSION_URI + "$" );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
 		return matcher.matches();
@@ -347,7 +347,7 @@ public class Moodle2SiocUtils {
 
 	public static boolean isForumUri( URI uri, URI serviceEndpoint ) {
 		Pattern pattern = Pattern.compile(
-		        serviceEndpoint + Moodle2SiocUtils.REGEX_FORUM_URI );
+		        serviceEndpoint + Moodle2SiocUtils.REGEX_FORUM_URI + "$" );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
 		return matcher.matches();

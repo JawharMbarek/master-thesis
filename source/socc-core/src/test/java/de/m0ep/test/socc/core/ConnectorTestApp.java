@@ -11,11 +11,14 @@ import org.purl.dc.terms.DCTermsVocabulary;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.SIOCVocabulary;
+import org.rdfs.sioc.services.Thing;
 
 import com.xmlns.foaf.FOAFVocabulary;
 import com.xmlns.foaf.Person;
 
+import de.m0ep.sioc.services.auth.AccessToken;
 import de.m0ep.sioc.services.auth.Direct;
+import de.m0ep.sioc.services.auth.OAuth;
 import de.m0ep.sioc.services.auth.Password;
 import de.m0ep.sioc.services.auth.Service;
 import de.m0ep.sioc.services.auth.UserAccount;
@@ -26,12 +29,15 @@ import de.m0ep.socc.core.connector.DefaultConnector;
 import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
+import de.m0ep.socc.core.connector.canvaslms.CanvasLmsConnector;
 import de.m0ep.socc.core.connector.moodle.Moodle2Connector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 public class ConnectorTestApp {
 
+	private static final String CANVAS_LMS_CONNECTOR_ID = "canvas-test";
+	private static final String CANVAS_LMS_ROOT_URI = "https://canvas.instructure.com";
 	private static final String MOODLE_ROOT_URI = "http://localhost/moodle";
 	private static final String MOODLE_CONNECTOR_ID = "moodle-test";
 	private Person florianPerson;
@@ -64,13 +70,21 @@ public class ConnectorTestApp {
 			kaiPerson.setName( "Kai" );
 
 			addMoodleRdfData( model );
+			addCanvasLmsRdfData( model );
 
-			IConnector connector = DefaultConnector.createConnector( context, MOODLE_CONNECTOR_ID );
+			// IConnector connector = DefaultConnector.createConnector( 
+			//         context, 
+			//		   MOODLE_CONNECTOR_ID );
+
+			IConnector connector = DefaultConnector.createConnector(
+			        context,
+			        CANVAS_LMS_CONNECTOR_ID );
+
 			connector.initialize();
 
-			IStructureReader<Moodle2Connector> structureReader = connector.getStructureReader();
-			IPostReader<Moodle2Connector> postReader = connector.getPostReader();
-			// IPostWriter<Moodle2Connector> postWriter = connector.getPostWriter();
+			IStructureReader<?> structureReader = connector.getStructureReader();
+			IPostReader<?> postReader = connector.getPostReader();
+			// IPostWriter<?> postWriter = connector.getPostWriter();
 
 			List<Container> forums = structureReader.listContainer();
 			for ( Container forum : forums ) {
@@ -87,12 +101,14 @@ public class ConnectorTestApp {
 				}
 			}
 		} finally {
-			//System.out.println( RdfUtils.modelToString( model, Syntax.Turtle ) );
+			System.err.println(
+			        "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<o>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" );
+			System.err.println( RdfUtils.modelToString( model, Syntax.Turtle ) );
 			model.close();
 		}
 	}
 
-	private void addMoodleRdfData( final Model model ) {
+	public void addMoodleRdfData( final Model model ) {
 		Service service = new Service( model, true );
 		service.setServiceEndpoint( Builder.createURI( MOODLE_ROOT_URI ) );
 		service.setName( "Moodle LMS Service" );
@@ -113,6 +129,7 @@ public class ConnectorTestApp {
 		florianUserAccount.setAccountName( "6" );
 		florianUserAccount.setAccountServiceHomepage( service.getServiceEndpoint() );
 		florianUserAccount.setAccountAuthentication( floriandirect );
+		Thing.setService( model, florianUserAccount, service );
 		florianPerson.addAccount( florianUserAccount );
 		florianUserAccount.setAccountOf( florianPerson );
 
@@ -132,6 +149,7 @@ public class ConnectorTestApp {
 		kaiUserAccount.setAccountName( "4" );
 		kaiUserAccount.setAccountServiceHomepage( service.getServiceEndpoint() );
 		kaiUserAccount.setAccountAuthentication( kaidirect );
+		Thing.setService( model, kaiUserAccount, service );
 		kaiPerson.addAccount( kaiUserAccount );
 		kaiUserAccount.setAccountOf( kaiPerson );
 
@@ -151,6 +169,7 @@ public class ConnectorTestApp {
 		defaultUserAccount.setAccountName( "5" );
 		defaultUserAccount.setAccountServiceHomepage( service.getServiceEndpoint() );
 		defaultUserAccount.setAccountAuthentication( defaultdirect );
+		Thing.setService( model, defaultUserAccount, service );
 		defaultPerson.addAccount( defaultUserAccount );
 		defaultUserAccount.setAccountOf( defaultPerson );
 
@@ -161,5 +180,71 @@ public class ConnectorTestApp {
 		config.setDefaultUserAccount( defaultUserAccount );
 		config.setService( service );
 		config.setConnectorClassName( Moodle2Connector.class.getName() );
+	}
+
+	public void addCanvasLmsRdfData( final Model model ) {
+
+		Service service = new Service( model, true );
+		service.setServiceEndpoint( Builder.createURI( CANVAS_LMS_ROOT_URI ) );
+		service.setServiceDefinition( Builder.createPlainliteral( "Canvas LMS Service" ) );
+
+		/********************************************************/
+
+		AccessToken defaultAccessToken = new AccessToken( model, true );
+		defaultAccessToken.setValue(
+		        "7~wCpRKiFl91vrGdUHQ8gQFIVlVc9KiUe396TbAsfOXPMp6qWBUbqbjxAsKnDOZcc9" );
+
+		OAuth defaultOAuth = new OAuth( model, true );
+		defaultOAuth.addCredentials( defaultAccessToken );
+
+		UserAccount defaultUserAccount = new UserAccount( model, true );
+		defaultUserAccount.setAccountName( "3478501" );
+		defaultUserAccount.setAccountServiceHomepage( service.getServiceEndpoint() );
+		defaultUserAccount.setAccountAuthentication( defaultOAuth );
+		Thing.setService( model, defaultUserAccount, service );
+		defaultPerson.addAccount( defaultUserAccount );
+		defaultUserAccount.setAccountOf( defaultPerson );
+
+		/********************************************************/
+
+		AccessToken kaiAccessToken = new AccessToken( model, true );
+		kaiAccessToken.setValue(
+		        "7~LUpV7B3lJYadvZ2sHlpJiTcyJ6HaduVb3Ho8YjBNXSdIE4AEFzLFfORcOHRHh1fU" );
+
+		OAuth kaiOAuth = new OAuth( model, true );
+		kaiOAuth.addCredentials( kaiAccessToken );
+
+		UserAccount kaiUserAccount = new UserAccount( model, true );
+		kaiUserAccount.setAccountName( "3451205" );
+		kaiUserAccount.setAccountServiceHomepage( service.getServiceEndpoint() );
+		kaiUserAccount.setAccountAuthentication( kaiOAuth );
+		Thing.setService( model, kaiUserAccount, service );
+		kaiPerson.addAccount( kaiUserAccount );
+		kaiUserAccount.setAccountOf( kaiPerson );
+
+		/********************************************************/
+
+		AccessToken florianAccessToken = new AccessToken( model, true );
+		florianAccessToken.setValue(
+		        "7~45nTvodrOtuaDNbsjParF4vMd4xqljGD76LLoeTVbxyg8d2ECHN55KEsL1045G5V" );
+
+		OAuth florianOAuth = new OAuth( model, true );
+		florianOAuth.addCredentials( florianAccessToken );
+
+		UserAccount florianUserAccount = new UserAccount( model, true );
+		florianUserAccount.setAccountName( "3457836" );
+		florianUserAccount.setAccountServiceHomepage( service.getServiceEndpoint() );
+		florianUserAccount.setAccountAuthentication( florianOAuth );
+		Thing.setService( model, florianUserAccount, service );
+		florianPerson.addAccount( florianUserAccount );
+		florianUserAccount.setAccountOf( florianPerson );
+
+		/********************************************************/
+
+		ConnectorConfig config = new ConnectorConfig( model, true );
+		config.setId( CANVAS_LMS_CONNECTOR_ID );
+		config.setDefaultUserAccount( defaultUserAccount );
+		config.setService( service );
+		config.setConnectorClassName( CanvasLmsConnector.class.getName() );
 	}
 }

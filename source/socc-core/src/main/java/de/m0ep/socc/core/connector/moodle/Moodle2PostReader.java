@@ -102,7 +102,11 @@ public class Moodle2PostReader extends
 			return pollPostsAtContainer( container, since, limit );
 		}
 
-		throw new IOException( "Can't poll posts from " + sourceUri + " at this service " );
+		throw new IOException(
+		        "Can't poll posts from uri "
+		                + sourceUri
+		                + " at service "
+		                + getServiceEndpoint() );
 	}
 
 	/**

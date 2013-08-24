@@ -1,5 +1,6 @@
 package de.m0ep.socc.core.connector.canvaslms;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +23,7 @@ import de.m0ep.canvas.model.Attachment;
 import de.m0ep.canvas.model.Course;
 import de.m0ep.canvas.model.DiscussionTopic;
 import de.m0ep.canvas.model.Entry;
+import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.DateUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
@@ -30,38 +32,48 @@ import de.m0ep.socc.core.utils.UserAccountUtils;
 
 public final class CanvasLmsSiocUtils {
 
+	public static final String CANVAS_LMS_API_BASE_URI =
+	        "/api/v1";
+
 	public static final String REGEX_USER_URI =
-	        "/about/([0-9])$";
+	        CANVAS_LMS_API_BASE_URI
+	                + "/about/([0-9])";
 
 	public static final String REGEX_COURSE_URI =
-	        "/api/v1/courses/([0-9]+)$";
+	        CANVAS_LMS_API_BASE_URI
+	                + "/courses/([0-9]+)";
 
 	public static final String REGEX_DISCUSSION_TOPIC_URI =
-	        "/api/v1/courses/([0-9]+)/discussion_topics/([0-9]+)$";
+	        REGEX_COURSE_URI
+	                + "/discussion_topics/([0-9]+)";
 
 	public static final String REGEX_INITIAL_ENTRY_URI =
-	        "/api/v1/courses/([0-9]+)/discussion_topics/([0-9]+)#discussion_topic$";
+	        REGEX_DISCUSSION_TOPIC_URI
+	                + "#discussion_topic";
 
 	public static final String REGEX_ENTRY_URI =
-	        "/api/v1/courses/([0-9]+)/discussion_topics/([0-9]+)/entries/([0-9]+)$";
-
-	public static final String TEMPLATE_API_BASE_URI =
-	        "/api/v1/";
+	        REGEX_DISCUSSION_TOPIC_URI
+	                + "#entry-([0-9]+)";
 
 	public static final String TEMPLATE_USER_URI =
-	        TEMPLATE_API_BASE_URI + "/about/{userId}";
+	        CANVAS_LMS_API_BASE_URI
+	                + "/about/{userId}";
 
 	public static final String TEMPLATE_COURSE_URI =
-	        TEMPLATE_API_BASE_URI + "/courses/{courseId}";
+	        CANVAS_LMS_API_BASE_URI
+	                + "/courses/{courseId}";
 
 	public static final String TEMPLATE_DISCUSSION_TOPIC_URI =
-	        TEMPLATE_COURSE_URI + "/discussion_topics/{discussionId}";
+	        TEMPLATE_COURSE_URI
+	                + "/discussion_topics/{discussionId}";
 
 	public static final String TEMPLATE_INITIAL_ENTRY_URI =
-	        TEMPLATE_DISCUSSION_TOPIC_URI + "#discussion_topic";
+	        TEMPLATE_DISCUSSION_TOPIC_URI
+	                + "#discussion_topic";
 
 	public static final String TEMPLATE_ENTRY_URI =
-	        TEMPLATE_DISCUSSION_TOPIC_URI + "/entries/{entryId}";
+	        TEMPLATE_DISCUSSION_TOPIC_URI
+	                + "#entry-{entryId}";
 
 	public static final String TEMPLATE_VAR_USER_ID =
 	        "userId";
@@ -86,7 +98,7 @@ public final class CanvasLmsSiocUtils {
 	        Course course ) {
 		URI serviceEndpoint = connector.getService().getServiceEndpoint()
 		        .asURI();
-		URI uri = createSiocForumUri( serviceEndpoint, course.getId() );
+		URI uri = createCourseUri( serviceEndpoint, course.getId() );
 
 		if ( !Forum.hasInstance( connector.getContext().getModel(), uri ) ) {
 			Forum result = new Forum( connector.getContext().getModel(), uri,
@@ -120,7 +132,7 @@ public final class CanvasLmsSiocUtils {
 			                + parent.getId() );
 		}
 
-		URI uri = createSiocThreadUri(
+		URI uri = createDiscussionTopicUri(
 		        serviceEndpoint,
 		        courseId,
 		        discussionTopic.getId() );
@@ -136,15 +148,11 @@ public final class CanvasLmsSiocUtils {
 			parent.addParentOf( result );
 			SiocUtils.incNumThreads( parent );
 
-			Post initPost = createTopicInitialPost(
+			createInitialEntryPost(
 			        connector,
 			        result,
 			        discussionTopic,
 			        courseId );
-
-			initPost.setContainer( result );
-			result.setContainerOf( initPost );
-			SiocUtils.incNumItems( result );
 
 			return result;
 		}
@@ -152,7 +160,7 @@ public final class CanvasLmsSiocUtils {
 		return Thread.getInstance( model, uri );
 	}
 
-	public static Post createTopicInitialPost( CanvasLmsConnector connector,
+	public static Post createInitialEntryPost( CanvasLmsConnector connector,
 	        Container container, DiscussionTopic discussionTopic, long courseId ) {
 		Model model = connector.getContext().getModel();
 		URI serviceEndpoint = connector.getService()
@@ -176,7 +184,7 @@ public final class CanvasLmsSiocUtils {
 		String createdDate = DateUtils.formatISO8601(
 		        discussionTopic.getPostedAt() );
 
-		URI initPostUri = createTopicPostUri(
+		URI initPostUri = createInitialEntryUri(
 		        serviceEndpoint,
 		        courseId,
 		        discussionTopic.getId() );
@@ -203,13 +211,20 @@ public final class CanvasLmsSiocUtils {
 	}
 
 	public static Post createSiocPost( CanvasLmsConnector connector,
-	        Entry entry, Container container, Post parentPost ) {
+	        Entry entry, Container container, Post parentPost ) throws
+	        NotFoundException,
+	        AuthenticationException,
+	        IOException {
 		Model model = connector.getContext().getModel();
 		URI serviceEndpoint = connector.getService()
 		        .getServiceEndpoint()
 		        .asURI();
 
-		Container containerParent = container.getParent();
+		Container containerParent = connector.getStructureReader()
+		        .getContainer(
+		                container
+		                        .getParent()
+		                        .asURI() );
 
 		long courseId;
 		try {
@@ -229,7 +244,7 @@ public final class CanvasLmsSiocUtils {
 			                + containerParent.getId() );
 		}
 
-		URI uri = createSiocPostUri(
+		URI uri = createEntryUri(
 		        serviceEndpoint,
 		        courseId,
 		        discussionId,
@@ -361,14 +376,14 @@ public final class CanvasLmsSiocUtils {
 	 * RDF URI creation methods
 	 */
 
-	public static URI createSiocForumUri( final URI rootUri, final long courseId ) {
+	public static URI createCourseUri( final URI rootUri, final long courseId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( rootUri + TEMPLATE_COURSE_URI )
 		                .set( TEMPLATE_VAR_COURSE_ID, courseId )
 		                .expand() );
 	}
 
-	public static URI createSiocThreadUri( final URI rootUri,
+	public static URI createDiscussionTopicUri( final URI rootUri,
 	        final long courseId, final long discussionId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( rootUri + TEMPLATE_DISCUSSION_TOPIC_URI )
@@ -377,7 +392,7 @@ public final class CanvasLmsSiocUtils {
 		                .expand() );
 	}
 
-	public static URI createTopicPostUri( final URI rootUri,
+	public static URI createInitialEntryUri( final URI rootUri,
 	        final long courseId, final long discussionId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( rootUri + TEMPLATE_INITIAL_ENTRY_URI )
@@ -386,7 +401,7 @@ public final class CanvasLmsSiocUtils {
 		                .expand() );
 	}
 
-	public static URI createSiocPostUri( final URI rootUri, final long courseId,
+	public static URI createEntryUri( final URI rootUri, final long courseId,
 	        final long discussionId, final long entryId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( rootUri + TEMPLATE_ENTRY_URI )
@@ -409,37 +424,37 @@ public final class CanvasLmsSiocUtils {
 	 */
 
 	public static boolean isUserUri( final URI uri, final URI serviceEndpoint ) {
-		Pattern pattern = Pattern.compile( serviceEndpoint + REGEX_USER_URI );
+		Pattern pattern = Pattern.compile( serviceEndpoint + REGEX_USER_URI + "$" );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.matches();
+		return matcher.find();
 	}
 
 	public static boolean isCourseUri( final URI uri, final URI serviceEndpoint ) {
-		Pattern pattern = Pattern.compile( serviceEndpoint + REGEX_COURSE_URI );
+		Pattern pattern = Pattern.compile( serviceEndpoint + REGEX_COURSE_URI + "$" );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.matches();
+		return matcher.find();
 	}
 
 	public static boolean isDiscussionTopicUri( final URI uri, final URI serviceEndpoint ) {
-		Pattern pattern = Pattern.compile( serviceEndpoint + REGEX_DISCUSSION_TOPIC_URI );
+		Pattern pattern = Pattern.compile( serviceEndpoint + REGEX_DISCUSSION_TOPIC_URI + "$" );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.matches();
+		return matcher.find();
 	}
 
 	public static boolean isInitialEntryUri( final URI uri, final URI serviceEndpoint ) {
-		Pattern pattern = Pattern.compile( serviceEndpoint + REGEX_INITIAL_ENTRY_URI );
+		Pattern pattern = Pattern.compile( serviceEndpoint + REGEX_INITIAL_ENTRY_URI + "$" );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.matches();
+		return matcher.find();
 	}
 
 	public static boolean isEntryUri( final URI uri, final URI serviceEndpoint ) {
-		Pattern pattern = Pattern.compile( serviceEndpoint + REGEX_ENTRY_URI );
+		Pattern pattern = Pattern.compile( serviceEndpoint + REGEX_ENTRY_URI + "$" );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.matches();
+		return matcher.find();
 	}
 }

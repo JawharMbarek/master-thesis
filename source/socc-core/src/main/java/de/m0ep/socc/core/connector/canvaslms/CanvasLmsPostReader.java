@@ -25,12 +25,13 @@ package de.m0ep.socc.core.connector.canvaslms;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.Thread;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
@@ -39,13 +40,12 @@ import de.m0ep.canvas.Pagination;
 import de.m0ep.canvas.exceptions.AuthorizationException;
 import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.exceptions.NetworkException;
+import de.m0ep.canvas.model.DiscussionTopic;
 import de.m0ep.canvas.model.Entry;
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.utils.RdfUtils;
-import de.m0ep.socc.core.utils.SiocUtils;
 
 /**
  * @author Florian Müller
@@ -66,104 +66,199 @@ public class CanvasLmsPostReader extends
 	}
 
 	@Override
-	public boolean containsPosts( final Container container ) {
-		return null != container
-		        && RdfUtils.isType(
-		                container,
-		                Thread.RDFS_CLASS )
-		        && SiocUtils.isContainerOfSite(
-		                container,
-		                getServiceEndpoint() );
+	public Post readPost( URI uri ) throws NotFoundException, AuthenticationException, IOException {
+		if ( Post.hasInstance( getModel(), uri ) ) {
+			return Post.getInstance( getModel(), uri );
+		}
+
+		try {
+			if ( CanvasLmsSiocUtils.isEntryUri( uri, getServiceEndpoint() ) ) {
+				return readEntry( uri );
+			} else if ( CanvasLmsSiocUtils.isInitialEntryUri( uri, getServiceEndpoint() ) ) {
+				return readInitialEntry( uri );
+			}
+		} catch ( CanvasLmsException e ) {
+			if ( e instanceof NetworkException ) {
+				throw new IOException( e );
+			} else if ( e instanceof AuthorizationException ) {
+				throw new AuthenticationException( e );
+			} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
+				throw new NotFoundException( e );
+			}
+
+			throw Throwables.propagate( e );
+		}
+
+		return null;
 	}
 
 	@Override
-	public List<Post> readNewPosts( final Date since, final long limit,
-	        final Container container )
+	public List<Post> pollPosts( URI sourceUri, Date since, int limit )
 	        throws AuthenticationException, IOException {
-		if ( 0 == limit ) {
-			return Lists.newArrayList();
+
+		try {
+			if ( CanvasLmsSiocUtils.isDiscussionTopicUri( sourceUri, getServiceEndpoint() )
+			        || CanvasLmsSiocUtils.isInitialEntryUri( sourceUri, getServiceEndpoint() ) ) {
+				return pollPostsFromDiscussionTopic( sourceUri, since, limit );
+
+			} else if ( CanvasLmsSiocUtils.isEntryUri( sourceUri, getServiceEndpoint() ) ) {
+				return pollPostsFromEntry( sourceUri, since, limit );
+			}
+		} catch ( CanvasLmsException e ) {
+			if ( e instanceof NetworkException ) {
+				throw new IOException( e );
+			} else if ( e instanceof AuthorizationException ) {
+				throw new AuthenticationException( e );
+			} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
+				throw new NotFoundException( e );
+			}
+
+			throw Throwables.propagate( e );
 		}
 
-		Preconditions.checkNotNull( container,
-		        "Required parameter container must be specified." );
-		Preconditions.checkArgument( containsPosts( container ),
-		        "The container contains no posts on this service." );
-		Preconditions.checkArgument( container.hasId(),
-		        "The parameter container has no id." );
-		Preconditions.checkArgument( container.hasParent(),
-		        "The parameter container has no required parent container." );
+		throw new IOException(
+		        "Can't poll posts from uri "
+		                + sourceUri
+		                + " at service "
+		                + getServiceEndpoint() );
+	}
 
-		Container parentContainer = container.getParent();
-		Preconditions.checkArgument( parentContainer.hasId(),
-		        "The parent container has no id." );
-
-		long courseId;
-		try {
-			courseId = Long.parseLong( parentContainer.getId() );
-		} catch ( NumberFormatException e ) {
-			throw new IllegalArgumentException(
-			        "The id of the containers parent is invalid: was "
-			                + parentContainer.getId() );
+	private Post readEntry( URI uri ) throws
+	        NotFoundException,
+	        AuthenticationException,
+	        IOException, CanvasLmsException {
+		if ( Post.hasInstance( getModel(), uri ) ) {
+			return Post.getInstance( getModel(), uri );
 		}
 
-		long topicId;
-		try {
-			topicId = Long.parseLong( container.getId() );
-		} catch ( NumberFormatException e ) {
-			throw new IllegalArgumentException(
-			        "The id of the container is invalid: was "
-			                + container.getId() );
+		Pattern pattern = Pattern.compile(
+		        getServiceEndpoint()
+		                + CanvasLmsSiocUtils.REGEX_ENTRY_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
+
+		if ( matcher.find() ) {
+			long courseId = Long.parseLong( matcher.group( 1 ) );
+			long topicId = Long.parseLong( matcher.group( 2 ) );
+			long entryId = Long.parseLong( matcher.group( 3 ) );
+
+			Entry entry = defaultClient.courses()
+			        .discussionTopics( courseId )
+			        .entries( topicId )
+			        .get( entryId )
+			        .execute();
+
+			if ( null != entry ) {
+				Container container = getConnector().getStructureReader().getContainer(
+				        CanvasLmsSiocUtils.createDiscussionTopicUri(
+				                getServiceEndpoint(),
+				                courseId,
+				                topicId ) );
+
+				return CanvasLmsSiocUtils.createSiocPost(
+				        getConnector(),
+				        entry,
+				        container,
+				        null );
+
+			}
 		}
 
-		Pagination<Entry> entryPages = null;
-		try {
-			entryPages = defaultClient.courses()
+		throw new NotFoundException( "Can't read post from uri " + uri );
+	}
+
+	private Post readInitialEntry( URI uri ) throws
+	        NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		if ( Post.hasInstance( getModel(), uri ) ) {
+			return Post.getInstance( getModel(), uri );
+		}
+
+		Pattern pattern = Pattern.compile(
+		        getServiceEndpoint()
+		                + CanvasLmsSiocUtils.REGEX_INITIAL_ENTRY_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
+
+		if ( matcher.find() ) {
+			long courseId = Long.parseLong( matcher.group( 1 ) );
+			long topicId = Long.parseLong( matcher.group( 2 ) );
+
+			try {
+				DiscussionTopic discussionTopic = defaultClient.courses()
+				        .discussionTopics( courseId )
+				        .get( topicId )
+				        .execute();
+				Container container = getConnector().getStructureReader().getContainer(
+				        CanvasLmsSiocUtils.createDiscussionTopicUri(
+				                getServiceEndpoint(),
+				                courseId,
+				                topicId ) );
+
+				return CanvasLmsSiocUtils.createInitialEntryPost(
+				        getConnector(),
+				        container,
+				        discussionTopic,
+				        courseId );
+			} catch ( CanvasLmsException e ) {
+				if ( e instanceof NetworkException ) {
+					throw new IOException( e );
+				} else if ( e instanceof AuthorizationException ) {
+					throw new AuthenticationException( e );
+				} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
+					throw new NotFoundException( e );
+				}
+
+				throw Throwables.propagate( e );
+			}
+		}
+
+		throw new NotFoundException( "Can't read post from uri " + uri );
+	}
+
+	private List<Post> pollPostsFromDiscussionTopic( URI sourceUri, Date since, int limit )
+	        throws CanvasLmsException,
+	        NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		Pattern pattern = Pattern.compile(
+		        getServiceEndpoint()
+		                + CanvasLmsSiocUtils.REGEX_DISCUSSION_TOPIC_URI );
+		Matcher matcher = pattern.matcher( sourceUri.toString() );
+		List<Post> result = Lists.newArrayList();
+
+		if ( matcher.find() ) {
+			long courseId = Long.parseLong( matcher.group( 1 ) );
+			long topicId = Long.parseLong( matcher.group( 2 ) );
+
+			Container container = getConnector().getStructureReader().getContainer(
+			        CanvasLmsSiocUtils.createDiscussionTopicUri(
+			                getServiceEndpoint(),
+			                courseId,
+			                topicId ) );
+
+			Post initPost = readInitialEntry(
+			        CanvasLmsSiocUtils.createInitialEntryUri(
+			                getServiceEndpoint(),
+			                courseId,
+			                topicId ) );
+
+			Pagination<Entry> pagination = defaultClient.courses()
 			        .discussionTopics( courseId )
 			        .entries( topicId )
 			        .list()
 			        .executePagination();
-		} catch ( CanvasLmsException e ) {
-			if ( e instanceof NetworkException ) {
-				throw new IOException( e );
-			} else if ( e instanceof AuthorizationException ) {
-				throw new AuthenticationException( e );
-			} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
-				throw new NotFoundException( e );
-			}
 
-			throw Throwables.propagate( e );
-		}
-
-		Post initPost = Post.getInstance(
-		        getModel(),
-		        CanvasLmsSiocUtils.createTopicPostUri(
-		                getServiceEndpoint(),
-		                courseId,
-		                topicId ) );
-
-		List<Post> result = Lists.newArrayList();
-		if ( null != entryPages ) {
-			for ( List<Entry> entries : entryPages ) {
-				for ( Entry entry : entries ) {
-					if ( 0 > limit || limit < result.size() ) {
-						Date createdDate = entry.getCreatedAt();
-						if ( null == since || createdDate.after( since ) ) {
-							result.add( CanvasLmsSiocUtils
-							        .createSiocPost(
-							                getConnector(),
-							                entry,
-							                container,
-							                initPost
-							        ) );
-						} else {
-							// abort, because entries are sorted by
-							// 'newest first'
-							return result;
-						}
-					} else {
-						// limit reached
-						return result;
-					}
+			for ( List<Entry> entryPage : pagination ) {
+				for ( Entry entry : entryPage ) {
+					addEntryToList(
+					        result,
+					        since,
+					        limit,
+					        entry,
+					        container,
+					        initPost,
+					        courseId,
+					        topicId );
 				}
 			}
 		}
@@ -171,108 +266,116 @@ public class CanvasLmsPostReader extends
 		return result;
 	}
 
-	@Override
-	public boolean containsReplies( final Post post ) {
-		return null != post
-		        && post.hasContainer()
-		        && containsPosts( post.getContainer() );
-	}
+	private List<Post> pollPostsFromEntry( URI sourceUri, Date since, int limit ) throws
+	        CanvasLmsException,
+	        NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		Pattern pattern = Pattern.compile(
+		        getServiceEndpoint()
+		                + CanvasLmsSiocUtils.REGEX_ENTRY_URI );
+		Matcher matcher = pattern.matcher( sourceUri.toString() );
+		List<Post> result = Lists.newArrayList();
 
-	@Override
-	public List<Post> pollRepliesAtPost( final Date since, final long limit,
-	        final Post post )
-	        throws AuthenticationException, IOException {
-		if ( 0 == limit ) {
-			return Lists.newArrayList();
-		}
+		if ( matcher.find() ) {
+			long courseId = Long.parseLong( matcher.group( 1 ) );
+			long topicId = Long.parseLong( matcher.group( 2 ) );
+			long entryId = Long.parseLong( matcher.group( 3 ) );
 
-		Preconditions.checkNotNull( post,
-		        "Required parameter post must be specified." );
-		Preconditions.checkArgument( containsReplies( post ),
-		        "The post contains no replies on this service." );
-		Preconditions.checkArgument( post.hasId(),
-		        "Required parameter post has no id." );
-		Preconditions.checkArgument( post.hasContainer(),
-		        "The paramater post has no container." );
+			Container container = getConnector().getStructureReader().getContainer(
+			        CanvasLmsSiocUtils.createDiscussionTopicUri(
+			                getServiceEndpoint(),
+			                courseId,
+			                topicId ) );
 
-		Container container = post.getContainer();
-		Preconditions.checkArgument( container.hasId(),
-		        "The container of the post has no id." );
-		Preconditions.checkArgument( container.hasParent(),
-		        "The container of post has no parent" );
+			Post parentPost = readEntry(
+			        CanvasLmsSiocUtils.createEntryUri(
+			                getServiceEndpoint(),
+			                courseId,
+			                topicId,
+			                entryId ) );
 
-		Container parentContainer = container.getParent();
-		Preconditions.checkArgument( parentContainer.hasId(),
-		        "The parent of post container has no id." );
-
-		long courseId;
-		try {
-			courseId = Long.parseLong( parentContainer.getId() );
-		} catch ( NumberFormatException e ) {
-			throw new IllegalArgumentException(
-			        "The id of the containers parent is invalid: was "
-			                + parentContainer.getId() );
-		}
-
-		long topicId;
-		try {
-			topicId = Long.parseLong( container.getId() );
-		} catch ( NumberFormatException e ) {
-			throw new IllegalArgumentException(
-			        "The id of the container is invalid: was "
-			                + container.getId() );
-		}
-
-		long entryId;
-		try {
-			entryId = Long.parseLong( post.getId() );
-		} catch ( NumberFormatException e ) {
-			throw new IllegalArgumentException(
-			        "The id of the parentPost is invalid: was "
-			                + container.getId() );
-		}
-
-		Pagination<Entry> replyPages = null;
-		try {
-			replyPages = defaultClient.courses()
+			Pagination<Entry> pagination = defaultClient.courses()
 			        .discussionTopics( courseId )
 			        .entries( topicId )
 			        .listReplies( entryId )
 			        .executePagination();
-		} catch ( CanvasLmsException e ) {
-			if ( e instanceof NetworkException ) {
-				throw new IOException( e );
-			} else if ( e instanceof AuthorizationException ) {
-				throw new AuthenticationException( e );
-			} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
-				throw new NotFoundException( e );
-			}
 
-			throw Throwables.propagate( e );
-		}
-
-		List<Post> result = Lists.newArrayList();
-		if ( null != replyPages ) {
-			for ( List<Entry> entries : replyPages ) {
-				for ( Entry entry : entries ) {
-					if ( 0 > limit || limit < result.size() ) {
-						Date createdDate = entry.getCreatedAt();
-						if ( null == since || createdDate.after( since ) ) {
-							result.add( CanvasLmsSiocUtils.createSiocPost(
-							        getConnector(),
-							        entry,
-							        container,
-							        post ) );
-						} else {
-							return result;
-						}
-					} else {
-						return result;
-					}
+			for ( List<Entry> replyPage : pagination ) {
+				for ( Entry reply : replyPage ) {
+					addEntryToList(
+					        result,
+					        since,
+					        Math.max( -1, limit - result.size() ),
+					        reply,
+					        container,
+					        parentPost,
+					        topicId,
+					        topicId );
 				}
 			}
 		}
 
 		return result;
+	}
+
+	private void addEntryToList( List<Post> result, Date since, int limit, Entry entry,
+	        Container container, Post parentPost, long courseId, long topicId )
+	        throws CanvasLmsException,
+	        NotFoundException,
+	        AuthenticationException,
+	        IOException {
+
+		if ( 0 > limit || limit < result.size() ) {
+			Date createdDate = entry.getCreatedAt();
+
+			Post post = CanvasLmsSiocUtils.createSiocPost(
+			        getConnector(),
+			        entry,
+			        container,
+			        parentPost );
+
+			if ( null == since || createdDate.after( since ) ) {
+				result.add( post );
+			}
+
+			Entry[] recentReplies = entry.getRecentReplies();
+			if ( null != recentReplies ) {
+
+				for ( Entry reply : recentReplies ) {
+					addEntryToList(
+					        result,
+					        since,
+					        Math.max( -1, limit - result.size() ),
+					        reply,
+					        container,
+					        post,
+					        topicId,
+					        topicId );
+				}
+			}
+
+			if ( entry.hasMoreReplies() ) {
+				Pagination<Entry> pagination = defaultClient.courses()
+				        .discussionTopics( courseId )
+				        .entries( topicId )
+				        .listReplies( entry.getId() )
+				        .executePagination();
+
+				for ( List<Entry> replyPage : pagination ) {
+					for ( Entry reply : replyPage ) {
+						addEntryToList(
+						        result,
+						        since,
+						        Math.max( -1, limit - result.size() ),
+						        reply,
+						        container,
+						        post,
+						        topicId,
+						        topicId );
+					}
+				}
+			}
+		}
 	}
 }

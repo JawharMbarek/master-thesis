@@ -1,4 +1,3 @@
-
 package de.m0ep.canvas;
 
 import java.nio.charset.Charset;
@@ -14,127 +13,169 @@ import org.slf4j.LoggerFactory;
 import com.damnhandy.uri.template.UriTemplate;
 
 import de.m0ep.canvas.exceptions.CanvasLmsException;
+import de.m0ep.canvas.exceptions.NotFoundException;
 import de.m0ep.canvas.model.Entry;
 
 public class Entries extends AbstractEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(Entries.class);
+	private static final Logger LOG = LoggerFactory.getLogger( Entries.class );
 
-    private static final String PARAM_ENTRY_ID = "entryId";
+	private static final String PARAM_ENTRY_ID = "entryId";
 
-    private static final String PATH = "/entries";
-    private static final String PATH_REPLIES = "/entries/{entryId}/replies";
+	private static final String PATH = "/entries";
+	private static final String PATH_REPLIES = "/entries/{entryId}/replies";
+	private static final String PATH_ENTRY_LIST = "/entry_list?ids[]={entryId}";
 
-    public class List extends CanvasLmsRequest<Entry> {
-        public List() {
-            super(Entries.this.getClient(),
-                    HttpGet.class,
-                    getEndpoint(),
-                    Entry.class);
-        }
+	public class List extends CanvasLmsRequest<Entry> {
+		public List() {
+			super( Entries.this.getClient(),
+			        HttpGet.class,
+			        getEndpoint(),
+			        Entry.class );
+		}
 
-        @Override
-        public Entry execute()
-                throws CanvasLmsException {
-            throw new UnsupportedOperationException(
-                    "execute() is not supported by List");
-        }
-    }
+		@Override
+		public Entry execute()
+		        throws CanvasLmsException {
+			throw new UnsupportedOperationException(
+			        "execute() is not supported by List" );
+		}
+	}
 
-    public class Post extends CanvasLmsRequest<Entry> {
-        public Post(final String message) {
-            super(Entries.this.getClient(),
-                    HttpPost.class,
-                    getEndpoint(),
-                    Entry.class);
+	public class Get extends CanvasLmsRequest<Entry> {
+		long entryId;
 
-            setContent(new UrlEncodedFormEntity(
-                    Arrays.asList(
-                            new BasicNameValuePair(
-                                    "message",
-                                    message)),
-                    Charset.defaultCharset()));
-        }
+		public Get( long entryId ) {
+			super( Entries.this.getClient(),
+			        HttpGet.class,
+			        UriTemplate.fromTemplate(
+			                getParentEndpoint() + PATH_ENTRY_LIST )
+			                .set( PARAM_ENTRY_ID, entryId )
+			                .expand(),
+			        Entry.class );
+			this.entryId = entryId;
+		}
 
-        @Override
-        public Pagination<Entry> executePagination()
-                throws CanvasLmsException {
-            throw new UnsupportedOperationException(
-                    "executePagination() is not supported by Post");
-        }
-    }
+		@Override
+		public Entry execute() throws CanvasLmsException {
+			Pagination<Entry> pagination = super.executePagination();
+			for ( java.util.List<Entry> list : pagination ) {
+				for ( Entry entry : list ) {
+					return entry;
+				}
+			}
 
-    public class ListReplies extends
-            CanvasLmsRequest<Entry> {
-        public ListReplies(final long entryId) {
-            super(Entries.this.getClient(),
-                    HttpGet.class,
-                    UriTemplate.fromTemplate(getParentEndpoint() + PATH_REPLIES)
-                            .set(PARAM_ENTRY_ID, entryId).expand(),
-                    Entry.class);
-        }
+			throw new NotFoundException( "No entry found with id= " + entryId );
+		}
 
-        @Override
-        public Entry execute()
-                throws CanvasLmsException {
-            throw new UnsupportedOperationException(
-                    "execute() is not supported by List");
-        }
-    }
+		@Override
+		public Pagination<Entry> executePagination()
+		        throws CanvasLmsException {
+			throw new UnsupportedOperationException(
+			        "executePagination() is not supported by Post" );
+		}
+	}
 
-    public class PostReply extends
-            CanvasLmsRequest<Entry> {
-        public PostReply(final String message, final long entryId) {
-            super(Entries.this.getClient(),
-                    HttpPost.class,
-                    UriTemplate.fromTemplate(getParentEndpoint() + PATH_REPLIES)
-                            .set(PARAM_ENTRY_ID, entryId).expand(),
-                    Entry.class);
+	public class Post extends CanvasLmsRequest<Entry> {
+		public Post( final String message ) {
+			super( Entries.this.getClient(),
+			        HttpPost.class,
+			        getEndpoint(),
+			        Entry.class );
 
-            setContent(new UrlEncodedFormEntity(
-                    Arrays.asList(
-                            new BasicNameValuePair(
-                                    "message",
-                                    message)),
-                    Charset.defaultCharset()));
-        }
+			setContent( new UrlEncodedFormEntity(
+			        Arrays.asList(
+			                new BasicNameValuePair(
+			                        "message",
+			                        message ) ),
+			        Charset.defaultCharset() ) );
+		}
 
-        @Override
-        public Pagination<Entry> executePagination()
-                throws CanvasLmsException {
-            throw new UnsupportedOperationException(
-                    "executePagination() is not supported by Post");
-        }
-    }
+		@Override
+		public Pagination<Entry> executePagination()
+		        throws CanvasLmsException {
+			throw new UnsupportedOperationException(
+			        "executePagination() is not supported by Post" );
+		}
+	}
 
-    public Entries(final CanvasLmsClient client, final String parentEndpointPath) {
-        setClient(client);
-        setParentEndpoint(parentEndpointPath);
-        setEndpoint(getParentEndpoint() + PATH);
+	public class ListReplies extends
+	        CanvasLmsRequest<Entry> {
+		public ListReplies( final long entryId ) {
+			super( Entries.this.getClient(),
+			        HttpGet.class,
+			        UriTemplate.fromTemplate( getParentEndpoint() + PATH_REPLIES )
+			                .set( PARAM_ENTRY_ID, entryId ).expand(),
+			        Entry.class );
+		}
 
-        LOG.info("Create Entries for '{}' endpoint.", getParentEndpoint());
-    }
+		@Override
+		public Entry execute()
+		        throws CanvasLmsException {
+			throw new UnsupportedOperationException(
+			        "execute() is not supported by List" );
+		}
+	}
 
-    public List list() {
-        List request = new List();
-        initializeRequest(request);
-        return request;
-    }
+	public class PostReply extends
+	        CanvasLmsRequest<Entry> {
+		public PostReply( final String message, final long entryId ) {
+			super( Entries.this.getClient(),
+			        HttpPost.class,
+			        UriTemplate.fromTemplate( getParentEndpoint() + PATH_REPLIES )
+			                .set( PARAM_ENTRY_ID, entryId ).expand(),
+			        Entry.class );
 
-    public Post post(final String message) {
-        Post request = new Post(message);
-        initializeRequest(request);
-        return request;
-    }
+			setContent( new UrlEncodedFormEntity(
+			        Arrays.asList(
+			                new BasicNameValuePair(
+			                        "message",
+			                        message ) ),
+			        Charset.defaultCharset() ) );
+		}
 
-    public ListReplies listReplies(final long entryId) {
-        ListReplies request = new ListReplies(entryId);
-        initializeRequest(request);
-        return request;
-    }
+		@Override
+		public Pagination<Entry> executePagination()
+		        throws CanvasLmsException {
+			throw new UnsupportedOperationException(
+			        "executePagination() is not supported by Post" );
+		}
+	}
 
-    public PostReply postReply(final String message, final long entryId) {
-        PostReply request = new PostReply(message, entryId);
-        initializeRequest(request);
-        return request;
-    }
+	public Entries( final CanvasLmsClient client, final String parentEndpointPath ) {
+		setClient( client );
+		setParentEndpoint( parentEndpointPath );
+		setEndpoint( getParentEndpoint() + PATH );
+
+		LOG.info( "Create Entries for '{}' endpoint.", getParentEndpoint() );
+	}
+
+	public List list() {
+		List request = new List();
+		initializeRequest( request );
+		return request;
+	}
+
+	public Get get( final long entryId ) {
+		Get request = new Get( entryId );
+		initializeRequest( request );
+		return request;
+	}
+
+	public Post post( final String message ) {
+		Post request = new Post( message );
+		initializeRequest( request );
+		return request;
+	}
+
+	public ListReplies listReplies( final long entryId ) {
+		ListReplies request = new ListReplies( entryId );
+		initializeRequest( request );
+		return request;
+	}
+
+	public PostReply postReply( final String message, final long entryId ) {
+		PostReply request = new PostReply( message, entryId );
+		initializeRequest( request );
+		return request;
+	}
 }

@@ -133,7 +133,7 @@ public class CanvasLmsPostWriter extends
 		if ( null != resultEntry ) {
 			Post initPost = Post.getInstance(
 			        getModel(),
-			        CanvasLmsSiocUtils.createTopicPostUri(
+			        CanvasLmsSiocUtils.createInitialEntryUri(
 			                getServiceEndpoint(),
 			                courseId,
 			                discussionId ) );
@@ -264,7 +264,7 @@ public class CanvasLmsPostWriter extends
 		if ( null != resultEntry ) {
 			Post initPost = Post.getInstance(
 			        getModel(),
-			        CanvasLmsSiocUtils.createTopicPostUri(
+			        CanvasLmsSiocUtils.createInitialEntryUri(
 			                getServiceEndpoint(),
 			                courseId,
 			                discussionId ) );

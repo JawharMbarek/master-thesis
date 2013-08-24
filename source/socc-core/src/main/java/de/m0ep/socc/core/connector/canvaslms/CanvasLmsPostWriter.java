@@ -133,12 +133,12 @@ public class CanvasLmsPostWriter extends
 		if ( null != resultEntry ) {
 			Post initPost = Post.getInstance(
 			        getModel(),
-			        CanvasLmsSiocConverter.createTopicPostUri(
+			        CanvasLmsSiocUtils.createTopicPostUri(
 			                getServiceEndpoint(),
 			                courseId,
 			                discussionId ) );
 
-			Post resultPost = CanvasLmsSiocConverter.createSiocPost(
+			Post resultPost = CanvasLmsSiocUtils.createSiocPost(
 			        getConnector(),
 			        resultEntry,
 			        container,
@@ -264,12 +264,12 @@ public class CanvasLmsPostWriter extends
 		if ( null != resultEntry ) {
 			Post initPost = Post.getInstance(
 			        getModel(),
-			        CanvasLmsSiocConverter.createTopicPostUri(
+			        CanvasLmsSiocUtils.createTopicPostUri(
 			                getServiceEndpoint(),
 			                courseId,
 			                discussionId ) );
 
-			Post resultPost = CanvasLmsSiocConverter.createSiocPost(
+			Post resultPost = CanvasLmsSiocUtils.createSiocPost(
 			        getConnector(),
 			        resultEntry,
 			        container,

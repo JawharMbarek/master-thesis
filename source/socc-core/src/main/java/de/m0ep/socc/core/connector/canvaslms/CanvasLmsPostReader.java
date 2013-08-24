@@ -136,7 +136,7 @@ public class CanvasLmsPostReader extends
 
 		Post initPost = Post.getInstance(
 		        getModel(),
-		        CanvasLmsSiocConverter.createTopicPostUri(
+		        CanvasLmsSiocUtils.createTopicPostUri(
 		                getServiceEndpoint(),
 		                courseId,
 		                topicId ) );
@@ -148,7 +148,7 @@ public class CanvasLmsPostReader extends
 					if ( 0 > limit || limit < result.size() ) {
 						Date createdDate = entry.getCreatedAt();
 						if ( null == since || createdDate.after( since ) ) {
-							result.add( CanvasLmsSiocConverter
+							result.add( CanvasLmsSiocUtils
 							        .createSiocPost(
 							                getConnector(),
 							                entry,
@@ -258,7 +258,7 @@ public class CanvasLmsPostReader extends
 					if ( 0 > limit || limit < result.size() ) {
 						Date createdDate = entry.getCreatedAt();
 						if ( null == since || createdDate.after( since ) ) {
-							result.add( CanvasLmsSiocConverter.createSiocPost(
+							result.add( CanvasLmsSiocUtils.createSiocPost(
 							        getConnector(),
 							        entry,
 							        container,

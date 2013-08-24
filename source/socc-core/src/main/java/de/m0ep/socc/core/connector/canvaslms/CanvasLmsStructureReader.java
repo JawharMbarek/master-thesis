@@ -125,7 +125,7 @@ public class CanvasLmsStructureReader extends
 			Course course = defaultClient.courses()
 			        .get( courseId )
 			        .execute();
-			return CanvasLmsSiocConverter.createSiocForum(
+			return CanvasLmsSiocUtils.createSiocForum(
 			        getConnector(),
 			        course );
 		} catch ( CanvasLmsException e ) {
@@ -166,7 +166,7 @@ public class CanvasLmsStructureReader extends
 			for ( List<Course> courses : coursePages ) {
 				for ( Course course : courses ) {
 					result.add(
-					        CanvasLmsSiocConverter.createSiocForum(
+					        CanvasLmsSiocUtils.createSiocForum(
 					                getConnector(),
 					                course ) );
 				}
@@ -225,7 +225,7 @@ public class CanvasLmsStructureReader extends
 			        .get( topicId )
 			        .execute();
 
-			return CanvasLmsSiocConverter.createSiocThread(
+			return CanvasLmsSiocUtils.createSiocThread(
 			        getConnector(),
 			        discussionTopic,
 			        parentForum );
@@ -296,7 +296,7 @@ public class CanvasLmsStructureReader extends
 
 			for ( List<DiscussionTopic> topics : discussionTopicPages ) {
 				for ( DiscussionTopic discussionTopic : topics ) {
-					result.add( CanvasLmsSiocConverter.createSiocThread(
+					result.add( CanvasLmsSiocUtils.createSiocThread(
 					        getConnector(),
 					        discussionTopic,
 					        parentForum ) );

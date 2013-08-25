@@ -17,6 +17,8 @@ import com.xmlns.foaf.FOAFVocabulary;
 import com.xmlns.foaf.Person;
 
 import de.m0ep.sioc.services.auth.AccessToken;
+import de.m0ep.sioc.services.auth.ClientId;
+import de.m0ep.sioc.services.auth.ClientSecret;
 import de.m0ep.sioc.services.auth.Direct;
 import de.m0ep.sioc.services.auth.OAuth;
 import de.m0ep.sioc.services.auth.Password;
@@ -30,6 +32,7 @@ import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.connector.canvaslms.CanvasLmsConnector;
+import de.m0ep.socc.core.connector.facebook.FacebookConnector;
 import de.m0ep.socc.core.connector.moodle.Moodle2Connector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
@@ -40,6 +43,8 @@ public class ConnectorTestApp {
 	private static final String CANVAS_LMS_ROOT_URI = "https://canvas.instructure.com";
 	private static final String MOODLE_ROOT_URI = "http://localhost/moodle";
 	private static final String MOODLE_CONNECTOR_ID = "moodle-test";
+	private static final String FACEBOOK_ROOT_URI = "https://www.facebook.com";
+	private static final String FACEBOOK_CONNECTOR_ID = "facebook-test";
 	private Person florianPerson;
 	private Person defaultPerson;
 	private Person kaiPerson;
@@ -71,14 +76,19 @@ public class ConnectorTestApp {
 
 			addMoodleRdfData( model );
 			addCanvasLmsRdfData( model );
+			addFacebookRdfData( model );
 
 			// IConnector connector = DefaultConnector.createConnector( 
 			//         context, 
 			//		   MOODLE_CONNECTOR_ID );
 
+			// IConnector connector = DefaultConnector.createConnector(
+			//        context,
+			//        CANVAS_LMS_CONNECTOR_ID );
+
 			IConnector connector = DefaultConnector.createConnector(
 			        context,
-			        CANVAS_LMS_CONNECTOR_ID );
+			        FACEBOOK_CONNECTOR_ID );
 
 			connector.initialize();
 
@@ -86,20 +96,33 @@ public class ConnectorTestApp {
 			IPostReader<?> postReader = connector.getPostReader();
 			// IPostWriter<?> postWriter = connector.getPostWriter();
 
-			List<Container> forums = structureReader.listContainer();
-			for ( Container forum : forums ) {
-				System.out.println( RdfUtils.resourceToString( forum, Syntax.Turtle ) );
+			//			List<Container> forums = structureReader.listContainer();
+			//			for ( Container forum : forums ) {
+			//				System.out.println( RdfUtils.resourceToString( forum, Syntax.Turtle ) );
+			//
+			//								List<Container> threads = structureReader.listContainer( forum.asURI() );
+			//								for ( Container thread : threads ) {
+			//									System.out.println( RdfUtils.resourceToString( thread, Syntax.Turtle ) );
+			//				
+			//									List<Post> posts = postReader.pollPosts( thread.asURI(), null, -1 );
+			//									for ( Post post : posts ) {
+			//										System.out.println( RdfUtils.resourceToString( post, Syntax.Turtle ) );
+			//									}
+			//								}
+			//			}
 
-				List<Container> threads = structureReader.listContainer( forum.asURI() );
-				for ( Container thread : threads ) {
-					System.out.println( RdfUtils.resourceToString( thread, Syntax.Turtle ) );
-
-					List<Post> posts = postReader.pollPosts( thread.asURI(), null, -1 );
-					for ( Post post : posts ) {
-						System.out.println( RdfUtils.resourceToString( post, Syntax.Turtle ) );
-					}
-				}
+			Container c = structureReader.getContainer(
+			        Builder.createURI(
+			                "https://www.facebook.com/19292868552" ) );
+			System.out.println( RdfUtils.resourceToString( c, Syntax.Turtle ) );
+			System.out.println(
+			        "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<o>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" );
+			List<Post> posts = postReader.pollPosts( Builder.createURI(
+			        "https://www.facebook.com/m0eper" ), null, 5 );
+			for ( Post post : posts ) {
+				System.out.println( RdfUtils.resourceToString( post, Syntax.Turtle ) );
 			}
+
 		} finally {
 			System.err.println(
 			        "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<o>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" );
@@ -246,5 +269,50 @@ public class ConnectorTestApp {
 		config.setDefaultUserAccount( defaultUserAccount );
 		config.setService( service );
 		config.setConnectorClassName( CanvasLmsConnector.class.getName() );
+	}
+
+	public void addFacebookRdfData( final Model model ) {
+		Service service = new Service( model, true );
+		service.setServiceEndpoint( Builder.createURI( FACEBOOK_ROOT_URI ) );
+
+		OAuth serviceOAuth = new OAuth( model, true );
+		service.setServiceAuthentication( serviceOAuth );
+
+		ClientId serviceClientId = new ClientId( model, true );
+		serviceClientId.setValue( "218182098322396" );
+		serviceOAuth.addCredentials( serviceClientId );
+
+		ClientSecret serviceClientSecret = new ClientSecret( model, true );
+		serviceClientSecret.setValue( "f4ed27b621c0f6476c2741f7cf9c4dc5" );
+		serviceOAuth.addCredentials( serviceClientSecret );
+
+		/*********************************/
+
+		UserAccount florianUserAccount = new UserAccount( model, true );
+		florianUserAccount.setAccountName( "100000490230885" );
+		florianUserAccount.setAccountServiceHomepage( service.getServiceEndpoint() );
+
+		florianPerson = new Person( model, true );
+		florianPerson.setName( "Florian Müller" );
+		florianPerson.addAccount( florianUserAccount );
+		florianUserAccount.setAccountOf( florianPerson );
+
+		OAuth florianOAuth = new OAuth( model, true );
+		florianUserAccount.setAccountAuthentication( florianOAuth );
+
+		AccessToken florianAccessToken = new AccessToken( model, true );
+		florianAccessToken
+		        .setValue( "CAADGb3p3g9wBANQpIOfeJjlO6WcgyILAE39y6YMECzuiM6xJB3HG5oAMetr0nQ3FdRfh"
+		                + "ysngrNmRysSVAcPQiWPPXd2q9ZBZBNf7kqd4IQnyg1BRZAEvABiUhpkxFlAMhVgn44J2mFN"
+		                + "pkgdDgUT" );
+		florianOAuth.addCredentials( florianAccessToken );
+
+		/*********************************/
+
+		ConnectorConfig config = new ConnectorConfig( model, true );
+		config.setId( FACEBOOK_CONNECTOR_ID );
+		config.setDefaultUserAccount( florianUserAccount );
+		config.setService( service );
+		config.setConnectorClassName( FacebookConnector.class.getName() );
 	}
 }

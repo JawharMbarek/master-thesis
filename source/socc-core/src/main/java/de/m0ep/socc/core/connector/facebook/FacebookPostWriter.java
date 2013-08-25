@@ -117,7 +117,7 @@ public class FacebookPostWriter extends
 
 		FacebookType result = null;
 		try {
-			result = client.getClient().publish(
+			result = client.getFacebookClient().publish(
 			        container.getId()
 			                + "/"
 			                + FacebookApiConstants.CONNECTION_FEED,
@@ -132,7 +132,7 @@ public class FacebookPostWriter extends
 			        container );
 			JsonObject object = null;
 			try {
-				object = client.getClient().fetchObject(
+				object = client.getFacebookClient().fetchObject(
 				        result.getId(),
 				        JsonObject.class );
 			} catch ( FacebookException e ) {
@@ -140,7 +140,7 @@ public class FacebookPostWriter extends
 			}
 
 			if ( null != object ) {
-				Post addedPost = FacebookSiocConverter.createSiocPost(
+				Post addedPost = FacebookSiocUtils.createSiocPost(
 				        getConnector(),
 				        object,
 				        container,
@@ -222,7 +222,7 @@ public class FacebookPostWriter extends
 
 		FacebookType fbResult = null;
 		try {
-			fbResult = client.getClient()
+			fbResult = client.getFacebookClient()
 			        .publish( parentPost.getId()
 			                + "/"
 			                + FacebookApiConstants.CONNECTION_COMMENTS,
@@ -241,14 +241,14 @@ public class FacebookPostWriter extends
 
 			JsonObject object = null;
 			try {
-				object = client.getClient().fetchObject(
+				object = client.getFacebookClient().fetchObject(
 				        fbResult.getId(),
 				        JsonObject.class );
 			} catch ( FacebookException e ) {
 				FacebookConnector.handleFacebookException( e );
 			}
 			if ( null != object ) {
-				Post addedPost = FacebookSiocConverter.createSiocPost(
+				Post addedPost = FacebookSiocUtils.createSiocPost(
 				        getConnector(),
 				        object,
 				        parentPost.getContainer(),

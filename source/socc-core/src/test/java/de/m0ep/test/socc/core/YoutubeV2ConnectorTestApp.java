@@ -129,7 +129,7 @@ public class YoutubeV2ConnectorTestApp {
                         -1, forum);
                 for (Post post : posts) {
                     List<Post> replies = connector.getPostReader()
-                            .pollRepliesAtPost(null, -1, post);
+                            .pollRepliesAtPost(post, null, -1);
                     for (Post reply : replies) {
                         connector.getPostWriter().writeReply(replyPost, reply);
                         System.err.println(reply.getContent() + " " + reply);

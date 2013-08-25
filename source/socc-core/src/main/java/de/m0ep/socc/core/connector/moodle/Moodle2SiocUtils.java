@@ -244,7 +244,7 @@ public class Moodle2SiocUtils {
 		Preconditions.checkNotNull( connector,
 		        "Required parameter connector must be specified." );
 
-		final Moodle2ClientWrapper client = connector.getServiceClientManager().getDefaultClient();
+		final Moodle2ClientWrapper client = connector.getClientManager().getDefaultClient();
 		UserRecord[] userRecords = client.callMethod( new Callable<UserRecord[]>() {
 			@Override
 			public UserRecord[] call() throws Exception {

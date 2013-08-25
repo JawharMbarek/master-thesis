@@ -57,7 +57,7 @@ public class GooglePlusPostReader extends
 	public GooglePlusPostReader( GooglePlusConnector connector ) {
 		super( connector );
 
-		this.defaultClient = getConnector().getServiceClientManager()
+		this.defaultClient = getConnector().getClientManager()
 		        .getDefaultClient();
 	}
 

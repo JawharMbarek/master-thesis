@@ -60,7 +60,7 @@ public class GooglePlusConnector extends DefaultConnector {
 
 	@Override
 	@SuppressWarnings( "unchecked" )
-	public GooglePlusClientManager getServiceClientManager() {
+	public GooglePlusClientManager getClientManager() {
 		return clientManager;
 	}
 

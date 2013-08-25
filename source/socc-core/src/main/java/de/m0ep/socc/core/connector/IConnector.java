@@ -70,7 +70,7 @@ public interface IConnector {
 	 * Returns a {@link IClientManager} instance to manage client objects of
 	 * different {@link UserAccount} for the used service.
 	 */
-	public <T> IClientManager<T> getServiceClientManager();
+	public <T> IClientManager<T> getClientManager();
 
 	/**
 	 * Returns an {@link IStructureReader} to get information about the

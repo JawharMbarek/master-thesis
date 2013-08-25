@@ -57,7 +57,7 @@ public class FacebookPostReader extends
 	public FacebookPostReader( FacebookConnector connector ) {
 		super( connector );
 
-		this.defaultClient = connector.getServiceClientManager()
+		this.defaultClient = connector.getClientManager()
 		        .getDefaultClient();
 	}
 

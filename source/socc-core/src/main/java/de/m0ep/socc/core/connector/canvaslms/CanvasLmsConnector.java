@@ -69,7 +69,7 @@ public class CanvasLmsConnector extends DefaultConnector {
 
 	@Override
 	@SuppressWarnings( "unchecked" )
-	public CanvasLmsClientManager getServiceClientManager() {
+	public CanvasLmsClientManager getClientManager() {
 		return clientManager;
 	}
 

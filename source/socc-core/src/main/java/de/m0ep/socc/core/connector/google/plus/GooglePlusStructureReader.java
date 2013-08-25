@@ -51,7 +51,7 @@ public class GooglePlusStructureReader extends
 	public GooglePlusStructureReader( GooglePlusConnector connector ) {
 		super( connector );
 
-		this.defaultClient = getConnector().getServiceClientManager()
+		this.defaultClient = getConnector().getClientManager()
 		        .getDefaultClient();
 		try {
 			this.defaultForum = getForum(

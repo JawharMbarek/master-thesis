@@ -125,7 +125,7 @@ public class Moodle2PostWriter extends
 		String content = post.getContent();
 		if ( null == client ) { // No client found, get default one an adapt
 			                    // message content
-			client = getConnector().getServiceClientManager()
+			client = getConnector().getClientManager()
 			        .getDefaultClient();
 			content = PostWriterUtils.createContentOfUnknownAccount(
 			        post,
@@ -245,7 +245,7 @@ public class Moodle2PostWriter extends
 		String content = post.getContent();
 		if ( null == client ) { // No client found, get default one an adapt
 			                    // message content
-			client = getConnector().getServiceClientManager()
+			client = getConnector().getClientManager()
 			        .getDefaultClient();
 			content = PostWriterUtils.createContentOfUnknownAccount(
 			        post,

@@ -61,7 +61,7 @@ public class FacebookConnector extends DefaultConnector {
 
 	@Override
 	@SuppressWarnings( "unchecked" )
-	public FacebookClientManager getServiceClientManager() {
+	public FacebookClientManager getClientManager() {
 		return clientManager;
 	}
 

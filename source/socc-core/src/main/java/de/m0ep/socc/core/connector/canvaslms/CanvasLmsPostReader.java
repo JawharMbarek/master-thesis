@@ -61,7 +61,7 @@ public class CanvasLmsPostReader extends
 	 */
 	public CanvasLmsPostReader( final CanvasLmsConnector connector ) {
 		super( connector );
-		this.defaultClient = connector.getServiceClientManager()
+		this.defaultClient = connector.getClientManager()
 		        .getDefaultClient();
 	}
 

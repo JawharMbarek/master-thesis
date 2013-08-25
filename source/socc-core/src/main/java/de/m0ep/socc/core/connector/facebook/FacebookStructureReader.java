@@ -54,7 +54,7 @@ public class FacebookStructureReader extends
 
 	public FacebookStructureReader( FacebookConnector connector ) {
 		super( connector );
-		this.defaultClient = connector.getServiceClientManager()
+		this.defaultClient = connector.getClientManager()
 		        .getDefaultClient();
 	}
 

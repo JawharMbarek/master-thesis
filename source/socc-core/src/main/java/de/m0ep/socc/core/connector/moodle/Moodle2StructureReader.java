@@ -52,7 +52,7 @@ public class Moodle2StructureReader extends
 
 	public Moodle2StructureReader( Moodle2Connector connector ) {
 		super( connector );
-		this.defaultClient = connector.getServiceClientManager()
+		this.defaultClient = connector.getClientManager()
 		        .getDefaultClient();
 	}
 

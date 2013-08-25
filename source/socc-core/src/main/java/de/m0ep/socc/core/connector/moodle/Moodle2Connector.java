@@ -38,7 +38,7 @@ public class Moodle2Connector extends DefaultConnector {
 
 	@SuppressWarnings( "unchecked" )
 	@Override
-	public Moodle2ClientManager getServiceClientManager() {
+	public Moodle2ClientManager getClientManager() {
 		return serviceClientManager;
 	}
 

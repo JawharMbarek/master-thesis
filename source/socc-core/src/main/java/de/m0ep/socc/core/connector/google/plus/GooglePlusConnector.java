@@ -35,101 +35,103 @@ import com.google.api.client.repackaged.com.google.common.base.Throwables;
 
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
-import de.m0ep.socc.core.connector.AbstractConnector;
-import de.m0ep.socc.core.connector.IServiceClientManager;
+import de.m0ep.socc.core.connector.DefaultConnector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
-public class GooglePlusConnector extends AbstractConnector {
+public class GooglePlusConnector extends DefaultConnector {
 
-    private static final URI URI_SERVICE_ENDPOINT = Builder
-            .createURI("https://plus.google.com");
+	private static final URI URI_SERVICE_ENDPOINT = Builder
+	        .createURI( "https://plus.google.com" );
 
-    private IServiceClientManager<GooglePlusClientWrapper> clientManager;
-    private IStructureReader structureReader;
-    private IPostReader postReader;
+	private GooglePlusClientManager clientManager;
+	private GooglePlusStructureReader structureReader;
+	private GooglePlusPostReader postReader;
 
-    public GooglePlusConnector(ISoccContext context, ConnectorConfig config) {
-        super(context, config);
-    }
+	public GooglePlusConnector( ISoccContext context, ConnectorConfig config ) {
+		super( context, config );
+	}
 
-    public GooglePlusConnector(String id, ISoccContext context,
-            UserAccount defaultUserAccount,
-            Service service) {
-        super(id, context, defaultUserAccount, service);
-    }
+	public GooglePlusConnector( String id, ISoccContext context,
+	        UserAccount defaultUserAccount,
+	        Service service ) {
+		super( id, context, defaultUserAccount, service );
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public IServiceClientManager<GooglePlusClientWrapper> getServiceClientManager() {
-        return clientManager;
-    }
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public GooglePlusClientManager getClientManager() {
+		return clientManager;
+	}
 
-    @Override
-    public IStructureReader getStructureReader() {
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public GooglePlusStructureReader getStructureReader() {
 
-        if (null == structureReader) {
-            structureReader = new GooglePlusStructureReader(this);
-        }
+		if ( null == structureReader ) {
+			structureReader = new GooglePlusStructureReader( this );
+		}
 
-        return structureReader;
-    }
+		return structureReader;
+	}
 
-    @Override
-    public IPostReader getPostReader() {
-        if (null == postReader) {
-            postReader = new GooglePlusPostReader(this);
-        }
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public GooglePlusPostReader getPostReader() {
+		if ( null == postReader ) {
+			postReader = new GooglePlusPostReader( this );
+		}
 
-        return postReader;
-    }
+		return postReader;
+	}
 
-    @Override
-    public IPostWriter getPostWriter() {
-        throw new UnsupportedOperationException(
-                "Google Plus supports currently no writing of posts");
-    }
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public GooglePlusPostWriter getPostWriter() {
+		throw new UnsupportedOperationException(
+		        "Google Plus supports currently no writing of posts" );
+	}
 
-    @Override
-    public void initialize() throws AuthenticationException, IOException {
-        getService().setServiceEndpoint(URI_SERVICE_ENDPOINT);
+	@Override
+	public void initialize() throws AuthenticationException, IOException {
+		getService().setServiceEndpoint( URI_SERVICE_ENDPOINT );
 
-        try {
-            this.clientManager = new GooglePlusClientManager(
-                    getService(),
-                    getDefaultUserAccount());
-        } catch (Exception e) {
-            Throwables.propagateIfInstanceOf(e, IOException.class);
-            Throwables.propagateIfInstanceOf(e, AuthenticationException.class);
-            throw Throwables.propagate(e);
-        }
+		try {
+			this.clientManager = new GooglePlusClientManager(
+			        getService(),
+			        getDefaultUserAccount() );
+		} catch ( Exception e ) {
+			Throwables.propagateIfInstanceOf( e, IOException.class );
+			Throwables.propagateIfInstanceOf( e, AuthenticationException.class );
+			throw Throwables.propagate( e );
+		}
 
-        setInitialized(true);
-    }
+		setInitialized( true );
+	}
 
-    @Override
-    public void shutdown() {
-        clientManager.clear();
-        setInitialized(false);
-    }
+	@Override
+	public void shutdown() {
+		clientManager.clear();
+		setInitialized( false );
+	}
 
-    public static void handleGoogleException(Exception e)
-            throws AuthenticationException, IOException {
-        if (e instanceof GoogleJsonResponseException) {
-            GoogleJsonResponseException gjre = (GoogleJsonResponseException) e;
-            GoogleJsonError error = gjre.getDetails();
+	public static void handleGoogleException( Exception e )
+	        throws AuthenticationException, IOException {
+		if ( e instanceof GoogleJsonResponseException ) {
+			GoogleJsonResponseException gjre = (GoogleJsonResponseException) e;
+			GoogleJsonError error = gjre.getDetails();
 
-            switch (error.getCode()) {
-                case 404:
-                    throw new NotFoundException(
-                            "Requested resource not found.", e);
-                case 401:
-                    throw new AuthenticationException("Authentication failed.",
-                            e);
-            }
-        }
+			switch ( error.getCode() ) {
+				case 404:
+					throw new NotFoundException(
+					        "Requested resource not found.", e );
+				case 401:
+					throw new AuthenticationException( "Authentication failed.",
+					        e );
+			}
+		}
 
-        Throwables.propagateIfInstanceOf(e, IOException.class);
-    }
+		Throwables.propagateIfInstanceOf( e, IOException.class );
+	}
 
 }

@@ -36,122 +36,124 @@ import com.restfb.exception.FacebookOAuthException;
 
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
-import de.m0ep.socc.core.connector.AbstractConnector;
-import de.m0ep.socc.core.connector.IServiceClientManager;
+import de.m0ep.socc.core.connector.DefaultConnector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
-public class FacebookConnector extends AbstractConnector {
-    public static final URI URI_SERVICE_ENDPOINT = Builder
-            .createURI("https://www.facebook.com");
+public class FacebookConnector extends DefaultConnector {
+	public static final URI URI_SERVICE_ENDPOINT = Builder
+	        .createURI( "https://www.facebook.com" );
 
-    private IServiceClientManager<FacebookClientWrapper> clientManager;
-    private IStructureReader serviceStructureReader;
-    private IPostReader postReader;
-    private IPostWriter postWriter;
+	private FacebookClientManager clientManager;
+	private FacebookStructureReader serviceStructureReader;
+	private FacebookPostReader postReader;
+	private FacebookPostWriter postWriter;
 
-    public FacebookConnector(String id, ISoccContext context,
-            UserAccount defaultUserAccount,
-            Service service) {
-        super(id, context, defaultUserAccount, service);
-    }
+	public FacebookConnector( String id, ISoccContext context,
+	        UserAccount defaultUserAccount,
+	        Service service ) {
+		super( id, context, defaultUserAccount, service );
+	}
 
-    public FacebookConnector(ISoccContext context, ConnectorConfig config) {
-        super(context, config);
-    }
+	public FacebookConnector( ISoccContext context, ConnectorConfig config ) {
+		super( context, config );
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public IServiceClientManager<FacebookClientWrapper> getServiceClientManager() {
-        return clientManager;
-    }
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public FacebookClientManager getClientManager() {
+		return clientManager;
+	}
 
-    @Override
-    public IStructureReader getStructureReader() {
-        if (null == serviceStructureReader) {
-            serviceStructureReader = new FacebookStructureReader(this);
-        }
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public FacebookStructureReader getStructureReader() {
+		if ( null == serviceStructureReader ) {
+			serviceStructureReader = new FacebookStructureReader( this );
+		}
 
-        return serviceStructureReader;
-    }
+		return serviceStructureReader;
+	}
 
-    @Override
-    public IPostReader getPostReader() {
-        if (null == postReader) {
-            this.postReader = new FacebookPostReader(this);
-        }
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public FacebookPostReader getPostReader() {
+		if ( null == postReader ) {
+			this.postReader = new FacebookPostReader( this );
+		}
 
-        return postReader;
-    }
+		return postReader;
+	}
 
-    @Override
-    public IPostWriter getPostWriter() {
-        if (null == postWriter) {
-            postWriter = new FacebookPostWriter(this);
-        }
-        return postWriter;
-    }
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public FacebookPostWriter getPostWriter() {
+		if ( null == postWriter ) {
+			postWriter = new FacebookPostWriter( this );
+		}
+		return postWriter;
+	}
 
-    @Override
-    public void initialize() throws AuthenticationException, IOException {
-        getService().setServiceEndpoint(URI_SERVICE_ENDPOINT);
+	@Override
+	public void initialize() throws AuthenticationException, IOException {
+		getService().setServiceEndpoint( URI_SERVICE_ENDPOINT );
 
-        try {
-            clientManager = new FacebookClientManager(getService(),
-                    getDefaultUserAccount());
-        } catch (Exception e) {
-            Throwables.propagateIfInstanceOf(e, IOException.class);
-            Throwables.propagateIfInstanceOf(e, AuthenticationException.class);
-            throw Throwables.propagate(e);
-        }
+		try {
+			clientManager = new FacebookClientManager( getService(),
+			        getDefaultUserAccount() );
+		} catch ( Exception e ) {
+			Throwables.propagateIfInstanceOf( e, IOException.class );
+			Throwables.propagateIfInstanceOf( e, AuthenticationException.class );
+			throw Throwables.propagate( e );
+		}
 
-        setInitialized(true);
-    }
+		setInitialized( true );
+	}
 
-    @Override
-    public void shutdown() {
-        clientManager.clear();
-        setInitialized(false);
-    }
+	@Override
+	public void shutdown() {
+		clientManager.clear();
+		setInitialized( false );
+	}
 
-    public static void handleFacebookException(FacebookException e)
-            throws AuthenticationException,
-            NotFoundException, IOException {
-        if (e instanceof FacebookOAuthException) {
-            FacebookOAuthException fae = (FacebookOAuthException) e;
+	public static void handleFacebookException( FacebookException e )
+	        throws AuthenticationException,
+	        NotFoundException, IOException {
+		if ( e instanceof FacebookOAuthException ) {
+			FacebookOAuthException fae = (FacebookOAuthException) e;
 
-            // error codes:
-            // http://www.fb-developers.info/tech/fb_dev/faq/general/gen_10.html
-            switch (fae.getErrorCode()) {
-                case 101: // Invalid API key
-                case 190: // Invalid Access Token
-                case 400: // Invalid email address
-                case 401: // Invalid username or password
-                case 402: // Invalid application auth signature
-                case 403: // Invalid timestamp for authentication
-                case 450: // Session key specified has passed its expiration
-                          // time
-                case 451: // Session key specified cannot be used to call this
-                    // method
-                case 452: // Session key invalid. This could be because the
-                          // session
-                    // key has an incorrect format, or because the user has
-                case 453: // revoked this session
-                case 454: // A session key is required for calling this method
-                case 455: // A session key must be specified when request is
-                          // signed
-                    // with a session secret
-                    throw new AuthenticationException(fae.getErrorMessage(),
-                            fae);
-                case 803: // Specified object cannot be found
-                    throw new NotFoundException("Not found", fae);
-            }
-        } else if (e instanceof FacebookNetworkException) {
-            FacebookNetworkException fne = (FacebookNetworkException) e;
-            throw new IOException("Network error: "
-                    + fne.getHttpStatusCode() + " " + fne.getMessage(), fne);
-        }
+			// error codes:
+			// http://www.fb-developers.info/tech/fb_dev/faq/general/gen_10.html
+			switch ( fae.getErrorCode() ) {
+				case 101: // Invalid API key
+				case 190: // Invalid Access Token
+				case 400: // Invalid email address
+				case 401: // Invalid username or password
+				case 402: // Invalid application auth signature
+				case 403: // Invalid timestamp for authentication
+				case 450: // Session key specified has passed its expiration
+					      // time
+				case 451: // Session key specified cannot be used to call this
+					// method
+				case 452: // Session key invalid. This could be because the
+					      // session
+					// key has an incorrect format, or because the user has
+				case 453: // revoked this session
+				case 454: // A session key is required for calling this method
+				case 455: // A session key must be specified when request is
+					      // signed
+					// with a session secret
+					throw new AuthenticationException( fae.getErrorMessage(),
+					        fae );
+				case 803: // Specified object cannot be found
+					throw new NotFoundException( "Not found", fae );
+			}
+		} else if ( e instanceof FacebookNetworkException ) {
+			FacebookNetworkException fne = (FacebookNetworkException) e;
+			throw new IOException( "Network error: "
+			        + fne.getHttpStatusCode() + " " + fne.getMessage(), fne );
+		}
 
-        throw Throwables.propagate(e);
-    }
+		throw Throwables.propagate( e );
+	}
 }

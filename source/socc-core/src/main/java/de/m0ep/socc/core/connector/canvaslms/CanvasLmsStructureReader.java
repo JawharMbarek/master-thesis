@@ -24,14 +24,17 @@ package de.m0ep.socc.core.connector.canvaslms;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
-import org.rdfs.sioc.SIOCVocabulary;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
@@ -42,249 +45,236 @@ import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.exceptions.NetworkException;
 import de.m0ep.canvas.model.Course;
 import de.m0ep.canvas.model.DiscussionTopic;
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.utils.RdfUtils;
-import de.m0ep.socc.core.utils.SiocUtils;
 
 /**
  * Structure reader for the CanvasLMS.
  * 
  * @author Florian Müller
  */
-public class CanvasLmsStructureReader extends
-        AbstractConnectorIOComponent<CanvasLmsConnector>
-        implements IStructureReader {
+public class CanvasLmsStructureReader
+        extends DefaultConnectorIOComponent<CanvasLmsConnector>
+        implements IStructureReader<CanvasLmsConnector> {
+	private static final Logger LOG =
+	        LoggerFactory.getLogger( CanvasLmsStructureReader.class );
 
-    private CanvasLmsClient defaultClient;
+	private final CanvasLmsClient defaultClient;
 
-    /**
-     * Constructs a new {@link CanvasLmsStructureReader} for the given
-     * {@link CanvasLmsConnector}.
-     * 
-     * @param connector
-     */
-    public CanvasLmsStructureReader(final CanvasLmsConnector connector) {
-        super(connector);
+	/**
+	 * Constructs a new {@link CanvasLmsStructureReader} for the given
+	 * {@link CanvasLmsConnector}.
+	 * 
+	 * @param connector
+	 */
+	public CanvasLmsStructureReader( final CanvasLmsConnector connector ) {
+		super( connector );
 
-        this.defaultClient = connector.getServiceClientManager()
-                .getDefaultClient();
-    }
+		this.defaultClient = connector.getClientManager()
+		        .getDefaultClient();
+	}
 
-    @Override
-    public Site getSite() {
-        if (!Site.hasInstance(getModel(), getServiceEndpoint())) {
-            Site result = new Site(getModel(), getServiceEndpoint(), true);
-            result.setName("Canvas LMS (" + getServiceEndpoint() + ")");
-            return result;
-        }
+	@Override
+	public Site getSite() {
+		if ( !Site.hasInstance( getModel(), getServiceEndpoint() ) ) {
+			Site result = new Site( getModel(), getServiceEndpoint(), true );
+			result.setName( "Canvas LMS (" + getServiceEndpoint() + ")" );
+			return result;
+		}
 
-        return Site.getInstance(
-                getModel(),
-                getServiceEndpoint());
-    }
+		return Site.getInstance(
+		        getModel(),
+		        getServiceEndpoint() );
+	}
 
-    @Override
-    public Forum getForum(String id) throws NotFoundException,
-            AuthenticationException, IOException {
-        Preconditions.checkNotNull(id,
-                "Required parameter id must be specified.");
-        Preconditions.checkArgument(!id.isEmpty(),
-                "Required parameter id may not be empty.");
+	@Override
+	public Container getContainer( URI uri ) throws
+	        NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		if ( CanvasLmsSiocUtils.isCourseUri( uri, getServiceEndpoint() ) ) {
+			return getCourse( uri );
+		} else if ( CanvasLmsSiocUtils.isDiscussionTopicUri( uri, getServiceEndpoint() ) ) {
+			return getDiscussionTopic( uri );
+		}
 
-        long courseId;
-        try {
-            courseId = Long.parseLong(id);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The parameter id is invalid, was " + id);
-        }
+		throw new NotFoundException( "No Container found at uri " + uri );
+	}
 
-        try {
-            Course course = defaultClient.courses()
-                    .get(courseId)
-                    .execute();
-            return CanvasLmsSiocConverter.createSiocForum(
-                    getConnector(),
-                    course);
-        } catch (CanvasLmsException e) {
-            if (e instanceof NetworkException) {
-                throw new IOException(e);
-            } else if (e instanceof AuthorizationException) {
-                throw new AuthenticationException(e);
-            } else if (e instanceof de.m0ep.canvas.exceptions.NotFoundException) {
-                throw new NotFoundException(e);
-            }
+	@Override
+	public List<Container> listContainer() throws
+	        NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		Pagination<Course> coursePages = null;
+		List<Container> result = Lists.newArrayList();
 
-            throw Throwables.propagate(e);
-        }
-    }
+		try {
+			coursePages = defaultClient.courses()
+			        .list()
+			        .executePagination();
+		} catch ( CanvasLmsException e ) {
+			if ( e instanceof NetworkException ) {
+				throw new IOException( e );
+			} else if ( e instanceof AuthorizationException ) {
+				throw new AuthenticationException( e );
+			} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
+				throw new NotFoundException( e );
+			}
 
-    @Override
-    public List<Forum> listForums() throws AuthenticationException, IOException {
-        Pagination<Course> coursePages = null;
-        List<Forum> result = Lists.newArrayList();
+			throw Throwables.propagate( e );
+		}
 
-        try {
-            coursePages = defaultClient.courses()
-                    .list()
-                    .executePagination();
-        } catch (CanvasLmsException e) {
-            if (e instanceof NetworkException) {
-                throw new IOException(e);
-            } else if (e instanceof AuthorizationException) {
-                throw new AuthenticationException(e);
-            } else if (e instanceof de.m0ep.canvas.exceptions.NotFoundException) {
-                throw new NotFoundException(e);
-            }
+		if ( null != coursePages ) {
+			for ( List<Course> courses : coursePages ) {
+				for ( Course course : courses ) {
+					result.add(
+					        CanvasLmsSiocUtils.createSiocForum(
+					                getConnector(),
+					                course ) );
+				}
+			}
+		}
 
-            throw Throwables.propagate(e);
-        }
+		return result;
+	}
 
-        if (null != coursePages) {
-            for (List<Course> courses : coursePages) {
-                for (Course course : courses) {
-                    result.add(
-                            CanvasLmsSiocConverter.createSiocForum(
-                                    getConnector(),
-                                    course));
-                }
-            }
-        }
+	@Override
+	public List<Container> listContainer( URI parentUri ) throws
+	        NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		List<Container> result = Lists.newArrayList();
+		Pattern pattern = Pattern.compile(
+		        getServiceEndpoint()
+		                + CanvasLmsSiocUtils.REGEX_COURSE_URI );
+		Matcher matcher = pattern.matcher( parentUri.toString() );
 
-        return result;
-    }
+		if ( matcher.find() ) {
+			long courseId = Long.parseLong( matcher.group( 1 ) );
+			Forum parentCourse = getCourse(
+			        CanvasLmsSiocUtils.createCourseUri(
+			                getServiceEndpoint(),
+			                courseId ) );
 
-    @Override
-    public Thread getThread(String id, Container container)
-            throws NotFoundException,
-            AuthenticationException, IOException {
-        Preconditions.checkNotNull(id,
-                "Required parameter id must be specified.");
-        Preconditions.checkArgument(!id.isEmpty(),
-                "Required parameter id may not be empty.");
+			Pagination<DiscussionTopic> discussionTopicPages = null;
+			try {
+				discussionTopicPages = defaultClient.courses()
+				        .discussionTopics( courseId )
+				        .list()
+				        .executePagination();
+			} catch ( CanvasLmsException e ) {
+				if ( e instanceof NetworkException ) {
+					throw new IOException( e );
+				} else if ( e instanceof AuthorizationException ) {
+					throw new AuthenticationException( e );
+				} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
+					throw new NotFoundException( e );
+				}
 
-        Preconditions.checkNotNull(container,
-                "Required parameter parent must be specified.");
-        Preconditions.checkArgument(
-                RdfUtils.isType(
-                        container,
-                        SIOCVocabulary.Forum),
-                "Required parameter container is no SIOC Forum.");
-        Preconditions.checkArgument(
-                SiocUtils.isContainerOfSite(
-                        container,
-                        getServiceEndpoint()),
-                "The parameter container has no moodle forums threads.");
-        Preconditions.checkArgument(container.hasId(),
-                "Required parameter container has no id.");
+				throw Throwables.propagate( e );
+			}
 
-        Forum parentForum = SiocUtils.asForum(container);
+			if ( null != discussionTopicPages ) {
 
-        long topicId;
-        try {
-            topicId = Long.parseLong(id);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The parameter id is invalid, was " + id);
-        }
+				for ( List<DiscussionTopic> topics : discussionTopicPages ) {
+					for ( DiscussionTopic discussionTopic : topics ) {
+						result.add( CanvasLmsSiocUtils.createSiocThread(
+						        getConnector(),
+						        discussionTopic,
+						        parentCourse ) );
+					}
+				}
+			}
+		} else {
+			LOG.debug( "The uri {} has no child container at {}", parentUri, getServiceEndpoint() );
+		}
 
-        long courseId;
-        try {
-            courseId = Long.parseLong(parentForum.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The parameter parent contains no valid id, was "
-                            + parentForum.getId());
-        }
+		return result;
+	}
 
-        try {
-            DiscussionTopic discussionTopic = defaultClient.courses()
-                    .discussionTopics(courseId)
-                    .get(topicId)
-                    .execute();
+	private Forum getCourse( URI uri ) throws
+	        NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		if ( Forum.hasInstance( getModel(), uri ) ) {
+			return Forum.getInstance( getModel(), uri );
+		}
 
-            return CanvasLmsSiocConverter.createSiocThread(
-                    getConnector(),
-                    discussionTopic,
-                    parentForum);
-        } catch (CanvasLmsException e) {
-            if (e instanceof NetworkException) {
-                throw new IOException(e);
-            } else if (e instanceof AuthorizationException) {
-                throw new AuthenticationException(e);
-            } else if (e instanceof de.m0ep.canvas.exceptions.NotFoundException) {
-                throw new NotFoundException(e);
-            }
+		Pattern pattern = Pattern.compile( CanvasLmsSiocUtils.REGEX_COURSE_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
 
-            throw Throwables.propagate(e);
-        }
-    }
+		if ( matcher.find() ) {
+			long courseId = Long.parseLong( matcher.group( 1 ) );
 
-    @Override
-    public List<Thread> listThreads(Container container)
-            throws AuthenticationException,
-            IOException {
-        Preconditions.checkNotNull(container,
-                "Required parameter container must be specified.");
-        Preconditions.checkArgument(
-                RdfUtils.isType(
-                        container,
-                        SIOCVocabulary.Forum),
-                "Required parameter container is no SIOC Forum.");
-        Preconditions.checkArgument(
-                SiocUtils.isContainerOfSite(
-                        container,
-                        getServiceEndpoint()),
-                "The container is no CanvasLMS forum");
-        Preconditions.checkArgument(container.hasId(),
-                "Required parameter container has no id.");
+			try {
+				Course course = defaultClient.courses()
+				        .get( courseId )
+				        .execute();
+				return CanvasLmsSiocUtils.createSiocForum(
+				        getConnector(),
+				        course );
+			} catch ( CanvasLmsException e ) {
+				if ( e instanceof NetworkException ) {
+					throw new IOException( e );
+				} else if ( e instanceof AuthorizationException ) {
+					throw new AuthenticationException( e );
+				} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
+					throw new NotFoundException( e );
+				}
 
-        Forum parentForum = SiocUtils.asForum(container);
+				throw Throwables.propagate( e );
+			}
+		}
 
-        long courseId;
-        try {
-            courseId = Long.parseLong(parentForum.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The parameter parent contains an invalid id: "
-                            + parentForum.getId());
-        }
+		throw new NotFoundException( "No course found at uri " + uri );
+	}
 
-        Pagination<DiscussionTopic> discussionTopicPages = null;
-        try {
-            discussionTopicPages = defaultClient.courses()
-                    .discussionTopics(courseId)
-                    .list()
-                    .executePagination();
-        } catch (CanvasLmsException e) {
-            if (e instanceof NetworkException) {
-                throw new IOException(e);
-            } else if (e instanceof AuthorizationException) {
-                throw new AuthenticationException(e);
-            } else if (e instanceof de.m0ep.canvas.exceptions.NotFoundException) {
-                throw new NotFoundException(e);
-            }
+	private Thread getDiscussionTopic( URI uri ) throws
+	        NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		if ( Thread.hasInstance( getModel(), uri ) ) {
+			return Thread.getInstance( getModel(), uri );
+		}
 
-            throw Throwables.propagate(e);
-        }
+		Pattern pattern = Pattern.compile( CanvasLmsSiocUtils.REGEX_DISCUSSION_TOPIC_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
 
-        List<Thread> result = Lists.newArrayList();
+		if ( matcher.find() ) {
+			long courseId = Long.parseLong( matcher.group( 1 ) );
+			long topicId = Long.parseLong( matcher.group( 2 ) );
+			Forum parentCourse = getCourse(
+			        CanvasLmsSiocUtils.createCourseUri(
+			                getServiceEndpoint(),
+			                courseId ) );
 
-        if (null != discussionTopicPages) {
+			try {
+				DiscussionTopic discussionTopic = defaultClient.courses()
+				        .discussionTopics( courseId )
+				        .get( topicId )
+				        .execute();
 
-            for (List<DiscussionTopic> topics : discussionTopicPages) {
-                for (DiscussionTopic discussionTopic : topics) {
-                    result.add(CanvasLmsSiocConverter.createSiocThread(
-                            getConnector(),
-                            discussionTopic,
-                            parentForum));
-                }
-            }
-        }
+				return CanvasLmsSiocUtils.createSiocThread(
+				        getConnector(),
+				        discussionTopic,
+				        parentCourse );
+			} catch ( CanvasLmsException e ) {
+				if ( e instanceof NetworkException ) {
+					throw new IOException( e );
+				} else if ( e instanceof AuthorizationException ) {
+					throw new AuthenticationException( e );
+				} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
+					throw new NotFoundException( e );
+				}
 
-        return result;
-    }
+				throw Throwables.propagate( e );
+			}
+		} else {
+		}
+
+		throw new NotFoundException( "No discussion topic found at uri " + uri );
+	}
 }

@@ -21,229 +21,227 @@ package de.m0ep.socc.core.connector.moodle;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.model.node.Variable;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.m0ep.moodlews.soap.ForumDiscussionRecord;
 import de.m0ep.moodlews.soap.ForumRecord;
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.utils.RdfUtils;
-import de.m0ep.socc.core.utils.SiocUtils;
 
 public class Moodle2StructureReader extends
-        AbstractConnectorIOComponent<Moodle2Connector>
+        DefaultConnectorIOComponent<Moodle2Connector>
         implements
-        IStructureReader {
+        IStructureReader<Moodle2Connector> {
 
-    private Moodle2ClientWrapper defaultClient;
+	private static final Logger LOG = LoggerFactory.getLogger( Moodle2StructureReader.class );
+	private final Moodle2ClientWrapper defaultClient;
 
-    public Moodle2StructureReader(Moodle2Connector connector) {
-        super(connector);
-        this.defaultClient = connector.getServiceClientManager()
-                .getDefaultClient();
-    }
+	public Moodle2StructureReader( Moodle2Connector connector ) {
+		super( connector );
+		this.defaultClient = connector.getClientManager()
+		        .getDefaultClient();
+	}
 
-    @Override
-    public Site getSite() {
-        if (!Site.hasInstance(getModel(), getServiceEndpoint())) {
-            Site result = new Site(getModel(), getServiceEndpoint(), true);
-            result.setName("Moolde LMS (" + getServiceEndpoint() + ")");
-            return result;
-        }
+	@Override
+	public Site getSite() {
+		if ( !Site.hasInstance( getModel(), getServiceEndpoint() ) ) {
+			Site result = new Site( getModel(), getServiceEndpoint(), true );
+			result.setName( "Moolde LMS (" + getServiceEndpoint() + ")" );
+			return result;
+		}
 
-        return Site.getInstance(getModel(), getServiceEndpoint());
-    }
+		return Site.getInstance( getModel(), getServiceEndpoint() );
+	}
 
-    @Override
-    public Forum getForum(final String id) throws NotFoundException,
-            AuthenticationException,
-            IOException {
-        Preconditions.checkNotNull(id,
-                "Required parameter id must be specified.");
-        Preconditions.checkArgument(!id.isEmpty(),
-                "Required parameter id may not be empty.");
+	@Override
+	public Container getContainer( URI uri ) throws NotFoundException, AuthenticationException,
+	        IOException {
+		if ( getModel().contains( uri, Variable.ANY, Variable.ANY ) ) {
+			return Container.getInstance( getModel(), uri );
+		}
 
-        ForumRecord[] forumRecordArray = defaultClient.callMethod(
-                new Callable<ForumRecord[]>() {
-                    @Override
-                    public ForumRecord[] call() throws Exception {
-                        return defaultClient
-                                .getBindingStub()
-                                .get_all_forums(
-                                        defaultClient.getAuthClient(),
-                                        defaultClient.getSessionKey(),
-                                        "id",
-                                        id);
-                    }
-                });
+		if ( Moodle2SiocUtils.isForumUri( uri, getServiceEndpoint() ) ) {
+			return getForum( uri );
+		} else if ( Moodle2SiocUtils.isThreadUri( uri, getServiceEndpoint() ) ) {
+			return getThread( uri );
+		}
 
-        if (null != forumRecordArray && 0 < forumRecordArray.length) {
-            return Moodle2SiocConverter.createSiocForum(
-                    getConnector(),
-                    forumRecordArray[0]);
-        }
+		throw new NotFoundException( "No container found at the uri " + uri );
+	}
 
-        throw new NotFoundException("No forum found with id " + id);
-    }
+	@Override
+	public List<Container> listContainer() throws AuthenticationException, IOException {
+		List<Container> result = Lists.newArrayList();
+		ForumRecord[] forumRecordArray = defaultClient
+		        .callMethod( new Callable<ForumRecord[]>() {
+			        @Override
+			        public ForumRecord[] call() throws Exception {
+				        return defaultClient
+				                .getBindingStub()
+				                .get_all_forums(
+				                        defaultClient.getAuthClient(),
+				                        defaultClient.getSessionKey(),
+				                        "",
+				                        "" );
+			        }
+		        } );
 
-    @Override
-    public List<Forum> listForums() throws AuthenticationException, IOException {
-        List<Forum> result = Lists.newArrayList();
+		if ( null != forumRecordArray && 0 < forumRecordArray.length ) {
+			for ( ForumRecord forumRecord : forumRecordArray ) {
+				result.add( Moodle2SiocUtils.createSiocForum(
+				        getConnector(),
+				        forumRecord ) );
+			}
+		}
 
-        ForumRecord[] forumRecordArray = defaultClient
-                .callMethod(new Callable<ForumRecord[]>() {
-                    @Override
-                    public ForumRecord[] call() throws Exception {
-                        return defaultClient
-                                .getBindingStub()
-                                .get_all_forums(
-                                        defaultClient.getAuthClient(),
-                                        defaultClient.getSessionKey(),
-                                        "",
-                                        "");
-                    }
-                });
+		return result;
+	}
 
-        if (null != forumRecordArray && 0 < forumRecordArray.length) {
-            for (ForumRecord forumRecord : forumRecordArray) {
-                result.add(Moodle2SiocConverter.createSiocForum(
-                        getConnector(),
-                        forumRecord));
-            }
-        }
+	@Override
+	public List<Container> listContainer( URI parent ) throws NumberFormatException,
+	        AuthenticationException, IOException {
+		Matcher matcher = Pattern
+		        .compile( getServiceEndpoint() + Moodle2SiocUtils.REGEX_FORUM_URI )
+		        .matcher( parent.toString() );
 
-        return result;
-    }
+		List<Container> results = Lists.newArrayList();
+		if ( matcher.matches() ) {
+			Forum parentForum = getForum( parent );
+			ForumDiscussionRecord[] discussions = loadForumDiscussions(
+			        Integer.parseInt(
+			                matcher.group( 1 ) ) );
 
-    @Override
-    public Thread getThread(String id, Container parent)
-            throws NotFoundException,
-            AuthenticationException, IOException {
-        Preconditions.checkNotNull(id,
-                "Required parameter id must be specified.");
-        Preconditions.checkArgument(!id.isEmpty(),
-                "Required parameter id may not be empty.");
+			if ( null != discussions ) {
+				for ( ForumDiscussionRecord discussion : discussions ) {
+					results.add( Moodle2SiocUtils.createSiocThread(
+					        getConnector(),
+					        discussion,
+					        parentForum ) );
+				}
+			}
+		} else {
+			LOG.debug( parent + " is no moodle thread URI." );
+		}
 
-        Preconditions.checkNotNull(parent,
-                "Required parameter parent must be specified.");
-        Preconditions.checkArgument(
-                RdfUtils.isType(
-                        parent,
-                        Forum.RDFS_CLASS),
-                "The parameter parent is not sioc:Forum");
-        Preconditions.checkArgument(
-                SiocUtils.isContainerOfSite(
-                        parent,
-                        getServiceEndpoint()),
-                "The parameter parent is no moodle forum.");
-        Preconditions.checkArgument(parent.hasId(),
-                "The parameter parent has no id.");
+		return results;
+	}
 
-        final int threadId;
-        try {
-            threadId = Integer.parseInt(id);
-        } catch (NumberFormatException e1) {
-            throw new IllegalArgumentException(
-                    "The id is invalid: was " + id);
-        }
+	private Forum getForum( URI uri ) throws AuthenticationException, IOException {
+		if ( getModel().contains( uri, Variable.ANY, Variable.ANY ) ) {
+			return Forum.getInstance( getModel(), uri );
+		}
 
-        final int forumId;
-        try {
-            forumId = Integer.parseInt(parent.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The id of the parameter parent is invalid: was "
-                            + parent.getId());
-        }
+		final Matcher matcher = Pattern
+		        .compile( getServiceEndpoint() + Moodle2SiocUtils.REGEX_FORUM_URI )
+		        .matcher( uri.toString() );
 
-        ForumDiscussionRecord[] discussionRecordArray = defaultClient
-                .callMethod(new Callable<ForumDiscussionRecord[]>() {
-                    @Override
-                    public ForumDiscussionRecord[] call() throws Exception {
-                        return defaultClient.getBindingStub()
-                                .get_forum_discussions(
-                                        defaultClient.getAuthClient(),
-                                        defaultClient.getSessionKey(),
-                                        forumId,
-                                        9999);
-                    }
-                });
+		if ( matcher.matches() ) {
+			ForumRecord[] forumRecordArray = defaultClient.callMethod(
+			        new Callable<ForumRecord[]>() {
+				        @Override
+				        public ForumRecord[] call() throws Exception {
+					        return defaultClient
+					                .getBindingStub()
+					                .get_all_forums(
+					                        defaultClient.getAuthClient(),
+					                        defaultClient.getSessionKey(),
+					                        "id",
+					                        matcher.group( 1 ) );
+				        }
+			        } );
 
-        if (null != discussionRecordArray && 0 < discussionRecordArray.length) {
-            for (ForumDiscussionRecord discussionRecord : discussionRecordArray) {
-                if (threadId == discussionRecord.getId()) {
-                    return Moodle2SiocConverter.createSiocThread(
-                            getConnector(),
-                            discussionRecord,
-                            SiocUtils.asForum(parent));
-                }
-            }
-        }
+			if ( null != forumRecordArray && 0 < forumRecordArray.length ) {
+				return Moodle2SiocUtils.createSiocForum(
+				        getConnector(),
+				        forumRecordArray[0] );
+			}
+		}
 
-        throw new NotFoundException("No thread found with id " + id);
-    }
+		throw new NotFoundException( "No forum found at the uri " + uri );
+	}
 
-    @Override
-    public List<Thread> listThreads(Container parent)
-            throws AuthenticationException, IOException {
-        Preconditions.checkNotNull(parent,
-                "Required parameter parent must be specified.");
-        Preconditions.checkArgument(
-                RdfUtils.isType(
-                        parent,
-                        Forum.RDFS_CLASS),
-                "The parameter parent is not sioc:Forum");
-        Preconditions.checkArgument(
-                SiocUtils.isContainerOfSite(
-                        parent,
-                        getServiceEndpoint()),
-                "The parent is no moodle forum.");
-        Preconditions.checkArgument(parent.hasId(),
-                "The parent has no id.");
+	private Thread getThread( URI uri ) throws AuthenticationException, IOException {
+		if ( getModel().contains( uri, Variable.ANY, Variable.ANY ) ) {
+			return Thread.getInstance( getModel(), uri );
+		}
 
-        List<Thread> result = Lists.newArrayList();
+		Matcher matcher = Pattern
+		        .compile( getServiceEndpoint() + Moodle2SiocUtils.REGEX_DISCUSSION_URI )
+		        .matcher( uri.toString() );
 
-        final int forumId;
-        try {
-            forumId = Integer.parseInt(parent.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The parent id is invalid: was " + parent.getId());
-        }
+		if ( matcher.matches() ) {
+			int id = Integer.parseInt( matcher.group( 1 ) );
+			ForumRecord[] forumArray = loadForums();
 
-        ForumDiscussionRecord[] discussionRecordArray = defaultClient
-                .callMethod(
-                new Callable<ForumDiscussionRecord[]>() {
-                    @Override
-                    public ForumDiscussionRecord[] call() throws Exception {
-                        return defaultClient
-                                .getBindingStub()
-                                .get_forum_discussions(
-                                        defaultClient.getAuthClient(),
-                                        defaultClient.getSessionKey(),
-                                        forumId,
-                                        9999);
-                    }
-                });
+			if ( null != forumArray ) {
+				for ( final ForumRecord forum : forumArray ) {
+					Forum parentForum = Moodle2SiocUtils.createSiocForum(
+					        getConnector(),
+					        forum );
 
-        if (null != discussionRecordArray && 0 < discussionRecordArray.length) {
-            for (ForumDiscussionRecord discussionRecord : discussionRecordArray) {
-                result.add(Moodle2SiocConverter.createSiocThread(
-                        getConnector(),
-                        discussionRecord,
-                        SiocUtils.asForum(parent)));
-            }
-        }
+					ForumDiscussionRecord[] discussionsArray = loadForumDiscussions( forum.getId() );
+					if ( null != discussionsArray ) {
+						for ( ForumDiscussionRecord discussion : discussionsArray ) {
+							if ( id == discussion.getId() ) {
+								return Moodle2SiocUtils.createSiocThread(
+								        getConnector(),
+								        discussion, parentForum );
+							}
+						}
+					}
+				}
+			}
+		}
 
-        return result;
-    }
+		throw new NotFoundException( "No thread found at the uri " + uri );
+	}
+
+	private ForumRecord[] loadForums() throws IOException, AuthenticationException {
+		ForumRecord[] forumRecordArray = defaultClient
+		        .callMethod( new Callable<ForumRecord[]>() {
+			        @Override
+			        public ForumRecord[] call() throws Exception {
+				        return defaultClient
+				                .getBindingStub()
+				                .get_all_forums(
+				                        defaultClient.getAuthClient(),
+				                        defaultClient.getSessionKey(),
+				                        "",
+				                        "" );
+			        }
+		        } );
+		return forumRecordArray;
+	}
+
+	private ForumDiscussionRecord[] loadForumDiscussions( final int id )
+	        throws IOException, AuthenticationException {
+		ForumDiscussionRecord[] discussionRecordArray = defaultClient.callMethod(
+		        new Callable<ForumDiscussionRecord[]>() {
+			        @Override
+			        public ForumDiscussionRecord[] call() throws Exception {
+				        return defaultClient
+				                .getBindingStub()
+				                .get_forum_discussions(
+				                        defaultClient.getAuthClient(),
+				                        defaultClient.getSessionKey(),
+				                        id,
+				                        9999 );
+			        }
+		        } );
+		return discussionRecordArray;
+	}
 }

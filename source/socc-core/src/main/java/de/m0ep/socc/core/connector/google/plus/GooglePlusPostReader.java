@@ -41,14 +41,14 @@ import com.google.api.services.plus.model.CommentFeed;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 public class GooglePlusPostReader extends
-        AbstractConnectorIOComponent<GooglePlusConnector> implements
-        IPostReader {
+        DefaultConnectorIOComponent<GooglePlusConnector> implements
+        IPostReader<GooglePlusConnector> {
 	private static final Logger LOG = LoggerFactory
 	        .getLogger( GooglePlusPostReader.class );
 
@@ -57,7 +57,7 @@ public class GooglePlusPostReader extends
 	public GooglePlusPostReader( GooglePlusConnector connector ) {
 		super( connector );
 
-		this.defaultClient = getConnector().getServiceClientManager()
+		this.defaultClient = getConnector().getClientManager()
 		        .getDefaultClient();
 	}
 
@@ -157,7 +157,7 @@ public class GooglePlusPostReader extends
 	}
 
 	@Override
-	public List<Post> readNewReplies( Date since, long limit, Post parentPost )
+	public List<Post> pollRepliesAtPost( Date since, long limit, Post parentPost )
 	        throws AuthenticationException, IOException {
 		if ( 0 == limit ) {
 			return Lists.newArrayList();

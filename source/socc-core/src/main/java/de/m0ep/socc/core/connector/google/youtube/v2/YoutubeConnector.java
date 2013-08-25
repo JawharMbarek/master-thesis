@@ -36,107 +36,109 @@ import com.google.common.base.Throwables;
 
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
-import de.m0ep.socc.core.connector.AbstractConnector;
-import de.m0ep.socc.core.connector.IServiceClientManager;
+import de.m0ep.socc.core.connector.DefaultConnector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
-public class YoutubeConnector extends AbstractConnector {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(YoutubeConnector.class);
+public class YoutubeConnector extends DefaultConnector {
+	private static final Logger LOG = LoggerFactory
+	        .getLogger( YoutubeConnector.class );
 
-    private URI serviceEndpoint = Builder.createURI("http://www.youtube.com");
+	private final URI serviceEndpoint = Builder.createURI( "http://www.youtube.com" );
 
-    private IServiceClientManager<YoutubeClientWrapper> serviceClientManager;
-    private IStructureReader serviceStructureReader;
-    private IPostReader postReader;
-    private IPostWriter postWriter;
+	private YoutubeClientManager serviceClientManager;
+	private YoutubeStructureReader serviceStructureReader;
+	private YoutubePostReader postReader;
+	private YoutubePostWriter postWriter;
 
-    private long lastServiceRequest = 0;
+	private final long lastServiceRequest = 0;
 
-    private YoutubeConnector(String id, ISoccContext context,
-            UserAccount defaultUserAccount,
-            Service service) {
-        super(id, context, defaultUserAccount, service);
-    }
+	private YoutubeConnector( String id, ISoccContext context,
+	        UserAccount defaultUserAccount,
+	        Service service ) {
+		super( id, context, defaultUserAccount, service );
+	}
 
-    public YoutubeConnector(ISoccContext context, ConnectorConfig config) {
-        super(context, config);
-    }
+	public YoutubeConnector( ISoccContext context, ConnectorConfig config ) {
+		super( context, config );
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public IServiceClientManager<YoutubeClientWrapper> getServiceClientManager() {
-        return serviceClientManager;
-    }
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public YoutubeClientManager getServiceClientManager() {
+		return serviceClientManager;
+	}
 
-    @Override
-    public IStructureReader getStructureReader() {
-        Preconditions.checkState(isInitialized(),
-                "Connector was not initialized");
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public YoutubeStructureReader getStructureReader() {
+		Preconditions.checkState( isInitialized(),
+		        "Connector was not initialized" );
 
-        if (null == serviceStructureReader) {
-            serviceStructureReader = new YoutubeStructureReader(this);
-        }
+		if ( null == serviceStructureReader ) {
+			serviceStructureReader = new YoutubeStructureReader( this );
+		}
 
-        return serviceStructureReader;
-    }
+		return serviceStructureReader;
+	}
 
-    @Override
-    public IPostReader getPostReader() {
-        Preconditions.checkState(isInitialized(),
-                "Connector was not initialized");
-        if (null == postReader) {
-            postReader = new YoutubePostReader(this);
-        }
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public YoutubePostReader getPostReader() {
+		Preconditions.checkState( isInitialized(),
+		        "Connector was not initialized" );
+		if ( null == postReader ) {
+			postReader = new YoutubePostReader( this );
+		}
 
-        return postReader;
-    }
+		return postReader;
+	}
 
-    @Override
-    public IPostWriter getPostWriter() {
-        Preconditions.checkState(isInitialized(),
-                "Connector was not initialized");
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public YoutubePostWriter getPostWriter() {
+		Preconditions.checkState( isInitialized(),
+		        "Connector was not initialized" );
 
-        if (null == postWriter) {
-            postWriter = new YoutubePostWriter(this);
-        }
+		if ( null == postWriter ) {
+			postWriter = new YoutubePostWriter( this );
+		}
 
-        return postWriter;
-    }
+		return postWriter;
+	}
 
-    @Override
-    public void initialize() throws AuthenticationException, IOException {
-        getService().setServiceEndpoint(serviceEndpoint);
+	@Override
+	public void initialize() throws AuthenticationException, IOException {
+		getService().setServiceEndpoint( serviceEndpoint );
 
-        try {
-            serviceClientManager = new YoutubeClientManager(getService(),
-                    getDefaultUserAccount());
-        } catch (Exception e) {
-            Throwables.propagateIfInstanceOf(e, AuthenticationException.class);
-            Throwables.propagateIfInstanceOf(e, IOException.class);
-            throw Throwables.propagate(e);
-        }
+		try {
+			serviceClientManager = new YoutubeClientManager( getService(),
+			        getDefaultUserAccount() );
+		} catch ( Exception e ) {
+			Throwables.propagateIfInstanceOf( e, AuthenticationException.class );
+			Throwables.propagateIfInstanceOf( e, IOException.class );
+			throw Throwables.propagate( e );
+		}
 
-        setInitialized(true);
+		setInitialized( true );
 
-        LOG.info("Create Youtube connector.");
-    }
+		LOG.info( "Create Youtube connector." );
+	}
 
-    @Override
-    public void shutdown() {
-        serviceClientManager.clear();
-        setInitialized(false);
-    }
+	@Override
+	public void shutdown() {
+		serviceClientManager.clear();
+		setInitialized( false );
+	}
 
-    public synchronized void waitForCooldown() {
-        long delta = System.currentTimeMillis() - lastServiceRequest;
+	public synchronized void waitForCooldown() {
+		long delta = System.currentTimeMillis() - lastServiceRequest;
 
-        if (500 >= delta) {
-            try {
-                Thread.sleep(500 - delta);
-            } catch (InterruptedException e) {
-                LOG.debug("Cooldown interrupted");
-            }
-        }
-    }
+		if ( 500 >= delta ) {
+			try {
+				Thread.sleep( 500 - delta );
+			} catch ( InterruptedException e ) {
+				LOG.debug( "Cooldown interrupted" );
+			}
+		}
+	}
 }

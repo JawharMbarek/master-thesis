@@ -44,236 +44,254 @@ import com.google.gdata.util.ResourceNotFoundException;
 import com.google.gdata.util.ServiceException;
 import com.google.gdata.util.ServiceForbiddenException;
 
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 public class YoutubeStructureReader extends
-        AbstractConnectorIOComponent<YoutubeConnector> implements
-        IStructureReader {
+        DefaultConnectorIOComponent<YoutubeConnector> implements
+        IStructureReader<YoutubeConnector> {
 
-    private YoutubeClientWrapper defaultClient;
+	private final YoutubeClientWrapper defaultClient;
 
-    private Forum playlists;
-    private Forum uploads;
+	private Forum playlists;
+	private Forum uploads;
 
-    public YoutubeStructureReader(YoutubeConnector connector) {
-        super(connector);
-        this.defaultClient = connector.getServiceClientManager()
-                .getDefaultClient();
+	public YoutubeStructureReader( YoutubeConnector connector ) {
+		super( connector );
+		this.defaultClient = connector.getServiceClientManager()
+		        .getDefaultClient();
 
-        URI playlistsUri = Builder.createURI(
-                getServiceEndpoint()
-                        + YoutubeSiocConverter.PLAYLISTS_URI_PATH
-                        + defaultClient
-                                .getUserProfile()
-                                .getUsername());
+		URI playlistsUri = Builder.createURI(
+		        getServiceEndpoint()
+		                + YoutubeSiocConverter.PLAYLISTS_URI_PATH
+		                + defaultClient
+		                        .getUserProfile()
+		                        .getUsername() );
 
-        if (!Forum.hasInstance(getModel(), playlistsUri)) {
-            this.playlists = new Forum(getModel(), playlistsUri, true);
-            this.playlists.setId(
-                    YoutubeSiocConverter.PLAYLISTS_ID_PREFIX
-                            + defaultClient
-                                    .getUserProfile()
-                                    .getUsername());
-            this.playlists
-                    .setName(
-                    (Strings.nullToEmpty(defaultClient
-                            .getUserProfile().getFirstName())
-                            + " "
-                            + Strings
-                                    .nullToEmpty(defaultClient
-                                            .getUserProfile().getLastName())
-                            + "'s Playlists").trim());
-            this.playlists.setNumThreads(0);
+		if ( !Forum.hasInstance( getModel(), playlistsUri ) ) {
+			this.playlists = new Forum( getModel(), playlistsUri, true );
+			this.playlists.setId(
+			        YoutubeSiocConverter.PLAYLISTS_ID_PREFIX
+			                + defaultClient
+			                        .getUserProfile()
+			                        .getUsername() );
+			this.playlists
+			        .setName(
+			        ( Strings.nullToEmpty( defaultClient
+			                .getUserProfile().getFirstName() )
+			                + " "
+			                + Strings
+			                        .nullToEmpty( defaultClient
+			                                .getUserProfile().getLastName() )
+			                + "'s Playlists" ).trim() );
+			this.playlists.setNumThreads( 0 );
 
-            Site site = getSite();
-            this.playlists.setHost(site);
-            site.addHostOf(this.playlists);
-        } else {
-            this.playlists = Forum.getInstance(getModel(), playlistsUri);
-        }
+			Site site = getSite();
+			this.playlists.setHost( site );
+			site.addHostOf( this.playlists );
+		} else {
+			this.playlists = Forum.getInstance( getModel(), playlistsUri );
+		}
 
-        URI uploadsUri = Builder.createURI(
-                getServiceEndpoint()
-                        + YoutubeSiocConverter.UPLOADS_URI_PATH
-                        + defaultClient
-                                .getUserProfile()
-                                .getUsername());
+		URI uploadsUri = Builder.createURI(
+		        getServiceEndpoint()
+		                + YoutubeSiocConverter.UPLOADS_URI_PATH
+		                + defaultClient
+		                        .getUserProfile()
+		                        .getUsername() );
 
-        if (!Forum.hasInstance(getModel(), uploadsUri)) {
-            this.uploads = new Forum(getModel(), uploadsUri, true);
-            this.uploads.setId(
-                    YoutubeSiocConverter.UPLOADS_ID_PREFIX
-                            + defaultClient
-                                    .getUserProfile()
-                                    .getUsername());
-            this.uploads
-                    .setName(
-                    (Strings.nullToEmpty(defaultClient
-                            .getUserProfile().getFirstName())
-                            + " "
-                            + Strings
-                                    .nullToEmpty(defaultClient
-                                            .getUserProfile().getLastName())
-                            + "'s Uploads").trim());
-            this.uploads.setNumItems(0);
+		if ( !Forum.hasInstance( getModel(), uploadsUri ) ) {
+			this.uploads = new Forum( getModel(), uploadsUri, true );
+			this.uploads.setId(
+			        YoutubeSiocConverter.UPLOADS_ID_PREFIX
+			                + defaultClient
+			                        .getUserProfile()
+			                        .getUsername() );
+			this.uploads
+			        .setName(
+			        ( Strings.nullToEmpty( defaultClient
+			                .getUserProfile().getFirstName() )
+			                + " "
+			                + Strings
+			                        .nullToEmpty( defaultClient
+			                                .getUserProfile().getLastName() )
+			                + "'s Uploads" ).trim() );
+			this.uploads.setNumItems( 0 );
 
-            Site site = getSite();
-            this.uploads.setHost(site);
-            site.addHostOf(this.uploads);
-        } else {
-            this.uploads = Forum.getInstance(getModel(), uploadsUri);
-        }
-    }
+			Site site = getSite();
+			this.uploads.setHost( site );
+			site.addHostOf( this.uploads );
+		} else {
+			this.uploads = Forum.getInstance( getModel(), uploadsUri );
+		}
+	}
 
-    @Override
-    public Site getSite() {
-        Site result = Site.getInstance(getModel(), getServiceEndpoint());
+	@Override
+	public Site getSite() {
+		Site result = Site.getInstance( getModel(), getServiceEndpoint() );
 
-        if (null == result) {
-            result = new Site(getModel(), getServiceEndpoint(), true);
-            result.setName("Youtube");
-        }
+		if ( null == result ) {
+			result = new Site( getModel(), getServiceEndpoint(), true );
+			result.setName( "Youtube" );
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
-    public Forum getForum(String id) throws NotFoundException,
-            AuthenticationException, IOException {
-        Preconditions.checkNotNull(id,
-                "Required parameter id must be specified.");
-        Preconditions.checkArgument(!id.isEmpty(),
-                "Required parameter id may not be empty.");
+	@Override
+	public Container getContainer( URI uri ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-        if (id.startsWith(YoutubeSiocConverter.PLAYLISTS_ID_PREFIX)) {
-            return playlists;
-        } else if (id.startsWith(YoutubeSiocConverter.UPLOADS_ID_PREFIX)) {
-            return uploads;
-        }
+	@Override
+	public List<Container> listContainer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-        throw new NotFoundException("No forum with with id " + id);
-    }
+	@Override
+	public List<Container> listContainer( URI parent ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public List<Forum> listForums() throws AuthenticationException, IOException {
-        return Lists.newArrayList(playlists, uploads);
-    }
+	@Override
+	public Forum getForum( String id ) throws NotFoundException,
+	        AuthenticationException, IOException {
+		Preconditions.checkNotNull( id,
+		        "Required parameter id must be specified." );
+		Preconditions.checkArgument( !id.isEmpty(),
+		        "Required parameter id may not be empty." );
 
-    @Override
-    public Thread getThread(String id, Container parent)
-            throws NotFoundException,
-            AuthenticationException, IOException {
-        Preconditions.checkNotNull(id,
-                "Required parameter id must be specified.");
-        Preconditions.checkArgument(!id.isEmpty(),
-                "Required parameter id may not be empty.");
-        Preconditions.checkNotNull(parent,
-                "Required parameter parent must be specified.");
-        Preconditions.checkArgument(RdfUtils.isType(
-                parent.getModel(),
-                parent.getResource(),
-                Forum.RDFS_CLASS),
-                "The parameter parent is no sioc:forum.");
-        Preconditions.checkArgument(parent.hasId(),
-                "The parameter parent has no id");
-        Preconditions.checkArgument(parent.getId().startsWith(
-                YoutubeSiocConverter.PLAYLISTS_ID_PREFIX),
-                "The parent is no Playlist forum");
+		if ( id.startsWith( YoutubeSiocConverter.PLAYLISTS_ID_PREFIX ) ) {
+			return playlists;
+		} else if ( id.startsWith( YoutubeSiocConverter.UPLOADS_ID_PREFIX ) ) {
+			return uploads;
+		}
 
-        String userId = parent.getId().split(YoutubeSiocConverter.ID_SEPERATOR)[1];
-        String playlistUri = UriTemplate
-                .fromTemplate(
-                        "http://gdata.youtube.com/feeds/api/users/{userId}/playlists/{playlistId}?v=2")
-                .set("userId", userId)
-                .set("playlistId", id)
-                .expand(); // FIXME: magic strings
+		throw new NotFoundException( "No forum with with id " + id );
+	}
 
-        PlaylistLinkEntry playlistEntry = null;
-        try {
-            getConnector().waitForCooldown();
-            playlistEntry = defaultClient
-                    .getService().getEntry(
-                            new URL(playlistUri),
-                            PlaylistLinkEntry.class);
-        } catch (com.google.gdata.util.AuthenticationException e) {
-            throw new AuthenticationException(e);
-        } catch (ServiceForbiddenException e) {
-            throw new AuthenticationException(
-                    defaultClient
-                            .getUserProfile().getUsername()
-                            + " has no access to the youtube service.", e);
-        } catch (ResourceNotFoundException e) {
-            throw new NotFoundException("No thread found with id " + id);
-        } catch (ServiceException e) {
-            throw Throwables.propagate(e);
-        }
+	@Override
+	public List<Forum> listForums() throws AuthenticationException, IOException {
+		return Lists.newArrayList( playlists, uploads );
+	}
 
-        if (null != playlistEntry) {
-            Thread result = YoutubeSiocConverter.createSiocThread(
-                    getConnector(),
-                    playlistEntry,
-                    Forum.getInstance(parent.getModel(), parent.getResource()));
+	@Override
+	public Thread getThread( String id, Container parent )
+	        throws NotFoundException,
+	        AuthenticationException, IOException {
+		Preconditions.checkNotNull( id,
+		        "Required parameter id must be specified." );
+		Preconditions.checkArgument( !id.isEmpty(),
+		        "Required parameter id may not be empty." );
+		Preconditions.checkNotNull( parent,
+		        "Required parameter parent must be specified." );
+		Preconditions.checkArgument( RdfUtils.isType(
+		        parent.getModel(),
+		        parent.getResource(),
+		        Forum.RDFS_CLASS ),
+		        "The parameter parent is no sioc:forum." );
+		Preconditions.checkArgument( parent.hasId(),
+		        "The parameter parent has no id" );
+		Preconditions.checkArgument( parent.getId().startsWith(
+		        YoutubeSiocConverter.PLAYLISTS_ID_PREFIX ),
+		        "The parent is no Playlist forum" );
 
-            return result;
-        }
+		String userId = parent.getId().split( YoutubeSiocConverter.ID_SEPERATOR )[1];
+		String playlistUri = UriTemplate
+		        .fromTemplate(
+		                "http://gdata.youtube.com/feeds/api/users/{userId}/playlists/{playlistId}?v=2" )
+		        .set( "userId", userId )
+		        .set( "playlistId", id )
+		        .expand(); // FIXME: magic strings
 
-        throw new NotFoundException("No thread found with id " + id);
-    }
+		PlaylistLinkEntry playlistEntry = null;
+		try {
+			getConnector().waitForCooldown();
+			playlistEntry = defaultClient
+			        .getService().getEntry(
+			                new URL( playlistUri ),
+			                PlaylistLinkEntry.class );
+		} catch ( com.google.gdata.util.AuthenticationException e ) {
+			throw new AuthenticationException( e );
+		} catch ( ServiceForbiddenException e ) {
+			throw new AuthenticationException(
+			        defaultClient
+			                .getUserProfile().getUsername()
+			                + " has no access to the youtube service.", e );
+		} catch ( ResourceNotFoundException e ) {
+			throw new NotFoundException( "No thread found with id " + id );
+		} catch ( ServiceException e ) {
+			throw Throwables.propagate( e );
+		}
 
-    @Override
-    public List<Thread> listThreads(Container parent)
-            throws AuthenticationException, IOException {
-        Preconditions.checkNotNull(parent,
-                "Required parameter parent must be specified.");
-        Preconditions.checkArgument(parent.getResource().equals(
-                playlists.getResource()),
-                "Only the playlists forum contains threads");
+		if ( null != playlistEntry ) {
+			Thread result = YoutubeSiocConverter.createSiocThread(
+			        getConnector(),
+			        playlistEntry,
+			        Forum.getInstance( parent.getModel(), parent.getResource() ) );
 
-        String nextFeed = UriTemplate
-                .fromTemplate(
-                        "https://gdata.youtube.com/feeds/api/users/{userId}/playlists?v=2")
-                .set("userId",
-                        defaultClient
-                                .getUserProfile()
-                                .getUsername())
-                .expand(); // FIXME: magic strings
+			return result;
+		}
 
-        List<Thread> results = Lists.newArrayList();
-        do {
-            PlaylistLinkFeed playlistFeed = null;
-            try {
-                getConnector().waitForCooldown();
-                playlistFeed = defaultClient
-                        .getService().getFeed(
-                                new URL(nextFeed),
-                                PlaylistLinkFeed.class);
-            } catch (com.google.gdata.util.AuthenticationException e) {
-                throw new AuthenticationException(e);
-            } catch (ServiceException e) {
-                throw Throwables.propagate(e);
-            } finally {
-                nextFeed = null;
-            }
+		throw new NotFoundException( "No thread found with id " + id );
+	}
 
-            if (null != playlistFeed) {
-                for (PlaylistLinkEntry playlistEntry : playlistFeed
-                        .getEntries()) {
-                    results.add(YoutubeSiocConverter.createSiocThread(
-                            getConnector(),
-                            playlistEntry,
-                            playlists));
-                }
-            }
+	@Override
+	public List<Thread> listThreads( Container parent )
+	        throws AuthenticationException, IOException {
+		Preconditions.checkNotNull( parent,
+		        "Required parameter parent must be specified." );
+		Preconditions.checkArgument( parent.getResource().equals(
+		        playlists.getResource() ),
+		        "Only the playlists forum contains threads" );
 
-            if (null != playlistFeed.getNextLink()) {
-                nextFeed = playlistFeed.getNextLink().getHref();
-            }
-        } while (null != nextFeed);
+		String nextFeed = UriTemplate
+		        .fromTemplate(
+		                "https://gdata.youtube.com/feeds/api/users/{userId}/playlists?v=2" )
+		        .set( "userId",
+		                defaultClient
+		                        .getUserProfile()
+		                        .getUsername() )
+		        .expand(); // FIXME: magic strings
 
-        return results;
-    }
+		List<Thread> results = Lists.newArrayList();
+		do {
+			PlaylistLinkFeed playlistFeed = null;
+			try {
+				getConnector().waitForCooldown();
+				playlistFeed = defaultClient
+				        .getService().getFeed(
+				                new URL( nextFeed ),
+				                PlaylistLinkFeed.class );
+			} catch ( com.google.gdata.util.AuthenticationException e ) {
+				throw new AuthenticationException( e );
+			} catch ( ServiceException e ) {
+				throw Throwables.propagate( e );
+			} finally {
+				nextFeed = null;
+			}
+
+			if ( null != playlistFeed ) {
+				for ( PlaylistLinkEntry playlistEntry : playlistFeed
+				        .getEntries() ) {
+					results.add( YoutubeSiocConverter.createSiocThread(
+					        getConnector(),
+					        playlistEntry,
+					        playlists ) );
+				}
+			}
+
+			if ( null != playlistFeed.getNextLink() ) {
+				nextFeed = playlistFeed.getNextLink().getHref();
+			}
+		} while ( null != nextFeed );
+
+		return results;
+	}
 }

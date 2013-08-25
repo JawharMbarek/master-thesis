@@ -3,6 +3,8 @@ package de.m0ep.socc.core.connector.moodle;
 import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.Node;
@@ -32,7 +34,45 @@ import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.StringUtils;
 import de.m0ep.socc.core.utils.UserAccountUtils;
 
-public class Moodle2SiocConverter {
+public class Moodle2SiocUtils {
+	public static final String REGEX_USER_URI =
+	        "/user/profile.php?id=([0-9]+)";
+
+	public static final String REGEX_FORUM_URI =
+	        "/mod/forum/view\\.php\\?id=([0-9]+)";
+
+	public static final String REGEX_DISCUSSION_URI =
+	        "/mod/forum/discuss\\.php\\?d=([0-9]+)";
+
+	public static final String REGEX_ENTRY_URI =
+	        "/mod/forum/discuss.php?d=([0-9]+)#p([0-9]+)";
+
+	public static final String TEMPLATE_USER_URI =
+	        "/user/profile.php?id={userId}";
+
+	public static final String TEMPLATE_FORUM_URI =
+	        "/mod/forum/view.php?id={forumId}";
+
+	public static final String TEMPLATE_DISCUSSION_URI =
+	        "/mod/forum/discuss.php?d={discussionId}";
+
+	public static final String TEMPLATE_ENTRY_URI =
+	        "/mod/forum/discuss.php?d={discussionId}#p{postId}";
+
+	public static final String TEMPLATE_VAR_USER_ID =
+	        "userId";
+
+	public static final String TEMPLATE_VAR_FORUM_ID =
+	        "forumId";
+
+	public static final String TEMPLATE_VAR_DISCUSSION_ID =
+	        "discussionId";
+
+	public static final String TEMPLATE_VAR_ENTRY_ID =
+	        "postId";
+
+	private Moodle2SiocUtils() {
+	}
 
 	public static Forum createSiocForum( Moodle2Connector connector, ForumRecord forumRecord ) {
 		Preconditions.checkNotNull( connector,
@@ -204,7 +244,7 @@ public class Moodle2SiocConverter {
 		Preconditions.checkNotNull( connector,
 		        "Required parameter connector must be specified." );
 
-		final Moodle2ClientWrapper client = connector.getServiceClientManager().getDefaultClient();
+		final Moodle2ClientWrapper client = connector.getClientManager().getDefaultClient();
 		UserRecord[] userRecords = client.callMethod( new Callable<UserRecord[]>() {
 			@Override
 			public UserRecord[] call() throws Exception {
@@ -243,33 +283,73 @@ public class Moodle2SiocConverter {
 		throw new IOException( "Failed to read user data" );
 	}
 
-	private static URI createSiocForumUri( URI rootUri, int id ) {
+	public static URI createSiocForumUri( URI rootUri, int id ) {
 		return Builder.createURI(
-		        UriTemplate.fromTemplate( rootUri + "/mod/forum/view.php?id={forumId}" )
-		                .set( "forumId", id )
+		        UriTemplate.fromTemplate( rootUri + TEMPLATE_FORUM_URI )
+		                .set( TEMPLATE_VAR_FORUM_ID, id )
 		                .expand() );
 	}
 
-	private static URI createSiocThreadUri( URI rootUri, int id ) {
+	public static URI createSiocThreadUri( URI rootUri, int id ) {
 		return Builder.createURI(
-		        UriTemplate.fromTemplate( rootUri + "/mod/forum/discuss.php?d={discussionId}" )
-		                .set( "discussionId", id )
+		        UriTemplate.fromTemplate( rootUri + TEMPLATE_DISCUSSION_URI )
+		                .set( TEMPLATE_VAR_DISCUSSION_ID, id )
 		                .expand() );
 	}
 
-	private static URI createSiocPostUri( URI rootUri, int discussionId, int postId ) {
+	public static URI createSiocPostUri( URI rootUri, int discussionId, int entryId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( rootUri
-		                + "/mod/forum/discuss.php?d={discussionId}#p{postId}" )
-		                .set( "discussionId", discussionId )
-		                .set( "postId", postId )
+		                + TEMPLATE_ENTRY_URI )
+		                .set( TEMPLATE_VAR_DISCUSSION_ID, discussionId )
+		                .set( TEMPLATE_VAR_ENTRY_ID, entryId )
 		                .expand() );
 	}
 
-	private static URI createSiocUserUri( URI rootUri, int id ) {
+	public static URI createSiocUserUri( URI rootUri, int id ) {
 		return Builder.createURI(
-		        UriTemplate.fromTemplate( rootUri + "/user/profile.php?id={userId}" )
-		                .set( "userId", id )
+		        UriTemplate.fromTemplate( rootUri + TEMPLATE_USER_URI + "$" )
+		                .set( TEMPLATE_VAR_USER_ID, id )
 		                .expand() );
+	}
+
+	/**
+	 * Checks if the <code>uri</code> is a moodle post {@link URI}.
+	 * 
+	 * @param uri
+	 *            {@link URI} to test.
+	 * @return Return <code>true</code> if the <code>uri</code> is a moodle post
+	 *         {@link URI}.
+	 */
+	public static boolean isPostUri( URI uri, URI serviceEndpoint ) {
+		Pattern pattern = Pattern.compile(
+		        serviceEndpoint + Moodle2SiocUtils.REGEX_ENTRY_URI + "$" );
+		Matcher matcher = pattern.matcher( uri.toString() );
+
+		return matcher.matches();
+	}
+
+	/**
+	 * Checks if the <code>uri</code> is a moodle thread {@link URI}.
+	 * 
+	 * @param uri
+	 *            {@link URI} to test.
+	 * @return Return <code>true</code> if the <code>uri</code> is a moodle
+	 *         thread {@link URI}.
+	 */
+	public static boolean isThreadUri( URI uri, URI serviceEndpoint ) {
+		Pattern pattern = Pattern.compile(
+		        serviceEndpoint + Moodle2SiocUtils.REGEX_DISCUSSION_URI + "$" );
+		Matcher matcher = pattern.matcher( uri.toString() );
+
+		return matcher.matches();
+	}
+
+	public static boolean isForumUri( URI uri, URI serviceEndpoint ) {
+		Pattern pattern = Pattern.compile(
+		        serviceEndpoint + Moodle2SiocUtils.REGEX_FORUM_URI + "$" );
+		Matcher matcher = pattern.matcher( uri.toString() );
+
+		return matcher.matches();
 	}
 }

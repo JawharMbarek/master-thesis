@@ -75,7 +75,7 @@ public class FacebookClientWrapper {
         return user;
     }
 
-    public FacebookClient getClient() {
+    public FacebookClient getFacebookClient() {
         return client;
     }
 }

@@ -28,12 +28,12 @@ import org.ontoware.rdf2go.model.node.URI;
 
 import com.google.common.base.Preconditions;
 
-public class AbstractConnectorIOComponent<T extends IConnector> implements
+public class DefaultConnectorIOComponent<T extends IConnector> implements
         IConnectorIOComponent<T> {
     private T connector;
     private URI serviceEndpoint;
 
-    public AbstractConnectorIOComponent(T connector) {
+    public DefaultConnectorIOComponent(T connector) {
         this.connector = Preconditions.checkNotNull(connector,
                 "Required parameter connector must be specified.");
         Preconditions.checkNotNull(this.connector.getService(),

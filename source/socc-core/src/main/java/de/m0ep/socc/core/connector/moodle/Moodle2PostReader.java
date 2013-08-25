@@ -1,11 +1,13 @@
-
 package de.m0ep.socc.core.connector.moodle;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Thread;
@@ -16,220 +18,275 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.m0ep.moodlews.soap.ForumPostRecord;
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
-import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.SiocUtils;
 
 public class Moodle2PostReader extends
-        AbstractConnectorIOComponent<Moodle2Connector> implements IPostReader {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(Moodle2PostReader.class);
+        DefaultConnectorIOComponent<Moodle2Connector> implements IPostReader<Moodle2Connector> {
+	private static final Logger LOG = LoggerFactory
+	        .getLogger( Moodle2PostReader.class );
 
-    private final Moodle2ClientWrapper defaultClient;
+	private final Moodle2ClientWrapper defaultClient;
 
-    public Moodle2PostReader(Moodle2Connector connector) {
-        super(connector);
-        this.defaultClient = connector.getServiceClientManager()
-                .getDefaultClient();
-    }
+	public Moodle2PostReader( Moodle2Connector connector ) {
+		super( connector );
+		this.defaultClient = connector.getClientManager()
+		        .getDefaultClient();
+	}
 
-    @Override
-    public boolean containsPosts(final Container container) {
-        return null != container
-                && RdfUtils.isType(
-                        container,
-                        Thread.RDFS_CLASS)
-                && SiocUtils.isContainerOfSite(
-                        container,
-                        getServiceEndpoint());
-    }
+	@Override
+	public Post readPost( URI uri ) throws AuthenticationException, IOException {
+		Preconditions.checkNotNull( uri,
+		        "Required parameter uri must be specified." );
 
-    @Override
-    public List<Post> readNewPosts(final Date since, final long limit,
-            final Container container)
-            throws AuthenticationException, IOException {
-        if (0 == limit) {
-            return Lists.newArrayList();
-        }
+		if ( Post.hasInstance( getModel(), uri ) ) {
+			return Post.getInstance( getModel(), uri );
+		}
 
-        Preconditions.checkNotNull(container,
-                "Required parameter container must be specified.");
-        Preconditions.checkArgument(containsPosts(container),
-                "The container contains no post at this connector.");
-        Preconditions.checkArgument(container.hasId(),
-                "The container has no id.");
+		Pattern pattern = Pattern.compile( Moodle2SiocUtils.REGEX_ENTRY_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
 
-        final int discussionId;
-        try {
-            discussionId = Integer.parseInt(container.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The id of the container is invalid: was "
-                            + container.getId());
-        }
+		if ( matcher.matches() ) {
+			final int discussionId = Integer.parseInt( matcher.group( 1 ) );
+			final int postId = Integer.parseInt( matcher.group( 2 ) );
 
-        ForumPostRecord[] postRecordArray = defaultClient
-                .callMethod(new Callable<ForumPostRecord[]>() {
-                    @Override
-                    public ForumPostRecord[] call() throws Exception {
-                        return defaultClient
-                                .getBindingStub()
-                                .get_forum_posts(
-                                        defaultClient.getAuthClient(),
-                                        defaultClient.getSessionKey(),
-                                        discussionId,
-                                        (int) limit);
-                    }
-                });
+			ForumPostRecord[] postRecordArray = defaultClient.callMethod(
+			        new Callable<ForumPostRecord[]>() {
+				        @Override
+				        public ForumPostRecord[] call() throws Exception {
+					        return defaultClient
+					                .getBindingStub()
+					                .get_forum_posts(
+					                        defaultClient.getAuthClient(),
+					                        defaultClient.getSessionKey(),
+					                        discussionId,
+					                        9999999 );
+				        }
+			        } );
 
-        List<Post> result = Lists.newArrayList();
-        if (null != postRecordArray && 0 < postRecordArray.length) {
-            result.addAll(
-                    extractPosts(
-                            since,
-                            limit,
-                            SiocUtils.asThread(container),
-                            null,
-                            postRecordArray));
-        }
+			ForumPostRecord postRecord = findPostRecordWithId( postRecordArray, postId );
 
-        return result;
-    }
+			if ( null != postRecord ) {
+				Container discussion = getConnector().getStructureReader().getContainer(
+				        Moodle2SiocUtils.createSiocThreadUri(
+				                getServiceEndpoint(),
+				                discussionId ) );
 
-    @Override
-    public boolean containsReplies(final Post post) {
-        return null != post
-                && post.hasContainer()
-                && containsPosts(post.getContainer());
-    }
+				return Moodle2SiocUtils.createSiocPost(
+				        getConnector(),
+				        postRecord,
+				        SiocUtils.asThread( discussion ),
+				        null );
+			}
+		}
 
-    @Override
-    public List<Post> readNewReplies(final Date since, final long limit,
-            final Post post)
-            throws AuthenticationException, IOException {
-        Preconditions.checkNotNull(post,
-                "Required parameter post must be specified.");
-        Preconditions.checkArgument(containsReplies(post),
-                "The parameter post has no replies at this Moodle instance.");
-        Preconditions.checkArgument(post.hasId(),
-                "The paramater post has no id.");
-        Preconditions.checkArgument(post.hasContainer(),
-                "The paramater post has no container.");
+		throw new NotFoundException( "No post found at uri " + uri );
+	}
 
-        Container container = post.getContainer();
-        Preconditions.checkArgument(container.hasId(),
-                "The container of the post has no id");
+	@Override
+	public List<Post> pollPosts( URI sourceUri, Date since, int limit ) throws
+	        AuthenticationException,
+	        IOException {
+		Preconditions.checkNotNull( sourceUri,
+		        "Required parameter uri must be specified." );
+		limit = Math.max( -1, limit );
 
-        final int discussionId;
-        try {
-            discussionId = Integer.parseInt(container.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The id of the container is invalid: was "
-                            + container.getId());
-        }
+		if ( Moodle2SiocUtils.isPostUri( sourceUri, getServiceEndpoint() ) ) {
+			Post post = readPost( sourceUri );
+			return pollRepliesAtPost( post, since, limit );
+		} else if ( Moodle2SiocUtils.isThreadUri( sourceUri, getServiceEndpoint() ) ) {
+			Container container = getConnector().getStructureReader().getContainer( sourceUri );
+			return pollPostsAtContainer( container, since, limit );
+		}
 
-        final int postId;
-        try {
-            postId = Integer.parseInt(post.getId());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "The id of the parentPost is invalid: was "
-                            + post.getId());
-        }
+		throw new IOException(
+		        "Can't poll posts from uri "
+		                + sourceUri
+		                + " at service "
+		                + getServiceEndpoint() );
+	}
 
-        ForumPostRecord[] postRecordArray = defaultClient.callMethod(
-                new Callable<ForumPostRecord[]>() {
-                    @Override
-                    public ForumPostRecord[] call() throws Exception {
-                        return defaultClient.getBindingStub()
-                                .get_forum_posts(
-                                        defaultClient.getAuthClient(),
-                                        defaultClient.getSessionKey(),
-                                        discussionId,
-                                        (int) limit);
-                    }
-                });
+	/**
+	 * Polls post from a {@link Container}.
+	 * 
+	 * @param container
+	 * @param since
+	 * @param limit
+	 * @return
+	 * @throws AuthenticationException
+	 * @throws IOException
+	 */
+	private List<Post> pollPostsAtContainer( final Container container, final Date since,
+	        final long limit ) throws
+	        AuthenticationException,
+	        IOException {
 
-        List<Post> result = Lists.newArrayList();
-        if (null != postRecordArray && 0 < postRecordArray.length) {
-            ForumPostRecord postRecord = findPostRecordWithId(postRecordArray,
-                    postId);
+		final int discussionId;
+		try {
+			discussionId = Integer.parseInt( container.getId() );
+		} catch ( NumberFormatException e ) {
+			throw new IllegalArgumentException(
+			        "The id of the container is invalid: was "
+			                + container.getId() );
+		}
 
-            if (null != postRecord) {
-                ForumPostRecord[] children = postRecord.getChildren();
-                if (null != children && 0 < children.length) {
-                    result.addAll(
-                            extractPosts(
-                                    since,
-                                    limit,
-                                    SiocUtils.asThread(container),
-                                    post,
-                                    children));
-                }
-            } else {
-                LOG.warn(
-                        "No post found in thread {} with id {} to read replies from.",
-                        discussionId, postId);
-            }
-        }
+		ForumPostRecord[] postRecordArray = defaultClient
+		        .callMethod( new Callable<ForumPostRecord[]>() {
+			        @Override
+			        public ForumPostRecord[] call() throws Exception {
+				        return defaultClient
+				                .getBindingStub()
+				                .get_forum_posts(
+				                        defaultClient.getAuthClient(),
+				                        defaultClient.getSessionKey(),
+				                        discussionId,
+				                        (int) limit );
+			        }
+		        } );
 
-        return result;
-    }
+		List<Post> result = Lists.newArrayList();
+		if ( null != postRecordArray && 0 < postRecordArray.length ) {
+			result.addAll(
+			        extractPosts(
+			                since,
+			                limit,
+			                SiocUtils.asThread( container ),
+			                null,
+			                postRecordArray ) );
+		}
 
-    private List<Post> extractPosts(final Date since, final long limit,
-            final Thread container,
-            final Post parentPost, final ForumPostRecord[] postRecordArray)
-            throws AuthenticationException, IOException {
+		return result;
+	}
 
-        List<Post> results = Lists.newArrayList();
+	/**
+	 * Polls replies from a post.0
+	 * 
+	 * @param post
+	 * @param since
+	 * @param limit
+	 * @return
+	 * @throws AuthenticationException
+	 * @throws IOException
+	 */
+	private List<Post> pollRepliesAtPost( final Post post, final Date since, final long limit )
+	        throws
+	        AuthenticationException,
+	        IOException {
+		Container container = getConnector().getStructureReader().getContainer(
+		        post.getContainer().asURI() );
 
-        for (ForumPostRecord postRecord : postRecordArray) {
-            if (0 > limit || limit < results.size()) {
-                Post post = Moodle2SiocConverter.createSiocPost(
-                        getConnector(),
-                        postRecord,
-                        container,
-                        parentPost);
-                results.add(post);
+		final int discussionId;
+		try {
+			discussionId = Integer.parseInt( container.getId() );
+		} catch ( NumberFormatException e ) {
+			throw new IllegalArgumentException(
+			        "The id of the container is invalid: was "
+			                + container.getId() );
+		}
 
-                ForumPostRecord[] children = postRecord.getChildren();
-                if (null != children && 0 < children.length) {
-                    results.addAll(extractPosts(
-                            since,
-                            (0 > limit)
-                                    ? -1
-                                    : Math.max(limit - results.size(),
-                                            0),
-                            container,
-                            post,
-                            postRecord.getChildren()));
-                }
-            }
-        }
+		final int postId;
+		try {
+			postId = Integer.parseInt( post.getId() );
+		} catch ( NumberFormatException e ) {
+			throw new IllegalArgumentException(
+			        "The id of the parentPost is invalid: was "
+			                + post.getId() );
+		}
 
-        return results;
-    }
+		ForumPostRecord[] postRecordArray = defaultClient.callMethod(
+		        new Callable<ForumPostRecord[]>() {
+			        @Override
+			        public ForumPostRecord[] call() throws Exception {
+				        return defaultClient.getBindingStub()
+				                .get_forum_posts(
+				                        defaultClient.getAuthClient(),
+				                        defaultClient.getSessionKey(),
+				                        discussionId,
+				                        (int) limit );
+			        }
+		        } );
 
-    private ForumPostRecord findPostRecordWithId(
-            ForumPostRecord[] postRecordArray, int postId) {
-        for (ForumPostRecord postRecord : postRecordArray) {
-            if (postId == postRecord.getId()) {
-                return postRecord;
-            }
+		List<Post> result = Lists.newArrayList();
+		if ( null != postRecordArray && 0 < postRecordArray.length ) {
+			ForumPostRecord postRecord = findPostRecordWithId( postRecordArray,
+			        postId );
 
-            ForumPostRecord[] children = postRecord.getChildren();
-            if (null != children && 0 < children.length) {
-                ForumPostRecord result = findPostRecordWithId(children, postId);
+			if ( null != postRecord ) {
+				ForumPostRecord[] children = postRecord.getChildren();
+				if ( null != children && 0 < children.length ) {
+					result.addAll(
+					        extractPosts(
+					                since,
+					                limit,
+					                SiocUtils.asThread( container ),
+					                post,
+					                children ) );
+				}
+			} else {
+				LOG.warn(
+				        "No post found in thread {} with id {} to read replies from.",
+				        discussionId, postId );
+			}
+		}
 
-                if (null != result) {
-                    return result;
-                }
-            }
-        }
+		return result;
+	}
 
-        return null;
-    }
+	private List<Post> extractPosts( final Date since, final long limit, final Thread container,
+	        final Post parentPost, final ForumPostRecord[] postRecordArray ) throws
+	        AuthenticationException,
+	        IOException {
+		List<Post> results = Lists.newArrayList();
+
+		for ( ForumPostRecord postRecord : postRecordArray ) {
+			if ( 0 > limit || limit < results.size() ) {
+				Date createdDate = new Date( postRecord.getCreated() * 1000L );
+				Post post = Moodle2SiocUtils.createSiocPost(
+				        getConnector(),
+				        postRecord,
+				        container,
+				        parentPost );
+
+				if ( null == since || createdDate.after( since ) ) {
+					results.add( post );
+				}
+
+				ForumPostRecord[] children = postRecord.getChildren();
+				if ( null != children && 0 < children.length ) {
+					results.addAll( extractPosts(
+					        since,
+					        0 > limit
+					                ? -1
+					                : Math.max( 0, limit - results.size() ),
+					        container,
+					        post,
+					        postRecord.getChildren() ) );
+				}
+			}
+		}
+
+		return results;
+	}
+
+	private ForumPostRecord findPostRecordWithId( ForumPostRecord[] postRecordArray, int postId ) {
+		for ( ForumPostRecord postRecord : postRecordArray ) {
+			if ( postId == postRecord.getId() ) {
+				return postRecord;
+			}
+
+			ForumPostRecord[] children = postRecord.getChildren();
+			if ( null != children && 0 < children.length ) {
+				ForumPostRecord result = findPostRecordWithId( children, postId );
+
+				if ( null != result ) {
+					return result;
+				}
+			}
+		}
+
+		return null;
+	}
 }

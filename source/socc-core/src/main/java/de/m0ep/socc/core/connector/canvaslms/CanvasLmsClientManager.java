@@ -32,7 +32,7 @@ import de.m0ep.canvas.CanvasLmsClient;
 import de.m0ep.sioc.services.auth.AuthenticationMechanism;
 import de.m0ep.sioc.services.auth.Credentials;
 import de.m0ep.sioc.services.auth.ServicesAuthVocabulary;
-import de.m0ep.socc.core.connector.AbstractServiceClientManager;
+import de.m0ep.socc.core.connector.DefauktClientManager;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 /**
@@ -41,7 +41,7 @@ import de.m0ep.socc.core.utils.RdfUtils;
  * @author Florian Müller
  */
 public class CanvasLmsClientManager extends
-        AbstractServiceClientManager<CanvasLmsClient> {
+        DefauktClientManager<CanvasLmsClient> {
 
     /**
      * Constructs a new {@link CanvasLmsClientManager} for a

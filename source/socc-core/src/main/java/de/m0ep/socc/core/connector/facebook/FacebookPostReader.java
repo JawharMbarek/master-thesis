@@ -25,158 +25,256 @@ package de.m0ep.socc.core.connector.facebook;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.restfb.Connection;
 import com.restfb.Parameter;
 import com.restfb.exception.FacebookException;
 import com.restfb.json.JsonObject;
 
-import de.m0ep.socc.core.connector.AbstractConnectorIOComponent;
+import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
+import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.Connections;
+import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.Fields;
+import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.RequestParameters;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
-import de.m0ep.socc.core.utils.RdfUtils;
-import de.m0ep.socc.core.utils.SiocUtils;
+import de.m0ep.socc.core.exceptions.NotFoundException;
 
 public class FacebookPostReader extends
-        AbstractConnectorIOComponent<FacebookConnector> implements IPostReader {
+        DefaultConnectorIOComponent<FacebookConnector> implements IPostReader<FacebookConnector> {
 
-    private FacebookClientWrapper defaultClient;
+	private final FacebookClientWrapper defaultClient;
 
-    public FacebookPostReader(FacebookConnector connector) {
-        super(connector);
+	public FacebookPostReader( FacebookConnector connector ) {
+		super( connector );
 
-        this.defaultClient = connector.getServiceClientManager()
-                .getDefaultClient();
-    }
+		this.defaultClient = connector.getClientManager()
+		        .getDefaultClient();
+	}
 
-    @Override
-    public boolean containsPosts(Container container) {
-        return null != container
-                && SiocUtils.isContainerOfSite(container, getServiceEndpoint())
-                && RdfUtils.isType(container, Forum.RDFS_CLASS);
-    }
+	@Override
+	public Post readPost( URI uri )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
 
-    @Override
-    public List<Post> readNewPosts(Date since, long limit, Container container)
-            throws AuthenticationException, IOException {
-        if (0 == limit) {
-            return Lists.newArrayList();
-        }
+		if ( Post.hasInstance( getModel(), uri ) ) {
+			return Post.getInstance( getModel(), uri );
+		}
 
-        Preconditions.checkNotNull(container,
-                "Required parameter container must be specified.");
-        Preconditions.checkArgument(containsPosts(container),
-                "This container has no posts at this service");
-        Preconditions.checkArgument(container.hasId(),
-                "The container has no id.");
+		Pattern pattern = Pattern.compile( FacebookSiocUtils.REGEX_FACEBOOK_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
 
-        Parameter paramSince = Parameter.with(
-                FacebookApiConstants.PARAM_SINCE,
-                (null != since) ? (since.getTime() / 1000L) : (0));
+		if ( matcher.find() ) {
+			String id = matcher.group( 1 );
+			JsonObject object = null;
 
-        Parameter paramLimit = Parameter.with(
-                FacebookApiConstants.PARAM_LIMIT,
-                (0 < limit || limit < 25) ? (limit) : (25));
+			try {
+				object = defaultClient.getFacebookClient().fetchObject(
+				        "/" + id,
+				        JsonObject.class,
+				        Parameter.with( RequestParameters.METADATA, 1 ) );
+			} catch ( FacebookException e ) {
+				FacebookConnector.handleFacebookException( e );
+			} catch ( Exception e ) {
+				Throwables.propagate( e );
+			}
 
-        Parameter paramFields = Parameter.with(
-                FacebookApiConstants.PARAM_FIELDS,
-                FacebookApiConstants.FIELDS_COMMENT);
+			if ( null != object ) {
+				if ( FacebookSiocUtils.hasConnection( object, Connections.COMMENTS ) ) {
+					return FacebookSiocUtils.createSiocPost( getConnector(), object, null, null );
+				}
+			}
+		}
 
-        Connection<JsonObject> feed = null;
-        try {
-            feed = defaultClient.getClient().fetchConnection(
-                    container.getId()
-                            + "/"
-                            + FacebookApiConstants.CONNECTION_FEED,
-                    JsonObject.class,
-                    paramSince,
-                    paramLimit,
-                    paramFields);
-        } catch (FacebookException e) {
-            FacebookConnector.handleFacebookException(e);
-        }
+		throw new NotFoundException(
+		        "The uri "
+		                + uri
+		                + " is no post at "
+		                + getServiceEndpoint() );
+	}
 
-        List<Post> results = Lists.newArrayList();
-        if (null != feed) {
-            for (List<JsonObject> objectList : feed) {
-                for (JsonObject object : objectList) {
-                    if (0 > limit || limit > results.size()) {
-                        results.add(FacebookSiocConverter.createSiocPost(
-                                getConnector(),
-                                object,
-                                container,
-                                null));
-                    }
-                }
-            }
-        }
+	@Override
+	public List<Post> pollPosts( URI sourceUri, Date since, int limit )
+	        throws AuthenticationException, IOException {
+		if ( Forum.hasInstance( getModel(), sourceUri ) ) {
+			return pollPostsAtContainer( Forum.getInstance( getModel(), sourceUri ), since, limit );
+		} else if ( Post.hasInstance( getModel(), sourceUri ) ) {
+			return pollRepliesAtPost( Post.getInstance( getModel(), sourceUri ), since, limit );
+		}
 
-        return results;
-    }
+		Pattern pattern = Pattern.compile( FacebookSiocUtils.REGEX_FACEBOOK_URI );
+		Matcher matcher = pattern.matcher( sourceUri.toString() );
 
-    @Override
-    public boolean containsReplies(Post post) {
-        return null != post
-                && post.hasContainer()
-                && containsPosts(post.getContainer());
-    }
+		if ( matcher.find() ) {
+			String id = matcher.group( 1 );
+			JsonObject object = null;
 
-    @Override
-    public List<Post> readNewReplies(Date since, long limit, Post parentPost)
-            throws AuthenticationException, IOException {
-        Preconditions.checkNotNull(parentPost,
-                "Required parameter parentPost must be specified.");
-        Preconditions.checkArgument(containsReplies(parentPost),
-                "This parentPost has no replies at this service.");
-        Preconditions.checkArgument(parentPost.hasId(),
-                "The parameter parentPost has no id.");
+			try {
+				object = defaultClient.getFacebookClient().fetchObject(
+				        "/" + id,
+				        JsonObject.class,
+				        Parameter.with( RequestParameters.METADATA, 1 ) );
+			} catch ( FacebookException e ) {
+				FacebookConnector.handleFacebookException( e );
+			} catch ( Exception e ) {
+				Throwables.propagate( e );
+			}
 
-        Parameter paramSince = Parameter.with(
-                FacebookApiConstants.PARAM_SINCE,
-                (null != since) ? (since.getTime() / 1000L) : (0));
-        Parameter paramLimit = Parameter.with(
-                FacebookApiConstants.PARAM_LIMIT,
-                (0 < limit || limit < 25) ? (limit) : (25));
+			if ( null != object ) {
+				if ( FacebookSiocUtils.hasConnection( object, Connections.FEED ) ) {
+					Container container = FacebookSiocUtils.createSiocForum(
+					        getConnector(),
+					        object );
+					return pollPostsAtContainer( container, since, limit );
+				} else if ( FacebookSiocUtils.hasConnection( object, Connections.COMMENTS ) ) {
+					Post post = FacebookSiocUtils.createSiocPost(
+					        getConnector(),
+					        object,
+					        null,
+					        null );
+					return pollRepliesAtPost( post, since, limit );
+				}
+			}
+		}
 
-        Parameter paramFields = Parameter.with(
-                FacebookApiConstants.PARAM_FIELDS,
-                FacebookApiConstants.FIELDS_COMMENT);
+		throw new IOException(
+		        "Can't read post from uri "
+		                + sourceUri
+		                + " at "
+		                + getServiceEndpoint() );
+	}
 
-        Connection<JsonObject> feed = null;
-        try {
-            feed = defaultClient.getClient().fetchConnection(
-                    parentPost.getId()
-                            + "/"
-                            + FacebookApiConstants.CONNECTION_COMMENTS,
-                    JsonObject.class,
-                    paramSince,
-                    paramLimit,
-                    paramFields);
-        } catch (FacebookException e) {
-            FacebookConnector.handleFacebookException(e);
-        }
+	public List<Post> pollPostsAtContainer( Container container, Date since, long limit )
+	        throws AuthenticationException, IOException {
+		if ( 0 == limit ) {
+			return Lists.newArrayList();
+		}
 
-        List<Post> results = Lists.newArrayList();
-        if (null != feed) {
-            for (List<JsonObject> objectList : feed) {
-                for (JsonObject object : objectList) {
-                    if (0 > limit || limit > results.size()) {
-                        results.add(FacebookSiocConverter.createSiocPost(
-                                getConnector(),
-                                object,
-                                parentPost.getContainer(),
-                                parentPost));
-                    }
-                }
-            }
-        }
+		Preconditions.checkNotNull( container,
+		        "Required parameter container must be specified." );
 
-        return results;
-    }
+		Parameter paramSince = Parameter.with(
+		        RequestParameters.SINCE,
+		        ( null != since ) ? ( since.getTime() / 1000L ) : ( 0 ) );
+
+		Parameter paramLimit = Parameter.with(
+		        RequestParameters.LIMIT,
+		        ( 0 < limit || limit < 25 ) ? ( limit ) : ( 25 ) );
+
+		Connection<JsonObject> feed = null;
+		try {
+			feed = defaultClient.getFacebookClient().fetchConnection(
+			        container.getId()
+			                + "/"
+			                + Connections.FEED,
+			        JsonObject.class,
+			        paramSince,
+			        paramLimit );
+		} catch ( FacebookException e ) {
+			FacebookConnector.handleFacebookException( e );
+		}
+
+		List<Post> results = Lists.newArrayList();
+		if ( null != feed ) {
+			for ( List<JsonObject> objectList : feed ) {
+				for ( JsonObject object : objectList ) {
+					if ( 0 > limit || limit > results.size() ) {
+						Date createdDate = null;
+						if ( object.has( Fields.CREATED_TIME ) ) {
+							createdDate = com.restfb.util.DateUtils
+							        .toDateFromLongFormat(
+							        object.getString( Fields.CREATED_TIME ) );
+						}
+
+						if ( null == since || null == createdDate || createdDate.after( since ) ) {
+							results.add( FacebookSiocUtils.createSiocPost(
+							        getConnector(),
+							        object,
+							        container,
+							        null ) );
+						} else {
+							return results;
+						}
+					} else {
+						return results;
+					}
+				}
+			}
+		}
+
+		return results;
+	}
+
+	public List<Post> pollRepliesAtPost( Post parentPost, Date since, long limit )
+	        throws AuthenticationException, IOException {
+		Preconditions.checkNotNull( parentPost,
+		        "Required parameter parentPost must be specified." );
+
+		Parameter paramSince = Parameter.with(
+		        RequestParameters.SINCE,
+		        ( null != since ) ? ( since.getTime() / 1000L ) : ( 0 ) );
+		Parameter paramLimit = Parameter.with(
+		        RequestParameters.LIMIT,
+		        ( 0 < limit || limit < 25 ) ? ( limit ) : ( 25 ) );
+
+		Parameter paramFields = Parameter.with(
+		        RequestParameters.FIELDS,
+		        FacebookSiocUtils.FIELDS_COMMENT );
+
+		Connection<JsonObject> feed = null;
+		try {
+			feed = defaultClient.getFacebookClient().fetchConnection(
+			        parentPost.getId()
+			                + "/"
+			                + Connections.COMMENTS,
+			        JsonObject.class,
+			        paramSince,
+			        paramLimit,
+			        paramFields );
+		} catch ( FacebookException e ) {
+			FacebookConnector.handleFacebookException( e );
+		}
+
+		List<Post> results = Lists.newArrayList();
+		if ( null != feed ) {
+			for ( List<JsonObject> objectList : feed ) {
+				for ( JsonObject object : objectList ) {
+					if ( 0 > limit || limit > results.size() ) {
+						Date createdDate = null;
+						if ( object.has( Fields.CREATED_TIME ) ) {
+							createdDate = com.restfb.util.DateUtils
+							        .toDateFromLongFormat(
+							        object.getString( Fields.CREATED_TIME ) );
+						}
+
+						if ( null == since || null == createdDate || createdDate.after( since ) ) {
+							results.add( FacebookSiocUtils.createSiocPost(
+							        getConnector(),
+							        object,
+							        parentPost.hasContainer()
+							                ? parentPost.getContainer()
+							                : null,
+							        null ) );
+						} else {
+							return results;
+						}
+					} else {
+						return results;
+					}
+				}
+			}
+		}
+
+		return results;
+	}
 }

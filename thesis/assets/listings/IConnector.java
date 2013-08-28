@@ -1,5 +1,5 @@
 /*
- * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * The MIT License (MIT) Copyright © 2013 Florian Mueller
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the “Software”), to deal
@@ -42,7 +42,7 @@ import de.m0ep.socc.core.exceptions.NotFoundException;
  * An interface that describes a class which helps to connect different online
  * communities with each other.
  * 
- * @author Florian Müller
+ * @author Florian Mueller
  */
 public interface IConnector {
 
@@ -132,7 +132,7 @@ public interface IConnector {
 	 * An interface to read some structural information about a service of an
 	 * online community.
 	 * 
-	 * @author Florian Müller
+	 * @author Florian Mueller
 	 */
 	public static interface IStructureReader<T extends IConnector> extends IConnectorIOComponent<T> {
 
@@ -178,8 +178,6 @@ public interface IConnector {
 		        AuthenticationException,
 		        IOException;
 
-		public boolean hasChildContainer( URI uri );
-
 		/**
 		 * List all child {@link Container}s of the parent at the
 		 * <code>parentUri</code>.
@@ -197,18 +195,15 @@ public interface IConnector {
 		public List<Container> listContainer( URI parentURI ) throws
 		        AuthenticationException,
 		        IOException;
-
 	}
 
 	/**
 	 * An interface that describes a class which is used to read data from a
 	 * connectors service-endpoint.
 	 * 
-	 * @author Florian Müller
+	 * @author Florian Mueller
 	 */
 	public static interface IPostReader<T extends IConnector> extends IConnectorIOComponent<T> {
-
-		public boolean hasPosts( URI uri );
 
 		public Post readPost( URI uri ) throws
 		        NotFoundException,
@@ -224,7 +219,7 @@ public interface IConnector {
 	 * An interface that describes a class which is used to write {@link Post}s
 	 * to a connectors service-endpoint.
 	 * 
-	 * @author Florian Müller
+	 * @author Florian Mueller
 	 */
 	public static interface IPostWriter<T extends IConnector> extends IConnectorIOComponent<T> {
 		public void writePost( URI targetUri, String rdfString, Syntax syntax ) throws

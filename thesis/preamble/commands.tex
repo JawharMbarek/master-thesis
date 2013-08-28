@@ -6,3 +6,15 @@
 \newcommand{\thesisAdvisor}{Prof. Dr. Max Mühlhäuser\xspace}
 \newcommand{\thesisResponseable}{Dipl.-Inform. Kai Höver\xspace}
 \newcommand{\thesisSubmissionDate}{September 2013\xspace}
+
+\makeatletter
+\newcommand\wrapfill{\par
+  \ifx\parshape\WF@fudgeparshape
+  \nobreak
+  \vskip-\baselineskip
+  \vskip\c@WF@wrappedlines\baselineskip
+  \allowbreak
+  \WFclear
+  \fi
+}
+\makeatother

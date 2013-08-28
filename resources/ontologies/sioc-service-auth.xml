@@ -52,7 +52,7 @@
     <owl:ObjectProperty 
         rdf:about="http://purl.oclc.org/NET/WebApiAuthentication#hasInputCredentials">
         <owl:equivalentProperty 
-            rdf:resource="http://www.m0ep.de/sioc/services/auth#has_credentials"/>
+            rdf:resource="http://www.m0ep.de/sioc/services/auth#credentials"/>
     </owl:ObjectProperty>
 
     <!-- http://www.m0ep.de/sioc/services/auth#serviceAuthentication -->

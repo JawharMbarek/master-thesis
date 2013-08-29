@@ -55,7 +55,7 @@ public class GooglePlusStructureReader extends
 		        .getDefaultClient();
 		try {
 			this.defaultForum = getForum(
-			        GooglePlusSiocConverter.PUBLIC_FEED_ID_PREFIX
+			        GooglePlusSiocUtils.PUBLIC_FEED_ID_PREFIX
 			                + defaultClient.getPerson().getId() );
 		} catch ( Exception e ) {
 			Throwables.propagate( e );
@@ -102,7 +102,7 @@ public class GooglePlusStructureReader extends
 		Preconditions.checkArgument( !id.isEmpty(),
 		        "Required parameter id may not be empty." );
 
-		if ( id.startsWith( GooglePlusSiocConverter.PUBLIC_FEED_ID_PREFIX ) ) {
+		if ( id.startsWith( GooglePlusSiocUtils.PUBLIC_FEED_ID_PREFIX ) ) {
 			String gId = id.substring( id.lastIndexOf( ':' ) + 1 );
 
 			Person person = null;
@@ -113,7 +113,7 @@ public class GooglePlusStructureReader extends
 			}
 
 			if ( null != person ) {
-				return GooglePlusSiocConverter.createSiocForum( getConnector(),
+				return GooglePlusSiocUtils.createSiocForum( getConnector(),
 				        person );
 			}
 		}

@@ -24,8 +24,6 @@ Eine wichtige Designentscheidung der Connectoren war es, wo alle zum Betrieb not
 
 \medskip
 
-Aus diesem Grunde wurde für die Konfiguration eines Connectors die \emph{Connector Config Ontology} entwickelt. Abbildung \ref{fig:uebersicht_conector_cfg} zeigt diese Ontologie. Jeder Connector bekommt einen eindeutigen Bezeichner(kurz ID) um jeden diesen identifizieren zu können. Dies kann eine beliebige Zeichenkette sein. Um die korrekte Javaklasse des zu erstellenden Connectors benutzen zu können, wird der vollständige Klassenname, wie er zum Beispiel von \lstinline{object.class.getName()} zurückgegeben wird, in \texttt{connectorClassName} gespeichert. Für den Zugriff auf die Daten der SOC sind bei einiges APIs bestimmte Parameter wie die genaue Adresse des Servers notwendig. SIOC bietet hierzu ein eigenes Modul an was genau für solche Beschreibungen die SIOC Ontologie erweitere. Eine kurze Beschreibung dieses Moduls und eine Erweiterung für den Einsatz in SOCC befindet sich im Abschnitt \ref{ssub:services} und \ref{ssub:authorization}. Als Letztes braucht ein Connector noch einen vordefinierten Benutzer welcher als \texttt{defaultUserAccount} als SIOC UserAccount gespeichert wird. Dieser vordefinierte erfüllt im Großen und Ganzen zwei Aufgaben. Als Erstes wird er für lesende Zugriffe der API auf die SOC genutzt, da hierzu ein einzelner Benutzer vollkommen ausreichend ist. Die zweite Aufgabe bezieht sich auf das stellvertretende Schreiben einzelner Benutzer. Nicht immer werden die dazu notwendigen Daten von den Benutzer zur Verfügung gestellt oder sind unbekannt. In diesem Fall wird der vordefinierte Benutzer genutzt und der Beitrag mit einem Vermerk zum original Autor über diesen geschrieben.
-
 \begin{figure}[ht]
     \centering
     \includegraphics[
@@ -36,8 +34,25 @@ Aus diesem Grunde wurde für die Konfiguration eines Connectors die \emph{Connec
     \label{fig:uebersicht_conector_cfg}
 \end{figure}
 
+Aus diesem Grunde wurde für die Konfiguration eines Connectors die \emph{Connector Config Ontology} entwickelt. Abbildung \ref{fig:uebersicht_conector_cfg} zeigt diese Ontologie. Jeder Connector bekommt einen eindeutigen Bezeichner(kurz ID) um jeden diesen identifizieren zu können. Dies kann eine beliebige Zeichenkette sein. Um die korrekte Javaklasse des zu erstellenden Connectors benutzen zu können, wird der vollständige Klassenname, wie er zum Beispiel von \lstinline{object.class.getName()} zurückgegeben wird, in \texttt{connectorClassName} gespeichert. Für den Zugriff auf die Daten der SOC sind bei einiges APIs bestimmte Parameter wie die genaue Adresse des Servers notwendig. SIOC bietet hierzu ein eigenes Modul an, welches genau für solche Beschreibungen von Diensten die SIOC Ontologie erweitert. Eine kurze Beschreibung dieses Moduls und eine Erweiterung des selbigen für den Einsatz in SOCC befindet sich im Abschnitt \ref{ssub:services} und \ref{ssub:authorization}. Als Letztes braucht ein Connector noch einen vordefinierten Benutzer welcher als \texttt{defaultUserAccount} als SIOC UserAccount gespeichert wird. Dieser vordefinierte Benutzer erfüllt im Großen und Ganzen zwei Aufgaben. Als Erstes wird er für lesende Zugriffe der API auf die SOC genutzt, da hierzu ein einzelner Benutzer vollkommen ausreichend ist. Die zweite Aufgabe bezieht sich auf das stellvertretende Schreiben einzelner Benutzer. Nicht immer werden die dazu notwendigen Daten von den Benutzer zur Verfügung gestellt oder sind unbekannt. In diesem Fall wird der vordefinierte Benutzer genutzt und der Beitrag mit einem Vermerk zum original Autor über diesen geschrieben.
+
+
 \subsubsection{Services} % (fold)
 \label{ssub:services}
+
+Wie eben schon beschrieben, existiert für SIOC ein Modul zur einfachen Modellierung von Diensten auf semantischer Ebene. Kernstück dieses Moduls ist die Klasse Service, wie auf Abbildung \ref{fig:uebersicht_sioc_services} zu sehen ist. Mit dieser Klasse kann durch eine Hand voll Eigenschaften ein Dienst beschrieben werden. Für diese Arbeit ist davon die wichtigste Eigenschaft \texttt{service\_endpoint}. Durch diese kann die Adresse festgelegt werden, unter dem ein bestimmter Dienst erreichbar ist. Gerade bei Plattformen die nicht an eine feste Adresse (Foren, Blogs, $\dots$) gebunden sind, ist diese Angabe unerlässlich. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[
+        width=0.7\textwidth,
+        keepaspectratio=true
+    ]{assets/images/sioc_services_ontology}
+    \caption{SIOC Services Ontology}
+    \label{fig:uebersicht_sioc_services}
+\end{figure}
+
+Die Eigenschaften \texttt{has\_service} und \texttt{service\_of} sind sind ideal zur Verbindung von einzelnen SIOC UserAccounts mit einem Service. Diese Verbindung hilft dabei für das stellvertretende Schreiben von Beiträgen schnell die passenden Benutzerdaten zu finden. Ebenfalls nützlich ist \texttt{max\_results}. Manche Dienste erlauben es nur eine maximale Anzahl an Ergebnissen pro Aufruf zurückgeben zu lassen. Da sich diese Anzahl über die Zeit ändern kann ist es nicht sinnvoll diese fest im Programm festzulegen, kann diese so im Nachhinein verändert werden. Für SOCC weniger interessant aber Vollständigkeit halber seien noch erwähnt \texttt{service\_protocol} zum Angeben des verwendeten Übertragungsprotokolls (REST\footnote{Representational State Transfer}, SOAP\footnote{Simple Object Access Protocol}, $\dots$) und \texttt{service\_definition} mit dem auf eine weiterführende Definition verwiesen werden kann.
 
 % subsubsection services (end)
 

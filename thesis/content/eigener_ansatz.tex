@@ -17,6 +17,42 @@
 \section{Social Online Community Connectors} % (fold)
 \label{sec:social_online_community_connectors}
 
+\subsection{Konfiguration} % (fold)
+\label{sub:konfiguration}
+
+Eine wichtige Designentscheidung der Connectoren war es, wo alle zum Betrieb notwendigen Einstellungen und zusätzliche Daten gespeichert werden sollen? In den ersten Testimplementierungen wurden diese Daten teilweise in einfachen Dateien, nur für die anfallenden Daten im RDF Format war von Beginn an eine Speicherung in einem RDF Triplestore vorgesehen. Im späteren Verlauf dieser Arbeit kam die Idee auf komplett alle Daten dort zu speichern. Da es vorkommen kann, dass bestimmte Einstellungen wie Anmeldedaten mehrfach genutzt werden und im Falle eine Änderung müssten die Daten nur an diesem einen Ort geändert werten. So könnten auch diverse Einstellungen über verschiedene unabhängige System hinweg genutzt werden. 
+
+\medskip
+
+Aus diesem Grunde wurde für die Konfiguration eines Connectors die \emph{Connector Config Ontology} entwickelt. Abbildung \ref{fig:uebersicht_conector_cfg} zeigt diese Ontologie. Jeder Connector bekommt einen eindeutigen Bezeichner(kurz ID) um jeden diesen identifizieren zu können. Dies kann eine beliebige Zeichenkette sein. Um die korrekte Javaklasse des zu erstellenden Connectors benutzen zu können, wird der vollständige Klassenname, wie er zum Beispiel von \lstinline{object.class.getName()} zurückgegeben wird, in \texttt{connectorClassName} gespeichert. Für den Zugriff auf die Daten der SOC sind bei einiges APIs bestimmte Parameter wie die genaue Adresse des Servers notwendig. SIOC bietet hierzu ein eigenes Modul an was genau für solche Beschreibungen die SIOC Ontologie erweitere. Eine kurze Beschreibung dieses Moduls und eine Erweiterung für den Einsatz in SOCC befindet sich im Abschnitt \ref{ssub:services} und \ref{ssub:authorization}. Als Letztes braucht ein Connector noch einen vordefinierten Benutzer welcher als \texttt{defaultUserAccount} als SIOC UserAccount gespeichert wird. Dieser vordefinierte erfüllt im Großen und Ganzen zwei Aufgaben. Als Erstes wird er für lesende Zugriffe der API auf die SOC genutzt, da hierzu ein einzelner Benutzer vollkommen ausreichend ist. Die zweite Aufgabe bezieht sich auf das stellvertretende Schreiben einzelner Benutzer. Nicht immer werden die dazu notwendigen Daten von den Benutzer zur Verfügung gestellt oder sind unbekannt. In diesem Fall wird der vordefinierte Benutzer genutzt und der Beitrag mit einem Vermerk zum original Autor über diesen geschrieben.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true
+    ]{assets/images/connector_config_ontology}
+    \caption{Connector Config Ontology}
+    \label{fig:uebersicht_conector_cfg}
+\end{figure}
+
+\subsubsection{Services} % (fold)
+\label{ssub:services}
+
+% subsubsection services (end)
+
+\subsubsection{UserAccounts} % (fold)
+\label{ssub:useraccounts}
+
+% subsubsection useraccounts (end)
+
+\subsubsection{Autorisierung} % (fold)
+\label{ssub:authorization}
+
+% subsubsection authorization (end)
+
+% subsection konfiguration (end)
+
 \subsection{Aufbau} % (fold)
 \label{sub:aufbau}
 
@@ -86,26 +122,22 @@ Der \texttt{PostReader} dient als Schnittstelle, um auf geschriebene Beitrage in
 \subsubsection{PostWriter} % (fold)
 \label{ssub:postwriter}
 
-
+In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein Sequenzdiagramm der PostWriter Komponente zu sehen. Dort ist visualisiert, welche Schritte für das stellvertretende Schreiben von Beiträgen eines Benutzers unternommen werden müssen. Soll nun ein Beitrag in einer SOC geschrieben werden, wird die Methode \texttt{writePost(URI, String, Syntax)} mit dem Zielort als URI, dem Beitrag als serialisiertes RDF Objekt und dem verwendeten Serialisierungsformates aufgerufen. Begonnen wird damit, dass als erstes nach einem UserAccount für den Service des aktuellen Connectors des Beitragautors gesucht. Im Idealfall befindet sich für den UserAccount des Beitragsautors ein Link zu seiner FOAF Person und von ein weiterer Link zum UserAccount für den aktuellen Service. Mit diesem UserAccount kann dann vom ClientManager ein Clientobjekt für die verwendete API angefordert werden. Sollte die Suche negativ verlaufen, steht der vordefinierte Client zur Verfügung. Mit diesem Client, ob mit der des Autors oder dem Vordefinierten, wird im letzten Schritt der Beitrag im von der API verwendeten Format in die SOC geschrieben.
+\begin{figure}[h]
+\centering
+\includegraphics[
+width=\textwidth,
+keepaspectratio=true,
+clip=true,
+trim= 90 200 220 75
+]{assets/images/postwriter_sequencediagram}
+\caption{PostWriter Sequenzdiagramm}
+\label{fig:postwriter_sequenzdiagramm}
+\end{figure}
 
 % subsubsection postwriter (end)
 
 % subsection aufbau (end)
-
-\subsection{Konfiguration} % (fold)
-\label{sub:konfiguration}
-
-\subsubsection{Services} % (fold)
-\label{ssub:services}
-
-% subsubsection services (end)
-
-\subsubsection{Authorization} % (fold)
-\label{ssub:authorization}
-
-% subsubsection authorization (end)
-
-% subsection konfiguration (end)
 
 \subsection{Moodle Connector} % (fold)
 \label{sub:moodle_connector}

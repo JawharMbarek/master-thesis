@@ -9,13 +9,16 @@
     \item Beispiel: Zugriff auf Moodle über Webservice
 \end{itemize}
 
-\section{Datenformat} % (fold)
-\label{sec:datenformat}
 
-% section datenformat (end)
+
 
 \section{Social Online Community Connectors} % (fold)
 \label{sec:social_online_community_connectors}
+
+\subsection{Datenformat} % (fold)
+\label{sub:datenformat}
+
+% subsection datenformat (end)
 
 \subsection{Konfiguration} % (fold)
 \label{sub:konfiguration}
@@ -61,22 +64,53 @@ Die Eigenschaften \texttt{has\_service} und \texttt{service\_of} sind sind ideal
 
 % subsubsection useraccounts (end)
 
-\subsubsection{Autorisierung} % (fold)
-\label{ssub:authorization}
+\subsubsection{Autorisierung und Authentifizierung} % (fold)
+\label{ssub:authentication}
+
+Die Wahl für SIOC als Datenformat zu hat sich nach den ersten Tests als eine sehr gute Entscheidung herausgestellt. Mittels SIOC ließen die wichtigsten Daten aller untersuchten Plattformen in einer einheitlichen Form speichern. Die ersten Probleme traten erst auf, als es daran ging Daten für die Autorisierung (Feststellen ob jemand eine Handlung ausführen darf) beziehungsweise Authentifizierung (Feststellen ob jemand der ist, den er vorgibt zu sein) an den verschiedenen Programmierschnittstellen einen geeigneten Ort zu finden. Dazu musste aber erst festgestellt werden, welche verschiedenen Daten alle vorliegen können.
+
+\medskip
+
+\begin{description}
+    \item[Username/Passwort] ist wohl eine der ersten und häufigsten Mechanismen, um den Zugriff sensibler Daten vor Dritten zu schützen. Das in Abschnitt \ref{sub:moodle_connector} beschriebene LMS Moodle, setzt zum Beispiel den Username und Password eines angemeldeten Benutzers zu Authentifizierung ein.
+    
+    \item[OAuth]\footnote{\url{http://oauth.net/}} stellt heutzutage den Standard der verwendeten Authentifizierungsmechanismen für hauptsächlich webbasierte API dar. Benutzer können so temporär Programmen den Zugriff auf ihre Daten erlauben und später wieder verbieten. Der aktuelle Standard stellt OAuth 2.0 dar und wird in dieser Version von den größten Seitenbetreibern wie Google, Facebook oder Microsoft eingesetzt\footnote{\url{http://en.wikipedia.org/wiki/OAuth\#List\_of\_OAuth\_service\_providers}}. Insgesamt sind für die Nutzung von OAuth vier Parameter wichtig. Für das Programm, dass Zugriff erhalten möchte sind die Parameter \emph{client\_id} und \emph{client\_secret} \cite{rfc6749}[S.\,8]. Sie weisen das Programm als autorisiert für die Benutzung der Schnittstelle aus. Soll nun beim Aufrufer einer von OAuth geschützten Funktion belegt werden ist ein sogenannter Accesstoken\cite{rfc6749}[S.\,9] nötig. Da dieser Accesstoken in der Regel nur eine bestimmte Zeit gültig ist, wird je nach Implementierung des Standards noch ein Refreshtoken mitgeliefert. Mit diesem Refreshtoken ist das Programm in der Lage ohne Zutun des Benutzers einen abgelaufen Accesstoken wieder zu aktivieren. Dies kann beliebig oft wiederholt werden, bis der Benutzer beide Token für ungültig erklärt.
+    \todo[inline]{vll. noch OAuth 1.0(a) einbauen}
+    
+    \item[API Schlüssel] sind eine dritte Möglichkeit Programmen Zugriff auf eine API zu gewähren. Der API Schlüssel entspricht ungefähr einer Kombination von client\_id und client\_secret von OAuth. Dieser Schlüssel schaltet in der Regel nicht den Zugriff auf persönliche Daten von Benutzer frei. Hier ist noch ein weiterer Mechanismus wie die Verwendung von einem Usernamen und Passwort nötig. Die in Abschnitt \ref{sub:youtube_connector}  beschriebene Google Youtube API hierzu ein gutes Beispiel.
+\end{description}
+
+\medskip
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true
+    ]{assets/images/sioc_services_authentication}
+    \caption{SIOC Services Authentication Ontology}
+    \label{fig:uebersicht_sioc_services_authentication}
+\end{figure}
+
+Neben diesen drei Mechanismen wäre noch der Vollständigkeit halber die HTTP-Authentifizierung zu nennen. Hierbei handelt es ich um eine Form des Username/Passwort Verfahrens, welches auf das HTTP Protokoll aufsetzt. Für einfachen Webseiten ist dies ein unkomplizierte Art die Datei vor fremden Zugriffen zu schützten. Für aktuelle öffentliche APIs ist diese Form der Authentifizierung nicht mehr Stand der Technik.
+
+\medskip
+
+Die Suche nach einer bestehen Ontologie, welche zusammen mit SIOC verwendet werden könnte, gestaltete sich als sehr schwierig. Ein Großteil der Ontologien in diese Richtung befasst sich eher mit dem Thema der Autorisierung wie Zugriffssteuerungsliste wie zum Beispiel die \emph{Web Access Control List} \cite{Hollenbach2009}. Nicht desto trotz existiert auch eine Authentifizierung Ontologie. Die \emph{Authentication Ontology}\footnote{\url{http://omnivoke.kmi.open.ac.uk/authentication/}} des \emph{OmniVoke}\footnote{\url{http://omnivoke.kmi.open.ac.uk/framework/}} ist für die geforderten Zwecke das ideale Werkzeug. 
 
 % subsubsection authorization (end)
 
 % subsection konfiguration (end)
 
-\subsection{Aufbau} % (fold)
-\label{sub:aufbau}
+\subsection{Aufbau eines Connectors} % (fold)
+\label{sub:connector_aufbau}
 
 \begin{figure}[ht]
     \centering
     \includegraphics[
         width=0.5\textwidth,
         keepaspectratio=true
-    ]{assets/images/socc_connector_overview.pdf}
+    ]{assets/images/socc_connector_overview}
     \caption{Übersicht der Komponenten der SOCC}
     \label{fig:uebersicht_socc}
 \end{figure}
@@ -112,7 +146,6 @@ Um auf Informationen über die Struktur von Foren, sozialen Netzwerken und so we
 
     \item[\texttt{hasChildContainer(URI)}] überprüft ob der Container hinter einer URI überhaupt weitere Container als Kinder besitzt. Diese Methode wird dazu eingesetzt, um vorab zu testen, ob der Aufruf von \texttt{listContainer(URI)} das gewünschte Ergebnis liefert oder ein Fehler auftritt. 
 \end{description}
-
 
 % subsubsection structurereader (end)
 
@@ -152,39 +185,14 @@ trim= 90 200 220 75
 
 % subsubsection postwriter (end)
 
-% subsection aufbau (end)
-
-\subsection{Moodle Connector} % (fold)
-\label{sub:moodle_connector}
-
-% subsection moodle_connector (end)
-
-\subsection{Facebook Connector} % (fold)
-\label{sub:facebook_connector}
-
-% subsection facebook_connector (end)
-
-\subsection{Google+ Connector} % (fold)
-\label{sub:google_plus_connector}
-
-% subsection google_connector (end)
-
-\subsection{Youtube Connector} % (fold)
-\label{sub:youtube_connector}
-
-% subsection youtube_connector (end)
-
-\subsection{Canvas LMS Connector} % (fold)
-\label{sub:canvas_lms_connector}
-
-% subsection canvas_lms (end)
+% subsection connector_aufbau (end)
 
 % section social_online_community_connectors (end)
 
 \section{SOCC-Camel} % (fold)
 \label{sec:socc_camel}
 
-\begin{figure}[ht]
+\begin{figure}[h]
      \includegraphics[
         width=\textwidth,
         keepaspectratio=true

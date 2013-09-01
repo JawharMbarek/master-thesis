@@ -1,0 +1,103 @@
+%!TEX root = ../thesis.tex
+
+\chapter{Implementierung} % (fold)
+\label{cha:implementierung}
+
+\section{Implementierung einiger Connectoren} % (fold)
+\label{sec:implementierung_einiger_connectoren}
+
+\subsection{Moodle Connector} % (fold)
+\label{sub:moodle_connector}
+
+\begin{itemize}
+    \item Eingebaute REST Schnittstelle, aber kein Lesen von Beiträgen
+    \item WebService Plugin MoodleWS (REST oder SOAP)
+    \begin{itemize}
+        \item https://github.com/patrickpollet/moodlews
+        \item ClientAPI existieren von selber Autor
+        \item REST defekt, kein schreiben von Beiträgen möglich
+        \item SOAP funktioniert mehr oder weniger
+        \item Verschluckt Fehlermeldungen
+        \item kein lesen einzelner Posts/Threads/Foren
+        \item SOAP ClientAPI neu generieren, weil vorhandene nicht mit 2.4 funktioniert.
+        \item Username/Password + Session Token/Id
+        \item “Use an auto generated wsdl” -> No
+        \item schreiben von neuen Beitrag direkt in thread nur als Antwort auf ersten Beitrag möglich
+        \item Rückgabe aller Beiträge in einem Objekt
+    \end{itemize}
+\end{itemize}
+
+% subsection moodle_connector (end)
+
+\subsection{Facebook Connector} % (fold)
+\label{sub:facebook_connector}
+
+\begin{itemize}
+    \item REST API + JSON
+    \item keine offizielle Java API für Desktop -> Web + Mobile only
+    \item GraphAPI, Facebook Query Language
+    \item OAuth 2.x
+    \begin{itemize}
+        \item kein Refreshtoke
+        \item Token Haltbarkeit 2h (2 Monate, wen extended)
+        \item token nur über webbrowser
+    \end{itemize}
+    \item RestFB alternative Java API für die REST Schnittstelle der GraphAPI
+    \item Typ der zurückgelieferten Daten nicht anhand der URI erkennbar, häufig erst durch Angabe von \emph{metadata=1}
+    \item beim herunterladen einzelner Posts nicht immer erkennbar wo sie geschrieben wurden
+\end{itemize}
+
+% subsection facebook_connector (end)
+
+\subsection{Google+ Connector} % (fold)
+\label{sub:google_plus_connector}
+
+\begin{itemize}
+    \item Einfach REST API + JSON
+    \item OAuth
+    \begin{itemize}
+        \item Refreshtoken (token laufen quasi nie ab)
+        \item holen von token ohne webbrowser möglich
+    \end{itemize}
+    \item Objekte aufgebaut aus Actor (wer machte was), Verb(wie machte er es), Object (wtas machte er) + Metadata
+    \item verschieden Sprachen + Plattformen
+    \item lesen nur von öffentlichen Beiträgen
+    \item kein Schreiben von Beiträgen
+\end{itemize}
+
+% subsection google_connector (end)
+
+\subsection{Youtube Connector} % (fold)
+\label{sub:youtube_connector}
+
+\begin{itemize}
+    \item Aktueller Umbau der API (ähnlich google+) v3
+    \begin{itemize}
+        \item keine lesen von kommentaren
+        \item kein schreiben
+    \end{itemize}
+    \item alte GData Feed API v2 basiert auf RSS + Youtube Erweiterung
+    \item Mapping teilweise durch basis auf RSS einfach, manchmal auch nicht
+    \item Wichtigen Metadaten nur implizit vorhanden (comment id in uri aber nicht in datenformat)
+\end{itemize}
+
+% subsection youtube_connector (end)
+
+\subsection{Canvas LMS Connector} % (fold)
+\label{sub:canvas_lms_connector}
+
+\begin{itemize}
+    \item relativ neues LMS
+    \item super Bedienung
+    \item super REST API
+    \item keine Java API
+    \item rudimentäre Eigenentwicklung einer Java API, Funktionsweise ähnlich  G+
+    \item viel API Funktionen wohl nicht extern nutzbar (UserProfil lesen, vll. Falsche Berechtigung -> test nötig)
+\end{itemize}
+
+% subsection canvas_lms (end)
+
+% section implementierung_einiger_connectoren (end)
+
+
+% chapter implementierung (end)

@@ -25,11 +25,12 @@ package de.m0ep.socc.core.connector.google.plus;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOCVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,208 +47,219 @@ import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.utils.RdfUtils;
 
 public class GooglePlusPostReader extends
         DefaultConnectorIOComponent<GooglePlusConnector> implements
         IPostReader<GooglePlusConnector> {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(GooglePlusPostReader.class);
+	private static final Logger LOG = LoggerFactory
+	        .getLogger( GooglePlusPostReader.class );
 
-    private final GooglePlusClientWrapper defaultClient;
+	private final GooglePlusClientWrapper defaultClient;
 
-    public GooglePlusPostReader(GooglePlusConnector connector) {
-        super(connector);
+	public GooglePlusPostReader( GooglePlusConnector connector ) {
+		super( connector );
 
-        this.defaultClient = getConnector().getClientManager()
-                .getDefaultClient();
-    }
+		this.defaultClient = getConnector().getClientManager()
+		        .getDefaultClient();
+	}
 
-    @Override
-    public boolean hasPosts(URI uri) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public Post readPost( URI uri )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		Preconditions.checkNotNull( uri,
+		        "Required parameter uri must be specified." );
 
-    @Override
-    public Post readPost(URI uri) throws NotFoundException,
-            AuthenticationException, IOException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		LOG.debug( "Read Post uri='{}'", uri );
 
-    @Override
-    public List<Post> pollPosts(URI sourceUri, Date since, int limit)
-            throws AuthenticationException, IOException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		if ( GooglePlusSiocUtils.isActivityUri( uri ) ) {
+			return readActivity( uri );
+		} else if ( GooglePlusSiocUtils.isCommentUri( uri ) ) {
+			return readComment( uri );
+		}
 
-    @Override
-    public boolean containsPosts(Container container) {
-        return null != container
-                && container.toString().startsWith(
-                        getServiceEndpoint().toString())
-                && RdfUtils.isType(
-                        container.getModel(),
-                        container.getResource(),
-                        SIOCVocabulary.Forum)
-                && container.hasId()
-                && container.getId().startsWith(
-                        GooglePlusSiocUtils.PUBLIC_FEED_ID_PREFIX);
-    }
+		throw new NotFoundException( "No Google+ post found at uri " + uri );
+	}
 
-    @Override
-    public List<Post> readNewPosts(Date since, long limit, Container container)
-            throws AuthenticationException, IOException {
-        if (0 == limit) {
-            return Lists.newArrayList();
-        }
+	@Override
+	public boolean hasPosts( URI uri ) {
+		return null != uri
+		        && ( GooglePlusSiocUtils.isActivityFeedUri( uri )
+		        || GooglePlusSiocUtils.isActivityUri( uri ) );
+	}
 
-        Preconditions.checkNotNull(container,
-                "Required parameter container must be specified.");
-        Preconditions.checkArgument(containsPosts(container),
-                "This container has no post at this service.");
+	@Override
+	public List<Post> pollPosts( URI sourceUri, Date since, int limit )
+	        throws AuthenticationException, IOException {
+		Preconditions.checkNotNull( since,
+		        "Required parameter since must be specified." );
 
-        String siocId = container.getId();
-        String googleId = siocId.substring(
-                siocId.lastIndexOf(
-                        GooglePlusSiocUtils.ID_SEPERATOR));
+		LOG.debug( "Poll posts uri='{}' since='{}' limit='{}'", sourceUri, since, limit );
 
-        List<Post> results = Lists.newArrayList();
-        String pageToken = null;
-        Activities.List activityListRequest = null;
-        do {
-            ActivityFeed activityFeed = null;
-            try {
-                if (null == activityListRequest) {
-                    activityListRequest = defaultClient.getService()
-                            .activities()
-                            .list(googleId, "public");
-                    activityListRequest
-                            .setFields("id,"
-                                    + "items(actor,id,"
-                                    + "object(attachments/url,content,replies/totalItems)"
-                                    + ",published,title,updated)" +
-                                    ",nextPageToken,updated");
-                }
+		if ( GooglePlusSiocUtils.isActivityFeedUri( sourceUri ) ) {
+			return pollActivityFeed( sourceUri, since, limit );
+		} else if ( GooglePlusSiocUtils.isActivityUri( sourceUri ) ) {
+			return pollActivityCommentFeed( sourceUri, since, limit );
+		}
 
-                if (null != pageToken) {
-                    activityListRequest.setPageToken(pageToken);
-                }
+		throw new IOException( "Can't poll for Google+ posts at this uri " + sourceUri );
+	}
 
-                activityFeed = activityListRequest.execute();
-            } catch (Exception e) {
-                GooglePlusConnector.handleGoogleException(e);
-            }
+	private Post readActivity( URI uri )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		Pattern pattern = Pattern.compile( "^"
+		        + GooglePlusSiocUtils.GOOGLE_PLUS_ROOT_URI
+		        + GooglePlusSiocUtils.REGEX_ACTIVITY_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
 
-            if (null != activityFeed) {
-                LOG.debug("{} activities fetcht from Google Plus.",
-                        activityFeed.getItems().size());
+		if ( matcher.find() && 2 <= matcher.groupCount() ) {
+			String activityId = matcher.group( 1 );
 
-                pageToken = activityFeed.getNextPageToken();
-                for (Activity activity : activityFeed.getItems()) {
-                    Date created = new Date(activity.getPublished().getValue());
+			try {
+				Activity activity = defaultClient.getGooglePlusService()
+				        .activities()
+				        .get( activityId )
+				        .execute();
 
-                    if (0 > limit || limit < results.size()) {
-                        if (created.after(since)) {
-                            Post post = GooglePlusSiocUtils.createSiocPost(
-                                    getConnector(),
-                                    activity,
-                                    container);
+				return GooglePlusSiocUtils.createSiocPost( getConnector(), activity, null );
+			} catch ( IOException e ) {
+				GooglePlusConnector.handleGoogleException( e );
+			}
+		}
 
-                            // Long numReplies =
-                            // activity.getObject().getReplies()
-                            // .getTotalItems();
-                            results.add(post);
-                        }
-                    }
-                }
-            }
-        } while (null != pageToken);
+		throw new NotFoundException( "No Google+ post found at uri " + uri );
+	}
 
-        return results;
-    }
+	private Post readComment( URI uri )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		Pattern pattern = Pattern.compile( "^"
+		        + GooglePlusSiocUtils.GOOGLE_PLUS_ROOT_URI
+		        + GooglePlusSiocUtils.REGEX_COMMENT_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
 
-    @Override
-    public boolean containsReplies(Post post) {
-        return null != post
-                && post.toString().startsWith(getServiceEndpoint().toString())
-                && post.hasId()
-                && post.getId().startsWith(
-                        GooglePlusSiocUtils.ACTIVITY_ID_PREFIX);
-    }
+		if ( matcher.find() && 2 <= matcher.groupCount() ) {
+			String commentId = matcher.group( 1 );
 
-    @Override
-    public List<Post> pollRepliesAtPost(Date since, long limit, Post parentPost)
-            throws AuthenticationException, IOException {
-        if (0 == limit) {
-            return Lists.newArrayList();
-        }
+			try {
+				Comment comment = defaultClient.getGooglePlusService()
+				        .comments()
+				        .get( commentId )
+				        .execute();
 
-        Preconditions.checkNotNull(parentPost,
-                "Required parameter parentPost must be specified.");
-        Preconditions.checkArgument(containsReplies(parentPost),
-                "This container has no post at this service.");
+				return GooglePlusSiocUtils.createSiocComment( getConnector(), comment, null );
+			} catch ( IOException e ) {
+				GooglePlusConnector.handleGoogleException( e );
+			}
+		}
 
-        String siocId = parentPost.getId();
-        String googleId = siocId.substring(
-                siocId.lastIndexOf(
-                        GooglePlusSiocUtils.ID_SEPERATOR));
+		throw new NotFoundException( "No Google+ post found at uri " + uri );
+	}
 
-        List<Post> results = Lists.newArrayList();
-        String pageToken = null;
-        Comments.List commentsListRequest = null;
-        do {
-            CommentFeed commentFeed = null;
-            try {
-                if (null == commentsListRequest) {
-                    commentsListRequest = defaultClient.getService()
-                            .comments()
-                            .list(googleId);
-                    commentsListRequest
-                            .setFields("id,"
-                                    + "items(actor,id,inReplyTo,object/content,published,updated)"
-                                    + ",nextPageToken,updated");
-                }
+	private List<Post> pollActivityFeed( URI sourceUri, Date since, int limit )
+	        throws AuthenticationException,
+	        IOException {
+		Pattern pattern = Pattern.compile( "^"
+		        + GooglePlusSiocUtils.GOOGLE_PLUS_ROOT_URI
+		        + GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
+		Matcher matcher = pattern.matcher( sourceUri.toString() );
+		List<Post> result = Lists.newArrayList();
 
-                if (null != pageToken) {
-                    commentsListRequest.setPageToken(pageToken);
-                }
+		if ( matcher.find() && 3 <= matcher.groupCount() ) {
+			String userId = matcher.group( 1 );
+			String collection = matcher.group( 2 );
+			String pageToken = null;
 
-                commentFeed = commentsListRequest.execute();
-            } catch (Exception e) {
-                GooglePlusConnector.handleGoogleException(e);
-            }
+			Container container = getConnector().getStructureReader().getContainer( sourceUri );
 
-            if (null != commentFeed) {
-                LOG.debug("{} comments fetcht from Activity {}.",
-                        commentFeed.getItems().size(),
-                        googleId);
+			try {
+				do {
+					Activities.List activityFeedList = defaultClient.getGooglePlusService()
+					        .activities()
+					        .list( userId, collection );
 
-                pageToken = commentFeed.getNextPageToken();
-                for (Comment comment : commentFeed.getItems()) {
-                    Date created = new Date(comment.getPublished().getValue());
+					if ( null != pageToken ) {
+						activityFeedList.setPageToken( pageToken );
+					}
 
-                    if (0 > limit || limit < results.size()) {
-                        if (created.after(since)) {
-                            Post post = GooglePlusSiocUtils
-                                    .createSiocComment(
-                                            getConnector(),
-                                            comment,
-                                            parentPost);
+					ActivityFeed activityFeed = activityFeedList.execute();
 
-                            // Long numReplies =
-                            // activity.getObject().getReplies()
-                            // .getTotalItems();
-                            results.add(post);
-                        }
-                    }
-                }
-            }
-        } while (null != pageToken);
+					for ( Activity activity : activityFeed.getItems() ) {
+						Date createdDate = new Date( activity.getPublished().getValue() );
+						if ( ( 0 > limit || limit < result.size() )
+						        && ( null == since || createdDate.after( since ) ) ) {
+							result.add( GooglePlusSiocUtils.createSiocPost(
+							        getConnector(),
+							        activity,
+							        container ) );
+						} else {
+							return result;
+						}
+					}
 
-        return results;
-    }
+					pageToken = activityFeed.getNextPageToken();
+				} while ( null != pageToken );
+			} catch ( Exception e ) {
+				GooglePlusConnector.handleGoogleException( e );
+			}
+		}
+
+		LOG.debug( "polled {} activities from Google+ uri '{}'", result.size(), sourceUri );
+		return result;
+	}
+
+	private List<Post> pollActivityCommentFeed( URI sourceUri, Date since, int limit )
+	        throws AuthenticationException,
+	        IOException {
+		Pattern pattern = Pattern.compile( "^"
+		        + GooglePlusSiocUtils.GOOGLE_PLUS_ROOT_URI
+		        + GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
+		Matcher matcher = pattern.matcher( sourceUri.toString() );
+		List<Post> result = Lists.newArrayList();
+
+		if ( matcher.find() && 2 <= matcher.groupCount() ) {
+			String activityId = matcher.group( 1 );
+			String pageToken = null;
+			Post parentPost = readActivity( sourceUri );
+
+			try {
+				do {
+					Comments.List commentFeedList = defaultClient.getGooglePlusService()
+					        .comments()
+					        .list( activityId );
+
+					if ( null != pageToken ) {
+						commentFeedList.setPageToken( pageToken );
+					}
+
+					CommentFeed commentFeed = commentFeedList.execute();
+
+					for ( Comment comment : commentFeed.getItems() ) {
+						Date createdDate = new Date( comment.getPublished().getValue() );
+						if ( ( 0 > limit || limit < result.size() )
+						        && ( null == since || createdDate.after( since ) ) ) {
+							result.add( GooglePlusSiocUtils.createSiocComment(
+							        getConnector(),
+							        comment,
+							        parentPost ) );
+						} else {
+							return result;
+						}
+					}
+
+					pageToken = commentFeed.getNextPageToken();
+				} while ( null != pageToken );
+			} catch ( Exception e ) {
+				GooglePlusConnector.handleGoogleException( e );
+			}
+		}
+
+		LOG.debug( "polled {} comments from Google+ uri '{}'", result.size(), sourceUri );
+		return result;
+	}
 
 }

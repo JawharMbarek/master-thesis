@@ -32,6 +32,7 @@ import de.m0ep.socc.core.SoccContext;
 import de.m0ep.socc.core.connector.DefaultConnector;
 import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
+import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.connector.canvaslms.CanvasLmsConnector;
 import de.m0ep.socc.core.connector.facebook.FacebookConnector;
@@ -104,7 +105,7 @@ public class ConnectorTestApp {
 
 			IStructureReader<?> structureReader = connector.getStructureReader();
 			IPostReader<?> postReader = connector.getPostReader();
-			// IPostWriter<?> postWriter = connector.getPostWriter();
+			IPostWriter<?> postWriter = connector.getPostWriter();
 
 			List<Container> forums = structureReader.listContainer();
 			for ( Container forum : forums ) {
@@ -125,6 +126,16 @@ public class ConnectorTestApp {
 					}
 				}
 			}
+
+			Post post = new Post( model, true );
+			post.setContent( "Hallo, welt" );
+
+			postWriter.writePost(
+			        Builder.createURI(
+			                "http://gdata.youtube.com/feeds/api/videos/t8Bxv0QDUCA"
+			                        + "/comments/8PCCnf7RQlR3nMrAMLHLgMYFbZDFpu2GD-fSKOXfcSQ" ),
+			        RdfUtils.resourceToString( post, Syntax.RdfXml ),
+			        Syntax.RdfXml );
 
 			//			Container c = structureReader.getContainer(
 			//			        Builder.createURI(

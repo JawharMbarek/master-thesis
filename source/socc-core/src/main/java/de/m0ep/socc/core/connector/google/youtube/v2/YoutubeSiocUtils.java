@@ -54,7 +54,6 @@ import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.VideoFeed;
 import com.google.gdata.data.youtube.YouTubeMediaGroup;
 import com.google.gdata.data.youtube.YouTubeNamespace;
-import com.google.gdata.data.youtube.YtVideoId;
 import com.google.gdata.util.ServiceException;
 
 import de.m0ep.socc.core.exceptions.AuthenticationException;
@@ -293,12 +292,16 @@ public class YoutubeSiocUtils {
 	        IOException {
 		Model model = connector.getContext().getModel();
 
-		String commentIdRaw = commentEntry.getId();
-		String commentId = commentIdRaw.substring(
-		        commentIdRaw.lastIndexOf( ':' ) + 1 );
-		YtVideoId videoId = commentEntry.getExtension( YtVideoId.class );
+		Link selfLink = commentEntry.getLink( "self", null );
 
-		URI uri = createCommentUri( videoId.getVideoId(), commentId );
+		Pattern pattern = Pattern.compile( YoutubeSiocUtils.REGEX_COMMENT_URI );
+		Matcher matcher = pattern.matcher( selfLink.getHref() );
+		matcher.find();
+
+		String commentId = matcher.group( 2 );
+		String videoId = matcher.group( 1 );
+
+		URI uri = createCommentUri( videoId, commentId );
 
 		Post result = new Post( model, uri, true );
 		result.setId( commentId );
@@ -338,9 +341,13 @@ public class YoutubeSiocUtils {
 		        "application/atom+xml" );
 		if ( null != replyToLink ) { // it's a reply to another comment
 			String replyToLinkHref = replyToLink.getHref();
+
+			int qmIndex = replyToLinkHref.indexOf( '?' );
+
 			String replyToId = replyToLinkHref.substring(
-			        replyToLinkHref.lastIndexOf( '/' ) + 1 );
-			URI replyToUri = createCommentUri( videoId.getVideoId(), replyToId );
+			        replyToLinkHref.lastIndexOf( '/' ) + 1,
+			        ( -1 != qmIndex ) ? qmIndex : replyToLinkHref.length() );
+			URI replyToUri = createCommentUri( videoId, replyToId );
 
 			Post replyToPost = new Post( model, replyToUri, true );
 			replyToPost.setId( replyToId );
@@ -468,7 +475,7 @@ public class YoutubeSiocUtils {
 	public static boolean isVideoUri( URI uri ) {
 		Pattern pattern = Pattern.compile( REGEX_VIDEO_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
-		return matcher.find();
+		return matcher.find() && !isCommentUri( uri );
 	}
 
 	public static boolean isPlaylistUri( URI uri ) {

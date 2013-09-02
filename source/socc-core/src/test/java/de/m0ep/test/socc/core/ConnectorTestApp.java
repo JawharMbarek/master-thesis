@@ -16,6 +16,7 @@ import org.rdfs.sioc.services.Thing;
 import com.xmlns.foaf.FOAFVocabulary;
 import com.xmlns.foaf.Person;
 
+import de.m0ep.sioc.services.auth.APIKey;
 import de.m0ep.sioc.services.auth.AccessToken;
 import de.m0ep.sioc.services.auth.ClientId;
 import de.m0ep.sioc.services.auth.ClientSecret;
@@ -25,6 +26,7 @@ import de.m0ep.sioc.services.auth.Password;
 import de.m0ep.sioc.services.auth.Service;
 import de.m0ep.sioc.services.auth.UserAccount;
 import de.m0ep.sioc.services.auth.Username;
+import de.m0ep.sioc.services.auth.WebAPI;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.SoccContext;
 import de.m0ep.socc.core.connector.DefaultConnector;
@@ -33,12 +35,15 @@ import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.connector.canvaslms.CanvasLmsConnector;
 import de.m0ep.socc.core.connector.facebook.FacebookConnector;
+import de.m0ep.socc.core.connector.google.youtube.v2.YoutubeConnector;
 import de.m0ep.socc.core.connector.moodle.Moodle2Connector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 public class ConnectorTestApp {
 
+	private static final String YOUTUBE_CONNECTOR_ID = "youtube-test";
+	private static final String YOUTUBE_ROOT_URI = "http://www.youtube.com";
 	private static final String CANVAS_LMS_CONNECTOR_ID = "canvas-test";
 	private static final String CANVAS_LMS_ROOT_URI = "https://canvas.instructure.com";
 	private static final String MOODLE_ROOT_URI = "http://localhost/moodle";
@@ -77,6 +82,7 @@ public class ConnectorTestApp {
 			addMoodleRdfData( model );
 			addCanvasLmsRdfData( model );
 			addFacebookRdfData( model );
+			addYoutubeRdfData( model );
 
 			// IConnector connector = DefaultConnector.createConnector( 
 			//         context, 
@@ -86,9 +92,13 @@ public class ConnectorTestApp {
 			//        context,
 			//        CANVAS_LMS_CONNECTOR_ID );
 
+			//			IConnector connector = DefaultConnector.createConnector(
+			//			        context,
+			//			        FACEBOOK_CONNECTOR_ID );
+
 			IConnector connector = DefaultConnector.createConnector(
 			        context,
-			        FACEBOOK_CONNECTOR_ID );
+			        YOUTUBE_CONNECTOR_ID );
 
 			connector.initialize();
 
@@ -96,32 +106,37 @@ public class ConnectorTestApp {
 			IPostReader<?> postReader = connector.getPostReader();
 			// IPostWriter<?> postWriter = connector.getPostWriter();
 
-			//			List<Container> forums = structureReader.listContainer();
-			//			for ( Container forum : forums ) {
-			//				System.out.println( RdfUtils.resourceToString( forum, Syntax.Turtle ) );
-			//
-			//								List<Container> threads = structureReader.listContainer( forum.asURI() );
-			//								for ( Container thread : threads ) {
-			//									System.out.println( RdfUtils.resourceToString( thread, Syntax.Turtle ) );
-			//				
-			//									List<Post> posts = postReader.pollPosts( thread.asURI(), null, -1 );
-			//									for ( Post post : posts ) {
-			//										System.out.println( RdfUtils.resourceToString( post, Syntax.Turtle ) );
-			//									}
-			//								}
-			//			}
+			List<Container> forums = structureReader.listContainer();
+			for ( Container forum : forums ) {
+				System.out.println( RdfUtils.resourceToString( forum, Syntax.Turtle ) );
 
-			Container c = structureReader.getContainer(
-			        Builder.createURI(
-			                "https://www.facebook.com/19292868552" ) );
-			System.out.println( RdfUtils.resourceToString( c, Syntax.Turtle ) );
-			System.out.println(
-			        "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<o>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" );
-			List<Post> posts = postReader.pollPosts( Builder.createURI(
-			        "https://www.facebook.com/m0eper" ), null, 5 );
-			for ( Post post : posts ) {
-				System.out.println( RdfUtils.resourceToString( post, Syntax.Turtle ) );
+				if ( structureReader.hasChildContainer( forum.getResource().asURI() ) ) {
+					List<Container> threads = structureReader.listContainer( forum.asURI() );
+					for ( Container thread : threads ) {
+						System.out.println( RdfUtils.resourceToString( thread, Syntax.Turtle ) );
+
+						if ( postReader.hasPosts( thread.getResource().asURI() ) ) {
+							List<Post> posts = postReader.pollPosts( thread.asURI(), null, -1 );
+							for ( Post post : posts ) {
+								System.out.println(
+								        RdfUtils.resourceToString( post, Syntax.Turtle ) );
+							}
+						}
+					}
+				}
 			}
+
+			//			Container c = structureReader.getContainer(
+			//			        Builder.createURI(
+			//			                "https://www.facebook.com/19292868552" ) );
+			//			System.out.println( RdfUtils.resourceToString( c, Syntax.Turtle ) );
+			//			System.out.println(
+			//			        "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<o>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" );
+			//			List<Post> posts = postReader.pollPosts( Builder.createURI(
+			//			        "https://www.facebook.com/m0eper" ), null, 5 );
+			//			for ( Post post : posts ) {
+			//				System.out.println( RdfUtils.resourceToString( post, Syntax.Turtle ) );
+			//			}
 
 		} finally {
 			System.err.println(
@@ -225,6 +240,8 @@ public class ConnectorTestApp {
 		defaultUserAccount.setAccountServiceHomepage( service.getServiceEndpoint() );
 		defaultUserAccount.setAccountAuthentication( defaultOAuth );
 		Thing.setService( model, defaultUserAccount, service );
+		service.addServiceOf( defaultUserAccount );
+
 		defaultPerson.addAccount( defaultUserAccount );
 		defaultUserAccount.setAccountOf( defaultPerson );
 
@@ -241,7 +258,9 @@ public class ConnectorTestApp {
 		kaiUserAccount.setAccountName( "3451205" );
 		kaiUserAccount.setAccountServiceHomepage( service.getServiceEndpoint() );
 		kaiUserAccount.setAccountAuthentication( kaiOAuth );
+
 		Thing.setService( model, kaiUserAccount, service );
+
 		kaiPerson.addAccount( kaiUserAccount );
 		kaiUserAccount.setAccountOf( kaiPerson );
 
@@ -258,7 +277,9 @@ public class ConnectorTestApp {
 		florianUserAccount.setAccountName( "3457836" );
 		florianUserAccount.setAccountServiceHomepage( service.getServiceEndpoint() );
 		florianUserAccount.setAccountAuthentication( florianOAuth );
+
 		Thing.setService( model, florianUserAccount, service );
+
 		florianPerson.addAccount( florianUserAccount );
 		florianUserAccount.setAccountOf( florianPerson );
 
@@ -292,8 +313,6 @@ public class ConnectorTestApp {
 		florianUserAccount.setAccountName( "100000490230885" );
 		florianUserAccount.setAccountServiceHomepage( service.getServiceEndpoint() );
 
-		florianPerson = new Person( model, true );
-		florianPerson.setName( "Florian Müller" );
 		florianPerson.addAccount( florianUserAccount );
 		florianUserAccount.setAccountOf( florianPerson );
 
@@ -314,5 +333,73 @@ public class ConnectorTestApp {
 		config.setDefaultUserAccount( florianUserAccount );
 		config.setService( service );
 		config.setConnectorClassName( FacebookConnector.class.getName() );
+	}
+
+	public void addYoutubeRdfData( final Model model ) {
+
+		Service service = new Service( model, true );
+		service.setServiceEndpoint( Builder.createURI( YOUTUBE_ROOT_URI ) );
+
+		WebAPI serviceAuth = new WebAPI( model, true );
+		service.setServiceAuthentication( serviceAuth );
+
+		APIKey apiKey = new APIKey( model, true );
+		apiKey.setValue( "AI39si48dEjhAE9RrY6w1HnlmyrUUTDt-xssOKkEEcpOIMD1gFcQ-0Xv40YNl-H1MxFzGz"
+		        + "bHih4ootWo1cRrPH9gV-5UdazEbQ" );
+		serviceAuth.addCredentials( apiKey );
+
+		/*********************************/
+
+		UserAccount defaultUserAccount = new UserAccount( model, true );
+		defaultUserAccount.setAccountName( "qX2si9NbFXXGS14BWC1juw" );
+		defaultUserAccount.setAccountServiceHomepage( service.getServiceEndpoint() );
+
+		Thing.setService( model, defaultUserAccount, service );
+		service.addServiceOf( defaultUserAccount );
+
+		defaultPerson.addAccount( defaultUserAccount );
+		defaultUserAccount.setAccountOf( defaultPerson );
+
+		Direct defaultDirect = new Direct( model, true );
+		defaultUserAccount.setAccountAuthentication( defaultDirect );
+
+		Username defaultUsername = new Username( model, true );
+		defaultUsername.setValue( "tkhiwis@gmail.com" );
+		defaultDirect.addCredentials( defaultUsername );
+
+		Password defaultPassword = new Password( model, true );
+		defaultPassword.setValue( "turing123" );
+		defaultDirect.addCredentials( defaultPassword );
+
+		/*********************************/
+
+		UserAccount florianUserAccount = new UserAccount( model, true );
+		florianUserAccount.setAccountName( "m0eper" );
+		florianUserAccount.setAccountServiceHomepage( service.getServiceEndpoint() );
+
+		Thing.setService( model, florianUserAccount, service );
+		service.addServiceOf( florianUserAccount );
+
+		florianPerson.addAccount( florianUserAccount );
+		florianUserAccount.setAccountOf( florianPerson );
+
+		Direct florianDirect = new Direct( model, true );
+		florianUserAccount.setAccountAuthentication( florianDirect );
+
+		Username florianUsername = new Username( model, true );
+		florianUsername.setValue( "email.mufl@gmail.com" );
+		florianDirect.addCredentials( florianUsername );
+
+		Password florianPassword = new Password( model, true );
+		florianPassword.setValue( "email.mufl.net" );
+		florianDirect.addCredentials( florianPassword );
+
+		/*********************************/
+
+		ConnectorConfig config = new ConnectorConfig( model, true );
+		config.setId( YOUTUBE_CONNECTOR_ID );
+		config.setDefaultUserAccount( defaultUserAccount );
+		config.setService( service );
+		config.setConnectorClassName( YoutubeConnector.class.getName() );
 	}
 }

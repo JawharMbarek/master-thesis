@@ -30,7 +30,7 @@ import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.SoccContext;
 import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.connector.google.youtube.v2.YoutubeConnector;
-import de.m0ep.socc.core.connector.google.youtube.v2.YoutubeSiocConverter;
+import de.m0ep.socc.core.connector.google.youtube.v2.YoutubeSiocUtils;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
@@ -124,7 +124,7 @@ public class YoutubeV2ConnectorTestApp {
         for (Forum forum : forums) {
             System.err.println(forum + " " + forum.getId());
             if (forum.getId().startsWith(
-                    YoutubeSiocConverter.PLAYLISTS_ID_PREFIX)) {
+                    YoutubeSiocUtils.PLAYLISTS_ID_PREFIX)) {
                 List<Post> posts = connector.getPostReader().readNewPosts(null,
                         -1, forum);
                 for (Post post : posts) {

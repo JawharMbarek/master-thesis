@@ -33,11 +33,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.google.gdata.util.ResourceNotFoundException;
+import com.google.gdata.util.ServiceException;
+import com.google.gdata.util.ServiceForbiddenException;
 
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.DefaultConnector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
+import de.m0ep.socc.core.exceptions.NotFoundException;
 
 public class YoutubeConnector extends DefaultConnector {
 	private static final Logger LOG = LoggerFactory
@@ -64,7 +68,7 @@ public class YoutubeConnector extends DefaultConnector {
 
 	@Override
 	@SuppressWarnings( "unchecked" )
-	public YoutubeClientManager getServiceClientManager() {
+	public YoutubeClientManager getClientManager() {
 		return serviceClientManager;
 	}
 
@@ -130,7 +134,7 @@ public class YoutubeConnector extends DefaultConnector {
 		setInitialized( false );
 	}
 
-	public synchronized void waitForCooldown() {
+	synchronized void waitForCooldown() {
 		long delta = System.currentTimeMillis() - lastServiceRequest;
 
 		if ( 500 >= delta ) {
@@ -140,5 +144,17 @@ public class YoutubeConnector extends DefaultConnector {
 				LOG.debug( "Cooldown interrupted" );
 			}
 		}
+	}
+
+	static void handleYoutubeExceptions( ServiceException e )
+	        throws NotFoundException,
+	        AuthenticationException {
+		if ( e instanceof ServiceForbiddenException ) {
+			throw new AuthenticationException( e );
+		} else if ( e instanceof ResourceNotFoundException ) {
+			throw new NotFoundException( e );
+		}
+
+		Throwables.propagate( e );
 	}
 }

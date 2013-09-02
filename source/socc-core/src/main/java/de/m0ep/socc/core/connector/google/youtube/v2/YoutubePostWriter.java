@@ -75,8 +75,8 @@ public class YoutubePostWriter extends
 		        &&
 		        post.hasId()
 		        &&
-		        ( post.getId().startsWith( YoutubeSiocConverter.VIDEO_ID_PREFIX ) ||
-		        post.getId().startsWith( YoutubeSiocConverter.COMMENT_ID_PREFIX ) );
+		        ( post.getId().startsWith( YoutubeSiocUtils.VIDEO_ID_PREFIX ) ||
+		        post.getId().startsWith( YoutubeSiocUtils.COMMENT_ID_PREFIX ) );
 	}
 
 	@Override
@@ -131,10 +131,10 @@ public class YoutubePostWriter extends
 		insertEntry.setContent( new PlainTextConstruct( content ) );
 
 		if ( parentPost.getId().startsWith(
-		        YoutubeSiocConverter.COMMENT_ID_PREFIX ) ) {
+		        YoutubeSiocUtils.COMMENT_ID_PREFIX ) ) {
 			String commentId = parentPost.getId().substring(
 			        parentPost.getId().lastIndexOf(
-			                YoutubeSiocConverter.ID_SEPERATOR ) + 1 );
+			                YoutubeSiocUtils.ID_SEPERATOR ) + 1 );
 
 			String replyToUri = UriTemplate
 			        .fromTemplate(
@@ -163,7 +163,7 @@ public class YoutubePostWriter extends
 		}
 
 		if ( null != resultEntry ) {
-			Post resultPost = YoutubeSiocConverter.createSiocPost(
+			Post resultPost = YoutubeSiocUtils.createSiocPost(
 			        getConnector(),
 			        resultEntry,
 			        parentPost );
@@ -177,10 +177,10 @@ public class YoutubePostWriter extends
 		Item replyOf = post;
 		do {
 			if ( replyOf.getId()
-			        .startsWith( YoutubeSiocConverter.VIDEO_ID_PREFIX ) ) {
+			        .startsWith( YoutubeSiocUtils.VIDEO_ID_PREFIX ) ) {
 				return replyOf.getId().substring(
 				        replyOf.getId().lastIndexOf(
-				                YoutubeSiocConverter.ID_SEPERATOR ) + 1 );
+				                YoutubeSiocUtils.ID_SEPERATOR ) + 1 );
 			}
 
 			replyOf = ( replyOf.hasReplyOf() ) ? ( replyOf.getReplyOf() ) : ( null );

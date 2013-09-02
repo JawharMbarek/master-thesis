@@ -87,6 +87,12 @@ public class Moodle2PostReader extends
 	}
 
 	@Override
+	public boolean hasPosts( URI uri ) {
+		return Moodle2SiocUtils.isThreadUri( uri, getServiceEndpoint() )
+		        || Moodle2SiocUtils.isPostUri( uri, getServiceEndpoint() );
+	}
+
+	@Override
 	public List<Post> pollPosts( URI sourceUri, Date since, int limit ) throws
 	        AuthenticationException,
 	        IOException {

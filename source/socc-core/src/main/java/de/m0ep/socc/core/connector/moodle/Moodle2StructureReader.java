@@ -112,6 +112,11 @@ public class Moodle2StructureReader extends
 	}
 
 	@Override
+	public boolean hasChildContainer( URI uri ) {
+		return Moodle2SiocUtils.isThreadUri( uri, getServiceEndpoint() );
+	}
+
+	@Override
 	public List<Container> listContainer( URI parent ) throws NumberFormatException,
 	        AuthenticationException, IOException {
 		Matcher matcher = Pattern

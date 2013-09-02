@@ -148,6 +148,11 @@ public class FacebookStructureReader extends
 	}
 
 	@Override
+	public boolean hasChildContainer( URI uri ) {
+		return false;
+	}
+
+	@Override
 	public List<Container> listContainer( URI parent ) {
 		throw new UnsupportedOperationException( "Facbook don't support threaded containers" );
 	}

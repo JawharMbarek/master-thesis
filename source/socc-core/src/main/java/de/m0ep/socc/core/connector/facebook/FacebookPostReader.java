@@ -104,6 +104,33 @@ public class FacebookPostReader extends
 	}
 
 	@Override
+	public boolean hasPosts( URI uri ) {
+		Pattern pattern = Pattern.compile( FacebookSiocUtils.REGEX_FACEBOOK_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
+
+		if ( matcher.find() ) {
+			String id = matcher.group( 1 );
+			JsonObject object = null;
+
+			try {
+				object = defaultClient.getFacebookClient().fetchObject(
+				        "/" + id,
+				        JsonObject.class,
+				        Parameter.with( RequestParameters.METADATA, 1 ) );
+			} catch ( Exception e ) {
+				return false;
+			}
+
+			if ( null != object ) {
+				return FacebookSiocUtils.hasConnection( object, Connections.FEED )
+				        || FacebookSiocUtils.hasConnection( object, Connections.COMMENTS );
+			}
+		}
+
+		return false;
+	}
+
+	@Override
 	public List<Post> pollPosts( URI sourceUri, Date since, int limit )
 	        throws AuthenticationException, IOException {
 		if ( Forum.hasInstance( getModel(), sourceUri ) ) {

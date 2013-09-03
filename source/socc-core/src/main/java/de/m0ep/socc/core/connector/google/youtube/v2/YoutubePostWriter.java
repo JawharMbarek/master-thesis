@@ -52,107 +52,114 @@ import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 
 public class YoutubePostWriter extends
-        DefaultConnectorIOComponent<YoutubeConnector> implements IPostWriter<YoutubeConnector> {
-	public YoutubePostWriter( YoutubeConnector connector ) {
-		super( connector );
-	}
+        DefaultConnectorIOComponent<YoutubeConnector> implements
+        IPostWriter<YoutubeConnector> {
+    public YoutubePostWriter(YoutubeConnector connector) {
+        super(connector);
+    }
 
-	@Override
-	public void writePost( URI targetUri, String rdfString, Syntax syntax )
-	        throws NotFoundException,
-	        AuthenticationException,
-	        IOException {
-		boolean isVideo = YoutubeSiocUtils.isVideoUri( targetUri );
-		boolean isComment = YoutubeSiocUtils.isCommentUri( targetUri );
+    @Override
+    public void writePost(URI targetUri, String rdfString, Syntax syntax)
+            throws NotFoundException,
+            AuthenticationException,
+            IOException {
+        boolean isVideo = YoutubeSiocUtils.isVideoUri(targetUri);
+        boolean isComment = YoutubeSiocUtils.isCommentUri(targetUri);
 
-		if ( isVideo || isComment ) {
-			Model tmpModel = RDFTool.stringToModel( rdfString, syntax );
-			ClosableIterator<Resource> postIter = Post.getAllInstances( tmpModel );
-			try {
-				while ( postIter.hasNext() ) {
-					Resource resource = postIter.next();
-					Post post = Post.getInstance( tmpModel, resource );
+        if (isVideo || isComment) {
+            Model tmpModel = RDFTool.stringToModel(rdfString, syntax);
+            ClosableIterator<Resource> postIter = Post
+                    .getAllInstances(tmpModel);
+            try {
+                while (postIter.hasNext()) {
+                    Resource resource = postIter.next();
+                    Post post = Post.getInstance(tmpModel, resource);
 
-					UserAccount creatorAccount = post.getCreator();
-					Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
-					        getConnector(), creatorAccount );
+                    UserAccount creatorAccount = post.getCreator();
+                    Person creatorPerson = PostWriterUtils
+                            .getPersonOfCreatorOrNull(
+                                    getConnector(), creatorAccount);
 
-					YoutubeClientWrapper client = null;
-					if ( null != creatorPerson ) {
-						UserAccount serviceAccount = PostWriterUtils
-						        .getServiceAccountOfPersonOrNull(
-						                getConnector(),
-						                creatorPerson,
-						                getServiceEndpoint() );
-						if ( null != serviceAccount ) {
-							client = (YoutubeClientWrapper) PostWriterUtils
-							        .getClientOfServiceAccountOrNull(
-							                getConnector(),
-							                serviceAccount );
-						}
-					}
+                    YoutubeClientWrapper client = null;
+                    if (null != creatorPerson) {
+                        UserAccount serviceAccount = PostWriterUtils
+                                .getServiceAccountOfPersonOrNull(
+                                        getConnector(),
+                                        creatorPerson,
+                                        getServiceEndpoint());
+                        if (null != serviceAccount) {
+                            client = (YoutubeClientWrapper) PostWriterUtils
+                                    .getClientOfServiceAccountOrNull(
+                                            getConnector(),
+                                            serviceAccount);
+                        }
+                    }
 
-					String content = post.getContent();
-					if ( null == client ) { // No client found, get default one an adapt
-						                    // message content
-						client = getConnector().getClientManager()
-						        .getDefaultClient();
-						content = PostWriterUtils.createContentOfUnknownAccount(
-						        post,
-						        creatorAccount,
-						        creatorPerson );
-					}
+                    String content = post.getContent();
+                    if (null == client) { // No client found, get default one an
+                                          // adapt
+                                          // message content
+                        client = getConnector().getClientManager()
+                                .getDefaultClient();
+                        content = PostWriterUtils
+                                .createContentOfUnknownAccount(
+                                        post,
+                                        creatorAccount,
+                                        creatorPerson);
+                    }
 
-					CommentEntry entry = new CommentEntry();
-					entry.setContent( new PlainTextConstruct( content ) );
+                    CommentEntry entry = new CommentEntry();
+                    entry.setContent(new PlainTextConstruct(content));
 
-					if ( isComment ) {
-						entry.getLinks().add(
-						        new Link( YouTubeNamespace.IN_REPLY_TO,
-						                "application/atom+xml",
-						                targetUri.toString() ) );
-					}
+                    if (isComment) {
+                        entry.getLinks().add(
+                                new Link(YouTubeNamespace.IN_REPLY_TO,
+                                        "application/atom+xml",
+                                        targetUri.toString()));
+                    }
 
-					// find video ID by regex
-					Pattern pattern = Pattern.compile( YoutubeSiocUtils.REGEX_VIDEO_URI );
-					Matcher matcher = pattern.matcher( targetUri.toString() );
+                    // find video ID by regular expression
+                    Pattern pattern = Pattern
+                            .compile(YoutubeSiocUtils.REGEX_VIDEO_URI);
+                    Matcher matcher = pattern.matcher(targetUri.toString());
 
-					if ( matcher.find() ) {
-						CommentEntry result = null;
-						try {
-							result = client.getService().insert(
-							        new URL(
-							                YoutubeSiocUtils.createVideoUri(
-							                        matcher.group( 1 ) ).toString()
-							                        + "/comments" ),
-							        entry );
-						} catch ( MalformedURLException e ) {
-							// shouldn't happened
-							Throwables.propagate( e );
-						} catch ( ServiceException e ) {
-							YoutubeConnector.handleYoutubeExceptions( e );
-						}
+                    if (matcher.find()) {
+                        CommentEntry result = null;
+                        try {
+                            result = client.getService().insert(
+                                    new URL(
+                                            YoutubeSiocUtils.createVideoUri(
+                                                    matcher.group(1))
+                                                    .toString()
+                                                    + "/comments"),
+                                    entry);
+                        } catch (MalformedURLException e) {
+                            // shouldn't happened
+                            Throwables.propagate(e);
+                        } catch (ServiceException e) {
+                            YoutubeConnector.handleYoutubeExceptions(e);
+                        }
 
-						if ( null != result ) {
-							Post parentPost = getConnector().getPostReader().readPost( targetUri );
-							Post resultPost = YoutubeSiocUtils.createSiocPost(
-							        getConnector(),
-							        result,
-							        parentPost );
+                        if (null != result) {
+                            Post parentPost = getConnector().getPostReader()
+                                    .readPost(targetUri);
+                            Post resultPost = YoutubeSiocUtils.createSiocPost(
+                                    getConnector(),
+                                    result,
+                                    parentPost);
 
-							resultPost.setSibling( post );
-							post.setSibling( resultPost );
+                            resultPost.setSibling(post);
 
-							return;
-						}
-					}
-				}
-			} finally {
-				postIter.close();
-				tmpModel.close();
-			}
-		}
+                            return;
+                        }
+                    }
+                }
+            } finally {
+                postIter.close();
+                tmpModel.close();
+            }
+        }
 
-		throw new IOException( "Can't write post(s) to uri " + targetUri );
-	}
+        throw new IOException("Can't write post(s) to uri " + targetUri);
+    }
 }

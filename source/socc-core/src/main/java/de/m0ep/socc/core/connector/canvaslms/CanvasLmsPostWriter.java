@@ -32,6 +32,7 @@ import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.RDFTool;
+import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.UserAccount;
 
@@ -42,6 +43,7 @@ import de.m0ep.canvas.CanvasLmsClient;
 import de.m0ep.canvas.exceptions.AuthorizationException;
 import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.exceptions.NetworkException;
+import de.m0ep.canvas.model.Entry;
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
@@ -53,196 +55,223 @@ import de.m0ep.socc.core.utils.PostWriterUtils;
  * {@link CanvasLmsConnector}.
  * 
  * @author "Florian Mueller"
- * 
  */
 public class CanvasLmsPostWriter extends
         DefaultConnectorIOComponent<CanvasLmsConnector> implements
         IPostWriter<CanvasLmsConnector> {
 
-	/**
-	 * Constructor to create a new instance for a {@link CanvasLmsConnector}.
-	 * 
-	 * @param connector
-	 *            Instance of a {@link CanvasLmsConnector}.
-	 */
-	public CanvasLmsPostWriter( final CanvasLmsConnector connector ) {
-		super( connector );
-	}
+    /**
+     * Constructor to create a new instance for a {@link CanvasLmsConnector}.
+     * 
+     * @param connector
+     *            Instance of a {@link CanvasLmsConnector}.
+     */
+    public CanvasLmsPostWriter(final CanvasLmsConnector connector) {
+        super(connector);
+    }
 
-	@Override
-	public void writePost( URI targetUri, String rdfString, Syntax syntax )
-	        throws NotFoundException,
-	        AuthenticationException,
-	        IOException {
-		Model tmpModel = RDFTool.stringToModel( rdfString, syntax );
+    @Override
+    public void writePost(URI targetUri, String rdfString, Syntax syntax)
+            throws NotFoundException,
+            AuthenticationException,
+            IOException {
+        Model tmpModel = RDFTool.stringToModel(rdfString, syntax);
 
-		try {
-			ClosableIterator<Resource> resIter = Post.getAllInstances( tmpModel );
-			while ( resIter.hasNext() ) {
-				Resource resource = resIter.next();
-				Post post = Post.getInstance( tmpModel, resource );
+        try {
+            ClosableIterator<Resource> resIter = Post.getAllInstances(tmpModel);
+            while (resIter.hasNext()) {
+                Resource resource = resIter.next();
+                Post post = Post.getInstance(tmpModel, resource);
 
-				if ( CanvasLmsSiocUtils.isDiscussionTopicUri( targetUri, getServiceEndpoint() )
-				        || CanvasLmsSiocUtils.isInitialEntryUri( targetUri, getServiceEndpoint() ) ) {
-					writePostToTopic( targetUri, post );
-				} else if ( CanvasLmsSiocUtils.isEntryUri( targetUri, getServiceEndpoint() ) ) {
-					writeReplyToPost( targetUri, post );
-				}
-			}
-		} finally {
-			tmpModel.close();
-		}
-	}
+                if (CanvasLmsSiocUtils.isDiscussionTopicUri(targetUri,
+                        getServiceEndpoint())
+                        || CanvasLmsSiocUtils.isInitialEntryUri(targetUri,
+                                getServiceEndpoint())) {
+                    writePostToTopic(targetUri, post);
+                } else if (CanvasLmsSiocUtils.isEntryUri(targetUri,
+                        getServiceEndpoint())) {
+                    writeReplyToPost(targetUri, post);
+                }
+            }
+        } finally {
+            tmpModel.close();
+        }
+    }
 
-	/**
-	 * Write a {@link Post} to a Discussion Topic of a Canvas LMS Course.
-	 * 
-	 * @param targetUri
-	 *            Target URI of the discussion topic
-	 * @param post
-	 *            The post to write
-	 * 
-	 * @throws AuthenticationException
-	 *             Thrown if there are some issues with authentication to Canvas
-	 *             LMS.
-	 * @throws IOException
-	 *             Thrown if there are errors writing the post.
-	 */
-	private void writePostToTopic( URI targetUri, Post post )
-	        throws AuthenticationException,
-	        IOException {
-		Pattern pattern = Pattern.compile(
-		        getServiceEndpoint()
-		                + CanvasLmsSiocUtils.REGEX_DISCUSSION_TOPIC_URI );
-		Matcher matcher = pattern.matcher( targetUri.toString() );
+    /**
+     * Write a {@link Post} to a Discussion Topic of a Canvas LMS Course.
+     * 
+     * @param targetUri
+     *            Target URI of the discussion topic
+     * @param post
+     *            The post to write
+     * @throws AuthenticationException
+     *             Thrown if there are some issues with authentication to Canvas
+     *             LMS.
+     * @throws IOException
+     *             Thrown if there are errors writing the post.
+     */
+    private void writePostToTopic(URI targetUri, Post post)
+            throws AuthenticationException,
+            IOException {
+        Pattern pattern = Pattern.compile(
+                getServiceEndpoint()
+                        + CanvasLmsSiocUtils.REGEX_DISCUSSION_TOPIC_URI);
+        Matcher matcher = pattern.matcher(targetUri.toString());
 
-		if ( matcher.find() ) {
-			long courseId = Long.parseLong( matcher.group( 1 ) );
-			long topicId = Long.parseLong( matcher.group( 2 ) );
+        if (matcher.find()) {
+            long courseId = Long.parseLong(matcher.group(1));
+            long topicId = Long.parseLong(matcher.group(2));
 
-			UserAccount creatorAccount = post.getCreator();
-			Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
-			        getConnector(),
-			        creatorAccount );
+            UserAccount creatorAccount = post.getCreator();
+            Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
+                    getConnector(),
+                    creatorAccount);
 
-			CanvasLmsClient client = null;
-			if ( null != creatorPerson ) {
-				UserAccount serviceAccount = PostWriterUtils
-				        .getServiceAccountOfPersonOrNull(
-				                getConnector(),
-				                creatorPerson,
-				                getServiceEndpoint() );
-				if ( null != serviceAccount ) {
-					client = (CanvasLmsClient) PostWriterUtils
-					        .getClientOfServiceAccountOrNull(
-					                getConnector(),
-					                serviceAccount );
-				}
-			}
+            CanvasLmsClient client = null;
+            if (null != creatorPerson) {
+                UserAccount serviceAccount = PostWriterUtils
+                        .getServiceAccountOfPersonOrNull(
+                                getConnector(),
+                                creatorPerson,
+                                getServiceEndpoint());
+                if (null != serviceAccount) {
+                    client = (CanvasLmsClient) PostWriterUtils
+                            .getClientOfServiceAccountOrNull(
+                                    getConnector(),
+                                    serviceAccount);
+                }
+            }
 
-			String content = post.getContent();
-			if ( null == client ) { // No client found, get default one an adapt
-				                    // message content
-				client = getConnector().getClientManager()
-				        .getDefaultClient();
-				content = PostWriterUtils.createContentOfUnknownAccount(
-				        post,
-				        creatorAccount,
-				        creatorPerson );
-			}
+            String content = post.getContent();
+            if (null == client) { // No client found, get default one an adapt
+                                  // message content
+                client = getConnector().getClientManager()
+                        .getDefaultClient();
+                content = PostWriterUtils.createContentOfUnknownAccount(
+                        post,
+                        creatorAccount,
+                        creatorPerson);
+            }
 
-			try {
-				client.courses()
-				        .discussionTopics( courseId )
-				        .entries( topicId )
-				        .post( content )
-				        .execute();
-			} catch ( CanvasLmsException e ) {
-				if ( e instanceof NetworkException ) {
-					throw new IOException( e );
-				} else if ( e instanceof AuthorizationException ) {
-					throw new AuthenticationException( e );
-				}
+            try {
+                Entry resultEntry = client.courses()
+                        .discussionTopics(courseId)
+                        .entries(topicId)
+                        .post(content)
+                        .execute();
 
-				throw Throwables.propagate( e );
-			}
-		}
-	}
+                Container container = getConnector().getStructureReader()
+                        .getContainer(targetUri);
+                Post resultPost = CanvasLmsSiocUtils.createSiocPost(
+                        getConnector(),
+                        resultEntry,
+                        container,
+                        null);
 
-	/**
-	 * Write a {@link Post} as a reply to a other entry of a Canvas LMS course
-	 * discussion topic.
-	 * 
-	 * @param targetUri
-	 *            Target URI of the entry
-	 * @param post
-	 *            The post to write
-	 * 
-	 * @throws AuthenticationException
-	 *             Thrown if there are some issues with authentication to Canvas
-	 *             LMS.
-	 * @throws IOException
-	 *             Thrown if there are errors writing the post.
-	 */
-	private void writeReplyToPost( URI targetUri, Post post )
-	        throws AuthenticationException,
-	        IOException {
-		Pattern pattern = Pattern.compile(
-		        getServiceEndpoint()
-		                + CanvasLmsSiocUtils.REGEX_ENTRY_URI );
-		Matcher matcher = pattern.matcher( targetUri.toString() );
+                resultPost.hasSibling(post);
+            } catch (CanvasLmsException e) {
+                if (e instanceof NetworkException) {
+                    throw new IOException(e);
+                } else if (e instanceof AuthorizationException) {
+                    throw new AuthenticationException(e);
+                }
 
-		if ( matcher.find() ) {
-			long courseId = Long.parseLong( matcher.group( 1 ) );
-			long topicId = Long.parseLong( matcher.group( 2 ) );
-			long entryId = Long.parseLong( matcher.group( 3 ) );
+                throw Throwables.propagate(e);
+            }
+        }
+    }
 
-			UserAccount creatorAccount = post.getCreator();
-			Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
-			        getConnector(),
-			        creatorAccount );
+    /**
+     * Write a {@link Post} as a reply to a other entry of a Canvas LMS course
+     * discussion topic.
+     * 
+     * @param targetUri
+     *            Target URI of the entry
+     * @param post
+     *            The post to write
+     * @throws AuthenticationException
+     *             Thrown if there are some issues with authentication to Canvas
+     *             LMS.
+     * @throws IOException
+     *             Thrown if there are errors writing the post.
+     */
+    private void writeReplyToPost(URI targetUri, Post post)
+            throws AuthenticationException,
+            IOException {
+        Pattern pattern = Pattern.compile(
+                getServiceEndpoint()
+                        + CanvasLmsSiocUtils.REGEX_ENTRY_URI);
+        Matcher matcher = pattern.matcher(targetUri.toString());
 
-			CanvasLmsClient client = null;
-			if ( null != creatorPerson ) {
-				UserAccount serviceAccount = PostWriterUtils
-				        .getServiceAccountOfPersonOrNull(
-				                getConnector(),
-				                creatorPerson,
-				                getServiceEndpoint() );
-				if ( null != serviceAccount ) {
-					client = (CanvasLmsClient) PostWriterUtils
-					        .getClientOfServiceAccountOrNull(
-					                getConnector(),
-					                serviceAccount );
-				}
-			}
+        if (matcher.find()) {
+            long courseId = Long.parseLong(matcher.group(1));
+            long topicId = Long.parseLong(matcher.group(2));
+            long entryId = Long.parseLong(matcher.group(3));
 
-			String content = post.getContent();
-			if ( null == client ) { // No client found, get default one an adapt
-				                    // message content
-				client = getConnector().getClientManager()
-				        .getDefaultClient();
-				content = PostWriterUtils.createContentOfUnknownAccount(
-				        post,
-				        creatorAccount,
-				        creatorPerson );
-			}
+            UserAccount creatorAccount = post.getCreator();
+            Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
+                    getConnector(),
+                    creatorAccount);
 
-			try {
-				client.courses()
-				        .discussionTopics( courseId )
-				        .entries( topicId )
-				        .postReply( content, entryId )
-				        .execute();
-			} catch ( CanvasLmsException e ) {
-				if ( e instanceof NetworkException ) {
-					throw new IOException( e );
-				} else if ( e instanceof AuthorizationException ) {
-					throw new AuthenticationException( e );
-				}
+            CanvasLmsClient client = null;
+            if (null != creatorPerson) {
+                UserAccount serviceAccount = PostWriterUtils
+                        .getServiceAccountOfPersonOrNull(
+                                getConnector(),
+                                creatorPerson,
+                                getServiceEndpoint());
+                if (null != serviceAccount) {
+                    client = (CanvasLmsClient) PostWriterUtils
+                            .getClientOfServiceAccountOrNull(
+                                    getConnector(),
+                                    serviceAccount);
+                }
+            }
 
-				throw Throwables.propagate( e );
-			}
-		}
-	}
+            String content = post.getContent();
+            if (null == client) { // No client found, get default one an adapt
+                                  // message content
+                client = getConnector().getClientManager()
+                        .getDefaultClient();
+                content = PostWriterUtils.createContentOfUnknownAccount(
+                        post,
+                        creatorAccount,
+                        creatorPerson);
+            }
+
+            try {
+                Entry resultEntry = client.courses()
+                        .discussionTopics(courseId)
+                        .entries(topicId)
+                        .postReply(content, entryId)
+                        .execute();
+
+                Container container = getConnector().getStructureReader()
+                        .getContainer(
+                                CanvasLmsSiocUtils.createDiscussionTopicUri(
+                                        getServiceEndpoint(),
+                                        courseId,
+                                        topicId));
+                Post parentPost = getConnector().getPostReader().readPost(
+                        targetUri);
+
+                Post resultPost = CanvasLmsSiocUtils.createSiocPost(
+                        getConnector(),
+                        resultEntry,
+                        container,
+                        parentPost);
+
+                resultPost.hasSibling(post);
+            } catch (CanvasLmsException e) {
+                if (e instanceof NetworkException) {
+                    throw new IOException(e);
+                } else if (e instanceof AuthorizationException) {
+                    throw new AuthenticationException(e);
+                }
+
+                throw Throwables.propagate(e);
+            }
+        }
+    }
 }

@@ -32,8 +32,8 @@ Dass ein Connector funktionieren kann, muss er von außen mit Informationen zuge
 
 Aus diesem Grund wurde für Konfiguration eines Connectors die \emph{Connector Config Ontology} entwickelt. Diese Ontologie ist sehr einfach gehalten und baut auf schon vorhandenen Ontologien auf. Zusätzlich musste die SIOC Ontologie so erweitert werden, dass die Integration von Autorisierungs- und Authentifizierungsinformationen möglich war. 
 
-\subsubsection{Connector Config Ontology} % (fold)
-\label{ssub:connector_config_ontology}
+\subsubsection{Connector Config Ontologie} % (fold)
+\label{ssub:connector_config_ontologie}
 
 Abbildung \ref{fig:uebersicht_conector_cfg} zeigt die entwickelte Connector Con
  Ontologie. Sie besteht aus einer einzigen Klasse \texttt{ConnectorConfig} und vier Eigenschaften.
@@ -69,10 +69,18 @@ Wie eben schon beschrieben, existiert für SIOC ein Modul zur einfachen Modellie
     \label{fig:uebersicht_sioc_services}
 \end{figure}
 
-Die Eigenschaften \texttt{has\_service} und \texttt{service\_of} sind sind ideal zur Verbindung von einzelnen SIOC UserAccounts mit einem Service. Diese Verbindung hilft dabei für das stellvertretende Schreiben von Beiträgen schnell die passenden Benutzerdaten zu finden. Ebenfalls nützlich ist \texttt{max\_results}. Manche Dienste erlauben es nur eine maximale Anzahl an Ergebnissen pro Aufruf zurückgeben zu lassen. Da sich diese Anzahl über die Zeit ändern kann ist es nicht sinnvoll diese fest im Programm festzulegen, kann diese so im Nachhinein verändert werden. Für SOCC weniger interessant aber Vollständigkeit halber seien noch erwähnt \texttt{service\_protocol} zum Angeben des verwendeten Übertragungsprotokolls (REST\footnote{Representational State Transfer}, SOAP\footnote{Simple Object Access Protocol}, $\dots$) und \texttt{service\_definition} mit dem auf eine weiterführende Definition verwiesen werden kann.
+Die Eigenschaften \texttt{has\_service} und \texttt{service\_of} sind sind ideal zur Verbindung von einzelnen SIOC UserAccounts mit einem Service. Diese Verbindung hilft dabei für das stellvertretende Schreiben von Beiträgen schnell die passenden Benutzerdaten zu finden. Ebenfalls nützlich ist \texttt{max\_results}. Manche Dienste erlauben es nur eine maximale Anzahl an Ergebnissen pro Aufruf zurückgeben zu lassen. Da sich diese Anzahl über die Zeit ändern kann ist es nicht sinnvoll diese fest im Programm festzulegen, kann diese so im Nachhinein verändert werden. Für SOCC weniger interessant aber Vollständigkeit halber seien noch erwähnt \texttt{service\_protocol} zum Angeben des verwendeten Übertragungsprotokolls REST, SOAP, $\dots$) und \texttt{service\_definition} mit dem auf eine weiterführende Definition verwiesen werden kann.
 
 % subsubsection services (end)
 
+
+\subsubsection{Benutzerdaten} % (fold)
+\label{ssub:benutzerdaten}
+
+Soll ein Beitrag eines Benutzers von Google+ nach Facebook synchronisiert werden und es so aussehen, als hat er diesen Beitrag selbst auf Facebook geschrieben, sind gute Kenntnisse über alle Benutzerkonten dieser einen Person notwendig. Als erstes muss die Existenz dieser dieser Person dem System bekannt sein. Hierzu kann diese durch die Klasse Person aus der FOAF Ontologie dargestellt werden. Für ein einzelnes Benutzerkonto wurde in SIOC die Klasse die Klasse UserAccount definiert. 
+
+
+% subsubsection benutzerdaten (end)
 
 
 \subsubsection{Autorisierung und Authentifizierung} % (fold)

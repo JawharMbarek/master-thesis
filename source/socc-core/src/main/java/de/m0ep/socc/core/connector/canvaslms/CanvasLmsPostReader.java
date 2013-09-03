@@ -89,13 +89,19 @@ public class CanvasLmsPostReader extends
 			throw Throwables.propagate( e );
 		}
 
-		return null;
+		throw new NotFoundException( "No Canvas LMS post found at uri " + uri );
+	}
+
+	@Override
+	public boolean hasPosts( URI uri ) {
+		return CanvasLmsSiocUtils.isDiscussionTopicUri( uri, getServiceEndpoint() )
+		        || CanvasLmsSiocUtils.isInitialEntryUri( uri, getServiceEndpoint() )
+		        || CanvasLmsSiocUtils.isEntryUri( uri, getServiceEndpoint() );
 	}
 
 	@Override
 	public List<Post> pollPosts( URI sourceUri, Date since, int limit )
 	        throws AuthenticationException, IOException {
-
 		try {
 			if ( CanvasLmsSiocUtils.isDiscussionTopicUri( sourceUri, getServiceEndpoint() )
 			        || CanvasLmsSiocUtils.isInitialEntryUri( sourceUri, getServiceEndpoint() ) ) {

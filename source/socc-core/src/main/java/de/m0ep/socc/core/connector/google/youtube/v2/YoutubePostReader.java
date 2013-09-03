@@ -23,253 +23,215 @@
 package de.m0ep.socc.core.connector.google.youtube.v2;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
-import org.rdfs.sioc.Container;
+import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.Thread;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.damnhandy.uri.template.UriTemplate;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.gdata.data.DateTime;
+import com.google.gdata.data.Link;
 import com.google.gdata.data.youtube.CommentEntry;
 import com.google.gdata.data.youtube.CommentFeed;
 import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.VideoFeed;
+import com.google.gdata.util.NotModifiedException;
 import com.google.gdata.util.ServiceException;
 
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
-import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.SiocUtils;
 
 public class YoutubePostReader extends
         DefaultConnectorIOComponent<YoutubeConnector> implements
         IPostReader<YoutubeConnector> {
-	private static final Logger LOG = LoggerFactory
-	        .getLogger( YoutubePostReader.class );
-
 	private final YoutubeClientWrapper defaultClient;
 
 	public YoutubePostReader( YoutubeConnector connector ) {
 		super( connector );
-
-		this.defaultClient = connector.getServiceClientManager()
-		        .getDefaultClient();
+		this.defaultClient = connector.getClientManager().getDefaultClient();
 	}
 
 	@Override
-	public boolean containsPosts( Container container ) {
-		return isUploadsContainer( container ) || isPlaylistContainer( container );
+	public Post readPost( URI uri ) throws NotFoundException, AuthenticationException, IOException {
+		if ( Post.hasInstance( getModel(), uri ) ) {
+			return Post.getInstance( getModel(), uri );
+		}
+
+		if ( YoutubeSiocUtils.isVideoUri( uri ) ) {
+			return readVideo( uri );
+		} else if ( YoutubeSiocUtils.isCommentUri( uri ) ) {
+			return readComment( uri );
+		}
+
+		throw new NotFoundException( "There is no Youtube post at uri " + uri );
 	}
 
 	@Override
-	public List<Post> readNewPosts( Date lastPostDate, long limit,
-	        Container container )
-	        throws AuthenticationException, IOException {
-		if ( 0 == limit ) {
-			return Lists.newArrayList();
+	public boolean hasPosts( URI uri ) {
+		return null != uri &&
+		        ( YoutubeSiocUtils.isUserUploadsUri( uri )
+		                || YoutubeSiocUtils.isPlaylistUri( uri )
+		                || YoutubeSiocUtils.isVideoUri( uri ) );
+	}
+
+	@Override
+	public List<Post> pollPosts( URI sourceUri, Date since, int limit )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+
+		if ( YoutubeSiocUtils.isUserUploadsUri( sourceUri )
+		        || YoutubeSiocUtils.isPlaylistUri( sourceUri ) ) {
+			return pollFromVideoFeed( sourceUri, since, Math.max( -1, limit ) );
+		} else if ( YoutubeSiocUtils.isVideoUri( sourceUri ) ) {
+			return pollFromVideoCommentsFeed( sourceUri, since, Math.max( -1, limit ) );
 		}
 
-		Preconditions.checkNotNull( container,
-		        "Required parameter container must be specified." );
-		Preconditions.checkArgument( containsPosts( container ),
-		        "The container contains no posts on this service." );
-		List<Post> results = Lists.newArrayList();
+		throw new NotFoundException( "Can't poll Youtube posts from uri " + sourceUri );
+	}
 
-		String nextFeedUri = null;
-		if ( isUploadsContainer( container ) ) {
-			nextFeedUri = UriTemplate
-			        .fromTemplate(
-			                "http://gdata.youtube.com/feeds/api/users/{userId}/uploads?v=2" )
-			        .set( "userId",
-			                container.getId().split(
-			                        YoutubeSiocConverter.ID_SEPERATOR )[1] )
-			        .expand(); // FIXME: magic strings
-		} else if ( isPlaylistContainer( container ) ) {
-			nextFeedUri = UriTemplate
-			        .fromTemplate(
-			                "http://gdata.youtube.com/feeds/api/playlists/{playlistId}?v=2" )
-			        .set( "playlistId",
-			                container.getId().split(
-			                        YoutubeSiocConverter.ID_SEPERATOR )[1] )
-			        .expand(); // FIXME: magic strings
+	private Post readVideo( URI uri )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		VideoEntry videoEntry = null;
+		try {
+			videoEntry = defaultClient.getService().getEntry(
+			        new URL( uri.toString() ),
+			        VideoEntry.class );
+		} catch ( MalformedURLException e ) {
+			// shouldn't happened
+			Throwables.propagate( e );
+		} catch ( ServiceException e ) {
+			YoutubeConnector.handleYoutubeExceptions( e );
 		}
 
-		while ( null != nextFeedUri ) {
-			System.out.println( nextFeedUri );
+		return YoutubeSiocUtils.createSiocPost( getConnector(), videoEntry, null );
+	}
+
+	private Post readComment( URI uri )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		CommentEntry commentEntry = null;
+		try {
+			commentEntry = defaultClient.getService().getEntry(
+			        new URL( uri.toString() ),
+			        CommentEntry.class );
+		} catch ( MalformedURLException e ) {
+			// shouldn't happened
+			Throwables.propagate( e );
+		} catch ( ServiceException e ) {
+			YoutubeConnector.handleYoutubeExceptions( e );
+		}
+
+		return YoutubeSiocUtils.createSiocPost( getConnector(), commentEntry, null );
+	}
+
+	private List<Post> pollFromVideoFeed( URI sourceUri, Date since, int limit )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		Forum parent = SiocUtils.asForum( getConnector().getStructureReader()
+		        .getContainer( sourceUri ) );
+		String pageUrl = sourceUri.toString();
+
+		List<Post> result = Lists.newArrayList();
+		do {
 			VideoFeed videoFeed = null;
 			try {
-				getConnector().waitForCooldown();
-				videoFeed = defaultClient
-				        .getService().getFeed(
-				                new URL( nextFeedUri ),
-				                VideoFeed.class );
-				LOG.debug(
-				        "Fetched {} videos from {}.",
-				        videoFeed.getEntries().size(),
-				        nextFeedUri );
-			} catch ( com.google.gdata.util.AuthenticationException e ) {
-				throw new AuthenticationException( e );
+				if ( null != since ) {
+					videoFeed = defaultClient.getService().getFeed(
+					        new URL( pageUrl ),
+					        VideoFeed.class,
+					        new DateTime( since ) );
+				} else {
+					videoFeed = defaultClient.getService().getFeed(
+					        new URL( pageUrl ),
+					        VideoFeed.class );
+				}
+			} catch ( MalformedURLException e ) {
+				// shouldn't happened
+				Throwables.propagate( e );
+			} catch ( NotModifiedException e ) {
+				return result;
 			} catch ( ServiceException e ) {
-				throw Throwables.propagate( e );
-			} finally {
-				nextFeedUri = null;
+				YoutubeConnector.handleYoutubeExceptions( e );
 			}
 
-			if ( null != videoFeed ) {
-				for ( VideoEntry videoEntry : videoFeed.getEntries() ) {
-					Date created;
-					if ( null != videoEntry.getPublished() ) {
-						created = new Date( videoEntry.getPublished().getValue() );
-					} else {
-						created = new Date( 0 );
-					}
-
-					if ( null != lastPostDate && lastPostDate.before( created ) ) {
-						return results;
-					}
-
-					results.add(
-					        YoutubeSiocConverter.createSiocPost(
-					                getConnector(),
-					                videoEntry,
-					                container ) );
-
-					if ( 0 < limit && limit == results.size() ) {
-						return results;
-					}
+			for ( VideoEntry videoEntry : videoFeed.getEntries() ) {
+				if ( 0 > limit || limit < result.size() ) {
+					result.add( YoutubeSiocUtils.createSiocPost(
+					        getConnector(),
+					        videoEntry,
+					        parent ) );
+				} else {
+					return result;
 				}
 			}
 
-			if ( null != videoFeed.getNextLink() ) {
-				nextFeedUri = videoFeed.getNextLink().getHref();
-			}
-		}
+			Link nextLink = videoFeed.getNextLink();
+			pageUrl = ( null != nextLink ) ? nextLink.getHref() : null;
+		} while ( null != pageUrl );
 
-		return results;
+		return result;
 	}
 
-	@Override
-	public boolean containsReplies( Post post ) {
-		return post.toString().startsWith( getServiceEndpoint().toString() )
-		        &&
-		        post.hasId()
-		        &&
-		        post.getId().startsWith( YoutubeSiocConverter.VIDEO_ID_PREFIX )
-		        &&
-		        post.hasContainer()
-		        &&
-		        post.getContainer().toString().startsWith(
-		                getServiceEndpoint().toString() );
-	}
+	private List<Post> pollFromVideoCommentsFeed( URI sourceUri, Date since, int limit )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		Post parentPost = readPost( sourceUri );
+		String pageUrl = sourceUri.toString();
 
-	@Override
-	public List<Post> pollRepliesAtPost( Date lastReplyDate, long limit,
-	        Post parentPost )
-	        throws AuthenticationException, IOException {
-		if ( 0 == limit ) {
-			return Lists.newArrayList();
-		}
-
-		Preconditions.checkNotNull( parentPost,
-		        "Required parameter parentPost must be specified." );
-		Preconditions
-		        .checkArgument( containsReplies( parentPost ),
-		                "The parameter parentPost contians no replies at this service." );
-
-		String videoId = parentPost.getId().split(
-		        YoutubeSiocConverter.ID_SEPERATOR )[1];
-		String nextFeedUri = UriTemplate.fromTemplate(
-		        "http://gdata.youtube.com/feeds/api/videos/{videoId}/comments" )
-		        .set( "videoId", videoId )
-		        .expand(); // FIXME: magic strings
-
-		List<Post> results = Lists.newArrayList();
-		while ( null != nextFeedUri ) {
+		List<Post> result = Lists.newArrayList();
+		do {
 			CommentFeed commentFeed = null;
 			try {
-				getConnector().waitForCooldown();
-				commentFeed = defaultClient
-				        .getService().getFeed(
-				                new URL( nextFeedUri ),
-				                CommentFeed.class );
-				LOG.debug( "Fetched {} comments from {}.",
-				        commentFeed.getEntries().size(),
-				        nextFeedUri );
-			} catch ( com.google.gdata.util.AuthenticationException e ) {
-				throw new AuthenticationException( e );
+
+				if ( null != since ) {
+					commentFeed = defaultClient.getService().getFeed(
+					        new URL( pageUrl ),
+					        CommentFeed.class,
+					        new DateTime( since ) );
+				} else {
+					commentFeed = defaultClient.getService().getFeed(
+					        new URL( pageUrl ),
+					        CommentFeed.class );
+				}
+			} catch ( MalformedURLException e ) {
+				// shouldn't happened
+				Throwables.propagate( e );
+			} catch ( NotModifiedException e ) {
+				return result;
 			} catch ( ServiceException e ) {
-				throw Throwables.propagate( e );
-			} finally {
-				nextFeedUri = null;
+				YoutubeConnector.handleYoutubeExceptions( e );
 			}
 
-			if ( null != commentFeed ) {
-				for ( CommentEntry commentEntry : commentFeed.getEntries() ) {
-					Date created;
-					if ( null != commentEntry.getPublished() ) {
-						created = new Date( commentEntry.getPublished()
-						        .getValue() );
-					} else {
-						created = new Date( 0 );
-					}
-
-					if ( null != lastReplyDate && lastReplyDate.before( created ) ) {
-						return results;
-					}
-
-					results.add(
-					        YoutubeSiocConverter.createSiocPost(
-					                getConnector(),
-					                commentEntry,
-					                parentPost ) );
-
-					if ( 0 < limit && limit == results.size() ) {
-						return results;
-					}
+			for ( CommentEntry commentEntry : commentFeed.getEntries() ) {
+				if ( 0 > limit || limit < result.size() ) {
+					result.add( YoutubeSiocUtils.createSiocPost(
+					        getConnector(),
+					        commentEntry,
+					        parentPost ) );
+				} else {
+					return result;
 				}
 			}
 
-			if ( null != commentFeed.getNextLink() ) {
-				nextFeedUri = commentFeed.getNextLink().getHref();
-			}
-		}
+			Link nextLink = commentFeed.getNextLink();
+			pageUrl = ( null != nextLink ) ? nextLink.getHref() : null;
+		} while ( null != pageUrl );
 
-		return results;
-	}
-
-	private boolean isPlaylistContainer( Container container ) {
-		return null != container
-		        && container.toString()
-		                .startsWith( getServiceEndpoint().toString() )
-		        && RdfUtils.isType(
-		                container.getModel(),
-		                container.getResource(),
-		                Thread.RDFS_CLASS )
-		        && container.hasParent()
-		        && container.getParent().toString().startsWith(
-		                getServiceEndpoint().toString() )
-		        && container.getParent().hasId()
-		        && container.getParent().getId().startsWith(
-		                YoutubeSiocConverter.PLAYLISTS_ID_PREFIX );
-	}
-
-	private boolean isUploadsContainer( Container container ) {
-		return container.toString().startsWith( getServiceEndpoint().toString() )
-		        && RdfUtils.isType(
-		                container.getModel(),
-		                container.getResource(),
-		                Forum.RDFS_CLASS )
-		        && container.hasId()
-		        && container.getId().startsWith(
-		                YoutubeSiocConverter.UPLOADS_ID_PREFIX );
+		return result;
 	}
 
 }

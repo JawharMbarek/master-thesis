@@ -142,6 +142,11 @@ public class CanvasLmsStructureReader
 	}
 
 	@Override
+	public boolean hasChildContainer( URI uri ) {
+		return CanvasLmsSiocUtils.isCourseUri( uri, getServiceEndpoint() );
+	}
+
+	@Override
 	public List<Container> listContainer( URI parentUri ) throws
 	        NotFoundException,
 	        AuthenticationException,

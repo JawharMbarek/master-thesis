@@ -10,7 +10,7 @@
 \end{itemize}
 
 
-
+\todo[inline]{Auch begründen warum die Verwendung von Ontologien und nicht bspw. die Entwicklung eines XML Schemas (alternativ bei der Analyse Kap. 3.2)}
 
 \section{Social Online Community Connectors} % (fold)
 \label{sec:social_online_community_connectors}
@@ -23,11 +23,24 @@
 \subsection{Konfiguration} % (fold)
 \label{sub:konfiguration}
 
-Eine wichtige Designentscheidung der Connectoren war es, wo alle zum Betrieb notwendigen Einstellungen und zusätzliche Daten gespeichert werden sollen? In den ersten Testimplementierungen wurden diese Daten teilweise in einfachen Dateien, nur für die anfallenden Daten im RDF Format war von Beginn an eine Speicherung in einem RDF Triplestore vorgesehen. Im späteren Verlauf dieser Arbeit kam die Idee auf komplett alle Daten dort zu speichern. Da es vorkommen kann, dass bestimmte Einstellungen wie Anmeldedaten mehrfach genutzt werden und im Falle eine Änderung müssten die Daten nur an diesem einen Ort geändert werten. So könnten auch diverse Einstellungen über verschiedene unabhängige System hinweg genutzt werden. 
+\todo[inline]{Keine Erzählung nach dem Motto: erst haben wir das gemacht und dann gemerkt dass das nicht so toll war. Lieber begründen warum man das System so oder so konzipiert.}
+
+
+Dass ein Connector funktionieren kann, muss er von außen mit Informationen zugeführt bekommen welche er zum Betrieb braucht. Die sind zum Beispiel Informationen zu Benutzerkonten oder Parameter für die verwendete API. Da einige dieser Informationen werden nicht nur von einen Connector benutzt werden, ist es sinnvoll diese zusammen an einen Ort zu speichern und wiederverwenden zu können. Die wichtigsten Informationen für die Konfiguration der Connectoren stellen die Benutzerkonten dar. Sie enthalten unter anderem die Informationen um Zugriff auf die einzelnen APIs zu erhalten. Da die Benutzerkonten wie im Abschnitt \ref{sub:datenformat} beschrieben im FOAF Format in einen Triplestore gespeichert werden, stellt es sich als Vorteil heraus die übrigen Informationen ebenfalls dort zu speichern und mit den schon vorhandenen zu verbinden. 
 
 \medskip
 
-\begin{figure}[ht]
+Aus diesem Grund wurde für Konfiguration eines Connectors die \emph{Connector Config Ontology} entwickelt. Diese Ontologie ist sehr einfach gehalten und baut auf schon vorhandenen Ontologien auf. Zusätzlich musste die SIOC Ontologie so erweitert werden, dass die Integration von Autorisierungs- und Authentifizierungsinformationen möglich war. 
+
+\subsubsection{Connector Config Ontology} % (fold)
+\label{ssub:connector_config_ontology}
+
+Abbildung \ref{fig:uebersicht_conector_cfg} zeigt die entwickelte Connector Con
+ Ontologie. Sie besteht aus einer einzigen Klasse \texttt{ConnectorConfig} und vier Eigenschaften.
+
+\medskip
+
+\begin{figure}[h]
     \centering
     \includegraphics[
         width=\textwidth,
@@ -37,7 +50,8 @@ Eine wichtige Designentscheidung der Connectoren war es, wo alle zum Betrieb not
     \label{fig:uebersicht_conector_cfg}
 \end{figure}
 
-Aus diesem Grunde wurde für die Konfiguration eines Connectors die \emph{Connector Config Ontology} entwickelt. Abbildung \ref{fig:uebersicht_conector_cfg} zeigt diese Ontologie. Jeder Connector bekommt einen eindeutigen Bezeichner(kurz ID) um jeden diesen identifizieren zu können. Dies kann eine beliebige Zeichenkette sein. Um die korrekte Javaklasse des zu erstellenden Connectors benutzen zu können, wird der vollständige Klassenname, wie er zum Beispiel von \lstinline{object.class.getName()} zurückgegeben wird, in \texttt{connectorClassName} gespeichert. Für den Zugriff auf die Daten der SOC sind bei einiges APIs bestimmte Parameter wie die genaue Adresse des Servers notwendig. SIOC bietet hierzu ein eigenes Modul an, welches genau für solche Beschreibungen von Diensten die SIOC Ontologie erweitert. Eine kurze Beschreibung dieses Moduls und eine Erweiterung des selbigen für den Einsatz in SOCC befindet sich im Abschnitt \ref{ssub:services} und \ref{ssub:authorization}. Als Letztes braucht ein Connector noch einen vordefinierten Benutzer welcher als \texttt{defaultUserAccount} als SIOC UserAccount gespeichert wird. Dieser vordefinierte Benutzer erfüllt im Großen und Ganzen zwei Aufgaben. Als Erstes wird er für lesende Zugriffe der API auf die SOC genutzt, da hierzu ein einzelner Benutzer vollkommen ausreichend ist. Die zweite Aufgabe bezieht sich auf das stellvertretende Schreiben einzelner Benutzer. Nicht immer werden die dazu notwendigen Daten von den Benutzer zur Verfügung gestellt oder sind unbekannt. In diesem Fall wird der vordefinierte Benutzer genutzt und der Beitrag mit einem Vermerk zum original Autor über diesen geschrieben.
+% subsubsection connector_config_ontology (end)
+Jeder Connector erhält einen eindeutigen \texttt{id} zugewiesen, um jeden dieser Connectoren eindeutig identifizieren zu können. Die Eigenschaft \texttt{connectorClassName} beschreibt den vollständigen Klassennamen des beschriebenen Connector. Diese wird für das laden der richtigen Implementierung benötigt. Für die Nutzung einiger APIs müssen bestimmte Parameter angegeben werden. Dies könnte zum Beispiel die genau Adresse des Dienstes sein. Hierzu wird auf die schon Bestehende SIOC Services Ontologie zurückgegriffen. Diese stellt eine Klasse \emph{Service} zur Verfügung und mittels der Eigenschaft \texttt{service} kann ein solcher Service einem Connector zugewiesen werden. Der genaue Aufbau eines solchen Services wird im Abschnitt \ref{ssub:services} dargestellt. Die letzte Information für die Konfiguration eins Connectors ist eine vordefinierter Benutzer und wird mit der Eigenschaft \texttt{defaultUserAccount} festgelegt. Dieser vordefinierte Benutzer erfüllt im Großen und Ganzen zwei Aufgaben. Als Erstes wird er für lesende Zugriffe der API auf den verwendeten Dienst genutzt. Hierzu ist ein einzelnes Benutzerkonto vollkommen ausreichend, da nur die gelesenen Daten wichtig sind und nicht von welchen Konto sie kommen.Die zweite Aufgabe bezieht sich auf das stellvertretende Schreiben einzelner Benutzer. Nicht immer werden die dazu notwendigen Daten von den Benutzer zur Verfügung gestellt oder sind unbekannt. In diesem Fall wird der vordefinierte Benutzer genutzt und der Beitrag mit einem Vermerk zum original Autor über diesen geschrieben.
 
 
 \subsubsection{Services} % (fold)
@@ -45,7 +59,7 @@ Aus diesem Grunde wurde für die Konfiguration eines Connectors die \emph{Connec
 
 Wie eben schon beschrieben, existiert für SIOC ein Modul zur einfachen Modellierung von Diensten auf semantischer Ebene. Kernstück dieses Moduls ist die Klasse Service, wie auf Abbildung \ref{fig:uebersicht_sioc_services} zu sehen ist. Mit dieser Klasse kann durch eine Hand voll Eigenschaften ein Dienst beschrieben werden. Für diese Arbeit ist davon die wichtigste Eigenschaft \texttt{service\_endpoint}. Durch diese kann die Adresse festgelegt werden, unter dem ein bestimmter Dienst erreichbar ist. Gerade bei Plattformen die nicht an eine feste Adresse (Foren, Blogs, $\dots$) gebunden sind, ist diese Angabe unerlässlich. 
 
-\begin{figure}[ht]
+\begin{figure}[h]
     \centering
     \includegraphics[
         width=0.7\textwidth,
@@ -59,10 +73,7 @@ Die Eigenschaften \texttt{has\_service} und \texttt{service\_of} sind sind ideal
 
 % subsubsection services (end)
 
-\subsubsection{UserAccounts} % (fold)
-\label{ssub:useraccounts}
 
-% subsubsection useraccounts (end)
 
 \subsubsection{Autorisierung und Authentifizierung} % (fold)
 \label{ssub:authentication}

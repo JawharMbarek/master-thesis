@@ -81,7 +81,7 @@ public class GooglePlusStructureReader extends
 		}
 
 		Pattern pattern = Pattern.compile( "^"
-		        + GooglePlusSiocUtils.GOOGLE_PLUS_ROOT_URI
+		        + GooglePlusSiocUtils.GOOGLE_PLUS_API_ROOT_URI
 		        + GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 

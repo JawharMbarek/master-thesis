@@ -1,4 +1,3 @@
-
 package de.m0ep.socc.core.connector.moodle;
 
 import java.io.IOException;
@@ -35,330 +34,335 @@ import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.StringUtils;
 import de.m0ep.socc.core.utils.UserAccountUtils;
 
-public class Moodle2SiocUtils {
-    public static final String REGEX_USER_URI =
-            "/user/profile.php?id=([0-9]+)";
+public final class Moodle2SiocUtils {
+	public static final String REGEX_INT_ID_GROUP = "([0-9]+)";
 
-    public static final String REGEX_FORUM_URI =
-            "/mod/forum/view\\.php\\?id=([0-9]+)";
+	public static final String REGEX_USER_URI =
+	        "/user/profile.php?id="
+	                + REGEX_INT_ID_GROUP;
 
-    public static final String REGEX_DISCUSSION_URI =
-            "/mod/forum/discuss\\.php\\?d=([0-9]+)";
+	public static final String REGEX_FORUM_URI =
+	        "/mod/forum/view\\.php\\?id="
+	                + REGEX_INT_ID_GROUP;
 
-    public static final String REGEX_ENTRY_URI =
-            "/mod/forum/discuss.php?d=([0-9]+)#p([0-9]+)";
+	public static final String REGEX_DISCUSSION_URI =
+	        "/mod/forum/discuss\\.php\\?d="
+	                + REGEX_INT_ID_GROUP;
 
-    public static final String TEMPLATE_USER_URI =
-            "/user/profile.php?id={userId}";
+	public static final String REGEX_FORUM_POST_URI =
+	        "/mod/forum/discuss.php?d="
+	                + REGEX_INT_ID_GROUP
+	                + "#p"
+	                + REGEX_INT_ID_GROUP;
 
-    public static final String TEMPLATE_FORUM_URI =
-            "/mod/forum/view.php?id={forumId}";
+	public static final String TEMPLATE_VAR_USER_ID = "userId";
 
-    public static final String TEMPLATE_DISCUSSION_URI =
-            "/mod/forum/discuss.php?d={discussionId}";
+	public static final String TEMPLATE_VAR_FORUM_ID = "forumId";
 
-    public static final String TEMPLATE_ENTRY_URI =
-            "/mod/forum/discuss.php?d={discussionId}#p{postId}";
+	public static final String TEMPLATE_VAR_DISCUSSION_ID = "discussionId";
 
-    public static final String TEMPLATE_VAR_USER_ID =
-            "userId";
+	public static final String TEMPLATE_VAR_ENTRY_ID = "postId";
 
-    public static final String TEMPLATE_VAR_FORUM_ID =
-            "forumId";
+	public static final String TEMPLATE_USER_URI =
+	        "/user/profile.php?id={"
+	                + TEMPLATE_VAR_USER_ID
+	                + "}";
 
-    public static final String TEMPLATE_VAR_DISCUSSION_ID =
-            "discussionId";
+	public static final String TEMPLATE_FORUM_URI =
+	        "/mod/forum/view.php?id={"
+	                + TEMPLATE_VAR_FORUM_ID
+	                + "}";
 
-    public static final String TEMPLATE_VAR_ENTRY_ID =
-            "postId";
+	public static final String TEMPLATE_DISCUSSION_URI =
+	        "/mod/forum/discuss.php?d={"
+	                + TEMPLATE_VAR_DISCUSSION_ID
+	                + "}";
 
-    private Moodle2SiocUtils() {
-    }
+	public static final String TEMPLATE_FORUM_POST_URI =
+	        "/mod/forum/discuss.php?d={"
+	                + TEMPLATE_VAR_DISCUSSION_ID
+	                + "}#p{"
+	                + TEMPLATE_VAR_ENTRY_ID
+	                + "}";
 
-    public static Forum createSiocForum(Moodle2Connector connector,
-            ForumRecord forumRecord) {
-        Preconditions.checkNotNull(connector,
-                "Required parameter connector must be specified.");
-        Preconditions.checkNotNull(forumRecord,
-                "Required parameter forumRecord must be specified.");
+	private Moodle2SiocUtils() {
+	}
 
-        Model model = connector.getContext().getModel();
-        URI serviceEndpoint = connector.getService().getServiceEndpoint()
-                .asURI();
-        URI uri = createSiocForumUri(serviceEndpoint, forumRecord.getId());
+	public static UserAccount createSiocUserAccount(
+	        final Moodle2Connector connector,
+	        final int userid )
+	        throws AuthenticationException, IOException {
+		Preconditions.checkNotNull( connector,
+		        "Required parameter connector must be specified." );
+	
+		final Moodle2ClientWrapper client = connector.getClientManager()
+		        .getDefaultClient();
+		UserRecord[] userRecords = client
+		        .callMethod( new Callable<UserRecord[]>() {
+			        @Override
+			        public UserRecord[] call() throws Exception {
+				        return client.getBindingStub().get_user_byid(
+				                client.getAuthClient(), client.getSessionKey(),
+				                userid );
+			        }
+		        } );
+	
+		if ( null != userRecords && 0 < userRecords.length ) {
+			UserRecord userRecord = userRecords[0];
+			Service service = connector.getService();
+			URI uri = createUserUri(
+			        service.getServiceEndpoint().asURI(),
+			        userRecord.getId() );
+	
+			UserAccount result = new UserAccount( connector.getContext()
+			        .getModel(), uri, true );
+			result.setId( Integer.toString( userRecord.getId() ) );
+			result.setName( userRecord.getName() );
+			result.setAccountName( Integer.toString( userRecord.getId() ) );
+			result.setAccountServiceHomepage( service.getServiceEndpoint() );
+	
+			Thing.setService( result.getModel(), result.getResource(), service );
+			service.addServiceOf( result );
+	
+			return result;
+		}
+	
+		throw new IOException( "Failed to read user data" );
+	}
 
-        Forum result;
-        if (Forum.hasInstance(model, uri)) {
-            result = Forum.getInstance(model, uri);
+	public static Forum createSiocForum(
+	        final Moodle2Connector connector,
+	        final ForumRecord forumRecord ) {
+		Preconditions.checkNotNull( connector,
+		        "Required parameter connector must be specified." );
+		Preconditions.checkNotNull( forumRecord,
+		        "Required parameter forumRecord must be specified." );
 
-            Node intro = Builder.createPlainliteral(
-                    Strings.nullToEmpty(
-                            forumRecord.getIntro()));
-            if (result.hasDescription(intro)) {
-                result.setDescription(intro);
-            }
-        } else {
-            result = new Forum(model, uri, true);
+		Model model = connector.getContext().getModel();
+		URI serviceEndpoint = connector.getService().getServiceEndpoint()
+		        .asURI();
+		URI uri = createForumUri( serviceEndpoint, forumRecord.getId() );
 
-            result.setId(Integer.toString(forumRecord.getId()));
-            result.setName(
-                    "Course (id="
-                            + forumRecord.getCourse()
-                            + ")/"
-                            + forumRecord.getName());
-            result.setDescription(forumRecord.getIntro());
-            result.setNumThreads(0);
-            result.setNumItems(0);
+		Forum result;
+		if ( Forum.hasInstance( model, uri ) ) {
+			result = Forum.getInstance( model, uri );
 
-            // update relationships
-            Site site = connector.getStructureReader().getSite();
-            result.setHost(site);
-            site.addHostOf(result);
-        }
+			Node intro = Builder.createPlainliteral(
+			        Strings.nullToEmpty(
+			                forumRecord.getIntro() ) );
+			if ( result.hasDescription( intro ) ) {
+				result.setDescription( intro );
+			}
+		} else {
+			result = new Forum( model, uri, true );
 
-        return result;
-    }
+			result.setId( Integer.toString( forumRecord.getId() ) );
+			result.setName(
+			        "Course (id="
+			                + forumRecord.getCourse()
+			                + ")/"
+			                + forumRecord.getName() );
+			result.setDescription( forumRecord.getIntro() );
+			result.setNumThreads( 0 );
+			result.setNumItems( 0 );
 
-    public static Thread createSiocThread(Moodle2Connector connector,
-            ForumDiscussionRecord discussionRecord, Forum parentForum) {
-        Preconditions.checkNotNull(connector,
-                "Required parameter connector must be specified.");
-        Preconditions.checkNotNull(discussionRecord,
-                "Required parameter discussionRecord must be specified.");
-        Preconditions.checkNotNull(parentForum,
-                "Required parameter parentForum must be specified.");
-        Preconditions.checkArgument(parentForum.hasId(),
-                "The parameter parentForum has no id.");
+			// update relationships
+			Site site = connector.getStructureReader().getSite();
+			result.setHost( site );
+			site.addHostOf( result );
+		}
 
-        Model model = connector.getContext().getModel();
-        URI serviceEndpoint = connector.getService().getServiceEndpoint()
-                .asURI();
-        URI uri = createSiocThreadUri(serviceEndpoint, discussionRecord.getId());
+		return result;
+	}
 
-        Thread result;
-        if (Thread.hasInstance(model, uri)) {
-            result = Thread.getInstance(model, uri);
+	public static Thread createSiocThread(
+	        final Moodle2Connector connector,
+	        final ForumDiscussionRecord discussionRecord,
+	        final Forum parentForum ) {
+		Preconditions.checkNotNull( connector,
+		        "Required parameter connector must be specified." );
+		Preconditions.checkNotNull( discussionRecord,
+		        "Required parameter discussionRecord must be specified." );
+		Preconditions.checkNotNull( parentForum,
+		        "Required parameter parentForum must be specified." );
+		Preconditions.checkArgument( parentForum.hasId(),
+		        "The parameter parentForum has no id." );
 
-            Node name = Builder.createPlainliteral(
-                    Strings.nullToEmpty(
-                            discussionRecord.getName()));
-            if (!result.hasName(name)) {
-                result.setName(name);
-            }
-        } else {
-            result = new Thread(model, uri,
-                    true);
-            result.setId(Integer.toString(discussionRecord.getId()));
-            result.setName(discussionRecord.getName());
-            result.setNumItems(0);
+		Model model = connector.getContext().getModel();
+		URI serviceEndpoint = connector.getService().getServiceEndpoint()
+		        .asURI();
+		URI uri = createForumDiscussionUri( serviceEndpoint, discussionRecord.getId() );
 
-            // update relationships
-            result.setParent(parentForum);
-            parentForum.addParentOf(result);
-            SiocUtils.incNumThreads(parentForum);
-        }
+		Thread result;
+		if ( Thread.hasInstance( model, uri ) ) {
+			result = Thread.getInstance( model, uri );
 
-        return result;
-    }
+			Node name = Builder.createPlainliteral(
+			        Strings.nullToEmpty(
+			                discussionRecord.getName() ) );
+			if ( !result.hasName( name ) ) {
+				result.setName( name );
+			}
+		} else {
+			result = new Thread( model, uri,
+			        true );
+			result.setId( Integer.toString( discussionRecord.getId() ) );
+			result.setName( discussionRecord.getName() );
+			result.setNumItems( 0 );
 
-    public static Post createSiocPost(Moodle2Connector connector,
-            ForumPostRecord postRecord, Thread discussion, Post parentPost)
-            throws IOException,
-            AuthenticationException {
-        Preconditions.checkNotNull(connector,
-                "Required parameter connector must be specified.");
-        Preconditions.checkNotNull(postRecord,
-                "Required parameter postRecord must be specified.");
-        Preconditions.checkNotNull(discussion,
-                "Required parameter discussion must be specified.");
+			// update relationships
+			result.setParent( parentForum );
+			parentForum.addParentOf( result );
+			SiocUtils.incNumThreads( parentForum );
+		}
 
-        Model model = connector.getContext().getModel();
-        URI serviceEndpoint = connector.getService().getServiceEndpoint()
-                .asURI();
+		return result;
+	}
 
-        int discussionId;
-        try {
-            discussionId = Integer.parseInt(discussion.getId());
-        } catch (NumberFormatException e2) {
-            throw new IllegalArgumentException(
-                    "The parameter discussion has an ivalid id.");
-        }
+	public static Post createSiocPost(
+	        final Moodle2Connector connector,
+	        final ForumPostRecord postRecord,
+	        final Thread discussion,
+	        final Post parentPost )
+	        throws IOException,
+	        AuthenticationException {
+		Preconditions.checkNotNull( connector,
+		        "Required parameter connector must be specified." );
+		Preconditions.checkNotNull( postRecord,
+		        "Required parameter postRecord must be specified." );
+		Preconditions.checkNotNull( discussion,
+		        "Required parameter discussion must be specified." );
 
-        URI uri = createSiocPostUri(serviceEndpoint, discussionId, postRecord
-                .getId());
+		Model model = connector.getContext().getModel();
+		URI serviceEndpoint = connector.getService().getServiceEndpoint()
+		        .asURI();
 
-        Post result;
-        if (Post.hasInstance(model, uri)) {
-            // Update existing post if necessary
-            result = Post.getInstance(model, uri);
+		int discussionId;
+		try {
+			discussionId = Integer.parseInt( discussion.getId() );
+		} catch ( NumberFormatException e2 ) {
+			throw new IllegalArgumentException(
+			        "The parameter discussion has an ivalid id." );
+		}
 
-            // Check if the modified time changes.
-            // if it's true, change the content
-            Node modified = Builder.createPlainliteral(
-                    DateUtils.formatISO8601(
-                            postRecord.getModified() * 1000L));
-            if (result.hasModified(modified)) {
-                result.setModified(modified);
-                result.setContent(postRecord.getMessage());
-                result.setTitle(postRecord.getSubject());
-            }
-        } else {
-            UserAccount creator = null;
-            try {
-                String accountName = Integer.toString(postRecord.getUserid());
-                creator = UserAccountUtils.findUserAccount(model, accountName,
-                        serviceEndpoint);
-            } catch (NotFoundException e) {
-                try {
-                    creator = createSiocUserAccount(connector, postRecord
-                            .getUserid());
-                } catch (Exception e1) {
-                    Throwables.propagateIfInstanceOf(e1,
-                            AuthenticationException.class);
-                    Throwables.propagateIfInstanceOf(e1, IOException.class);
-                    Throwables.propagate(e1);
-                }
-            }
+		URI uri = createForumPostUri( serviceEndpoint, discussionId, postRecord
+		        .getId() );
 
-            result = new Post(model, uri, true);
-            result.setId(Integer.toString(postRecord.getId()));
-            result.setTitle(postRecord.getSubject());
-            result.setCreator(creator);
-            result.setNumReplies(0);
-            result.setContent(
-                    StringUtils.stripHTML(
-                            Strings.nullToEmpty(
-                                    postRecord.getMessage())));
+		Post result;
+		if ( Post.hasInstance( model, uri ) ) {
+			// Update existing post if necessary
+			result = Post.getInstance( model, uri );
 
-            Date createdDate = new Date(postRecord.getCreated() * 1000L);
-            result.setCreated(DateUtils.formatISO8601(createdDate));
-            SiocUtils.updateLastItemDate(discussion, createdDate);
+			// Check if the modified time changes.
+			// if it's true, change the content
+			Node modified = Builder.createPlainliteral(
+			        DateUtils.formatISO8601(
+			                postRecord.getModified() * 1000L ) );
+			if ( result.hasModified( modified ) ) {
+				result.setModified( modified );
+				result.setContent( postRecord.getMessage() );
+				result.setTitle( postRecord.getSubject() );
+			}
+		} else {
+			UserAccount creator = null;
+			try {
+				String accountName = Integer.toString( postRecord.getUserid() );
+				creator = UserAccountUtils.findUserAccount( model, accountName,
+				        serviceEndpoint );
+			} catch ( NotFoundException e ) {
+				try {
+					creator = createSiocUserAccount( connector, postRecord
+					        .getUserid() );
+				} catch ( Exception e1 ) {
+					Throwables.propagateIfInstanceOf( e1,
+					        AuthenticationException.class );
+					Throwables.propagateIfInstanceOf( e1, IOException.class );
+					Throwables.propagate( e1 );
+				}
+			}
 
-            // update relationships
-            result.setContainer(discussion);
-            discussion.addContainerOf(result);
-            SiocUtils.incNumItems(discussion);
+			result = new Post( model, uri, true );
+			result.setId( Integer.toString( postRecord.getId() ) );
+			result.setTitle( postRecord.getSubject() );
+			result.setCreator( creator );
+			result.setNumReplies( 0 );
+			result.setContent(
+			        StringUtils.stripHTML(
+			                Strings.nullToEmpty(
+			                        postRecord.getMessage() ) ) );
 
-            if (null != parentPost) {
-                result.setReplyOf(parentPost);
-                parentPost.addReply(result);
-                SiocUtils.updateLastReplyDate(parentPost, createdDate);
-                SiocUtils.incNumReplies(parentPost);
-            }
-        }
-        return result;
-    }
+			Date createdDate = new Date( postRecord.getCreated() * 1000L );
+			result.setCreated( DateUtils.formatISO8601( createdDate ) );
+			SiocUtils.updateLastItemDate( discussion, createdDate );
 
-    public static UserAccount createSiocUserAccount(
-            final Moodle2Connector connector,
-            final int userid)
-            throws AuthenticationException, IOException {
-        Preconditions.checkNotNull(connector,
-                "Required parameter connector must be specified.");
+			// update relationships
+			result.setContainer( discussion );
+			discussion.addContainerOf( result );
+			SiocUtils.incNumItems( discussion );
 
-        final Moodle2ClientWrapper client = connector.getClientManager()
-                .getDefaultClient();
-        UserRecord[] userRecords = client
-                .callMethod(new Callable<UserRecord[]>() {
-                    @Override
-                    public UserRecord[] call() throws Exception {
-                        return client.getBindingStub().get_user_byid(
-                                client.getAuthClient(), client.getSessionKey(),
-                                userid);
-                    }
-                });
+			if ( null != parentPost ) {
+				result.setReplyOf( parentPost );
+				parentPost.addReply( result );
+				SiocUtils.updateLastReplyDate( parentPost, createdDate );
+				SiocUtils.incNumReplies( parentPost );
+			}
+		}
+		return result;
+	}
 
-        if (null != userRecords && 0 < userRecords.length) {
-            UserRecord userRecord = userRecords[0];
-            Service service = connector.getService();
-            URI uri = createSiocUserUri(
-                    service.getServiceEndpoint().asURI(),
-                    userRecord.getId());
+	public static URI createUserUri( final URI rootUri, final int id ) {
+		return Builder.createURI(
+		        UriTemplate.fromTemplate( rootUri + TEMPLATE_USER_URI )
+		                .set( TEMPLATE_VAR_USER_ID, id )
+		                .expand() );
+	}
 
-            UserAccount result = new UserAccount(connector.getContext()
-                    .getModel(), uri, true);
-            result.setId(Integer.toString(userRecord.getId()));
-            result.setName(userRecord.getName());
-            result.setAccountName(Integer.toString(userRecord.getId()));
-            result.setAccountServiceHomepage(service.getServiceEndpoint());
+	public static URI createForumUri( final URI rootUri, final int id ) {
+		return Builder.createURI(
+		        UriTemplate.fromTemplate( rootUri + TEMPLATE_FORUM_URI )
+		                .set( TEMPLATE_VAR_FORUM_ID, id )
+		                .expand() );
+	}
 
-            Thing.setService(result.getModel(), result.getResource(), service);
-            service.addServiceOf(result);
+	public static URI createForumDiscussionUri( final URI rootUri, final int id ) {
+		return Builder.createURI(
+		        UriTemplate.fromTemplate( rootUri + TEMPLATE_DISCUSSION_URI )
+		                .set( TEMPLATE_VAR_DISCUSSION_ID, id )
+		                .expand() );
+	}
 
-            return result;
-        }
+	public static URI createForumPostUri(
+	        final URI rootUri,
+	        final int discussionId,
+	        final int entryId ) {
+		return Builder.createURI(
+		        UriTemplate.fromTemplate( rootUri + TEMPLATE_FORUM_POST_URI )
+		                .set( TEMPLATE_VAR_DISCUSSION_ID, discussionId )
+		                .set( TEMPLATE_VAR_ENTRY_ID, entryId )
+		                .expand() );
+	}
 
-        throw new IOException("Failed to read user data");
-    }
+	public static boolean isForumUri( final URI uri, final URI rootUri ) {
+		Pattern pattern = Pattern.compile(
+		        "^" + rootUri + Moodle2SiocUtils.REGEX_FORUM_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
+	
+		return matcher.matches();
+	}
 
-    public static URI createSiocForumUri(URI rootUri, int id) {
-        return Builder.createURI(
-                UriTemplate.fromTemplate(rootUri + TEMPLATE_FORUM_URI)
-                        .set(TEMPLATE_VAR_FORUM_ID, id)
-                        .expand());
-    }
+	public static boolean isForumDiscussionUri( final URI uri, final URI rootUri ) {
+		Pattern pattern = Pattern.compile(
+		        "^" + rootUri + Moodle2SiocUtils.REGEX_DISCUSSION_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
 
-    public static URI createSiocThreadUri(URI rootUri, int id) {
-        return Builder.createURI(
-                UriTemplate.fromTemplate(rootUri + TEMPLATE_DISCUSSION_URI)
-                        .set(TEMPLATE_VAR_DISCUSSION_ID, id)
-                        .expand());
-    }
+		return matcher.matches();
+	}
 
-    public static URI createSiocPostUri(URI rootUri, int discussionId,
-            int entryId) {
-        return Builder.createURI(
-                UriTemplate.fromTemplate(rootUri
-                        + TEMPLATE_ENTRY_URI)
-                        .set(TEMPLATE_VAR_DISCUSSION_ID, discussionId)
-                        .set(TEMPLATE_VAR_ENTRY_ID, entryId)
-                        .expand());
-    }
-
-    public static URI createSiocUserUri(URI rootUri, int id) {
-        return Builder.createURI(
-                UriTemplate.fromTemplate(rootUri + TEMPLATE_USER_URI + "$")
-                        .set(TEMPLATE_VAR_USER_ID, id)
-                        .expand());
-    }
-
-    /**
-     * Checks if the <code>uri</code> is a moodle post {@link URI}.
-     * 
-     * @param uri
-     *            {@link URI} to test.
-     * @return Return <code>true</code> if the <code>uri</code> is a moodle post
-     *         {@link URI}.
-     */
-    public static boolean isPostUri(URI uri, URI serviceEndpoint) {
-        Pattern pattern = Pattern.compile(
-                serviceEndpoint + Moodle2SiocUtils.REGEX_ENTRY_URI + "$");
-        Matcher matcher = pattern.matcher(uri.toString());
-
-        return matcher.matches();
-    }
-
-    /**
-     * Checks if the <code>uri</code> is a moodle thread {@link URI}.
-     * 
-     * @param uri
-     *            {@link URI} to test.
-     * @return Return <code>true</code> if the <code>uri</code> is a moodle
-     *         thread {@link URI}.
-     */
-    public static boolean isThreadUri(URI uri, URI serviceEndpoint) {
-        Pattern pattern = Pattern.compile(
-                serviceEndpoint + Moodle2SiocUtils.REGEX_DISCUSSION_URI + "$");
-        Matcher matcher = pattern.matcher(uri.toString());
-
-        return matcher.matches();
-    }
-
-    public static boolean isForumUri(URI uri, URI serviceEndpoint) {
-        Pattern pattern = Pattern.compile(
-                serviceEndpoint + Moodle2SiocUtils.REGEX_FORUM_URI + "$");
-        Matcher matcher = pattern.matcher(uri.toString());
-
-        return matcher.matches();
-    }
+	public static boolean isForumPostUri( final URI uri, final URI rootUri ) {
+		Pattern pattern = Pattern.compile(
+		        "^" + rootUri + Moodle2SiocUtils.REGEX_FORUM_POST_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
+	
+		return matcher.matches();
+	}
 }

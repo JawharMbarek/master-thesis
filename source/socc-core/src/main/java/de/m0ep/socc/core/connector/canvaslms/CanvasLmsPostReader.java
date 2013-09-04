@@ -200,7 +200,7 @@ public class CanvasLmsPostReader extends
 				                courseId,
 				                topicId ) );
 
-				return CanvasLmsSiocUtils.createInitialEntryPost(
+				return CanvasLmsSiocUtils.createSiocPost(
 				        getConnector(),
 				        container,
 				        discussionTopic,

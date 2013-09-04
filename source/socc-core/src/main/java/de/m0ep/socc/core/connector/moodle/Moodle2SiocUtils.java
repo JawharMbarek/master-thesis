@@ -38,7 +38,7 @@ public final class Moodle2SiocUtils {
 	public static final String REGEX_INT_ID_GROUP = "([0-9]+)";
 
 	public static final String REGEX_USER_URI =
-	        "/user/profile.php?id="
+	        "/user/profile\\.php\\?id="
 	                + REGEX_INT_ID_GROUP;
 
 	public static final String REGEX_FORUM_URI =
@@ -50,7 +50,7 @@ public final class Moodle2SiocUtils {
 	                + REGEX_INT_ID_GROUP;
 
 	public static final String REGEX_FORUM_POST_URI =
-	        "/mod/forum/discuss.php?d="
+	        "/mod/forum/discuss\\.php\\?d="
 	                + REGEX_INT_ID_GROUP
 	                + "#p"
 	                + REGEX_INT_ID_GROUP;
@@ -94,7 +94,7 @@ public final class Moodle2SiocUtils {
 	        throws AuthenticationException, IOException {
 		Preconditions.checkNotNull( connector,
 		        "Required parameter connector must be specified." );
-	
+
 		final Moodle2ClientWrapper client = connector.getClientManager()
 		        .getDefaultClient();
 		UserRecord[] userRecords = client
@@ -106,27 +106,27 @@ public final class Moodle2SiocUtils {
 				                userid );
 			        }
 		        } );
-	
+
 		if ( null != userRecords && 0 < userRecords.length ) {
 			UserRecord userRecord = userRecords[0];
 			Service service = connector.getService();
 			URI uri = createUserUri(
 			        service.getServiceEndpoint().asURI(),
 			        userRecord.getId() );
-	
+
 			UserAccount result = new UserAccount( connector.getContext()
 			        .getModel(), uri, true );
 			result.setId( Integer.toString( userRecord.getId() ) );
 			result.setName( userRecord.getName() );
 			result.setAccountName( Integer.toString( userRecord.getId() ) );
 			result.setAccountServiceHomepage( service.getServiceEndpoint() );
-	
+
 			Thing.setService( result.getModel(), result.getResource(), service );
 			service.addServiceOf( result );
-	
+
 			return result;
 		}
-	
+
 		throw new IOException( "Failed to read user data" );
 	}
 
@@ -346,7 +346,7 @@ public final class Moodle2SiocUtils {
 		Pattern pattern = Pattern.compile(
 		        "^" + rootUri + Moodle2SiocUtils.REGEX_FORUM_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
-	
+
 		return matcher.matches();
 	}
 
@@ -362,7 +362,7 @@ public final class Moodle2SiocUtils {
 		Pattern pattern = Pattern.compile(
 		        "^" + rootUri + Moodle2SiocUtils.REGEX_FORUM_POST_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
-	
+
 		return matcher.matches();
 	}
 }

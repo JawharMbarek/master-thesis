@@ -40,7 +40,7 @@ Abbildung \ref{fig:uebersicht_conector_cfg} zeigt die entwickelte Connector Con
 
 \medskip
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[
         width=\textwidth,
@@ -59,7 +59,7 @@ Jeder Connector erhält einen eindeutigen \texttt{id} zugewiesen, um jeden diese
 
 Wie eben schon beschrieben, existiert für SIOC ein Modul zur einfachen Modellierung von Diensten auf semantischer Ebene. Kernstück dieses Moduls ist die Klasse Service, wie auf Abbildung \ref{fig:uebersicht_sioc_services} zu sehen ist. Mit dieser Klasse kann durch eine Hand voll Eigenschaften ein Dienst beschrieben werden. Für diese Arbeit ist davon die wichtigste Eigenschaft \texttt{service\_endpoint}. Durch diese kann die Adresse festgelegt werden, unter dem ein bestimmter Dienst erreichbar ist. Gerade bei Plattformen die nicht an eine feste Adresse (Foren, Blogs, $\dots$) gebunden sind, ist diese Angabe unerlässlich. 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[
         width=0.7\textwidth,
@@ -101,7 +101,7 @@ Die Wahl für SIOC als Datenformat zu hat sich nach den ersten Tests als eine se
 
 \medskip
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[
         width=\textwidth,
@@ -192,7 +192,7 @@ Der \texttt{PostReader} dient als Schnittstelle, um auf geschriebene Beitrage in
 \label{ssub:postwriter}
 
 In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein Sequenzdiagramm der PostWriter Komponente zu sehen. Dort ist visualisiert, welche Schritte für das stellvertretende Schreiben von Beiträgen eines Benutzers unternommen werden müssen. Soll nun ein Beitrag in einer SOC geschrieben werden, wird die Methode \texttt{writePost(URI, String, Syntax)} mit dem Zielort als URI, dem Beitrag als serialisiertes RDF Objekt und dem verwendeten Serialisierungsformates aufgerufen. Begonnen wird damit, dass als erstes nach einem UserAccount für den Service des aktuellen Connectors des Beitragautors gesucht. Im Idealfall befindet sich für den UserAccount des Beitragsautors ein Link zu seiner FOAF Person und von ein weiterer Link zum UserAccount für den aktuellen Service. Mit diesem UserAccount kann dann vom ClientManager ein Clientobjekt für die verwendete API angefordert werden. Sollte die Suche negativ verlaufen, steht der vordefinierte Client zur Verfügung. Mit diesem Client, ob mit der des Autors oder dem Vordefinierten, wird im letzten Schritt der Beitrag im von der API verwendeten Format in die SOC geschrieben.
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \includegraphics[
 width=\textwidth,
@@ -213,7 +213,7 @@ trim= 90 200 220 75
 \section{SOCC-Camel} % (fold)
 \label{sec:socc_camel}
 
-\begin{figure}[h]
+\begin{figure}[ht]
      \includegraphics[
         width=\textwidth,
         keepaspectratio=true

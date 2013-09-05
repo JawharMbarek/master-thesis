@@ -49,13 +49,20 @@ import de.m0ep.socc.core.exceptions.NotFoundException;
  * @author Florian Müller
  */
 public abstract class DefaultConnector implements IConnector {
-	private static Map<String, IConnector> connectorMap;
+	public static final String DEFAULT_MESSAGE_TEMPLATE = "{author} wrote: {message}";
+	public static final String MESSAGE_TEMPLATE_VAR_AUTHOR = "author";
+	public static final String MESSAGE_TEMPLATE_VAR_MESSAGE = "message";
+	public static final String MESSAGE_TEMPLATE_VAR_CONNECTOR_ID = "connectorId";
+	public static final String MESSAGE_TEMPLATE_VAR_SERVICE = "service";
 
 	protected String id;
 	protected ISoccContext context;
 	protected UserAccount defaultUserAccount;
 	protected Service service;
 	protected boolean isInitialized;
+	protected String messageTemplateString;
+
+	private static Map<String, IConnector> connectorMap;
 
 	static {
 		connectorMap = Maps.newHashMap();
@@ -77,8 +84,11 @@ public abstract class DefaultConnector implements IConnector {
 	 *             Thrown if <code>context</code> or <code>id</code> are
 	 *             <code>null</code>.
 	 */
-	public static IConnector createConnector( final ISoccContext context, final String connectorId )
-	        throws ConnectorException, NotFoundException {
+	public static IConnector createConnector(
+	        final ISoccContext context,
+	        final String connectorId )
+	        throws ConnectorException,
+	        NotFoundException {
 		Preconditions.checkNotNull( context,
 		        "Required parameter context must be specified." );
 		Preconditions.checkNotNull( connectorId,
@@ -111,8 +121,10 @@ public abstract class DefaultConnector implements IConnector {
 	 *             Thrown if the parameter <code>config</code> has no
 	 *             <b>connectorClassName<b> property.
 	 */
-	public static IConnector createConnector( final ISoccContext context,
-	        final ConnectorConfig config ) throws ConnectorException {
+	public static IConnector createConnector(
+	        final ISoccContext context,
+	        final ConnectorConfig config )
+	        throws ConnectorException {
 		Preconditions.checkNotNull( context,
 		        "Required parameter context must be specified." );
 		Preconditions.checkNotNull( config,
@@ -196,8 +208,10 @@ public abstract class DefaultConnector implements IConnector {
 	 * @throws IllegalStateException
 	 *             Thrown if the <code>model</code> was not opened.
 	 */
-	public static ConnectorConfig readConnectorConfig( final Model model,
-	        final String connectorId ) throws NotFoundException {
+	public static ConnectorConfig readConnectorConfig(
+	        final Model model,
+	        final String connectorId )
+	        throws NotFoundException {
 		Preconditions.checkNotNull( model,
 		        "Required parameter model must be specified." );
 		Preconditions.checkState( model.isOpen(),
@@ -230,6 +244,7 @@ public abstract class DefaultConnector implements IConnector {
 		this.defaultUserAccount = null;
 		this.service = null;
 		this.isInitialized = false;
+		this.messageTemplateString = DEFAULT_MESSAGE_TEMPLATE;
 	}
 
 	/**
@@ -243,7 +258,8 @@ public abstract class DefaultConnector implements IConnector {
 	 *             Thrown if <code>config</code> contains no <code>id</code>,
 	 *             <code>defaultUser</code> or <code>service</code>.
 	 */
-	public DefaultConnector( final ISoccContext context,
+	public DefaultConnector(
+	        final ISoccContext context,
 	        final ConnectorConfig config ) {
 		this();
 		this.context = Preconditions.checkNotNull(
@@ -265,6 +281,10 @@ public abstract class DefaultConnector implements IConnector {
 		Preconditions.checkArgument( config.hasService(),
 		        "Provided parameter config contains no service" );
 		this.service = config.getService();
+
+		if ( config.hasUnknownMessageTemplate() ) {
+			this.messageTemplateString = config.getUnknownMessageTemplate();
+		}
 	}
 
 	/**
@@ -281,10 +301,10 @@ public abstract class DefaultConnector implements IConnector {
 	 *             Thrown if <code>id</code> is empty.
 	 */
 	public DefaultConnector(
-	        String id,
-	        ISoccContext context,
-	        UserAccount defaultUserAccount,
-	        Service service ) {
+	        final String id,
+	        final ISoccContext context,
+	        final UserAccount defaultUserAccount,
+	        final Service service ) {
 		this();
 		this.id = Preconditions.checkNotNull(
 		        id,
@@ -327,6 +347,16 @@ public abstract class DefaultConnector implements IConnector {
 	}
 
 	@Override
+	public String getUnknownMessageTemplate() {
+		return messageTemplateString;
+	}
+
+	@Override
+	public void setUnknownMessageTemplate( final String template ) {
+		this.messageTemplateString = template;
+	}
+
+	@Override
 	public boolean isInitialized() {
 		return isInitialized;
 	}
@@ -336,7 +366,7 @@ public abstract class DefaultConnector implements IConnector {
 	 * 
 	 * @param isInitialized
 	 */
-	protected void setInitialized( boolean isInitialized ) {
+	protected void setInitialized( final boolean isInitialized ) {
 		this.isInitialized = isInitialized;
 	}
 }

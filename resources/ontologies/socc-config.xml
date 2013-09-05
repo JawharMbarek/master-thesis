@@ -87,6 +87,12 @@
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
+<!-- http://www.m0ep.de/socc/config#messageTemplate -->
+    <owl:DatatypeProperty rdf:about="http://www.m0ep.de/socc/config#messageTemplate">
+        <rdfs:domain rdf:resource="http://www.m0ep.de/socc/config#ConnectorConfig"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
 
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////

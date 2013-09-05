@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
 <!--
     Author: Florian Mueller
-    Date: 2013-08-07
-    Version: 1.1
+    Date: 2013-09-05
+    Version: 1.2
 -->
-
 
 <!DOCTYPE rdf:RDF [
     <!ENTITY sioc "http://rdfs.org/sioc/ns#" >
@@ -15,7 +14,6 @@
     <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
     <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
 ]>
-
 
 <rdf:RDF xmlns="http://www.m0ep.de/socc/config#"
      xml:base="http://www.m0ep.de/socc/config#"
@@ -42,13 +40,10 @@
     
 
     <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
+    //////////////////////////////
     // Object Properties
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
+    //////////////////////////////
+    -->
 
     <!-- http://www.m0ep.de/socc/config#defaultUser -->
     <owl:ObjectProperty rdf:about="http://www.m0ep.de/socc/config#defaultUserAccount">
@@ -62,14 +57,11 @@
         <rdfs:range rdf:resource="&siocs;Service"/>
     </owl:ObjectProperty>
     
-
     <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
+    //////////////////////////////
     // Data properties
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
+    //////////////////////////////
+    -->
 
     
     <!-- http://www.m0ep.de/socc/config#connectorClass Name
@@ -80,26 +72,22 @@
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
-
     <!-- http://www.m0ep.de/socc/config#id -->
     <owl:DatatypeProperty rdf:about="http://www.m0ep.de/socc/config#id">
         <rdfs:domain rdf:resource="http://www.m0ep.de/socc/config#ConnectorConfig"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
-<!-- http://www.m0ep.de/socc/config#messageTemplate -->
-    <owl:DatatypeProperty rdf:about="http://www.m0ep.de/socc/config#messageTemplate">
+<!-- http://www.m0ep.de/socc/config#unknownMessageTemplate -->
+    <owl:DatatypeProperty rdf:about="http://www.m0ep.de/socc/config#unknownMessageTemplate">
         <rdfs:domain rdf:resource="http://www.m0ep.de/socc/config#ConnectorConfig"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
-
     <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
+    //////////////////////////////
     // Classes
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////
      -->
 
     <!-- http://www.m0ep.de/socc/config#ConnectorConfig -->

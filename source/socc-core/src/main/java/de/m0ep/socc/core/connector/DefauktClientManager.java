@@ -29,7 +29,7 @@ public abstract class DefauktClientManager<T> implements
                 "Required parameter defaultUserAccount must be specified.");
 
         init();
-        this.defaultClient = createClientFromAccount(defaultUserAccount);
+        this.defaultClient = createClient(defaultUserAccount);
     }
 
     protected abstract void init();

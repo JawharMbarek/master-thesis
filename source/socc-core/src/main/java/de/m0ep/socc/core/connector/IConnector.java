@@ -67,14 +67,6 @@ public interface IConnector {
 	public String getUnknownMessageTemplate();
 
 	/**
-	 * Sets the message template for unknown {@link UserAccount}s
-	 * 
-	 * @param template
-	 *            The template String to set
-	 */
-	public void setUnknownMessageTemplate( String template );
-
-	/**
 	 * Returns the default {@link UserAccount} of this connector.
 	 */
 	public UserAccount getDefaultUserAccount();

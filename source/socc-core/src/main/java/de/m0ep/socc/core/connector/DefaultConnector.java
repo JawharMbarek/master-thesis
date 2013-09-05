@@ -352,11 +352,6 @@ public abstract class DefaultConnector implements IConnector {
 	}
 
 	@Override
-	public void setUnknownMessageTemplate( final String template ) {
-		this.messageTemplateString = template;
-	}
-
-	@Override
 	public boolean isInitialized() {
 		return isInitialized;
 	}

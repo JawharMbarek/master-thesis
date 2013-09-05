@@ -48,7 +48,7 @@ public interface IClientManager<T> {
      *             Thrown if <code>userAccount</code> has invalid properties to
      *             create a client.
      */
-    public T createClientFromAccount(UserAccount userAccount) throws Exception;
+    public T createClient(UserAccount userAccount) throws Exception;
 
     /**
      * Adds a new client with a corresponding {@link UserAccount}.

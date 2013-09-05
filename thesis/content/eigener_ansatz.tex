@@ -123,7 +123,7 @@ Die Suche nach einer bestehen Ontologie, welche zusammen mit SIOC verwendet werd
 
 % subsection konfiguration (end)
 
-\subsection{Aufbau eines Connectors} % (fold)
+\subsection{Aufbau der SOCC} % (fold)
 \label{sub:connector_aufbau}
 
 \begin{figure}[ht]
@@ -136,23 +136,92 @@ Die Suche nach einer bestehen Ontologie, welche zusammen mit SIOC verwendet werd
     \label{fig:uebersicht_socc}
 \end{figure}
 
+\subsection{Design eines Connectors} % (fold)
+\label{sub:design_eines_connectors}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[
+        scale=0.95,
+        keepaspectratio=true,
+        angle=90
+    ]{assets/images/socc_uml_classdiagram}
+    \caption{UML Klassendiagramm eines Connectors}
+    \label{fig:connecotr_uml_classdiagram}
+\end{figure}
+
+% subsection design_eines_connectors (end)
+
+\subsubsection{SOCC Context} % (fold)
+\label{ssub:socc_context}
+
+\begin{wrapfigure}{r}{6cm}
+\centering
+\includegraphics[
+width=6cm,
+keepaspectratio=true,
+clip=true,
+trim= 35 340 520 9
+]{assets/images/socc_uml_classdiagram}
+\caption{SOCC Context}
+\label{fig:uml_socc_context}
+\end{wrapfigure}
+
+Text \wrapfill
+
+% subsubsection socc_context (end)
+
+\subsubsection{AccessControl} % (fold)
+\label{ssub:accesscontrol}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[
+width=0.8\textwidth,
+keepaspectratio=true,
+clip=true,
+trim= 35 8 250 340
+]{assets/images/socc_uml_classdiagram}
+\caption{AccessControl}
+\label{fig:uml_accesscontrol}
+\end{figure}
+
+Text 
+
+% subsubsection accesscontrol (end)
+
+
 \subsubsection{ClientManager} % (fold)
 \label{ssub:clientmanager}
+
+\begin{wrapfigure}{r}{9cm}
+\centering
+\includegraphics[
+width=9cm,
+keepaspectratio=true,
+clip=true,
+trim= 497 257 9 9
+]{assets/images/socc_uml_classdiagram}
+\caption{ClientManager}
+\label{fig:uml_clientmanager}
+\end{wrapfigure}
+
+Text \wrapfill
 
 % subsubsection clientmanager (end)
 
 \subsubsection{StructureReader} % (fold)
 \label{ssub:structurereader}
 
-\begin{wrapfigure}[10]{r}{7cm}
+\begin{wrapfigure}[10]{r}{9cm}
     \centering
     \includegraphics[
-        width=5cm,
+        width=9cm,
         keepaspectratio=true,
         clip=true,
-        trim= 0 126 456 326
+        trim= 20 118 456 206
     ]
-    {assets/images/uml_iconnector.png}
+    {assets/images/socc_uml_classdiagram}
     \caption{StructurReader}
     \label{fig:uml_structure_reader}
 \end{wrapfigure}
@@ -173,15 +242,16 @@ Um auf Informationen über die Struktur von Foren, sozialen Netzwerken und so we
 \subsubsection{PostReader} % (fold)
 \label{ssub:postreader}
 
-\begin{wrapfigure}{r}{7cm}
+\begin{wrapfigure}{r}{9cm}
 \centering
 \includegraphics[
-width=6cm,
+width=9cm,
 keepaspectratio=true,
 clip=true,
-trim= 220 144 220 344
-]{assets/images/uml_iconnector.png}
+trim= 243 137 255 206
+]{assets/images/socc_uml_classdiagram}
 \caption{PostReader}
+\label{fig:uml_post_reader}
 \end{wrapfigure}
 
 Der \texttt{PostReader} dient als Schnittstelle, um auf geschriebene Beitrage innerhalb eines Containers oder die Kommentare auf eines Beitrags zuzugreifen. Die Methode \texttt{hasPosts(URI)} ist nur zur Überprüfung ob ein Container oder ein Beitrag hinter einer URI weiter Beiträge enthält die gelesen werden können. Um einen einzelnen Beitrag anhand seiner URI lesen zu können kann die Methode \texttt{getPost(URI)}  genutzt werden. Sei liefert dann den Beitrag SIOC Post Objekt zurück beziehungsweise einen Fehler, falls der Beitrag nicht mit diesem Connector gelesen werden kann. Die wichtigste Methode dahingegen ist \texttt{pollPosts(URI, Date, int)}. Insgesamt können dieser Methode drei Parameter übergeben werden. Der Erste ist eine URI die den Ort angibt von der alle Beiträge gelesen werden können. Mit dem zweiten Parameter kann ein Zeitpunkt angegeben werden, ab dem ein zu lesender Beitrag geschrieben sein muss. Alle Beiträge die vor diesem Zeitpunkt erstellt wurden, werden nicht zurück gegeben. Der letzte Parameter gibt eine obere Schranke an wie viele Beiträge maximal pro Aufruf dieser Methode gelesen werden dürfen.

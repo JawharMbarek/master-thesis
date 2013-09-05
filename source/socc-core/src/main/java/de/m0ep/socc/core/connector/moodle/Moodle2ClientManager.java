@@ -27,7 +27,7 @@ public class Moodle2ClientManager extends
 	}
 
 	@Override
-	public Moodle2ClientWrapper createClientFromAccount( UserAccount userAccount )
+	public Moodle2ClientWrapper createClient( UserAccount userAccount )
 	        throws Exception {
 		de.m0ep.sioc.services.auth.UserAccount authUserAccount =
 		        de.m0ep.sioc.services.auth.UserAccount.getInstance(

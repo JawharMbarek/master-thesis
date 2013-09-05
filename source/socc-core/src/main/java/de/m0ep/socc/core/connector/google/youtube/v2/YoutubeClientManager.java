@@ -114,7 +114,7 @@ public class YoutubeClientManager extends
     }
 
     @Override
-    public YoutubeClientWrapper createClientFromAccount(UserAccount userAccount)
+    public YoutubeClientWrapper createClient(UserAccount userAccount)
             throws Exception {
         Preconditions.checkState(null != apiKey,
                 "API key missing.");

@@ -111,7 +111,7 @@ public class GooglePlusPostReader extends
 	        AuthenticationException,
 	        IOException {
 		Pattern pattern = Pattern.compile( "^"
-		        + GooglePlusSiocUtils.GOOGLE_PLUS_ROOT_URI
+		        + GooglePlusSiocUtils.GOOGLE_PLUS_API_ROOT_URI
 		        + GooglePlusSiocUtils.REGEX_ACTIVITY_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
@@ -138,7 +138,7 @@ public class GooglePlusPostReader extends
 	        AuthenticationException,
 	        IOException {
 		Pattern pattern = Pattern.compile( "^"
-		        + GooglePlusSiocUtils.GOOGLE_PLUS_ROOT_URI
+		        + GooglePlusSiocUtils.GOOGLE_PLUS_API_ROOT_URI
 		        + GooglePlusSiocUtils.REGEX_COMMENT_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
@@ -151,7 +151,7 @@ public class GooglePlusPostReader extends
 				        .get( commentId )
 				        .execute();
 
-				return GooglePlusSiocUtils.createSiocComment( getConnector(), comment, null );
+				return GooglePlusSiocUtils.createSiocPost( getConnector(), comment, null );
 			} catch ( IOException e ) {
 				GooglePlusConnector.handleGoogleException( e );
 			}
@@ -164,7 +164,7 @@ public class GooglePlusPostReader extends
 	        throws AuthenticationException,
 	        IOException {
 		Pattern pattern = Pattern.compile( "^"
-		        + GooglePlusSiocUtils.GOOGLE_PLUS_ROOT_URI
+		        + GooglePlusSiocUtils.GOOGLE_PLUS_API_ROOT_URI
 		        + GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
 		Matcher matcher = pattern.matcher( sourceUri.toString() );
 		List<Post> result = Lists.newArrayList();
@@ -216,7 +216,7 @@ public class GooglePlusPostReader extends
 	        throws AuthenticationException,
 	        IOException {
 		Pattern pattern = Pattern.compile( "^"
-		        + GooglePlusSiocUtils.GOOGLE_PLUS_ROOT_URI
+		        + GooglePlusSiocUtils.GOOGLE_PLUS_API_ROOT_URI
 		        + GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
 		Matcher matcher = pattern.matcher( sourceUri.toString() );
 		List<Post> result = Lists.newArrayList();
@@ -242,7 +242,7 @@ public class GooglePlusPostReader extends
 						Date createdDate = new Date( comment.getPublished().getValue() );
 						if ( ( 0 > limit || limit < result.size() )
 						        && ( null == since || createdDate.after( since ) ) ) {
-							result.add( GooglePlusSiocUtils.createSiocComment(
+							result.add( GooglePlusSiocUtils.createSiocPost(
 							        getConnector(),
 							        comment,
 							        parentPost ) );

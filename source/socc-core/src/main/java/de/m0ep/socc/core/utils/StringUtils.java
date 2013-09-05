@@ -32,21 +32,21 @@ import com.google.common.base.Strings;
  * @author Florian Müller
  */
 public class StringUtils {
-    /**
-     * Private constructor, because this class has only static methods.
-     */
-    private StringUtils() {
-    }
+	/**
+	 * Private constructor, because this class has only static methods.
+	 */
+	private StringUtils() {
+	}
 
-    /**
-     * User JSoup to remove all HTML tags from a string If value is empty, it
-     * will be converted to an empty string.
-     * 
-     * @param value
-     *            String to strip
-     * @return String without HTML tags
-     */
-    public static String stripHTML(final String value) {
-        return Jsoup.parse(Strings.nullToEmpty(value)).text();
-    }
+	/**
+	 * User JSoup to remove all HTML tags from a string If value is empty, it
+	 * will be converted to an empty string.
+	 * 
+	 * @param value
+	 *            String to strip
+	 * @return String without HTML tags
+	 */
+	public static String stripHTML( final String value ) {
+		return Jsoup.parse( Strings.nullToEmpty( value ) ).text();
+	}
 }

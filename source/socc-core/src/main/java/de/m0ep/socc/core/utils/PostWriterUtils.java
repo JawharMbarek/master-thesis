@@ -71,7 +71,7 @@ public final class PostWriterUtils {
 			} else {
 				try {
 					Object client = connector.getClientManager()
-					        .createClientFromAccount( serviceAccount );
+					        .createClient( serviceAccount );
 
 					connector.getClientManager().add( serviceAccount,
 					        client );

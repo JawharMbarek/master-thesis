@@ -74,7 +74,7 @@ public class CanvasLmsClientManager extends
      *             Thrown if has missing parameters to create a client.
      */
     @Override
-    public CanvasLmsClient createClientFromAccount(final UserAccount userAccount)
+    public CanvasLmsClient createClient(final UserAccount userAccount)
             throws Exception {
         Preconditions.checkNotNull(userAccount,
                 "Required parameter userAccount must be specified.");

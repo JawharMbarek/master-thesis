@@ -76,7 +76,7 @@ public class Moodle2StructureReader extends
 
 		if ( Moodle2SiocUtils.isForumUri( uri, getServiceEndpoint() ) ) {
 			return getForum( uri );
-		} else if ( Moodle2SiocUtils.isThreadUri( uri, getServiceEndpoint() ) ) {
+		} else if ( Moodle2SiocUtils.isForumDiscussionUri( uri, getServiceEndpoint() ) ) {
 			return getThread( uri );
 		}
 
@@ -113,7 +113,7 @@ public class Moodle2StructureReader extends
 
 	@Override
 	public boolean hasChildContainer( URI uri ) {
-		return Moodle2SiocUtils.isThreadUri( uri, getServiceEndpoint() );
+		return Moodle2SiocUtils.isForumDiscussionUri( uri, getServiceEndpoint() );
 	}
 
 	@Override

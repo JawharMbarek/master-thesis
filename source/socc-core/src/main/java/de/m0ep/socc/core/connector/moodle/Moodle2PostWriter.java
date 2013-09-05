@@ -72,14 +72,14 @@ public class Moodle2PostWriter extends
                 Resource resource = postIter.next();
                 Post post = Post.getInstance(tmpModel, resource);
 
-                if (Moodle2SiocUtils.isThreadUri(targetUri,
+                if (Moodle2SiocUtils.isForumDiscussionUri(targetUri,
                         getServiceEndpoint())) {
                     Container targetContainer = getConnector()
                             .getStructureReader()
                             .getContainer(targetUri);
 
                     writePost(targetContainer, post);
-                } else if (Moodle2SiocUtils.isPostUri(targetUri,
+                } else if (Moodle2SiocUtils.isForumPostUri(targetUri,
                         getServiceEndpoint())) {
                     Post targetPost = getConnector().getPostReader().readPost(
                             targetUri);

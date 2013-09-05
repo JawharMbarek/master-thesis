@@ -108,7 +108,7 @@ public class FacebookClientManager extends
     }
 
     @Override
-    public FacebookClientWrapper createClientFromAccount(UserAccount userAccount)
+    public FacebookClientWrapper createClient(UserAccount userAccount)
             throws Exception {
         Preconditions.checkState(null != clientId,
                 "Client id missing.");

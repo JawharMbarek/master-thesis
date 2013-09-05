@@ -62,6 +62,11 @@ public interface IConnector {
 	public Service getService();
 
 	/**
+	 * Returns the message template for unknown {@link UserAccount}s
+	 */
+	public String getUnknownMessageTemplate();
+
+	/**
 	 * Returns the default {@link UserAccount} of this connector.
 	 */
 	public UserAccount getDefaultUserAccount();

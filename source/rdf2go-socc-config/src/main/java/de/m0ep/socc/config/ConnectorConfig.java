@@ -37,12 +37,12 @@ public class ConnectorConfig extends OwlThing {
 	public static final URI RDFS_CLASS = new URIImpl(
 	        "http://www.m0ep.de/socc/config#ConnectorConfig", false );
 
-	/** http://www.m0ep.de/socc/config#connectorClass */
-	public static final URI CONNECTORCLASS = new URIImpl(
+	/** http://www.m0ep.de/socc/config#connectorClassName */
+	public static final URI CONNECTOR_CLASSNAME = new URIImpl(
 	        "http://www.m0ep.de/socc/config#connectorClassName", false );
 
 	/** http://www.m0ep.de/socc/config#defaultUserAccount */
-	public static final URI DEFAULTUSERACCOUNT = new URIImpl(
+	public static final URI DEFAULT_USERACCOUNT = new URIImpl(
 	        "http://www.m0ep.de/socc/config#defaultUserAccount", false );
 
 	/** http://www.m0ep.de/socc/config#id */
@@ -50,6 +50,10 @@ public class ConnectorConfig extends OwlThing {
 
 	/** http://www.m0ep.de/socc/config#service */
 	public static final URI SERVICE = new URIImpl( "http://www.m0ep.de/socc/config#service", false );
+
+	/** http://www.m0ep.de/socc/config#unknownUserAccountMessageTemplate */
+	public static final URI UNKNOWN_MESSAGE_TEMPLATE = new URIImpl(
+	        "http://www.m0ep.de/socc/config#unknownMessageTemplate", false );
 
 	/**
 	 * All property-URIs with this class as domain. All properties of all
@@ -59,7 +63,8 @@ public class ConnectorConfig extends OwlThing {
 	        new URIImpl( "http://www.m0ep.de/socc/config#connectorClassName", false ),
 	        new URIImpl( "http://www.m0ep.de/socc/config#defaultUserAccount", false ),
 	        new URIImpl( "http://www.m0ep.de/socc/config#id", false ),
-	        new URIImpl( "http://www.m0ep.de/socc/config#service", false )
+	        new URIImpl( "http://www.m0ep.de/socc/config#service", false ),
+	        new URIImpl( "http://www.m0ep.de/socc/config#unknownMessageTemplate", false )
 	};
 
 	// protected constructors needed for inheritance
@@ -264,7 +269,7 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get0has-static]
 	 */
 	public static boolean hasConnectorClassName( Model model, Resource instanceResource ) {
-		return Base.has( model, instanceResource, CONNECTORCLASS );
+		return Base.has( model, instanceResource, CONNECTOR_CLASSNAME );
 	}
 
 	/**
@@ -275,7 +280,7 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get0has-dynamic]
 	 */
 	public boolean hasConnectorClassName() {
-		return Base.has( this.model, this.getResource(), CONNECTORCLASS );
+		return Base.has( this.model, this.getResource(), CONNECTOR_CLASSNAME );
 	}
 
 	/**
@@ -295,7 +300,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static boolean hasConnectorClassName( Model model, Resource instanceResource,
 	        Node value ) {
-		return Base.hasValue( model, instanceResource, CONNECTORCLASS, value );
+		return Base.hasValue( model, instanceResource, CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -310,7 +315,7 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get0has-value-dynamic]
 	 */
 	public boolean hasConnectorClassName( Node value ) {
-		return Base.hasValue( this.model, this.getResource(), CONNECTORCLASS, value );
+		return Base.hasValue( this.model, this.getResource(), CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -327,7 +332,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static ClosableIterator<Node> getAllConnectorClassName_asNode( Model model,
 	        Resource instanceResource ) {
-		return Base.getAll_asNode( model, instanceResource, CONNECTORCLASS );
+		return Base.getAll_asNode( model, instanceResource, CONNECTOR_CLASSNAME );
 	}
 
 	/**
@@ -339,7 +344,7 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get8dynamic]
 	 */
 	public ClosableIterator<Node> getAllConnectorClassName_asNode() {
-		return Base.getAll_asNode( this.model, this.getResource(), CONNECTORCLASS );
+		return Base.getAll_asNode( this.model, this.getResource(), CONNECTOR_CLASSNAME );
 	}
 
 	/**
@@ -355,7 +360,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static ClosableIterator<java.lang.String> getAllConnectorClassName( Model model,
 	        Resource instanceResource ) {
-		return Base.getAll( model, instanceResource, CONNECTORCLASS, java.lang.String.class );
+		return Base.getAll( model, instanceResource, CONNECTOR_CLASSNAME, java.lang.String.class );
 	}
 
 	/**
@@ -366,7 +371,8 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get12dynamic]
 	 */
 	public ClosableIterator<java.lang.String> getAllConnectorClassName() {
-		return Base.getAll( this.model, this.getResource(), CONNECTORCLASS, java.lang.String.class );
+		return Base.getAll( this.model, this.getResource(), CONNECTOR_CLASSNAME,
+		        java.lang.String.class );
 	}
 
 	/**
@@ -377,7 +383,7 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get12dynamic]
 	 */
 	public static String getConnectorClassName( Model model, Resource instanceResource ) {
-		return Base.getAll_as( model, instanceResource, CONNECTORCLASS,
+		return Base.getAll_as( model, instanceResource, CONNECTOR_CLASSNAME,
 		        java.lang.String.class ).firstValue();
 	}
 
@@ -389,7 +395,7 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get12dynamic]
 	 */
 	public String getConnectorClassName() {
-		return Base.getAll_as( this.model, this.getResource(), CONNECTORCLASS,
+		return Base.getAll_as( this.model, this.getResource(), CONNECTOR_CLASSNAME,
 		        java.lang.String.class ).firstValue();
 	}
 
@@ -408,7 +414,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static void addConnectorClassName( Model model, Resource instanceResource,
 	        Node value ) {
-		Base.add( model, instanceResource, CONNECTORCLASS, value );
+		Base.add( model, instanceResource, CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -421,7 +427,7 @@ public class ConnectorConfig extends OwlThing {
 	 *            [Generated from RDFReactor template rule #add1dynamic]
 	 */
 	public void addConnectorClassName( Node value ) {
-		Base.add( this.model, this.getResource(), CONNECTORCLASS, value );
+		Base.add( this.model, this.getResource(), CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -438,7 +444,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static void addConnectorClassName( Model model, Resource instanceResource,
 	        java.lang.String value ) {
-		Base.add( model, instanceResource, CONNECTORCLASS, value );
+		Base.add( model, instanceResource, CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -448,7 +454,7 @@ public class ConnectorConfig extends OwlThing {
 	 * [Generated from RDFReactor template rule #add4dynamic]
 	 */
 	public void addConnectorClassName( java.lang.String value ) {
-		Base.add( this.model, this.getResource(), CONNECTORCLASS, value );
+		Base.add( this.model, this.getResource(), CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -469,7 +475,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static void setConnectorClassName( Model model, Resource instanceResource,
 	        Node value ) {
-		Base.set( model, instanceResource, CONNECTORCLASS, value );
+		Base.set( model, instanceResource, CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -485,7 +491,7 @@ public class ConnectorConfig extends OwlThing {
 	 *            [Generated from RDFReactor template rule #set1dynamic]
 	 */
 	public void setConnectorClassName( Node value ) {
-		Base.set( this.model, this.getResource(), CONNECTORCLASS, value );
+		Base.set( this.model, this.getResource(), CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -506,7 +512,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static void setConnectorClassName( Model model, Resource instanceResource,
 	        java.lang.String value ) {
-		Base.set( model, instanceResource, CONNECTORCLASS, value );
+		Base.set( model, instanceResource, CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -522,7 +528,7 @@ public class ConnectorConfig extends OwlThing {
 	 *            [Generated from RDFReactor template rule #set4dynamic]
 	 */
 	public void setConnectorClassName( java.lang.String value ) {
-		Base.set( this.model, this.getResource(), CONNECTORCLASS, value );
+		Base.set( this.model, this.getResource(), CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -540,7 +546,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static void removeConnectorClassName( Model model, Resource instanceResource,
 	        Node value ) {
-		Base.remove( model, instanceResource, CONNECTORCLASS, value );
+		Base.remove( model, instanceResource, CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -553,7 +559,7 @@ public class ConnectorConfig extends OwlThing {
 	 *            [Generated from RDFReactor template rule #remove1dynamic]
 	 */
 	public void removeConnectorClassName( Node value ) {
-		Base.remove( this.model, this.getResource(), CONNECTORCLASS, value );
+		Base.remove( this.model, this.getResource(), CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -571,7 +577,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static void removeConnectorClassName( Model model, Resource instanceResource,
 	        java.lang.String value ) {
-		Base.remove( model, instanceResource, CONNECTORCLASS, value );
+		Base.remove( model, instanceResource, CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -584,7 +590,7 @@ public class ConnectorConfig extends OwlThing {
 	 *            [Generated from RDFReactor template rule #remove4dynamic]
 	 */
 	public void removeConnectorClassName( java.lang.String value ) {
-		Base.remove( this.model, this.getResource(), CONNECTORCLASS, value );
+		Base.remove( this.model, this.getResource(), CONNECTOR_CLASSNAME, value );
 	}
 
 	/**
@@ -598,7 +604,7 @@ public class ConnectorConfig extends OwlThing {
 	 *            [Generated from RDFReactor template rule #removeall1static]
 	 */
 	public static void removeAllConnectorClassName( Model model, Resource instanceResource ) {
-		Base.removeAll( model, instanceResource, CONNECTORCLASS );
+		Base.removeAll( model, instanceResource, CONNECTOR_CLASSNAME );
 	}
 
 	/**
@@ -607,7 +613,7 @@ public class ConnectorConfig extends OwlThing {
 	 * [Generated from RDFReactor template rule #removeall1dynamic]
 	 */
 	public void removeAllConnectorClassName() {
-		Base.removeAll( this.model, this.getResource(), CONNECTORCLASS );
+		Base.removeAll( this.model, this.getResource(), CONNECTOR_CLASSNAME );
 	}
 
 	/**
@@ -622,7 +628,7 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get0has-static]
 	 */
 	public static boolean hasDefaultUserAccount( Model model, Resource instanceResource ) {
-		return Base.has( model, instanceResource, DEFAULTUSERACCOUNT );
+		return Base.has( model, instanceResource, DEFAULT_USERACCOUNT );
 	}
 
 	/**
@@ -633,7 +639,7 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get0has-dynamic]
 	 */
 	public boolean hasDefaultUserAccount() {
-		return Base.has( this.model, this.getResource(), DEFAULTUSERACCOUNT );
+		return Base.has( this.model, this.getResource(), DEFAULT_USERACCOUNT );
 	}
 
 	/**
@@ -653,7 +659,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static boolean hasDefaultUserAccount( Model model, Resource instanceResource,
 	        Node value ) {
-		return Base.hasValue( model, instanceResource, DEFAULTUSERACCOUNT, value );
+		return Base.hasValue( model, instanceResource, DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -668,7 +674,7 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get0has-value-dynamic]
 	 */
 	public boolean hasDefaultUserAccount( Node value ) {
-		return Base.hasValue( this.model, this.getResource(), DEFAULTUSERACCOUNT, value );
+		return Base.hasValue( this.model, this.getResource(), DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -685,7 +691,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static ClosableIterator<Node> getAllDefaultUserAccount_asNode( Model model,
 	        Resource instanceResource ) {
-		return Base.getAll_asNode( model, instanceResource, DEFAULTUSERACCOUNT );
+		return Base.getAll_asNode( model, instanceResource, DEFAULT_USERACCOUNT );
 	}
 
 	/**
@@ -697,7 +703,7 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get8dynamic]
 	 */
 	public ClosableIterator<Node> getAllDefaultUserAccount_asNode() {
-		return Base.getAll_asNode( this.model, this.getResource(), DEFAULTUSERACCOUNT );
+		return Base.getAll_asNode( this.model, this.getResource(), DEFAULT_USERACCOUNT );
 	}
 
 	/**
@@ -713,7 +719,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static ClosableIterator<UserAccount> getAllDefaultUserAccount( Model model,
 	        Resource instanceResource ) {
-		return Base.getAll( model, instanceResource, DEFAULTUSERACCOUNT, UserAccount.class );
+		return Base.getAll( model, instanceResource, DEFAULT_USERACCOUNT, UserAccount.class );
 	}
 
 	/**
@@ -724,7 +730,7 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get12dynamic]
 	 */
 	public ClosableIterator<UserAccount> getAllDefaultUserAccount() {
-		return Base.getAll( this.model, this.getResource(), DEFAULTUSERACCOUNT, UserAccount.class );
+		return Base.getAll( this.model, this.getResource(), DEFAULT_USERACCOUNT, UserAccount.class );
 	}
 
 	/**
@@ -735,7 +741,7 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get12dynamic]
 	 */
 	public static UserAccount getDefaultUserAccount( Model model, Resource instanceResource ) {
-		return Base.getAll_as( model, instanceResource, DEFAULTUSERACCOUNT,
+		return Base.getAll_as( model, instanceResource, DEFAULT_USERACCOUNT,
 		        UserAccount.class ).firstValue();
 	}
 
@@ -747,7 +753,7 @@ public class ConnectorConfig extends OwlThing {
 	 *         [Generated from RDFReactor template rule #get12dynamic]
 	 */
 	public UserAccount getDefaultUserAccount() {
-		return Base.getAll_as( this.model, this.getResource(), DEFAULTUSERACCOUNT,
+		return Base.getAll_as( this.model, this.getResource(), DEFAULT_USERACCOUNT,
 		        UserAccount.class ).firstValue();
 	}
 
@@ -766,7 +772,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static void addDefaultUserAccount( Model model, Resource instanceResource,
 	        Node value ) {
-		Base.add( model, instanceResource, DEFAULTUSERACCOUNT, value );
+		Base.add( model, instanceResource, DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -779,7 +785,7 @@ public class ConnectorConfig extends OwlThing {
 	 *            [Generated from RDFReactor template rule #add1dynamic]
 	 */
 	public void addDefaultUserAccount( Node value ) {
-		Base.add( this.model, this.getResource(), DEFAULTUSERACCOUNT, value );
+		Base.add( this.model, this.getResource(), DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -796,7 +802,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static void addDefaultUserAccount( Model model, Resource instanceResource,
 	        UserAccount value ) {
-		Base.add( model, instanceResource, DEFAULTUSERACCOUNT, value );
+		Base.add( model, instanceResource, DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -806,7 +812,7 @@ public class ConnectorConfig extends OwlThing {
 	 * [Generated from RDFReactor template rule #add4dynamic]
 	 */
 	public void addDefaultUserAccount( UserAccount value ) {
-		Base.add( this.model, this.getResource(), DEFAULTUSERACCOUNT, value );
+		Base.add( this.model, this.getResource(), DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -827,7 +833,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static void setDefaultUserAccount( Model model, Resource instanceResource,
 	        Node value ) {
-		Base.set( model, instanceResource, DEFAULTUSERACCOUNT, value );
+		Base.set( model, instanceResource, DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -843,7 +849,7 @@ public class ConnectorConfig extends OwlThing {
 	 *            [Generated from RDFReactor template rule #set1dynamic]
 	 */
 	public void setDefaultUserAccount( Node value ) {
-		Base.set( this.model, this.getResource(), DEFAULTUSERACCOUNT, value );
+		Base.set( this.model, this.getResource(), DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -864,7 +870,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static void setDefaultUserAccount( Model model, Resource instanceResource,
 	        UserAccount value ) {
-		Base.set( model, instanceResource, DEFAULTUSERACCOUNT, value );
+		Base.set( model, instanceResource, DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -880,7 +886,7 @@ public class ConnectorConfig extends OwlThing {
 	 *            [Generated from RDFReactor template rule #set4dynamic]
 	 */
 	public void setDefaultUserAccount( UserAccount value ) {
-		Base.set( this.model, this.getResource(), DEFAULTUSERACCOUNT, value );
+		Base.set( this.model, this.getResource(), DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -898,7 +904,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static void removeDefaultUserAccount( Model model, Resource instanceResource,
 	        Node value ) {
-		Base.remove( model, instanceResource, DEFAULTUSERACCOUNT, value );
+		Base.remove( model, instanceResource, DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -911,7 +917,7 @@ public class ConnectorConfig extends OwlThing {
 	 *            [Generated from RDFReactor template rule #remove1dynamic]
 	 */
 	public void removeDefaultUserAccount( Node value ) {
-		Base.remove( this.model, this.getResource(), DEFAULTUSERACCOUNT, value );
+		Base.remove( this.model, this.getResource(), DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -929,7 +935,7 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public static void removeDefaultUserAccount( Model model, Resource instanceResource,
 	        UserAccount value ) {
-		Base.remove( model, instanceResource, DEFAULTUSERACCOUNT, value );
+		Base.remove( model, instanceResource, DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -942,7 +948,7 @@ public class ConnectorConfig extends OwlThing {
 	 *            [Generated from RDFReactor template rule #remove4dynamic]
 	 */
 	public void removeDefaultUserAccount( UserAccount value ) {
-		Base.remove( this.model, this.getResource(), DEFAULTUSERACCOUNT, value );
+		Base.remove( this.model, this.getResource(), DEFAULT_USERACCOUNT, value );
 	}
 
 	/**
@@ -956,7 +962,7 @@ public class ConnectorConfig extends OwlThing {
 	 *            [Generated from RDFReactor template rule #removeall1static]
 	 */
 	public static void removeAllDefaultUserAccount( Model model, Resource instanceResource ) {
-		Base.removeAll( model, instanceResource, DEFAULTUSERACCOUNT );
+		Base.removeAll( model, instanceResource, DEFAULT_USERACCOUNT );
 	}
 
 	/**
@@ -965,7 +971,7 @@ public class ConnectorConfig extends OwlThing {
 	 * [Generated from RDFReactor template rule #removeall1dynamic]
 	 */
 	public void removeAllDefaultUserAccount() {
-		Base.removeAll( this.model, this.getResource(), DEFAULTUSERACCOUNT );
+		Base.removeAll( this.model, this.getResource(), DEFAULT_USERACCOUNT );
 	}
 
 	/**
@@ -1656,5 +1662,374 @@ public class ConnectorConfig extends OwlThing {
 	 */
 	public void removeAllService() {
 		Base.removeAll( this.model, this.getResource(), SERVICE );
+	}
+
+	/**
+	 * Check if {@code UnknownMessageTemplate} has at least one value set.
+	 * 
+	 * @param model
+	 *            an RDF2Go model
+	 * @param instanceResource
+	 *            an RDF2Go resource
+	 * @return true if this property has at least one value
+	 * 
+	 *         [Generated from RDFReactor template rule #get0has-static]
+	 */
+	public static boolean hasUnknownMessageTemplate( Model model,
+	        Resource instanceResource ) {
+		return Base.has( model, instanceResource, UNKNOWN_MESSAGE_TEMPLATE );
+	}
+
+	/**
+	 * Check if {@code UnknownMessageTemplateName} has at least one value set.
+	 * 
+	 * @return true if this property has at least one value
+	 * 
+	 *         [Generated from RDFReactor template rule #get0has-dynamic]
+	 */
+	public boolean hasUnknownMessageTemplate() {
+		return Base.has( this.model, this.getResource(), UNKNOWN_MESSAGE_TEMPLATE );
+	}
+
+	/**
+	 * Check if {@code UnknownMessageTemplateName} has the given value (maybe
+	 * among other values).
+	 * 
+	 * @param model
+	 *            an RDF2Go model
+	 * @param instanceResource
+	 *            an RDF2Go resource
+	 * @param value
+	 *            the value to be checked
+	 * @return true if this property contains (maybe among other) the given
+	 *         value
+	 * 
+	 *         [Generated from RDFReactor template rule #get0has-value-static]
+	 */
+	public static boolean hasUnknownMessageTemplate( Model model,
+	        Resource instanceResource,
+	        Node value ) {
+		return Base.hasValue( model, instanceResource, UNKNOWN_MESSAGE_TEMPLATE, value );
+	}
+
+	/**
+	 * Check if {@code UnknownMessageTemplateName} has the given value (maybe
+	 * among other values).
+	 * 
+	 * @param value
+	 *            the value to be checked
+	 * @return true if this property contains (maybe among other) the given
+	 *         value
+	 * 
+	 *         [Generated from RDFReactor template rule #get0has-value-dynamic]
+	 */
+	public boolean hasUnknownMessageTemplate( Node value ) {
+		return Base.hasValue( this.model, this.getResource(), UNKNOWN_MESSAGE_TEMPLATE,
+		        value );
+	}
+
+	/**
+	 * Get all values of property {@code UnknownMessageTemplateName} as an
+	 * Iterator over RDF2Go nodes.
+	 * 
+	 * @param model
+	 *            an RDF2Go model
+	 * @param instanceResource
+	 *            an RDF2Go resource
+	 * @return a ClosableIterator of RDF2Go Nodes
+	 * 
+	 *         [Generated from RDFReactor template rule #get7static]
+	 */
+	public static ClosableIterator<Node> getAllUnknownMessageTemplate_asNode(
+	        Model model,
+	        Resource instanceResource ) {
+		return Base.getAll_asNode( model, instanceResource, UNKNOWN_MESSAGE_TEMPLATE );
+	}
+
+	/**
+	 * Get all values of property {@code UnknownMessageTemplateName} as an
+	 * Iterator over RDF2Go nodes
+	 * 
+	 * @return a ClosableIterator of RDF2Go Nodes
+	 * 
+	 *         [Generated from RDFReactor template rule #get8dynamic]
+	 */
+	public ClosableIterator<Node> getAllUnknownMessageTemplate_asNode() {
+		return Base.getAll_asNode( this.model, this.getResource(),
+		        UNKNOWN_MESSAGE_TEMPLATE );
+	}
+
+	/**
+	 * Get all values of property {@code UnknownMessageTemplate}.
+	 * 
+	 * @param model
+	 *            an RDF2Go model
+	 * @param instanceResource
+	 *            an RDF2Go resource
+	 * @return a ClosableIterator of $type
+	 * 
+	 *         [Generated from RDFReactor template rule #get11static]
+	 */
+	public static ClosableIterator<java.lang.String> getAllUnknownMessageTemplate(
+	        Model model,
+	        Resource instanceResource ) {
+		return Base.getAll( model, instanceResource, UNKNOWN_MESSAGE_TEMPLATE,
+		        java.lang.String.class );
+	}
+
+	/**
+	 * Get all values of property {@code UnknownMessageTemplate}.
+	 * 
+	 * @return a ClosableIterator of $type
+	 * 
+	 *         [Generated from RDFReactor template rule #get12dynamic]
+	 */
+	public ClosableIterator<java.lang.String> getAllUnknownMessageTemplate() {
+		return Base.getAll( this.model, this.getResource(), UNKNOWN_MESSAGE_TEMPLATE,
+		        java.lang.String.class );
+	}
+
+	/**
+	 * Get all values of property {@code UnknownMessageTemplate}.
+	 * 
+	 * @return a ClosableIterator of $type
+	 * 
+	 *         [Generated from RDFReactor template rule #get12dynamic]
+	 */
+	public static String getUnknownMessageTemplate( Model model, Resource instanceResource ) {
+		return Base.getAll_as( model, instanceResource, UNKNOWN_MESSAGE_TEMPLATE,
+		        java.lang.String.class ).firstValue();
+	}
+
+	/**
+	 * Get all values of property {@code UnknownMessageTemplate}.
+	 * 
+	 * @return a ClosableIterator of $type
+	 * 
+	 *         [Generated from RDFReactor template rule #get12dynamic]
+	 */
+	public String getUnknownMessageTemplate() {
+		return Base.getAll_as( this.model, this.getResource(), UNKNOWN_MESSAGE_TEMPLATE,
+		        java.lang.String.class ).firstValue();
+	}
+
+	/**
+	 * Adds a value to property {@code UnknownMessageTemplate} as an RDF2Go
+	 * {@linkplain Node}.
+	 * 
+	 * @param model
+	 *            an RDF2Go model
+	 * @param instanceResource
+	 *            an RDF2Go resource
+	 * @param value
+	 *            the value to be added
+	 * 
+	 *            [Generated from RDFReactor template rule #add1static]
+	 */
+	public static void addUnknownMessageTemplate( Model model, Resource instanceResource,
+	        Node value ) {
+		Base.add( model, instanceResource, UNKNOWN_MESSAGE_TEMPLATE, value );
+	}
+
+	/**
+	 * Adds a value to property {@code UnknownMessageTemplate} as an RDF2Go
+	 * {@linkplain Node}.
+	 * 
+	 * @param value
+	 *            the value to be added
+	 * 
+	 *            [Generated from RDFReactor template rule #add1dynamic]
+	 */
+	public void addUnknownMessageTemplate( Node value ) {
+		Base.add( this.model, this.getResource(), UNKNOWN_MESSAGE_TEMPLATE, value );
+	}
+
+	/**
+	 * Adds a value to property {@code UnknownMessageTemplate} from an instance
+	 * of {@linkplain java.lang.String}.
+	 * 
+	 * @param model
+	 *            an RDF2Go model
+	 * @param instanceResource
+	 *            an RDF2Go resource
+	 * @param value
+	 * 
+	 *            [Generated from RDFReactor template rule #add3static]
+	 */
+	public static void addUnknownMessageTemplate( Model model, Resource instanceResource,
+	        java.lang.String value ) {
+		Base.add( model, instanceResource, UNKNOWN_MESSAGE_TEMPLATE, value );
+	}
+
+	/**
+	 * Adds a value to property {@code UnknownMessageTemplate} from an instance
+	 * of {@linkplain java.lang.String}.
+	 * 
+	 * [Generated from RDFReactor template rule #add4dynamic]
+	 */
+	public void addUnknownMessageTemplate( java.lang.String value ) {
+		Base.add( this.model, this.getResource(), UNKNOWN_MESSAGE_TEMPLATE, value );
+	}
+
+	/**
+	 * Sets a value of property {@code UnknownMessageTemplate} from an RDF2Go
+	 * {@linkplain Node}. First, all existing values are removed, then this
+	 * value is added. Cardinality constraints are not checked, but this method
+	 * exists only for properties with no {@code minCardinality} or
+	 * {@code minCardinality == 1}.
+	 * 
+	 * @param model
+	 *            an RDF2Go model
+	 * @param instanceResource
+	 *            an RDF2Go resource
+	 * @param value
+	 *            the value to be set
+	 * 
+	 *            [Generated from RDFReactor template rule #set1static]
+	 */
+	public static void setUnknownMessageTemplate( Model model, Resource instanceResource,
+	        Node value ) {
+		Base.set( model, instanceResource, UNKNOWN_MESSAGE_TEMPLATE, value );
+	}
+
+	/**
+	 * Sets a value of property {@code UnknownMessageTemplate} from an RDF2Go
+	 * {@linkplain Node}. First, all existing values are removed, then this
+	 * value is added. Cardinality constraints are not checked, but this method
+	 * exists only for properties with no {@code minCardinality} or
+	 * {@code minCardinality == 1}.
+	 * 
+	 * @param value
+	 *            the value to be added
+	 * 
+	 *            [Generated from RDFReactor template rule #set1dynamic]
+	 */
+	public void setUnknownMessageTemplate( Node value ) {
+		Base.set( this.model, this.getResource(), UNKNOWN_MESSAGE_TEMPLATE, value );
+	}
+
+	/**
+	 * Sets a value of property {@code UnknownMessageTemplate} from an instance
+	 * of {@linkplain java.lang.String}. First, all existing values are removed,
+	 * then this value is added. Cardinality constraints are not checked, but
+	 * this method exists only for properties with no {@code minCardinality} or
+	 * {@code minCardinality == 1}.
+	 * 
+	 * @param model
+	 *            an RDF2Go model
+	 * @param instanceResource
+	 *            an RDF2Go resource
+	 * @param value
+	 *            the value to be added
+	 * 
+	 *            [Generated from RDFReactor template rule #set3static]
+	 */
+	public static void setUnknownMessageTemplate( Model model, Resource instanceResource,
+	        java.lang.String value ) {
+		Base.set( model, instanceResource, UNKNOWN_MESSAGE_TEMPLATE, value );
+	}
+
+	/**
+	 * Sets a value of property {@code UnknownMessageTemplate} from an instance
+	 * of {@linkplain java.lang.String}. First, all existing values are removed,
+	 * then this value is added. Cardinality constraints are not checked, but
+	 * this method exists only for properties with no {@code minCardinality} or
+	 * {@code minCardinality == 1}.
+	 * 
+	 * @param value
+	 *            the value to be added
+	 * 
+	 *            [Generated from RDFReactor template rule #set4dynamic]
+	 */
+	public void setUnknownMessageTemplate( java.lang.String value ) {
+		Base.set( this.model, this.getResource(), UNKNOWN_MESSAGE_TEMPLATE, value );
+	}
+
+	/**
+	 * Removes a value of property {@code UnknownMessageTemplate} as an RDF2Go
+	 * {@linkplain Node}.
+	 * 
+	 * @param model
+	 *            an RDF2Go model
+	 * @param instanceResource
+	 *            an RDF2Go resource
+	 * @param value
+	 *            the value to be removed
+	 * 
+	 *            [Generated from RDFReactor template rule #remove1static]
+	 */
+	public static void removeUnknownMessageTemplate( Model model,
+	        Resource instanceResource,
+	        Node value ) {
+		Base.remove( model, instanceResource, UNKNOWN_MESSAGE_TEMPLATE, value );
+	}
+
+	/**
+	 * Removes a value of property {@code UnknownMessageTemplate} as an RDF2Go
+	 * {@linkplain Node}.
+	 * 
+	 * @param value
+	 *            the value to be removed
+	 * 
+	 *            [Generated from RDFReactor template rule #remove1dynamic]
+	 */
+	public void removeUnknownMessageTemplate( Node value ) {
+		Base.remove( this.model, this.getResource(), UNKNOWN_MESSAGE_TEMPLATE, value );
+	}
+
+	/**
+	 * Removes a value of property {@code UnknownMessageTemplate} given as an
+	 * instance of {@linkplain java.lang.String}.
+	 * 
+	 * @param model
+	 *            an RDF2Go model
+	 * @param instanceResource
+	 *            an RDF2Go resource
+	 * @param value
+	 *            the value to be removed
+	 * 
+	 *            [Generated from RDFReactor template rule #remove3static]
+	 */
+	public static void removeUnknownMessageTemplate( Model model,
+	        Resource instanceResource,
+	        java.lang.String value ) {
+		Base.remove( model, instanceResource, UNKNOWN_MESSAGE_TEMPLATE, value );
+	}
+
+	/**
+	 * Removes a value of property {@code UnknownMessageTemplate} given as an
+	 * instance of {@linkplain java.lang.String}.
+	 * 
+	 * @param value
+	 *            the value to be removed
+	 * 
+	 *            [Generated from RDFReactor template rule #remove4dynamic]
+	 */
+	public void removeUnknownMessageTemplate( java.lang.String value ) {
+		Base.remove( this.model, this.getResource(), UNKNOWN_MESSAGE_TEMPLATE, value );
+	}
+
+	/**
+	 * Removes all values of property {@code UnknownMessageTemplate}.
+	 * 
+	 * @param model
+	 *            an RDF2Go model
+	 * @param instanceResource
+	 *            an RDF2Go resource
+	 * 
+	 *            [Generated from RDFReactor template rule #removeall1static]
+	 */
+	public static void removeAllUnknownMessageTemplate( Model model,
+	        Resource instanceResource ) {
+		Base.removeAll( model, instanceResource, UNKNOWN_MESSAGE_TEMPLATE );
+	}
+
+	/**
+	 * Removes all values of property {@code UnknownMessageTemplate}.
+	 * 
+	 * [Generated from RDFReactor template rule #removeall1dynamic]
+	 */
+	public void removeAllUnknownMessageTemplate() {
+		Base.removeAll( this.model, this.getResource(), UNKNOWN_MESSAGE_TEMPLATE );
 	}
 }

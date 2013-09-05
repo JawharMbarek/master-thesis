@@ -40,7 +40,7 @@ Abbildung \ref{fig:uebersicht_conector_cfg} zeigt die entwickelte Connector Con
 
 \medskip
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[
         width=\textwidth,
@@ -51,7 +51,7 @@ Abbildung \ref{fig:uebersicht_conector_cfg} zeigt die entwickelte Connector Con
 \end{figure}
 
 % subsubsection connector_config_ontology (end)
-Jeder Connector erhält einen eindeutigen \texttt{id} zugewiesen, um jeden dieser Connectoren eindeutig identifizieren zu können. Die Eigenschaft \texttt{connectorClassName} beschreibt den vollständigen Klassennamen des beschriebenen Connector. Diese wird für das laden der richtigen Implementierung benötigt. Für die Nutzung einiger APIs müssen bestimmte Parameter angegeben werden. Dies könnte zum Beispiel die genau Adresse des Dienstes sein. Hierzu wird auf die schon Bestehende SIOC Services Ontologie zurückgegriffen. Diese stellt eine Klasse \emph{Service} zur Verfügung und mittels der Eigenschaft \texttt{service} kann ein solcher Service einem Connector zugewiesen werden. Der genaue Aufbau eines solchen Services wird im Abschnitt \ref{ssub:services} dargestellt. Die letzte Information für die Konfiguration eins Connectors ist eine vordefinierter Benutzer und wird mit der Eigenschaft \texttt{defaultUserAccount} festgelegt. Dieser vordefinierte Benutzer erfüllt im Großen und Ganzen zwei Aufgaben. Als Erstes wird er für lesende Zugriffe der API auf den verwendeten Dienst genutzt. Hierzu ist ein einzelnes Benutzerkonto vollkommen ausreichend, da nur die gelesenen Daten wichtig sind und nicht von welchen Konto sie kommen.Die zweite Aufgabe bezieht sich auf das stellvertretende Schreiben einzelner Benutzer. Nicht immer werden die dazu notwendigen Daten von den Benutzer zur Verfügung gestellt oder sind unbekannt. In diesem Fall wird der vordefinierte Benutzer genutzt und der Beitrag mit einem Vermerk zum original Autor über diesen geschrieben.
+Jeder Connector erhält einen eindeutigen \texttt{id} zugewiesen, um jeden dieser Connectoren eindeutig identifizieren zu können. Die Eigenschaft \texttt{connectorClassName} beschreibt den vollständigen Klassennamen des beschriebenen Connector. Diese wird für das laden der richtigen Implementierung benötigt. Für die Nutzung einiger APIs müssen bestimmte Parameter angegeben werden. Dies könnte zum Beispiel die genau Adresse des Dienstes sein. Hierzu wird auf die schon Bestehende SIOC Services Ontologie zurückgegriffen. Diese stellt eine Klasse \emph{Service} zur Verfügung und mittels der Eigenschaft \texttt{service} kann ein solcher Service einem Connector zugewiesen werden. Der genaue Aufbau eines solchen Services wird im Abschnitt \ref{ssub:services} dargestellt. Die letzte Information für die Konfiguration eins Connectors ist eine vordefinierter Benutzer (im Folgenden Defaultuser genannt) und wird mit der Eigenschaft \texttt{defaultUserAccount} festgelegt. Dieser Defaultuser erfüllt im Großen und Ganzen zwei Aufgaben. Als Erstes wird er für lesende Zugriffe der API auf den verwendeten Dienst genutzt. Hierzu ist ein einzelnes Benutzerkonto vollkommen ausreichend, da nur die gelesenen Daten wichtig sind und nicht von welchen Konto sie kommen.Die zweite Aufgabe bezieht sich auf das stellvertretende Schreiben einzelner Benutzer. Nicht immer werden die dazu notwendigen Daten von den Benutzer zur Verfügung gestellt oder sind unbekannt. In diesem Fall wird der Defaultuser genutzt und der Beitrag mit einem Vermerk zum original Autor über diesen geschrieben.
 
 
 \subsubsection{Services} % (fold)
@@ -59,7 +59,7 @@ Jeder Connector erhält einen eindeutigen \texttt{id} zugewiesen, um jeden diese
 
 Wie eben schon beschrieben, existiert für SIOC ein Modul zur einfachen Modellierung von Diensten auf semantischer Ebene. Kernstück dieses Moduls ist die Klasse Service, wie auf Abbildung \ref{fig:uebersicht_sioc_services} zu sehen ist. Mit dieser Klasse kann durch eine Hand voll Eigenschaften ein Dienst beschrieben werden. Für diese Arbeit ist davon die wichtigste Eigenschaft \texttt{service\_endpoint}. Durch diese kann die Adresse festgelegt werden, unter dem ein bestimmter Dienst erreichbar ist. Gerade bei Plattformen die nicht an eine feste Adresse (Foren, Blogs, $\dots$) gebunden sind, ist diese Angabe unerlässlich. 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[
         width=0.7\textwidth,
@@ -84,7 +84,7 @@ Soll ein Beitrag eines Benutzers von Google+ nach Facebook synchronisiert werden
 
 
 \subsubsection{Autorisierung und Authentifizierung} % (fold)
-\label{ssub:authentication}
+\label{ssub:autorisierung_und_authentifizierung}
 
 Die Wahl für SIOC als Datenformat zu hat sich nach den ersten Tests als eine sehr gute Entscheidung herausgestellt. Mittels SIOC ließen die wichtigsten Daten aller untersuchten Plattformen in einer einheitlichen Form speichern. Die ersten Probleme traten erst auf, als es daran ging Daten für die Autorisierung (Feststellen ob jemand eine Handlung ausführen darf) beziehungsweise Authentifizierung (Feststellen ob jemand der ist, den er vorgibt zu sein) an den verschiedenen Programmierschnittstellen einen geeigneten Ort zu finden. Dazu musste aber erst festgestellt werden, welche verschiedenen Daten alle vorliegen können.
 
@@ -101,7 +101,7 @@ Die Wahl für SIOC als Datenformat zu hat sich nach den ersten Tests als eine se
 
 \medskip
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[
         width=\textwidth,
@@ -123,7 +123,7 @@ Die Suche nach einer bestehen Ontologie, welche zusammen mit SIOC verwendet werd
 
 % subsection konfiguration (end)
 
-\subsection{Aufbau eines Connectors} % (fold)
+\subsection{Aufbau der SOCC} % (fold)
 \label{sub:connector_aufbau}
 
 \begin{figure}[ht]
@@ -136,27 +136,96 @@ Die Suche nach einer bestehen Ontologie, welche zusammen mit SIOC verwendet werd
     \label{fig:uebersicht_socc}
 \end{figure}
 
+\subsection{Design eines Connectors} % (fold)
+\label{sub:design_eines_connectors}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[
+        scale=0.95,
+        keepaspectratio=true,
+        angle=90
+    ]{assets/images/socc_uml_classdiagram}
+    \caption{UML Klassendiagramm eines Connectors}
+    \label{fig:connecotr_uml_classdiagram}
+\end{figure}
+
+% subsection design_eines_connectors (end)
+
+\subsubsection{SOCC Context} % (fold)
+\label{ssub:socc_context}
+
+\begin{wrapfigure}{r}{6cm}
+\centering
+\includegraphics[
+width=6cm,
+keepaspectratio=true,
+clip=true,
+trim= 35 340 520 9
+]{assets/images/socc_uml_classdiagram}
+\caption{SOCC Context}
+\label{fig:uml_socc_context}
+\end{wrapfigure}
+
+Text \wrapfill
+
+% subsubsection socc_context (end)
+
+\subsubsection{AccessControl} % (fold)
+\label{ssub:accesscontrol}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[
+width=0.8\textwidth,
+keepaspectratio=true,
+clip=true,
+trim= 35 8 250 340
+]{assets/images/socc_uml_classdiagram}
+\caption{AccessControl}
+\label{fig:uml_accesscontrol}
+\end{figure}
+
+Text 
+
+% subsubsection accesscontrol (end)
+
+
 \subsubsection{ClientManager} % (fold)
 \label{ssub:clientmanager}
+
+\begin{wrapfigure}{r}{9cm}
+\centering
+\includegraphics[
+width=9cm,
+keepaspectratio=true,
+clip=true,
+trim= 497 257 9 9
+]{assets/images/socc_uml_classdiagram}
+\caption{ClientManager}
+\label{fig:uml_clientmanager}
+\end{wrapfigure}
+
+Der Zugriff auf eine API innerhalb eines Programms erfolgt in der Regel über eine sogenanntes Clientobjekt (kurz Client). Dieser Client erlaubt es mit den Anmeldedaten oder den Accesstoken für ein Benutzerkonto auf die Funktionen der API über verschiedene Methoden zu zugreifen. Da ein Client immer nur mit einem Benutzerkonto verknüpft ist und von diesen eine große Anzahl verwaltet werden müssen, enthält jeder Connector einen ClientManager. Der interne Aufbau eines Client ist dabei stark von der verwendeten API abhängig und arbeitet mit dem Connector zusammen für den er geschrieben wurde. Für alle benutzerunabhängigen Daten erhält der ClientManager ein wie Abschnitt \ref{ssub:services} beschriebenes Serviceobjekt. Ein neuer Client kann dann durch den Aufruf der Methode \lstinline[language=java]{createClient($\dots$)} erstellt werden. Als Parameter wird der Methode ein Benutzerkonto in Form eines SIOC UserAccounts übergeben. Sind alle erforderlichen Autorisierung- und Authentifizierungsinformation aus Abschnitt \ref{ssub:autorisierung_und_authentifizierung} vorhanden, wird ein neuer Client erzeugt und zurück gegeben. Dieser Client wird aber dadurch nicht automatisch vom ClientManager verwaltet. Hierzu muss der im vorherigen erzeugte Client durch den Aufruf von \lstinline[language=java]{add(userAccount: UserAccount, client: T )} dauerhaft mit den angegeben UserAccount verknüpft und intern gespeichert. Wichtig ist hierbei, dass die Eigenschaften \texttt{accountName} und \texttt{accountServiceHomepage} des UserAccount Objekts gesetzt sind. Aus diesen wird ein eindeutiger Schlüssel generiert der zur Zuordnung von UserAccount und Client innerhalb des ClientManagers dient. Dieser Zwischenschritt ist einer verbesserten Abstraktion bei der späteren Implementierung geschuldet, da nur die Methode \lstinline[language=java]{createClient} stark von der verwendeten API Bibliothek abhängt. Des weiteren stehen noch Methoden \lstinline[language=java]{remove(userAccount: UserAccount)} zum Entfernen und \lstinline[language=java]{get(userAccount: UserAccount)} Holen von Clients, sowie \lstinline[language=java]{contains(userAccount: UserAccount)} für Tests ob ein Client zu einem UserAccount existiert. Sollen zum Beispiel am Ende der Laufzeit des Programms alle erzeugten Clients auf einmal abgemeldet und gelöscht werden, kann dies über die Methode \lstinline[language=java]{clear()} erfolgen. Der ClientManager verwaltet ebenfalls den Client für den in Abschnitt \ref{ssub:connector_config_ontologie} angesprochenen Defaultuser. Dieser Defaultclient genannte Client kann über die Methode  \lstinline[language=java]{setDefaultClient(client: T)} gesetzt und durch \lstinline[language=java]{getDefaultClient()} jederzeit wieder abgerufen werden. 
 
 % subsubsection clientmanager (end)
 
 \subsubsection{StructureReader} % (fold)
 \label{ssub:structurereader}
 
-\begin{wrapfigure}[10]{r}{7cm}
+\begin{wrapfigure}[10]{r}{9cm}
     \centering
     \includegraphics[
-        width=5cm,
+        width=9cm,
         keepaspectratio=true,
         clip=true,
-        trim= 0 126 456 326
+        trim= 20 118 456 206
     ]
-    {assets/images/uml_iconnector.png}
+    {assets/images/socc_uml_classdiagram}
     \caption{StructurReader}
     \label{fig:uml_structure_reader}
 \end{wrapfigure}
-Um auf Informationen über die Struktur von Foren, sozialen Netzwerken und so weiter im SIOC Format zugreifen zu können, implementiert jeder Connector dazu einen StructureReader. Die Struktur lässt sich, wie im Abschnitt \ref{sec:social_online_community_connectors} gezeigt, durch die SIOC Klassen \emph{Site} und \emph{Container} (und Unterklassen davon) beschrieben. Um auf diese Struktur zugreifen zu können, enthält die StructureReader Schnittstelle mehrere Methode (Siehe Abbildung \ref{fig:uml_structure_reader}). \wrapfill
+Um auf Informationen über die Struktur von Foren, sozialen Netzwerken und so weiter im SIOC Format zugreifen zu können, implementiert jeder Connector dazu einen StructureReader. Die Struktur lässt sich, wie im Abschnitt \ref{sec:social_online_community_connectors} vorgestellt, durch die SIOC Klassen \emph{Site} und \emph{Container} (und Unterklassen davon) beschrieben. Um auf diese Struktur zugreifen zu können, enthält die StructureReader Schnittstelle mehrere Methode (Siehe Abbildung \ref{fig:uml_structure_reader}). \wrapfill
 
 \begin{description}
     \item[\texttt{getSite()}] ist eine Methode, welche die Beschreibung einer Seite (Forum, Blog, soziales Netzwerk) als SIOC Site Objekt zurücklieft. Dies wird relativ häufig um die Zugehörigkeit einiger Objekte durch einen Link zu dieser Seite zu verdeutlichen. Dies kann bei einigen APIs nützlich sein, da dort manchmal keine Information zum \emph{Container} eines Beitrags mitgeliefert werden, über den man sonst eine Beziehung zwischen Seite und Beitrag herstellen könnte.
@@ -173,15 +242,16 @@ Um auf Informationen über die Struktur von Foren, sozialen Netzwerken und so we
 \subsubsection{PostReader} % (fold)
 \label{ssub:postreader}
 
-\begin{wrapfigure}{r}{7cm}
+\begin{wrapfigure}{r}{9cm}
 \centering
 \includegraphics[
-width=6cm,
+width=9cm,
 keepaspectratio=true,
 clip=true,
-trim= 220 144 220 344
-]{assets/images/uml_iconnector.png}
+trim= 243 137 255 206
+]{assets/images/socc_uml_classdiagram}
 \caption{PostReader}
+\label{fig:uml_post_reader}
 \end{wrapfigure}
 
 Der \texttt{PostReader} dient als Schnittstelle, um auf geschriebene Beitrage innerhalb eines Containers oder die Kommentare auf eines Beitrags zuzugreifen. Die Methode \texttt{hasPosts(URI)} ist nur zur Überprüfung ob ein Container oder ein Beitrag hinter einer URI weiter Beiträge enthält die gelesen werden können. Um einen einzelnen Beitrag anhand seiner URI lesen zu können kann die Methode \texttt{getPost(URI)}  genutzt werden. Sei liefert dann den Beitrag SIOC Post Objekt zurück beziehungsweise einen Fehler, falls der Beitrag nicht mit diesem Connector gelesen werden kann. Die wichtigste Methode dahingegen ist \texttt{pollPosts(URI, Date, int)}. Insgesamt können dieser Methode drei Parameter übergeben werden. Der Erste ist eine URI die den Ort angibt von der alle Beiträge gelesen werden können. Mit dem zweiten Parameter kann ein Zeitpunkt angegeben werden, ab dem ein zu lesender Beitrag geschrieben sein muss. Alle Beiträge die vor diesem Zeitpunkt erstellt wurden, werden nicht zurück gegeben. Der letzte Parameter gibt eine obere Schranke an wie viele Beiträge maximal pro Aufruf dieser Methode gelesen werden dürfen.
@@ -191,8 +261,8 @@ Der \texttt{PostReader} dient als Schnittstelle, um auf geschriebene Beitrage in
 \subsubsection{PostWriter} % (fold)
 \label{ssub:postwriter}
 
-In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein Sequenzdiagramm der PostWriter Komponente zu sehen. Dort ist visualisiert, welche Schritte für das stellvertretende Schreiben von Beiträgen eines Benutzers unternommen werden müssen. Soll nun ein Beitrag in einer SOC geschrieben werden, wird die Methode \texttt{writePost(URI, String, Syntax)} mit dem Zielort als URI, dem Beitrag als serialisiertes RDF Objekt und dem verwendeten Serialisierungsformates aufgerufen. Begonnen wird damit, dass als erstes nach einem UserAccount für den Service des aktuellen Connectors des Beitragautors gesucht. Im Idealfall befindet sich für den UserAccount des Beitragsautors ein Link zu seiner FOAF Person und von ein weiterer Link zum UserAccount für den aktuellen Service. Mit diesem UserAccount kann dann vom ClientManager ein Clientobjekt für die verwendete API angefordert werden. Sollte die Suche negativ verlaufen, steht der vordefinierte Client zur Verfügung. Mit diesem Client, ob mit der des Autors oder dem Vordefinierten, wird im letzten Schritt der Beitrag im von der API verwendeten Format in die SOC geschrieben.
-\begin{figure}[h]
+In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein Sequenzdiagramm der PostWriter Komponente zu sehen. Dort ist visualisiert, welche Schritte für das stellvertretende Schreiben von Beiträgen eines Benutzers unternommen werden müssen. Soll nun ein Beitrag in einer SOC geschrieben werden, wird die Methode \texttt{writePost(URI, String, Syntax)} mit dem Zielort als URI, dem Beitrag als serialisiertes RDF Objekt und dem verwendeten Serialisierungsformates aufgerufen. Begonnen wird damit, dass als erstes nach einem UserAccount für den Service des aktuellen Connectors des Beitragautors gesucht. Im Idealfall befindet sich für den UserAccount des Beitragsautors ein Link zu seiner FOAF Person und von ein weiterer Link zum UserAccount für den aktuellen Service. Mit diesem UserAccount kann dann vom ClientManager ein Clientobjekt für die verwendete API angefordert werden. Sollte die Suche negativ verlaufen, steht der Defaultclient zur Verfügung. Mit diesem Client, ob mit der des Autors oder dem Defaultclient, wird im letzten Schritt der Beitrag im von der API verwendeten Format in die SOC geschrieben.
+\begin{figure}[ht]
 \centering
 \includegraphics[
 width=\textwidth,
@@ -213,7 +283,7 @@ trim= 90 200 220 75
 \section{SOCC-Camel} % (fold)
 \label{sec:socc_camel}
 
-\begin{figure}[h]
+\begin{figure}[ht]
      \includegraphics[
         width=\textwidth,
         keepaspectratio=true

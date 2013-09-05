@@ -125,7 +125,7 @@ public class GooglePlusClientManager extends
     }
 
     @Override
-    public GooglePlusClientWrapper createClientFromAccount(
+    public GooglePlusClientWrapper createClient(
             UserAccount userAccount)
             throws Exception {
 

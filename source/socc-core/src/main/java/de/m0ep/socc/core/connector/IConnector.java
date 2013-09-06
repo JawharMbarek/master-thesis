@@ -45,6 +45,13 @@ import de.m0ep.socc.core.exceptions.NotFoundException;
  * @author Florian Müller
  */
 public interface IConnector {
+	public static final String DEFAULT_MESSAGE_TEMPLATE = "{author} wrote at {serviceName}: {message}";
+	public static final String MESSAGE_TEMPLATE_VAR_AUTHOR_NAME = "authorName";
+	public static final String MESSAGE_TEMPLATE_VAR_MESSAGE = "message";
+	public static final String MESSAGE_TEMPLATE_VAR_CONNECTOR_ID = "connectorId";
+	public static final String MESSAGE_TEMPLATE_VAR_SERVICE_NAME = "serviceName";
+	public static final String MESSAGE_TEMPLATE_VAR_SOURCE_URI = "sourceUri";
+	public static final String MESSAGE_TEMPLATE_VAR_CREATION_DATE = "creationDate";
 
 	/**
 	 * Returns the Id of this connector.

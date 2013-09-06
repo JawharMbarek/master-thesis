@@ -35,11 +35,11 @@ import de.m0ep.sioc.services.auth.ClientSecret;
 import de.m0ep.sioc.services.auth.Credentials;
 import de.m0ep.sioc.services.auth.RefreshToken;
 import de.m0ep.sioc.services.auth.ServicesAuthVocabulary;
-import de.m0ep.socc.core.connector.DefauktClientManager;
+import de.m0ep.socc.core.connector.DefaultClientManager;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 public class GooglePlusClientManager extends
-        DefauktClientManager<GooglePlusClientWrapper> {
+        DefaultClientManager<GooglePlusClientWrapper> {
 
     private ClientId clientId;
     private ClientSecret clientSecret;

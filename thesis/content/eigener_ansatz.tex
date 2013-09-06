@@ -52,12 +52,13 @@ Jeder Connector erhält einen eindeutigen \texttt{id} zugewiesen, um jeden Conne
 \caption{Variablennamen und Ersetzung innerhalb von \texttt{unknownMessageTemplate} }
 \centering
 \begin{tabular}{r|l}
-\textbf{varName}      & \textbf{Ersetzt durch}                   \\
+\textbf{varName}      & \textbf{Ersetzt durch}                     \\
 \hline
-\texttt{message}      & Original Beitrag                         \\
-\texttt{sourceUri}    & URI des original Beitrags                \\
-\texttt{connectorId}  & ID des aktuellen Connectors              \\
-\texttt{creationDate} & Erstelldatum des Beitrags (falls bekannt)\\
+\texttt{message}      & Original Beitrag                           \\
+\texttt{sourceUri}    & URI des original Beitrags                  \\
+\texttt{connectorId}  & ID des aktuellen Connectors                \\
+\texttt{serviceName}  & Name des vom Connector verwendeten Service \\
+\texttt{creationDate} & Erstelldatum des Beitrags (falls bekannt)  \\
 \texttt{authorName}   & Name des Autors (falls bekannt)          
 \end{tabular}
 \label{tbl:unknown_message_template_vars}

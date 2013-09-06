@@ -1,8 +1,5 @@
-
-package de.m0ep.socc.core.connector;
-
 /*
- * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * The MIT License (MIT) Copyright © 2013 "Florian Mueller"
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the “Software”), to deal
@@ -23,39 +20,72 @@ package de.m0ep.socc.core.connector;
  * SOFTWARE.
  */
 
+package de.m0ep.socc.core.connector;
+
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.URI;
+import org.rdfs.sioc.services.Service;
 
 import com.google.common.base.Preconditions;
 
+import de.m0ep.socc.core.ISoccContext;
+
+/**
+ * Default implementation of a {@link IConnectorIOComponent}. Provides some
+ * useful utility methods.
+ * 
+ * @author "Florian Mueller"
+ * 
+ * @param <T>
+ *            Class of the implementing connector.
+ */
 public class DefaultConnectorIOComponent<T extends IConnector> implements
         IConnectorIOComponent<T> {
-    private T connector;
-    private URI serviceEndpoint;
+	private final T connector;
+	private final URI serviceEndpoint;
+	private final Model model;
 
-    public DefaultConnectorIOComponent(T connector) {
-        this.connector = Preconditions.checkNotNull(connector,
-                "Required parameter connector must be specified.");
-        Preconditions.checkNotNull(this.connector.getService(),
-                "The parameter connector has no service");
-        Preconditions.checkArgument(this.connector.getService()
-                .hasServiceEndpoint(),
-                "The connectors service has no serviceEndpoint.");
+	/**
+	 * Constructs a new ConnectorIOComponent for a {@link IConnector}
+	 * 
+	 * @param connector
+	 */
+	public DefaultConnectorIOComponent( T connector ) {
+		this.connector = Preconditions.checkNotNull( connector,
+		        "Required parameter connector must be specified." );
+		Preconditions.checkNotNull( this.connector.getService(),
+		        "The parameter connector has no service" );
+		Preconditions.checkArgument( this.connector.getService()
+		        .hasServiceEndpoint(),
+		        "The connectors service has no serviceEndpoint." );
 
-        this.serviceEndpoint = this.connector.getService().getServiceEndpoint()
-                .asURI();
-    }
+		this.model = this.connector.getContext().getModel();
+		this.serviceEndpoint = this.connector.getService().getServiceEndpoint()
+		        .asURI();
+	}
 
-    @Override
-    public T getConnector() {
-        return connector;
-    }
+	@Override
+	public T getConnector() {
+		return connector;
+	}
 
-    protected Model getModel() {
-        return connector.getContext().getModel();
-    }
+	/**
+	 * Utility methods for easier {@link ISoccContext#getModel()}.
+	 * 
+	 * @return The model of the {@link ISoccContext} of the connector.
+	 */
+	protected Model getModel() {
+		return model;
+	}
 
-    protected URI getServiceEndpoint() {
-        return serviceEndpoint;
-    }
+	/**
+	 * Utility method for easier acces to the
+	 * {@link Service#getServiceEndpoint()}
+	 * 
+	 * @return The
+	 *         <code>serviceEndpoint<code> of the {@link Service} of the connector.
+	 */
+	protected URI getServiceEndpoint() {
+		return serviceEndpoint;
+	}
 }

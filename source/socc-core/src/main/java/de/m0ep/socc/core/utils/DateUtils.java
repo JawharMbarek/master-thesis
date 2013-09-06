@@ -36,62 +36,59 @@ import com.google.common.base.Preconditions;
  * @author Florian Müller
  */
 public final class DateUtils {
-    /**
-     * Private constructor, because this class has only static methods.
-     */
-    private DateUtils() {
-    }
+	private DateUtils() {
+	}
 
-    /**
-     * Convert a {@link Date} to a ISO8601 string.
-     * 
-     * @param date
-     *            {@link Date} to convert.
-     * @return ISO8601 string.
-     * @throws NullPointerException
-     *             Thrown if date is null.
-     */
-    public static String formatISO8601(final Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(
-                Preconditions.checkNotNull(
-                        date,
-                        "Date can not be null."));
+	/**
+	 * Convert a {@link Date} to a ISO8601 string.
+	 * 
+	 * @param date
+	 *            {@link Date} to convert.
+	 * @return ISO8601 string.
+	 * @throws NullPointerException
+	 *             Thrown if date is null.
+	 */
+	public static String formatISO8601( final Date date ) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(
+		        Preconditions.checkNotNull(
+		                date,
+		                "Date can not be null." ) );
 
-        return DatatypeConverter.printDateTime(cal);
-    }
+		return DatatypeConverter.printDateTime( cal );
+	}
 
-    /**
-     * Convert a {@link Long} to a ISO8601 string.
-     * 
-     * @param millis
-     *            {@link Long} to convert.
-     * @return ISO8601 string.
-     * @throws NullPointerException
-     *             Thrown if millis is null.
-     */
-    public static String formatISO8601(final Long millis) {
-        return formatISO8601(new Date(
-                Preconditions.checkNotNull(
-                        millis,
-                        "Millis can not be null.")));
-    }
+	/**
+	 * Convert a {@link Long} to a ISO8601 string.
+	 * 
+	 * @param millis
+	 *            {@link Long} to convert.
+	 * @return ISO8601 string.
+	 * @throws NullPointerException
+	 *             Thrown if millis is null.
+	 */
+	public static String formatISO8601( final Long millis ) {
+		return formatISO8601( new Date(
+		        Preconditions.checkNotNull(
+		                millis,
+		                "Millis can not be null." ) ) );
+	}
 
-    /**
-     * Parse a ISO8601 String to a {@link Date} object.
-     * 
-     * @param value
-     *            ISO8601 String
-     * @return {@link Date} object of the ISO8601 String.
-     * @throws IllegalArgumentException
-     *             Thrown if parsing fails.
-     * @throws NullPointerException
-     *             Thrown if value is null.
-     */
-    public static Date parseISO8601(final String value) throws ParseException {
-        return DatatypeConverter.parseDateTime(
-                Preconditions.checkNotNull(
-                        value,
-                        "Value can not be null.")).getTime();
-    }
+	/**
+	 * Parse a ISO8601 String to a {@link Date} object.
+	 * 
+	 * @param value
+	 *            ISO8601 String
+	 * @return {@link Date} object of the ISO8601 String.
+	 * @throws IllegalArgumentException
+	 *             Thrown if parsing fails.
+	 * @throws NullPointerException
+	 *             Thrown if value is null.
+	 */
+	public static Date parseISO8601( final String value ) throws ParseException {
+		return DatatypeConverter.parseDateTime(
+		        Preconditions.checkNotNull(
+		                value,
+		                "Value can not be null." ) ).getTime();
+	}
 }

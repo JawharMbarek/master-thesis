@@ -4,13 +4,6 @@
 \label{cha:eigener_ansatz}
 
 
-\begin{itemize}
-    \item Probleme und deren Lösung während der Umsetzung
-    \item Beispiel: Zugriff auf Moodle über Webservice
-\end{itemize}
-
-
-\todo[inline]{Auch begründen warum die Verwendung von Ontologien und nicht bspw. die Entwicklung eines XML Schemas (alternativ bei der Analyse Kap. 3.2)}
 
 \section{Social Online Community Connectors} % (fold)
 \label{sec:social_online_community_connectors}
@@ -18,12 +11,14 @@
 \subsection{Datenformat} % (fold)
 \label{sub:datenformat}
 
+\todo[inline]{Auch begründen warum die Verwendung von Ontologien und nicht bspw. die Entwicklung eines XML Schemas (alternativ bei der Analyse Kap. 3.2)}
+
 % subsection datenformat (end)
 
 \subsection{Konfiguration} % (fold)
 \label{sub:konfiguration}
 
-\todo[inline]{Keine Erzählung nach dem Motto: erst haben wir das gemacht und dann gemerkt dass das nicht so toll war. Lieber begründen warum man das System so oder so konzipiert.}
+% \todo[inline]{Keine Erzählung nach dem Motto: erst haben wir das gemacht und dann gemerkt dass das nicht so toll war. Lieber begründen warum man das System so oder so konzipiert.}
 
 
 Dass ein Connector funktionieren kann, muss er von außen mit Informationen zugeführt bekommen welche er zum Betrieb braucht. Die sind zum Beispiel Informationen zu Benutzerkonten oder Parameter für die verwendete API. Da einige dieser Informationen werden nicht nur von einen Connector benutzt werden, ist es sinnvoll diese zusammen an einen Ort zu speichern und wiederverwenden zu können. Die wichtigsten Informationen für die Konfiguration der Connectoren stellen die Benutzerkonten dar. Sie enthalten unter anderem die Informationen um Zugriff auf die einzelnen APIs zu erhalten. Da die Benutzerkonten wie im Abschnitt \ref{sub:datenformat} beschrieben im FOAF Format in einen Triplestore gespeichert werden, stellt es sich als Vorteil heraus die übrigen Informationen ebenfalls dort zu speichern und mit den schon vorhandenen zu verbinden. 
@@ -36,7 +31,7 @@ Aus diesem Grund wurde für Konfiguration eines Connectors die \emph{Connector C
 \label{ssub:connector_config_ontologie}
 
 Abbildung \ref{fig:uebersicht_conector_cfg} zeigt die entwickelte Connector Con
- Ontologie. Sie besteht aus einer einzigen Klasse \texttt{ConnectorConfig} und vier Eigenschaften.
+ Ontologie. Sie besteht aus einer einzigen Klasse \texttt{ConnectorConfig} und fünf Eigenschaften für diese.
 
 \medskip
 
@@ -51,13 +46,30 @@ Abbildung \ref{fig:uebersicht_conector_cfg} zeigt die entwickelte Connector Con
 \end{figure}
 
 % subsubsection connector_config_ontology (end)
-Jeder Connector erhält einen eindeutigen \texttt{id} zugewiesen, um jeden dieser Connectoren eindeutig identifizieren zu können. Die Eigenschaft \texttt{connectorClassName} beschreibt den vollständigen Klassennamen des beschriebenen Connector. Diese wird für das laden der richtigen Implementierung benötigt. Für die Nutzung einiger APIs müssen bestimmte Parameter angegeben werden. Dies könnte zum Beispiel die genau Adresse des Dienstes sein. Hierzu wird auf die schon Bestehende SIOC Services Ontologie zurückgegriffen. Diese stellt eine Klasse \emph{Service} zur Verfügung und mittels der Eigenschaft \texttt{service} kann ein solcher Service einem Connector zugewiesen werden. Der genaue Aufbau eines solchen Services wird im Abschnitt \ref{ssub:services} dargestellt. Die letzte Information für die Konfiguration eins Connectors ist eine vordefinierter Benutzer (im Folgenden Defaultuser genannt) und wird mit der Eigenschaft \texttt{defaultUserAccount} festgelegt. Dieser Defaultuser erfüllt im Großen und Ganzen zwei Aufgaben. Als Erstes wird er für lesende Zugriffe der API auf den verwendeten Dienst genutzt. Hierzu ist ein einzelnes Benutzerkonto vollkommen ausreichend, da nur die gelesenen Daten wichtig sind und nicht von welchen Konto sie kommen.Die zweite Aufgabe bezieht sich auf das stellvertretende Schreiben einzelner Benutzer. Nicht immer werden die dazu notwendigen Daten von den Benutzer zur Verfügung gestellt oder sind unbekannt. In diesem Fall wird der Defaultuser genutzt und der Beitrag mit einem Vermerk zum original Autor über diesen geschrieben.
+Jeder Connector erhält einen eindeutigen \texttt{id} zugewiesen, um jeden Connectoren später eindeutig identifizieren zu können. Die Eigenschaft \texttt{connectorClassName} beschreibt den vollständigen Klassennamen des beschriebenen Connector. Diese wird für das laden der richtigen Implementierung benötigt. Manchmal kann es passieren, dass keine passendes Benutzerkonto zum Weiterleiten eins Beitrags gefunden werden kann. Dadurch es es wünschenswert solche Beiträte dahingegen zu verändern, dass eine Verweis auf den original Autor und vielleicht wo der Beitrag gemacht wurde vorhanden ist. Durch die Eigenschaft \texttt{unknownMessageTemplate} kann eine Vorlage für das Aussehen des des Verweises definiert werden.Innerhalb dieser Vorlage stehen einige Variablen in der Form \texttt{\{varName\}} zur Verfügung. Alle zur Zeit vorhandenen Variablennamen und deren Ersetzung sind in Tabelle \ref{tbl:unknown_message_template_vars} zu sehen. 
+
+\begin{table}[h]
+\caption{Variablennamen und Ersetzung innerhalb von \texttt{unknownMessageTemplate} }
+\centering
+\begin{tabular}{r|l}
+\textbf{varName}      & \textbf{Ersetzt durch}                   \\
+\hline
+\texttt{message}      & Original Beitrag                         \\
+\texttt{sourceUri}    & URI des original Beitrags                \\
+\texttt{connectorId}  & ID des aktuellen Connectors              \\
+\texttt{creationDate} & Erstelldatum des Beitrags (falls bekannt)\\
+\texttt{authorName}   & Name des Autors (falls bekannt)          
+\end{tabular}
+\label{tbl:unknown_message_template_vars}
+\end{table}
+
+Für die Nutzung einiger APIs müssen bestimmte Parameter angegeben werden. Dies könnte zum Beispiel die genau Adresse des Dienstes sein. Hierzu wird auf die schon Bestehende SIOC Services Ontologie zurückgegriffen. Diese stellt eine Klasse \emph{Service} zur Verfügung und mittels der Eigenschaft \texttt{service} kann ein solcher Service einem Connector zugewiesen werden. Der genaue Aufbau eines solchen Services wird im Abschnitt \ref{ssub:services} dargestellt. Die letzte Information für die Konfiguration eins Connectors ist eine vordefinierter Benutzer (im Folgenden Defaultuser genannt) und wird mit der Eigenschaft \texttt{defaultUserAccount} festgelegt. Dieser Defaultuser erfüllt im Großen und Ganzen zwei Aufgaben. Als Erstes wird er für lesende Zugriffe der API auf den verwendeten Dienst genutzt. Hierzu ist ein einzelnes Benutzerkonto vollkommen ausreichend, da nur die gelesenen Daten wichtig sind und nicht von welchen Konto sie kommen.Die zweite Aufgabe bezieht sich auf das stellvertretende Schreiben einzelner Benutzer. Nicht immer werden die dazu notwendigen Daten von den Benutzer zur Verfügung gestellt oder sind unbekannt. In diesem Fall wird der Defaultuser genutzt und der Beitrag mit einem Vermerk zum original Autor über diesen geschrieben.
 
 
 \subsubsection{Services} % (fold)
 \label{ssub:services}
 
-Wie eben schon beschrieben, existiert für SIOC ein Modul zur einfachen Modellierung von Diensten auf semantischer Ebene. Kernstück dieses Moduls ist die Klasse Service, wie auf Abbildung \ref{fig:uebersicht_sioc_services} zu sehen ist. Mit dieser Klasse kann durch eine Hand voll Eigenschaften ein Dienst beschrieben werden. Für diese Arbeit ist davon die wichtigste Eigenschaft \texttt{service\_endpoint}. Durch diese kann die Adresse festgelegt werden, unter dem ein bestimmter Dienst erreichbar ist. Gerade bei Plattformen die nicht an eine feste Adresse (Foren, Blogs, $\dots$) gebunden sind, ist diese Angabe unerlässlich. 
+Wie eben schon beschrieben, existiert für SIOC ein Modul zur einfachen Modellierung von Diensten auf semantischer Ebene: Das SIOC Services Module (Präfix \emph{siocs:}). Kernstück dieses Moduls ist die Klasse Service, wie auf Abbildung \ref{fig:uebersicht_sioc_services} zu sehen ist. Mit dieser Klasse kann durch eine Hand voll Eigenschaften ein Dienst beschrieben werden. Für diese Arbeit ist davon die wichtigste Eigenschaft \texttt{service\_endpoint}. Durch diese kann die Adresse festgelegt werden, unter dem ein bestimmter Dienst erreichbar ist. Gerade bei Plattformen die nicht an eine feste Adresse (Foren, Blogs, $\dots$) gebunden sind, ist diese Angabe unerlässlich. Die Eigenschaften \texttt{has\_service} und \texttt{service\_of} sind sind ideal zur Verbindung von einzelnen SIOC UserAccounts mit einem Service. Diese Verbindung hilft dabei für das stellvertretende Schreiben von Beiträgen schnell die passenden Benutzerdaten zu finden. Ebenfalls nützlich ist \texttt{max\_results}. Manche Dienste erlauben es nur eine maximale Anzahl an Ergebnissen pro Aufruf zurückgeben zu lassen. Da sich diese Anzahl über die Zeit ändern kann ist es nicht sinnvoll diese fest im Programm festzulegen, kann diese so im Nachhinein verändert werden. Für SOCC weniger interessant aber Vollständigkeit halber seien noch erwähnt \texttt{service\_protocol} zum Angeben des verwendeten Übertragungsprotokolls REST, SOAP, $\dots$) und \texttt{service\_definition} mit dem auf eine weiterführende Definition verwiesen werden kann. 
 
 \begin{figure}[ht]
     \centering
@@ -65,11 +77,9 @@ Wie eben schon beschrieben, existiert für SIOC ein Modul zur einfachen Modellie
         width=0.7\textwidth,
         keepaspectratio=true
     ]{assets/images/sioc_services_ontology}
-    \caption{SIOC Services Ontology}
+    \caption{SIOC Services Module}
     \label{fig:uebersicht_sioc_services}
 \end{figure}
-
-Die Eigenschaften \texttt{has\_service} und \texttt{service\_of} sind sind ideal zur Verbindung von einzelnen SIOC UserAccounts mit einem Service. Diese Verbindung hilft dabei für das stellvertretende Schreiben von Beiträgen schnell die passenden Benutzerdaten zu finden. Ebenfalls nützlich ist \texttt{max\_results}. Manche Dienste erlauben es nur eine maximale Anzahl an Ergebnissen pro Aufruf zurückgeben zu lassen. Da sich diese Anzahl über die Zeit ändern kann ist es nicht sinnvoll diese fest im Programm festzulegen, kann diese so im Nachhinein verändert werden. Für SOCC weniger interessant aber Vollständigkeit halber seien noch erwähnt \texttt{service\_protocol} zum Angeben des verwendeten Übertragungsprotokolls REST, SOAP, $\dots$) und \texttt{service\_definition} mit dem auf eine weiterführende Definition verwiesen werden kann.
 
 % subsubsection services (end)
 
@@ -78,6 +88,16 @@ Die Eigenschaften \texttt{has\_service} und \texttt{service\_of} sind sind ideal
 \label{ssub:benutzerdaten}
 
 Soll ein Beitrag eines Benutzers von Google+ nach Facebook synchronisiert werden und es so aussehen, als hat er diesen Beitrag selbst auf Facebook geschrieben, sind gute Kenntnisse über alle Benutzerkonten dieser einen Person notwendig. Als erstes muss die Existenz dieser dieser Person dem System bekannt sein. Hierzu kann diese durch die Klasse Person aus der FOAF Ontologie dargestellt werden. Für ein einzelnes Benutzerkonto wurde in SIOC die Klasse die Klasse UserAccount definiert. 
+
+\begin{figure}[ht]
+\centering
+\includegraphics[
+width=\textwidth,
+keepaspectratio=true,
+]{assets/images/usermanagement}
+\caption{Zusammenhang von Person, UserAccount und Service. Die inversen Eigenschaften \texttt{sioc:account\_of} und \texttt{siocs:service\_of} wurden zu einer besseren Übersicht weggelassen}
+\label{fig:usermanagement}
+\end{figure}
 
 
 % subsubsection benutzerdaten (end)
@@ -115,9 +135,17 @@ Neben diesen drei Mechanismen wäre noch der Vollständigkeit halber die HTTP-Au
 
 \medskip
 
-Die Suche nach einer bestehen Ontologie, welche zusammen mit SIOC verwendet werden könnte, gestaltete sich als sehr schwierig. Ein Großteil der Ontologien in diese Richtung befasst sich eher mit dem Thema der Autorisierung wie Zugriffssteuerungsliste wie zum Beispiel die \emph{Web Access Control List} \cite{Hollenbach2009}. Nicht desto trotz existiert auch eine Authentifizierung Ontologie. Die \emph{Authentication Ontology}\footnote{\url{http://omnivoke.kmi.open.ac.uk/authentication/}} des \emph{OmniVoke}\footnote{\url{http://omnivoke.kmi.open.ac.uk/framework/}} ist für die notwendigen Zwecke das ideale Werkzeug. 
+Die Suche nach einer bestehen Ontologie, welche zusammen mit SIOC verwendet werden könnte, gestaltete sich als sehr schwierig. Ein Großteil der Ontologien in diese Richtung befasst sich eher mit dem Thema der Autorisierung wie zum Beispiel die \emph{Web Access Control List} \cite{Hollenbach2009} mit Zugriffssteuerungsliste. Eine Ausnahme stellt die \emph{Authentication Ontology}\footnote{\url{http://omnivoke.kmi.open.ac.uk/authentication/}} des \emph{OmniVoke}\footnote{\url{http://omnivoke.kmi.open.ac.uk/framework/}} Frameworks dar. Die Art der Authentifizierung wird darin durch die Klasse \texttt{AuthenticationMechanism} modelliert. Unterklassen für die wichtigsten Mechanismen wie \texttt{OAuth}, \texttt{WebAPI}s und Username/Password (dort \texttt{Direct} genannt) sind vorhanden. Jedem AuthenticationMechanism Objekt können dann sogenannte \texttt{Credentials} (engl. für Anmeldedaten) angehängt werden.
 
-\todo[inline]{fertig schreiben}
+\medskip
+
+Das einzige Manko an dieser Ontologie war das Fehlen von Credentials für OAuth in der Version 2.0. Im einzelnen waren dies Klassen für clien\_id, client\_secret sowie für Access- und Refreshtoken. Um auch diese OAuth Version unterstützen zu können, wurden hierfür die Klassen ClientId, ClientSecret, AccessToken und RefreshToken als Unterklassen von Credentials abgeleitet. Als Letztes musste noch eine Verbindung zwischen Authentication Ontology und SIOC hergestellt werden. Zum Einen war eine Erweiterung der Klasse UserAccount notwendig, so dass die Anmeldedaten der Benutzer zur Verfügung standen. Zum Anderen werden Daten wie ein API Schlüssen von einen Service benötigt, die von denen der Benutzer unabhängig sind. Für die Klasse UserAccount wurde die Eigenschaft \texttt{accountAuthentication} geschaffen. Diese erwartet als Subjekt einen UserAccount und als Objekt ein AuthenticationMechanism, welcher dann die Credentials enthält. Für die Klasse Service existiert das Äquivalent \texttt{serviceAuthentication}. 
+
+\medskip
+
+Diese Erweiterungen (Präfix \emph{siocsa:}) und die übernommenen Teile der Authentication Ontology wurden danach im \emph{SIOC Services Authentication Module} zusammengefasst. Graphisch ist sie in Abbildung \ref{fig:uebersicht_sioc_services_authentication} und im Anhang \ref{sec:sioc_services_authentication_module} als OWL Schema zu sehen. 
+
+
 
 % subsubsection authorization (end)
 
@@ -195,15 +223,15 @@ Text
 \label{ssub:clientmanager}
 
 \begin{wrapfigure}{r}{9cm}
-\centering
-\includegraphics[
-width=9cm,
-keepaspectratio=true,
-clip=true,
-trim= 497 257 9 9
-]{assets/images/socc_uml_classdiagram}
-\caption{ClientManager}
-\label{fig:uml_clientmanager}
+    \centering
+    \includegraphics[
+        width=9cm,
+        keepaspectratio=true,
+        clip=true,
+        trim= 497 257 9 9
+    ]{assets/images/socc_uml_classdiagram}
+    \caption{ClientManager}
+    \label{fig:uml_clientmanager}
 \end{wrapfigure}
 
 Der Zugriff auf eine API innerhalb eines Programms erfolgt in der Regel über eine sogenanntes Clientobjekt (kurz Client). Dieser Client erlaubt es mit den Anmeldedaten oder den Accesstoken für ein Benutzerkonto auf die Funktionen der API über verschiedene Methoden zu zugreifen. Da ein Client immer nur mit einem Benutzerkonto verknüpft ist und von diesen eine große Anzahl verwaltet werden müssen, enthält jeder Connector einen ClientManager. Der interne Aufbau eines Client ist dabei stark von der verwendeten API abhängig und arbeitet mit dem Connector zusammen für den er geschrieben wurde. Für alle benutzerunabhängigen Daten erhält der ClientManager ein wie Abschnitt \ref{ssub:services} beschriebenes Serviceobjekt. Ein neuer Client kann dann durch den Aufruf der Methode \lstinline[language=java]{createClient($\dots$)} erstellt werden. Als Parameter wird der Methode ein Benutzerkonto in Form eines SIOC UserAccounts übergeben. Sind alle erforderlichen Autorisierung- und Authentifizierungsinformation aus Abschnitt \ref{ssub:autorisierung_und_authentifizierung} vorhanden, wird ein neuer Client erzeugt und zurück gegeben. Dieser Client wird aber dadurch nicht automatisch vom ClientManager verwaltet. Hierzu muss der im vorherigen erzeugte Client durch den Aufruf von \lstinline[language=java]{add(userAccount: UserAccount, client: T )} dauerhaft mit den angegeben UserAccount verknüpft und intern gespeichert. Wichtig ist hierbei, dass die Eigenschaften \texttt{accountName} und \texttt{accountServiceHomepage} des UserAccount Objekts gesetzt sind. Aus diesen wird ein eindeutiger Schlüssel generiert der zur Zuordnung von UserAccount und Client innerhalb des ClientManagers dient. Dieser Zwischenschritt ist einer verbesserten Abstraktion bei der späteren Implementierung geschuldet, da nur die Methode \lstinline[language=java]{createClient} stark von der verwendeten API Bibliothek abhängt. Des weiteren stehen noch Methoden \lstinline[language=java]{remove(userAccount: UserAccount)} zum Entfernen und \lstinline[language=java]{get(userAccount: UserAccount)} Holen von Clients, sowie \lstinline[language=java]{contains(userAccount: UserAccount)} für Tests ob ein Client zu einem UserAccount existiert. Sollen zum Beispiel am Ende der Laufzeit des Programms alle erzeugten Clients auf einmal abgemeldet und gelöscht werden, kann dies über die Methode \lstinline[language=java]{clear()} erfolgen. Der ClientManager verwaltet ebenfalls den Client für den in Abschnitt \ref{ssub:connector_config_ontologie} angesprochenen Defaultuser. Dieser Defaultclient genannte Client kann über die Methode  \lstinline[language=java]{setDefaultClient(client: T)} gesetzt und durch \lstinline[language=java]{getDefaultClient()} jederzeit wieder abgerufen werden. 
@@ -270,7 +298,7 @@ keepaspectratio=true,
 clip=true,
 trim= 90 200 220 75
 ]{assets/images/postwriter_sequencediagram}
-\caption{PostWriter Sequenzdiagramm}
+\caption{UML Sequenzdiagramm eines PostWriters}
 \label{fig:postwriter_sequenzdiagramm}
 \end{figure}
 

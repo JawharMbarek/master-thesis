@@ -50,6 +50,7 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
+import de.m0ep.socc.core.utils.SoccUtils;
 
 public class Moodle2PostWriter extends
         DefaultConnectorIOComponent<Moodle2Connector> implements
@@ -98,7 +99,9 @@ public class Moodle2PostWriter extends
 				Post post = Post.getInstance( tmpModel, resource );
 
 				// skip all posts that are already forwarded from this site
-				if ( PostWriterUtils.hasContentWatermark( getConnector(), post.getContent() ) ) {
+				if ( SoccUtils.hasContentWatermark(
+				        getConnector().getStructureReader().getSite(),
+				        post.getContent() ) ) {
 					continue;
 				}
 
@@ -151,11 +154,12 @@ public class Moodle2PostWriter extends
 			}
 		}
 
-		// add watermark for 'already forwarded' check
-		content = PostWriterUtils.addContentWatermark( getConnector(), content );
+		if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
+			// add watermark for 'already forwarded' check
+			content = SoccUtils.addContentWatermark( post.getIsPartOf(), content );
+		}
 
 		final Moodle2ClientWrapper callingClient = client;
-
 		Post firstPost = null;
 		if ( firstPostIdMap.containsKey( discussionId ) ) {
 			firstPost = firstPostIdMap.get( discussionId );
@@ -265,8 +269,10 @@ public class Moodle2PostWriter extends
 			}
 		}
 
-		// add watermark for 'already forwarded' check
-		content = PostWriterUtils.addContentWatermark( getConnector(), content );
+		if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
+			// add watermark for 'already forwarded' check
+			content = SoccUtils.addContentWatermark( post.getIsPartOf(), content );
+		}
 
 		final Moodle2ClientWrapper finalClient = client;
 		final ForumPostDatum replyDatum = new ForumPostDatum( client

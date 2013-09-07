@@ -137,21 +137,21 @@ public final class FacebookSiocUtils {
 		        "Required parameter connector must be specified." );
 		Preconditions.checkNotNull( jsonObject,
 		        "Required parameter jsonObject must be specified." );
-	
+
 		Model model = connector.getContext().getModel();
 		Service service = connector.getService();
 		String id = jsonObject.getString( Fields.ID );
 		URI uri = createSiocUri( id );
-	
+
 		UserAccount result = new UserAccount( model, uri, true );
 		result.setId( id );
 		result.setName( jsonObject.getString( Fields.NAME ) );
 		result.setAccountName( id );
 		result.setAccountServiceHomepage( service.getServiceEndpoint() );
-	
+
 		Thing.setService( result.getModel(), result.getResource(), service );
 		service.addServiceOf( result );
-	
+
 		return result;
 	}
 
@@ -195,8 +195,7 @@ public final class FacebookSiocUtils {
 		        "Required parameter object must be specified." );
 
 		Model model = connector.getContext().getModel();
-		URI serviceEndpoint = connector.getService().getServiceEndpoint()
-		        .asURI();
+		URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
 		URI uri = createSiocUri( object.getString( Fields.ID ) );
 
 		Post result;
@@ -211,14 +210,14 @@ public final class FacebookSiocUtils {
 				        DateUtils.formatISO8601( modifiedDate ) );
 
 				if ( !result.hasModified( modifiedNode ) ) {
+					result.setModified( modifiedNode );
 					result.removeAllAttachments();
 					setPostCoreProperties( result, object );
-					result.setModified( modifiedNode );
 				}
 			}
 		} else {
 			result = new Post( model, uri, true );
-
+			result.setIsPartOf( connector.getStructureReader().getSite() );
 			result.setId( object.getString( Fields.ID ) );
 
 			JsonObject fromObject = object.getJsonObject( Fields.FROM );
@@ -302,7 +301,7 @@ public final class FacebookSiocUtils {
 		        "Required parameter result must be specified." );
 		Preconditions.checkNotNull( object,
 		        "Required parameter object must be specified." );
-	
+
 		// content
 		if ( object.has( Fields.MESSAGE ) ) {
 			result.setContent(
@@ -314,14 +313,14 @@ public final class FacebookSiocUtils {
 			result.setContent(
 			        object.getString( Fields.STORY ) );
 		}
-	
+
 		// title
 		if ( object.has( Fields.NAME ) ) {
 			result.setTitle( object.getString( Fields.NAME ) );
 		} else if ( object.has( Fields.CAPTION ) ) {
 			result.setTitle( Fields.CAPTION );
 		}
-	
+
 		// attachment
 		if ( object.has( Fields.LINK ) ) {
 			result.setAttachment(
@@ -334,7 +333,7 @@ public final class FacebookSiocUtils {
 		} else if ( object.has( Fields.ATTACHMENT ) ) {
 			JsonObject attachment = object
 			        .getJsonObject( Fields.ATTACHMENT );
-	
+
 			if ( attachment.has( Fields.TARGET ) ) {
 				JsonObject target = attachment
 				        .getJsonObject( Fields.TARGET );

@@ -283,6 +283,7 @@ public final class Moodle2SiocUtils {
 
 			result = new Post( model, uri, true );
 			result.setId( Integer.toString( postRecord.getId() ) );
+			result.setIsPartOf( connector.getStructureReader().getSite() );
 			result.setTitle( postRecord.getSubject() );
 			result.setCreator( creator );
 			result.setNumReplies( 0 );

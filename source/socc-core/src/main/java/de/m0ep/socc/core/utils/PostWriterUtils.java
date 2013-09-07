@@ -24,8 +24,6 @@ package de.m0ep.socc.core.utils;
 
 import java.text.ParseException;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Post;
@@ -108,26 +106,6 @@ public final class PostWriterUtils {
 		}
 
 		return MapFormat.format( connector.getUnknownMessageTemplate(), args );
-	}
-
-	public static String addContentWatermark( final IConnector connector, final String content ) {
-		return content
-		        + IPostWriter.MESSAGE_WATERMARK_PREFIX
-		        + connector.getStructureReader().getSite()
-		        + IPostWriter.MESSAGE_WATERMARK_POSTFIX;
-	}
-
-	public static boolean hasContentWatermark( final IConnector connector, final String content ) {
-		return content.contains(
-		        IPostWriter.MESSAGE_WATERMARK_PREFIX
-		                + connector.getStructureReader().getSite()
-		                + IPostWriter.MESSAGE_WATERMARK_POSTFIX );
-	}
-
-	public static boolean hasAnyContentWatermark( final String content ) {
-		Pattern pattern = Pattern.compile( IPostWriter.REGEX_MESSAGE_WATERMARK );
-		Matcher matcher = pattern.matcher( content );
-		return matcher.find();
 	}
 
 	/**

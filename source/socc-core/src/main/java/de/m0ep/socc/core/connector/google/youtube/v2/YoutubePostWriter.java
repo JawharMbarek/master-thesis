@@ -50,6 +50,7 @@ import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
+import de.m0ep.socc.core.utils.SoccUtils;
 
 public class YoutubePostWriter extends
         DefaultConnectorIOComponent<YoutubeConnector> implements
@@ -76,7 +77,9 @@ public class YoutubePostWriter extends
 					Post post = Post.getInstance( tmpModel, resource );
 
 					// skip all posts that are already forwarded from this site
-					if ( PostWriterUtils.hasContentWatermark( getConnector(), post.getContent() ) ) {
+					if ( SoccUtils.hasContentWatermark(
+					        getConnector().getStructureReader().getSite(),
+					        post.getContent() ) ) {
 						continue;
 					}
 
@@ -105,8 +108,10 @@ public class YoutubePostWriter extends
 						}
 					}
 
-					// add watermark for 'already forwarded' check
-					content = PostWriterUtils.addContentWatermark( getConnector(), content );
+					if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
+						// add watermark for 'already forwarded' check
+						content = SoccUtils.addContentWatermark( post.getIsPartOf(), content );
+					}
 
 					CommentEntry entry = new CommentEntry();
 					entry.setContent( new PlainTextConstruct( content ) );

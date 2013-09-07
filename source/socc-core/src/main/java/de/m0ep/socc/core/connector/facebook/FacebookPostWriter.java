@@ -34,6 +34,7 @@ import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.RequestParameters;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
+import de.m0ep.socc.core.utils.SoccUtils;
 
 public class FacebookPostWriter extends
         DefaultConnectorIOComponent<FacebookConnector> implements
@@ -67,6 +68,7 @@ public class FacebookPostWriter extends
 					FacebookClientWrapper defaultClient = getConnector()
 					        .getClientManager()
 					        .getDefaultClient();
+
 					object = defaultClient
 					        .getFacebookClient()
 					        .fetchObject(
@@ -122,7 +124,9 @@ public class FacebookPostWriter extends
 				Post post = Post.getInstance( tmpModel, resource );
 
 				// skip all posts that are already forwarded from this site
-				if ( PostWriterUtils.hasContentWatermark( getConnector(), post.getContent() ) ) {
+				if ( SoccUtils.hasContentWatermark(
+				        getConnector().getStructureReader().getSite(),
+				        post.getContent() ) ) {
 					continue;
 				}
 
@@ -163,8 +167,10 @@ public class FacebookPostWriter extends
 					attachIter.close();
 				}
 
-				// add watermark for 'already forwarded' check
-				content = PostWriterUtils.addContentWatermark( getConnector(), content );
+				if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
+					// add watermark for 'already forwarded' check
+					content = SoccUtils.addContentWatermark( post.getIsPartOf(), content );
+				}
 
 				// create Facebook Graph API publish parameter
 				List<Parameter> params = new ArrayList<Parameter>();
@@ -214,7 +220,9 @@ public class FacebookPostWriter extends
 				Post reply = Post.getInstance( tmpModel, resource );
 
 				// skip all posts that are already forwarded from this site
-				if ( PostWriterUtils.hasContentWatermark( getConnector(), post.getContent() ) ) {
+				if ( SoccUtils.hasContentWatermark(
+				        getConnector().getStructureReader().getSite(),
+				        post.getContent() ) ) {
 					continue;
 				}
 
@@ -256,8 +264,10 @@ public class FacebookPostWriter extends
 					attachIter.close();
 				}
 
-				// add watermark for 'already forwarded' check
-				content = PostWriterUtils.addContentWatermark( getConnector(), content );
+				if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
+					// add watermark for 'already forwarded' check
+					content = SoccUtils.addContentWatermark( post.getIsPartOf(), content );
+				}
 
 				FacebookType result = null;
 				try {

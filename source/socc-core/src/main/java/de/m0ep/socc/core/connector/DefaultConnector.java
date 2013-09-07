@@ -238,7 +238,7 @@ public abstract class DefaultConnector implements IConnector {
 		this.defaultUserAccount = null;
 		this.service = null;
 		this.isInitialized = false;
-		this.messageTemplateString = DEFAULT_MESSAGE_TEMPLATE;
+		this.messageTemplateString = IPostWriter.DEFAULT_MESSAGE_TEMPLATE;
 	}
 
 	/**

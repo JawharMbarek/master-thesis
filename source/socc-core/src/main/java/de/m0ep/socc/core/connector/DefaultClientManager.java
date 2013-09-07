@@ -27,6 +27,8 @@ import java.util.Map;
 
 import org.rdfs.sioc.UserAccount;
 import org.rdfs.sioc.services.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.api.client.util.Maps;
 import com.google.common.base.Objects;
@@ -46,6 +48,8 @@ import de.m0ep.socc.core.exceptions.NotFoundException;
  */
 public abstract class DefaultClientManager<T> implements
         IClientManager<T> {
+	private static final Logger LOG = LoggerFactory.getLogger( DefaultClientManager.class );
+
 	private Service service;
 	private T defaultClient;
 	private final Map<Integer, T> clientMap = Maps.newHashMap();
@@ -81,9 +85,6 @@ public abstract class DefaultClientManager<T> implements
 	protected abstract void init();
 
 	@Override
-	public abstract T createClient( UserAccount userAccount ) throws Exception;
-
-	@Override
 	public Service getService() {
 		return service;
 	}
@@ -98,7 +99,7 @@ public abstract class DefaultClientManager<T> implements
 	public T getDefaultClient() {
 		Preconditions.checkState( null != defaultClient,
 		        "No default client set." );
-	
+
 		return defaultClient;
 	}
 
@@ -158,7 +159,15 @@ public abstract class DefaultClientManager<T> implements
 		T result = clientMap.get( generateKey( userAccount ) );
 
 		if ( null == result ) {
-			throw new NotFoundException( "No client found for " + userAccount );
+			// try to create a new client
+			try {
+				T client = createClient( userAccount );
+				add( userAccount, client );
+				result = client;
+			} catch ( Exception e ) {
+				LOG.warn( "Failed to create new client", e );
+				throw new NotFoundException( "No client found for " + userAccount );
+			}
 		}
 
 		return result;

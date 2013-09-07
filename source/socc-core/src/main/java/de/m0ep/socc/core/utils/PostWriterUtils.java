@@ -24,6 +24,8 @@ package de.m0ep.socc.core.utils;
 
 import java.text.ParseException;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Post;
@@ -37,6 +39,7 @@ import com.google.common.base.Preconditions;
 import com.xmlns.foaf.Person;
 
 import de.m0ep.socc.core.connector.IConnector;
+import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
 /**
@@ -53,15 +56,16 @@ public final class PostWriterUtils {
 
 	/**
 	 * Formats the content of a post with the
-	 * <code>unknownMessageTemplate</code> of a {@link IConnector}.
+	 * <code>unknownMessageTemplate</code> of the <code>connector</code>. If the
+	 * creator of the post has no sioc:name property set,
+	 * {@link IConnector#MESSAGE_TEMPLATE_UNKNOWN_AUTHOR_NAME} will be used as
+	 * <code>{authorName}</code>.
+	 * 
 	 * 
 	 * @param connector
 	 *            Used Connector
 	 * @param post
 	 *            The Post from where the content should be formated.
-	 * @param authorName
-	 *            Name of the author. If it's <code>null</code>, 'an unknown
-	 *            user' is used instead.
 	 * @return The formated content as {@link String}.
 	 * @throws NullPointerException
 	 *             Thrown if <code>connector</code> or <code>post</code> are
@@ -69,38 +73,31 @@ public final class PostWriterUtils {
 	 */
 	public static String formatUnknownMessage(
 	        final IConnector connector,
-	        final Post post,
-	        final String authorName ) {
+	        final Post post ) {
 		Preconditions.checkNotNull( connector,
 		        "Required parameter connector must be specified." );
 		Preconditions.checkNotNull( post,
 		        "Required parameter post must be specified." );
 
 		Map<String, Object> args = Maps.newHashMap();
+		UserAccount creatorAccount = post.getCreator();
+		String authorName = creatorAccount.hasName() ? creatorAccount.getName() : "an unknown user";
 
-		args.put(
-		        IConnector.MESSAGE_TEMPLATE_VAR_MESSAGE,
-		        post.getContent() );
-		args.put(
-		        IConnector.MESSAGE_TEMPLATE_VAR_CONNECTOR_ID,
-		        connector.getId() );
-		args.put(
-		        IConnector.MESSAGE_TEMPLATE_VAR_AUTHOR_NAME,
-		        null != authorName ? authorName : "an unknown user" );
-		args.put(
-		        IConnector.MESSAGE_TEMPLATE_VAR_SOURCE_URI,
-		        post.getResource().toString() );
+		args.put( IPostWriter.MESSAGE_TEMPLATE_VAR_MESSAGE, post.getContent() );
+		args.put( IPostWriter.MESSAGE_TEMPLATE_VAR_CONNECTOR_ID, connector.getId() );
+		args.put( IPostWriter.MESSAGE_TEMPLATE_VAR_AUTHOR_NAME, authorName );
+		args.put( IPostWriter.MESSAGE_TEMPLATE_VAR_SOURCE_URI, post.getResource() );
 
 		if ( connector.getService().hasName() ) {
 			args.put(
-			        IConnector.MESSAGE_TEMPLATE_VAR_SERVICE_NAME,
+			        IPostWriter.MESSAGE_TEMPLATE_VAR_SERVICE_NAME,
 			        connector.getService().getName() );
 		}
 
 		if ( post.hasCreated() ) {
 			try {
 				args.put(
-				        IConnector.MESSAGE_TEMPLATE_VAR_CREATION_DATE,
+				        IPostWriter.MESSAGE_TEMPLATE_VAR_CREATION_DATE,
 				        DateUtils.parseISO8601( post.getCreated() ) );
 			} catch ( ParseException e ) {
 				LOG.warn(
@@ -111,6 +108,26 @@ public final class PostWriterUtils {
 		}
 
 		return MapFormat.format( connector.getUnknownMessageTemplate(), args );
+	}
+
+	public static String addContentWatermark( final IConnector connector, final String content ) {
+		return content
+		        + IPostWriter.MESSAGE_WATERMARK_PREFIX
+		        + connector.getStructureReader().getSite()
+		        + IPostWriter.MESSAGE_WATERMARK_POSTFIX;
+	}
+
+	public static boolean hasContentWatermark( final IConnector connector, final String content ) {
+		return content.contains(
+		        IPostWriter.MESSAGE_WATERMARK_PREFIX
+		                + connector.getStructureReader().getSite()
+		                + IPostWriter.MESSAGE_WATERMARK_POSTFIX );
+	}
+
+	public static boolean hasAnyContentWatermark( final String content ) {
+		Pattern pattern = Pattern.compile( IPostWriter.REGEX_MESSAGE_WATERMARK );
+		Matcher matcher = pattern.matcher( content );
+		return matcher.find();
 	}
 
 	/**

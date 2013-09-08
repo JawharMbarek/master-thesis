@@ -7,6 +7,63 @@
 \chapter{Grundlagen} % (fold)
 \label{cha:grundlagen}
 
+\section{Zugriff auf Webanwendungen} % (fold)
+\label{sec:zugriff_auf_webanwendungen}
+
+\subsection{REST} % (fold)
+\label{sub:rest}
+
+Eine sehr beliebte Architektur für den öffentlichen Zugriff auf Webanwendungen ist \emph{Representational State Transfer} (REST) \cite[S.\,76]{fielding2000architectural}. REST baut auf HTTP auf und definiert einige Beschränkungen die eine Dienst erfüllen muss. 
+
+\medskip
+
+Die Grundidee besteht darin, dass hinter einer URL eine bestimmte Ressource sich verbirgt auf die man von außen zugreifen möchte. REST schreib aber nicht vor in welchen Datenformat diese Ressource übermittelt werden soll, sondern dass das zurückgelieferte Format der Ressource änderbar ist. 
+
+
+\begin{quote}
+\enquote{REST components communicate by transferring a representation of a resource
+in a format matching one of an evolving set of standard data types, selected dynamically
+based on the capabilities or desires of the recipient and the nature of the resource.}\cite[S.\,87]{fielding2000architectural} 
+
+\end{quote}
+
+Dadurch soll einer einfachere Verwendbarkeit in unterschiedliche Systemen ermöglicht werden. So kann für eine Webanwendung beim aufrufen im Browser eine HTML-Datei zurück geliefert werden, die sofort betrachtet werden kann und falls ein Programm darauf zugreift wird ein maschinenlesbares Format verwendet. Neben HTML sind auch noch XML und JSON sehr verbreitete Formate. Die Kommunikation wird dabei komplett Zustandslos abgehalten und alle Zusatzinformationen müssen immer mitgeliefert werden. Durch die Zustandslosigkeit skaliert das System viel besser, da Ressourcen sofort wieder frei gegeben werden können und nicht für spätere Anfragen gespeichert werden müssen. 
+
+\medskip
+
+Wie schon beschrieben, nutzen REST basierte Dienste HTTP als Grundlage zur Kommunikation. Die dort definierten Operationen werden mit REST zur Auslieferung und Manipulation der Ressourcen verwendet. Zur Grundausstattung  gehören dabei \texttt{GET}, \texttt{POST}, \texttt{PUT} und \texttt{DELETE} (siehe Tabelle \ref{tbl:rest_oprations}). Die anderen Operationen \texttt{HEAD}, \texttt{TRACE}, \texttt{OPTIONS} und \texttt{CONNECT} sind eher selten anzutreffen.
+
+\begin{table}[ht]
+\centering
+\caption{Wichtigsten HTTP Operationen mit REST} 
+\begin{tabular}{r|p{12cm}}
+    \textbf{Operation} & 
+    \textbf{Beschreibung} \\ 
+    \hline
+    \texttt{GET} & 
+    Liefert die hinter einer URL liegende Ressource an den Aufrufer zurück.\\
+    
+    \texttt{POST} & 
+    Dient zum Anlegen einer neuen Ressource. Die URI der neuen Ressource ist beim Aufruf noch unbekannt und wird von Service bestimmt. \\
+
+    \texttt{PUT} & 
+    Wird zum Ändern eine bestehenden Ressource genutzt. \\
+    
+    \texttt{DELETE} &
+    löscht, wie der Name schon sagt, eine Ressource dauerhaft.
+\end{tabular}
+\label{tbl:rest_oprations}
+\end{table}      
+
+% subsection rest (end)
+
+\subsection{WSDL und SOAP} % (fold)
+\label{sub:wsdl_und_soap}
+
+% subsection wsdl_und_soap (end)
+
+% section zugriff_auf_webanwendungen (end)
+
 \section{Datenintegration} % (fold)
 \label{sec:datenintegration}
 
@@ -20,7 +77,7 @@
 
 \todo[inline]{Idee semantic web einbauen}
 
-Eine der bekanntesten Umsetzungen der Vision des  semantischen Webs ist wohl das Resource Description Framework (RDF). Wie der Name schon suggeriert dient RDF zur Beschreibung von einzelnen Ressourcen innerhalb des Internets. Nach \cite{Klyne2004,Manola2004} bestand die Motivation bei der Entwicklung von RDF Information über Ressource in einen offenen Datenmodell zu speichern, so dass diese Daten von Maschinen automatisch verarbeitet, manipulieren und untereinander ausgetauscht werden können. Gleichzeitig sollte es auch einfach von jedem erweitert werden können \enquote{RDF is designed to represent information in a minimally constraining, flexible way}\cite{Klyne2004}.
+Eine der bekanntesten Umsetzungen der Vision des  semantischen Webs ist wohl das \emph{Resource Description Framework} (RDF). Wie der Name schon suggeriert dient RDF zur Beschreibung von einzelnen Ressourcen innerhalb des Internets. Nach \cite{Klyne2004,Manola2004} bestand die Motivation bei der Entwicklung von RDF Information über Ressource in einen offenen Datenmodell zu speichern, so dass diese Daten von Maschinen automatisch verarbeitet, manipulieren und untereinander ausgetauscht werden können. Gleichzeitig sollte es auch einfach von jedem erweitert werden können \enquote{RDF is designed to represent information in a minimally constraining, flexible way}\cite{Klyne2004}.
 
 \medskip
 
@@ -101,20 +158,15 @@ Semantically-Interlinked Online Communities\footnote{\url{http://sioc-project.or
 \section{Datenverteilung} % (fold)
 \label{sec:datenverteilung}
 
-\subsection{Enterprise Integration Pattern} % (fold)
-\label{sub:enterprise_integration_pattern}
-
-% subsection enterprise_integration_pattern (end)
-
 \subsection{Java Messaging Service} % (fold)
 \label{sub:java_messaging_service}
 
 % subsection java_messaging_service (end)
 
-\subsection{Apache Camel} % (fold)
-\label{sub:apache_camel}
+\subsection{Enterprise Integration Pattern und Apache Camel} % (fold)
+\label{sub:enterprise_integration_pattern_und_apache_camel}
 
-% subsection apache_camel (end)
+% subsection enterprise_integration_pattern_und_apache_camel (end)
 
 % section datenverteilung (end)
 

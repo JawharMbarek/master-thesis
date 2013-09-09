@@ -70,9 +70,9 @@ Das \emph{Simple Object Access Protocol}\cite{Mitra2007} (SOAP) ist ein vom W3C 
 \medskip
 
 \begin{lstlisting}[
-language=XML,
-caption={SOAP Nachricht}\label{lst:soap_nachricht},
-captionpos=t]
+    language=XML,
+    caption={SOAP Nachricht}\label{lst:soap_nachricht},
+    captionpos=t]
 <Envelope xmlns="http://www.w3.org/2003/05/soap-envelope">
     <Header>
         <!-- header information -->
@@ -129,7 +129,7 @@ Das Datenmodell von RDF ist sehr einfach aufgebaut um es effizient verarbeiten z
 
 \medskip
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[scale=0.7]{assets/images/rdf-triple}
     \caption{Graphische Darstellung eines RDF Tripels}
@@ -214,8 +214,55 @@ Semantically-Interlinked Online Communities\footnote{\url{http://sioc-project.or
 
 % section datenverteilung (end)
 
+
+\section{Soziale Netzwerke und Lernplattformen} % (fold)
+\label{sec:soziale_netzwerke_und_lernplattformen}
+
 \todo[inline]{Du könntest in dem Grundlagenkapitel auch noch auf Foren, Moodle, FB und Google+ kurz eingehen. Deren Datenmodelle und -schnittstellen können auch später erläutert werden.}
 
+\subsection{Moodle} % (fold)
+\label{sub:moodle}
+
+Moodle\footnote{\url{https://moodle.org/}} ist ein weit verbreitetes Open Source Online LMS. Die Hauptaufgabe liegt im Verwalten von online Kursen im Bereich E-Learning. Hierzu bietet Moodle von Haus aus eine große Menge an Funktionen für die Verwaltung des Kurses und die Kommunikation zwischen Lehrenden und Lernenden. Es bietet die Möglichkeit Aufgaben die Teilnehmern zu verteilen, Fragebögen zu erstellen, zusätzlichen Kursmaterialien bereitzustellen und den Lernerfolg durch Benotung und Feedback zu kontrollieren. Funktionen für die Unterstützung des kooperativen Lernens sind ebenfalls vorhanden. Teilnehmer können Lerngruppen bilden, sich über persönliche Nachrichten austauschen, gemeinsam an Wikis arbeiten oder in Foren diskutieren. 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[
+        width=0.7\textwidth,
+        keepaspectratio=true,
+    ]{assets/images/tud_moodle_screenshot}
+    \caption{Moodle Instanz der TU Darmstadt}
+    \label{fig:moodle_tud}
+\end{figure}
+
+\medskip
+
+Moodle wurde in der Programmiersprache PHP geschrieben und unterstützt die  Datenbanken werden MySQL, PostgrSQL, MSSQL und Oracle. Die Installation von weiteren Funktionalitäten ist durch von Dritten geschriebenen Erweiterungen möglich. Seit Version 2.0 können für Moodle auch Webservices installiert werden, so können auch externe Anwendungen auf interne Funktionen und Daten zugreifen.
+
+% subsection moodle (end)
+
+\subsection{Facebook} % (fold)
+\label{sub:facebook}
+
+
+
+% subsection facebook (end)
+
+\subsection{Google+} % (fold)
+\label{sub:google_}
+
+% subsection google_ (end)
+
+\subsection{Youtube} % (fold)
+\label{sub:youtube}
+
+% subsection youtube (end)
+
+\subsection{Canvas} % (fold)
+\label{sub:canvas}
+
+% subsection canvas (end)
+
+% section soziale_netzwerke_und_lernplattformen (end)
 
 \section{Verwandte Arbeiten und Projekte} % (fold)
 \label{sec:verwandte_arbeiten_und_projekte}
@@ -224,6 +271,8 @@ Semantically-Interlinked Online Communities\footnote{\url{http://sioc-project.or
 \label{sub:verw_arbeiten_reclaim_social}
 
 Hat sich nicht jeder schon einmal vor den Rechner gesessen um, zum Beispiel, nach einen Bild gesucht das man irgendwann auf irgendeinem der unzähligen sozialen Netzwerke hochgeladen hat, einem aber partout nicht einfallen will wo? Wann und wo habe habe ich den Beitrag geschrieben, der perfekt zu meiner aktuellen Arbeit passen würde? Solche oder ähnliche Fragen wurden sicherlich schon mehrere Millionen mal von verschiedenen Menschen in der Welt des Internets gestellt. Wer hätte in so einen Fall nicht gerne alles was man über die letzten Jahre an verschiedenen Stellen im Netz geschrieben, hochgeladen oder als für ihn wichtig markiert hat zentral gespeichert um es durchsuchen zu können? Genau diesem Thema haben sich Sascha Lobo und Felix Schwenzel angenommen und auf der Netzkonferenz re:publica\footnote{\url{http://re-publica.de/}} 2013 ihr gestartetes Projekt \enquote{Reclaim Social} \cite{Schwenzel2013} vorgestellt.
+
+\todo[inline]{Das klingt ein wenig wie ein Werbetext ;-)}
 
 \medskip
 

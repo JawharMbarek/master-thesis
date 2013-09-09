@@ -45,7 +45,6 @@ import de.m0ep.socc.core.exceptions.NotFoundException;
  * @author Florian Müller
  */
 public interface IConnector {
-
 	/**
 	 * Returns the Id of this connector.
 	 */
@@ -232,6 +231,35 @@ public interface IConnector {
 	 * @author Florian Müller
 	 */
 	public static interface IPostWriter<T extends IConnector> extends IConnectorIOComponent<T> {
+		public static final String MESSAGE_TEMPLATE_VAR_AUTHOR_NAME = "authorName";
+
+		public static final String MESSAGE_TEMPLATE_VAR_MESSAGE = "message";
+
+		public static final String MESSAGE_TEMPLATE_VAR_CONNECTOR_ID = "connectorId";
+
+		public static final String MESSAGE_TEMPLATE_VAR_SERVICE_NAME = "serviceName";
+
+		public static final String MESSAGE_TEMPLATE_VAR_SOURCE_URI = "sourceUri";
+
+		public static final String MESSAGE_TEMPLATE_VAR_CREATION_DATE = "creationDate";
+
+		public static final String MESSAGE_TEMPLATE_UNKNOWN_AUTHOR_NAME = "an unknown user";
+
+		public static final String DEFAULT_MESSAGE_TEMPLATE = "{"
+		        + MESSAGE_TEMPLATE_VAR_AUTHOR_NAME
+		        + "} wrote: {"
+		        + MESSAGE_TEMPLATE_VAR_MESSAGE
+		        + "}";
+
+		public static final String MESSAGE_WATERMARK_PREFIX = "--- forwarded by SOCC from ";
+
+		public static final String MESSAGE_WATERMARK_POSTFIX = " ---";
+
+		public static final String REGEX_MESSAGE_WATERMARK =
+		        MESSAGE_WATERMARK_PREFIX
+		                + "(.+)"
+		                + MESSAGE_WATERMARK_POSTFIX;
+
 		public void writePost( URI targetUri, String rdfString, Syntax syntax ) throws
 		        NotFoundException,
 		        AuthenticationException,

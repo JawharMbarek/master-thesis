@@ -180,7 +180,7 @@ public class YoutubeSiocUtils {
 	        AuthenticationException,
 	        IOException {
 		Model model = connector.getContext().getModel();
-	
+
 		URI uri = Builder.createURI( author.getUri() );
 		if ( !UserAccount.hasInstance( model, uri ) ) {
 			YoutubeClientWrapper client = connector.getClientManager()
@@ -199,19 +199,19 @@ public class YoutubeSiocUtils {
 				YoutubeConnector.handleYoutubeExceptions( e );
 			}
 			Service service = connector.getService();
-	
+
 			UserAccount result = new UserAccount( model, uri, true );
 			result.setId( profileEntry.getUsername() );
 			result.setName( profileEntry.getTitle().toString() );
 			result.setAccountName( profileEntry.getUsername() );
 			result.setAccountServiceHomepage( service.getServiceEndpoint() );
-	
+
 			Thing.setService( result.getModel(), result.asResource(), service );
 			service.addServiceOf( result );
-	
+
 			return result;
 		}
-	
+
 		return UserAccount.getInstance( model, uri );
 	}
 
@@ -314,6 +314,7 @@ public class YoutubeSiocUtils {
 
 		Post result = new Post( model, uri, true );
 		result.setId( mediaGroup.getVideoId() );
+		result.setIsPartOf( connector.getStructureReader().getSite() );
 
 		for ( Person author : videoEntry.getAuthors() ) {
 			UserAccount creator = createSiocUserAccount( connector, author );
@@ -382,6 +383,7 @@ public class YoutubeSiocUtils {
 
 		Post result = new Post( model, uri, true );
 		result.setId( commentId );
+		result.setIsPartOf( connector.getStructureReader().getSite() );
 
 		for ( Person author : commentEntry.getAuthors() ) {
 			UserAccount creator = createSiocUserAccount( connector, author );

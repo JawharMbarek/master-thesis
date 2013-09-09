@@ -235,6 +235,7 @@ public final class GooglePlusSiocUtils {
 		} else {
 			result = new Post( model, uri, true );
 			result.setId( activity.getId() );
+			result.setIsPartOf( connector.getStructureReader().getSite() );
 
 			if ( null != activity.getTitle() ) {
 				result.setTitle( activity.getTitle() );
@@ -299,75 +300,93 @@ public final class GooglePlusSiocUtils {
 		Model model = connector.getContext().getModel();
 		URI uri = createCommentUri( comment.getId() );
 
-		Post result = ( Post.hasInstance( model, uri ) ) ?
-		        ( Post.getInstance( model, uri ) ) :
-		        ( new Post( model, uri, true ) );
-		result.setId( comment.getId() );
+		Post result = null;
+		if ( Post.hasInstance( model, uri ) ) {
+			result = Post.getInstance( model, uri );
 
-		if ( null != comment.getActor() ) {
-			UserAccount creator = null;
-			try {
-				creator = UserAccountUtils.findUserAccount(
-				        model,
-				        comment.getActor().getId(),
-				        serviceEndpoint.asURI() );
-			} catch ( NotFoundException e ) {
-				creator = createSiocUserAccount(
-				        connector,
-				        comment.getActor() );
-			}
+			if ( null != comment.getUpdated() ) {
+				Node modifiedNode = Builder.createPlainliteral(
+				        DateUtils.formatISO8601(
+				                comment.getUpdated().getValue() ) );
 
-			result.setCreator( creator );
-		}
+				if ( !result.hasModified( modifiedNode ) ) {
+					result.setModified( modifiedNode );
 
-		Date createdDate = new Date( comment.getPublished().getValue() );
-		result.setCreated( DateUtils.formatISO8601( createdDate ) );
-
-		if ( null != comment.getUpdated() ) {
-			result.setModified( DateUtils
-			        .formatISO8601( comment.getUpdated()
-			                .getValue() ) );
-		}
-		String content = comment.getObject().getContent();
-		result.setContent( StringUtils.stripHTML( content ) );
-
-		if ( null == parentPost ) {
-			// try to set replied post if there is none parentPost
-			for ( InReplyTo inReplyTo : comment.getInReplyTo() ) {
-				try {
-					Post inReplyToPost = connector.getPostReader().readPost(
-					        Builder.createURI( inReplyTo.getUrl() ) );
-
-					result.setReplyOf( inReplyToPost );
-					inReplyToPost.addReply( result );
-					SiocUtils.incNumReplies( inReplyToPost );
-					SiocUtils.updateLastReplyDate( inReplyToPost, createdDate );
-
-					if ( inReplyToPost.hasContainer() ) {
-						Container container = inReplyToPost.getContainer();
-						result.setContainer( container );
-						container.addContainerOf( result );
-						SiocUtils.incNumItems( container );
-						SiocUtils.updateLastItemDate( container, createdDate );
-					}
-				} catch ( Exception e ) {
-					LOG.warn( "Failed to read activity from "
-					        + inReplyTo.getUrl() );
+					String content = comment.getObject().getContent();
+					result.setContent( StringUtils.stripHTML( content ) );
 				}
 			}
 		} else {
-			result.setReplyOf( parentPost );
-			parentPost.addReply( result );
-			SiocUtils.incNumReplies( parentPost );
-			SiocUtils.updateLastReplyDate( parentPost, createdDate );
+			result = new Post( model, uri, true );
+			result.setId( comment.getId() );
+			result.setIsPartOf( connector.getStructureReader().getSite() );
 
-			if ( parentPost.hasContainer() ) {
-				Container container = parentPost.getContainer();
-				result.setContainer( container );
-				container.addContainerOf( result );
-				SiocUtils.incNumItems( container );
-				SiocUtils.updateLastItemDate( container, createdDate );
+			if ( null != comment.getActor() ) {
+				UserAccount creator = null;
+				try {
+					creator = UserAccountUtils.findUserAccount(
+					        model,
+					        comment.getActor().getId(),
+					        serviceEndpoint.asURI() );
+				} catch ( NotFoundException e ) {
+					creator = createSiocUserAccount(
+					        connector,
+					        comment.getActor() );
+				}
+
+				result.setCreator( creator );
 			}
+
+			Date createdDate = new Date( comment.getPublished().getValue() );
+			result.setCreated( DateUtils.formatISO8601( createdDate ) );
+
+			if ( null != comment.getUpdated() ) {
+				result.setModified( DateUtils
+				        .formatISO8601( comment.getUpdated()
+				                .getValue() ) );
+			}
+			String content = comment.getObject().getContent();
+			result.setContent( StringUtils.stripHTML( content ) );
+
+			if ( null == parentPost ) {
+				// try to set replied post if there is none parentPost
+				for ( InReplyTo inReplyTo : comment.getInReplyTo() ) {
+					try {
+						Post inReplyToPost = connector.getPostReader().readPost(
+						        Builder.createURI( inReplyTo.getUrl() ) );
+
+						result.setReplyOf( inReplyToPost );
+						inReplyToPost.addReply( result );
+						SiocUtils.incNumReplies( inReplyToPost );
+						SiocUtils.updateLastReplyDate( inReplyToPost, createdDate );
+
+						if ( inReplyToPost.hasContainer() ) {
+							Container container = inReplyToPost.getContainer();
+							result.setContainer( container );
+							container.addContainerOf( result );
+							SiocUtils.incNumItems( container );
+							SiocUtils.updateLastItemDate( container, createdDate );
+						}
+					} catch ( Exception e ) {
+						LOG.warn( "Failed to read activity from "
+						        + inReplyTo.getUrl() );
+					}
+				}
+			} else {
+				result.setReplyOf( parentPost );
+				parentPost.addReply( result );
+				SiocUtils.incNumReplies( parentPost );
+				SiocUtils.updateLastReplyDate( parentPost, createdDate );
+
+				if ( parentPost.hasContainer() ) {
+					Container container = parentPost.getContainer();
+					result.setContainer( container );
+					container.addContainerOf( result );
+					SiocUtils.incNumItems( container );
+					SiocUtils.updateLastItemDate( container, createdDate );
+				}
+			}
+
 		}
 
 		return result;

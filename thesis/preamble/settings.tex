@@ -24,6 +24,10 @@ Prof. Dr. Max Mühlhäuser
 % LaTeX Settings
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Abstand Tabellenzeilen
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.5}
+
 % Absatzeinschub
 %\setlength{\parindent}{0pt}
 
@@ -36,7 +40,18 @@ Prof. Dr. Max Mühlhäuser
     pdfpagemode=UseNone, 
     pageanchor=true, 
     pdfpagemode=UseOutlines, 
-    pdfborder={0 0 0}
+    pdfborder={0 0 1},
+    pdftitle={\thesisTitle},
+    pdfauthor={\thesisAuthor},
+    pdfsubject={Dataintegration of social networks},
+    pdfkeywords={
+      {masterthesis}
+      {social}
+      {networks}
+      {dataintegration}
+      {sioc}
+      {foaf}
+    }
 }
 
 \definecolor{darkgreen}{rgb}{0,.4,0}

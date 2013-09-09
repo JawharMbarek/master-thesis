@@ -106,14 +106,14 @@ public final class CanvasLmsSiocUtils {
 	public static UserAccount createSiocUserAccount(
 	        final CanvasLmsConnector connector,
 	        final DiscussionTopic.Author author ) {
-	
+
 		return createSiocUserAccount( connector, author.getId(), author.getDisplayName() );
 	}
 
 	public static UserAccount createSiocUserAccount(
 	        final CanvasLmsConnector connector,
 	        final Entry entry ) {
-	
+
 		return createSiocUserAccount( connector, entry.getUserId(), entry.getUserName() );
 	}
 
@@ -121,22 +121,22 @@ public final class CanvasLmsSiocUtils {
 	        final CanvasLmsConnector connector,
 	        final long userId,
 	        final String username ) {
-	
+
 		Model model = connector.getContext().getModel();
 		Service service = connector.getService();
 		URI userUri = createUserUri(
 		        service.getServiceEndpoint().asURI(),
 		        userId );
-	
+
 		UserAccount result = new UserAccount( model, userUri, true );
 		result.setId( Long.toString( userId ) );
 		result.setName( username );
 		result.setAccountName( Long.toString( userId ) );
 		result.setAccountServiceHomepage( service.getServiceEndpoint() );
-	
+
 		Thing.setService( result.getModel(), result, service );
 		service.addServiceOf( result );
-	
+
 		return result;
 	}
 
@@ -243,6 +243,7 @@ public final class CanvasLmsSiocUtils {
 
 		Post result = new Post( model, initPostUri, true );
 		result.setId( Long.toString( discussionTopic.getId() ) );
+		result.setIsPartOf( connector.getStructureReader().getSite() );
 		result.setTitle( discussionTopic.getTitle() );
 		result.setContent( content );
 		result.setCreator( creator );
@@ -340,6 +341,7 @@ public final class CanvasLmsSiocUtils {
 
 			result = new Post( model, uri, true );
 			result.setId( Long.toString( entry.getId() ) );
+			result.setIsPartOf( connector.getStructureReader().getSite() );
 			result.setCreator( creator );
 			result.setCreated( DateUtils.formatISO8601( entry.getCreatedAt() ) );
 			result.setContent( content );

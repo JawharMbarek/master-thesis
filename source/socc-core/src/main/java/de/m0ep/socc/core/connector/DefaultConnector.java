@@ -49,12 +49,6 @@ import de.m0ep.socc.core.exceptions.NotFoundException;
  * @author Florian Müller
  */
 public abstract class DefaultConnector implements IConnector {
-	public static final String DEFAULT_MESSAGE_TEMPLATE = "{author} wrote: {message}";
-	public static final String MESSAGE_TEMPLATE_VAR_AUTHOR = "author";
-	public static final String MESSAGE_TEMPLATE_VAR_MESSAGE = "message";
-	public static final String MESSAGE_TEMPLATE_VAR_CONNECTOR_ID = "connectorId";
-	public static final String MESSAGE_TEMPLATE_VAR_SERVICE = "service";
-
 	protected String id;
 	protected ISoccContext context;
 	protected UserAccount defaultUserAccount;
@@ -244,7 +238,7 @@ public abstract class DefaultConnector implements IConnector {
 		this.defaultUserAccount = null;
 		this.service = null;
 		this.isInitialized = false;
-		this.messageTemplateString = DEFAULT_MESSAGE_TEMPLATE;
+		this.messageTemplateString = IPostWriter.DEFAULT_MESSAGE_TEMPLATE;
 	}
 
 	/**

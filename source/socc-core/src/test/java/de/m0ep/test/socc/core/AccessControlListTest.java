@@ -22,93 +22,87 @@
 
 package de.m0ep.test.socc.core;
 
-import java.util.EnumSet;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.Builder;
-import org.ontoware.rdfreactor.schema.rdfs.Class;
-import org.rdfs.sioc.Post;
+import org.rdfs.sioc.SiocVocabulary;
+import org.w3.ns.auth.acl.AclVocabulary;
 import org.w3.ns.auth.acl.Authorization;
 
+import com.google.common.collect.Sets;
 import com.xmlns.foaf.Agent;
+import com.xmlns.foaf.FoafVocabulary;
 
-import de.m0ep.socc.core.acl.AccessMode;
 import de.m0ep.socc.core.acl.AccessControl;
 import de.m0ep.socc.core.acl.IAccessControl;
 
 public class AccessControlListTest {
-
-    private static final URI SOCC_BOT_AGENT_URI = Builder
-            .createURI("http://example.com/agent/soccBot");
     private static final URI SAMPLE_USERACCOUNT_URI = Builder
             .createURI("http://example.com/agent/johnDoe");
     private static final URI SAMPLE_USERACCOUNT2_URI = Builder
             .createURI("http://example.com/agent/jennyDoe");
     private static final URI SAMPLE_RESOURCE_URI = Builder
             .createURI("http://example.com/resource");
-    private static final URI SAMPLE_CLASS_URI = Post.RDFS_CLASS;
 
     @Test
-    public void testCheckAuthorizationForResource() {
+    public void testCheckAccessTo() {
         Model model = createFilledModel();
 
-        IAccessControl instance = new AccessControl(model, new Agent(model, SOCC_BOT_AGENT_URI,
-                false));
+        IAccessControl instance = new AccessControl(model);
         Agent user = Agent.getInstance(model, SAMPLE_USERACCOUNT_URI);
 
-        Assert.assertTrue(instance.checkAuthorizationForResource(
+        Assert.assertTrue(instance.checkAccessTo(
                 user,
                 SAMPLE_RESOURCE_URI,
-                EnumSet.of(AccessMode.READ)));
+                Sets.newHashSet(AclVocabulary.Read)));
 
-        Assert.assertTrue(instance.checkAuthorizationForResource(
+        Assert.assertTrue(instance.checkAccessTo(
                 user,
                 SAMPLE_RESOURCE_URI,
-                EnumSet.of(AccessMode.READ, AccessMode.WRITE)));
+                Sets.newHashSet(AclVocabulary.Read, AclVocabulary.Write)));
 
-        Assert.assertFalse(instance.checkAuthorizationForResource(
+        Assert.assertFalse(instance.checkAccessTo(
                 user,
                 SAMPLE_RESOURCE_URI,
-                EnumSet.of(AccessMode.APPEND)));
+                Sets.newHashSet(AclVocabulary.Append)));
 
-        Assert.assertFalse(instance.checkAuthorizationForResource(
+        Assert.assertFalse(instance.checkAccessTo(
                 user,
                 SAMPLE_RESOURCE_URI,
-                EnumSet.of(AccessMode.WRITE, AccessMode.CONTROL)));
+                Sets.newHashSet(AclVocabulary.Write, AclVocabulary.Control)));
 
         model.close();
     }
 
     @Test
-    public void testCheckAuthorizationForClass() {
+    public void testCheckAccessToClass() {
         Model model = createFilledModel();
 
-        IAccessControl acl = new AccessControl(model, new Agent(model, SOCC_BOT_AGENT_URI, false));
+        IAccessControl acl = new AccessControl(model);
         Agent user = Agent.getInstance(model, SAMPLE_USERACCOUNT_URI);
 
-        Assert.assertTrue(acl.checkAuthorizationForClass(
+        Assert.assertTrue(acl.checkAccessToClass(
                 user,
-                SAMPLE_CLASS_URI,
-                EnumSet.of(AccessMode.READ)));
+                SiocVocabulary.Post,
+                Sets.newHashSet(AclVocabulary.Read)));
 
-        Assert.assertFalse(acl.checkAuthorizationForClass(
+        Assert.assertFalse(acl.checkAccessToClass(
                 user,
-                SAMPLE_CLASS_URI,
-                EnumSet.of(AccessMode.READ, AccessMode.WRITE)));
+                SiocVocabulary.Post,
+                Sets.newHashSet(AclVocabulary.Read, AclVocabulary.Write)));
 
-        Assert.assertFalse(acl.checkAuthorizationForClass(
+        Assert.assertFalse(acl.checkAccessToClass(
                 user,
-                SAMPLE_CLASS_URI,
-                EnumSet.of(AccessMode.APPEND)));
+                SiocVocabulary.Post,
+                Sets.newHashSet(AclVocabulary.Append)));
 
-        Assert.assertFalse(acl.checkAuthorizationForClass(
+        Assert.assertFalse(acl.checkAccessToClass(
                 user,
-                SAMPLE_CLASS_URI,
-                EnumSet.of(AccessMode.WRITE, AccessMode.CONTROL)));
+                SiocVocabulary.Post,
+                Sets.newHashSet(AclVocabulary.Write, AclVocabulary.Control)));
 
         model.close();
     }
@@ -127,24 +121,27 @@ public class AccessControlListTest {
         Agent user = Agent.getInstance(model, SAMPLE_USERACCOUNT_URI);
         Agent user2 = Agent.getInstance(model, SAMPLE_USERACCOUNT2_URI);
 
-        Authorization resAuth = new Authorization(model, model.createBlankNode(), true);
+        Authorization resAuth = new Authorization(model, model
+                .createBlankNode(), true);
         resAuth.setOwner(user);
         resAuth.setAccessTo(SAMPLE_RESOURCE_URI);
-        resAuth.setAgent(new Agent(model, SOCC_BOT_AGENT_URI, false));
-        resAuth.addAccessMode(AccessMode.READ.toUri());
-        resAuth.addAccessMode(AccessMode.WRITE.toUri());
+        resAuth.setAgentClass(FoafVocabulary.Agent);
+        resAuth.addAccessMode(AclVocabulary.Read);
+        resAuth.addAccessMode(AclVocabulary.Write);
 
-        Authorization resAuth2 = new Authorization(model, model.createBlankNode(), true);
+        Authorization resAuth2 = new Authorization(model, model
+                .createBlankNode(), true);
         resAuth2.setOwner(user);
-        resAuth2.setAccessToClass(new Class(model, SAMPLE_CLASS_URI, false));
-        resAuth2.setAgent(new Agent(model, SOCC_BOT_AGENT_URI, false));
-        resAuth2.addAccessMode(AccessMode.READ.toUri());
+        resAuth2.setAccessToClass(SiocVocabulary.Post);
+        resAuth2.setAgentClass(FoafVocabulary.Agent);
+        resAuth2.addAccessMode(AclVocabulary.Read);
 
-        Authorization resAuth3 = new Authorization(model, model.createBlankNode(), true);
+        Authorization resAuth3 = new Authorization(model, model
+                .createBlankNode(), true);
         resAuth3.setOwner(user2);
-        resAuth3.setAccessToClass(new Class(model, SAMPLE_CLASS_URI, false));
-        resAuth3.setAgent(new Agent(model, SOCC_BOT_AGENT_URI, false));
-        resAuth3.addAccessMode(AccessMode.READ.toUri());
+        resAuth3.setAccessToClass(SiocVocabulary.Post);
+        resAuth3.setAgentClass(FoafVocabulary.Agent);
+        resAuth3.addAccessMode(AclVocabulary.Read);
 
         return model;
     }

@@ -22,7 +22,8 @@
 
 package de.m0ep.socc.core.acl;
 
-import java.util.EnumSet;
+import java.nio.file.AccessMode;
+import java.util.Set;
 
 import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
@@ -43,27 +44,27 @@ public interface IAccessControl {
      * Checks if the provided {@link Agent} has granted access to a
      * {@link Resource} with the wanted {@link AccessMode} modes.
      * 
-     * @param creator
+     * @param owner
      * @param accessTo
      * @param accessModeSet
      * @return
      */
-    public boolean checkAuthorizationForResource(
+    public boolean checkAccessTo(
             Agent owner,
             URI accessTo,
-            EnumSet<AccessMode> accessModeSet);
+            Set<URI> accessModeSet);
 
     /**
      * Checks if the provided {@link Agent} has granted access to a rdf class
      * with the wanted {@link AccessMode} modes.
      * 
-     * @param creator
+     * @param owner
      * @param accessToClass
      * @param accessModeSet
      * @return
      */
-    public boolean checkAuthorizationForClass(
+    public boolean checkAccessToClass(
             Agent owner,
             URI accessToClass,
-            EnumSet<AccessMode> accessModeSet);
+            Set<URI> accessModeSet);
 }

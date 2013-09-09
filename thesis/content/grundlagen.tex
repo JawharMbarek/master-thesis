@@ -7,13 +7,17 @@
 \chapter{Grundlagen} % (fold)
 \label{cha:grundlagen}
 
+\todo[inline]{\Huge mehr QUELLEN!!!}
+
 \section{Zugriff auf Webanwendungen} % (fold)
 \label{sec:zugriff_auf_webanwendungen}
 
-\subsection{REST} % (fold)
+Der Zugriff auf Daten von einer Webanwendung ist in den seltensten Fällen durch eine direkte Anbindung an die dahinter liegende Datenbank möglich beziehungsweise gewünscht. Gerade wenn das eigene Geschäft von diesen Daten abhängt, will man nur ungern alles mit allen teilen. Um trotzdem Dritten die Nutzung zu ermöglichen, wird dazu eine eine der Zugriff über eine vordefinierte Schnittstelle gestattet. Für Anwendungen und Dienste im Web sind die folgenden zwei Ansätze für die Architektur einer solchen Schnittstellen besonders verbreitet. 
+
+\subsection{Representational State Transfer (REST)} % (fold)
 \label{sub:rest}
 
-Eine sehr beliebte Architektur für den öffentlichen Zugriff auf Webanwendungen ist \emph{Representational State Transfer} (REST) \cite[S.\,76]{fielding2000architectural}. REST baut auf HTTP auf und definiert einige Beschränkungen die eine Dienst erfüllen muss. 
+Eine sehr beliebte Architektur für den öffentlichen Zugriff auf Webanwendungen ist \emph{Representational State Transfer} (REST) \cite[S.\,76]{fielding2000architectural}. REST baut auf HTTP auf und definiert einige Beschränkungen die eine REST basierter Dienst erfüllen muss. 
 
 \medskip
 
@@ -29,9 +33,6 @@ based on the capabilities or desires of the recipient and the nature of the reso
 
 Dadurch soll einer einfachere Verwendbarkeit in unterschiedliche Systemen ermöglicht werden. So kann für eine Webanwendung beim aufrufen im Browser eine HTML-Datei zurück geliefert werden, die sofort betrachtet werden kann und falls ein Programm darauf zugreift wird ein maschinenlesbares Format verwendet. Neben HTML sind auch noch XML und JSON sehr verbreitete Formate. Die Kommunikation wird dabei komplett Zustandslos abgehalten und alle Zusatzinformationen müssen immer mitgeliefert werden. Durch die Zustandslosigkeit skaliert das System viel besser, da Ressourcen sofort wieder frei gegeben werden können und nicht für spätere Anfragen gespeichert werden müssen. 
 
-\medskip
-
-Wie schon beschrieben, nutzen REST basierte Dienste HTTP als Grundlage zur Kommunikation. Die dort definierten Operationen werden mit REST zur Auslieferung und Manipulation der Ressourcen verwendet. Zur Grundausstattung  gehören dabei \texttt{GET}, \texttt{POST}, \texttt{PUT} und \texttt{DELETE} (siehe Tabelle \ref{tbl:rest_oprations}). Die anderen Operationen \texttt{HEAD}, \texttt{TRACE}, \texttt{OPTIONS} und \texttt{CONNECT} sind eher selten anzutreffen.
 
 \begin{table}[ht]
 \centering
@@ -53,14 +54,57 @@ Wie schon beschrieben, nutzen REST basierte Dienste HTTP als Grundlage zur Kommu
     löscht, wie der Name schon sagt, eine Ressource dauerhaft.
 \end{tabular}
 \label{tbl:rest_oprations}
-\end{table}      
+\end{table} 
 
+\medskip
+
+Wie schon beschrieben, nutzen REST basierte Dienste HTTP als Grundlage zur Kommunikation. Die dort definierten Operationen werden mit REST zur Auslieferung und Manipulation der Ressourcen verwendet. Zur Grundausstattung  gehören dabei \texttt{GET}, \texttt{POST}, \texttt{PUT} und \texttt{DELETE} (siehe Tabelle \ref{tbl:rest_oprations}). Die anderen Operationen \texttt{HEAD}, \texttt{TRACE}, \texttt{OPTIONS} und \texttt{CONNECT} sind eher selten anzutreffen.
+     
 % subsection rest (end)
 
-\subsection{WSDL und SOAP} % (fold)
-\label{sub:wsdl_und_soap}
+\subsection{Simple Object Access Protocol (SOAP)} % (fold)
+\label{sub:soap}
+
+Das \emph{Simple Object Access Protocol}\cite{Mitra2007} (SOAP) ist ein vom W3C standardisiertes Netzwerkprotokoll für den Austausch von Daten zwischen heterogenen Systemen. SOAP schreibt einen bestimmten Aufbau von Nachrichten vor, innerhalb von denen die Daten transportiert werden. Als Repräsentation für diese Nachrichten wird auf XML gesetzt. Bei der Wahl des Transportprotokolls werden dahingegen keine Vorgaben gemacht und es ist frei wählbar. Häufig wird es aber in Verbindung mit HTTP und TCP verwendet. 
+
+\medskip
+
+\begin{lstlisting}[
+language=XML,
+caption={SOAP Nachricht}\label{lst:soap_nachricht},
+captionpos=t]
+<Envelope xmlns="http://www.w3.org/2003/05/soap-envelope">
+    <Header>
+        <!-- header information -->
+    <Header> 
+    <Body>
+        <!--body content-->
+    </Body>
+</Envelope>
+\end{lstlisting}
+
+Eine Nachricht besteht im Grunde aus drei Elementen: den \emph{Envelope}, einen optionalen \emph{Header} und einem \emph{Body} (siehe Listing \ref{lst:soap_nachricht}). Der Envelope fungiert, wie die Übersetzung schon sagt, als Briefumschlag für die zu transportierenden Daten. Innerhalb jedes Envelopes können zusätzliche Meta-Informationen im Header Element gespeichert werden. Die eigentlichen Daten befinden sich im Body Element des Evelopes. Wie der Inhalt von Header und Body auszusehen haben wird von SOAP nicht vorgeschrieben. Dies können weitere XML Elemente oder einfache Zeichenketten sein. 
+
+\subsubsection{Web Services Description Language} % (fold)
+\label{ssub:wsdl}
+
+% subsubsection wsdl (end)
+
+Gebräuchlich ist der Einsatz von SOAP bei sogenannten \emph{Remote Procedure  Calls} (RPC). Unter RPC verseht man den Aufruf eine Funktion von einem entfernten Dienst und das Zurückliefern einer eventuell vorhandenen Antwort. Welche Funktionen von einen Dienst zur Verfügung stehen wird ein einer \emph{Web Services Description Language}\cite{wsdl2001} (WSDL) Datei beschrieben. Diese WSDL Datei wird in XML Format geschrieben und enthält alle wichtigen Informationen für RPC Aufrufe, die von einen Dienst zur Verfügung gestellt werden: 
+
+\begin{description}
+    \item[\textbf{types}] enthält Definition von Datentypen die in einer Message eingesetzt werden können. Zur Definition der Datentypen wird das Vokabular von XML Schema\footnote{\url{http://www.w3.org/XML/Schema}} eingesetzt.
+    \item[\textbf{message}] Elemente beschreiben die Datentypen aus denen eine Nachricht aufgebaut ist.
+    \item[\textbf{portType}] definiert eine Menge an zur Verfügung stehenden Operationen. Inklusive Eingabe- und Ausgabeparameter. In der WSDL Version 2.0 wurde portType in \emph{interface} umbenannt.
+    \item[\textbf{binding}] beschreibt das Format und den Protokollablauf mehrerer Operationen. Zum Beispiel wie Eingabe- und Ausgabeparameter kodiert werden sollen. 
+    \item[\textbf{port}] Definiert eine Adresse hinter der sich ein Binding befindet. Üblicherweise in Form ein URI. Seit WSDL 2.0 wird statt port der Begriff \emph{endpoint} verwendet.
+    \item[\textbf{service}] dient zum Zusammenfassen mehrerer Ports zu einen einzigen Dienst.
+\end{description}
+
+Wird eine solche WSDL Datei öffentlich zugänglich gemacht, kann festgestellt werden welche Funktionen ein Dienst anbietet und automatisch Schnittstellen für unterschiedliche Systeme generiert werden. Der weiter Datenaustausch erfolgt dann über SOAP Nachrichten.
 
 % subsection wsdl_und_soap (end)
+
 
 % section zugriff_auf_webanwendungen (end)
 

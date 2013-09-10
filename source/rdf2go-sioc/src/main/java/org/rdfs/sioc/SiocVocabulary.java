@@ -8,7 +8,7 @@ import org.ontoware.rdf2go.model.node.impl.URIImpl;
  * Dec 23 16:39:20 CET 2012 input file: src/main/resources/ontologies/sioc.rdf
  * namespace: http://rdfs.org/sioc/ns#
  */
-public interface SIOCVocabulary {
+public interface SiocVocabulary {
     public static final URI NS_SIOC = new URIImpl("http://rdfs.org/sioc/ns#",
 	    false);
 

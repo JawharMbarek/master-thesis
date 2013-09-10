@@ -22,7 +22,7 @@
 
 package de.m0ep.socc.core.acl;
 
-import java.util.EnumSet;
+import java.util.Set;
 
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.QueryResultTable;
@@ -34,6 +34,7 @@ import org.w3.ns.auth.acl.Authorization;
 
 import com.google.common.base.Preconditions;
 import com.xmlns.foaf.Agent;
+import com.xmlns.foaf.FoafVocabulary;
 
 /**
  * Implements the {@link IAccessControl} to create an {@link AccessControl} for
@@ -44,7 +45,6 @@ import com.xmlns.foaf.Agent;
  */
 public class AccessControl implements IAccessControl {
     private Model model;
-    private Agent soccBotAgent;
 
     /**
      * Constructs a new {@link AccessControl} object with a specified
@@ -53,20 +53,18 @@ public class AccessControl implements IAccessControl {
      * @param model
      * @param soccBotAgentUri
      */
-    public AccessControl(final Model model, final Agent soccBotAgent) {
+    public AccessControl(final Model model) {
         this.model = Preconditions.checkNotNull(
                 model,
                 "Required parameter model must be specified.");
         Preconditions.checkArgument(model.isOpen(), "The model isn't open. ");
-
-        this.soccBotAgent = Preconditions.checkNotNull(
-                soccBotAgent,
-                "Required parameter soccBotAgent must be specified.");
     }
 
     @Override
-    public boolean checkAuthorizationForResource(Agent owner, URI accessTo,
-            EnumSet<AccessMode> accessModeSet) {
+    public boolean checkAccessTo(
+            Agent owner,
+            URI accessTo,
+            Set<URI> accessModeSet) {
         Preconditions.checkNotNull(owner,
                 "Required parameter owner must be specified.");
         Preconditions.checkNotNull(accessTo,
@@ -81,11 +79,13 @@ public class AccessControl implements IAccessControl {
                         "WHERE {\n" +
                         "?auth " + RDF.type.toSPARQL() + " "
                         + AclVocabulary.Authorization.toSPARQL() + ".\n" +
-                        "?auth " + AclVocabulary.owner.toSPARQL() + " " + owner.toSPARQL()
+                        "?auth " + AclVocabulary.owner.toSPARQL() + " "
+                        + owner.toSPARQL()
                         + ".\n" +
-                        "?auth " + AclVocabulary.agent.toSPARQL() + " "
-                        + soccBotAgent.toSPARQL() + ".\n" +
-                        "?auth " + AclVocabulary.accessTo.toSPARQL() + " " + accessTo.toSPARQL() +
+                        "?auth " + AclVocabulary.agentClass.toSPARQL() + " "
+                        + FoafVocabulary.Agent.toSPARQL() + ".\n" +
+                        "?auth " + AclVocabulary.accessTo.toSPARQL() + " "
+                        + accessTo.toSPARQL() +
                         ".}");
 
         for (QueryRow row : resultTable) {
@@ -94,8 +94,8 @@ public class AccessControl implements IAccessControl {
                     row.getValue("auth").asResource());
 
             int hits = 0;
-            for (AccessMode access : accessModeSet) {
-                if (authorization.hasAccessMode(access.toUri())) {
+            for (URI accessMode : accessModeSet) {
+                if (authorization.hasAccessMode(accessMode)) {
                     hits++;
                 }
             }
@@ -109,8 +109,8 @@ public class AccessControl implements IAccessControl {
     }
 
     @Override
-    public boolean checkAuthorizationForClass(Agent owner, URI accessToClass,
-            EnumSet<AccessMode> accessModeSet) {
+    public boolean checkAccessToClass(Agent owner, URI accessToClass,
+            Set<URI> accessModeSet) {
         Preconditions.checkNotNull(owner,
                 "Required parameter owner must be specified.");
         Preconditions.checkNotNull(accessToClass,
@@ -125,10 +125,11 @@ public class AccessControl implements IAccessControl {
                         "WHERE {\n" +
                         "?auth " + RDF.type.toSPARQL() + " "
                         + AclVocabulary.Authorization.toSPARQL() + ".\n" +
-                        "?auth " + AclVocabulary.owner.toSPARQL() + " " + owner.toSPARQL()
+                        "?auth " + AclVocabulary.owner.toSPARQL() + " "
+                        + owner.toSPARQL()
                         + ".\n" +
-                        "?auth " + AclVocabulary.agent.toSPARQL() + " "
-                        + soccBotAgent.toSPARQL() + ".\n" +
+                        "?auth " + AclVocabulary.agentClass.toSPARQL() + " "
+                        + FoafVocabulary.Agent.toSPARQL() + ".\n" +
                         "?auth " + AclVocabulary.accessToClass.toSPARQL() + " "
                         + accessToClass.toSPARQL() + ".}");
 
@@ -138,8 +139,8 @@ public class AccessControl implements IAccessControl {
                     row.getValue("auth").asResource());
 
             int hits = 0;
-            for (AccessMode access : accessModeSet) {
-                if (authorization.hasAccessMode(access.toUri())) {
+            for (URI accessMode : accessModeSet) {
+                if (authorization.hasAccessMode(accessMode)) {
                     hits++;
                 }
             }

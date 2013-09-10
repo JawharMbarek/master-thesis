@@ -29,12 +29,12 @@ import org.ontoware.rdf2go.model.QueryResultTable;
 import org.ontoware.rdf2go.model.QueryRow;
 import org.ontoware.rdf2go.model.node.Node;
 import org.ontoware.rdf2go.model.node.URI;
-import org.rdfs.sioc.SIOCVocabulary;
+import org.rdfs.sioc.SiocVocabulary;
 import org.rdfs.sioc.UserAccount;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.xmlns.foaf.FOAFVocabulary;
+import com.xmlns.foaf.FoafVocabulary;
 import com.xmlns.foaf.OnlineAccount;
 import com.xmlns.foaf.Person;
 
@@ -78,13 +78,13 @@ public final class UserAccountUtils {
 
         QueryResultTable resultTable = model.sparqlSelect(
                 "SELECT DISTINCT ?acc WHERE {{{?acc a "
-                        + SIOCVocabulary.UserAccount.toSPARQL()
+                        + SiocVocabulary.UserAccount.toSPARQL()
                         + "}UNION{?acc a "
-                        + FOAFVocabulary.OnlineAccount.toSPARQL()
+                        + FoafVocabulary.OnlineAccount.toSPARQL()
                         + "}}{{?acc "
-                        + SIOCVocabulary.account_of.toSPARQL() + " " + person.toSPARQL()
+                        + SiocVocabulary.account_of.toSPARQL() + " " + person.toSPARQL()
                         + "}UNION{"
-                        + person.toSPARQL() + " " + FOAFVocabulary.account.toSPARQL()
+                        + person.toSPARQL() + " " + FoafVocabulary.account.toSPARQL()
                         + " ?acc}}}");
 
         for (QueryRow row : resultTable) {
@@ -137,14 +137,14 @@ public final class UserAccountUtils {
 
         QueryResultTable resultTable = model.sparqlSelect(
                 "SELECT DISTINCT ?acc WHERE{{{?acc a "
-                        + SIOCVocabulary.UserAccount.toSPARQL() + "}UNION{?acc a " +
-                        FOAFVocabulary.OnlineAccount.toSPARQL()
+                        + SiocVocabulary.UserAccount.toSPARQL() + "}UNION{?acc a " +
+                        FoafVocabulary.OnlineAccount.toSPARQL()
                         + "}} ?acc "
-                        + FOAFVocabulary.accountName.toSPARQL()
+                        + FoafVocabulary.accountName.toSPARQL()
                         + " \""
                         + accountName
                         + "\" . ?acc "
-                        + FOAFVocabulary.accountServiceHomepage.toSPARQL()
+                        + FoafVocabulary.accountServiceHomepage.toSPARQL()
                         + " "
                         + accountServiceHomepage.toSPARQL() + " .}");
 
@@ -193,13 +193,13 @@ public final class UserAccountUtils {
                 "SELECT ?acc WHERE {{{"
                         + person.toSPARQL()
                         + " "
-                        + FOAFVocabulary.account.toSPARQL()
+                        + FoafVocabulary.account.toSPARQL()
                         + " ?acc} UNION {?acc "
-                        + SIOCVocabulary.account_of.toSPARQL()
+                        + SiocVocabulary.account_of.toSPARQL()
                         + " "
                         + person.toSPARQL()
                         + "}} ?acc "
-                        + FOAFVocabulary.accountServiceHomepage.toSPARQL()
+                        + FoafVocabulary.accountServiceHomepage.toSPARQL()
                         + " "
                         + accountServiceHomepage.toSPARQL()
                         + ".}");
@@ -242,13 +242,13 @@ public final class UserAccountUtils {
 
         QueryResultTable resultTable = model.sparqlSelect(
                 "SELECT DISTINCT ?person WHERE {{{?person a "
-                        + FOAFVocabulary.Person.toSPARQL()
+                        + FoafVocabulary.Person.toSPARQL()
                         + "}UNION{?person a "
-                        + FOAFVocabulary.Agent.toSPARQL()
+                        + FoafVocabulary.Agent.toSPARQL()
                         + "}}{{" + userAccount.toSPARQL() + " "
-                        + SIOCVocabulary.account_of.toSPARQL()
+                        + SiocVocabulary.account_of.toSPARQL()
                         + " ?person}UNION{?person "
-                        + FOAFVocabulary.account.toSPARQL()
+                        + FoafVocabulary.account.toSPARQL()
                         + " "
                         + userAccount.toSPARQL()
                         + "}}}");

@@ -35,7 +35,7 @@ import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Item;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.SIOCVocabulary;
+import org.rdfs.sioc.SiocVocabulary;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.Thread;
 import org.slf4j.Logger;
@@ -273,7 +273,7 @@ public final class SiocUtils {
 
 		// if its a forum, it has maybe a host
 		if ( RdfUtils.isType( container.getModel(), container.getResource(),
-		        SIOCVocabulary.Forum ) ) {
+		        SiocVocabulary.Forum ) ) {
 			Forum forum = Forum.getInstance( container.getModel(), container
 			        .getResource() );
 			return forum.hasHost( siteUri );

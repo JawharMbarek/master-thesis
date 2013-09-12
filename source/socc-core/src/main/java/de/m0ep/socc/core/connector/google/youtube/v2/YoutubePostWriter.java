@@ -147,7 +147,7 @@ public class YoutubePostWriter extends
 
 						if ( null != result ) {
 							Post parentPost = getConnector().getPostReader()
-							        .readPost( targetUri );
+							        .getPost( targetUri );
 							Post resultPost = YoutubeSiocUtils.createSiocPost(
 							        getConnector(),
 							        result,

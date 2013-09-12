@@ -352,7 +352,7 @@ public final class GooglePlusSiocUtils {
 				// try to set replied post if there is none parentPost
 				for ( InReplyTo inReplyTo : comment.getInReplyTo() ) {
 					try {
-						Post inReplyToPost = connector.getPostReader().readPost(
+						Post inReplyToPost = connector.getPostReader().getPost(
 						        Builder.createURI( inReplyTo.getUrl() ) );
 
 						result.setReplyOf( inReplyToPost );

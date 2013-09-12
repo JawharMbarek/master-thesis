@@ -280,7 +280,7 @@ public final class FacebookSiocUtils {
 	}
 
 	public static boolean hasConnection( JsonObject object, String connection ) {
-		if ( object.has( Fields.METADATA ) ) {
+		if ( null != object && object.has( Fields.METADATA ) ) {
 			JsonObject metadata = object.getJsonObject( Fields.METADATA );
 
 			if ( metadata.has( Fields.CONNECTIONS ) ) {

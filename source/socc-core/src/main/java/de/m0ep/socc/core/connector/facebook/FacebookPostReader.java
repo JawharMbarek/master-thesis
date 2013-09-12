@@ -62,7 +62,38 @@ public class FacebookPostReader extends
 	}
 
 	@Override
-	public Post readPost( URI uri )
+	public boolean isPost( URI uri ) {
+		if ( Post.hasInstance( getModel(), uri ) ) {
+			return true;
+		}
+
+		Pattern pattern = Pattern.compile( FacebookSiocUtils.REGEX_FACEBOOK_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
+
+		if ( matcher.find() ) {
+			String id = matcher.group( 1 );
+			JsonObject object = null;
+
+			try {
+				object = defaultClient.getFacebookClient().fetchObject(
+				        "/" + id,
+				        JsonObject.class,
+				        Parameter.with( RequestParameters.METADATA, 1 ) );
+			} catch ( Exception e ) {
+				Throwables.propagate( e );
+			}
+
+			if ( FacebookSiocUtils.hasConnection( object, Connections.COMMENTS ) ) {
+				FacebookSiocUtils.createSiocPost( getConnector(), object, null, null );
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public Post getPost( URI uri )
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {

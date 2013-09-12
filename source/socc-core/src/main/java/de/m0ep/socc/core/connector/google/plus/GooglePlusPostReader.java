@@ -64,7 +64,13 @@ public class GooglePlusPostReader extends
 	}
 
 	@Override
-	public Post readPost( URI uri )
+	public boolean isPost( URI uri ) {
+		return GooglePlusSiocUtils.isActivityUri( uri )
+		        || GooglePlusSiocUtils.isCommentUri( uri );
+	}
+
+	@Override
+	public Post getPost( URI uri )
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {

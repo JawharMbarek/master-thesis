@@ -98,7 +98,7 @@ public class CanvasLmsPostWriter extends
 		if ( isDiscussionTopicUri || isInitialEntryUri ) {
 			targetResource = getConnector().getStructureReader().getContainer( targetUri );
 		} else if ( isEntryUri ) {
-			targetResource = getConnector().getPostReader().readPost( targetUri );
+			targetResource = getConnector().getPostReader().getPost( targetUri );
 		}
 
 		ClosableIterator<Resource> postIter = Post.getAllInstances( tmpModel );

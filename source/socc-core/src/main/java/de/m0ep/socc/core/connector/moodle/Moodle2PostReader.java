@@ -38,7 +38,12 @@ public class Moodle2PostReader extends
 	}
 
 	@Override
-	public Post readPost( URI uri ) throws AuthenticationException, IOException {
+	public boolean isPost( URI uri ) {
+		return Moodle2SiocUtils.isForumPostUri( uri, getServiceEndpoint() );
+	}
+
+	@Override
+	public Post getPost( URI uri ) throws AuthenticationException, IOException {
 		Preconditions.checkNotNull( uri,
 		        "Required parameter uri must be specified." );
 
@@ -101,7 +106,7 @@ public class Moodle2PostReader extends
 		limit = Math.max( -1, limit );
 
 		if ( Moodle2SiocUtils.isForumPostUri( sourceUri, getServiceEndpoint() ) ) {
-			Post post = readPost( sourceUri );
+			Post post = getPost( sourceUri );
 			return pollRepliesAtPost( post, since, limit );
 		} else if ( Moodle2SiocUtils.isForumDiscussionUri( sourceUri, getServiceEndpoint() ) ) {
 			Container container = getConnector().getStructureReader().getContainer( sourceUri );

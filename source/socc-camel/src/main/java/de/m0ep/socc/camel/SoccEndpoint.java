@@ -1,106 +1,56 @@
 package de.m0ep.socc.camel;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
-import org.ontoware.rdf2go.model.Model;
-import org.rdfs.sioc.Container;
-import org.rdfs.sioc.Post;
+import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.util.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 
 import de.m0ep.socc.core.connector.IConnector;
-import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.utils.SiocUtils;
 
 public class SoccEndpoint extends ScheduledPollEndpoint {
+	public static final String PROPERTY_LIMIT = "limit";
+	public static final String PROPERTY_URI = "uri";
+
 	private static final Logger LOG = LoggerFactory.getLogger( SoccEndpoint.class );
 
 	private IConnector connector;
-	private List<String> containerIds;
-	private String postId;
 	private int limit = -1;
-	private Container container;
-	private Post post;
+	private URI uri;
 
-	public SoccEndpoint( String endpointUri, SoccComponent component, IConnector connector,
-	        List<String> containerIds ) throws NotFoundException,
-	        AuthenticationException, IOException {
+	public SoccEndpoint(
+	        final String endpointUri,
+	        final SoccComponent component,
+	        final IConnector connector )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
 		super( endpointUri, component );
 		this.connector = Preconditions.checkNotNull( connector,
 		        "Required parameter connector must be specified." );
-		this.containerIds = Preconditions.checkNotNull( containerIds,
-		        "Required parameter containerIds must be specified." );
-		Preconditions.checkArgument( !containerIds.isEmpty(),
-		        "The parameter shouldn't be empty." );
-
-		getPollContainer( connector, containerIds );
 
 		LOG.debug( "create Endpoint uri={}  connector={} containerIds={} postId={}",
 		        endpointUri,
-		        connector.getId(),
-		        Arrays.toString( containerIds.toArray() ),
-		        postId );
-	}
-
-	private void getPollContainer( IConnector connector, List<String> containerIds2 )
-	        throws NotFoundException, AuthenticationException, IOException {
-		IStructureReader<? extends IConnector> structureReader = connector.getStructureReader();
-		String rootContainerId = containerIds2.get( 0 );
-		Container parent = null;
-		parent = structureReader.getForum( rootContainerId );
-
-		for ( int i = 1; i < containerIds2.size(); i++ ) {
-			parent = structureReader.getThread( containerIds2.get( i ), parent );
-		}
-		this.container = parent;
+		        connector.getId() );
 	}
 
 	public IConnector getConnector() {
 		return connector;
 	}
 
-	public void setConnector( IConnector connector ) {
+	public void setConnector( final IConnector connector ) {
 		this.connector = Preconditions.checkNotNull( connector,
 		        "Required parameter connector must be specified." );
-	}
-
-	public List<String> getContainerIds() {
-		return containerIds;
-	}
-
-	public void setContainerIds( ImmutableList<String> containerIds ) {
-		this.containerIds = Preconditions.checkNotNull( containerIds,
-		        "Required parameter containerIds must be specified." );
-	}
-
-	public String getPostId() {
-		return postId;
-	}
-
-	public void setPostId( String postId ) {
-		this.postId = postId;
-	}
-
-	public Container getContainer() {
-		return container;
-	}
-
-	public void setContainer( Container container ) {
-		this.container = Preconditions.checkNotNull( container,
-		        "Required parameter container must be specified." );
 	}
 
 	public int getLimit() {
@@ -108,91 +58,71 @@ public class SoccEndpoint extends ScheduledPollEndpoint {
 	}
 
 	public void setLimit( int limit ) {
-		this.limit = limit;
+		this.limit = Math.max( -1, limit );
 	}
 
-	public Post getPost() throws NotFoundException {
-		if ( null == post ) { // TODO in Methode auslagern
-			Model model = getConnector().getContext().getModel();
-			post = SiocUtils.getPost( model, getPostId(), getContainer() );
-		}
+	public URI getUri() {
+		return uri;
+	}
 
-		return post;
+	public void setUri( URI uri ) {
+		this.uri = Preconditions.checkNotNull( uri,
+		        "Required parameter uri must be specified." );
 	}
 
 	@Override
-	public void setConsumerProperties( Map<String, Object> consumerProperties ) {
-		String limit = Strings.emptyToNull( (String) consumerProperties.remove( "limit" ) );
-		if ( null != limit ) {
+	public void configureProperties( final Map<String, Object> options ) {
+		if ( options.containsKey( PROPERTY_URI ) ) {
+			setUri( Builder.createURI( (String) options.remove( PROPERTY_URI ) ) );
+			LOG.debug( "Found property uri='{}'", getUri() );
+		}
+
+		if ( options.containsKey( PROPERTY_LIMIT ) ) {
 			try {
-				setLimit( Integer.parseInt( limit ) );
+				setLimit( Integer.parseInt( (String) options.remove( PROPERTY_LIMIT ) ) );
+				LOG.debug( "Found property limit='{}'", getLimit() );
 			} catch ( Exception e ) {
 				LOG.warn( "Failed to parse 'limit' parameter: was {}", limit );
+				setLimit( -1 );
 			}
-		}
-
-		super.setConsumerProperties( consumerProperties );
-	}
-
-	@Override
-	protected void configureConsumer( Consumer consumer ) throws Exception {
-		if ( consumer instanceof ISoccConsumer ) {
-			ISoccConsumer soccConsumer = (ISoccConsumer) consumer;
-			soccConsumer.setContainer( container );
-			soccConsumer.setLimit( limit );
-
-			if ( consumer instanceof ISoccPostConsumer ) {
-				( (ISoccPostConsumer) consumer ).setPost( getPost() );
-			}
-		}
-
-		super.configureConsumer( consumer );
-	}
-
-	@Override
-	public void configureProperties( Map<String, Object> options ) {
-		String postId = Strings.emptyToNull( (String) options.remove( "post" ) );
-		if ( null != postId ) {
-			setPostId( postId );
 		}
 
 		super.configureProperties( options );
 	}
 
 	@Override
-	public Producer createProducer() throws Exception {
-		ISoccProducer producer = null;
-		if ( null == postId ) {
-			LOG.debug( "Create SoccProducer" );
-			producer = new SoccContainerProducer( this );
+	public Consumer createConsumer( final Processor processor ) throws Exception {
+		ISoccConsumer pollConsumer = new SoccPostPollConsumer( this, processor );
+		configureConsumer( pollConsumer );
+		return pollConsumer;
+	}
 
-		} else {
-			LOG.debug( "Create SoccPostProducer" );
-			producer = new SoccPostProducer( this );
-			( (ISoccPostProducer) producer ).setPost( getPost() );
+	@Override
+	protected void configureConsumer( final Consumer consumer ) throws Exception {
+		if ( consumer instanceof ISoccConsumer ) {
+			ISoccConsumer soccConsumer = (ISoccConsumer) consumer;
+			soccConsumer.setPostReader( connector.getPostReader() );
+			soccConsumer.setUri( uri );
+			soccConsumer.setLimit( limit );
 		}
 
-		producer.setPostWriter( getConnector().getPostWriter() );
-		producer.setContainer( getContainer() );
+		super.configureConsumer( consumer );
+	}
+
+	@Override
+	public Producer createProducer() throws Exception {
+		ISoccProducer producer = new SoccPostProducer( this );
+		configureProducer( producer );
 
 		return producer;
 	}
 
-	@Override
-	public Consumer createConsumer( Processor processor ) throws Exception {
-		ISoccConsumer pollConsumer = null;
-		if ( null == postId ) {
-			pollConsumer = new SoccContainerPollConsumer( this, processor );
-		} else {
-			pollConsumer = new SoccPostPollConsumer( this, processor );
+	public void configureProducer( final Producer producer ) {
+		if ( producer instanceof ISoccProducer ) {
+			ISoccProducer soccProducer = (ISoccProducer) producer;
+			soccProducer.setPostWriter( getConnector().getPostWriter() );
+			soccProducer.setUri( uri );
 		}
-
-		pollConsumer.setPostReader( getConnector().getPostReader() );
-		pollConsumer.setContainer( getContainer() );
-		pollConsumer.setLimit( getLimit() );
-
-		configureConsumer( pollConsumer );
-		return pollConsumer;
 	}
 
 	@Override

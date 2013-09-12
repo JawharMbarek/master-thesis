@@ -148,6 +148,49 @@ Diese Erweiterungen (Präfix \emph{siocsa:}) und die übernommenen Teile der Aut
 
 % subsubsection authorization (end)
 
+\subsubsection{Autorisierung} % (fold)
+\label{ssub:autorisierung}
+
+Da für viele Menschen im Internet ihre Privatsphäre und nicht wollen, dass ohne ihr Wissen Informationen von ihnen weitergegeben werden, ist es wichtig von den Benutzern die Erlaubnis zu holen Beiträge weiter zu leiten. Ein verbreitetes Mittel für eine solche Zugriffssteuerung sind Access Control Lists (ACL) (engl. für Zugriffsteuerungsliste). Die anderen nur einen begrenzten Zugriff auf eine feste Ressource gewähren. Für den Einsatz in dieser Arbeit wurde die Basic Access Control Ontologie \cite{Hollenbach2009,wiki:wacl} ausgewählt (Im Folgenden nur als ACL bezeichnet). Der Hauptgrund lag darin, dass sie auf FOAF aufbaut und sich so einfach integrieren ließ.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true
+    ]{assets/images/w3c_web_acl}
+    \caption{Basic Access Control Ontologie}
+    \label{fig:w3c_web_acl}
+\end{figure}
+
+ Die ACL stellt die Klasse \texttt{acl:Access} für die Abbildung eines Zugriffrechts auf eine Ressource zur Verfügung. Von dieser Klasse werden einzelne Rechte wie \texttt{acl:Read} für das Lesen und \texttt{acl:Write} für das Schreiben abgeleitet. Nebenbei existieren noch Ableitungen \texttt{acl:Control} zum Ausführen und \texttt{acl:Append} zum Anfügen von Inhalten. Diese sind für diese Arbeit aber nicht von Bedeutung.
+
+ \medskip
+
+ Die eigentliche Regel für die ACL besteht aus der Klasse \texttt{acl:Authorization}. Der Besitzer dieser Regel wird durch die Eigenschaft \texttt{alc:owner} festgelegt. Der Besitzer ist im Fall von SOCC  ein Objekt der Klasse Person, wie in Abschnitt \ref{ssub:benutzerdaten} \enquote{\nameref{ssub:benutzerdaten}} beschrieben, da diese eine Unterklasse von der ACL geforderten \texttt{foaf:Agent} ist. Mittels \texttt{acl:agent} kann signalisiert werden, dass diese Regel nur für eine bestimmte Person/Agenten gilt. Das selbe gilt für \texttt{acl:agentClass}, wobei hier eine bestimmte Klasse gemeint ist. Soll zum Beispiel ein öffentlicher Zugriff definiert werden, wird \texttt{foaf:Agent} eingesetzt \cite[\enquote{Public Access}]{wiki:wacl}. Innerhalb von SOCC werden nur Regel angewendet, die einen solchen öffentlichen Zugriff erlauben. Die eigentlichen Rechte werden über die Eigenschaft \texttt{acl:mode} festgelegt. Erlaubt ist die Angabe jeder beliebigen Klasse, SOCC testet aber nur auf die Klassen \texttt{acl:Read} und \texttt{acl:Write} zum Lesen und Schreiben von Beiträten. Auf welche Ressource sich ein Regel letztendlich bezieht, wird über die Eigenschaft \texttt{acl:accessTo} geregelt. Die Angabe von \enquote{http://www.facebook.com} würde sich für SOCC zum Beispiel auf alle Beiträge des Besitzers auf Facebook beziehen, \enquote{https://canvas.instructure.com/courses/798152} dahingegen nur auf alle Beiträge innerhalb eines Canvas Kurses. Für einen Zugriff auf alle Beiträge prüft SOCC ob die Eigenschaft \texttt{acl:accessToClass} auf die Klasse \texttt{sioc:Post} verweist. So müsste nicht jede einzelne Seite angegeben werden.
+
+% access und accessClass fehlen
+
+\medskip
+
+Das Listing \ref{lst:acl_beispiel} zeigt ein Beispiel wie ein ACL Regel aussehen könnte. Der Besitzer dieser Regel wird durch die URI http:/example.org#john beschrieben (Zeile 6). Diese Person erlaubt nun öffentlichen Zugriff (Zeile 7) all all seine Beiträge (Zeile 8). Dieser Zugriff kann sowohl lesend als auch schreibend erfolgen (Zeile 9).
+
+\begin{lstlisting}[
+    caption={ACL Beispiel}\label{lst:acl_beispiel},
+    captionpos=t]
+@prefix sioc: <http://rdfs.org/sioc/ns#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/>
+@prefix acl: <http://www.w3.org/ns/auth/acl#> .
+
+[] a acl:Authorization;
+    acl:owner <http:/example.org#john>;
+    acl:agentClass foaf:Agent;
+    acl:accessToClass sioc:Post;
+    acl:mode acl:Read, acl:Write .
+\end{lstlisting}
+
+% subsubsection autorisierung (end)
+
 % subsection konfiguration (end)
 
 \subsection{Aufbau der SOCC} % (fold)
@@ -194,9 +237,7 @@ Diese Erweiterungen (Präfix \emph{siocsa:}) und die übernommenen Teile der Aut
     \label{fig:uml_socc_context}
 \end{wrapfigure}
 
-Der Kontext eines Connectors beschreibt die Umgebung innerhalb dem er seine Arbeit verrichtet. 
-
- \wrapfill
+Der Kontext eines Connectors beschreibt die Umgebung innerhalb dem er seine Arbeit verrichtet. Im aktuellen Status erhält der Connector zum einen Zugriff auf ein außenstehendes Model (TripleStore), das wichtige Daten für den Betrieb und enthält oder abgelegt werden können. Eine Referenz auf dieses Model erhält der Connector über den Aufruf der Funktion \texttt{getModel()}. Durch die Methode \texttt{getAccessControl()} kann der Connector über die im nächsten Abschnitt beschriebene AccessControl Schnittstelle auf die Information für die Zugriffssteuerung für das Lesen und Schreiben von Beiträgen. 
 
 % subsubsection socc_context (end)
 
@@ -215,8 +256,7 @@ Der Kontext eines Connectors beschreibt die Umgebung innerhalb dem er seine Arbe
     \label{fig:uml_accesscontrol}
 \end{wrapfigure}
 
-Die AccessControl Schnittstelle ist sehr einfach gehalten und dient für den Zugriff auf die in Abschnitt \ref{ssub:autorisierung_und_authentifizierung} beschriebene ACL. Die Methode \texttt{checkAccessTo(\dots)} prüft, ob der Zugriff auf eine Ressource mit allen übergebenen Zugriffsmodi erlaubt ist. Die andere Methode \texttt{checkAccessToClass} ist zur Überprüfung, die die Rechte für den Zugriff auf eine komplette Klasse von Ressourcen. 
-
+Die AccessControl Schnittstelle ist sehr einfach gehalten und dient für den Zugriff auf die in Abschnitt \ref{ssub:autorisierung_und_authentifizierung} \enquote{Autorisierung} beschriebene ACL. Die Methode \texttt{checkAccessTo(\dots)} prüft, ob der Zugriff auf eine Ressource mit allen übergebenen Zugriffsmodi erlaubt ist. Die andere Methode \texttt{checkAccessToClass} ist zur Überprüfung, die die Rechte für den Zugriff auf eine komplette Klasse von Ressourcen. 
 
 % subsubsection accesscontrol (end)
 

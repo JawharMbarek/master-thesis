@@ -98,7 +98,7 @@ public class CanvasLmsPostWriter extends
 		if ( isDiscussionTopicUri || isInitialEntryUri ) {
 			targetResource = getConnector().getStructureReader().getContainer( targetUri );
 		} else if ( isEntryUri ) {
-			targetResource = getConnector().getPostReader().readPost( targetUri );
+			targetResource = getConnector().getPostReader().getPost( targetUri );
 		}
 
 		ClosableIterator<Resource> postIter = Post.getAllInstances( tmpModel );
@@ -111,6 +111,7 @@ public class CanvasLmsPostWriter extends
 				if ( SoccUtils.hasContentWatermark(
 				        getConnector().getStructureReader().getSite(),
 				        post.getContent() ) ) {
+					LOG.info( "Skip this post, posted already at this site" );
 					continue;
 				}
 

@@ -66,7 +66,13 @@ public class CanvasLmsPostReader extends
 	}
 
 	@Override
-	public Post readPost( URI uri ) throws NotFoundException, AuthenticationException, IOException {
+	public boolean isPost( URI uri ) {
+		return CanvasLmsSiocUtils.isInitialEntryUri( uri, getServiceEndpoint() )
+		        || CanvasLmsSiocUtils.isEntryUri( uri, getServiceEndpoint() );
+	}
+
+	@Override
+	public Post getPost( URI uri ) throws NotFoundException, AuthenticationException, IOException {
 		if ( Post.hasInstance( getModel(), uri ) ) {
 			return Post.getInstance( getModel(), uri );
 		}

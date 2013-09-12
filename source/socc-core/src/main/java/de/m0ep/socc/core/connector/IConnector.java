@@ -146,6 +146,16 @@ public interface IConnector {
 		public Site getSite();
 
 		/**
+		 * Checks if the parameter <code>uri</code> is a container.
+		 * 
+		 * @param uri
+		 *            {@link URI} to check
+		 * @return <code>true</code> if there is a container behind the
+		 *         <code>uri</code>, <b>false</b> otherwise.
+		 */
+		public boolean isContainer( URI uri );
+
+		/**
 		 * Returns a {@link Container} that is located at the provided
 		 * {@link URI}
 		 * 
@@ -212,9 +222,11 @@ public interface IConnector {
 	 */
 	public static interface IPostReader<T extends IConnector> extends IConnectorIOComponent<T> {
 
+		public boolean isPost( URI uri );
+
 		public boolean hasPosts( URI uri );
 
-		public Post readPost( URI uri ) throws
+		public Post getPost( URI uri ) throws
 		        NotFoundException,
 		        AuthenticationException,
 		        IOException;

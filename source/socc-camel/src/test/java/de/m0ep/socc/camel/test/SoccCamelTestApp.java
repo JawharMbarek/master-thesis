@@ -70,12 +70,12 @@ public class SoccCamelTestApp {
 		}
 
 		RouteDefinition rd = new RouteDefinition()
-		        .from( "socc://canvas-test/798152/1440784?delay=10000" )
-		        .to( "socc://canvas-test/798152/1440783" );
+		        .from( "socc://canvas-test?uri=https://canvas.instructure.com/courses/798152/discussion_topics/1440784&delay=10000" )
+		        .to( "socc://canvas-test?uri=https://canvas.instructure.com/courses/798152/discussion_topics/1440780" );
 		try {
 			camelContext.addRouteDefinition( rd );
 		} catch ( Exception e ) {
-			LOG.debug( e.getMessage(), e );
+			LOG.debug( "Failed to add route", e );
 		}
 
 		try {

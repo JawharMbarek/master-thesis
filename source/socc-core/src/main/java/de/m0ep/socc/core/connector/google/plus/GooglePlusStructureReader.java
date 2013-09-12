@@ -69,6 +69,11 @@ public class GooglePlusStructureReader extends
 	}
 
 	@Override
+	public boolean isContainer( URI uri ) {
+		return GooglePlusSiocUtils.isActivityFeedUri( uri );
+	}
+
+	@Override
 	public Container getContainer( URI uri )
 	        throws NotFoundException,
 	        AuthenticationException,

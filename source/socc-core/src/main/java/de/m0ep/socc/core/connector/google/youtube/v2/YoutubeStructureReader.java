@@ -88,6 +88,13 @@ public class YoutubeStructureReader extends
 	}
 
 	@Override
+	public boolean isContainer( URI uri ) {
+		return YoutubeSiocUtils.isPlaylistUri( uri )
+		        || YoutubeSiocUtils.isUserPlaylistsUri( uri )
+		        || YoutubeSiocUtils.isUserUploadsUri( uri );
+	}
+
+	@Override
 	public Container getContainer( URI uri )
 	        throws NotFoundException,
 	        AuthenticationException,

@@ -196,7 +196,7 @@ public class FacebookPostWriter extends
 				}
 
 				if ( null != result && null != result.getId() ) {
-					Post resultPost = getConnector().getPostReader().readPost(
+					Post resultPost = getConnector().getPostReader().getPost(
 					        FacebookSiocUtils.createSiocUri(
 					                result.getId() ) );
 					resultPost.setSibling( post );
@@ -284,7 +284,7 @@ public class FacebookPostWriter extends
 				}
 
 				if ( null != result && null != result.getId() ) {
-					Post resultPost = getConnector().getPostReader().readPost(
+					Post resultPost = getConnector().getPostReader().getPost(
 					        FacebookSiocUtils.createSiocUri(
 					                result.getId() ) );
 

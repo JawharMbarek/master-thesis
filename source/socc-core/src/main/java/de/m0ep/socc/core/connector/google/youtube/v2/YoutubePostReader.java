@@ -60,7 +60,13 @@ public class YoutubePostReader extends
 	}
 
 	@Override
-	public Post readPost( URI uri ) throws NotFoundException, AuthenticationException, IOException {
+	public boolean isPost( URI uri ) {
+		return YoutubeSiocUtils.isCommentUri( uri )
+		        || YoutubeSiocUtils.isVideoUri( uri );
+	}
+
+	@Override
+	public Post getPost( URI uri ) throws NotFoundException, AuthenticationException, IOException {
 		if ( Post.hasInstance( getModel(), uri ) ) {
 			return Post.getInstance( getModel(), uri );
 		}
@@ -189,7 +195,7 @@ public class YoutubePostReader extends
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {
-		Post parentPost = readPost( sourceUri );
+		Post parentPost = getPost( sourceUri );
 		String pageUrl = sourceUri.toString();
 
 		List<Post> result = Lists.newArrayList();

@@ -68,6 +68,12 @@ public class Moodle2StructureReader extends
 	}
 
 	@Override
+	public boolean isContainer( URI uri ) {
+		return Moodle2SiocUtils.isForumDiscussionUri( uri, getServiceEndpoint() )
+		        || Moodle2SiocUtils.isForumUri( uri, getServiceEndpoint() );
+	}
+
+	@Override
 	public Container getContainer( URI uri ) throws NotFoundException, AuthenticationException,
 	        IOException {
 		if ( getModel().contains( uri, Variable.ANY, Variable.ANY ) ) {

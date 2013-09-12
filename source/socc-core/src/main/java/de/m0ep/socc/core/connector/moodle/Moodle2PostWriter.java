@@ -85,7 +85,7 @@ public class Moodle2PostWriter extends
 		} else if ( isForumPostUri ) {
 			targetResource = getConnector()
 			        .getPostReader()
-			        .readPost( targetUri );
+			        .getPost( targetUri );
 		} else {
 			throw new NotFoundException( "No suitable Moodle target found at uri "
 			        + targetUri

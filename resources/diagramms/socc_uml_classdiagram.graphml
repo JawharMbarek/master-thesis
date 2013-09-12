@@ -39,7 +39,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="115.0" width="309.0" x="402.0" y="388.0"/>
+          <y:Geometry height="128.0" width="309.0" x="402.0" y="388.0"/>
           <y:Fill color="#C0C0C0" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="custom" textColor="#000000" visible="true" width="79.86083984375" x="114.569580078125" y="26.701171875">IPostReader<y:LabelModel>
@@ -51,7 +51,8 @@
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="interface" use3DEffect="false">
             <y:AttributeLabel/>
-            <y:MethodLabel>+ readPost(uri: URI): Post
+            <y:MethodLabel>+ isPost(uri: URI): boolean
++ getPost(uri: URI): Post
 + hasPosts(uri: URI): boolean
 + pollPosts(uri: URI, since: Date, limit: int): List</y:MethodLabel>
           </y:UML>
@@ -62,7 +63,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="144.0" width="309.0" x="63.0" y="388.0"/>
+          <y:Geometry height="160.0" width="309.0" x="63.0" y="388.0"/>
           <y:Fill color="#C0C0C0" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="custom" textColor="#000000" visible="true" width="109.47900390625" x="99.760498046875" y="26.701171875">IStructureReader<y:LabelModel>
@@ -75,6 +76,7 @@
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="interface" use3DEffect="false">
             <y:AttributeLabel/>
             <y:MethodLabel>+ getSite(): Site
++ isContainer(uri: URI): boolean
 + getContainer(uri: URI): Container
 + listContainer(): List
 + hasChildContainer(uri: URI): boolean
@@ -189,10 +191,10 @@
     <node id="n7">
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="100.25" width="648.0" x="63.0" y="607.125"/>
+          <y:Geometry height="100.25" width="500.0" x="63.0" y="607.125"/>
           <y:Fill color="#C0C0C0" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="custom" textColor="#000000" visible="true" width="99.36083984375" x="274.319580078125" y="26.701171875">IAccessControl<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="custom" textColor="#000000" visible="true" width="99.36083984375" x="200.319580078125" y="26.701171875">IAccessControl<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -201,8 +203,8 @@
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="interface" use3DEffect="false">
             <y:AttributeLabel/>
-            <y:MethodLabel>+ checkAuthorizationForResource(owner: Agent, accessTo: URI, accessModeSet: EnumSet&lt;AccessMode&gt;): boolean
-+ checkAuthorizationForClass(owner: Agent, accessTo: URI, accessModeSet: EnumSet&lt;AccessMode&gt;): boolean</y:MethodLabel>
+            <y:MethodLabel>+ checkAccessTo(owner: Agent, accessTo: URI , accessModeSet: Set&lt;URI&gt;): boolean
++ checkAccessToClass(owner: Agent, accessTo: URI, accessModeSet: Set&lt;URI&gt;): boolean</y:MethodLabel>
           </y:UML>
         </y:UMLClassNode>
       </data>
@@ -266,9 +268,9 @@
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="shead" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="10.673828125" x="-12.673828125" y="10.1151123046875">1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="shead" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="10.673828125" x="-12.673828125" y="10.13311767578125">1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="thead" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="24.015625" x="-26.015625" y="51.6639404296875">0..1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="thead" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="24.015625" x="-26.015625" y="51.68194580078125">0..1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>

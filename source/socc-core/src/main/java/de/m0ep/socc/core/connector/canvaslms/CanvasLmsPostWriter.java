@@ -111,6 +111,7 @@ public class CanvasLmsPostWriter extends
 				if ( SoccUtils.hasContentWatermark(
 				        getConnector().getStructureReader().getSite(),
 				        post.getContent() ) ) {
+					LOG.info( "Skip this post, posted already at this site" );
 					continue;
 				}
 

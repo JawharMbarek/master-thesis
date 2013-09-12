@@ -34,21 +34,26 @@ public final class CanvasLmsSiocUtils {
 
 	public static final String CANVAS_LMS_API_PATH = "/api/v1";
 
-	public static final String REGEX_INT_ID_GROUP = "([0-9]+)";
+	public static final String REGEX_API_PATH = "(?:/api/v1)?";
+
+	public static final String REGEX_INT_ID_GROUP = "([\\d]+)";
+
+	public static final String REGEX_QUERY_PARAMETER = "(?:\\?.*)?";
 
 	public static final String REGEX_USER_URI =
-	        CANVAS_LMS_API_PATH
+	        REGEX_API_PATH
 	                + "/about/"
-	                + REGEX_INT_ID_GROUP;
+	                + REGEX_INT_ID_GROUP
+	                + REGEX_QUERY_PARAMETER;
 
 	public static final String REGEX_COURSE_URI =
-	        CANVAS_LMS_API_PATH
+	        REGEX_API_PATH
 	                + "/courses/"
 	                + REGEX_INT_ID_GROUP;
 
 	public static final String REGEX_DISCUSSION_TOPIC_URI =
 	        REGEX_COURSE_URI
-	                + "/discussion_topics"
+	                + "/discussion_topics/"
 	                + REGEX_INT_ID_GROUP;
 
 	public static final String REGEX_INITIAL_ENTRY_URI =
@@ -423,34 +428,34 @@ public final class CanvasLmsSiocUtils {
 		Pattern pattern = Pattern.compile( "^" + rootUri + REGEX_USER_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.find();
+		return matcher.matches();
 	}
 
 	public static boolean isCourseUri( final URI uri, final URI rootUri ) {
 		Pattern pattern = Pattern.compile( "^" + rootUri + REGEX_COURSE_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.find();
+		return matcher.matches();
 	}
 
 	public static boolean isDiscussionTopicUri( final URI uri, final URI rootUri ) {
 		Pattern pattern = Pattern.compile( "^" + rootUri + REGEX_DISCUSSION_TOPIC_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.find();
+		return matcher.matches();
 	}
 
 	public static boolean isInitialEntryUri( final URI uri, final URI rootUri ) {
 		Pattern pattern = Pattern.compile( "^" + rootUri + REGEX_INITIAL_ENTRY_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.find();
+		return matcher.matches();
 	}
 
 	public static boolean isEntryUri( final URI uri, final URI rootUri ) {
 		Pattern pattern = Pattern.compile( "^" + rootUri + REGEX_ENTRY_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.find();
+		return matcher.matches();
 	}
 }

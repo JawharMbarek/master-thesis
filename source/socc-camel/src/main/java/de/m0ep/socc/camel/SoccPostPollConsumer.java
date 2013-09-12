@@ -103,8 +103,10 @@ public class SoccPostPollConsumer extends ScheduledPollConsumer implements ISocc
 	private Thing createThing( IConnector connector, URI uri ) throws NotFoundException {
 		try {
 			if ( connector.getStructureReader().isContainer( uri ) ) {
+				LOG.debug( "'{}' is a container uri", uri );
 				return connector.getStructureReader().getContainer( uri );
 			} else if ( connector.getPostReader().isPost( uri ) ) {
+				LOG.debug( "'{}' is a post uri", uri );
 				return connector.getPostReader().getPost( uri );
 			}
 		} catch ( Exception e ) {

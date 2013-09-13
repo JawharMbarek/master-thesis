@@ -125,32 +125,65 @@ Eine der bekanntesten Umsetzungen der Vision des  semantischen Webs ist wohl das
 
 \medskip
 
-Das Datenmodell von RDF ist sehr einfach aufgebaut um es effizient verarbeiten zu können. Die Grundlage bilden simple Tripel aus Subjekt, Prädikat und Objekt, welche an die natürliche Sprache angelehnt als Sätze\cite{Heinzen} bezeichnet werden. Mehrere solcher Tripel bilden einen RDF Graphen. Das Prädikat beschreibt hierbei eine Beziehung zwischen Subjekt und Objekt und wird daher oft als Eigenschaft beschrieben. In der natürlichen Sprache kann man dies zum Beispiel so ausdrücken; Das Subjekt hat eine Eigenschaft mit den Wert Objekt. Graphisch wird dies durch eine gerichtete Verbindung von Subjekt und Objekt mit der Beschriftung der Prädikats dargestellt (siehe Abbildung \ref{fig:graphische_darstellung_eines_rdf_tripels}).
-
-\medskip
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[scale=0.7]{assets/images/rdf-triple}
-    \caption{Graphische Darstellung eines RDF Tripels}
-    \label{fig:graphische_darstellung_eines_rdf_tripels}
-\end{figure} 
-
-Für Subjekt, Prädikat und Objekt besteht die Möglichkeit sogenannte Uniform Resource Identifiers (URI), Literale oder leere Knoten als Werte einzusetzen. 
+Das Datenmodell von RDF ist zur effizienten Verarbeitung sehr einfach aufgebaut. Die Grundlage bilden Tripel aus Subjekt, Prädikat und Objekt. Einer oder mehrere solcher Triple zusammen werden als gerichteter RDF-Graph bezeichnet. Subjekt und Objekt stehen über das Prädikat mit einander in Beziehung, wobei die Beziehung immer vom Subjekt zum Objekt geht. Das Prädikat wird auch als Eigenschaft (engl. Property) bezeichnet. Gemeinsam beschreibt das Triple immer eine Aussage über eine oder zwei Ressourcen. Zum Beispiel \enquote{Die Dose enthält Kekse} wäre eine Aussage, dass in einer Dose sich Kekse befinden. Die Dose ist dabei das Subjekt, enthält das Prädikat und Kekse das Objekt. Ein Triple ist quasi ein einfacher Satz in der natürlichen Sprache \cite{Heinzen}. Für Subjekt, Prädikat und Objekt werden in RDF \emph{Uniform Resource Identifier} (URI), \emph{Literale} oder \emph{leere Knoten} (im englischen \emph{Blank Nodes} genannt) verwendet. 
 
 \begin{description}
-    \item[URIs] sind eindeutige Bezeichner die eine beliebige reale oder abstrakte Ressource und werden wie in RFC 2396\footnote{\url{http://www.isi.edu/in-notes/rfc2396.txt}} beschrieben formatiert, wobei relative URIs nach \cite{Klyne2004} nicht verwendete werden sollen.
-    \item[Literale] bestehen aus einfachen Zeichenketten die zum Speichern der Informationen dienen. Zusätzlich können Literale mit der Angabe der verwendeten Sprache \lstinline[basicstyle=\ttfamily]{"Objekt"@de} oder des Datentyps \lstinline[basicstyle=\ttfamily]{"42"^^xsd:integer} erweitert werden. Bei Literalen ist aber auch darauf zu achten, dass \lstinline[basicstyle=\ttfamily]{"Objekt} und \lstinline[basicstyle=\ttfamily]{"Objekt"@de} beschreiben zwar beide den gleichen Wert werden aber von RDF nicht als gleich angesehen. Zwei Literale können nur gleich sein, wenn sie die selbe Sprache beziehungsweise den selben Datentyp besitzen.  
-    \item[Leere Knoten] werden als alle Knoten im RDF Graphen beschrieben, welche weder eine URI noch ein Literal sind. Sie dienen häufig dazu um Subjekte zu beschreiben für die aber nicht unbedingt eine eigene URI nötig ist und sind nur innerhalb eines Graphen eindeutig\todo{Daher eignen sie sich auch nicht zur Referenzierung außerhalb des RDF-Graphen!} \todo[inline]{Beispiel}.
+    \item[URIs] sind eindeutige Bezeichner die eine beliebige reale oder abstrakte Ressource darstellen und werden wie in RFC 2396\footnote{\url{http://www.isi.edu/in-notes/rfc2396.txt}} beschrieben formatiert. Relative URIs sollten aber nach \cite{Klyne2004} aber nach Möglichkeit vermieden werden. URIs bilden eine Verallgemeinerung der im Web gebräuchlichen Uniform Resource Locator (URL).
+   
+    \item[Literale] bestehen aus einfachen Zeichenketten die zum Speichern der Informationen dienen. Zusätzlich können Literale mit der Angabe der verwendeten Sprache \texttt{"Objekt"@de} oder des Datentyps \texttt{"42"^^xsd:integer} erweitert werden. Bei Literalen ist darauf zu achten, dass die Literale \texttt{"Objekt"} und \texttt{"Objekt"@de} auf den ersten Blick zwar den selben Wert beschreiben, aber aus Sicht von RDF nicht die selben sind. Sowohl die angegebene Spracht als auch der Datentyp müssen übereinstimmen.
+
+    \item[Leere Knoten] werden als alle Knoten im RDF Graphen beschrieben, welche weder eine URI noch ein Literal sind. Sie dienen häufig dazu, um Subjekte zu beschreiben für die nicht unbedingt eine eigene URI nötig ist und sind nur innerhalb eines Graphen eindeutig. Für die Referenzierung außerhalb des RDF-Graphen sind leere Knoten ungeeignet.
 \end{description}
 
-Doch nicht jeder davon ist in jeden Teil des Tripels erlaubt. Das Subjekt ist entweder eine URI oder ein leerer Knoten wobei das Prädikat nur eine URI sein kann. Dahingegen ist es beim Objekt möglich eine URI, einen leeren Knoten oder ein Literal zu verwendeten. 
+Doch nicht jeder davon ist in jeden Teil des Tripels erlaubt. Das Subjekt ist entweder eine URI oder ein leerer Knoten, wobei das Prädikat nur eine URI sein kann. Dahingegen ist es beim Objekt möglich eine URI, einen leeren Knoten oder ein Literal zu verwendeten. 
 
-\subsubsection{RDF Darstellungsformate} % (fold)
-\label{ssub:rdf_xml_n3}
+\subsubsection{Darstellung von RDF} % (fold)
+\label{ssub:darstellung_von_rdf}
+
+\paragraph{Graphische Darstellung} % (fold)
+\label{par:graphische_darstellung}
+
+Graphisch lässt sich RDF als gerichteter Graph mit Knoten und Kanten darstellen. Ressourcen werden dabei als elliptische Knoten, Literale als Rechtecke und die Prädikate als gerichtete Kante gezeichnet. Ein Beispiel ist in Abbildung \ref{fig:graphisch_rdf_triple} zu sehen.
+
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[
+            width=0.6\textwidth,
+            keepaspectratio=true,
+            clip=true]
+            {assets/images/rdf-triple}
+        \caption{Einfacher RDF-Graph}
+        \label{fig:graphisch_rdf_triple}
+    \end{figure}
+
+% paragraph graphische_darstellung (end)
+
+\paragraph{RDF/XML} % (fold)
+\label{par:rdf_xml}
+
+RDF/XML\cite[Abschnitt 3.2]{Manola2004} ist eine verbreitete Form RDF-Dokumente zu beschreiben. Die Basis bildet hierbei die Verwendung der Extensible Markup Language (XML). In Listing \ref{lst:rdf_xml_beispiel} ist ein Beispieldokument in RDF/XML zusehen. Das in Zeile 2 zu sehende \texttt{rdf:RDF} Element zeigt, dass sich innerhalb von ihm sich die RDF-Beschreibung des Dokuments befindet. In diesem ELement werden mit \texttt{xmlns:} einige Präfixe für Namensräume  definiert, um das Dokument übersichtlicher zu halten. Alle Präfixe werden danach mit den angegebenen Namensraum ersetzt. Das \texttt{Description} in Zeile 5 stellt die Beschreibung einer Ressource im RDF-Graphen. Die URI der Ressource wird mit dem Attribut \texttt{rdf:about} definiert. Innerhalb des Description Elements befinden sich die Prädikate. In Zeile 6 steht also, dass die Ressource die Eigenschaft \texttt{exterms:enthaelt} besitzt und diese das Literal \texttt{Kekse}. Wäre das Objekt nicht wie hier ein Literal sondern eine weitere Ressource, könnte man über das Attribut \texttt{rdf:ressource} für das \texttt{exterms:enthaelt} auf diese Ressource verweisen.
+
+\begin{lstlisting}[
+    language=XML,
+    caption={RDF/XML Beispiel}\label{lst:rdf_xml_beispiel},
+    captionpos=t]
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:exterms="http://www.example.org/terms/">
+
+    <rdf:Description rdf:about="http://www.example.org/dose">
+       <exterms:enthaelt>Kekse</exterms:enthaelt>
+    </rdf:Description>
+</rdf:RDF>
+\end{lstlisting}
+% paragraph rdf_xml (end)
+
+\paragraph{Turtle} % (fold)
+\label{par:turtle}
+
+% paragraph turtle (end)
 
 \begin{description}
-    \item[RDF/XML] 
     \item[N3] ist die Kurzform für Notation 3 und wurde von Tim Berners-Lee als Sprache für RDF entwickelt. Tripel in N3 werden dabei wie Sätze in meisten natürlichen Sprachen geschrieben. Erst das Subjekt, dann das Prädikat und am Ende das Objekt gefolgt von einen Punkt, wie in  Listing \ref{lst:n3_beispiel} zu sehen ist.
     \begin{lstlisting}[caption={Einfaches N3 Beispiel}\label{lst:n3_beispiel},captionpos=t]
 <http://example.de/florian> <http://example.org/#name> "Florian" .
@@ -169,22 +202,21 @@ Doch nicht jeder davon ist in jeden Teil des Tripels erlaubt. Das Subjekt ist en
 
 \end{description}
 
-% subsubsection rdf_xml_n3_turtle (end)
-
-\subsubsection{Abfragesprache SPARQL} % (fold)
-\label{ssub:abfragesprache_sparql}
-
-% subsubsection resource_description_language (end)
-
-\subsubsection{Ontologien} % (fold)
-\label{ssub:ontologien}
-
-% subsubsection ontologien (end)
+% subsubsection darstellung_von_rdf (end)
 
 % subsection semantic_web_und_das_resource_description_framework (end)
 
-\section{Semantically-Interlinked Online Communities} % (fold)
-\label{sec:verw_arbeiten_sioc}
+\subsection{Ontologien} % (fold)
+\label{sub:ontologien}
+
+\subsubsection{Friend of a Friend (FOAF)} % (fold)
+\label{ssub:friend_of_a_friend_}
+
+% subsubsection friend_of_a_friend_ (end)
+
+\subsubsection{Semantically-Interlinked Online Communities (SIOC)} % (fold)
+\label{ssub:semantically_interlinked_online_communities}
+
 
 Semantically-Interlinked Online Communities\footnote{\url{http://sioc-project.org/}} (SIOC, ausgesprochen \enquote{schock}) ist ein Projekt, welches von Uldis Boj\=ars und John Breslin begonnen wurde um unterschiedliche, webbasierte Diskussionslattformen(Blog, Forum, Mailinglist,\dots) untereinander verbinden zu können \cite{Breslin2005}. Der Kern von SIOC besteht aus einer Ontologie, welche den Inhalt und die Struktur diese Plattformen in ein maschinenlesbares Format bringt und es erlaubt diese auf semantischer Ebene zu verbinden. Auch soll es so möglich sein Daten von einer Plattform zu einer Anderen zu transferieren und so einfacher Inhalte austauschen zu können. Als Basis für SIOC dient RDF, die Ontologie selber wurde in RDFS und OWL designt. Um nicht das Rad neu erfinden zu müssen greift SIOC auf schon bestehende und bewährte Ontologien zurück. Für die Abbildung von Beziehungen zwischen einzelnen Personen wird Friend of a Friend\footnote{\url{http://www.foaf-project.org/}} (FOAF) und für einige Inhaltliche- und Metadaten (Titel, Inhalt, Erstelldatum, \dots) Dublin Core Terms\footnote{http://dublincore.org/documents/dcmi-terms/} eingesetzt.
 
@@ -198,6 +230,10 @@ Semantically-Interlinked Online Communities\footnote{\url{http://sioc-project.or
     \caption{Aufbau von SIOC (modifiziert) - Originalquelle: \cite{deri2013}}
     \label{fig:sioc_aufbau_diagramm}
 \end{figure}
+
+% subsubsection semantically_interlinked_online_communities (end)
+
+% subsection ontologien (end)
 
 \section{Datenverteilung} % (fold)
 \label{sec:datenverteilung}

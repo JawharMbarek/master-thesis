@@ -32,9 +32,6 @@ import com.google.common.base.Strings;
  * @author Florian Müller
  */
 public class StringUtils {
-	/**
-	 * Private constructor, because this class has only static methods.
-	 */
 	private StringUtils() {
 	}
 

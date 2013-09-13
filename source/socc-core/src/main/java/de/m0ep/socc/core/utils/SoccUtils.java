@@ -48,10 +48,7 @@ public final class SoccUtils {
 	 * @return Post content with watermark.
 	 */
 	public static String addContentWatermark( final Node siteNode, final String content ) {
-		return content
-		        + IPostWriter.MESSAGE_WATERMARK_PREFIX
-		        + siteNode
-		        + IPostWriter.MESSAGE_WATERMARK_POSTFIX;
+		return addContentWatermark( siteNode, content, "\n" );
 	}
 
 	/**
@@ -82,5 +79,24 @@ public final class SoccUtils {
 		Pattern pattern = Pattern.compile( IPostWriter.REGEX_MESSAGE_WATERMARK );
 		Matcher matcher = pattern.matcher( content );
 		return matcher.find();
+	}
+
+	/**
+	 * Adds a SOCC watermark to the content to prevent writing duplicate posts.
+	 * 
+	 * @param siteNode
+	 *            Site where the post was made.
+	 * @param content
+	 *            Content of the post where the watermark will be added.
+	 * @param lineBreak
+	 *            Linebreak symbol between content and watermark
+	 * @return Post content with watermark.
+	 */
+	public static String addContentWatermark( Node siteNode, String content, String lineBreak ) {
+		return content
+		        + lineBreak
+		        + IPostWriter.MESSAGE_WATERMARK_PREFIX
+		        + siteNode
+		        + IPostWriter.MESSAGE_WATERMARK_POSTFIX;
 	}
 }

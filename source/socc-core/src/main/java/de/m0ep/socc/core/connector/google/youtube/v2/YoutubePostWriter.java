@@ -36,6 +36,8 @@ import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.UserAccount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 import com.google.gdata.data.Link;
@@ -43,7 +45,6 @@ import com.google.gdata.data.PlainTextConstruct;
 import com.google.gdata.data.youtube.CommentEntry;
 import com.google.gdata.data.youtube.YouTubeNamespace;
 import com.google.gdata.util.ServiceException;
-import com.xmlns.foaf.Person;
 
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
@@ -51,10 +52,13 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
+import de.m0ep.socc.core.utils.UserAccountUtils;
 
 public class YoutubePostWriter extends
         DefaultConnectorIOComponent<YoutubeConnector> implements
         IPostWriter<YoutubeConnector> {
+	private static final Logger LOG = LoggerFactory.getLogger( YoutubePostWriter.class );
+
 	public YoutubePostWriter( YoutubeConnector connector ) {
 		super( connector );
 	}
@@ -83,29 +87,33 @@ public class YoutubePostWriter extends
 						continue;
 					}
 
-					UserAccount creatorAccount = post.getCreator();
-					Person creatorPerson = PostWriterUtils
-					        .getPersonOfCreatorOrNull(
-					                getConnector(), creatorAccount );
-
 					YoutubeClientWrapper client = null;
 					String content = post.getContent();
-					if ( null != creatorPerson ) {
-						UserAccount serviceAccount = PostWriterUtils
-						        .getServiceAccountOfPersonOrNull(
-						                getConnector(),
-						                creatorPerson,
-						                getServiceEndpoint() );
-						if ( null != serviceAccount ) {
-							try {
-								client = getConnector().getClientManager().get( serviceAccount );
-							} catch ( Exception e ) {
-								client = getConnector().getClientManager().getDefaultClient();
-								content = PostWriterUtils.formatUnknownMessage(
-								        getConnector(),
-								        post );
-							}
+
+					UserAccount creatorAccount = UserAccount.getInstance(
+					        getModel(),
+					        post.getCreator().getResource() );
+					if ( null != creatorAccount ) {
+						try {
+							UserAccount serviceAccount = UserAccountUtils.findUserAccountOfService(
+							        getModel(),
+							        creatorAccount,
+							        getConnector().getService() );
+
+							client = getConnector().getClientManager().get( serviceAccount );
+						} catch ( Exception e ) {
+							LOG.warn( "", e );
+							LOG.debug( "No client found for UserAccount {}", creatorAccount );
+							client = null;
 						}
+					}
+
+					if ( null == client ) {
+						LOG.debug( "Using default client" );
+						client = getConnector().getClientManager().getDefaultClient();
+						content = PostWriterUtils.formatUnknownMessage(
+						        getConnector(),
+						        post );
 					}
 
 					if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
@@ -156,6 +164,8 @@ public class YoutubePostWriter extends
 							resultPost.setSibling( post );
 
 							return;
+						} else {
+							LOG.warn( "Failed to write post(s) to uri " + targetUri );
 						}
 					}
 				}
@@ -164,7 +174,9 @@ public class YoutubePostWriter extends
 				tmpModel.close();
 			}
 		}
-
-		throw new IOException( "Can't write post(s) to uri " + targetUri );
+		throw new IOException(
+		        "Failed to write post to target uri "
+		                + targetUri
+		                + ", it's neither a conainer nor a post od comment" );
 	}
 }

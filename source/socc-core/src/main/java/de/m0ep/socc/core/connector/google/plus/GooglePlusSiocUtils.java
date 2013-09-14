@@ -148,7 +148,7 @@ public final class GooglePlusSiocUtils {
 
 		Model model = connector.getContext().getModel();
 		Service service = connector.getService();
-		URI userUri = createPeopleUri( userId );
+		URI userUri = createPersonUri( userId );
 
 		UserAccount result = new UserAccount( model, userUri, true );
 		result.setId( userId );
@@ -392,7 +392,7 @@ public final class GooglePlusSiocUtils {
 		return result;
 	}
 
-	public static URI createPeopleUri( final String userId ) {
+	public static URI createPersonUri( final String userId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( TEMPLATE_PEOPLE_URI )
 		                .set( TEMPLATE_VAR_USER_ID, userId )
@@ -421,14 +421,14 @@ public final class GooglePlusSiocUtils {
 		                .expand() );
 	}
 
-	public static boolean isPeopleUri( final URI uri ) {
+	public static boolean isPersonUri( final URI uri ) {
 		Preconditions.checkNotNull( uri,
 		        "Required parameter uri must be specified." );
 
 		Pattern pattern = Pattern.compile( REGEX_PEOPLE_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.find();
+		return matcher.matches();
 	}
 
 	public static boolean isActivityFeedUri( final URI uri ) {
@@ -438,7 +438,7 @@ public final class GooglePlusSiocUtils {
 		Pattern pattern = Pattern.compile( REGEX_ACTIVITY_FEED_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.find();
+		return matcher.matches();
 	}
 
 	public static boolean isActivityUri( final URI uri ) {
@@ -448,7 +448,7 @@ public final class GooglePlusSiocUtils {
 		Pattern pattern = Pattern.compile( REGEX_ACTIVITY_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.find();
+		return matcher.matches();
 	}
 
 	public static boolean isCommentUri( final URI uri ) {
@@ -458,6 +458,6 @@ public final class GooglePlusSiocUtils {
 		Pattern pattern = Pattern.compile( REGEX_COMMENT_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		return matcher.find();
+		return matcher.matches();
 	}
 }

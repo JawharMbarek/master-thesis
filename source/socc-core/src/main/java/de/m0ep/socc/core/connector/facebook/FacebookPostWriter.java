@@ -17,6 +17,8 @@ import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Thing;
 import org.rdfs.sioc.UserAccount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -24,7 +26,6 @@ import com.restfb.Parameter;
 import com.restfb.exception.FacebookException;
 import com.restfb.json.JsonObject;
 import com.restfb.types.FacebookType;
-import com.xmlns.foaf.Person;
 
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
@@ -35,29 +36,34 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
+import de.m0ep.socc.core.utils.UserAccountUtils;
 
 public class FacebookPostWriter extends
         DefaultConnectorIOComponent<FacebookConnector> implements
         IPostWriter<FacebookConnector> {
-	public FacebookPostWriter( FacebookConnector connector ) {
+	private static final Logger LOG = LoggerFactory.getLogger( FacebookPostWriter.class );
+
+	public FacebookPostWriter( final FacebookConnector connector ) {
 		super( connector );
 	}
 
 	@Override
-	public void writePost( URI targetUri, String rdfString, Syntax syntax )
+	public void writePost(
+	        final URI targetUri,
+	        final String rdfString,
+	        final Syntax syntax )
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {
 
 		if ( Forum.hasInstance( getModel(), targetUri ) ) {
-			writePostToContainer( rdfString, syntax, Forum.getInstance(
-			        getModel(), targetUri ) );
+			writePostToContainer( Forum.getInstance(
+			        getModel(), targetUri ), rdfString, syntax );
 		} else if ( Post.hasInstance( getModel(), targetUri ) ) {
-			writeReplyToPost( rdfString, syntax, Post.getInstance( getModel(),
-			        targetUri ) );
+			writeReplyToPost( Post.getInstance( getModel(),
+			        targetUri ), rdfString, syntax );
 		} else {
-			Pattern pattern = Pattern
-			        .compile( FacebookSiocUtils.REGEX_FACEBOOK_URI );
+			Pattern pattern = Pattern.compile( FacebookSiocUtils.REGEX_FACEBOOK_URI );
 			Matcher matcher = pattern.matcher( targetUri.toString() );
 
 			if ( matcher.find() ) {
@@ -83,36 +89,35 @@ public class FacebookPostWriter extends
 				}
 
 				if ( null != object ) {
-					if ( FacebookSiocUtils.hasConnection( object,
-					        Connections.FEED ) ) {
+					if ( FacebookSiocUtils.hasConnection( object, Connections.FEED ) ) {
 						Container container = FacebookSiocUtils
 						        .createSiocForum(
 						                getConnector(),
 						                object );
-						writePostToContainer( rdfString, syntax, container );
+						writePostToContainer( container, rdfString, syntax );
 
-					} else if ( FacebookSiocUtils.hasConnection( object,
-					        Connections.COMMENTS ) ) {
+					} else if ( FacebookSiocUtils.hasConnection( object, Connections.COMMENTS ) ) {
 						Post post = FacebookSiocUtils.createSiocPost(
 						        getConnector(),
 						        object,
 						        null,
 						        null );
-						writeReplyToPost( rdfString, syntax, post );
+						writeReplyToPost( post, rdfString, syntax );
 					}
 				}
 			} else {
 				throw new IOException(
-				        "Can't write post to target uri "
+				        "Failed to write post to target uri "
 				                + targetUri
-				                + " at "
-				                + getServiceEndpoint() );
+				                + ", it's neither a conainer nor a post od comment" );
 			}
 		}
 	}
 
-	private void writePostToContainer( String rdfString, Syntax syntax,
-	        Container container )
+	private void writePostToContainer(
+	        final Container targetContainer,
+	        final String rdfString,
+	        final Syntax syntax )
 	        throws AuthenticationException,
 	        NotFoundException,
 	        IOException {
@@ -130,30 +135,34 @@ public class FacebookPostWriter extends
 					continue;
 				}
 
-				UserAccount creatorAccount = post.getCreator();
-				Person creatorPerson = PostWriterUtils
-				        .getPersonOfCreatorOrNull(
-				                getConnector(),
-				                creatorAccount );
-
+				UserAccount creatorAccount = UserAccount.getInstance(
+				        getModel(),
+				        post.getCreator().getResource() );
 				FacebookClientWrapper client = null;
 				String content = Strings.nullToEmpty( post.getContent() );
-				if ( null != creatorPerson ) {
-					UserAccount serviceAccount = PostWriterUtils
-					        .getServiceAccountOfPersonOrNull(
-					                getConnector(),
-					                creatorPerson,
-					                getServiceEndpoint() );
-					if ( null != serviceAccount ) {
-						try {
-							client = getConnector().getClientManager().get( serviceAccount );
-						} catch ( Exception e ) {
-							client = getConnector().getClientManager().getDefaultClient();
-							content = PostWriterUtils.formatUnknownMessage(
-							        getConnector(),
-							        post );
-						}
+				if ( null != creatorAccount ) {
+					try {
+						UserAccount serviceAccount = UserAccountUtils.findUserAccountOfService(
+						        getModel(),
+						        creatorAccount,
+						        getConnector().getService() );
+
+						client = getConnector().getClientManager().get( serviceAccount );
+					} catch ( Exception e ) {
+						LOG.debug( "No client found for UserAccount {}: exception -> {}\n{}",
+						        creatorAccount,
+						        e.getMessage(),
+						        Throwables.getStackTraceAsString( e ) );
+						client = null;
 					}
+				}
+
+				if ( null == client ) {
+					LOG.debug( "Using default client" );
+					client = getConnector().getClientManager().getDefaultClient();
+					content = PostWriterUtils.formatUnknownMessage(
+					        getConnector(),
+					        post );
 				}
 
 				ClosableIterator<Thing> attachIter = post.getAllAttachments();
@@ -186,7 +195,7 @@ public class FacebookPostWriter extends
 				FacebookType result = null;
 				try {
 					result = client.getFacebookClient().publish(
-					        container.getId()
+					        targetContainer.getId()
 					                + "/"
 					                + Connections.FEED,
 					        FacebookType.class,
@@ -200,15 +209,21 @@ public class FacebookPostWriter extends
 					        FacebookSiocUtils.createSiocUri(
 					                result.getId() ) );
 					resultPost.setSibling( post );
+					return;
 				}
 			}
 		} finally {
 			postIter.close();
 			tmpModel.close();
 		}
+
+		LOG.warn( "Failed to write post(s) to uri " + targetContainer );
 	}
 
-	private void writeReplyToPost( String rdfString, Syntax syntax, Post post )
+	private void writeReplyToPost(
+	        final Post targetPost,
+	        final String rdfString,
+	        final Syntax syntax )
 	        throws AuthenticationException,
 	        NotFoundException,
 	        IOException {
@@ -222,34 +237,38 @@ public class FacebookPostWriter extends
 				// skip all posts that are already forwarded from this site
 				if ( SoccUtils.hasContentWatermark(
 				        getConnector().getStructureReader().getSite(),
-				        post.getContent() ) ) {
+				        targetPost.getContent() ) ) {
 					continue;
 				}
 
-				UserAccount creatorAccount = reply.getCreator();
-				Person creatorPerson = PostWriterUtils
-				        .getPersonOfCreatorOrNull(
-				                getConnector(),
-				                creatorAccount );
-
+				UserAccount creatorAccount = UserAccount.getInstance(
+				        getModel(),
+				        targetPost.getCreator().getResource() );
 				FacebookClientWrapper client = null;
 				String content = Strings.nullToEmpty( reply.getContent() );
-				if ( null != creatorPerson ) {
-					UserAccount serviceAccount = PostWriterUtils
-					        .getServiceAccountOfPersonOrNull(
-					                getConnector(),
-					                creatorPerson,
-					                getServiceEndpoint() );
-					if ( null != serviceAccount ) {
-						try {
-							client = getConnector().getClientManager().get( serviceAccount );
-						} catch ( Exception e ) {
-							client = getConnector().getClientManager().getDefaultClient();
-							content = PostWriterUtils.formatUnknownMessage(
-							        getConnector(),
-							        post );
-						}
+				if ( null != creatorAccount ) {
+					try {
+						UserAccount serviceAccount = UserAccountUtils.findUserAccountOfService(
+						        getModel(),
+						        creatorAccount,
+						        getConnector().getService() );
+
+						client = getConnector().getClientManager().get( serviceAccount );
+					} catch ( Exception e ) {
+						LOG.debug( "No client found for UserAccount {}: exception -> {}\n{}",
+						        creatorAccount,
+						        e.getMessage(),
+						        Throwables.getStackTraceAsString( e ) );
+						client = null;
 					}
+				}
+
+				if ( null == client ) {
+					LOG.debug( "Using default client" );
+					client = getConnector().getClientManager().getDefaultClient();
+					content = PostWriterUtils.formatUnknownMessage(
+					        getConnector(),
+					        targetPost );
 				}
 
 				// can only send a message -> add attachments to the content.
@@ -266,13 +285,13 @@ public class FacebookPostWriter extends
 
 				if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
 					// add watermark for 'already forwarded' check
-					content = SoccUtils.addContentWatermark( post.getIsPartOf(), content );
+					content = SoccUtils.addContentWatermark( targetPost.getIsPartOf(), content );
 				}
 
 				FacebookType result = null;
 				try {
 					result = client.getFacebookClient()
-					        .publish( post.getId()
+					        .publish( targetPost.getId()
 					                + "/"
 					                + Connections.COMMENTS,
 					                FacebookType.class,
@@ -288,12 +307,15 @@ public class FacebookPostWriter extends
 					        FacebookSiocUtils.createSiocUri(
 					                result.getId() ) );
 
-					resultPost.setSibling( post );
+					resultPost.setSibling( targetPost );
+					return;
 				}
 			}
 		} finally {
 			postIter.close();
 			tmpModel.close();
 		}
+
+		LOG.warn( "Failed to write post(s) to uri " + targetPost );
 	}
 }

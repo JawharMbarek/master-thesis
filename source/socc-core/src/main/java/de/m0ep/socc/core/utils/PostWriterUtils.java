@@ -25,20 +25,17 @@ package de.m0ep.socc.core.utils;
 import java.text.ParseException;
 import java.util.Map;
 
-import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.UserAccount;
-import org.rdfs.sioc.services.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
-import com.xmlns.foaf.Person;
+import com.java2s.code.java.i18n.MapFormat;
 
 import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
-import de.m0ep.socc.core.exceptions.NotFoundException;
 
 /**
  * Utility methods so the PostWriters are not a huge mess ;)
@@ -76,10 +73,14 @@ public final class PostWriterUtils {
 		        "Required parameter connector must be specified." );
 		Preconditions.checkNotNull( post,
 		        "Required parameter post must be specified." );
+		Preconditions.checkArgument( post.hasContent(),
+		        "The parameter post has no content." );
 
 		Map<String, Object> args = Maps.newHashMap();
-		UserAccount creatorAccount = post.getCreator();
-		String authorName = creatorAccount.hasName() ? creatorAccount.getName() : "an unknown user";
+		UserAccount creatorAccount = post.hasCreator() ? post.getCreator() : null;
+		String authorName = ( null != creatorAccount && creatorAccount.hasName() )
+		        ? creatorAccount.getName()
+		        : "an unknown user";
 
 		args.put( IPostWriter.MESSAGE_TEMPLATE_VAR_MESSAGE, post.getContent() );
 		args.put( IPostWriter.MESSAGE_TEMPLATE_VAR_CONNECTOR_ID, connector.getId() );
@@ -106,126 +107,5 @@ public final class PostWriterUtils {
 		}
 
 		return MapFormat.format( connector.getUnknownMessageTemplate(), args );
-	}
-
-	/**
-	 * Finds a {@link UserAccount} that ist mapped to
-	 * <code>creatorUserAccount</code> and belongs to the {@link Service} of the
-	 * <code>connector</code>.
-	 * 
-	 * @param connector
-	 *            Used Connector
-	 * @param creatorUserAccount
-	 *            {@link UserAccount} of which a mapped {@link UserAccount}
-	 *            should be found.
-	 * 
-	 * @return The mapped {@link UserAccount}
-	 * @throws NotFoundException
-	 *             Thrown if no such mapped {@link UserAccount} could be found.
-	 * @throws NullPointerException
-	 *             Thrown if <code>connector</code> or
-	 *             <code>creatorUserAccount</code> are <code>null</code>.
-	 */
-	public static UserAccount findUserAccountOfService(
-	        final IConnector connector,
-	        final UserAccount creatorUserAccount ) {
-		Preconditions.checkNotNull( connector,
-		        "Required parameter connector must be specified." );
-		Preconditions.checkNotNull( creatorUserAccount,
-		        "Required parameter creatorUserAccount must be specified." );
-
-		//Service service = connector.getService();
-
-		// TODO: mhm... ganz schön leer ;)
-
-		return null;
-	}
-
-	public static String createContentOfUnknownAccount(
-	        final Post post,
-	        final UserAccount creatorAccount,
-	        final Person creatorPerson ) {
-		String creator = "unknown";
-
-		if ( null != creatorPerson ) {
-			if ( creatorPerson.hasNickname() ) {
-				creator = creatorPerson.getNickname();
-			} else if ( creatorPerson.hasName() ) {
-				creator = creatorPerson.getName();
-			}
-		} else if ( null != creatorAccount ) {
-			creator = creatorAccount.getName();
-		}
-
-		return creator
-		        + " wrote: \n"
-		        + post.getContent();
-	}
-
-	public static Object getClientOfServiceAccountOrNull(
-	        final IConnector connector,
-	        final UserAccount serviceAccount ) {
-		try {
-			if ( connector.getClientManager().contains( serviceAccount ) ) {
-				return connector.getClientManager().get( serviceAccount );
-			} else {
-				try {
-					Object client = connector.getClientManager()
-					        .createClient( serviceAccount );
-
-					connector.getClientManager().add( serviceAccount,
-					        client );
-					return client;
-				} catch ( Exception e ) {
-					LOG.debug( "Failed to create client form userAccount "
-					        + connector.getService().getServiceEndpoint() );
-				}
-			}
-		} catch ( Exception e ) {
-			LOG.debug( "Failed to load client form userAccount "
-			        + connector.getService().getServiceEndpoint(),
-			        e );
-		}
-
-		return null;
-	}
-
-	public static UserAccount getServiceAccountOfPersonOrNull(
-	        final IConnector connector,
-	        final Person creatorPerson,
-	        final URI serviceEndpoint ) {
-		try {
-			return UserAccountUtils.findUserAccountOfService(
-			        connector.getContext().getModel(),
-			        creatorPerson,
-			        serviceEndpoint );
-		} catch ( NotFoundException e ) {
-			LOG.debug( "Person {} has no userAccount at the {} service",
-			        creatorPerson,
-			        connector.getService().getServiceEndpoint() );
-			return null;
-		}
-	}
-
-	public static Person getPersonOfCreatorOrNull(
-	        final IConnector connector,
-	        final UserAccount creatorAccount ) {
-		if ( null != creatorAccount ) {
-			if ( creatorAccount.hasAccountOf() ) {
-				return Person.getInstance(
-				        connector.getContext().getModel(),
-				        creatorAccount.getAccountOf().getResource() );
-			} else {
-				try {
-					return UserAccountUtils.findPerson(
-					        connector.getContext().getModel(),
-					        creatorAccount );
-				} catch ( NotFoundException e ) {
-					LOG.debug( "No corresponding person found for " + creatorAccount );
-				}
-			}
-		}
-
-		return null;
 	}
 }

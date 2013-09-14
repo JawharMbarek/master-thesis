@@ -188,10 +188,10 @@ public final class Moodle2SiocUtils {
 		Preconditions.checkArgument( parentForum.hasId(),
 		        "The parameter parentForum has no id." );
 
+		int id = discussionRecord.getPost().getDiscussion();
 		Model model = connector.getContext().getModel();
-		URI serviceEndpoint = connector.getService().getServiceEndpoint()
-		        .asURI();
-		URI uri = createForumDiscussionUri( serviceEndpoint, discussionRecord.getId() );
+		URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
+		URI uri = createForumDiscussionUri( serviceEndpoint, id );
 
 		Thread result;
 		if ( Thread.hasInstance( model, uri ) ) {
@@ -206,7 +206,7 @@ public final class Moodle2SiocUtils {
 		} else {
 			result = new Thread( model, uri,
 			        true );
-			result.setId( Integer.toString( discussionRecord.getId() ) );
+			result.setId( Integer.toString( id ) );
 			result.setName( discussionRecord.getName() );
 			result.setNumItems( 0 );
 

@@ -1,4 +1,4 @@
-package de.m0ep.socc.core.utils;
+package com.java2s.code.java.i18n;
 
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
@@ -73,6 +73,8 @@ import java.util.Map;
  * 
  * @author Slavek Psenicka
  * @see MessageFormat
+ * @see <a
+ *      href="http://www.java2s.com/Code/Java/I18N/AtextformatsimilartoMessageFormatbutusingstringratherthannumerickeys.htm">http://www.java2s.com/Code/Java/I18N/AtextformatsimilartoMessageFormatbutusingstringratherthannumerickeys.htm</a>
  */
 @SuppressWarnings( "rawtypes" )
 public class MapFormat extends Format {

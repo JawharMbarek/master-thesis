@@ -108,85 +108,143 @@ Wird eine solche WSDL Datei öffentlich zugänglich gemacht, kann festgestellt w
 
 % section zugriff_auf_webanwendungen (end)
 
-\section{Datenintegration} % (fold)
-\label{sec:datenintegration}
+\section{Datenintegration mit Ontologien} % (fold)
+\label{sec:datenintegration_mit_ontologien}
 
 % section datenintegration (end)
 
 
-\subsection{Semantic web und das Resource Description Framework} % (fold)
-\label{sub:semantic_web_und_das_resource_description_framework}
-
-
+\subsection{Semantic Web} % (fold)
+\label{sub:semantic_web}
 
 \todo[inline]{Idee semantic web einbauen}
 
-Eine der bekanntesten Umsetzungen der Vision des  semantischen Webs ist wohl das \emph{Resource Description Framework} (RDF). Wie der Name schon suggeriert dient RDF zur Beschreibung von einzelnen Ressourcen innerhalb des Internets. Nach \cite{Klyne2004,Manola2004} bestand die Motivation bei der Entwicklung von RDF Information über Ressource in einen offenen Datenmodell zu speichern, so dass diese Daten von Maschinen automatisch verarbeitet, manipulieren und untereinander ausgetauscht werden können. Gleichzeitig sollte es auch einfach von jedem erweitert werden können \enquote{RDF is designed to represent information in a minimally constraining, flexible way}\cite{Klyne2004}.
+\subsubsection{Resource Description Framework} % (fold)
+\label{ssub:resource_description_framework}
+
+
+Eine der bekanntesten Umsetzungen der Vision des semantischen Webs ist wohl das \emph{Resource Description Framework} (RDF). Wie der Name schon suggeriert dient RDF zur Beschreibung von einzelnen Ressourcen innerhalb des Internets. Nach \cite{Klyne2004,Manola2004} bestand die Motivation bei der Entwicklung von RDF Information über Ressource in einen offenen Datenmodell zu speichern, so dass diese Daten von Maschinen automatisch verarbeitet, manipulieren und untereinander ausgetauscht werden können. Gleichzeitig sollte es auch einfach von jedem erweitert werden können \enquote{RDF is designed to represent information in a minimally constraining, flexible way}\cite{Klyne2004}.
 
 \medskip
 
-Das Datenmodell von RDF ist sehr einfach aufgebaut um es effizient verarbeiten zu können. Die Grundlage bilden simple Tripel aus Subjekt, Prädikat und Objekt, welche an die natürliche Sprache angelehnt als Sätze\cite{Heinzen} bezeichnet werden. Mehrere solcher Tripel bilden einen RDF Graphen. Das Prädikat beschreibt hierbei eine Beziehung zwischen Subjekt und Objekt und wird daher oft als Eigenschaft beschrieben. In der natürlichen Sprache kann man dies zum Beispiel so ausdrücken; Das Subjekt hat eine Eigenschaft mit den Wert Objekt. Graphisch wird dies durch eine gerichtete Verbindung von Subjekt und Objekt mit der Beschriftung der Prädikats dargestellt (siehe Abbildung \ref{fig:graphische_darstellung_eines_rdf_tripels}).
-
-\medskip
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[scale=0.7]{assets/images/rdf-triple}
-    \caption{Graphische Darstellung eines RDF Tripels}
-    \label{fig:graphische_darstellung_eines_rdf_tripels}
-\end{figure} 
-
-Für Subjekt, Prädikat und Objekt besteht die Möglichkeit sogenannte Uniform Resource Identifiers (URI), Literale oder leere Knoten als Werte einzusetzen. 
+Das Datenmodell von RDF ist zur effizienten Verarbeitung sehr einfach aufgebaut. Die Grundlage bilden Tripel aus Subjekt, Prädikat und Objekt. Einer oder mehrere solcher Triple zusammen werden als gerichteter RDF-Graph bezeichnet. Subjekt und Objekt stehen über das Prädikat mit einander in Beziehung, wobei die Beziehung immer vom Subjekt zum Objekt geht. Das Prädikat wird auch als Eigenschaft (engl. Property) bezeichnet. Gemeinsam beschreibt das Triple immer eine Aussage über eine oder zwei Ressourcen. Zum Beispiel \enquote{Die Dose enthält Kekse} wäre eine Aussage, dass in einer Dose sich Kekse befinden. Die Dose ist dabei das Subjekt, enthält das Prädikat und Kekse das Objekt. Ein Triple ist quasi ein einfacher Satz in der natürlichen Sprache \cite{Heinzen}. Für Subjekt, Prädikat und Objekt werden in RDF \emph{Uniform Resource Identifier} (URI), \emph{Literale} oder \emph{leere Knoten} (im englischen \emph{Blank Nodes} genannt) verwendet. 
 
 \begin{description}
-    \item[URIs] sind eindeutige Bezeichner die eine beliebige reale oder abstrakte Ressource und werden wie in RFC 2396\footnote{\url{http://www.isi.edu/in-notes/rfc2396.txt}} beschrieben formatiert, wobei relative URIs nach \cite{Klyne2004} nicht verwendete werden sollen.
-    \item[Literale] bestehen aus einfachen Zeichenketten die zum Speichern der Informationen dienen. Zusätzlich können Literale mit der Angabe der verwendeten Sprache \lstinline[basicstyle=\ttfamily]{"Objekt"@de} oder des Datentyps \lstinline[basicstyle=\ttfamily]{"42"^^xsd:integer} erweitert werden. Bei Literalen ist aber auch darauf zu achten, dass \lstinline[basicstyle=\ttfamily]{"Objekt} und \lstinline[basicstyle=\ttfamily]{"Objekt"@de} beschreiben zwar beide den gleichen Wert werden aber von RDF nicht als gleich angesehen. Zwei Literale können nur gleich sein, wenn sie die selbe Sprache beziehungsweise den selben Datentyp besitzen.  
-    \item[Leere Knoten] werden als alle Knoten im RDF Graphen beschrieben, welche weder eine URI noch ein Literal sind. Sie dienen häufig dazu um Subjekte zu beschreiben für die aber nicht unbedingt eine eigene URI nötig ist und sind nur innerhalb eines Graphen eindeutig\todo{Daher eignen sie sich auch nicht zur Referenzierung außerhalb des RDF-Graphen!} \todo[inline]{Beispiel}.
+    \item[URIs] sind eindeutige Bezeichner die eine beliebige reale oder abstrakte Ressource darstellen und werden wie in RFC 2396\footnote{\url{http://www.isi.edu/in-notes/rfc2396.txt}} beschrieben formatiert. Relative URIs sollten aber nach \cite{Klyne2004} aber nach Möglichkeit vermieden werden. URIs bilden eine Verallgemeinerung der im Web gebräuchlichen Uniform Resource Locator (URL).
+   
+    \item[Literale] bestehen aus einfachen Zeichenketten die zum Speichern der Informationen dienen. Zusätzlich können Literale mit der Angabe der verwendeten Sprache \texttt{"Objekt"@de} oder des Datentyps \texttt{"42"^^xsd:integer} erweitert werden. Bei Literalen ist darauf zu achten, dass die Literale \texttt{"Objekt"} und \texttt{"Objekt"@de} auf den ersten Blick zwar den selben Wert beschreiben, aber aus Sicht von RDF nicht die selben sind. Sowohl die angegebene Spracht als auch der Datentyp müssen übereinstimmen.
+
+    \item[Leere Knoten] werden als alle Knoten im RDF Graphen beschrieben, welche weder eine URI noch ein Literal sind. Sie dienen häufig dazu, um Subjekte zu beschreiben für die nicht unbedingt eine eigene URI nötig ist und sind nur innerhalb eines Graphen eindeutig. Für die Referenzierung außerhalb des RDF-Graphen sind leere Knoten ungeeignet.
 \end{description}
 
-Doch nicht jeder davon ist in jeden Teil des Tripels erlaubt. Das Subjekt ist entweder eine URI oder ein leerer Knoten wobei das Prädikat nur eine URI sein kann. Dahingegen ist es beim Objekt möglich eine URI, einen leeren Knoten oder ein Literal zu verwendeten. 
+Doch nicht jeder davon ist in jeden Teil des Tripels erlaubt. Das Subjekt ist entweder eine URI oder ein leerer Knoten, wobei das Prädikat nur eine URI sein kann. Dahingegen ist es beim Objekt möglich eine URI, einen leeren Knoten oder ein Literal zu verwendeten. 
 
-\subsubsection{RDF Darstellungsformate} % (fold)
-\label{ssub:rdf_xml_n3}
+% subsubsection resource_description_framework (end)
 
-\begin{description}
-    \item[RDF/XML] 
-    \item[N3] ist die Kurzform für Notation 3 und wurde von Tim Berners-Lee als Sprache für RDF entwickelt. Tripel in N3 werden dabei wie Sätze in meisten natürlichen Sprachen geschrieben. Erst das Subjekt, dann das Prädikat und am Ende das Objekt gefolgt von einen Punkt, wie in  Listing \ref{lst:n3_beispiel} zu sehen ist.
-    \begin{lstlisting}[caption={Einfaches N3 Beispiel}\label{lst:n3_beispiel},captionpos=t]
-<http://example.de/florian> <http://example.org/#name> "Florian" .
-<http://example.de/florian> <http://example.org/#age> "28" .    \end{lstlisting} 
-    Die URI \texttt{http://example.de/florian} beschreibt hierbei eine Ressource welche einen Namen \texttt{Florian} und ein Alter \texttt{28} besitzt. Es ist darauf zu achten, dass alle URI immer zwischen spitzen Klammern stehen. Da nun einzelne Prädikate recht häufig innerhalb eines Graphen auftauchen können, kann es einfach sein diese abgekürzt schreiben zu können. Hierzu ist es möglich sogenannte Präfixe (auch Namensräume genannt) am Beginn des Dokumentes zu definieren und einen so Schreibarbeit abzunehmen.
+\subsubsection{Darstellung von RDF-Graphen} % (fold)
+\label{ssub:darstellung_von_rdf_graphen}
 
-    \begin{lstlisting}[caption={Präfixe}\label{lst:n3_prefix},captionpos=t]
-@prefix person: <http://example.org/#> .
-<http://example.de/florian> person:name "Florian" .
-<http://example.de/florian> person:age "28" .    \end{lstlisting}
+In Laufe der Zeit von RDF wurde verschiedene Möglichkeiten erfunden einen RDF-Graphen darzustellen. In diesem Abschnitt werden drei Formen vorgestellt die auch in dieser Arbeit zur Visualisierung benutzt werden. 
 
-    Am Anfang von Listing \ref{lst:n3_prefix} wird durch Einleiten mittels des Schlüsselwortes \texttt{@prefix} ein neuer Präfix \texttt{person:} für die URI \texttt{http://example.org/\#} festgelegt (man beachte wieder den Punkt am Ende der Zeile). Dieser Präfix kann nun überall innerhalb des Dokumentes verwendet werden, wobei die spitzen Klammern der vorherigen URI weggelassen werden können.
+\paragraph{Graphische Darstellung} % (fold)
+\label{par:graphische_darstellung}
 
-    \todo[inline]{Leere Knoten + kurz Turtle}
-    \todo[inline]{Die englischen Fachbegriffe (also hier blank nodes oder bnodes) würde ich auch erwähnen. Das hilft dem Leser, wenn er sich englischsprachige Literatur anschaut nach dem er deine Arbeit gelesen hat.}
+Graphisch lässt sich RDF als gerichteter Graph mit Knoten und Kanten darstellen. Ressourcen werden dabei als elliptische Knoten, Literale als Rechtecke und die Prädikate als gerichtete Kante gezeichnet. Ein Beispiel ist in Abbildung \ref{fig:graphisch_rdf_triple} zu sehen.
 
-\end{description}
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[
+            width=0.6\textwidth,
+            keepaspectratio=true,
+            clip=true]
+            {assets/images/rdf-triple}
+        \caption{Einfacher RDF-Graph}
+        \label{fig:graphisch_rdf_triple}
+    \end{figure}
 
-% subsubsection rdf_xml_n3_turtle (end)
+% paragraph graphische_darstellung (end)
 
-\subsubsection{Abfragesprache SPARQL} % (fold)
-\label{ssub:abfragesprache_sparql}
+\paragraph{RDF/XML} % (fold)
+\label{par:rdf_xml}
 
-% subsubsection resource_description_language (end)
+RDF/XML\cite[Abschnitt 3.2]{Manola2004} ist eine verbreitete Form RDF-Dokumente zu beschreiben. Die Basis bildet hierbei die Verwendung der Extensible Markup Language (XML). In Listing \ref{lst:rdf_xml_beispiel} ist ein Beispieldokument in RDF/XML zusehen. Das in Zeile 2 zu sehende \texttt{rdf:RDF} Element zeigt, dass sich innerhalb von ihm sich die RDF-Beschreibung des Dokuments befindet. In diesem ELement werden mit \texttt{xmlns:} einige Präfixe für Namensräume  definiert, um das Dokument übersichtlicher zu halten. Alle Präfixe werden danach mit den angegebenen Namensraum ersetzt. Das \texttt{Description} in Zeile 5 stellt die Beschreibung einer Ressource im RDF-Graphen. Die URI der Ressource wird mit dem Attribut \texttt{rdf:about} definiert. Innerhalb des Description Elements befinden sich die Prädikate. In Zeile 6 steht also, dass die Ressource die Eigenschaft \texttt{exterms:enthaelt} besitzt und diese das Literal \texttt{Kekse}. Wäre das Objekt nicht wie hier ein Literal sondern eine weitere Ressource, könnte man über das Attribut \texttt{rdf:ressource} für das \texttt{exterms:enthaelt} auf diese Ressource verweisen.
+
+\begin{lstlisting}[
+    language=XML,
+    caption={RDF/XML Beispiel}\label{lst:rdf_xml_beispiel},
+    captionpos=t]
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:exterms="http://www.example.org/terms#">
+
+    <rdf:Description rdf:about="http://www.example.org/dose">
+       <exterms:enthaelt>Kekse</exterms:enthaelt>
+    </rdf:Description>
+</rdf:RDF>
+\end{lstlisting}
+% paragraph rdf_xml (end)
+
+\paragraph{Turtle} % (fold)
+\label{par:turtle}
+
+Turtle (Ausgeschrieben: \emph{Terse RDF Triple Language}) ist eine weiter Möglichkeit RDF-Graphen darzustellen und ist eine ging aus der Sprache N3 (Kurzform für Notation 2) hervor \cite{DavidBeckett}. In Turtle wird das Triple aus Subjekt, Prädikat und Objekt hintereinander geschrieben und zwischen jeden mindestens ein Leerzeichen gelassen. Als Abschluss folgt nach jedem Tripel noch ein Punkt. Der Punkt verdeutlicht noch einmal die Ähnlichkeit mit gesprochenen Sätzen. Listing \ref{lst:turtle_beispiel} zeigt das Beispiel mit der Keksdose noch einmal in Turtle Notation. 
+
+\begin{lstlisting}[
+    caption={Turtle Beispiel}\label{lst:turtle_beispiel},
+    captionpos=t]
+<http://www.example.org/dose> <http://www.example.org/terms#enthaelt> "Kekse" .
+\end{lstlisting} 
+
+In Turtle ist darauf zu achten, dass alle URIs immer zwischen Spitzenklammern stehen müssen. Literale werden in Anführungszeichen geschrieben. Da nun einzelne Prädikate beziehungsweise allgemein URIs recht häufig innerhalb eines Graphen auftauchen können, kann es einfacher sein diese abzukürzen. Wie schon in RDF/XML können auch in Turtle Präfixe definiert werden um Schreibarbeit zu sparen.
+
+\begin{lstlisting}[
+    caption={Turtle Präfixe}\label{lst:turtle_prefix},
+    captionpos=t]
+@prefix exterms: <http://www.example.org/terms#> .
+<http://www.example.org/dose> exterms:enthaelt "Kekse" .   
+\end{lstlisting}
+
+In der ersten Zeile von Listing \ref{lst:turtle_prefix} wird durch Einleiten mit dem Schlüsselwort \texttt{@prefix} ein neuer Präfix \texttt{exterms:} für den Namensraum \texttt{http://www.example.org/terms\#}. Dieser Präfix kann nun überall innerhalb des Dokumentes verwendet werden, wobei die Spitzenklammern dann weggelassen werden können.
+
+\begin{lstlisting}[
+    caption={Turtle abkürzende Schreibweise}\label{lst:turtle_shortcut},
+    captionpos=t]
+@prefix exterms: <http://www.example.org/terms#> .
+<http://www.example.org/dose> exterms:farbe "blau";
+    exterms:enthaelt "Kekse", "Geld" .   
+\end{lstlisting}
+
+Listing \ref{lst:turtle_shortcut} zeigt nochmal ein drittes Beispiel, wie redundante Angeben eingespart werden. Wie man in der zweiten Zeile sehen kann. wir deine Frage für die Dose angeben das Triple aber mit einen Semikolon abschlossen und nicht mit einen Punk. Durch das Semikolon ist es Möglich das Subjekt mehrfach wieder zu verwenden, wenn sich nur Prädikat und Objekt ändern. So können sich mehrere Eigenschaften einer Ressource platzsparend schreiben ohne das Subjekt immer wieder anzugeben. Ändert sich dahingegen nur das Objekt können mehrere durch Kommata getrennt hintereinander geschrieben werden. Die dritte Zeile beschreibt zum Beispiel, dass in der Dose nicht nur Kekse sonder auch Geld steckt. Leere Knoten können dann noch in Turtle durch angeben einer geöffneten eckigen Klammer gefolgt von einer sich Schließenden dargestellt \enquote{\texttt{[]}}. Soll ein leerer Knoten innerhalb eines Graphen referenziert werden, kann er auch als \texttt{\_:LABEL}, wobei \texttt{LABEL} ein beliebiger Beizeichner ist, geschrieben werden.
+
+% paragraph turtle (end)
+
+% subsubsection darstellung_von_rdf (end)
 
 \subsubsection{Ontologien} % (fold)
 \label{ssub:ontologien}
+
+Sollen Daten aus verschiedenen Quellen zusammengefügt werden, stellt sich häufig das Problem dass Teile dieser dieser Daten zwar den gleichen Sinn haben, aber aufgrund der Sichtweise des jeweiligen System eine andere Bezeichnung besitzen. Das kann zum Beispiel zu Missverständnissen bei der Verarbeitung führen oder dass Teile eines anderen Systems nicht wiederverwendet werden können \cite{Uschold1996}. Einen Ausweg aus diesem Dilemma kann die Verwendung von Ontologien zeigen. Ontolgien können allgemein als Wissensbasis \cite{Uschold1996,Hitzler2008a} bezeichnet werden und liefern eine formale Spezifikation über eine bestimmte Interessensdömäne. Sie beschreibt nicht nur wie das verwendete Vokabular aussieht, sondern legt auch fest welche Bedeutung jede Vokabel hat. 
+
+\medskip
+
+Im Bereich des Semantic Webs sind heutzutage zwei Sprachen für die Erstellung von Ontologien weit verbreitet. Diese sind \emph{RDF Schema} (RDFS)\cite{Brickley} und die darauf aufbauende \emph{Web Ontology Language} (OWL)\cite{partelschneider2004}. Beide Sprachen basieren auf RDF, so können sie zusammen mit jedem System verwendet werden, das RDF versteht. Mit ihnen können Klassen von abstrakten Objekten und deren Eigenschaften definiert werden. Vererbung von Klassen und ihren Eigenschaften ist ebenfalls möglich. Im Gegensatz zu RDFS können in OWL Einschränkungen definiert werden, wie zum Beispiel dass eine Eigenschaft nur maximal einmal pro Objekt vorhanden sein darf. 
 
 % subsubsection ontologien (end)
 
 % subsection semantic_web_und_das_resource_description_framework (end)
 
-\section{Semantically-Interlinked Online Communities} % (fold)
-\label{sec:verw_arbeiten_sioc}
+\subsection{Friend of a Friend (FOAF)} % (fold)
+\label{sub:friend_of_a_friend_}
 
-Semantically-Interlinked Online Communities\footnote{\url{http://sioc-project.org/}} (SIOC, ausgesprochen \enquote{schock}) ist ein Projekt, welches von Uldis Boj\=ars und John Breslin begonnen wurde um unterschiedliche, webbasierte Diskussionslattformen(Blog, Forum, Mailinglist,\dots) untereinander verbinden zu können \cite{Breslin2005}. Der Kern von SIOC besteht aus einer Ontologie, welche den Inhalt und die Struktur diese Plattformen in ein maschinenlesbares Format bringt und es erlaubt diese auf semantischer Ebene zu verbinden. Auch soll es so möglich sein Daten von einer Plattform zu einer Anderen zu transferieren und so einfacher Inhalte austauschen zu können. Als Basis für SIOC dient RDF, die Ontologie selber wurde in RDFS und OWL designt. Um nicht das Rad neu erfinden zu müssen greift SIOC auf schon bestehende und bewährte Ontologien zurück. Für die Abbildung von Beziehungen zwischen einzelnen Personen wird Friend of a Friend\footnote{\url{http://www.foaf-project.org/}} (FOAF) und für einige Inhaltliche- und Metadaten (Titel, Inhalt, Erstelldatum, \dots) Dublin Core Terms\footnote{http://dublincore.org/documents/dcmi-terms/} eingesetzt.
+\emph{Friend of a Friend}\footnote{\url{http://www.foaf-project.org}} (FOAF) ist ein 2000 gestartet Projekt und versucht Personen innerhalb des Webs, inklusive der Verbindungen zwischen ihnen und anderen, sowie dem was sie machen, in maschinenlesbarer Form abzubilden. FOAF stellt hierzu ein Vokabular \cite{Brickley2010} auf der Basis von RDF für solche sozialen Netzwerke zur Verfügung. Das Vokabular von FOAF gliedert sich dazu in einen \enquote{FOAF Core} und einen \enquote{Social Web} Bereich. Der Core-Bereich die Klasse \texttt{Agent} für alle Dinge die eine Handlung ausführen können, also sowohl natürliche Personen, Gruppen oder Organisationen als auch Computerprogramme oder Maschinen. Für diese gibt es jeweils noch einzelne Unterklassen die von der Klasse \texttt{Agent} erben. Objekten dieser Klassen können eigene Eigenschaften wie einen Namen, ein Alter oder wen sie kennen gegeben werden. Der Sozial Web Bereich enthält alle Teile die für das Web interessant wären. Das wären zum Beispiel welche E-Mail-Adresse eine Person besitzt, welche Benutzerkonten im bei welcher Webseite gehören oder wie die URL seiner Homepage lautet. Das FOAF Projekt sieht sich aber selber nicht als Konkurrenz gegenüber den etablierten sozialen Online-Netzwerken, sondern eher ein Ansatz für einen besser Austausch zwischen den einzelnen Seiten \cite[Abstract]{Brickley2010}.
+
+% subsection friend_of_a_friend_ (end)
+
+\subsection{Semantically-Interlinked Online Communities (SIOC)} % (fold)
+\label{sub:semantically_interlinked_online_communities}
+
+
+\emph{Semantically-Interlinked Online Communities} (SIOC, ausgesprochen \enquote{schock}) ist ein Projekt, welches von Uldis Boj\=ars und John Breslin begonnen wurde um unterschiedliche, webbasierte Diskussionslattformen(Blog, Forum, Mailinglist,\dots) untereinander verbinden zu können \cite{deri2013,Breslin2005}. Der Kern von SIOC besteht aus einer Ontologie, welche den Inhalt und die Struktur diese Plattformen in ein maschinenlesbares Format bringt und es erlaubt diese auf semantischer Ebene zu verbinden. Auch soll es so möglich sein Daten von einer Plattform zu einer Anderen zu transferieren und so einfacher Inhalte austauschen zu können. Als Basis für SIOC dient RDF, die Ontologie selber wurde in RDFS und OWL designt. Um nicht das Rad neu erfinden zu müssen greift SIOC auf schon bestehende und bewährte Ontologien zurück. Für die Abbildung von Beziehungen zwischen einzelnen Personen wird FOAF und für einige Inhaltliche- und Metadaten (Titel, Inhalt, Erstelldatum, \dots) Dublin Core Terms\footnote{\url{http://dublincore.org/documents/dcmi-terms}} eingesetzt.
 
 \begin{figure}[ht]
     \centering
@@ -198,6 +256,9 @@ Semantically-Interlinked Online Communities\footnote{\url{http://sioc-project.or
     \caption{Aufbau von SIOC (modifiziert) - Originalquelle: \cite{deri2013}}
     \label{fig:sioc_aufbau_diagramm}
 \end{figure}
+
+% subsection semantically_interlinked_online_communities (end)
+
 
 \section{Datenverteilung} % (fold)
 \label{sec:datenverteilung}
@@ -218,13 +279,14 @@ Semantically-Interlinked Online Communities\footnote{\url{http://sioc-project.or
 \section{Lernplattformen und soziale Online-Netzwerke} % (fold)
 \label{sec:lernplattformen_und_soziale_online_netzwerke}
 
+An dieser Stelle sollen noch kurz einige Lernplattformen und soziale Online-Netzwerke vorgestellt, die im späteren Verlauf dieser Arbeit für die Implementierung verwendet wurden. Im Einzelnen waren dies \emph{Moodle}, \emph{Canvas}, \emph{Youtube}, \emph{Facebook} und \emph{Google+}, da sie einen guten Schnitt von den Plattformen bilden, die heutzutage sowohl im Bereich E-Learning als auch von der breiten Masse verwendet werden.
 
-\todo[inline]{Du könntest in dem Grundlagenkapitel auch noch auf Foren, Moodle, FB und Google+ kurz eingehen. Deren Datenmodelle und -schnittstellen können auch später erläutert werden.}
+%\todo[inline]{Du könntest in dem Grundlagenkapitel auch noch auf Foren, Moodle, FB und Google+ kurz eingehen. Deren Datenmodelle und -schnittstellen können auch später erläutert werden.}
 
 \subsection{Moodle} % (fold)
 \label{sub:moodle}
 
-Moodle\footnote{\url{https://moodle.org/}} ist ein weit verbreitetes Open Source Online LMS. Die Hauptaufgabe liegt im Verwalten von online Kursen im Bereich E-Learning. Hierzu bietet Moodle von Haus aus eine große Menge an Funktionen für die Verwaltung des Kurses und die Kommunikation zwischen Lehrenden und Lernenden. Es bietet die Möglichkeit Aufgaben die Teilnehmern zu verteilen, Fragebögen zu erstellen, zusätzlichen Kursmaterialien bereitzustellen und den Lernerfolg durch Benotung und Feedback zu kontrollieren. Funktionen für die Unterstützung des kooperativen Lernens sind ebenfalls vorhanden. Teilnehmer können Lerngruppen bilden, sich über persönliche Nachrichten austauschen, gemeinsam an Wikis arbeiten oder in Foren diskutieren. 
+Moodle\footnote{\url{https://moodle.org/}} ist ein weit verbreitetes Open Source Online LMS. Die Hauptaufgabe liegt im Verwalten von online Kursen im Bereich E-Learning. Hierzu bietet Moodle von Haus aus eine große Menge an Funktionen für die Verwaltung des Kurses und die Kommunikation zwischen Lehrenden und Lernenden. Es bietet die Möglichkeit Aufgaben die Teilnehmern zu verteilen, Fragebögen zu erstellen, zusätzlichen Kursmaterialien bereitzustellen und den Lernerfolg durch Benotung und Feedback zu kontrollieren. Funktionen für die Unterstützung des kollaborativen Lernens sind ebenfalls vorhanden. Teilnehmer können Lerngruppen bilden, sich über persönliche Nachrichten austauschen, gemeinsam an Wikis arbeiten oder in Foren diskutieren. 
 \begin{figure}[ht]
     \centering
     \includegraphics[
@@ -244,7 +306,7 @@ Moodle wurde in der Programmiersprache PHP geschrieben und unterstützt die  Dat
 \subsection{Canvas} % (fold)
 \label{sub:canvas}
 
-Das von der Firma Instructure\footnote{\url{https://www.instructure.com/}} entwickelte \emph{Canvas} ist ein unter Open Source Lizenz gestelltes LMS. Vom Funktionsumfang ist es Moodle nicht unähnlich. Es existiert eine Verwaltung einzelner Kurse. Innerhalb dieser Kurse können in einem Forum Diskussionen geführt und Lernmieteralien hoch- und heruntergeladenen werden. Verteilung von Aufgaben, deren Benotung und ein Benachrichtigungssystem existiert ebenfalls. Canvas erlaubt auch das Einbinden von externen Diensten zum kooperativen Lernen und Arbeiten wie Google Docs\footnote{\url{https://drive.google.com}} oder der Webkonferenz Anwendung BigBlueButton\footnote{\url{http://www.bigbluebutton.org}}.
+Das von der Firma Instructure\footnote{\url{https://www.instructure.com/}} entwickelte \emph{Canvas} ist ein unter Open Source Lizenz gestelltes LMS. Vom Funktionsumfang ist es Moodle nicht unähnlich. Es existiert eine Verwaltung einzelner Kurse. Innerhalb dieser Kurse können in einem Forum Diskussionen geführt und Lernmieteralien hoch- und heruntergeladenen werden. Verteilung von Aufgaben, deren Benotung und ein Benachrichtigungssystem existiert ebenfalls. Canvas erlaubt auch das Einbinden von externen Diensten zum kollaborativen Lernen und Arbeiten wie Google Docs\footnote{\url{https://drive.google.com}} oder der Webkonferenz Anwendung BigBlueButton\footnote{\url{http://www.bigbluebutton.org}}.
 
 \begin{figure}[ht]
     \centering
@@ -270,7 +332,7 @@ Die Youtube\footnote{\url{https://www.youtube.com}} Webseite gehört wohl heute 
 \subsection{Facebook} % (fold)
 \label{sub:facebook}
 
-Das soziale Online-Netzwerk Facebook\footnote{\url{https://www.facebook.com/}} kann mit rund 699 Millionen aktiven Benutzern täglich \cite{Facebook2013} zu den aktuell beliebtesten Vertretern seiner Art bezeichnet werden. Facebook erlaubt es, wie alle sozialen Online-Netzwerke, bekannte Personen in Freundeslisten zusammen zufassen und mit ihnen private Nachrichten auszutauschen. Beiträge wie Texte, Fotos oder Videos können auf einer Art Pinnwand der \enquote{Wall} öffentlich oder nur mit Freunden geteilt werden. Benutzer mit gemeinsamen Interessen können dazu eigene Gruppen bilden und dort auf einer eigen Wall Beiträge veröffentlichen oder die anderer kommentieren. Wie in der Einleitung schon erklärt zeigt Qiyun Wang et. al. \cite{Wang2012} das sich Facebook, wenn auch mit Einschränkungen wunderbar zur Verwaltung und Nutzung durch Lernkurse und Lerngruppen eignet. 
+Das soziale Online-Netzwerk Facebook\footnote{\url{https://www.facebook.com/}} kann mit rund 699 Millionen aktiven Benutzern täglich \cite{Facebook2013} zu den aktuell beliebtesten Vertretern seiner Art bezeichnet werden. Facebook erlaubt es, wie alle sozialen Online-Netzwerke, bekannte Personen in Freundeslisten zusammen zufassen und mit ihnen private Nachrichten auszutauschen. Beiträge wie Texte, Fotos oder Videos können auf einer Art Pinnwand der \enquote{Wall} öffentlich oder nur mit Freunden geteilt werden. Benutzer mit gemeinsamen Interessen können dazu eigene Gruppen bilden und dort auf einer eigen Wall Beiträge veröffentlichen oder die anderer kommentieren. Wie in der Einleitung schon erklärt zeigt Qiyun Wang et. al. \cite{Wang2012} das sich Facebook, wenn auch mit Einschränkungen, wunderbar zur Verwaltung und Nutzung durch Lernkurse und Lerngruppen eignet. Die gleiche Erfahrung teilte Anthony Fontana \cite{Fontana2009,FacebookinEducarion2010}, der Facebook als Alternative zum bestehenden System der Bowling Green State University in Ohio, USA verwendete.
 
 
 % subsection facebook (end)

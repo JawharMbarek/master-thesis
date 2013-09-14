@@ -190,11 +190,12 @@ public class Moodle2StructureReader extends
 			return Thread.getInstance( getModel(), uri );
 		}
 
-		Matcher matcher = Pattern
-		        .compile( getServiceEndpoint() + Moodle2SiocUtils.REGEX_DISCUSSION_URI )
-		        .matcher( uri.toString() );
+		Pattern pattern = Pattern.compile( "^"
+		        + getServiceEndpoint()
+		        + Moodle2SiocUtils.REGEX_DISCUSSION_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
 
-		if ( matcher.matches() ) {
+		if ( matcher.find() ) {
 			int id = Integer.parseInt( matcher.group( 1 ) );
 			ForumRecord[] forumArray = loadForums();
 
@@ -207,7 +208,7 @@ public class Moodle2StructureReader extends
 					ForumDiscussionRecord[] discussionsArray = loadForumDiscussions( forum.getId() );
 					if ( null != discussionsArray ) {
 						for ( ForumDiscussionRecord discussion : discussionsArray ) {
-							if ( id == discussion.getId() ) {
+							if ( id == discussion.getPost().getDiscussion() ) {
 								return Moodle2SiocUtils.createSiocThread(
 								        getConnector(),
 								        discussion, parentForum );

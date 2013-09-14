@@ -108,20 +108,22 @@ Wird eine solche WSDL Datei öffentlich zugänglich gemacht, kann festgestellt w
 
 % section zugriff_auf_webanwendungen (end)
 
-\section{Datenintegration} % (fold)
-\label{sec:datenintegration}
+\section{Datenintegration mit Ontologien} % (fold)
+\label{sec:datenintegration_mit_ontologien}
 
 % section datenintegration (end)
 
 
-\subsection{Semantic web und das Resource Description Framework} % (fold)
-\label{sub:semantic_web_und_das_resource_description_framework}
-
-
+\subsection{Semantic Web} % (fold)
+\label{sub:semantic_web}
 
 \todo[inline]{Idee semantic web einbauen}
 
-Eine der bekanntesten Umsetzungen der Vision des  semantischen Webs ist wohl das \emph{Resource Description Framework} (RDF). Wie der Name schon suggeriert dient RDF zur Beschreibung von einzelnen Ressourcen innerhalb des Internets. Nach \cite{Klyne2004,Manola2004} bestand die Motivation bei der Entwicklung von RDF Information über Ressource in einen offenen Datenmodell zu speichern, so dass diese Daten von Maschinen automatisch verarbeitet, manipulieren und untereinander ausgetauscht werden können. Gleichzeitig sollte es auch einfach von jedem erweitert werden können \enquote{RDF is designed to represent information in a minimally constraining, flexible way}\cite{Klyne2004}.
+\subsubsection{Resource Description Framework} % (fold)
+\label{ssub:resource_description_framework}
+
+
+Eine der bekanntesten Umsetzungen der Vision des semantischen Webs ist wohl das \emph{Resource Description Framework} (RDF). Wie der Name schon suggeriert dient RDF zur Beschreibung von einzelnen Ressourcen innerhalb des Internets. Nach \cite{Klyne2004,Manola2004} bestand die Motivation bei der Entwicklung von RDF Information über Ressource in einen offenen Datenmodell zu speichern, so dass diese Daten von Maschinen automatisch verarbeitet, manipulieren und untereinander ausgetauscht werden können. Gleichzeitig sollte es auch einfach von jedem erweitert werden können \enquote{RDF is designed to represent information in a minimally constraining, flexible way}\cite{Klyne2004}.
 
 \medskip
 
@@ -137,8 +139,12 @@ Das Datenmodell von RDF ist zur effizienten Verarbeitung sehr einfach aufgebaut.
 
 Doch nicht jeder davon ist in jeden Teil des Tripels erlaubt. Das Subjekt ist entweder eine URI oder ein leerer Knoten, wobei das Prädikat nur eine URI sein kann. Dahingegen ist es beim Objekt möglich eine URI, einen leeren Knoten oder ein Literal zu verwendeten. 
 
-\subsubsection{Darstellung von RDF} % (fold)
-\label{ssub:darstellung_von_rdf}
+% subsubsection resource_description_framework (end)
+
+\subsubsection{Darstellung von RDF-Graphen} % (fold)
+\label{ssub:darstellung_von_rdf_graphen}
+
+In Laufe der Zeit von RDF wurde verschiedene Möglichkeiten erfunden einen RDF-Graphen darzustellen. In diesem Abschnitt werden drei Formen vorgestellt die auch in dieser Arbeit zur Visualisierung benutzt werden. 
 
 \paragraph{Graphische Darstellung} % (fold)
 \label{par:graphische_darstellung}
@@ -208,7 +214,7 @@ In der ersten Zeile von Listing \ref{lst:turtle_prefix} wird durch Einleiten mit
     exterms:enthaelt "Kekse", "Geld" .   
 \end{lstlisting}
 
-Listing \ref{lst:turtle_shortcut} zeigt nochmal ein drittes Beispiel, wie redundante Angeben eingespart werden. Wie man in der zweiten Zeile sehen kann. wir deine Frage für die Dose angeben das Triple aber mit einen Semikolon abschlossen und nicht mit einen Punk. Durch das Semikolon ist es Möglich das Subjekt mehrfach wieder zu verwenden, wenn sich nur Prädikat und Objekt ändern. So können sich mehrere Eigenschaften einer Ressource platzsparend schreiben ohne das Subjekt immer wieder anzugeben. Ändert sich dahingegen nur das Objekt können mehrere durch Kommata getrennt hintereinander geschrieben werden. Die dritte Zeile beschreibt zum Beispiel, dass in der Dose nicht nur Kekse sonder auch Geld steckt. Leere Knoten können dann noch in Turtle durch angeben einer geöffneten eckigen Klammer gefolgt von einer sich Schließenden dargestellt. Ein Beispiel für einen solchen leeren Knoten in Turtle ist in Listing \ref{lst:acl_beispiel} zu sehen.
+Listing \ref{lst:turtle_shortcut} zeigt nochmal ein drittes Beispiel, wie redundante Angeben eingespart werden. Wie man in der zweiten Zeile sehen kann. wir deine Frage für die Dose angeben das Triple aber mit einen Semikolon abschlossen und nicht mit einen Punk. Durch das Semikolon ist es Möglich das Subjekt mehrfach wieder zu verwenden, wenn sich nur Prädikat und Objekt ändern. So können sich mehrere Eigenschaften einer Ressource platzsparend schreiben ohne das Subjekt immer wieder anzugeben. Ändert sich dahingegen nur das Objekt können mehrere durch Kommata getrennt hintereinander geschrieben werden. Die dritte Zeile beschreibt zum Beispiel, dass in der Dose nicht nur Kekse sonder auch Geld steckt. Leere Knoten können dann noch in Turtle durch angeben einer geöffneten eckigen Klammer gefolgt von einer sich Schließenden dargestellt \enquote{\texttt{[]}}. Soll ein leerer Knoten innerhalb eines Graphen referenziert werden, kann er auch als \texttt{\_:LABEL}, wobei \texttt{LABEL} ein beliebiger Beizeichner ist, geschrieben werden.
 
 % paragraph turtle (end)
 
@@ -216,6 +222,12 @@ Listing \ref{lst:turtle_shortcut} zeigt nochmal ein drittes Beispiel, wie redund
 
 \subsubsection{Ontologien} % (fold)
 \label{ssub:ontologien}
+
+Sollen Daten aus verschiedenen Quellen zusammengefügt werden, stellt sich häufig das Problem dass Teile dieser dieser Daten zwar den gleichen Sinn haben, aber aufgrund der Sichtweise des jeweiligen System eine andere Bezeichnung besitzen. Das kann zum Beispiel zu Missverständnissen bei der Verarbeitung führen oder dass Teile eines anderen Systems nicht wiederverwendet werden können \cite{Uschold1996}. Einen Ausweg aus diesem Dilemma kann die Verwendung von Ontologien zeigen. Ontolgien können allgemein als Wissensbasis \cite{Uschold1996,Hitzler2008a} bezeichnet werden und liefern eine formale Spezifikation über eine bestimmte Interessensdömäne. Sie beschreibt nicht nur wie das verwendete Vokabular aussieht, sondern legt auch fest welche Bedeutung jede Vokabel hat. 
+
+\medskip
+
+Im Bereich des Semantic Webs sind heutzutage zwei Sprachen für die Erstellung von Ontologien weit verbreitet. Diese sind \emph{RDF Schema} (RDFS)\cite{Brickley} und die darauf aufbauende \emph{Web Ontology Language} (OWL)\cite{partelschneider2004}. Beide Sprachen basieren auf RDF, so können sie zusammen mit jedem System verwendet werden, das RDF versteht. Mit ihnen können Klassen von abstrakten Objekten und deren Eigenschaften definiert werden. Vererbung von Klassen und ihren Eigenschaften ist ebenfalls möglich. Im Gegensatz zu RDFS können in OWL Einschränkungen definiert werden, wie zum Beispiel dass eine Eigenschaft nur maximal einmal pro Objekt vorhanden sein darf. 
 
 % subsubsection ontologien (end)
 

@@ -223,7 +223,7 @@ Listing \ref{lst:turtle_shortcut} zeigt nochmal ein drittes Beispiel, wie redund
 \subsubsection{Ontologien} % (fold)
 \label{ssub:ontologien}
 
-Sollen Daten aus verschiedenen Quellen zusammengefügt werden, stellt sich häufig das Problem dass Teile dieser dieser Daten zwar den gleichen Sinn haben, aber aufgrund der Sichtweise des jeweiligen System eine andere Bezeichnung besitzen. Das kann zum Beispiel zu Missverständnissen bei der Verarbeitung führen oder dass Teile eines anderen Systems nicht wiederverwendet werden können \cite{Uschold1996}. Einen Ausweg aus diesem Dilemma kann die Verwendung von Ontologien zeigen. Ontolgien können allgemein als Wissensbasis \cite{Uschold1996,Hitzler2008a} bezeichnet werden und liefern eine formale Spezifikation über eine bestimmte Interessensdömäne. Sie beschreibt nicht nur wie das verwendete Vokabular aussieht, sondern legt auch fest welche Bedeutung jede Vokabel hat. 
+Sollen Daten aus verschiedenen Quellen zusammengefügt werden, stellt sich häufig das Problem dass Teile dieser dieser Daten zwar den gleichen Sinn haben, aber aufgrund der Sichtweise des jeweiligen System eine andere Bezeichnung besitzen. Das kann zum Beispiel zu Missverständnissen bei der Verarbeitung führen oder dass Teile eines anderen Systems nicht wiederverwendet werden können \cite{Uschold1996}. Einen Ausweg aus diesem Dilemma kann die Verwendung von Ontologien zeigen. Ontolgien können allgemein als Wissensbasis \cite{Uschold1996,Hitzler2008a} bezeichnet werden und liefern eine formale Spezifikation über eine bestimmte Interessensdömäne. Sie beschreibt nicht nur wie das verwendete Vokabular aussieht, sondern legt auch fest welche einheitliche Bedeutung jede Vokabel hat. 
 
 \medskip
 
@@ -237,6 +237,33 @@ Im Bereich des Semantic Webs sind heutzutage zwei Sprachen für die Erstellung v
 \label{sub:friend_of_a_friend_}
 
 \emph{Friend of a Friend}\footnote{\url{http://www.foaf-project.org}} (FOAF) ist ein 2000 gestartet Projekt und versucht Personen innerhalb des Webs, inklusive der Verbindungen zwischen ihnen und anderen, sowie dem was sie machen, in maschinenlesbarer Form abzubilden. FOAF stellt hierzu ein Vokabular \cite{Brickley2010} auf der Basis von RDF für solche sozialen Netzwerke zur Verfügung. Das Vokabular von FOAF gliedert sich dazu in einen \enquote{FOAF Core} und einen \enquote{Social Web} Bereich. Der Core-Bereich die Klasse \texttt{Agent} für alle Dinge die eine Handlung ausführen können, also sowohl natürliche Personen, Gruppen oder Organisationen als auch Computerprogramme oder Maschinen. Für diese gibt es jeweils noch einzelne Unterklassen die von der Klasse \texttt{Agent} erben. Objekten dieser Klassen können eigene Eigenschaften wie einen Namen, ein Alter oder wen sie kennen gegeben werden. Der Sozial Web Bereich enthält alle Teile die für das Web interessant wären. Das wären zum Beispiel welche E-Mail-Adresse eine Person besitzt, welche Benutzerkonten im bei welcher Webseite gehören oder wie die URL seiner Homepage lautet. Das FOAF Projekt sieht sich aber selber nicht als Konkurrenz gegenüber den etablierten sozialen Online-Netzwerken, sondern eher ein Ansatz für einen besser Austausch zwischen den einzelnen Seiten \cite[Abstract]{Brickley2010}.
+
+\medskip
+
+Listing \ref{lst:foaf_beispiel} zeig eine Beispiel FOAF-Dokument in RDF/XML. Es beschreibt die fiktive Person \enquote{Max Mustermann}, mit Vor- und Nachname sowie der Hashwert seiner E-Email-Adresse (\texttt{foaf:mbox\_sha1sum}). Diese Person kennt (\texttt{foaf:knows}) kennt eine Person mit dem Namen \enquote{John Doe} der ebenso eine E-Mail-Adresse mit den angegeben Hashwert besitzt. Statt die Eigenschaften von John Doe hier noch einmal vollständig anzugeben, wird über die Eigenschaft \texttt{rdfs:seeAlso} auf ein weiteres FOAF-Dokument verwiesen, dass die fehlenden Daten enthält. 
+
+\begin{lstlisting}[
+    language=XML,
+    caption={FOAF Beispiel}\label{lst:foaf_beispiel},
+    captionpos=t]
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/">
+  <foaf:Person>
+    <foaf:name>Max Mustermann</foaf:name>
+    <foaf:firstName>Max</foaf:firstName>
+    <foaf:surname>Mustermann</foaf:surname>
+    <foaf:mbox_sha1sum>dce4fc922158f8b26fbf0a65ea32bfab58488bd2</foaf:mbox_sha1sum>
+    <foaf:knows>
+      <foaf:Person>
+        <foaf:name>John Doe</foaf:name>
+        <foaf:mbox_sha1sum>479ea35d3522662b70dc7afd721853485c95db57</foaf:mbox_sha1sum>
+        <rdfs:seeAlso rdf:resource="http://www.example.org/people/jd/foaf.rdf"/>
+      </foaf:Person>
+    </foaf:knows>
+  </foaf:Person>
+</rdf:RDF>
+\end{lstlisting}
 
 % subsection friend_of_a_friend_ (end)
 
@@ -257,6 +284,8 @@ Im Bereich des Semantic Webs sind heutzutage zwei Sprachen für die Erstellung v
     \label{fig:sioc_aufbau_diagramm}
 \end{figure}
 
+Die wichtigsten Klassen von SIOC sind in Abbildung \ref{fig:sioc_aufbau_diagramm} in der mittleren Spalte zu sehen. Die Klasse \texttt{Site} ist für die Beschreibung von allgemeinen Webseiten in denen Beiträge innerhalb von Containern verfasst werden. Ein solcher Container ist die Klasse \texttt{Forum}und steht für einen Ort an dem Diskussionen geführt werden. Enthält ein Forum unterschiedliche Diskussionen zu unterschiedlichen Themen, kann es noch einmal in unterschiedliche \texttt{Thread} unterteilt werden, welche immer ein Forum als Elternteil haben (\texttt{has\_parent}). Beide Klassen leiten sich von der Klasse \texttt{Container} als einen allgemeinen Ort für Beiträge ab. Die einzelnen Beiträge werden durch die Klasse \texttt{Post} beziehungsweise von der übergeordneten Klasse \texttt{Item} modelliert. Beiträge gehören in der Regel immer zu einen bestimmten Container oder mindesten zu einer Webseite. Es ist auch mögliche Beiträge als Kommentar zu anderen Beiträgen über die Eigenschaft \texttt{has\_reply} abzubilden. Jeder Beitrag besitzt mindesten einen Autor der ein Benutzerkonto auf der betreffenden Seite besitzt. Für die Beschreibung eines solchen Benutzerkontos wird die Klasse \texttt{UserAccount} verwendet. Dieses Benutzerkonto kann nun zu einer Gruppe von anderen Konten gehören, zum Beispiel einer Lerngruppe. Über die Klasse \texttt{Role} keine einen Benutzerkonto eine bestimmte Rolle innerhalb eine Seite, Forum und so weiter zugeteilt werden. Ein Beispiel dafür wäre die Rolle eines Moderator, der überwacht ob die Regel der Seite in den einzelnen Foren eingehalten werden.
+
 % subsection semantically_interlinked_online_communities (end)
 
 
@@ -268,13 +297,84 @@ Im Bereich des Semantic Webs sind heutzutage zwei Sprachen für die Erstellung v
 
 % subsection java_messaging_service (end)
 
-\subsection{Enterprise Integration Pattern und Apache Camel} % (fold)
-\label{sub:enterprise_integration_pattern_und_apache_camel}
+\subsection{Enterprise Integration Pattern (EIP)} % (fold)
+\label{sub:enterprise_integration_pattern}
 
-% subsection enterprise_integration_pattern_und_apache_camel (end)
+Bezeichnungen wie \enquote{Iterator}, \enquote{Factory Method}, \enquote{Observer} oder \enquote{Proxy} hat bestimmt schon jeder Programmieren mindestens einmal gehört. Hierbei handelt es sich im sogenannte Entwurfsmuster für Softwareprogramme. Sie sind Schablonen für Lösungen von Problemen, die in der Entwicklung von Software immer wieder auftreten und sich als hilfreich erwiesen haben. Auch in der Integration von verschiedenen Geschäftsanwendungen in ein System treten solche Muster immer wieder auf. Gregor Hohpe und Bobby Woolf beschreiben in ihren Buch \enquote{Enterprise Integration Patterns: Designing, Building, and Deploying Messaging Solutions}\cite{Hohpe:2003:EIP:940308} eine Vielzahl solcher Enterprise Integration Patterns (EIP) für die Integration mit MOM. Alle hier aufzuzählen würde den Rahmen dieser Arbeit sprengen. Aus diesem Grund werden in Tabelle \ref{tbl:eip_beispiel_muster} fünf Muster inklusive der verwendeten Symbole vorgestellt die später noch vorkommen werden. Die restlichen Muster sind auf der Webseite von EIP\footnote{\url{http://www.enterpriseintegrationpatterns.com/toc.html}} zu finden.
+
+\begin{table}[ht]
+    \centering
+    \caption{Einige Beispiel von EIP}
+    \begin{tabular}{c|c|p{9cm}}
+        \textbf{Icon} & 
+        \textbf{Name} & 
+        \textbf{Beschreibung} \\ 
+        \hline
+
+        \raisebox{-0.7\totalheight}{\includegraphics[
+            width=1cm,
+            keepaspectratio=true]
+        {assets/images/eip/message_alt}} & 
+        \emph{Message} & 
+        Über Nachrichten werden Daten zwischen zwei oder mehr Systemen ausgetauscht. \\
+
+        \raisebox{-0.7\totalheight}{\includegraphics[
+                width=3cm,
+                keepaspectratio=true]
+            {assets/images/eip/channel}}& 
+        \emph{Channel} &
+        Ein Channel beschreibt einen Nachrichtenkanal über dem Nachrichten von einem Systemen in ein anderes verschickt werden können.\\
+
+        \raisebox{-0.7\totalheight}{\includegraphics[
+                width=3cm,
+                keepaspectratio=true]
+            {assets/images/eip/endpoint}}& 
+        \emph{Endpoint} & 
+        Endpoints sind Schnittstellen in einem System, von dem Nachrichten in einen Kanal gesendet oder von da Empfangen werden. \\
+        &&\\
+
+
+        \raisebox{-0.7\totalheight}{\includegraphics[
+                width=3cm,
+                keepaspectratio=true]
+            {assets/images/eip/message_translator}} & 
+        \emph{Message Translator} & 
+        Nicht immer liegt eine Nachricht im richtigen Format für ein System vor. Durch Message Translators können diese in das gewünschte Format übersetzt werden.\\
+
+        \raisebox{-0.7\totalheight}{\includegraphics[
+                width=3cm,
+                keepaspectratio=true]
+            {assets/images/eip/polling_consumer}}& 
+        \emph{Polling Consumer} &
+
+    \end{tabular}
+    \label{tbl:eip_beispiel_muster}
+\end{table}
+
+\subsubsection{Apache Camel} % (fold)
+\label{ssub:apache_camel}
+
+\emph{Apache Camel}\cite{ApacheCamel} (kurz: Camel) ist ein Projekt der Apache Software Foundation (kurz: Apache) für das Routen und Verteilen von Nachrichten zur Integration von System auf der Basis von definierten Regeln. Camel stellt dazu eine Java basierte API für den Einsatz der EIP bereit. Die Regeln für die Routen, die Nachrichten nehmen können, können direkt in Java aber auch durch das Spring Framework\footnote{\url{http://www.springsource.org/}} in XML definiert werden. 
+
+\begin{lstlisting}[
+    caption={Apache Camel Beispiel}\label{lst:camel_beispiel},
+    captionpos=t]
+RouteDefinition rd = new RouteDefinition()
+    .from('timer://helloTimer?period=3000')
+    .to('log:helloLog');
+
+CamelContext camelContext = new DefaultCamelContext();
+camelContext.addRouteDefinition( rd );
+camelContext.start();
+\end{lstlisting}
+
+Listing \ref{lst:camel_beispiel} zeig ein kleines Beispiel, wie eine Nachrichtenroute in Java definiert werden kann. In der ersten Zeile wird über die Klasse \texttt{RouteDefinition} eine neue Route erstellt. Über die Methode \texttt{from} wird der Endpunkt vom dem die Route ausgeht festgelegt. Welcher Endpunkt das genau seien soll kann auf zwei Arten definiert werden. Man übergibt der Methode direkt ein Objekt einer Klasse die das Interface \texttt{Endpoint} implementiert oder man macht es, wie hier im Beispiel, über eine URI. Die URI baut sich auf folgende Weise zusammen. Der Teil bis zum Doppelpunkt, das sogenannte \enquote{Schema}, legt die Komponente (engl. \texttt{Component}) fest, von der ein Endpunkt erzeugen werden soll. In diesem Falls ist es eine Timer-Komponente, deren Endpunkt im periodischen Abstand Event-Nachrichten verschickt. Der Rest der URI wird zur Konfiguration an den Endpunkt übergeben. \enquote{helloTimer} steht hier für einen Namen für den Timer und der Parameter \enquote{period} gibt den zeitlichen Abstand zwischen zwei Event-Nachrichten an. Das Ziel der Route wird mit der Methode \texttt{to} in Zeile Drei festgelegt. Für das Ziel wird hier eine Log-Komponente mit dem Namen \enquote{helloLog} festgelegt, die alle reinkommenden Nachrichten protokolliert. In der fünften Zeile wird ein \texttt{CamelContext} Objekt, das für die Verwaltung und Ausführung der Routen verantwortliche ist. Die eben erstellte Route wird dann dem CamelContext hinzugefügt und die Ausführung in der letzten Zeile gestartet. Nun Wird der Timer alle 3000 Millisekunden eine neue Event-Nachricht erzeugen und an den CamelContext schicken. Dieser leitet die Nachricht dann an das durch die Route definierte Ziel und wird dort von der Log-Komponente
+
+% subsubsection apache_camel (end)
+
+% subsection enterprise_integration_patternl (end)
 
 % section datenverteilung (end)
-
 
 \section{Lernplattformen und soziale Online-Netzwerke} % (fold)
 \label{sec:lernplattformen_und_soziale_online_netzwerke}

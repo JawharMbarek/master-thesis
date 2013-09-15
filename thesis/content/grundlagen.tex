@@ -297,13 +297,84 @@ Die wichtigsten Klassen von SIOC sind in Abbildung \ref{fig:sioc_aufbau_diagramm
 
 % subsection java_messaging_service (end)
 
-\subsection{Enterprise Integration Pattern und Apache Camel} % (fold)
-\label{sub:enterprise_integration_pattern_und_apache_camel}
+\subsection{Enterprise Integration Pattern (EIP)} % (fold)
+\label{sub:enterprise_integration_pattern}
 
-% subsection enterprise_integration_pattern_und_apache_camel (end)
+Bezeichnungen wie \enquote{Iterator}, \enquote{Factory Method}, \enquote{Observer} oder \enquote{Proxy} hat bestimmt schon jeder Programmieren mindestens einmal gehört. Hierbei handelt es sich im sogenannte Entwurfsmuster für Softwareprogramme. Sie sind Schablonen für Lösungen von Problemen, die in der Entwicklung von Software immer wieder auftreten und sich als hilfreich erwiesen haben. Auch in der Integration von verschiedenen Geschäftsanwendungen in ein System treten solche Muster immer wieder auf. Gregor Hohpe und Bobby Woolf beschreiben in ihren Buch \enquote{Enterprise Integration Patterns: Designing, Building, and Deploying Messaging Solutions}\cite{Hohpe:2003:EIP:940308} eine Vielzahl solcher Enterprise Integration Patterns (EIP) für die Integration mit MOM. Alle hier aufzuzählen würde den Rahmen dieser Arbeit sprengen. Aus diesem Grund werden in Tabelle \ref{tbl:eip_beispiel_muster} fünf Muster inklusive der verwendeten Symbole vorgestellt die später noch vorkommen werden. Die restlichen Muster sind auf der Webseite von EIP\footnote{\url{http://www.enterpriseintegrationpatterns.com/toc.html}} zu finden.
+
+\begin{table}[ht]
+    \centering
+    \caption{Einige Beispiel von EIP}
+    \begin{tabular}{c|c|p{9cm}}
+        \textbf{Icon} & 
+        \textbf{Name} & 
+        \textbf{Beschreibung} \\ 
+        \hline
+
+        \raisebox{-0.7\totalheight}{\includegraphics[
+            width=1cm,
+            keepaspectratio=true]
+        {assets/images/eip/message_alt}} & 
+        \emph{Message} & 
+        Über Nachrichten werden Daten zwischen zwei oder mehr Systemen ausgetauscht. \\
+
+        \raisebox{-0.7\totalheight}{\includegraphics[
+                width=3cm,
+                keepaspectratio=true]
+            {assets/images/eip/channel}}& 
+        \emph{Channel} &
+        Ein Channel beschreibt einen Nachrichtenkanal über dem Nachrichten von einem Systemen in ein anderes verschickt werden können.\\
+
+        \raisebox{-0.7\totalheight}{\includegraphics[
+                width=3cm,
+                keepaspectratio=true]
+            {assets/images/eip/endpoint}}& 
+        \emph{Endpoint} & 
+        Endpoints sind Schnittstellen in einem System, von dem Nachrichten in einen Kanal gesendet oder von da Empfangen werden. \\
+        &&\\
+
+
+        \raisebox{-0.7\totalheight}{\includegraphics[
+                width=3cm,
+                keepaspectratio=true]
+            {assets/images/eip/message_translator}} & 
+        \emph{Message Translator} & 
+        Nicht immer liegt eine Nachricht im richtigen Format für ein System vor. Durch Message Translators können diese in das gewünschte Format übersetzt werden.\\
+
+        \raisebox{-0.7\totalheight}{\includegraphics[
+                width=3cm,
+                keepaspectratio=true]
+            {assets/images/eip/polling_consumer}}& 
+        \emph{Polling Consumer} &
+
+    \end{tabular}
+    \label{tbl:eip_beispiel_muster}
+\end{table}
+
+\subsubsection{Apache Camel} % (fold)
+\label{ssub:apache_camel}
+
+\emph{Apache Camel}\cite{ApacheCamel} (kurz: Camel) ist ein Projekt der Apache Software Foundation (kurz: Apache) für das Routen und Verteilen von Nachrichten zur Integration von System auf der Basis von definierten Regeln. Camel stellt dazu eine Java basierte API für den Einsatz der EIP bereit. Die Regeln für die Routen, die Nachrichten nehmen können, können direkt in Java aber auch durch das Spring Framework\footnote{\url{http://www.springsource.org/}} in XML definiert werden. 
+
+\begin{lstlisting}[
+    caption={Apache Camel Beispiel}\label{lst:camel_beispiel},
+    captionpos=t]
+RouteDefinition rd = new RouteDefinition()
+    .from('timer://helloTimer?period=3000')
+    .to('log:helloLog');
+
+CamelContext camelContext = new DefaultCamelContext();
+camelContext.addRouteDefinition( rd );
+camelContext.start();
+\end{lstlisting}
+
+Listing \ref{lst:camel_beispiel} zeig ein kleines Beispiel, wie eine Nachrichtenroute in Java definiert werden kann. In der ersten Zeile wird über die Klasse \texttt{RouteDefinition} eine neue Route erstellt. Über die Methode \texttt{from} wird der Endpunkt vom dem die Route ausgeht festgelegt. Welcher Endpunkt das genau seien soll kann auf zwei Arten definiert werden. Man übergibt der Methode direkt ein Objekt einer Klasse die das Interface \texttt{Endpoint} implementiert oder man macht es, wie hier im Beispiel, über eine URI. Die URI baut sich auf folgende Weise zusammen. Der Teil bis zum Doppelpunkt, das sogenannte \enquote{Schema}, legt die Komponente (engl. \texttt{Component}) fest, von der ein Endpunkt erzeugen werden soll. In diesem Falls ist es eine Timer-Komponente, deren Endpunkt im periodischen Abstand Event-Nachrichten verschickt. Der Rest der URI wird zur Konfiguration an den Endpunkt übergeben. \enquote{helloTimer} steht hier für einen Namen für den Timer und der Parameter \enquote{period} gibt den zeitlichen Abstand zwischen zwei Event-Nachrichten an. Das Ziel der Route wird mit der Methode \texttt{to} in Zeile Drei festgelegt. Für das Ziel wird hier eine Log-Komponente mit dem Namen \enquote{helloLog} festgelegt, die alle reinkommenden Nachrichten protokolliert. In der fünften Zeile wird ein \texttt{CamelContext} Objekt, das für die Verwaltung und Ausführung der Routen verantwortliche ist. Die eben erstellte Route wird dann dem CamelContext hinzugefügt und die Ausführung in der letzten Zeile gestartet. Nun Wird der Timer alle 3000 Millisekunden eine neue Event-Nachricht erzeugen und an den CamelContext schicken. Dieser leitet die Nachricht dann an das durch die Route definierte Ziel und wird dort von der Log-Komponente
+
+% subsubsection apache_camel (end)
+
+% subsection enterprise_integration_patternl (end)
 
 % section datenverteilung (end)
-
 
 \section{Lernplattformen und soziale Online-Netzwerke} % (fold)
 \label{sec:lernplattformen_und_soziale_online_netzwerke}

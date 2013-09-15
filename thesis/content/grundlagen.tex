@@ -295,6 +295,50 @@ Die wichtigsten Klassen von SIOC sind in Abbildung \ref{fig:sioc_aufbau_diagramm
 \subsection{Java Messaging Service} % (fold)
 \label{sub:java_messaging_service}
 
+Das \emph{Java Messageing Service} (JMS) ist ein Sammlung von Schnittstellen für das Erstellen, Senden und Empfangen von Nachrichten zwischen Clients \cite{jms}. JMS erlaubt eine Entwicklung von verteilten Anwendung die nicht nur lose gekoppelt, sondern auch asynchron und zuverlässig arbeiten. 
+
+\medskip
+
+Die Grundstruktur einer JMS Anwendung besteht aus einem \emph{JMS Provider}, der die Schnittstellen von JMS implementiert. Dieser JMS Provider wird auch all  \emph{Message Oriented Middleware} (MOM) bezeichnet und kümmert sich auch darum, dass Nachrichten zuverlässig verschickt werden. Einen JMS Client von dem Nachrich
+ten verschickt und empfangen werden. Den Nachrichten selber und den sogenannten \emph{Administered Objects}. Diese bestehen aus vorkonfigurierten \emph{Connection Factory}s für das Erstellen von Verbindungen (Connections) zwischen Client und MOM und \emph{Destination}s als Sende- und Empfangspunkte von Nachrichten. Die Administered Objects können im Client über das Java Naming and Directory Interface (JNDI)\footnote{JNDI API:\url{http://www.oracle.com/technetwork/java/index-jsp-137536.html}} API abgefragt werden. Alle Clients die nicht die JMS API sondern die implementierte API der MOM direkt verwenden, werden \emph{Native Client} genannt.
+
+\medskip
+
+JMS unterstützt zwei Verbindungsarten zum Übertragen von Nachrichten: Queue-basiert und Topic-basiert. Als Queue-basiert wird eine Punkt-zu-Punkt Verbindung bezeichnet. Hier werden Nachrichten nur zwischen zwei Clients übertragen und gegebenenfalls in einer Warteschlange zwischengespeichert. Hinter Topic-basiert verbirgt sich ein Publish-Subscribe Mechanismus bei dem ein Client Nachrichten an eine bestimmtes Topic-Destination schickt und andere Clients sich auf dieses Topic anmelden können, die dann die Nachrichten des ersten Clients zugeschickt bekommen. Ob Queue oder Topic-basiert, wird über das verwendete Destination Objekt ausgewählt.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[
+        width=0.8\textwidth,
+        keepaspectratio=true,
+        clip=true]
+        {assets/images/jms_api_overview}
+    \caption{JMS Programmiermodell - Original Bild: \url{http://docs.oracle.com/javaee/1.3/jms/tutorial/1_3_1-fcs/doc/images/Fig3.1.gif}}
+    \label{fig:jms_api_overview}
+\end{figure}
+\medskip
+
+Sollen nun Nachrichten von einem Client verschickt beziehungsweise empfangen werden, muss mit einer Connection Factory eine neue Connection zu einer MOM aufgebaut werden. Mit dieser Connection wird danach ein \emph{Session}-Objekt erstellt, das als Kontext zum Senden und Empfangen verwendet wird. Sollen Nachrichten gesendet werden, muss mit einem Destination-Objekt ein \emph{MessageProducer} und danach eine Nachricht mit dem Session-Objekt erstellt werden. Die Nachricht wird dann über den MessageProducer versendet. Für das Empfangen ist ein \emph{MessageConsumer} verantwortlich. Abbildung \ref{fig:jms_api_overview} zeig noch einmal den Zusammenhang aller JMS Komponenten.
+
+\begin{lstlisting}[
+    caption={JMS Beispiel}\label{lst:jms_beispiel},
+    captionpos=t]
+Context ctx = new InitialContext();
+ConnectionFactory connectionFactory = (ConnectionFactory) ctx.lookup("ConnectionFactory");
+
+Connection connection = connectionFactory.createConnection();
+connection.start();
+
+Session session = connection.createSession();
+Destination destination = session.createTopic("topic-test");
+
+MessageProducer msgProducer = session.createProducer(destination);
+Message msg = session.createTextMessage("Hallo World!");
+msgProducer.send(msg);
+\end{lstlisting}
+
+Listing \ref{lst:jms_beispiel} zeig ein kleines Beispiel zum Senden eine Textnachricht mit JMS. Die erste und zweite Zeile zeigt wie ein JNDI Kontext erstellt und nach einer vordefinierten Connection Factory mit den Name \enquote{ConnectionFactory} gesucht wird. Mit dieser Connection Factory wird dann eine neue Connection erstellt und gestartet. Danach folgt in Zeile 7 und 8 das Erstellen einer neuen Session und die Definition eins Topics mit dem Namen \enquote{topic-test} als Destination. In der zehnten Zeile wird dann der MessageProducer zum Senden von Nachrichten und in der Folgezeile die zu sendende Textnachricht erzeugt. Diese wird dann in der letzten Zeile an das Topic verschickt.
+
 % subsection java_messaging_service (end)
 
 \subsection{Enterprise Integration Pattern (EIP)} % (fold)

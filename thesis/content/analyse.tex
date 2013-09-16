@@ -83,7 +83,7 @@ Nimmt man an $n_{ws}$ sei eine beliebige Anzahl sozialer Netzwerke, entspricht d
         width=0.7\textwidth,
         keepaspectratio=true
     ]{assets/images/interlingua_vs_allvsall}
-    \caption{Komplexität ohne und mit Zwischenformat}
+    \caption{Komplexität ohne und mit dem Einsatz eines Zwischenformats - Originalbild: \cite{Uschold1996a}}
     \label{fig:interlingua_vs_all}
 \end{figure}
 
@@ -101,7 +101,9 @@ Eine elegantere Methode für die Lösung dieses Problems, welche die Anzahl zu i
     \label{fig:lesen_von_beitrag_und_convertieren}
 \end{figure}
 
-Da ein Teil dieser Arbeit darin besteht Beiträge zwischen zwei oder mehr Webseiten zu synchronisieren, muss das Eintreffen neuer Beiträge an die einzelnen Komponenten mitgeteilt werden. Da es unmöglich ist diesen Zeitpunkt vorher zu sagen ist der beste Weg einen ereignisorientierten Ansatz zu wählen. Hierbei wird beim lesen eines neuen Beitrags eine Ereignisnachricht erzeugt, welche die interessierten Komponenten über das Eintreffen informiert. So wird eine zeitliche Entkopplung von Lesen und Schreiben möglich, gleichzeitig können sich einzelnen Komponenten an diesen Nachrichtenstrom an- oder abhängen ohne Andere zu stören. Dies erhöht die Flexibilität des Systems.
+Bei der automatischen Sammlung von benutzergenerierten Inhalten stellt sich immer die Frage der Privatsphäre. Nicht jeder möchte, dass vielleicht sensible Informationen von ihnen weitergegeben werden. Aus diesem Grund ist die Einführung eines Mechanismus sinnvoll mit dem ein Benutzer das Lesen seiner Beiträge komplett erlaubt oder auf bestimmte Seiten, Foren oder nur für einzelne Threads beschränkt \cite{Bojars2011}. Sollte eine solche Erlaubnis nicht vorliegen, wird der gelesene Beitrag verworfen.
+
+Da das Eintreffen neuer Beitrage nicht vorhersagbar ist, ist es angebracht beim Synchronisieren das Lesen und Schreiben zeitlich zu entkoppeln. Eine der weit verbreitetsten Techniken dazu ist das Versenden von Nachrichten über einen Nachrichtenkanal den die schreibende Komponente nach neuen Beiträgen abhört. Diesen Kanal können mehrere Gleichzeitig abhören und stellen so eine gute Flexibilität sicher. 
 
 % subsection beiträge_lesen_und_konvertieren (end)
 
@@ -109,9 +111,7 @@ Da ein Teil dieser Arbeit darin besteht Beiträge zwischen zwei oder mehr Websei
 \label{sub:beiträge_in_eine_andere_webseite_schreiben}
 
 
-Hat sich eine Komponenten und empfängt eine Ereignisnachricht von einen neuen Beitrag, wird ähnlich Verfahren wie schon beim Lesen, nur umgekehrt (Siehe Abbildung \ref{fig:konvertieren_formatb_und_schreiben} links, oberer Ablauf). Der neue Beitrag wird vor den schreiben in das soziale Netzwerk B aus dem Zwischenformat in der Zielformat B konvertiert. Alle dazu nötigen Information können direkt aus der Ereignisnachricht oder zusätzlich aus der oben genannten Datenbank geholt werden. 
-
-Wünschenswert wäre es hierbei, wenn es so aussehen würde der Beitrag nicht vom hier entwickelten System, sondern von Autor des ursprünglichen Beitrags geschrieben worden. Hierzu es unerlässlich auf das Konto des Autor im entsprechenden Netzwerk zugreifen zu können, da im allgemeinen der Schreiben stellvertretend für dritte Personen nicht möglich ist. Hierzu muss zunächst für den betreffenden Autor das Konto für das soziale Netzwerk B herausgesucht werden (Siehe Abbildung \ref{fig:konvertieren_formatb_und_schreiben} links, unterer Ablauf). Wurde ein passendes Konto gefunden, wird der konvertierte Beitrag über diesen geschrieben. Sollten kein Passender gefunden werden, müsste dies über ein vorher definiertes Konto geschehen. Dabei sollte aber auf den ursprünglichen Autor beziehungsweise Beitrag in irgendeiner Form hingewiesen werden. Dies kann zum Beispiel durch anbringen eines Links an den  Text des Beitrags erfolgen. 
+Empfängt nun eine Komponente, die für das Schreiben zuständig ist, eine Nachricht von einen neuen Beitrags der Webseite A ist der Ablauf ähnlich wie beim Lesen nur in umgekehrter Reihenfolge (Siehe Abbildung \ref{fig:konvertieren_formatb_und_schreiben} links, oberer Ablauf). Der neue Beitrag wird vor dem Schreiben aus dem Zwischenformat in das Format B konvertiert. Da bei einer Synchronisation vom Vorteil wäre, wenn der synchronisierte Beitrag so aussehen würde, als hätte ihn der original Autor geschrieben. Hierzu muss das System Zugriff auf die Benutzerkonto haben und diese in einer Datenbank verwalten. Dort kann dann nach einen passenden Benutzerkonto des Autors gesucht und dieses dann zum Schreiben verwendet werden. Steht ein solches Benutzerkonto nicht zur Verfügung, ist das Ausweichen auf ein vorgegebenes Benutzerkonto hilfreich. Manche Benutzer sind vielleicht damit einverstanden, dass ihre Beiträge weitergegeben werden, aber nicht dass andere Programme automatisch in ihren Namen Beiträge schreiben. Deswegen ist wichtig davor noch einmal zu prüfen, ob eine entsprechende Erlaubnis gegen wurde. Sind alle Voraussetzungen gegeben, kann der Beitrag über das ausgewählte Benutzerkonto auf die Webseite B geschrieben werden.
 
 \begin{figure}[ht]
      \includegraphics[
@@ -120,28 +120,73 @@ Wünschenswert wäre es hierbei, wenn es so aussehen würde der Beitrag nicht vo
         clip=true,
         trim= 0 0 0 257
     ]{assets/images/activitydiagram_post_as_user_check_authorization.pdf}
-    \caption{
-        Konvertierten des Beitrags in das Format B und schreiben in das soziale Netzwerk B
-    }
+    \caption{Konvertierten des Beitrags in das Format B und schreiben n das soziale Netzwerk B}
     \label{fig:konvertieren_formatb_und_schreiben}
 \end{figure}
-
-Gleichzeitig mit den Sammeln von Daten kommt immer auch das Thema zum Schutz der Privatsphäre auf. Wie soll damit umgegangen werden, wen ein Benutzer nicht möchte dass seine Beiträge gesammelt werden oder automatisch weiter geleiten werden sollen? Hierzu wäre es sinnvoll die eben beschriebenen Abläufe so zu erweitern, dass der Benutzer festlegen kann bestimme Quellen oder einzelne Teile für das automatische Lesen und Schreiben zu blockieren, wie es von Uldis Bojars et al. in \cite{Bojars2011} vorgeschlagen wird. Dies könnte durch eine Access Control List (ACL) realisiert werden. Hier könnte der Benutzer Lese und Schreibrechte für einzelne Bereiche festlegen, welche dann das System benutzt um einzelne Abläufe auszuführen oder abzubrechen.
 
 % subsection beiträge_in_eine_andere_webseite_schreiben (end)
 
 \section{Identifizierung der Komponenten} % (fold)
 \label{sec:identifizierung_der_komponenten}
 
-Anhand dieses kurzen Ablaufbeispiels kann man einige Komponenten ablesen die das System unbedingt beinhalten muss und welche ergänzend dazu Wünschenswert wären:
+Anhand dieses kurzen Ablaufbeispiels kann man einige Komponenten ablesen, aus denen das neue System auf jeden Fall bestehen beziehungsweise enthalten muss und welche ergänzend dazu Wünschenswert wären:
 
 \begin{itemize} 
-    \item Eine Komponente muss Daten von einen sozialen Netzwerk in das System einlesen und diese in ein geeignetes Zwischenformat konvertieren können.
+    \item Eine Komponente muss Daten von einen Webseite über deren öffentlicher API in das System einlesen und diese in ein geeignetes Zwischenformat konvertieren können.
+    \item Es muss ein passendes Nachrichtensystem zum Entkoppeln von Lesen und Schreiben gewählt und/oder erstellt werden.
     \item Eine weitere Komponente nimmt Beiträte im Zwischenformat entgegen, konvertiert diese in das Format des entsprechenden Netzwerkes und schreibt diese dorthin.
-    \item Um stellvertretend für einen Benutzer schreiben zu können muss es möglich sein nach Konto eines Benutzer in einem Netzwerk suchen zu können.
-    \item Um die Privatsphäre der Benutzer zu wahren, wäre eine ACL Mechanismus sinnvoll.
+    \item Um stellvertretend für einen Benutzer schreiben zu können, muss es möglich sein nach dem Konto eines Benutzer zu einer bestimmten Webseite suchen zu können.
+    \item Um die Privatsphäre der Benutzer zu wahren, wäre eine Mechanismus zum festlegen von Zugriffsrechen sinnvoll.
 \end{itemize}   
 
 % section identifizierung_der_komponenten (end)
+
+\section{Wahl vorhandener Techniken} % (fold)
+\label{sec:wahl_vorhandener_techniken}
+
+\todo[inline]{vielleicht doch eher an den Anfang von "Eigener Ansatz"!?}
+
+\subsection{Welches Zwischenformat} % (fold)
+\label{sub:welches_zwischenformat}
+
+\begin{itemize}
+    \item SIOC als geeignetes Zwischenformat
+    \item warum Ontologie und keine neues XML Schema!?
+\end{itemize}
+
+% subsection welches_zwischenformat (end)
+
+\subsection{Nachrichtensystem} % (fold)
+\label{sub:nachrichtensystem}
+
+\subsubsection{JMS} % (fold)
+\label{ssub:jms}
+\begin{itemize}
+    \item zum reinen verschicken ausreichend
+    \item fast alles muss selber gemacht werden.
+\end{itemize}
+    
+\subsubsection{Apache Camel} % (fold)
+\label{ssub:apache_camel}
+    \begin{itemize}
+        \item erweitern der "Pipeline" z.B. mit Filtern einfach möglich
+    \end{itemize}
+
+\subsection{JMS + Apache Camel} % (fold)
+\label{sub:jms_apache_camel}
+
+\begin{itemize}
+    \item gute kombination -> durable subscriber
+\end{itemize}
+
+% subsection jms_apache_camel (end)
+
+% subsubsection apache_camel (end)
+
+% subsubsection jms (end)
+
+% subsection nachrichtensystem (end)
+
+% section wahl_vorhandener_techniken (end)
 
 % chapter analyse (end)

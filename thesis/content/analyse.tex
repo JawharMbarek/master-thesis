@@ -3,19 +3,16 @@
 \chapter{Analyse} % (fold)
 \label{cha:analyse}
 
-\todo[inline]{Inhalt: wass gibt es, was muss neu gemacht werden}
-\todo[inline]{Begriff soziales Netzwerk anpassen}
+%\todo[inline]{Inhalt: wass gibt es, was muss neu gemacht werden}
+%\todo[inline]{Begriff soziales Netzwerk anpassen}
 
-Um sich eine Vorstellung davon zu machen, wie ein System auszusehen hat und welche Komponenten dazu nötig sind um zwei oder mehrere sozialen Netzwerke zu verbinden, soll hierzu ein kleines Ablaufbeispiel konstruiert werden.
+Bevor nun ein System entwickelt werden kann, das die Synchronisation von Diskussionen auf Lernplattformen und sozialen Online-Netzwerken ermöglicht, muss erst analysiert werden, welche Aufgaben das System erfüllen muss und welche Techniken dafür geeignet sind. Alle diese Schritte sollen im folgenden Abschnitt an einen kleinen Beispiel gezeigt werden.
 
-\section{Neuen Beitrag verfassen} % (fold)
-\label{sec:neuen_beitrag_verfassen}
+\section{Ein Beispiel} % (fold)
+\label{sec:analyse_beispiel}
 
 % section neuen_beitrag_verfassen (end)
-
-Alles beginnt damit, dass zum Beispiel ein Student im sozialen Netzwerk A, im Forum zur Veranstaltung Telekooperation 1, eine Frage zur aktuellen Übung stellen will. Er geht zuerst in den passenden Thread und beginnt einen neuen Beitrag zu schreiben. Sobald er fertig ist, klickt er auf \enquote{Absenden} und sein Beitrag wird in der Datenbank des sozialen Netzwerkes A gespeichert und als neuer Eintrag im Thread angezeigt (siehe Abbildung \ref{fig:beutzer_erstellt_beitrag_a}).
-
-\medskip
+Am Anfang muss irgendjemand auf einer Webseite einen Beitrag schreiben der synchronisiert werden kann. Zum Beispiel geht ein Student in das Forum seiner Veranstaltung auf der Webseite A und in den Thread zur aktuellen Übung, weil er zu ihr eine Frage hat. Er schreibt also einen neuen Beitrag in das Eingabefeld und schickt es ab. Dieser wird dann an die Webseite A geschickt, im dortigen Format (Format A) in eine Datenbank oder Ähnliches geschrieben und als neuer Beitrag im Thread angezeigt (siehe Abbildung \ref{fig:beutzer_erstellt_beitrag_a}). Da eine andere Webseite B das Format von Webseite A in der Regel nicht versteht, muss in einen nächsten Schritt der Beitrag aus der Datenbank gelesen und auf irgendeine Art konvertiert werden. 
 
 \begin{figure}[ht]
      \includegraphics[
@@ -28,34 +25,16 @@ Alles beginnt damit, dass zum Beispiel ein Student im sozialen Netzwerk A, im Fo
     \label{fig:beutzer_erstellt_beitrag_a}
 \end{figure}
 
-\section{Beiträge von sozialen Netzwerk A lesen} % (fold)
-\label{sec:beiträge_von_solzialen_netzwerk_a_lesen}
+\subsection{Beiträge lesen und konvertieren} % (fold)
+\label{sub:beiträge_lesen_und_konvertieren}
 
+Abbildung \ref{fig:lesen_von_beitrag_und_convertieren} zeigt den Ablauf, wie Beiträge von der Webseite A gelesen, konvertiert und weiterverarbeitet werden. Dazu müssen zuerst die Daten über eine öffentliche API vom Server des Webseite A heruntergeladen werden. Da im Allgemeinen nicht automatisch bekannt ist, wann ein neuer Beitrag vorhanden ist, müssen die Server in zeitlichen Abständen abgefragt (\emph{Polling} genannt) und die zurückgelieferten Daten nach neuen Beiträgen durchsucht werden. Sind ein oder mehrere neue Beiträge gefunden worden, können diese nicht direkt an die Webseite B geschickt werden, da sich diese in der Regel im verwendeten Datenformat unterscheiden. Diese müssen zuvor konvertiert werden.
 
-Um diese Beitrag in das soziale Netzwerk B transferieren zu können, müssen zuerst die Daten über eine öffentliche Schnittstelle vom Server des sozialen Netzwerks A heruntergeladen werden. Da in der Regel nicht automatisch bekannt ist, wann ein neuer Beitrag vorhanden ist, müssen die Server in zeitlichen Abständen abgefragt (polling genannt) und die zurückgelieferten Daten nach neuen Beiträgen durchsucht werden. Sind ein oder mehrere neue Beiträge gefunden worden, können diese nicht direkt an das soziale Netzwerk B geschickt werden, da sich diese in der Regel im verwendeten Datenformat unterscheiden. Diese müssen zuvor konvertiert werden.
-
-\medskip
-
-Die einfachste Möglichkeit wäre nun die Daten von Format A nach Format B zu konvertieren. Bei zwei Formaten ist dies noch sehr einfach. Es müsste lediglich ein Konverter von Format A nach Format B und einer in die umgekehrte Richtung implementiert werden. Für den Fall, dass nun ein weiteres Netzwerk C unterstützt werden soll, würde ich die Anzahl an nötigen Konvertern auf Sechs erhöhen, wie Tabelle \ref{tbl:anzahl_konvertern_bei_drei_netzwerken} zeigt. 
-
- \medskip
-
-% \begin{table}[ht]
-%     \centering
-%     \begin{tabular}{cc}
-%         A $ \Rightarrow $ B & A $ \Rightarrow $ C \\
-%         B $ \Rightarrow $ A & B $ \Rightarrow $ C \\
-%         C $ \Rightarrow $ A & C $ \Rightarrow $ B \\
-%     \end{tabular}
-
-    
-%     \caption{Konverter bei Drei sozialen Netzwerken}
-%     \label{tbl:anzahl_konvertern_bei_drei_netzwerken}
-% \end{table}
+Die einfachste Möglichkeit wäre die Daten von Webseite A, die in Format A vorliegen, in das Format B von Webseite B zu konvertieren. Bei zwei Formaten ist dies noch sehr einfach. Es müsste lediglich ein Konverter von Format A nach Format B und einer in die umgekehrte Richtung implementiert werden. Für den Fall, dass ein weiteres Webseite C unterstützt werden soll, würde ich die Anzahl an notwendigen Konvertern , wie Tabelle \ref{tbl:anzahl_konvertern_bei_drei_netzwerken} zeigt, auf Sechs erhöhen. 
 
 \begin{table}[ht]
     \centering
-    \caption{Anzahl Konverter bei drei sozialen Netzwerken}
+    \caption{Anzahl Konverter bei drei Webseiten}
     
     \begin{tabular}{c|c|c|c|c}
         % Zeile 1
@@ -65,14 +44,14 @@ Die einfachste Möglichkeit wäre nun die Daten von Format A nach Format B zu ko
 
         % Zeile 2
         \multicolumn{2}{c|}{} & 
-        \textbf{Netzwerk A} & 
-        \textbf{Netzwerk B} & 
-        \textbf{Netzwerk C} \\ 
+        \textbf{Webseite A} & 
+        \textbf{Webseite B} & 
+        \textbf{Webseite C} \\ 
         \hline
 
         % Zeile 3
         \multirow{3}{*}{Von} & 
-        \textbf{Netzwerk A} & 
+        \textbf{Webseite A} & 
         -&            
         $ \times $ &            
         $ \times $ \\ 
@@ -80,7 +59,7 @@ Die einfachste Möglichkeit wäre nun die Daten von Format A nach Format B zu ko
 
         % Zeile 4
         & 
-        \textbf{Netzwerk B} &            
+        \textbf{Webseite B} &            
         $ \times $ &            
         -&            
         $ \times $ \\ 
@@ -88,7 +67,7 @@ Die einfachste Möglichkeit wäre nun die Daten von Format A nach Format B zu ko
          
         % Zeile 5
         & 
-        \textbf{Netzwerk C} &            
+        \textbf{Webseite C} &            
         $ \times $ &            
         $ \times $ &            
         -\\
@@ -96,45 +75,43 @@ Die einfachste Möglichkeit wäre nun die Daten von Format A nach Format B zu ko
     \label{tbl:anzahl_konvertern_bei_drei_netzwerken}
 \end{table}
 
-Nimmt man an $n_{sn}$ sei eine beliebige Anzahl sozialer Netzwerke, entspricht die Anzahl der notwendiger Konverter $ n_{k1}= n_{sn}*(n_{sn}-1) $, da für jedes Netzwerk ein Konverter in alle anderen Netzwerke erzeugt werden muss. Sollen nur Zwei oder Drei Netzwerke unterstützt werden ist der Aufwand noch sehr überschaubar, bei mehr kann dies aber sehr Aufwendig werden. 
-
-\medskip
-
-Eine elegantere Methode, welche die Anzahl zu implementierender Konverter in Grenzen halten kann, wäre die Einführung eines Zwischenformates. Geht man davon aus, dass die Daten aller Netzwerke nur in dieses Zwischenformat geschrieben und aus diesem gelesen werden müssen, würde sich der Aufwand auf maximal Zwei Konverter pro neuem Netzwerk reduzieren. Für eine beliebige Anzahl Netzwerke wären also $ n_{k2} = n_{sn} * 2 $ Konverter nötig. Nachteile hätte dieser Ansatz nur für $ n_{sn}=2 $ und $ n_{sn}=3$ , da in diesen Fällen mehr beziehungsweise gleich viele Konverter gegenüber der ersten Methode erforderlich wären. Erhöht man die Anzahl Netzwerke jedoch nur geringfügig, sinkt die Menge an Konvertern sichtbar. Für $ n_{sn} = 4 $ wären es $ n_{k2} = 8 $ statt $ n_{k1} = 12 $ und für $ n_{sn} = 5 $ ergibt sich $ n_{k2} = 10 $ statt $ n_{k1} = 20 $ Konvertern. Gleichzeitig können so syntaktische Unterschiede in den einzelnen Formaten angeglichen werden, was sie leichter handhabbar macht. Abbildung \ref{fig:lesen_von_beitrag_und_convertieren} verdeutlicht den Ablauf unter Verwendung des eben beschriebenen Zwischenformats.
-
-\medskip
+Nimmt man an $n_{ws}$ sei eine beliebige Anzahl sozialer Netzwerke, entspricht die Anzahl der notwendiger Konverter $ n_{k1} = n_{ws}*(n_{ws}-1) $, da für jedes Netzwerk ein Konverter in alle anderen Netzwerke erzeugt werden muss. Sollen nur Zwei oder Drei Netzwerke unterstützt werden ist der Aufwand noch sehr überschaubar, bei mehr kann dies aber sehr Aufwendig werden. 
 
 \begin{figure}[ht]
-     \includegraphics[
+    \centering
+    \includegraphics[
+        width=0.7\textwidth,
+        keepaspectratio=true
+    ]{assets/images/interlingua_vs_allvsall}
+    \caption{Komplexität ohne und mit Zwischenformat}
+    \label{fig:interlingua_vs_all}
+\end{figure}
+
+Eine elegantere Methode für die Lösung dieses Problems, welche die Anzahl zu implementierender Konverter in Grenzen halten kann, wäre die Einführung eines Zwischenformates (auch Inter-Lingua, in Abbildung \ref{fig:lesen_von_beitrag_und_convertieren} als \enquote{IM Format} bezeichnet) \cite[S.\,9]{Uschold1996a}. Geht man davon aus, dass die Daten aller Webseiten nur in dieses Zwischenformat geschrieben und aus diesem gelesen werden müssen, würde sich der Aufwand auf maximal zwei Konverter je Webseite reduzieren. Für eine beliebige Anzahl Webseiten wären also $ n_{k2} = n_{ws} * 2 $ Konverter nötig. Nachteile hätte dieser Ansatz nur für $ n_{ws} = 2 $ und $ n_{ws}=3$ , da in diesen Fällen mehr beziehungsweise gleich viele Konverter gegenüber der ersten Methode erforderlich wären. Erhöht man die Anzahl Webseiten jedoch nur geringfügig, sinkt die Menge an Konvertern sichtbar. Für $ n_{ws} = 4 $ wären es $ n_{k2} = 8 $ statt $ n_{k1} = 12 $ (siehe Abbildung \ref{fig:interlingua_vs_all}) und für $ n_{ws} = 5 $ ergibt sich $ n_{k2} = 10 $ statt $ n_{k1} = 20 $ Konvertern. Gleichzeitig können so syntaktische Unterschiede in den einzelnen Formaten angeglichen werden, was sie leichter handhabbar macht. 
+
+\begin{figure}[ht]
+    \includegraphics[
         width=\textwidth,
         keepaspectratio=true,
         clip=true,
         trim= 0 193 0 113
     ]{assets/images/activitydiagram_post_as_user_check_authorization.pdf}
-    \caption{
-        Lesen des erstellten Beitrags und konvertieren in das Zwischenformat.
-    }
+    \caption{Lesen des erstellten Beitrags und konvertieren in das Zwischenformat.}
+% section beiträge_von_solzialen_netzwerk_a_lesen (end)
     \label{fig:lesen_von_beitrag_und_convertieren}
 \end{figure}
 
-Liegen nun alle Daten in diesem Zwischenformat vor, könnten diese an einer Datenbank gespeichert werden. Diese Datenbank macht es möglich auf einfache Art und Weise auf die gespeicherten Daten von außerhalb zu zugreifen und diverse Abfragen ausführen zu können. Dies könnte zum Beispiel sein, in den Daten nach inhaltlich gleichen oder ähnlichen Beiträgen zu suchen oder passende externe Materialien aus Vorlesungen zu einen Thema vorzuschlagen. Die Möglichkeiten sind hier vielfältig. 
+Da ein Teil dieser Arbeit darin besteht Beiträge zwischen zwei oder mehr Webseiten zu synchronisieren, muss das Eintreffen neuer Beiträge an die einzelnen Komponenten mitgeteilt werden. Da es unmöglich ist diesen Zeitpunkt vorher zu sagen ist der beste Weg einen ereignisorientierten Ansatz zu wählen. Hierbei wird beim lesen eines neuen Beitrags eine Ereignisnachricht erzeugt, welche die interessierten Komponenten über das Eintreffen informiert. So wird eine zeitliche Entkopplung von Lesen und Schreiben möglich, gleichzeitig können sich einzelnen Komponenten an diesen Nachrichtenstrom an- oder abhängen ohne Andere zu stören. Dies erhöht die Flexibilität des Systems.
 
-\medskip
+% subsection beiträge_lesen_und_konvertieren (end)
 
-Da ein Teil dieser Arbeit darin besteht Beiträge zwischen zwei oder mehr sozialen Netzwerken zu synchronisieren, muss das Eintreffen neuer Beiträge an die einzelnen Komponenten mitgeteilt werden. Da es unmöglich ist diesen Zeitpunkt vorher zu sagen ist der beste Weg einen ereignisorientierten Ansatz zu wählen. Hierbei wird beim lesen eines neuen Beitrags eine Ereignisnachricht erzeugt, welche die interessierten Komponenten über das Eintreffen informiert. So wird eine zeitliche Entkopplung von Lesen und Schreiben möglich, gleichzeitig können sich einzelnen Komponenten an diesen Nachrichtenstrom an- oder abhängen ohne Andere zu stören. Dies erhöht die Flexibilität des Systems.
+\subsection{Beiträge in eine andere Webseite schreiben} % (fold)
+\label{sub:beiträge_in_eine_andere_webseite_schreiben}
 
-% section beiträge_von_solzialen_netzwerk_a_lesen (end)
-
-\section{Beitrag in soziales Netzwerk B schreiben} % (fold)
-\label{sec:beitrag_in_soziales_netzwerk_b_schreiben}
 
 Hat sich eine Komponenten und empfängt eine Ereignisnachricht von einen neuen Beitrag, wird ähnlich Verfahren wie schon beim Lesen, nur umgekehrt (Siehe Abbildung \ref{fig:konvertieren_formatb_und_schreiben} links, oberer Ablauf). Der neue Beitrag wird vor den schreiben in das soziale Netzwerk B aus dem Zwischenformat in der Zielformat B konvertiert. Alle dazu nötigen Information können direkt aus der Ereignisnachricht oder zusätzlich aus der oben genannten Datenbank geholt werden. 
 
-\medskip
-
 Wünschenswert wäre es hierbei, wenn es so aussehen würde der Beitrag nicht vom hier entwickelten System, sondern von Autor des ursprünglichen Beitrags geschrieben worden. Hierzu es unerlässlich auf das Konto des Autor im entsprechenden Netzwerk zugreifen zu können, da im allgemeinen der Schreiben stellvertretend für dritte Personen nicht möglich ist. Hierzu muss zunächst für den betreffenden Autor das Konto für das soziale Netzwerk B herausgesucht werden (Siehe Abbildung \ref{fig:konvertieren_formatb_und_schreiben} links, unterer Ablauf). Wurde ein passendes Konto gefunden, wird der konvertierte Beitrag über diesen geschrieben. Sollten kein Passender gefunden werden, müsste dies über ein vorher definiertes Konto geschehen. Dabei sollte aber auf den ursprünglichen Autor beziehungsweise Beitrag in irgendeiner Form hingewiesen werden. Dies kann zum Beispiel durch anbringen eines Links an den  Text des Beitrags erfolgen. 
-
-\medskip
 
 \begin{figure}[ht]
      \includegraphics[
@@ -151,12 +128,12 @@ Wünschenswert wäre es hierbei, wenn es so aussehen würde der Beitrag nicht vo
 
 Gleichzeitig mit den Sammeln von Daten kommt immer auch das Thema zum Schutz der Privatsphäre auf. Wie soll damit umgegangen werden, wen ein Benutzer nicht möchte dass seine Beiträge gesammelt werden oder automatisch weiter geleiten werden sollen? Hierzu wäre es sinnvoll die eben beschriebenen Abläufe so zu erweitern, dass der Benutzer festlegen kann bestimme Quellen oder einzelne Teile für das automatische Lesen und Schreiben zu blockieren, wie es von Uldis Bojars et al. in \cite{Bojars2011} vorgeschlagen wird. Dies könnte durch eine Access Control List (ACL) realisiert werden. Hier könnte der Benutzer Lese und Schreibrechte für einzelne Bereiche festlegen, welche dann das System benutzt um einzelne Abläufe auszuführen oder abzubrechen.
 
-% section beitrag_an_soziales_netzwerk_b_weiterleiten (end)
+% subsection beiträge_in_eine_andere_webseite_schreiben (end)
 
 \section{Identifizierung der Komponenten} % (fold)
 \label{sec:identifizierung_der_komponenten}
 
-Anhand dieses kurzen Ablaufbeispiels können wir nun einige Komponenten ablesen die das System unbedingt beinhalten muss und welche ergänzend dazu Wünschenswert wären:
+Anhand dieses kurzen Ablaufbeispiels kann man einige Komponenten ablesen die das System unbedingt beinhalten muss und welche ergänzend dazu Wünschenswert wären:
 
 \begin{itemize} 
     \item Eine Komponente muss Daten von einen sozialen Netzwerk in das System einlesen und diese in ein geeignetes Zwischenformat konvertieren können.

@@ -16,15 +16,14 @@
     <data key="d7"/>
     <node id="n0" yfiles.foldertype="group">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
             <y:GroupNode>
-              <y:Geometry height="182.37646484375" width="275.0" x="922.5" y="455.0672607421875"/>
+              <y:Geometry height="339.8693542480469" width="308.351547241211" x="280.9957012176514" y="255.62353515625"/>
               <y:Fill color="#FFFFFF" transparent="false"/>
               <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="275.0" x="0.0" y="0.0">SoccComponent</y:NodeLabel>
+              <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="308.351547241211" x="0.0" y="0.0">SoccComponent</y:NodeLabel>
               <y:Shape type="roundrectangle"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
@@ -44,29 +43,28 @@
         </y:ProxyAutoBoundsNode>
       </data>
       <graph edgedefault="directed" id="n0:">
-        <node id="n0::n0" yfiles.foldertype="folder">
+        <node id="n0::n0" yfiles.foldertype="group">
           <data key="d4"/>
-          <data key="d5"/>
           <data key="d6">
             <y:ProxyAutoBoundsNode>
-              <y:Realizers active="1">
+              <y:Realizers active="0">
                 <y:GroupNode>
-                  <y:Geometry height="126.77880859375" width="365.3456859588623" x="878.9999980926514" y="447.012939453125"/>
+                  <y:Geometry height="136.47998046875" width="194.35155487060547" x="295.9957012176514" y="293.0"/>
                   <y:Fill color="#FFFFFF" transparent="false"/>
                   <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="365.3456859588623" x="0.0" y="0.0">SoccPostProducer</y:NodeLabel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="194.35155487060547" x="0.0" y="0.0">SoccPostPollingConsumer</y:NodeLabel>
                   <y:Shape type="roundrectangle"/>
                   <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
                   <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
-                  <y:BorderInsets bottom="0" bottomF="0.0" left="99" leftF="98.9999942779541" right="0" rightF="0.0" top="0" topF="0.0"/>
+                  <y:BorderInsets bottom="10" bottomF="9.701171875" left="0" leftF="0.0" right="0" rightF="0.0" top="0" topF="0.0"/>
                 </y:GroupNode>
                 <y:GroupNode>
-                  <y:Geometry height="50.0" width="245.0" x="937.5" y="572.4437255859375"/>
-                  <y:Fill color="#FFFFFF" transparent="false"/>
-                  <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="245.0" x="0.0" y="0.0">SoccPostProducer</y:NodeLabel>
+                  <y:Geometry height="50.0" width="50.0" x="200.0" y="150.0"/>
+                  <y:Fill color="#CAECFF84" transparent="false"/>
+                  <y:BorderStyle color="#666699" type="dotted" width="1.0"/>
+                  <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#99CCFF" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="50.0" x="0.0" y="0.0">2</y:NodeLabel>
                   <y:Shape type="roundrectangle"/>
-                  <y:State closed="true" closedHeight="50.0" closedWidth="245.0" innerGraphDisplayEnabled="false"/>
+                  <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
                   <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
                   <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="0" rightF="0.0" top="0" topF="0.0"/>
                 </y:GroupNode>
@@ -75,14 +73,13 @@
           </data>
           <graph edgedefault="directed" id="n0::n0:">
             <node id="n0::n0::n0">
-              <data key="d5"/>
               <data key="d6">
                 <y:SVGNode>
-                  <y:Geometry height="36.99993896484375" width="59.999996185302734" x="1091.9999885559082" y="484.389404296875"/>
+                  <y:Geometry height="36.99993896484375" width="59.999996185302734" x="310.9957012176514" y="330.3764953613281"/>
                   <y:Fill color="#CCCCFF" transparent="false"/>
                   <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="51.373046875" x="4.313474655151367" y="40.99993896484375">Writer
-Endpoint</y:NodeLabel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="59.353515625" x="0.3232402801513672" y="40.99993896484375">Polling
+Consumer</y:NodeLabel>
                   <y:SVGNodeProperties usingVisualBounds="true"/>
                   <y:SVGModel svgBoundsPolicy="0">
                     <y:SVGContent refid="1"/>
@@ -91,14 +88,13 @@ Endpoint</y:NodeLabel>
               </data>
             </node>
             <node id="n0::n0::n1">
-              <data key="d5"/>
               <data key="d6">
                 <y:SVGNode>
-                  <y:Geometry height="37.0" width="60.0" x="992.9999923706055" y="484.389404296875"/>
+                  <y:Geometry height="37.0" width="60.0" x="409.99569358825687" y="330.37646484375"/>
                   <y:Fill color="#CCCCFF" transparent="false"/>
                   <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="58.017578125" x="0.9912109375" y="41.0">Message
-Translator</y:NodeLabel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="70.703125" x="-5.3515625" y="41.0">Connector A
+PostReader</y:NodeLabel>
                   <y:SVGNodeProperties usingVisualBounds="true"/>
                   <y:SVGModel svgBoundsPolicy="0">
                     <y:SVGContent refid="2"/>
@@ -106,69 +102,30 @@ Translator</y:NodeLabel>
                 </y:SVGNode>
               </data>
             </node>
-            <node id="n0::n0::n2">
-              <data key="d5"/>
-              <data key="d6">
-                <y:SVGNode>
-                  <y:Geometry height="27.0" width="24.0" x="1190.9999809265137" y="489.3893737792969"/>
-                  <y:Fill color="#CCCCFF" transparent="false"/>
-                  <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="52.69140625" x="-14.345703125" y="31.0">Post
-Message</y:NodeLabel>
-                  <y:SVGNodeProperties usingVisualBounds="true"/>
-                  <y:SVGModel svgBoundsPolicy="0">
-                    <y:SVGContent refid="3"/>
-                  </y:SVGModel>
-                </y:SVGNode>
-              </data>
-            </node>
-            <edge id="n0::n0::e0" source="n0::n0::n0" target="n0::n0::n1">
-              <data key="d9"/>
-              <data key="d10">
-                <y:PolyLineEdge>
-                  <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
-                  <y:LineStyle color="#000000" type="line" width="1.0"/>
-                  <y:Arrows source="none" target="standard"/>
-                  <y:BendStyle smoothed="false"/>
-                </y:PolyLineEdge>
-              </data>
-            </edge>
-            <edge id="n0::n0::e1" source="n0::n0::n0" target="n0::n0::n2">
-              <data key="d9"/>
-              <data key="d10">
-                <y:PolyLineEdge>
-                  <y:Path sx="0.0" sy="0.0" tx="-10.0" ty="0.0"/>
-                  <y:LineStyle color="#000000" type="line" width="1.0"/>
-                  <y:Arrows source="standard" target="none"/>
-                  <y:BendStyle smoothed="false"/>
-                </y:PolyLineEdge>
-              </data>
-            </edge>
           </graph>
         </node>
-        <node id="n0::n1" yfiles.foldertype="folder">
+        <node id="n0::n1" yfiles.foldertype="group">
           <data key="d4"/>
-          <data key="d5"/>
           <data key="d6">
             <y:ProxyAutoBoundsNode>
-              <y:Realizers active="1">
+              <y:Realizers active="0">
                 <y:GroupNode>
-                  <y:Geometry height="126.77880859375" width="365.3456840515137" x="879.0" y="296.0"/>
+                  <y:Geometry height="136.47994995117188" width="194.35155487060547" x="295.9957012176514" y="444.012939453125"/>
                   <y:Fill color="#FFFFFF" transparent="false"/>
                   <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="365.3456840515137" x="0.0" y="0.0">SoccPostPollingConsumer</y:NodeLabel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="194.35155487060547" x="0.0" y="0.0">SoccPostProducer</y:NodeLabel>
                   <y:Shape type="roundrectangle"/>
                   <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
                   <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
-                  <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="0" rightF="0.0" top="0" topF="0.0"/>
+                  <y:BorderInsets bottom="10" bottomF="9.701141357421875" left="94" leftF="93.64842987060547" right="0" rightF="0.0" top="0" topF="0.0"/>
                 </y:GroupNode>
                 <y:GroupNode>
-                  <y:Geometry height="50.0" width="244.99999809265137" x="937.5000019073486" y="492.4437255859375"/>
-                  <y:Fill color="#FFFFFF" transparent="false"/>
-                  <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="244.99999809265137" x="0.0" y="0.0">SoccPostPollingConsumer</y:NodeLabel>
+                  <y:Geometry height="50.0" width="50.0" x="212.0" y="282.889404296875"/>
+                  <y:Fill color="#CAECFF84" transparent="false"/>
+                  <y:BorderStyle color="#666699" type="dotted" width="1.0"/>
+                  <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#99CCFF" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="50.0" x="0.0" y="0.0">2</y:NodeLabel>
                   <y:Shape type="roundrectangle"/>
-                  <y:State closed="true" closedHeight="50.0" closedWidth="244.99999809265137" innerGraphDisplayEnabled="false"/>
+                  <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
                   <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
                   <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="0" rightF="0.0" top="0" topF="0.0"/>
                 </y:GroupNode>
@@ -177,30 +134,13 @@ Message</y:NodeLabel>
           </data>
           <graph edgedefault="directed" id="n0::n1:">
             <node id="n0::n1::n0">
-              <data key="d5"/>
               <data key="d6">
                 <y:SVGNode>
-                  <y:Geometry height="36.99993896484375" width="59.999996185302734" x="894.0" y="333.3764953613281"/>
+                  <y:Geometry height="37.0" width="60.0" x="409.99569358825687" y="481.389404296875"/>
                   <y:Fill color="#CCCCFF" transparent="false"/>
                   <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="59.353515625" x="0.3232402801513672" y="40.99993896484375">Polling
-Consumer</y:NodeLabel>
-                  <y:SVGNodeProperties usingVisualBounds="true"/>
-                  <y:SVGModel svgBoundsPolicy="0">
-                    <y:SVGContent refid="4"/>
-                  </y:SVGModel>
-                </y:SVGNode>
-              </data>
-            </node>
-            <node id="n0::n1::n1">
-              <data key="d5"/>
-              <data key="d6">
-                <y:SVGNode>
-                  <y:Geometry height="37.0" width="60.0" x="992.9999923706055" y="333.37646484375"/>
-                  <y:Fill color="#CCCCFF" transparent="false"/>
-                  <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="58.017578125" x="0.9912109375" y="41.0">Message
-Translator</y:NodeLabel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="70.703125" x="-5.3515625" y="41.0">Connector A
+PostWriter</y:NodeLabel>
                   <y:SVGNodeProperties usingVisualBounds="true"/>
                   <y:SVGModel svgBoundsPolicy="0">
                     <y:SVGContent refid="2"/>
@@ -208,78 +148,42 @@ Translator</y:NodeLabel>
                 </y:SVGNode>
               </data>
             </node>
-            <node id="n0::n1::n2">
-              <data key="d5"/>
-              <data key="d6">
-                <y:SVGNode>
-                  <y:Geometry height="36.99993896484375" width="59.999996185302734" x="1091.9999885559082" y="333.3764953613281"/>
-                  <y:Fill color="#CCCCFF" transparent="false"/>
-                  <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="51.373046875" x="4.313474655151367" y="40.99993896484375">Reader
-Endpoint</y:NodeLabel>
-                  <y:SVGNodeProperties usingVisualBounds="true"/>
-                  <y:SVGModel svgBoundsPolicy="0">
-                    <y:SVGContent refid="1"/>
-                  </y:SVGModel>
-                </y:SVGNode>
-              </data>
-            </node>
-            <node id="n0::n1::n3">
-              <data key="d5"/>
-              <data key="d6">
-                <y:SVGNode>
-                  <y:Geometry height="27.0" width="24.0" x="1190.9999809265137" y="338.37646484375"/>
-                  <y:Fill color="#CCCCFF" transparent="false"/>
-                  <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="52.69140625" x="-14.345703125" y="31.0">Post
-Message</y:NodeLabel>
-                  <y:SVGNodeProperties usingVisualBounds="true"/>
-                  <y:SVGModel svgBoundsPolicy="0">
-                    <y:SVGContent refid="3"/>
-                  </y:SVGModel>
-                </y:SVGNode>
-              </data>
-            </node>
-            <edge id="n0::n1::e0" source="n0::n1::n0" target="n0::n1::n1">
-              <data key="d9"/>
-              <data key="d10">
-                <y:PolyLineEdge>
-                  <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
-                  <y:LineStyle color="#000000" type="line" width="1.0"/>
-                  <y:Arrows source="none" target="standard"/>
-                  <y:BendStyle smoothed="false"/>
-                </y:PolyLineEdge>
-              </data>
-            </edge>
-            <edge id="n0::n1::e1" source="n0::n1::n1" target="n0::n1::n2">
-              <data key="d9"/>
-              <data key="d10">
-                <y:PolyLineEdge>
-                  <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
-                  <y:LineStyle color="#000000" type="line" width="1.0"/>
-                  <y:Arrows source="none" target="standard"/>
-                  <y:BendStyle smoothed="false"/>
-                </y:PolyLineEdge>
-              </data>
-            </edge>
-            <edge id="n0::n1::e2" source="n0::n1::n2" target="n0::n1::n3">
-              <data key="d9"/>
-              <data key="d10">
-                <y:PolyLineEdge>
-                  <y:Path sx="0.0" sy="0.0" tx="-10.0" ty="0.0"/>
-                  <y:LineStyle color="#000000" type="line" width="1.0"/>
-                  <y:Arrows source="none" target="standard"/>
-                  <y:BendStyle smoothed="false"/>
-                </y:PolyLineEdge>
-              </data>
-            </edge>
           </graph>
+        </node>
+        <node id="n0::n2">
+          <data key="d6">
+            <y:SVGNode>
+              <y:Geometry height="36.99993896484375" width="59.999996185302734" x="514.3472522735597" y="330.3764953613281"/>
+              <y:Fill color="#CCCCFF" transparent="false"/>
+              <y:BorderStyle color="#000000" type="line" width="1.0"/>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="59.353515625" x="0.3232402801513672" y="40.99993896484375">Consumer
+Endpoint</y:NodeLabel>
+              <y:SVGNodeProperties usingVisualBounds="true"/>
+              <y:SVGModel svgBoundsPolicy="0">
+                <y:SVGContent refid="3"/>
+              </y:SVGModel>
+            </y:SVGNode>
+          </data>
+        </node>
+        <node id="n0::n3">
+          <data key="d6">
+            <y:SVGNode>
+              <y:Geometry height="36.99993896484375" width="59.999996185302734" x="514.3472522735597" y="481.38943481445307"/>
+              <y:Fill color="#CCCCFF" transparent="false"/>
+              <y:BorderStyle color="#000000" type="line" width="1.0"/>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="52.69140625" x="3.654294967651367" y="40.99993896484381">Producer
+Endpoint</y:NodeLabel>
+              <y:SVGNodeProperties usingVisualBounds="true"/>
+              <y:SVGModel svgBoundsPolicy="0">
+                <y:SVGContent refid="3"/>
+              </y:SVGModel>
+            </y:SVGNode>
+          </data>
         </node>
       </graph>
     </node>
     <node id="n1" yfiles.foldertype="group">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
@@ -309,109 +213,6 @@ Message</y:NodeLabel>
       <graph edgedefault="directed" id="n1:">
         <node id="n1::n0" yfiles.foldertype="folder">
           <data key="d4"/>
-          <data key="d5"/>
-          <data key="d6">
-            <y:ProxyAutoBoundsNode>
-              <y:Realizers active="1">
-                <y:GroupNode>
-                  <y:Geometry height="126.77880859375" width="365.3456859588623" x="878.9999980926514" y="447.012939453125"/>
-                  <y:Fill color="#FFFFFF" transparent="false"/>
-                  <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="365.3456859588623" x="0.0" y="0.0">SoccPostProducer</y:NodeLabel>
-                  <y:Shape type="roundrectangle"/>
-                  <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
-                  <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
-                  <y:BorderInsets bottom="0" bottomF="0.0" left="99" leftF="98.9999942779541" right="0" rightF="0.0" top="0" topF="0.0"/>
-                </y:GroupNode>
-                <y:GroupNode>
-                  <y:Geometry height="50.0" width="245.0" x="937.5000009536743" y="323.87646484375"/>
-                  <y:Fill color="#FFFFFF" transparent="false"/>
-                  <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="245.0" x="0.0" y="0.0">SoccPostProducer</y:NodeLabel>
-                  <y:Shape type="roundrectangle"/>
-                  <y:State closed="true" closedHeight="50.0" closedWidth="245.0" innerGraphDisplayEnabled="false"/>
-                  <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
-                  <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="0" rightF="0.0" top="0" topF="0.0"/>
-                </y:GroupNode>
-              </y:Realizers>
-            </y:ProxyAutoBoundsNode>
-          </data>
-          <graph edgedefault="directed" id="n1::n0:">
-            <node id="n1::n0::n0">
-              <data key="d5"/>
-              <data key="d6">
-                <y:SVGNode>
-                  <y:Geometry height="36.99993896484375" width="59.999996185302734" x="1091.9999885559082" y="484.389404296875"/>
-                  <y:Fill color="#CCCCFF" transparent="false"/>
-                  <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="51.373046875" x="4.313474655151367" y="40.99993896484375">Writer
-Endpoint</y:NodeLabel>
-                  <y:SVGNodeProperties usingVisualBounds="true"/>
-                  <y:SVGModel svgBoundsPolicy="0">
-                    <y:SVGContent refid="1"/>
-                  </y:SVGModel>
-                </y:SVGNode>
-              </data>
-            </node>
-            <node id="n1::n0::n1">
-              <data key="d5"/>
-              <data key="d6">
-                <y:SVGNode>
-                  <y:Geometry height="37.0" width="60.0" x="992.9999923706055" y="484.389404296875"/>
-                  <y:Fill color="#CCCCFF" transparent="false"/>
-                  <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="58.017578125" x="0.9912109375" y="41.0">Message
-Translator</y:NodeLabel>
-                  <y:SVGNodeProperties usingVisualBounds="true"/>
-                  <y:SVGModel svgBoundsPolicy="0">
-                    <y:SVGContent refid="2"/>
-                  </y:SVGModel>
-                </y:SVGNode>
-              </data>
-            </node>
-            <node id="n1::n0::n2">
-              <data key="d5"/>
-              <data key="d6">
-                <y:SVGNode>
-                  <y:Geometry height="27.0" width="24.0" x="1190.9999809265137" y="489.3893737792969"/>
-                  <y:Fill color="#CCCCFF" transparent="false"/>
-                  <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="52.69140625" x="-14.345703125" y="31.0">Post
-Message</y:NodeLabel>
-                  <y:SVGNodeProperties usingVisualBounds="true"/>
-                  <y:SVGModel svgBoundsPolicy="0">
-                    <y:SVGContent refid="3"/>
-                  </y:SVGModel>
-                </y:SVGNode>
-              </data>
-            </node>
-            <edge id="n1::n0::e0" source="n1::n0::n0" target="n1::n0::n1">
-              <data key="d9"/>
-              <data key="d10">
-                <y:PolyLineEdge>
-                  <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
-                  <y:LineStyle color="#000000" type="line" width="1.0"/>
-                  <y:Arrows source="none" target="standard"/>
-                  <y:BendStyle smoothed="false"/>
-                </y:PolyLineEdge>
-              </data>
-            </edge>
-            <edge id="n1::n0::e1" source="n1::n0::n0" target="n1::n0::n2">
-              <data key="d9"/>
-              <data key="d10">
-                <y:PolyLineEdge>
-                  <y:Path sx="0.0" sy="0.0" tx="-10.0" ty="0.0"/>
-                  <y:LineStyle color="#000000" type="line" width="1.0"/>
-                  <y:Arrows source="standard" target="none"/>
-                  <y:BendStyle smoothed="false"/>
-                </y:PolyLineEdge>
-              </data>
-            </edge>
-          </graph>
-        </node>
-        <node id="n1::n1" yfiles.foldertype="folder">
-          <data key="d4"/>
-          <data key="d5"/>
           <data key="d6">
             <y:ProxyAutoBoundsNode>
               <y:Realizers active="1">
@@ -438,9 +239,8 @@ Message</y:NodeLabel>
               </y:Realizers>
             </y:ProxyAutoBoundsNode>
           </data>
-          <graph edgedefault="directed" id="n1::n1:">
-            <node id="n1::n1::n0">
-              <data key="d5"/>
+          <graph edgedefault="directed" id="n1::n0:">
+            <node id="n1::n0::n0">
               <data key="d6">
                 <y:SVGNode>
                   <y:Geometry height="36.99993896484375" width="59.999996185302734" x="894.0" y="333.3764953613281"/>
@@ -450,13 +250,12 @@ Message</y:NodeLabel>
 Consumer</y:NodeLabel>
                   <y:SVGNodeProperties usingVisualBounds="true"/>
                   <y:SVGModel svgBoundsPolicy="0">
-                    <y:SVGContent refid="4"/>
+                    <y:SVGContent refid="1"/>
                   </y:SVGModel>
                 </y:SVGNode>
               </data>
             </node>
-            <node id="n1::n1::n1">
-              <data key="d5"/>
+            <node id="n1::n0::n1">
               <data key="d6">
                 <y:SVGNode>
                   <y:Geometry height="37.0" width="60.0" x="992.9999923706055" y="333.37646484375"/>
@@ -471,8 +270,7 @@ Translator</y:NodeLabel>
                 </y:SVGNode>
               </data>
             </node>
-            <node id="n1::n1::n2">
-              <data key="d5"/>
+            <node id="n1::n0::n2">
               <data key="d6">
                 <y:SVGNode>
                   <y:Geometry height="36.99993896484375" width="59.999996185302734" x="1091.9999885559082" y="333.3764953613281"/>
@@ -482,13 +280,12 @@ Translator</y:NodeLabel>
 Endpoint</y:NodeLabel>
                   <y:SVGNodeProperties usingVisualBounds="true"/>
                   <y:SVGModel svgBoundsPolicy="0">
-                    <y:SVGContent refid="1"/>
+                    <y:SVGContent refid="3"/>
                   </y:SVGModel>
                 </y:SVGNode>
               </data>
             </node>
-            <node id="n1::n1::n3">
-              <data key="d5"/>
+            <node id="n1::n0::n3">
               <data key="d6">
                 <y:SVGNode>
                   <y:Geometry height="27.0" width="24.0" x="1190.9999809265137" y="338.37646484375"/>
@@ -498,13 +295,12 @@ Endpoint</y:NodeLabel>
 Message</y:NodeLabel>
                   <y:SVGNodeProperties usingVisualBounds="true"/>
                   <y:SVGModel svgBoundsPolicy="0">
-                    <y:SVGContent refid="3"/>
+                    <y:SVGContent refid="4"/>
                   </y:SVGModel>
                 </y:SVGNode>
               </data>
             </node>
-            <edge id="n1::n1::e0" source="n1::n1::n0" target="n1::n1::n1">
-              <data key="d9"/>
+            <edge id="n1::n0::e0" source="n1::n0::n0" target="n1::n0::n1">
               <data key="d10">
                 <y:PolyLineEdge>
                   <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -514,8 +310,7 @@ Message</y:NodeLabel>
                 </y:PolyLineEdge>
               </data>
             </edge>
-            <edge id="n1::n1::e1" source="n1::n1::n1" target="n1::n1::n2">
-              <data key="d9"/>
+            <edge id="n1::n0::e1" source="n1::n0::n1" target="n1::n0::n2">
               <data key="d10">
                 <y:PolyLineEdge>
                   <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -525,8 +320,7 @@ Message</y:NodeLabel>
                 </y:PolyLineEdge>
               </data>
             </edge>
-            <edge id="n1::n1::e2" source="n1::n1::n2" target="n1::n1::n3">
-              <data key="d9"/>
+            <edge id="n1::n0::e2" source="n1::n0::n2" target="n1::n0::n3">
               <data key="d10">
                 <y:PolyLineEdge>
                   <y:Path sx="0.0" sy="0.0" tx="-10.0" ty="0.0"/>
@@ -538,19 +332,114 @@ Message</y:NodeLabel>
             </edge>
           </graph>
         </node>
+        <node id="n1::n1" yfiles.foldertype="folder">
+          <data key="d4"/>
+          <data key="d6">
+            <y:ProxyAutoBoundsNode>
+              <y:Realizers active="1">
+                <y:GroupNode>
+                  <y:Geometry height="126.77880859375" width="365.3456859588623" x="878.9999980926514" y="447.012939453125"/>
+                  <y:Fill color="#FFFFFF" transparent="false"/>
+                  <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
+                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="365.3456859588623" x="0.0" y="0.0">SoccPostProducer</y:NodeLabel>
+                  <y:Shape type="roundrectangle"/>
+                  <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
+                  <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
+                  <y:BorderInsets bottom="0" bottomF="0.0" left="99" leftF="98.9999942779541" right="0" rightF="0.0" top="0" topF="0.0"/>
+                </y:GroupNode>
+                <y:GroupNode>
+                  <y:Geometry height="50.0" width="245.0" x="937.5000009536743" y="323.87646484375"/>
+                  <y:Fill color="#FFFFFF" transparent="false"/>
+                  <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
+                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="245.0" x="0.0" y="0.0">SoccPostProducer</y:NodeLabel>
+                  <y:Shape type="roundrectangle"/>
+                  <y:State closed="true" closedHeight="50.0" closedWidth="245.0" innerGraphDisplayEnabled="false"/>
+                  <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
+                  <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="0" rightF="0.0" top="0" topF="0.0"/>
+                </y:GroupNode>
+              </y:Realizers>
+            </y:ProxyAutoBoundsNode>
+          </data>
+          <graph edgedefault="directed" id="n1::n1:">
+            <node id="n1::n1::n0">
+              <data key="d6">
+                <y:SVGNode>
+                  <y:Geometry height="36.99993896484375" width="59.999996185302734" x="1091.9999885559082" y="484.389404296875"/>
+                  <y:Fill color="#CCCCFF" transparent="false"/>
+                  <y:BorderStyle color="#000000" type="line" width="1.0"/>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="51.373046875" x="4.313474655151367" y="40.99993896484375">Writer
+Endpoint</y:NodeLabel>
+                  <y:SVGNodeProperties usingVisualBounds="true"/>
+                  <y:SVGModel svgBoundsPolicy="0">
+                    <y:SVGContent refid="3"/>
+                  </y:SVGModel>
+                </y:SVGNode>
+              </data>
+            </node>
+            <node id="n1::n1::n1">
+              <data key="d6">
+                <y:SVGNode>
+                  <y:Geometry height="37.0" width="60.0" x="992.9999923706055" y="484.389404296875"/>
+                  <y:Fill color="#CCCCFF" transparent="false"/>
+                  <y:BorderStyle color="#000000" type="line" width="1.0"/>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="58.017578125" x="0.9912109375" y="41.0">Message
+Translator</y:NodeLabel>
+                  <y:SVGNodeProperties usingVisualBounds="true"/>
+                  <y:SVGModel svgBoundsPolicy="0">
+                    <y:SVGContent refid="2"/>
+                  </y:SVGModel>
+                </y:SVGNode>
+              </data>
+            </node>
+            <node id="n1::n1::n2">
+              <data key="d6">
+                <y:SVGNode>
+                  <y:Geometry height="27.0" width="24.0" x="1190.9999809265137" y="489.3893737792969"/>
+                  <y:Fill color="#CCCCFF" transparent="false"/>
+                  <y:BorderStyle color="#000000" type="line" width="1.0"/>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="52.69140625" x="-14.345703125" y="31.0">Post
+Message</y:NodeLabel>
+                  <y:SVGNodeProperties usingVisualBounds="true"/>
+                  <y:SVGModel svgBoundsPolicy="0">
+                    <y:SVGContent refid="4"/>
+                  </y:SVGModel>
+                </y:SVGNode>
+              </data>
+            </node>
+            <edge id="n1::n1::e0" source="n1::n1::n0" target="n1::n1::n1">
+              <data key="d10">
+                <y:PolyLineEdge>
+                  <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+                  <y:LineStyle color="#000000" type="line" width="1.0"/>
+                  <y:Arrows source="none" target="standard"/>
+                  <y:BendStyle smoothed="false"/>
+                </y:PolyLineEdge>
+              </data>
+            </edge>
+            <edge id="n1::n1::e1" source="n1::n1::n0" target="n1::n1::n2">
+              <data key="d10">
+                <y:PolyLineEdge>
+                  <y:Path sx="0.0" sy="0.0" tx="-10.0" ty="0.0"/>
+                  <y:LineStyle color="#000000" type="line" width="1.0"/>
+                  <y:Arrows source="standard" target="none"/>
+                  <y:BendStyle smoothed="false"/>
+                </y:PolyLineEdge>
+              </data>
+            </edge>
+          </graph>
+        </node>
       </graph>
     </node>
     <node id="n2" yfiles.foldertype="group">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
             <y:GroupNode>
-              <y:Geometry height="339.8693542480469" width="401.33103561401373" x="280.9957012176514" y="255.62353515625"/>
+              <y:Geometry height="182.37646484375" width="275.0" x="922.5" y="455.0672607421875"/>
               <y:Fill color="#FFFFFF" transparent="false"/>
               <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="401.33103561401373" x="0.0" y="0.0">SoccComponent</y:NodeLabel>
+              <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="275.0" x="0.0" y="0.0">SoccComponent</y:NodeLabel>
               <y:Shape type="roundrectangle"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
@@ -570,29 +459,28 @@ Message</y:NodeLabel>
         </y:ProxyAutoBoundsNode>
       </data>
       <graph edgedefault="directed" id="n2:">
-        <node id="n2::n0" yfiles.foldertype="group">
+        <node id="n2::n0" yfiles.foldertype="folder">
           <data key="d4"/>
-          <data key="d5"/>
           <data key="d6">
             <y:ProxyAutoBoundsNode>
-              <y:Realizers active="0">
+              <y:Realizers active="1">
                 <y:GroupNode>
-                  <y:Geometry height="136.47994995117188" width="371.33103561401373" x="295.9957012176514" y="444.012939453125"/>
+                  <y:Geometry height="126.77880859375" width="365.3456840515137" x="879.0" y="296.0"/>
                   <y:Fill color="#FFFFFF" transparent="false"/>
                   <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="371.33103561401373" x="0.0" y="0.0">SoccPostProducer</y:NodeLabel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="365.3456840515137" x="0.0" y="0.0">SoccPostPollingConsumer</y:NodeLabel>
                   <y:Shape type="roundrectangle"/>
                   <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
                   <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
-                  <y:BorderInsets bottom="0" bottomF="0.0" left="94" leftF="93.64842987060547" right="0" rightF="0.0" top="0" topF="0.0"/>
+                  <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="0" rightF="0.0" top="0" topF="0.0"/>
                 </y:GroupNode>
                 <y:GroupNode>
-                  <y:Geometry height="50.0" width="50.0" x="212.0" y="282.889404296875"/>
-                  <y:Fill color="#CAECFF84" transparent="false"/>
-                  <y:BorderStyle color="#666699" type="dotted" width="1.0"/>
-                  <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#99CCFF" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="50.0" x="0.0" y="0.0">2</y:NodeLabel>
+                  <y:Geometry height="50.0" width="244.99999809265137" x="937.5000019073486" y="492.4437255859375"/>
+                  <y:Fill color="#FFFFFF" transparent="false"/>
+                  <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
+                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="244.99999809265137" x="0.0" y="0.0">SoccPostPollingConsumer</y:NodeLabel>
                   <y:Shape type="roundrectangle"/>
-                  <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
+                  <y:State closed="true" closedHeight="50.0" closedWidth="244.99999809265137" innerGraphDisplayEnabled="false"/>
                   <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
                   <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="0" rightF="0.0" top="0" topF="0.0"/>
                 </y:GroupNode>
@@ -601,14 +489,13 @@ Message</y:NodeLabel>
           </data>
           <graph edgedefault="directed" id="n2::n0:">
             <node id="n2::n0::n0">
-              <data key="d5"/>
               <data key="d6">
                 <y:SVGNode>
-                  <y:Geometry height="36.99993896484375" width="59.999996185302734" x="508.9956897735596" y="481.389404296875"/>
+                  <y:Geometry height="36.99993896484375" width="59.999996185302734" x="894.0" y="333.3764953613281"/>
                   <y:Fill color="#CCCCFF" transparent="false"/>
                   <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="52.69140625" x="3.654294967651424" y="40.99993896484375">Producer
-Endpoint</y:NodeLabel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="59.353515625" x="0.3232402801513672" y="40.99993896484375">Polling
+Consumer</y:NodeLabel>
                   <y:SVGNodeProperties usingVisualBounds="true"/>
                   <y:SVGModel svgBoundsPolicy="0">
                     <y:SVGContent refid="1"/>
@@ -617,14 +504,13 @@ Endpoint</y:NodeLabel>
               </data>
             </node>
             <node id="n2::n0::n1">
-              <data key="d5"/>
               <data key="d6">
                 <y:SVGNode>
-                  <y:Geometry height="37.0" width="60.0" x="409.99569358825687" y="481.389404296875"/>
+                  <y:Geometry height="37.0" width="60.0" x="992.9999923706055" y="333.37646484375"/>
                   <y:Fill color="#CCCCFF" transparent="false"/>
                   <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="70.703125" x="-5.3515625" y="41.0">Connector A
-PostWriter</y:NodeLabel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="58.017578125" x="0.9912109375" y="41.0">Message
+Translator</y:NodeLabel>
                   <y:SVGNodeProperties usingVisualBounds="true"/>
                   <y:SVGModel svgBoundsPolicy="0">
                     <y:SVGContent refid="2"/>
@@ -633,15 +519,13 @@ PostWriter</y:NodeLabel>
               </data>
             </node>
             <node id="n2::n0::n2">
-              <data key="d5"/>
               <data key="d6">
                 <y:SVGNode>
-                  <y:Geometry height="27.0" width="24.0" x="607.9956821441651" y="486.3893737792969"/>
+                  <y:Geometry height="36.99993896484375" width="59.999996185302734" x="1091.9999885559082" y="333.3764953613281"/>
                   <y:Fill color="#CCCCFF" transparent="false"/>
                   <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="48.103515625" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="64.662109375" x="-20.3310546875" y="31.0">Post
-Message
-(RDF/XML)</y:NodeLabel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="51.373046875" x="4.313474655151367" y="40.99993896484375">Reader
+Endpoint</y:NodeLabel>
                   <y:SVGNodeProperties usingVisualBounds="true"/>
                   <y:SVGModel svgBoundsPolicy="0">
                     <y:SVGContent refid="3"/>
@@ -649,31 +533,75 @@ Message
                 </y:SVGNode>
               </data>
             </node>
+            <node id="n2::n0::n3">
+              <data key="d6">
+                <y:SVGNode>
+                  <y:Geometry height="27.0" width="24.0" x="1190.9999809265137" y="338.37646484375"/>
+                  <y:Fill color="#CCCCFF" transparent="false"/>
+                  <y:BorderStyle color="#000000" type="line" width="1.0"/>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="52.69140625" x="-14.345703125" y="31.0">Post
+Message</y:NodeLabel>
+                  <y:SVGNodeProperties usingVisualBounds="true"/>
+                  <y:SVGModel svgBoundsPolicy="0">
+                    <y:SVGContent refid="4"/>
+                  </y:SVGModel>
+                </y:SVGNode>
+              </data>
+            </node>
+            <edge id="n2::n0::e0" source="n2::n0::n0" target="n2::n0::n1">
+              <data key="d10">
+                <y:PolyLineEdge>
+                  <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+                  <y:LineStyle color="#000000" type="line" width="1.0"/>
+                  <y:Arrows source="none" target="standard"/>
+                  <y:BendStyle smoothed="false"/>
+                </y:PolyLineEdge>
+              </data>
+            </edge>
+            <edge id="n2::n0::e1" source="n2::n0::n1" target="n2::n0::n2">
+              <data key="d10">
+                <y:PolyLineEdge>
+                  <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+                  <y:LineStyle color="#000000" type="line" width="1.0"/>
+                  <y:Arrows source="none" target="standard"/>
+                  <y:BendStyle smoothed="false"/>
+                </y:PolyLineEdge>
+              </data>
+            </edge>
+            <edge id="n2::n0::e2" source="n2::n0::n2" target="n2::n0::n3">
+              <data key="d10">
+                <y:PolyLineEdge>
+                  <y:Path sx="0.0" sy="0.0" tx="-10.0" ty="0.0"/>
+                  <y:LineStyle color="#000000" type="line" width="1.0"/>
+                  <y:Arrows source="none" target="standard"/>
+                  <y:BendStyle smoothed="false"/>
+                </y:PolyLineEdge>
+              </data>
+            </edge>
           </graph>
         </node>
-        <node id="n2::n1" yfiles.foldertype="group">
+        <node id="n2::n1" yfiles.foldertype="folder">
           <data key="d4"/>
-          <data key="d5"/>
           <data key="d6">
             <y:ProxyAutoBoundsNode>
-              <y:Realizers active="0">
+              <y:Realizers active="1">
                 <y:GroupNode>
-                  <y:Geometry height="136.47998046875" width="371.33103561401373" x="295.9957012176514" y="293.0"/>
+                  <y:Geometry height="126.77880859375" width="365.3456859588623" x="878.9999980926514" y="447.012939453125"/>
                   <y:Fill color="#FFFFFF" transparent="false"/>
                   <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="371.33103561401373" x="0.0" y="0.0">SoccPostPollingConsumer</y:NodeLabel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="365.3456859588623" x="0.0" y="0.0">SoccPostProducer</y:NodeLabel>
                   <y:Shape type="roundrectangle"/>
                   <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
                   <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
-                  <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="0" rightF="0.0" top="0" topF="0.0"/>
+                  <y:BorderInsets bottom="0" bottomF="0.0" left="99" leftF="98.9999942779541" right="0" rightF="0.0" top="0" topF="0.0"/>
                 </y:GroupNode>
                 <y:GroupNode>
-                  <y:Geometry height="50.0" width="50.0" x="200.0" y="150.0"/>
-                  <y:Fill color="#CAECFF84" transparent="false"/>
-                  <y:BorderStyle color="#666699" type="dotted" width="1.0"/>
-                  <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#99CCFF" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="50.0" x="0.0" y="0.0">2</y:NodeLabel>
+                  <y:Geometry height="50.0" width="245.0" x="937.5" y="572.4437255859375"/>
+                  <y:Fill color="#FFFFFF" transparent="false"/>
+                  <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
+                  <y:NodeLabel alignment="center" autoSizePolicy="node_width" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="245.0" x="0.0" y="0.0">SoccPostProducer</y:NodeLabel>
                   <y:Shape type="roundrectangle"/>
-                  <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
+                  <y:State closed="true" closedHeight="50.0" closedWidth="245.0" innerGraphDisplayEnabled="false"/>
                   <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
                   <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="0" rightF="0.0" top="0" topF="0.0"/>
                 </y:GroupNode>
@@ -682,30 +610,28 @@ Message
           </data>
           <graph edgedefault="directed" id="n2::n1:">
             <node id="n2::n1::n0">
-              <data key="d5"/>
               <data key="d6">
                 <y:SVGNode>
-                  <y:Geometry height="36.99993896484375" width="59.999996185302734" x="310.9957012176514" y="330.3764953613281"/>
+                  <y:Geometry height="36.99993896484375" width="59.999996185302734" x="1091.9999885559082" y="484.389404296875"/>
                   <y:Fill color="#CCCCFF" transparent="false"/>
                   <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="59.353515625" x="0.3232402801513672" y="40.99993896484375">Polling
-Consumer</y:NodeLabel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="51.373046875" x="4.313474655151367" y="40.99993896484375">Writer
+Endpoint</y:NodeLabel>
                   <y:SVGNodeProperties usingVisualBounds="true"/>
                   <y:SVGModel svgBoundsPolicy="0">
-                    <y:SVGContent refid="4"/>
+                    <y:SVGContent refid="3"/>
                   </y:SVGModel>
                 </y:SVGNode>
               </data>
             </node>
             <node id="n2::n1::n1">
-              <data key="d5"/>
               <data key="d6">
                 <y:SVGNode>
-                  <y:Geometry height="37.0" width="60.0" x="409.99569358825687" y="330.37646484375"/>
+                  <y:Geometry height="37.0" width="60.0" x="992.9999923706055" y="484.389404296875"/>
                   <y:Fill color="#CCCCFF" transparent="false"/>
                   <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="70.703125" x="-5.3515625" y="41.0">Connector A
-PostReader</y:NodeLabel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="58.017578125" x="0.9912109375" y="41.0">Message
+Translator</y:NodeLabel>
                   <y:SVGNodeProperties usingVisualBounds="true"/>
                   <y:SVGModel svgBoundsPolicy="0">
                     <y:SVGContent refid="2"/>
@@ -714,44 +640,45 @@ PostReader</y:NodeLabel>
               </data>
             </node>
             <node id="n2::n1::n2">
-              <data key="d5"/>
               <data key="d6">
                 <y:SVGNode>
-                  <y:Geometry height="36.99993896484375" width="59.999996185302734" x="508.9956897735596" y="330.3764953613281"/>
+                  <y:Geometry height="27.0" width="24.0" x="1190.9999809265137" y="489.3893737792969"/>
                   <y:Fill color="#CCCCFF" transparent="false"/>
                   <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="59.353515625" x="0.3232402801513672" y="40.99993896484375">Consumer
-Endpoint</y:NodeLabel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="52.69140625" x="-14.345703125" y="31.0">Post
+Message</y:NodeLabel>
                   <y:SVGNodeProperties usingVisualBounds="true"/>
                   <y:SVGModel svgBoundsPolicy="0">
-                    <y:SVGContent refid="1"/>
+                    <y:SVGContent refid="4"/>
                   </y:SVGModel>
                 </y:SVGNode>
               </data>
             </node>
-            <node id="n2::n1::n3">
-              <data key="d5"/>
-              <data key="d6">
-                <y:SVGNode>
-                  <y:Geometry height="27.0" width="24.0" x="607.9956821441651" y="335.37646484375"/>
-                  <y:Fill color="#CCCCFF" transparent="false"/>
-                  <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="48.103515625" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="64.662109375" x="-20.3310546875" y="31.0">Post
-Message
-(RDF/XML)</y:NodeLabel>
-                  <y:SVGNodeProperties usingVisualBounds="true"/>
-                  <y:SVGModel svgBoundsPolicy="0">
-                    <y:SVGContent refid="3"/>
-                  </y:SVGModel>
-                </y:SVGNode>
+            <edge id="n2::n1::e0" source="n2::n1::n0" target="n2::n1::n1">
+              <data key="d10">
+                <y:PolyLineEdge>
+                  <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+                  <y:LineStyle color="#000000" type="line" width="1.0"/>
+                  <y:Arrows source="none" target="standard"/>
+                  <y:BendStyle smoothed="false"/>
+                </y:PolyLineEdge>
               </data>
-            </node>
+            </edge>
+            <edge id="n2::n1::e1" source="n2::n1::n0" target="n2::n1::n2">
+              <data key="d10">
+                <y:PolyLineEdge>
+                  <y:Path sx="0.0" sy="0.0" tx="-10.0" ty="0.0"/>
+                  <y:LineStyle color="#000000" type="line" width="1.0"/>
+                  <y:Arrows source="standard" target="none"/>
+                  <y:BendStyle smoothed="false"/>
+                </y:PolyLineEdge>
+              </data>
+            </edge>
           </graph>
         </node>
       </graph>
     </node>
     <node id="n3">
-      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.flowchart.cloud">
           <y:Geometry height="75.0" width="150.0" x="121.99570503234867" y="383.2076416015625"/>
@@ -771,7 +698,6 @@ A<y:LabelModel>
       </data>
     </node>
     <node id="n4">
-      <data key="d5"/>
       <data key="d6">
         <y:SVGNode>
           <y:Geometry height="18.2943115234375" width="74.06396484375" x="740.2158591270447" y="339.72930908203125"/>
@@ -788,7 +714,6 @@ A</y:NodeLabel>
       </data>
     </node>
     <node id="n5">
-      <data key="d5"/>
       <data key="d6">
         <y:SVGNode>
           <y:Geometry height="18.2943115234375" width="74.06396484375" x="740.2158591270447" y="425.29107666015625"/>
@@ -805,7 +730,6 @@ B</y:NodeLabel>
       </data>
     </node>
     <node id="n6">
-      <data key="d5"/>
       <data key="d6">
         <y:SVGNode>
           <y:Geometry height="18.2943115234375" width="74.06396484375" x="740.2158591270447" y="510.85284423828125"/>
@@ -822,7 +746,6 @@ C</y:NodeLabel>
       </data>
     </node>
     <node id="n7">
-      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.flowchart.cloud">
           <y:Geometry height="75.0" width="150.0" x="1227.5000009536743" y="271.37646484375"/>
@@ -842,7 +765,6 @@ B<y:LabelModel>
       </data>
     </node>
     <node id="n8">
-      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.flowchart.cloud">
           <y:Geometry height="75.0" width="150.0" x="1221.7500019073486" y="519.9437255859375"/>
@@ -861,8 +783,58 @@ C<y:LabelModel>
         </y:GenericNode>
       </data>
     </node>
-    <edge id="n2::n1::e0" source="n2::n1::n0" target="n2::n1::n1">
-      <data key="d9"/>
+    <node id="n9">
+      <data key="d6">
+        <y:SVGNode>
+          <y:Geometry height="27.0" width="24.0" x="619.3472484588624" y="335.37646484375"/>
+          <y:Fill color="#CCCCFF" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="48.103515625" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="64.662109375" x="-20.3310546875" y="31.0">Post
+Message
+(RDF/XML)</y:NodeLabel>
+          <y:SVGNodeProperties usingVisualBounds="true"/>
+          <y:SVGModel svgBoundsPolicy="0">
+            <y:SVGContent refid="4"/>
+          </y:SVGModel>
+        </y:SVGNode>
+      </data>
+    </node>
+    <node id="n10">
+      <data key="d6">
+        <y:SVGNode>
+          <y:Geometry height="27.0" width="24.0" x="619.3472484588624" y="486.38940429687494"/>
+          <y:Fill color="#CCCCFF" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="48.103515625" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="64.662109375" x="-20.3310546875" y="31.0">Post
+Message
+(RDF/XML)</y:NodeLabel>
+          <y:SVGNodeProperties usingVisualBounds="true"/>
+          <y:SVGModel svgBoundsPolicy="0">
+            <y:SVGContent refid="4"/>
+          </y:SVGModel>
+        </y:SVGNode>
+      </data>
+    </node>
+    <node id="n11">
+      <data key="d5"/>
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="1.0" width="1.0" x="688.6671095529582" y="499.389404296875"/>
+          <y:Fill color="#000000" transparent="false"/>
+          <y:BorderStyle hasColor="false" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="custom" textColor="#000000" visible="true" width="4.0" x="-1.5" y="-1.5">
+            <y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+    <edge id="n0::n0::e0" source="n0::n0::n0" target="n0::n0::n1">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -872,107 +844,7 @@ C<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n2::n1::e1" source="n2::n1::n1" target="n2::n1::n2">
-      <data key="d9"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="n2::n1::e2" source="n2::n1::n2" target="n2::n1::n3">
-      <data key="d9"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="-10.0" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="n2::n0::e0" source="n2::n0::n0" target="n2::n0::n1">
-      <data key="d9"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="n2::e0" source="n2::n0" target="n2::n0::n0">
-      <data key="d9"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="117.7088211999096" sy="-7.512969970703125" tx="0.0" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="n2::e1" source="n2::n0" target="n2::n0::n0">
-      <data key="d9"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="124.38992660736452" sy="-7.512969970703125" tx="21.00001335144043" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="n2::e2" source="n2::n0" target="n2::n0::n0">
-      <data key="d9"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="124.38992660736452" sy="-7.512969970703125" tx="0.0" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="n2::e3" source="n2::n0::n0" target="n2::n0">
-      <data key="d9"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="112.92081612847342" ty="-7.512969970703125"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="n2::n0::e1" source="n2::n0::n0" target="n2::n0::n2">
-      <data key="d9"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="-10.0" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="standard" target="none"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e0" source="n2::n1::n3" target="n4">
-      <data key="d9"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="15.0" sy="0.0" tx="0.0" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e1" source="n2::n0::n1" target="n3">
-      <data key="d9"/>
+    <edge id="e0" source="n0::n1::n0" target="n3">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -984,8 +856,7 @@ C<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e2" source="n3" target="n2::n1::n0">
-      <data key="d9"/>
+    <edge id="e1" source="n3" target="n0::n0::n0">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -997,8 +868,7 @@ C<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e3" source="n4" target="n1::n0">
-      <data key="d9"/>
+    <edge id="e2" source="n4" target="n1::n1">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1010,8 +880,7 @@ C<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e4" source="n4" target="n0::n0">
-      <data key="d9"/>
+    <edge id="e3" source="n4" target="n2::n1">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1024,22 +893,7 @@ C<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e5" source="n5" target="n2::n0::n2">
-      <data key="d9"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="15.0" ty="0.0">
-            <y:Point x="721.9957012176515" y="434.438232421875"/>
-            <y:Point x="721.9957012176515" y="500.0"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e6" source="n1::n1" target="n5">
-      <data key="d9"/>
+    <edge id="e4" source="n1::n0" target="n5">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1052,22 +906,7 @@ C<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e7" source="n6" target="n2::n0::n2">
-      <data key="d9"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="15.0" ty="0.0">
-            <y:Point x="721.9957012176515" y="520.0"/>
-            <y:Point x="721.9957012176515" y="500.0"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e8" source="n0::n1" target="n6">
-      <data key="d9"/>
+    <edge id="e5" source="n2::n0" target="n6">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -1077,8 +916,7 @@ C<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e9" source="n7" target="n1::n1">
-      <data key="d9"/>
+    <edge id="e6" source="n7" target="n1::n0">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1090,8 +928,7 @@ C<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e10" source="n1::n0" target="n7">
-      <data key="d9"/>
+    <edge id="e7" source="n1::n1" target="n7">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1103,8 +940,7 @@ C<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e11" source="n0::n0" target="n8">
-      <data key="d9"/>
+    <edge id="e8" source="n2::n1" target="n8">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1116,8 +952,7 @@ C<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e12" source="n8" target="n0::n1">
-      <data key="d9"/>
+    <edge id="e9" source="n8" target="n2::n0">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1129,433 +964,102 @@ C<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
+    <edge id="n0::e0" source="n0::n0::n1" target="n0::n2">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e10" source="n0::n2" target="n9">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="-15.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e11" source="n9" target="n4">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="15.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e12" source="n6" target="n11">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
+            <y:Point x="689.1671095529582" y="520.0"/>
+          </y:Path>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="none"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e13" source="n5" target="n11">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
+            <y:Point x="689.1671095529582" y="434.438232421875"/>
+          </y:Path>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="none"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e14" source="n11" target="n10">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="15.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e15" source="n10" target="n0::n3">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="-15.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="n0::e1" source="n0::n3" target="n0::n1::n0">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
   </graph>
   <data key="d0">
     <y:Resources>
       <y:Resource id="1">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
-&lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
-
-&lt;svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   version="1.1"
-   width="60"
-   height="37"
-   id="svg2"&gt;
-  &lt;defs
-     id="defs4"&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="Arrow2Mend"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
-         transform="scale(-0.6,-0.6)"
-         id="path4015"
-         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="Arrow1Send"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
-         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
-         id="path4003"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="Arrow2Mstart"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
-         transform="scale(0.6,0.6)"
-         id="path4012"
-         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="Arrow1Mend"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
-         transform="matrix(-0.4,0,0,-0.4,-4,0)"
-         id="path3997"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="DotL"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
-         transform="matrix(0.8,0,0,0.8,5.92,0.8)"
-         id="path4049"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="DotM"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
-         transform="matrix(0.4,0,0,0.4,2.96,0.4)"
-         id="path4052"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="TriangleOutL"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
-         transform="scale(0.8,0.8)"
-         id="path4130"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="Arrow2Lend"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
-         transform="matrix(-1.1,0,0,-1.1,-1.1,0)"
-         id="path4009"
-         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="Arrow1Lend"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
-         transform="matrix(-0.8,0,0,-0.8,-10,0)"
-         id="path3991"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="Arrow1Lstart"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
-         transform="matrix(0.8,0,0,0.8,10,0)"
-         id="path3988"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="Arrow2Mend-4"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
-         transform="scale(-0.6,-0.6)"
-         id="path4015-8"
-         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="Arrow2Mend-4S"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
-         transform="scale(-0.6,-0.6)"
-         id="path15125"
-         style="fill:#808080;fill-rule:evenodd;stroke:#808080;stroke-width:0.625;stroke-linejoin:round" /&gt;
-    &lt;/marker&gt;
-  &lt;/defs&gt;
-  &lt;metadata
-     id="metadata7"&gt;
-    &lt;rdf:RDF&gt;
-      &lt;cc:Work
-         rdf:about=""&gt;
-        &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
-        &lt;dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
-        &lt;dc:title&gt;&lt;/dc:title&gt;
-      &lt;/cc:Work&gt;
-    &lt;/rdf:RDF&gt;
-  &lt;/metadata&gt;
-  &lt;g
-     transform="translate(0,-1015.3622)"
-     id="g13012"
-     style="display:inline"&gt;
-    &lt;rect
-       width="49.012157"
-       height="36.012157"
-       x="10.49392"
-       y="1015.856"
-       id="rect13014"
-       style="fill:#ccff99;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.98784137;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.9;display:inline" /&gt;
-  &lt;/g&gt;
-  &lt;g
-     transform="translate(0,-1015.3622)"
-     id="layer1"
-     style="opacity:1;display:inline"&gt;
-    &lt;rect
-       width="13"
-       height="13"
-       x="39"
-       y="12.000024"
-       transform="translate(0,1015.3622)"
-       id="rect13016"
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" /&gt;
-    &lt;path
-       d="m 0,19.000023 35,0"
-       transform="translate(0,1015.3622)"
-       id="path14251"
-       style="fill:#808080;fill-opacity:1;stroke:#808080;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mend-4S)" /&gt;
-  &lt;/g&gt;
-  &lt;g
-     transform="translate(0,-1015.3622)"
-     id="layer3"
-     style="opacity:0.1;display:inline" /&gt;
-&lt;/svg&gt;
-</y:Resource>
-      <y:Resource id="2">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
-&lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
-
-&lt;svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   version="1.1"
-   width="60"
-   height="37"
-   id="svg2"&gt;
-  &lt;defs
-     id="defs4"&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="TriangleOutL"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
-         transform="scale(0.8,0.8)"
-         id="path4130"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="Arrow2Lend"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
-         transform="matrix(-1.1,0,0,-1.1,-1.1,0)"
-         id="path4009"
-         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="Arrow1Lend"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
-         transform="matrix(-0.8,0,0,-0.8,-10,0)"
-         id="path3991"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
-    &lt;/marker&gt;
-    &lt;marker
-       refX="0"
-       refY="0"
-       orient="auto"
-       id="Arrow1Lstart"
-       style="overflow:visible"&gt;
-      &lt;path
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
-         transform="matrix(0.8,0,0,0.8,10,0)"
-         id="path3988"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
-    &lt;/marker&gt;
-  &lt;/defs&gt;
-  &lt;metadata
-     id="metadata7"&gt;
-    &lt;rdf:RDF&gt;
-      &lt;cc:Work
-         rdf:about=""&gt;
-        &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
-        &lt;dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
-        &lt;dc:title&gt;&lt;/dc:title&gt;
-      &lt;/cc:Work&gt;
-    &lt;/rdf:RDF&gt;
-  &lt;/metadata&gt;
-  &lt;g
-     transform="translate(0,-1015.3622)"
-     id="layer2"
-     style="display:inline" /&gt;
-  &lt;g
-     transform="translate(0,-1015.3622)"
-     id="layer1"
-     style="display:inline"&gt;
-    &lt;rect
-       width="59.010574"
-       height="36.010574"
-       x="0.49471226"
-       y="1015.8569"
-       id="rect2996-5"
-       style="fill:#ccff99;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.98942453;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.9" /&gt;
-    &lt;rect
-       width="17.999382"
-       height="26.999382"
-       x="7.6554637"
-       y="1019.8922"
-       id="rect6204"
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.0006187;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.9" /&gt;
-    &lt;rect
-       width="17.999382"
-       height="26.999382"
-       x="34.609306"
-       y="1019.8664"
-       id="rect6204-1"
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.0006187;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.9" /&gt;
-    &lt;path
-       d="m 45.679247,1041.7162 -29.46695,-18.1494"
-       id="path6262"
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" /&gt;
-    &lt;path
-       d="m 16.419327,1041.7852 29.25992,-18.3564"
-       id="path6264"
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" /&gt;
-  &lt;/g&gt;
-  &lt;g
-     transform="translate(0,-1015.3622)"
-     id="layer3"
-     style="opacity:0.11618257;display:inline" /&gt;
-&lt;/svg&gt;
-</y:Resource>
-      <y:Resource id="3">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
-&lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
-
-&lt;svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="24"
-   height="27"
-   id="svg16623"
-   version="1.1"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="message.svg"&gt;
-  &lt;defs
-     id="defs16625" /&gt;
-  &lt;sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="17.126386"
-     inkscape:cx="17.963932"
-     inkscape:cy="11.372227"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:snap-global="true"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1615"
-     inkscape:window-height="1026"
-     inkscape:window-x="65"
-     inkscape:window-y="24"
-     inkscape:window-maximized="1"&gt;
-    &lt;inkscape:grid
-       type="xygrid"
-       id="grid16631"
-       empspacing="5"
-       visible="true"
-       enabled="true"
-       snapvisiblegridlinesonly="true"
-       originx="0px"
-       originy="-19.000017px" /&gt;
-  &lt;/sodipodi:namedview&gt;
-  &lt;metadata
-     id="metadata16628"&gt;
-    &lt;rdf:RDF&gt;
-      &lt;cc:Work
-         rdf:about=""&gt;
-        &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
-        &lt;dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
-        &lt;dc:title&gt;&lt;/dc:title&gt;
-      &lt;/cc:Work&gt;
-    &lt;/rdf:RDF&gt;
-  &lt;/metadata&gt;
-  &lt;g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-1006.3622)"&gt;
-    &lt;path
-       sodipodi:type="arc"
-       style="fill:#808080;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-       id="path16644"
-       sodipodi:cx="411"
-       sodipodi:cy="150.36218"
-       sodipodi:rx="6"
-       sodipodi:ry="6"
-       d="m 417,150.36218 c 0,3.31371 -2.68629,6 -6,6 -3.31371,0 -6,-2.68629 -6,-6 0,-3.31371 2.68629,-6 6,-6 3.31371,0 6,2.68629 6,6 z"
-       transform="translate(-404.5,862.5)" /&gt;
-    &lt;path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 6.5,1018.8622 0,9 6,0"
-       id="path17175"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccc" /&gt;
-    &lt;rect
-       style="fill:#e67e22;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-       id="rect17181"
-       width="11"
-       height="11"
-       x="12.5"
-       y="1021.8622" /&gt;
-  &lt;/g&gt;
-&lt;/svg&gt;
-</y:Resource>
-      <y:Resource id="4">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
 &lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
 
 &lt;svg
@@ -1774,6 +1278,429 @@ C<y:LabelModel>
      transform="translate(0,-1015.3622)"
      id="layer3"
      style="opacity:0.1;display:inline" /&gt;
+&lt;/svg&gt;
+</y:Resource>
+      <y:Resource id="2">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
+&lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
+
+&lt;svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="60"
+   height="37"
+   id="svg2"&gt;
+  &lt;defs
+     id="defs4"&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="TriangleOutL"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         transform="scale(0.8,0.8)"
+         id="path4130"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow2Lend"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)"
+         id="path4009"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow1Lend"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         id="path3991"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow1Lstart"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         transform="matrix(0.8,0,0,0.8,10,0)"
+         id="path3988"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
+    &lt;/marker&gt;
+  &lt;/defs&gt;
+  &lt;metadata
+     id="metadata7"&gt;
+    &lt;rdf:RDF&gt;
+      &lt;cc:Work
+         rdf:about=""&gt;
+        &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
+        &lt;dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
+        &lt;dc:title&gt;&lt;/dc:title&gt;
+      &lt;/cc:Work&gt;
+    &lt;/rdf:RDF&gt;
+  &lt;/metadata&gt;
+  &lt;g
+     transform="translate(0,-1015.3622)"
+     id="layer2"
+     style="display:inline" /&gt;
+  &lt;g
+     transform="translate(0,-1015.3622)"
+     id="layer1"
+     style="display:inline"&gt;
+    &lt;rect
+       width="59.010574"
+       height="36.010574"
+       x="0.49471226"
+       y="1015.8569"
+       id="rect2996-5"
+       style="fill:#ccff99;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.98942453;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.9" /&gt;
+    &lt;rect
+       width="17.999382"
+       height="26.999382"
+       x="7.6554637"
+       y="1019.8922"
+       id="rect6204"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.0006187;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.9" /&gt;
+    &lt;rect
+       width="17.999382"
+       height="26.999382"
+       x="34.609306"
+       y="1019.8664"
+       id="rect6204-1"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.0006187;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.9" /&gt;
+    &lt;path
+       d="m 45.679247,1041.7162 -29.46695,-18.1494"
+       id="path6262"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" /&gt;
+    &lt;path
+       d="m 16.419327,1041.7852 29.25992,-18.3564"
+       id="path6264"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" /&gt;
+  &lt;/g&gt;
+  &lt;g
+     transform="translate(0,-1015.3622)"
+     id="layer3"
+     style="opacity:0.11618257;display:inline" /&gt;
+&lt;/svg&gt;
+</y:Resource>
+      <y:Resource id="3">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
+&lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
+
+&lt;svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="60"
+   height="37"
+   id="svg2"&gt;
+  &lt;defs
+     id="defs4"&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow2Mend"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6,-0.6)"
+         id="path4015"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow1Send"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         id="path4003"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow2Mstart"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(0.6,0.6)"
+         id="path4012"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow1Mend"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         id="path3997"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="DotL"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         transform="matrix(0.8,0,0,0.8,5.92,0.8)"
+         id="path4049"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="DotM"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         transform="matrix(0.4,0,0,0.4,2.96,0.4)"
+         id="path4052"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="TriangleOutL"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         transform="scale(0.8,0.8)"
+         id="path4130"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow2Lend"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)"
+         id="path4009"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow1Lend"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         id="path3991"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow1Lstart"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         transform="matrix(0.8,0,0,0.8,10,0)"
+         id="path3988"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow2Mend-4"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6,-0.6)"
+         id="path4015-8"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /&gt;
+    &lt;/marker&gt;
+    &lt;marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow2Mend-4S"
+       style="overflow:visible"&gt;
+      &lt;path
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6,-0.6)"
+         id="path15125"
+         style="fill:#808080;fill-rule:evenodd;stroke:#808080;stroke-width:0.625;stroke-linejoin:round" /&gt;
+    &lt;/marker&gt;
+  &lt;/defs&gt;
+  &lt;metadata
+     id="metadata7"&gt;
+    &lt;rdf:RDF&gt;
+      &lt;cc:Work
+         rdf:about=""&gt;
+        &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
+        &lt;dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
+        &lt;dc:title&gt;&lt;/dc:title&gt;
+      &lt;/cc:Work&gt;
+    &lt;/rdf:RDF&gt;
+  &lt;/metadata&gt;
+  &lt;g
+     transform="translate(0,-1015.3622)"
+     id="g13012"
+     style="display:inline"&gt;
+    &lt;rect
+       width="49.012157"
+       height="36.012157"
+       x="10.49392"
+       y="1015.856"
+       id="rect13014"
+       style="fill:#ccff99;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.98784137;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.9;display:inline" /&gt;
+  &lt;/g&gt;
+  &lt;g
+     transform="translate(0,-1015.3622)"
+     id="layer1"
+     style="opacity:1;display:inline"&gt;
+    &lt;rect
+       width="13"
+       height="13"
+       x="39"
+       y="12.000024"
+       transform="translate(0,1015.3622)"
+       id="rect13016"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" /&gt;
+    &lt;path
+       d="m 0,19.000023 35,0"
+       transform="translate(0,1015.3622)"
+       id="path14251"
+       style="fill:#808080;fill-opacity:1;stroke:#808080;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mend-4S)" /&gt;
+  &lt;/g&gt;
+  &lt;g
+     transform="translate(0,-1015.3622)"
+     id="layer3"
+     style="opacity:0.1;display:inline" /&gt;
+&lt;/svg&gt;
+</y:Resource>
+      <y:Resource id="4">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
+&lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
+
+&lt;svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="24"
+   height="27"
+   id="svg16623"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="message.svg"&gt;
+  &lt;defs
+     id="defs16625" /&gt;
+  &lt;sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="17.126386"
+     inkscape:cx="17.963932"
+     inkscape:cy="11.372227"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:snap-global="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1615"
+     inkscape:window-height="1026"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"&gt;
+    &lt;inkscape:grid
+       type="xygrid"
+       id="grid16631"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       originx="0px"
+       originy="-19.000017px" /&gt;
+  &lt;/sodipodi:namedview&gt;
+  &lt;metadata
+     id="metadata16628"&gt;
+    &lt;rdf:RDF&gt;
+      &lt;cc:Work
+         rdf:about=""&gt;
+        &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
+        &lt;dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
+        &lt;dc:title&gt;&lt;/dc:title&gt;
+      &lt;/cc:Work&gt;
+    &lt;/rdf:RDF&gt;
+  &lt;/metadata&gt;
+  &lt;g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1006.3622)"&gt;
+    &lt;path
+       sodipodi:type="arc"
+       style="fill:#808080;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path16644"
+       sodipodi:cx="411"
+       sodipodi:cy="150.36218"
+       sodipodi:rx="6"
+       sodipodi:ry="6"
+       d="m 417,150.36218 c 0,3.31371 -2.68629,6 -6,6 -3.31371,0 -6,-2.68629 -6,-6 0,-3.31371 2.68629,-6 6,-6 3.31371,0 6,2.68629 6,6 z"
+       transform="translate(-404.5,862.5)" /&gt;
+    &lt;path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 6.5,1018.8622 0,9 6,0"
+       id="path17175"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" /&gt;
+    &lt;rect
+       style="fill:#e67e22;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect17181"
+       width="11"
+       height="11"
+       x="12.5"
+       y="1021.8622" /&gt;
+  &lt;/g&gt;
 &lt;/svg&gt;
 </y:Resource>
       <y:Resource id="5">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;

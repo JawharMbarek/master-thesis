@@ -8,21 +8,19 @@
 \label{cha:grundlagen}
 
 \todo[inline]{\Huge mehr QUELLEN!!!}
+\todo[inline]{Grundlagen Einleitung schreiben}
 
 \section{Zugriff auf Webanwendungen} % (fold)
 \label{sec:zugriff_auf_webanwendungen}
 
-Der Zugriff auf Daten von einer Webanwendung ist in den seltensten Fällen durch eine direkte Anbindung an die dahinter liegende Datenbank möglich beziehungsweise gewünscht. Gerade wenn das eigene Geschäft von diesen Daten abhängt, will man nur ungern alles mit allen teilen. Um trotzdem Dritten die Nutzung zu ermöglichen, wird dazu eine eine der Zugriff über eine vordefinierte Schnittstelle gestattet. Für Anwendungen und Dienste im Web sind die folgenden zwei Ansätze für die Architektur einer solchen Schnittstellen besonders verbreitet. 
+Der Zugriff auf Daten von einer Webanwendung ist in den seltensten Fällen durch eine direkte Anbindung an die dahinter liegende Datenbank möglich beziehungsweise gewünscht. Gerade wenn das eigene Geschäft von diesen Daten abhängt, will man nur ungern alles mit allen teilen. Um trotzdem Dritten die Nutzung zu ermöglichen, wird dazu eine eine der Zugriff über eine vordefinierte Programmierschnittstelle (API) gestattet. Für Anwendungen und Dienste im Web sind die folgenden zwei Ansätze für die Architektur einer solchen API besonders verbreitet. 
 
 \subsection{Representational State Transfer (REST)} % (fold)
 \label{sub:rest}
 
 Eine sehr beliebte Architektur für den öffentlichen Zugriff auf Webanwendungen ist \emph{Representational State Transfer} (REST) \cite[S.\,76]{fielding2000architectural}. REST baut auf HTTP auf und definiert einige Beschränkungen die eine REST basierter Dienst erfüllen muss. 
 
-\medskip
-
 Die Grundidee besteht darin, dass hinter einer URL eine bestimmte Ressource sich verbirgt auf die man von außen zugreifen möchte. REST schreib aber nicht vor in welchen Datenformat diese Ressource übermittelt werden soll, sondern dass das zurückgelieferte Format der Ressource änderbar ist. 
-
 
 \begin{quote}
 \enquote{REST components communicate by transferring a representation of a resource
@@ -32,7 +30,6 @@ based on the capabilities or desires of the recipient and the nature of the reso
 \end{quote}
 
 Dadurch soll einer einfachere Verwendbarkeit in unterschiedliche Systemen ermöglicht werden. So kann für eine Webanwendung beim aufrufen im Browser eine HTML-Datei zurück geliefert werden, die sofort betrachtet werden kann und falls ein Programm darauf zugreift wird ein maschinenlesbares Format verwendet. Neben HTML sind auch noch XML und JSON sehr verbreitete Formate. Die Kommunikation wird dabei komplett Zustandslos abgehalten und alle Zusatzinformationen müssen immer mitgeliefert werden. Durch die Zustandslosigkeit skaliert das System viel besser, da Ressourcen sofort wieder frei gegeben werden können und nicht für spätere Anfragen gespeichert werden müssen. 
-
 
 \begin{table}[ht]
 \centering
@@ -56,8 +53,6 @@ Dadurch soll einer einfachere Verwendbarkeit in unterschiedliche Systemen ermög
 \label{tbl:rest_oprations}
 \end{table} 
 
-\medskip
-
 Wie schon beschrieben, nutzen REST basierte Dienste HTTP als Grundlage zur Kommunikation. Die dort definierten Operationen werden mit REST zur Auslieferung und Manipulation der Ressourcen verwendet. Zur Grundausstattung  gehören dabei \texttt{GET}, \texttt{POST}, \texttt{PUT} und \texttt{DELETE} (siehe Tabelle \ref{tbl:rest_oprations}). Die anderen Operationen \texttt{HEAD}, \texttt{TRACE}, \texttt{OPTIONS} und \texttt{CONNECT} sind eher selten anzutreffen.
      
 % subsection rest (end)
@@ -67,7 +62,6 @@ Wie schon beschrieben, nutzen REST basierte Dienste HTTP als Grundlage zur Kommu
 
 Das \emph{Simple Object Access Protocol}\cite{Mitra2007} (SOAP) ist ein vom W3C standardisiertes Netzwerkprotokoll für den Austausch von Daten zwischen heterogenen Systemen. SOAP schreibt einen bestimmten Aufbau von Nachrichten vor, innerhalb von denen die Daten transportiert werden. Als Repräsentation für diese Nachrichten wird auf XML gesetzt. Bei der Wahl des Transportprotokolls werden dahingegen keine Vorgaben gemacht und es ist frei wählbar. Häufig wird es aber in Verbindung mit HTTP und TCP verwendet. 
 
-\medskip
 
 \begin{lstlisting}[
     language=XML,
@@ -101,31 +95,28 @@ Gebräuchlich ist der Einsatz von SOAP bei sogenannten \emph{Remote Procedure  C
     \item[\textbf{service}] dient zum Zusammenfassen mehrerer Ports zu einen einzigen Dienst.
 \end{description}
 
-Wird eine solche WSDL Datei öffentlich zugänglich gemacht, kann festgestellt werden welche Funktionen ein Dienst anbietet und automatisch Schnittstellen für unterschiedliche Systeme generiert werden. Der weiter Datenaustausch erfolgt dann über SOAP Nachrichten.
+Wird eine solche WSDL Datei öffentlich zugänglich gemacht, kann festgestellt werden welche Funktionen ein Dienst anbietet und automatisch APIs für unterschiedliche Systeme generiert werden. Der weiter Datenaustausch erfolgt dann über SOAP Nachrichten.
 
 % subsection wsdl_und_soap (end)
 
-
 % section zugriff_auf_webanwendungen (end)
 
-\section{Datenintegration mit Ontologien} % (fold)
-\label{sec:datenintegration_mit_ontologien}
+\section{Datenintegration} % (fold)
+\label{sec:datenintegration}
 
-% section datenintegration (end)
-
+\todo[inline]{Datenintegration-Einleitung schreiben}
 
 \subsection{Semantic Web} % (fold)
 \label{sub:semantic_web}
 
-\todo[inline]{Idee semantic web einbauen}
+Seit den Anfängen des \emph{World Wide Webs} (kurz als WWW oder Web bezeichnet) hat die Masse an abrufbaren Information immer mehr zugenommen. Die Vorteile des Webs liegen eindeutig in der guten Aktualität und Erreichbarkeit von überall auf Erde. Die Menge an Informationen sind aber auch ein Problem im Web. Da diese überall verteilt sind, ist es schwer für einen einzelnen alleine alles zu einem Thema zu finden. Suchmaschinen wie Google\footnote{\url{https://www.google.com}}, Yahoo\footnote{\url{yahoo.com}} oder Microsoft Bing\footnote{\url{http://www.bing.com/}} leisten hier gute Dienste. Doch für Maschinen ist es noch immer nicht einfach die Inhalte von Webseiten zu verstehen, da diese für Menschen gemacht wurden \cite{Hitzler2008a}. Auch der erlernen von neuen Wissen anhand vorhandener Informationen ist in der aktuellen Form des Webs nur schwer realisierbar. 
+
+2001 machte Tim Berners-Lee (der Erfinder des Webs) den Vorschlag \cite{Berners-Lee2001} das Web mit maschinenlesbaren Informationen zu erweitern und so die Verarbeitung mit Computerprogrammen zu vereinfachen. Die Idee des \emph{Semantic Webs} wurde geboren. Der Inhalt des Webs wird mit semantischen Information so erweitert, dass Programme das sich zwei Texte an unterschiedlichen Stellen des Webs um das selbe Thema handeln. Aber auch die Anzeige von impliziten Wissen, wenn jemand zum Beispiel eine Telefonnummer in Los Angeles, USA sucht und aus Deutschland anrufen will, wird im mitgeteilt dass er wegen der Zeitdifferenz von neun Stunden lieber erst Nachmittags anrufen sollte, wäre so einfacher möglich.
 
 \subsubsection{Resource Description Framework} % (fold)
 \label{ssub:resource_description_framework}
 
-
-Eine der bekanntesten Umsetzungen der Vision des semantischen Webs ist wohl das \emph{Resource Description Framework} (RDF). Wie der Name schon suggeriert dient RDF zur Beschreibung von einzelnen Ressourcen innerhalb des Internets. Nach \cite{Klyne2004,Manola2004} bestand die Motivation bei der Entwicklung von RDF Information über Ressource in einen offenen Datenmodell zu speichern, so dass diese Daten von Maschinen automatisch verarbeitet, manipulieren und untereinander ausgetauscht werden können. Gleichzeitig sollte es auch einfach von jedem erweitert werden können \enquote{RDF is designed to represent information in a minimally constraining, flexible way}\cite{Klyne2004}.
-
-\medskip
+Eine Baustein des Semantic Webs ist das \emph{Resource Description Framework} (RDF). Wie der Name schon suggeriert, dient RDF zur Beschreibung von einzelnen Ressourcen innerhalb des Webs. Nach \cite{Klyne2004,Manola2004} bestand die Motivation bei der Entwicklung von RDF Information über Ressource in einen offenen Datenmodell zu speichern, so dass diese Daten von Maschinen automatisch verarbeitet, manipulieren und untereinander ausgetauscht werden können. Gleichzeitig sollte es auch einfach von jedem erweitert werden können \enquote{RDF is designed to represent information in a minimally constraining, flexible way}\cite{Klyne2004}.
 
 Das Datenmodell von RDF ist zur effizienten Verarbeitung sehr einfach aufgebaut. Die Grundlage bilden Tripel aus Subjekt, Prädikat und Objekt. Einer oder mehrere solcher Triple zusammen werden als gerichteter RDF-Graph bezeichnet. Subjekt und Objekt stehen über das Prädikat mit einander in Beziehung, wobei die Beziehung immer vom Subjekt zum Objekt geht. Das Prädikat wird auch als Eigenschaft (engl. Property) bezeichnet. Gemeinsam beschreibt das Triple immer eine Aussage über eine oder zwei Ressourcen. Zum Beispiel \enquote{Die Dose enthält Kekse} wäre eine Aussage, dass in einer Dose sich Kekse befinden. Die Dose ist dabei das Subjekt, enthält das Prädikat und Kekse das Objekt. Ein Triple ist quasi ein einfacher Satz in der natürlichen Sprache \cite{Heinzen}. Für Subjekt, Prädikat und Objekt werden in RDF \emph{Uniform Resource Identifier} (URI), \emph{Literale} oder \emph{leere Knoten} (im englischen \emph{Blank Nodes} genannt) verwendet. 
 
@@ -204,7 +195,7 @@ In Turtle ist darauf zu achten, dass alle URIs immer zwischen Spitzenklammern st
 <http://www.example.org/dose> exterms:enthaelt "Kekse" .   
 \end{lstlisting}
 
-In der ersten Zeile von Listing \ref{lst:turtle_prefix} wird durch Einleiten mit dem Schlüsselwort \texttt{@prefix} ein neuer Präfix \texttt{exterms:} für den Namensraum \texttt{http://www.example.org/terms\#}. Dieser Präfix kann nun überall innerhalb des Dokumentes verwendet werden, wobei die Spitzenklammern dann weggelassen werden können.
+In der ersten Zeile von Listing \ref{lst:turtle_prefix} wird durch Einleiten mit dem Schlüsselwort \texttt{@prefix} ein neuer Präfix \texttt{exterms:} für den Namensraum \texttt{http://www.example.org/terms\#} festgelegt. Dieser Präfix kann nun überall innerhalb des Dokumentes verwendet werden, wobei die Spitzenklammern dann weggelassen werden können.
 
 \begin{lstlisting}[
     caption={Turtle abkürzende Schreibweise}\label{lst:turtle_shortcut},
@@ -223,11 +214,9 @@ Listing \ref{lst:turtle_shortcut} zeigt nochmal ein drittes Beispiel, wie redund
 \subsubsection{Ontologien} % (fold)
 \label{ssub:ontologien}
 
-Sollen Daten aus verschiedenen Quellen zusammengefügt werden, stellt sich häufig das Problem dass Teile dieser dieser Daten zwar den gleichen Sinn haben, aber aufgrund der Sichtweise des jeweiligen System eine andere Bezeichnung besitzen. Das kann zum Beispiel zu Missverständnissen bei der Verarbeitung führen oder dass Teile eines anderen Systems nicht wiederverwendet werden können \cite{Uschold1996}. Einen Ausweg aus diesem Dilemma kann die Verwendung von Ontologien zeigen. Ontolgien können allgemein als Wissensbasis \cite{Uschold1996,Hitzler2008a} bezeichnet werden und liefern eine formale Spezifikation über eine bestimmte Interessensdömäne. Sie beschreibt nicht nur wie das verwendete Vokabular aussieht, sondern legt auch fest welche einheitliche Bedeutung jede Vokabel hat. 
+Sollen Daten aus verschiedenen Quellen zusammengefügt werden, stellt sich häufig das Problem dass Teile dieser dieser Daten zwar den gleichen Sinn haben, aber aufgrund der Sichtweise des jeweiligen System eine andere Bezeichnung besitzen. Das kann zum Beispiel zu Missverständnissen bei der Verarbeitung führen oder dass Teile eines anderen Systems nicht wiederverwendet werden können \cite{Uschold1996a}. Einen Ausweg aus diesem Dilemma kann die Verwendung von Ontologien zeigen. Ontolgien können allgemein als Wissensbasis \cite{Uschold1996a,Hitzler2008a} bezeichnet werden und liefern eine formale Spezifikation über eine bestimmte Interessensdömäne. Sie beschreibt nicht nur wie das verwendete Vokabular aussieht, sondern legt auch fest welche einheitliche Bedeutung jede Vokabel hat. 
 
-\medskip
-
-Im Bereich des Semantic Webs sind heutzutage zwei Sprachen für die Erstellung von Ontologien weit verbreitet. Diese sind \emph{RDF Schema} (RDFS)\cite{Brickley} und die darauf aufbauende \emph{Web Ontology Language} (OWL)\cite{partelschneider2004}. Beide Sprachen basieren auf RDF, so können sie zusammen mit jedem System verwendet werden, das RDF versteht. Mit ihnen können Klassen von abstrakten Objekten und deren Eigenschaften definiert werden. Vererbung von Klassen und ihren Eigenschaften ist ebenfalls möglich. Im Gegensatz zu RDFS können in OWL Einschränkungen definiert werden, wie zum Beispiel dass eine Eigenschaft nur maximal einmal pro Objekt vorhanden sein darf. 
+Im Bereich des Semantic Webs sind heutzutage zwei Sprachen für die Erstellung von Ontologien weit verbreitet. Diese sind \emph{RDF Schema} (RDFS)\cite{Brickley} und die darauf aufbauende \emph{Web Ontology Language} (OWL)\cite{partelschneider2004}. Beide Sprachen basieren auf RDF, so können sie zusammen mit jedem System verwendet werden, das RDF versteht. Mit ihnen ist man im Stande Klassen von abstrakten Objekten und deren Eigenschaften zu definieren und diese in eine Vererbungshierarchie einzugliedern. Im Gegensatz zu RDFS können in OWL diverse Einschränkungen definiert werden, wie zum Beispiel dass eine Eigenschaft nur einmal pro Objekt einer Klasse vorhanden sein darf. Die Anhänge \ref{sec:socc_connector_config_ontologie} und \ref{sec:sioc_services_authentication_module} zeigen zwei Ontologien in der Sprache OWL, welche innerhalb dieser Arbeit entwickelt wurden und in Abschnitt \ref{ssub:connector_config_ontologie} und \ref{ssub:autorisierung_und_authentifizierung} beschreiben werden.
 
 % subsubsection ontologien (end)
 
@@ -237,8 +226,6 @@ Im Bereich des Semantic Webs sind heutzutage zwei Sprachen für die Erstellung v
 \label{sub:friend_of_a_friend_}
 
 \emph{Friend of a Friend}\footnote{\url{http://www.foaf-project.org}} (FOAF) ist ein 2000 gestartet Projekt und versucht Personen innerhalb des Webs, inklusive der Verbindungen zwischen ihnen und anderen, sowie dem was sie machen, in maschinenlesbarer Form abzubilden. FOAF stellt hierzu ein Vokabular \cite{Brickley2010} auf der Basis von RDF für solche sozialen Netzwerke zur Verfügung. Das Vokabular von FOAF gliedert sich dazu in einen \enquote{FOAF Core} und einen \enquote{Social Web} Bereich. Der Core-Bereich die Klasse \texttt{Agent} für alle Dinge die eine Handlung ausführen können, also sowohl natürliche Personen, Gruppen oder Organisationen als auch Computerprogramme oder Maschinen. Für diese gibt es jeweils noch einzelne Unterklassen die von der Klasse \texttt{Agent} erben. Objekten dieser Klassen können eigene Eigenschaften wie einen Namen, ein Alter oder wen sie kennen gegeben werden. Der Sozial Web Bereich enthält alle Teile die für das Web interessant wären. Das wären zum Beispiel welche E-Mail-Adresse eine Person besitzt, welche Benutzerkonten im bei welcher Webseite gehören oder wie die URL seiner Homepage lautet. Das FOAF Projekt sieht sich aber selber nicht als Konkurrenz gegenüber den etablierten sozialen Online-Netzwerken, sondern eher ein Ansatz für einen besser Austausch zwischen den einzelnen Seiten \cite[Abstract]{Brickley2010}.
-
-\medskip
 
 Listing \ref{lst:foaf_beispiel} zeig eine Beispiel FOAF-Dokument in RDF/XML. Es beschreibt die fiktive Person \enquote{Max Mustermann}, mit Vor- und Nachname sowie der Hashwert seiner E-Email-Adresse (\texttt{foaf:mbox\_sha1sum}). Diese Person kennt (\texttt{foaf:knows}) kennt eine Person mit dem Namen \enquote{John Doe} der ebenso eine E-Mail-Adresse mit den angegeben Hashwert besitzt. Statt die Eigenschaften von John Doe hier noch einmal vollständig anzugeben, wird über die Eigenschaft \texttt{rdfs:seeAlso} auf ein weiteres FOAF-Dokument verwiesen, dass die fehlenden Daten enthält. 
 
@@ -270,8 +257,7 @@ Listing \ref{lst:foaf_beispiel} zeig eine Beispiel FOAF-Dokument in RDF/XML. Es 
 \subsection{Semantically-Interlinked Online Communities (SIOC)} % (fold)
 \label{sub:semantically_interlinked_online_communities}
 
-
-\emph{Semantically-Interlinked Online Communities} (SIOC, ausgesprochen \enquote{schock}) ist ein Projekt, welches von Uldis Boj\=ars und John Breslin begonnen wurde um unterschiedliche, webbasierte Diskussionslattformen(Blog, Forum, Mailinglist,\dots) untereinander verbinden zu können \cite{deri2013,Breslin2005}. Der Kern von SIOC besteht aus einer Ontologie, welche den Inhalt und die Struktur diese Plattformen in ein maschinenlesbares Format bringt und es erlaubt diese auf semantischer Ebene zu verbinden. Auch soll es so möglich sein Daten von einer Plattform zu einer Anderen zu transferieren und so einfacher Inhalte austauschen zu können. Als Basis für SIOC dient RDF, die Ontologie selber wurde in RDFS und OWL designt. Um nicht das Rad neu erfinden zu müssen greift SIOC auf schon bestehende und bewährte Ontologien zurück. Für die Abbildung von Beziehungen zwischen einzelnen Personen wird FOAF und für einige Inhaltliche- und Metadaten (Titel, Inhalt, Erstelldatum, \dots) Dublin Core Terms\footnote{\url{http://dublincore.org/documents/dcmi-terms}} eingesetzt.
+\emph{Semantically-Interlinked Online Communities} (SIOC, ausgesprochen \enquote{schock}) ist ein Projekt, welches von Uldis Boj\=ars und John Breslin begonnen wurde um unterschiedliche, webbasierte Diskussionslattformen(Blog, Forum, Mailinglist,\dots) untereinander verbinden zu können \cite{deri2013,Breslin2005,Bojars2008a}. Der Kern von SIOC besteht aus einer Ontologie, welche den Inhalt und die Struktur diese Plattformen in ein maschinenlesbares Format bringt und es erlaubt diese auf semantischer Ebene zu verbinden. Auch soll es so möglich sein Daten von einer Plattform zu einer Anderen zu transferieren und so einfacher Inhalte austauschen zu können. Als Basis für SIOC dient RDF, die Ontologie selber wurde in RDFS und OWL designt. Um nicht das Rad neu erfinden zu müssen greift SIOC auf schon bestehende und bewährte Ontologien zurück. Für die Abbildung von Beziehungen zwischen einzelnen Personen wird FOAF und für einige Inhaltliche- und Metadaten (Titel, Inhalt, Erstelldatum, \dots) Dublin Core Terms\footnote{\url{http://dublincore.org/documents/dcmi-terms}} eingesetzt.
 
 \begin{figure}[ht]
     \centering
@@ -288,21 +274,20 @@ Die wichtigsten Klassen von SIOC sind in Abbildung \ref{fig:sioc_aufbau_diagramm
 
 % subsection semantically_interlinked_online_communities (end)
 
+% section datenintegration (end)
 
 \section{Datenverteilung} % (fold)
 \label{sec:datenverteilung}
+
+\todo[inline]{Datenverteilung-Einleitung schreiben}
 
 \subsection{Java Messaging Service} % (fold)
 \label{sub:java_messaging_service}
 
 Das \emph{Java Messageing Service} (JMS) ist ein Sammlung von Schnittstellen für das Erstellen, Senden und Empfangen von Nachrichten zwischen Clients \cite{jms}. JMS erlaubt eine Entwicklung von verteilten Anwendung die nicht nur lose gekoppelt, sondern auch asynchron und zuverlässig arbeiten. 
 
-\medskip
-
 Die Grundstruktur einer JMS Anwendung besteht aus einem \emph{JMS Provider}, der die Schnittstellen von JMS implementiert. Dieser JMS Provider wird auch all  \emph{Message Oriented Middleware} (MOM) bezeichnet und kümmert sich auch darum, dass Nachrichten zuverlässig verschickt werden. Einen JMS Client von dem Nachrich
 ten verschickt und empfangen werden. Den Nachrichten selber und den sogenannten \emph{Administered Objects}. Diese bestehen aus vorkonfigurierten \emph{Connection Factory}s für das Erstellen von Verbindungen (Connections) zwischen Client und MOM und \emph{Destination}s als Sende- und Empfangspunkte von Nachrichten. Die Administered Objects können im Client über das Java Naming and Directory Interface (JNDI)\footnote{JNDI API:\url{http://www.oracle.com/technetwork/java/index-jsp-137536.html}} API abgefragt werden. Alle Clients die nicht die JMS API sondern die implementierte API der MOM direkt verwenden, werden \emph{Native Client} genannt.
-
-\medskip
 
 JMS unterstützt zwei Verbindungsarten zum Übertragen von Nachrichten: Queue-basiert und Topic-basiert. Als Queue-basiert wird eine Punkt-zu-Punkt Verbindung bezeichnet. Hier werden Nachrichten nur zwischen zwei Clients übertragen und gegebenenfalls in einer Warteschlange zwischengespeichert. Hinter Topic-basiert verbirgt sich ein Publish-Subscribe Mechanismus bei dem ein Client Nachrichten an eine bestimmtes Topic-Destination schickt und andere Clients sich auf dieses Topic anmelden können, die dann die Nachrichten des ersten Clients zugeschickt bekommen. Ob Queue oder Topic-basiert, wird über das verwendete Destination Objekt ausgewählt.
 
@@ -313,10 +298,9 @@ JMS unterstützt zwei Verbindungsarten zum Übertragen von Nachrichten: Queue-ba
         keepaspectratio=true,
         clip=true]
         {assets/images/jms_api_overview}
-    \caption{JMS Programmiermodell - Original Bild: \url{http://docs.oracle.com/javaee/1.3/jms/tutorial/1_3_1-fcs/doc/images/Fig3.1.gif}}
+    \caption{JMS Programmiermodell - Original Bild: \url{http://docs.oracle.com/javaee/1.3/jms/tutorial/1_3_1-fcs/doc/images/Fig3.1.gif} (Zugriff: 2013-09-15)}
     \label{fig:jms_api_overview}
 \end{figure}
-\medskip
 
 Sollen nun Nachrichten von einem Client verschickt beziehungsweise empfangen werden, muss mit einer Connection Factory eine neue Connection zu einer MOM aufgebaut werden. Mit dieser Connection wird danach ein \emph{Session}-Objekt erstellt, das als Kontext zum Senden und Empfangen verwendet wird. Sollen Nachrichten gesendet werden, muss mit einem Destination-Objekt ein \emph{MessageProducer} und danach eine Nachricht mit dem Session-Objekt erstellt werden. Die Nachricht wird dann über den MessageProducer versendet. Für das Empfangen ist ein \emph{MessageConsumer} verantwortlich. Abbildung \ref{fig:jms_api_overview} zeig noch einmal den Zusammenhang aller JMS Komponenten.
 
@@ -425,8 +409,6 @@ Listing \ref{lst:camel_beispiel} zeig ein kleines Beispiel, wie eine Nachrichten
 
 An dieser Stelle sollen noch kurz einige Lernplattformen und soziale Online-Netzwerke vorgestellt, die im späteren Verlauf dieser Arbeit für die Implementierung verwendet wurden. Im Einzelnen waren dies \emph{Moodle}, \emph{Canvas}, \emph{Youtube}, \emph{Facebook} und \emph{Google+}, da sie einen guten Schnitt von den Plattformen bilden, die heutzutage sowohl im Bereich E-Learning als auch von der breiten Masse verwendet werden.
 
-%\todo[inline]{Du könntest in dem Grundlagenkapitel auch noch auf Foren, Moodle, FB und Google+ kurz eingehen. Deren Datenmodelle und -schnittstellen können auch später erläutert werden.}
-
 \subsection{Moodle} % (fold)
 \label{sub:moodle}
 
@@ -440,8 +422,6 @@ Moodle\footnote{\url{https://moodle.org/}} ist ein weit verbreitetes Open Source
     \caption{Moodle Instanz der TU Darmstadt}
     \label{fig:moodle_tud}
 \end{figure}
-
-\medskip
 
 Moodle wurde in der Programmiersprache PHP geschrieben und unterstützt die  Datenbanken werden MySQL, PostgrSQL, MSSQL und Oracle. Die Installation von weiteren Funktionalitäten ist durch von Dritten geschriebenen Erweiterungen möglich. Seit Version 2.0 können für Moodle auch Webservices installiert werden, so können auch externe Anwendungen auf interne Funktionen und Daten zugreifen.
 
@@ -478,7 +458,6 @@ Die Youtube\footnote{\url{https://www.youtube.com}} Webseite gehört wohl heute 
 
 Das soziale Online-Netzwerk Facebook\footnote{\url{https://www.facebook.com/}} kann mit rund 699 Millionen aktiven Benutzern täglich \cite{Facebook2013} zu den aktuell beliebtesten Vertretern seiner Art bezeichnet werden. Facebook erlaubt es, wie alle sozialen Online-Netzwerke, bekannte Personen in Freundeslisten zusammen zufassen und mit ihnen private Nachrichten auszutauschen. Beiträge wie Texte, Fotos oder Videos können auf einer Art Pinnwand der \enquote{Wall} öffentlich oder nur mit Freunden geteilt werden. Benutzer mit gemeinsamen Interessen können dazu eigene Gruppen bilden und dort auf einer eigen Wall Beiträge veröffentlichen oder die anderer kommentieren. Wie in der Einleitung schon erklärt zeigt Qiyun Wang et. al. \cite{Wang2012} das sich Facebook, wenn auch mit Einschränkungen, wunderbar zur Verwaltung und Nutzung durch Lernkurse und Lerngruppen eignet. Die gleiche Erfahrung teilte Anthony Fontana \cite{Fontana2009,FacebookinEducarion2010}, der Facebook als Alternative zum bestehenden System der Bowling Green State University in Ohio, USA verwendete.
 
-
 % subsection facebook (end)
 
 \subsection{Google+} % (fold)
@@ -493,6 +472,7 @@ Google+\footnote{https://plus.google.com} ist ein 2011 von Google gestartetes so
 \section{Verwandte Arbeiten und Projekte} % (fold)
 \label{sec:verwandte_arbeiten_und_projekte}
 
+\todo[inline]{Verwandte Arbeiten Einleitung schreiben}
 
 \subsection{What happens when Facebook is gone?} % (fold)
 \label{sub:what_happens_when_facebook_is_gone}
@@ -515,11 +495,7 @@ Hat sich nicht jeder schon einmal vor den Rechner gesessen um, zum Beispiel, nac
 
 \todo[inline]{Das klingt ein wenig wie ein Werbetext ;-)}
 
-\medskip
-
 Ziel mit diesem Projektes soziale Medien aus allen möglichen Quellen auf seinen eigenen Blog zu spiegeln und so einen zentrale Anlaufstelle für seine eigenen Inhalte schaffen. Aufbauend auf der weit verbreiteten Blogsoftware \enquote{WordPress\footnote{\url{http://wordpress.org/}}} und der dafür vorhandenen Erweiterung \enquote{FeedWordPress}\footnote{\url{http://feedwordpress.radgeek.com/}}. Diese Kombination ermöglichst alle Internetseiten, welche einen RSS Feed anbieten, in die Datenbank von WordPress zu spiegeln. Das Problem hierbei besteht darin, dass einige sehr beliebte Internetseiten solche RSS Feeds nicht anbieten (Facebook, Google+) oder eingestellt haben (\url{https://twitter.com}). Für einige solcher Seiten wurden \enquote{proxy-scripte}\cite[Tech Specs Details]{Schwenzel2013} implementiert, welche für diese einen RSS Feed emulieren. Zugleich können in den Feeds enthaltende Medien, wie Bilder und Videos(bisher nur als Referenz), heruntergeladen und in WordPress gespeichert werden. So ist es möglich alle gespiegelten Daten einfach zu durchsuchen oder nach bestimmten Kriterien zu filtern. Zusätzlich können alle Freunde, welche auch Reclaim Social einsetzen, in einen Kontaktliste eingetragen und so auch deren Inhalte eingebunden werden.
-
-\medskip
 
 Aktuell befindet sich dieses Projekt noch im Alpha Stadium und die Installation ist relativ kompliziert. Es ist aber geplant eine eigene Erweiterung für WordPress zu schreiben \enquote{he goal is to build just one Reclaim Social-plugin for any wordpress user}\cite[How Does It Work]{Schwenzel2013}
 

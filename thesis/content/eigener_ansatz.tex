@@ -355,6 +355,8 @@ In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein Sequenzdiagramm der Po
 \section{SOCC-Camel} % (fold)
 \label{sec:socc_camel}
 
+\emph{SOCC-Camel} ist eine Modul der SOCC für die Einbindung von Connectoren in das Apache Camel Framework. Durch dieses ist es sehr einfach möglich die gelesenen Beiträte von einer SOC in eine andere zu schreiben. Abbildung \ref{fig:uebersicht_socc_camel} zeigt SOCC-Camel als EIP-Diagramm. 
+
 \begin{figure}[ht]
      \includegraphics[
         width=\textwidth,
@@ -364,18 +366,27 @@ In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein Sequenzdiagramm der Po
     \label{fig:uebersicht_socc_camel}
 \end{figure}
 
-\subsection{SoccComponent} % (fold)
-\label{sub:socccomponent}
+Hauptklasse dieses Modul ist die Klasse \texttt{SoccComponent} und ist für die Verwaltung von Connectoren und Erstellen der Endpoints für Apache Camel zuständig. Von dieser Klasse SoccComponent muss zuerst ein Objekt erzeugt und ein Objekt einer Klasse welche die Schnittstelle \texttt{ISoccContext} implementiert. Das das damit übergebende Model mit dem Triplestore sollte alle Daten für die Erstellung der später genutzten Connectoren und deren Betrieb enthalten. Also alle Daten die in Anschnitt \ref{sec:konfiguration} beschrieben sind. Das nun vorhandene SoccComponent Objekt wird dann unter einen frei wählbaren Namen in Apache Camel registriert. Nun kann wie in Abschnitt \ref{ssub:apache_camel} mit dieser Komponente eine Route erstellt werden. Die Konfigurationsuris habe dazu den folgenden Aufbau:
 
-% subsection socccomponent (end)
+\begin{lstlisting}[
+    caption={SOCC-Camel Konfigurations URI}\label{lst:socc_camel_uri},
+    captionpos=t]
+socc://{connectorId}?uri={targetUri}[&{options}...]
+\end{lstlisting}
+
+Der Anfang der URI mit \enquote{socc://} sagt Apache Camel, dass es für diesen Endpoint die Component benutzten soll, die unter dem Namen \enquote{socc}. Hier wäre dies eine der Klasse SoccComponent. Für den Platzhalte \enquote{\{connectorId\}} muss eine gültige ID eines Connectors sein, dessen Konfigurationsdaten im TripleStore. befinden. Über den URI Parameter \enquote{uri} wird dann die Quell- beziehungsweise Zieluri für den Connector angegeben. Im Falle, dass es sich um eine URI für den Startpunkt einer URI handelt, können am Ende noch weitere Parameter angehängt werden.
 
 \subsection{SoccPostPollingConsumer} % (fold)
 \label{sub:soccpostpollingconsumer}
+
+Wird ein Endpoint mit der Absicht zum Lesen von Beiträgen erstellt, erzeugt die Klasse SoccComponent eine Objekt der Klasse \texttt{SoccPostPollingConsumer} und übergibt im die Parameter aus der verwendeten URI. Als zusätzliche Parameter für die URI können \texttt{delay} und \texttt{limit angegeben werden}. Da SoccPostPollingConsumer sich von der Klasse \texttt{ScheduledPollConsumer} ableitet, ist es über den Parameter \texttt{delay} möglich in periodischen Abständen Aufgaben abzuarbeiten. In diesen Fall das Lesen von neuen Beiträgen. Die Angabe erfolgt dabei in Millisekunden. Der Parameter \texttt{limit} entspricht dabei den gleichnamigen Argument der Methode \texttt{pollPosts} des PostReaders aus Abschnitt \ref{sub:postreader}. Das dort noch fehlende Argument \texttt{since}, für das Datum ab wann ein Beitrag als neu gilt, holt sich der SoccPostPollingConsumer aus den im TripleStore gespeicherten Daten. Zum Beispiel durch das Datum des zuletzt gelesenen Beitrags aus einen Thread oder das des letzten Kommentars. Alle neue gelesenen Beiträge werden am Ende in das RDF/XML serialisiert und als Nachricht an Apache Camel übergeben, welches es dann anhand der festgelegte Routen weiterleitet. Dass andere Komponenten diese Nachricht wieder korrekt de-serialisieren können, muss der Nachricht noch ein Header \enquote{Content-Type} mit dem MIME-Type\footnote{ Multipurpose Internet Mail Extension - Types: \url{http://tools.ietf.org/html/rfc2046}} vom RDF/XML \enquote{application/rdf+xml} mitgegeben werden
 
 % subsection soccpostpollingconsumer (end)
 
 \subsection{SoccPostProducer} % (fold)
 \label{sub:soccpostproducer}
+
+Der \texttt{SoccPostProducer} ist das Gegenstück zum SoccPostPollingConsumer er ist der Endpoint der zum Schreiben von Beiträgen zurück eine ein SOC von der SoccComponent erzeugt wird. Intern verwendet er die PostWriter Komponente des betreffenden Connetors und leitet den Inhalt der Nachricht an diese weiter. Außer der Angabe über die Zieluri erhält der SoccPostProducer keine weiteren Parameter über die Konfigurationsuri.
 
 % subsection soccpostproducer (end)
 

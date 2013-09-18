@@ -1,11 +1,11 @@
 package de.m0ep.socc.core.connector.canvaslms;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.ontoware.rdf2go.model.Model;
-import org.ontoware.rdf2go.model.node.Node;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.Builder;
 import org.rdfs.sioc.Container;
@@ -26,6 +26,8 @@ import de.m0ep.canvas.model.Entry;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.DateUtils;
+import de.m0ep.socc.core.utils.HtmlLinkExtractor;
+import de.m0ep.socc.core.utils.HtmlLinkExtractor.Link;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.StringUtils;
 import de.m0ep.socc.core.utils.UserAccountUtils;
@@ -237,7 +239,6 @@ public final class CanvasLmsSiocUtils {
 			        discussionTopic.getAuthor() );
 		}
 
-		String content = StringUtils.stripHTML( discussionTopic.getMessage() );
 		String createdDate = DateUtils.formatISO8601(
 		        discussionTopic.getPostedAt() );
 
@@ -250,20 +251,29 @@ public final class CanvasLmsSiocUtils {
 		result.setId( Long.toString( discussionTopic.getId() ) );
 		result.setIsPartOf( connector.getStructureReader().getSite() );
 		result.setTitle( discussionTopic.getTitle() );
-		result.setContent( content );
+		result.setContent( StringUtils.stripHTML( discussionTopic.getMessage() ) );
 		result.setCreator( creator );
 		result.setCreated( createdDate );
 		result.setNumReplies( 0 );
+
+		result.removeAllAttachments();
+
+		List<Link> links = HtmlLinkExtractor.extractLinks( discussionTopic.getMessage() );
+		for ( Link link : links ) {
+			result.addAttachment( link.getUri() );
+		}
 
 		for ( Attachment attachment : discussionTopic.getAttachments() ) {
 			result.addAttachment( Builder.createURI( attachment.getUrl() ) );
 		}
 
 		// update container relation.
-		result.setContainer( container );
-		container.addContainerOf( result );
-		SiocUtils.incNumItems( container );
-		SiocUtils.updateLastItemDate( container, discussionTopic.getPostedAt() );
+		if ( null != container ) {
+			result.setContainer( container );
+			container.addContainerOf( result );
+			SiocUtils.incNumItems( container );
+			SiocUtils.updateLastItemDate( container, discussionTopic.getPostedAt() );
+		}
 
 		return result;
 	}
@@ -277,15 +287,9 @@ public final class CanvasLmsSiocUtils {
 	        AuthenticationException,
 	        IOException {
 		Model model = connector.getContext().getModel();
-		URI serviceEndpoint = connector.getService()
-		        .getServiceEndpoint()
-		        .asURI();
-
-		Container containerParent = connector.getStructureReader()
-		        .getContainer(
-		                container
-		                        .getParent()
-		                        .asURI() );
+		URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
+		Container containerParent = connector.getStructureReader().getContainer(
+		        container.getParent().asURI() );
 
 		long courseId;
 		try {
@@ -311,64 +315,59 @@ public final class CanvasLmsSiocUtils {
 		        discussionId,
 		        entry.getId() );
 
-		String content = StringUtils.stripHTML( entry.getMessage() );
+		// use already exiting Post to update it or create a new one
+		Post result = ( Post.hasInstance( model, uri ) )
+		        ? Post.getInstance( model, uri )
+		        : new Post( model, uri, true );
 
-		Post result = null;
-		if ( Post.hasInstance( model, uri ) ) {
-			result = Post.getInstance( model, uri );
+		UserAccount creator = null;
+		try {
+			String accountName = Long.toString( entry.getUserId() );
+			creator = UserAccountUtils.findUserAccount(
+			        model,
+			        accountName,
+			        serviceEndpoint );
+		} catch ( NotFoundException e ) {
+			creator = createSiocUserAccount( connector, entry );
+		}
 
-			Node modified = Builder.createPlainliteral(
-			        DateUtils.formatISO8601(
-			                entry.getUpdatedAt() ) );
+		result.setId( Long.toString( entry.getId() ) );
+		result.setIsPartOf( connector.getStructureReader().getSite() );
+		result.setCreator( creator );
+		result.setCreated( DateUtils.formatISO8601( entry.getCreatedAt() ) );
+		result.setContent( StringUtils.stripHTML( entry.getMessage() ) );
+		result.setNumReplies( 0 );
 
-			if ( !result.hasModified( modified ) ) {
-				result.setContent( content );
-				result.setModified( modified );
+		if ( null != entry.getUpdatedAt() ) {
+			result.setModified( DateUtils.formatISO8601( entry.getUpdatedAt() ) );
+		}
 
-				if ( null != entry.getAttachment() ) {
-					result.removeAllAttachments();
-					result.addAttachment( Builder.createURI( entry
-					        .getAttachment()
-					        .getUrl() ) );
-				}
-			}
-		} else {
-			UserAccount creator = null;
-			try {
-				String accountName = Long.toString( entry.getUserId() );
-				creator = UserAccountUtils.findUserAccount(
-				        model,
-				        accountName,
-				        serviceEndpoint );
-			} catch ( NotFoundException e ) {
-				creator = createSiocUserAccount( connector, entry );
-			}
+		result.removeAllAttachments();
 
-			result = new Post( model, uri, true );
-			result.setId( Long.toString( entry.getId() ) );
-			result.setIsPartOf( connector.getStructureReader().getSite() );
-			result.setCreator( creator );
-			result.setCreated( DateUtils.formatISO8601( entry.getCreatedAt() ) );
-			result.setContent( content );
-			result.setNumReplies( 0 );
+		List<Link> links = HtmlLinkExtractor.extractLinks( entry.getMessage() );
+		for ( Link link : links ) {
+			result.addAttachment( link.getUri() );
+		}
 
-			if ( null != entry.getAttachment() ) {
-				result.addAttachment( Builder.createURI( entry.getAttachment()
-				        .getUrl() ) );
-			}
+		if ( null != entry.getAttachment() ) {
+			result.addAttachment(
+			        Builder.createURI(
+			                entry.getAttachment().getUrl() ) );
+		}
 
-			// update container relation.
+		// update container relation.
+		if ( null != container ) {
 			result.setContainer( container );
 			container.addContainerOf( result );
 			SiocUtils.incNumItems( container );
 			SiocUtils.updateLastItemDate( container, entry.getCreatedAt() );
+		}
 
-			if ( null != parentPost ) {
-				result.setReplyOf( parentPost );
-				parentPost.addReply( result );
-				SiocUtils.incNumReplies( parentPost );
-				SiocUtils.updateLastReplyDate( parentPost, entry.getCreatedAt() );
-			}
+		if ( null != parentPost ) {
+			result.setReplyOf( parentPost );
+			parentPost.addReply( result );
+			SiocUtils.incNumReplies( parentPost );
+			SiocUtils.updateLastReplyDate( parentPost, entry.getCreatedAt() );
 		}
 
 		return result;

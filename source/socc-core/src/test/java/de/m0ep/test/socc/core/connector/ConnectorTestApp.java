@@ -1,9 +1,13 @@
 package de.m0ep.test.socc.core.connector;
 
+import java.util.List;
+
 import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Syntax;
+import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.Builder;
+import org.ontoware.rdf2go.vocabulary.XSD;
 import org.purl.dc.terms.DCTermsVocabulary;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.SiocVocabulary;
@@ -63,12 +67,12 @@ public class ConnectorTestApp {
 	}
 
 	public void run() throws Exception {
-
 		Model model = RDF2Go.getModelFactory().createModel();
 		model.open();
 		model.setNamespace( "sioc", SiocVocabulary.NS_SIOC.toString() );
 		model.setNamespace( "foaf", FoafVocabulary.NS_FOAF.toString() );
 		model.setNamespace( "dcterms", DCTermsVocabulary.NS_DCTerms.toString() );
+		model.setNamespace( "xsd", XSD.XSD_NS );
 
 		try {
 			SoccContext context = new SoccContext( model );
@@ -96,24 +100,24 @@ public class ConnectorTestApp {
 			kaiPerson = new Person( model, "http://www.example.org#kai", true );
 			kaiPerson.setName( "Kai" );
 
-			Authorization kaiAuthorization = new Authorization( model, true );
-			kaiAuthorization.setOwner( kaiPerson );
-			kaiAuthorization.setAgentClass( FoafVocabulary.Agent );
-			kaiAuthorization.setAccessToClass( SiocVocabulary.Post );
-			kaiAuthorization.addAccessMode( AclVocabulary.Read );
+			//			Authorization kaiAuthorization = new Authorization( model, true );
+			//			kaiAuthorization.setOwner( kaiPerson );
+			//			kaiAuthorization.setAgentClass( FoafVocabulary.Agent );
+			//			kaiAuthorization.setAccessToClass( SiocVocabulary.Post );
+			//			kaiAuthorization.addAccessMode( AclVocabulary.Read );
 
-			addMoodleRdfData( model );
+			//addMoodleRdfData( model );
 			addCanvasLmsRdfData( model );
-			addFacebookRdfData( model );
-			addYoutubeRdfData( model );
+			//addFacebookRdfData( model );
+			//addYoutubeRdfData( model );
+
+			//			IConnector connector = ConnectorFactory.getInstance().createConnector(
+			//			        context,
+			//			        MOODLE_CONNECTOR_ID );
 
 			IConnector connector = ConnectorFactory.getInstance().createConnector(
 			        context,
-			        MOODLE_CONNECTOR_ID );
-
-			// IConnector connector = DefaultConnector.createConnector(
-			// context,
-			// CANVAS_LMS_CONNECTOR_ID );
+			        CANVAS_LMS_CONNECTOR_ID );
 
 			// IConnector connector = DefaultConnector.createConnector(
 			// context,
@@ -147,14 +151,25 @@ public class ConnectorTestApp {
 			 * RdfUtils.resourceToString( post, Syntax.Turtle ) ); } } } } }
 			 */
 
-			Post post = new Post( model, true );
-			post.setContent( "Hallo, welt <br>" );
-			post.setCreator( kaiUserAccountMoodle );
+			URI uri = Builder.createURI(
+			        "https://canvas.instructure.com/courses/798152/discussion_topics/1440783" );
 
-			postWriter.writePost(
-			        Builder.createURI( "http://localhost/moodle/mod/forum/discuss.php?d=2" ),
-			        RdfUtils.resourceToString( post, Syntax.RdfXml ),
-			        Syntax.RdfXml );
+			if ( postReader.hasPosts( uri ) ) {
+				List<Post> result = postReader.pollPosts( uri, null, -1 );
+
+				for ( Post post : result ) {
+					System.out.println( RdfUtils.resourceToString( post, Syntax.Turtle ) );
+				}
+			}
+
+			//			Post post = new Post( model, true );
+			//			post.setContent( "Hallo, welt <br>" );
+			//			post.setCreator( kaiUserAccountMoodle );
+			//
+			//			postWriter.writePost(
+			//			        Builder.createURI( "http://localhost/moodle/mod/forum/discuss.php?d=2" ),
+			//			        RdfUtils.resourceToString( post, Syntax.RdfXml ),
+			//			        Syntax.RdfXml );
 
 			// Container c = structureReader.getContainer(
 			// Builder.createURI(
@@ -172,9 +187,7 @@ public class ConnectorTestApp {
 			// }
 
 		} finally {
-			System.err
-			        .println(
-			        "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<o>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" );
+			System.err.println( "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<o>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" );
 			System.err.println( RdfUtils.modelToString( model, Syntax.Turtle ) );
 			model.close();
 		}

@@ -159,6 +159,13 @@ public class CanvasLmsPostWriter extends
 			UserAccount creatorAccount = UserAccount.getInstance(
 			        getModel(),
 			        post.getCreator().getResource() );
+
+			if ( !SoccUtils.haveWriteAccess( getConnector(), creatorAccount, targetContainer ) ) {
+				LOG.info( "Have no permission to write Post for this UserAccount='{}'",
+				        post.getCreator() );
+				return;
+			}
+
 			CanvasLmsClient client = null;
 			String content = post.getContent();
 			if ( null != creatorAccount ) {

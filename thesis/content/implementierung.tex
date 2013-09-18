@@ -25,6 +25,25 @@ Das muss rein:
     \item Probleme bei der Implementierung
 \end{itemize}
 
+Innerhalb der Mappingbeschreibungen zwischen den Format der einzelnen SOC und SIOC werden zur besseren Übersicht und einfacheren Lesbarkeit Platzhalt für einige URIs benutzt. Welche Platzhalten dies sind und für welche URI sie stehen ist aus Tabelle \ref{tbl:platzhalter_fuer_sioc_mapping} zu entnehmen. Für die einzelnen SOC werden noch einmal gesonderte Platzhalter definiert, diese werden aber gesondert in den einzelnen Abschnitten beschrieben. 
+
+\begin{table}[h]
+    \centering
+    \caption{Allgemeine Platzhalter und deren Beschreibung für das Mapping nach SIOC}
+    \begin{tabular}{l|p{11cm}}
+        \textbf{Platzhalter} & \textbf{Bedeutung} \\ 
+        \hline
+        \texttt{\{serviceUri\}} & URI für einen Service \\
+        \texttt{\{userAccountUri\}} & URI für einen UserAccount \\
+        \texttt{\{siteUri\}} & URI für eine Site \\
+        \texttt{\{forumUri\}} & URI für ein Forum \\
+        \texttt{\{threadUri\}} & URI für ein Thread \\
+        \texttt{\{postUri\}} & URI für ein Post \\
+        \texttt{\{rootUri\}} & Die WurzelUri einer SOC. Für Facebook wäre dies zum Beispiel \texttt{https://www.facebook.com}
+    \end{tabular}
+    \label{tbl:platzhalter_fuer_sioc_mapping}
+\end{table}
+
 \subsection{Moodle} % (fold)
 \label{sub:moodle_connector}
 
@@ -176,6 +195,34 @@ Das muss rein:
 
 \subsubsection{SIOC Mapping} % (fold)
 \label{ssub:canvas_sioc_mapping}
+
+\begin{table}[h]
+    \centering
+    \caption{Format der URIs für Canvas}
+    \begin{tabular}{l|p{11cm}}
+        \textbf{URI Platzhalter} & URI-Format \\ 
+        \hline
+        \texttt{\{serviceUri\}} & 
+        \texttt{\{rootUri\}/api/v1} \\
+
+        \texttt{\{userAccountUri\}} & 
+        \texttt{\{rootUri\}/about/\{userId\}} \\
+
+        \texttt{\{siteUri\}} & 
+        \texttt{\{rootUri\}} \\
+
+        \texttt{\{forumUri\}} & 
+        \texttt{\{rootUri\}/courses/\{courseId\}} \\
+
+        \texttt{\{threadUri\}} & 
+        \texttt{\{forumUri\}/discussion\_topics/\{topicId\}} \\
+
+        \texttt{\{postUri\}} & 
+        \texttt{\{threadUri\}/entries/\{entryId\}}, \texttt{\{threadUri\}#discussion\_topic} \\
+    \end{tabular}
+    \label{tbl:platzhalter_fuer_sioc_mapping}
+\end{table}
+
 
 \subsubsection{API} % (fold)
 \label{ssub:canvas_api}

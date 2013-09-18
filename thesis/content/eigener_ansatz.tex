@@ -50,11 +50,11 @@ Dass ein Connector funktionieren kann, muss er von außen mit Informationen zuge
 
 Aus diesem Grund wurde für Konfiguration eines Connectors die \emph{Connector Config Ontology} entwickelt. Diese Ontologie ist sehr einfach gehalten und baut auf schon vorhandenen Ontologien auf. Zusätzlich musste die SIOC Ontologie so erweitert werden, dass die Integration von Autorisierungs- und Authentifizierungsinformationen möglich war. 
 
-\subsection{Connector Config Ontologie} % (fold)
+\subsection{SOCC Connector Config Ontologie} % (fold)
 \label{sub:connector_config_ontologie}
 
-Abbildung \ref{fig:uebersicht_conector_cfg} zeigt die entwickelte Connector Con
- Ontologie. Sie besteht aus einer einzigen Klasse \texttt{ConnectorConfig} und fünf Eigenschaften für diese.
+Abbildung \ref{fig:uebersicht_conector_cfg} zeigt die entwickelte \emph{SOCC Connector Config} Ontologie. Sie besteht aus einer einzigen Klasse \texttt{ConnectorConfig} und fünf Eigenschaften für diese.
+\todo[inline]{Einleitung umschreiben, klingt scheiße}
 
 \begin{figure}[ht]
     \centering
@@ -62,7 +62,7 @@ Abbildung \ref{fig:uebersicht_conector_cfg} zeigt die entwickelte Connector Con
         width=\textwidth,
         keepaspectratio=true
     ]{assets/images/connector_config_ontology}
-    \caption{Connector Config Ontology}
+    \caption{Schema der SOCC Connector Config Ontology}
     \label{fig:uebersicht_conector_cfg}
 \end{figure}
 
@@ -108,7 +108,8 @@ Wie eben schon beschrieben, existiert für SIOC ein Modul zur einfachen Modellie
 \subsection{Benutzerdaten} % (fold)
 \label{sub:benutzerdaten}
 
-Soll ein Beitrag eines Benutzers von Google+ nach Facebook synchronisiert werden und es so aussehen, als hat er diesen Beitrag selbst auf Facebook geschrieben, sind gute Kenntnisse über alle Benutzerkonten dieser einen Person notwendig. Als erstes muss die Existenz dieser dieser Person dem System bekannt sein. Hierzu kann diese durch die Klasse Person aus der FOAF Ontologie dargestellt werden. Für ein einzelnes Benutzerkonto wurde in SIOC die Klasse die Klasse UserAccount definiert. 
+Soll ein Beitrag eines Benutzers von Google+ nach Facebook synchronisiert werden und es so aussehen, als hat er diesen Beitrag selbst auf Facebook geschrieben, sind gute Kenntnisse über alle Benutzerkonten dieser einen Person notwendig. Als erstes muss die Existenz dieser Person dem System bekannt sein. Hierzu kann diese durch die Klasse \texttt{Person} aus der FOAF Ontologie dargestellt werden. Für ein einzelnes Benutzerkonto wurde in SIOC die Klasse \texttt{UserAccount} definiert. Da \texttt{UserAccount} eine Unterklasse von \texttt{OnlineAccount} aus FOAF ist, kann diese über die Eigenschaft \texttt{foaf:account} beziehungsweise \texttt{sioc:account\_of} mit einer Person verbunden werden. Da es wichtig ist zu wissen zu welcher Webseiten ein Benutzerkonto gehört, wird der \texttt{UserAccount} mit einem Objekt der Klasse \texttt{Service} über die Eigenschaft \texttt{siocs:has\_service}
+/\texttt{siocs:service\_of} zusammengebracht. Diese Verbindung ist für manche APIs besonders bedeutend, da in dem Serviceobjekt relevante Daten für den Zugriff darauf enthalten sind. Nun kann es vorkommen, dass eine Person private und geschäftliche Benutzerkonten besitzt. Um nicht private Beiträge auf Webseite A mit dem geschäftlichen Benutzerkonto auf Webseite B zu schreiben, muss ein Mapping zwischen den verschiedenen Benutzerkonten festgelegt werden. Dieses Mapping kann über ein in der \enquote{\nameref{sec:socc_connector_config_ontologie}} definierte Eigenschaft \texttt{mapped\_to} realisiert werden. Diese Eigenschaft ist bijektiv, also jedes Benutzerkonto maximal auf ein anderes Konto gemappt werden darf. Ebenso gilt, falls Benutzerkonto A mit Benutzerkonto B verbunden ist, ebenfalls B nach A gemappt wird. Abbildung \ref{fig:usermanagement} zeigt den zusammenhang zwischen der Klasse \texttt{Person}, \texttt{UserAccount} und \texttt{Service} sowie der Eigenschaft \texttt{mapped\_to} noch einmal graphisch an einem Beispiel.
 
 \begin{figure}[ht]
     \centering
@@ -119,8 +120,6 @@ Soll ein Beitrag eines Benutzers von Google+ nach Facebook synchronisiert werden
     \caption{Zusammenhang von Person, UserAccount und Service. Die inversen Eigenschaften \texttt{sioc:account\_of} und \texttt{siocs:service\_of} wurden zu einer besseren Übersicht weggelassen}
     \label{fig:usermanagement}
 \end{figure}
-
-\todo[inline]{fertig schreiben}
 
 % subsubsection benutzerdaten (end)
 
@@ -337,6 +336,8 @@ Der \texttt{PostReader} dient als Schnittstelle für das Lesen geschriebener Bei
 \label{sub:postwriter}
 
 In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein Sequenzdiagramm der PostWriter Komponente zu sehen. Dort ist visualisiert, welche Schritte für das stellvertretende Schreiben von Beiträgen eines Benutzers unternommen werden müssen. Soll nun ein Beitrag in einer SOC geschrieben werden, wird die Methode \texttt{writePost(URI, String, Syntax)} mit dem Zielort als URI, dem Beitrag als serialisiertes RDF Objekt und dem verwendeten Serialisierungsformates aufgerufen. Begonnen wird damit, dass als erstes nach einem UserAccount für den Service des aktuellen Connectors des Beitragautors gesucht. Im Idealfall befindet sich für den UserAccount des Beitragsautors ein Link zu seiner FOAF Person und von ein weiterer Link zum UserAccount für den aktuellen Service. Mit diesem UserAccount kann dann vom ClientManager ein Clientobjekt für die verwendete API angefordert werden. Sollte die Suche negativ verlaufen, steht der Defaultclient zur Verfügung. Mit diesem Client, ob mit der des Autors oder dem Defaultclient, wird im letzten Schritt der Beitrag im von der API verwendeten Format in die SOC geschrieben.
+
+\todo[inline]{unknownMessageTemplate und Watermark erwähnen}
 
 \begin{figure}[ht]
     \centering

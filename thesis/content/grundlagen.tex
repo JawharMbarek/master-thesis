@@ -211,19 +211,20 @@ Listing \ref{lst:turtle_shortcut} zeigt nochmal ein drittes Beispiel, wie redund
 
 % subsubsection darstellung_von_rdf (end)
 
-\subsubsection{Ontologien} % (fold)
-\label{ssub:ontologien}
+% subsection semantic_web_und_das_resource_description_framework (end)
+
+\subsection{Ontologien} % (fold)
+\label{sub:ontologien}
 
 Sollen Daten aus verschiedenen Quellen zusammengefügt werden, stellt sich häufig das Problem dass Teile dieser dieser Daten zwar den gleichen Sinn haben, aber aufgrund der Sichtweise des jeweiligen System eine andere Bezeichnung besitzen. Das kann zum Beispiel zu Missverständnissen bei der Verarbeitung führen oder dass Teile eines anderen Systems nicht wiederverwendet werden können \cite{Uschold1996a}. Einen Ausweg aus diesem Dilemma kann die Verwendung von Ontologien zeigen. Ontolgien können allgemein als Wissensbasis \cite{Uschold1996a,Hitzler2008a} bezeichnet werden und liefern eine formale Spezifikation über eine bestimmte Interessensdömäne. Sie beschreibt nicht nur wie das verwendete Vokabular aussieht, sondern legt auch fest welche einheitliche Bedeutung jede Vokabel hat. 
 
 Im Bereich des Semantic Webs sind heutzutage zwei Sprachen für die Erstellung von Ontologien weit verbreitet. Diese sind \emph{RDF Schema} (RDFS)\cite{Brickley} und die darauf aufbauende \emph{Web Ontology Language} (OWL)\cite{partelschneider2004}. Beide Sprachen basieren auf RDF, so können sie zusammen mit jedem System verwendet werden, das RDF versteht. Mit ihnen ist man im Stande Klassen von abstrakten Objekten und deren Eigenschaften zu definieren und diese in eine Vererbungshierarchie einzugliedern. Im Gegensatz zu RDFS können in OWL diverse Einschränkungen definiert werden, wie zum Beispiel dass eine Eigenschaft nur einmal pro Objekt einer Klasse vorhanden sein darf. Die Anhänge \ref{sec:socc_connector_config_ontologie} und \ref{sec:sioc_services_authentication_module} zeigen zwei Ontologien in der Sprache OWL, welche innerhalb dieser Arbeit entwickelt wurden und in Abschnitt \ref{sub:connector_config_ontologie} und \ref{sub:autorisierung_und_authentifizierung} beschreiben werden.
 
-% subsubsection ontologien (end)
+\todo[inline]{überleitung zu FOAF und SIOC}
 
-% subsection semantic_web_und_das_resource_description_framework (end)
 
-\subsection{Friend of a Friend (FOAF)} % (fold)
-\label{sub:friend_of_a_friend_}
+\subsubsection{Friend of a Friend (FOAF)} % (fold)
+\label{ssub:friend_of_a_friend_}
 
 \emph{Friend of a Friend}\footnote{\url{http://www.foaf-project.org}} (FOAF) ist ein 2000 gestartet Projekt und versucht Personen innerhalb des Webs, inklusive der Verbindungen zwischen ihnen und anderen, sowie dem was sie machen, in maschinenlesbarer Form abzubilden. FOAF stellt hierzu ein Vokabular \cite{Brickley2010} auf der Basis von RDF für solche sozialen Netzwerke zur Verfügung. Das Vokabular von FOAF gliedert sich dazu in einen \enquote{FOAF Core} und einen \enquote{Social Web} Bereich. Der Core-Bereich die Klasse \texttt{Agent} für alle Dinge die eine Handlung ausführen können, also sowohl natürliche Personen, Gruppen oder Organisationen als auch Computerprogramme oder Maschinen. Für diese gibt es jeweils noch einzelne Unterklassen die von der Klasse \texttt{Agent} erben. Objekten dieser Klassen können eigene Eigenschaften wie einen Namen, ein Alter oder wen sie kennen gegeben werden. Der Sozial Web Bereich enthält alle Teile die für das Web interessant wären. Das wären zum Beispiel welche E-Mail-Adresse eine Person besitzt, welche Benutzerkonten im bei welcher Webseite gehören oder wie die URL seiner Homepage lautet. Das FOAF Projekt sieht sich aber selber nicht als Konkurrenz gegenüber den etablierten sozialen Online-Netzwerken, sondern eher ein Ansatz für einen besser Austausch zwischen den einzelnen Seiten \cite[Abstract]{Brickley2010}.
 
@@ -252,10 +253,10 @@ Listing \ref{lst:foaf_beispiel} zeig eine Beispiel FOAF-Dokument in RDF/XML. Es 
 </rdf:RDF>
 \end{lstlisting}
 
-% subsection friend_of_a_friend_ (end)
+% subsubsection friend_of_a_friend_ (end)
 
-\subsection{Semantically-Interlinked Online Communities (SIOC)} % (fold)
-\label{sub:semantically_interlinked_online_communities}
+\subsubsection{Semantically-Interlinked Online Communities (SIOC)} % (fold)
+\label{ssub:semantically_interlinked_online_communities}
 
 \emph{Semantically-Interlinked Online Communities} (SIOC, ausgesprochen \enquote{schock}) ist ein Projekt, welches von Uldis Boj\=ars und John Breslin begonnen wurde um unterschiedliche, webbasierte Diskussionslattformen(Blog, Forum, Mailinglist,\dots) untereinander verbinden zu können \cite{deri2013,Breslin2005,Bojars2008a}. Der Kern von SIOC besteht aus einer Ontologie, welche den Inhalt und die Struktur diese Plattformen in ein maschinenlesbares Format bringt und es erlaubt diese auf semantischer Ebene zu verbinden. Auch soll es so möglich sein Daten von einer Plattform zu einer Anderen zu transferieren und so einfacher Inhalte austauschen zu können. Als Basis für SIOC dient RDF, die Ontologie selber wurde in RDFS und OWL designt. Um nicht das Rad neu erfinden zu müssen greift SIOC auf schon bestehende und bewährte Ontologien zurück. Für die Abbildung von Beziehungen zwischen einzelnen Personen wird FOAF und für einige Inhaltliche- und Metadaten (Titel, Inhalt, Erstelldatum, \dots) Dublin Core Terms\footnote{\url{http://dublincore.org/documents/dcmi-terms}} eingesetzt.
 
@@ -272,7 +273,9 @@ Listing \ref{lst:foaf_beispiel} zeig eine Beispiel FOAF-Dokument in RDF/XML. Es 
 
 Die wichtigsten Klassen von SIOC sind in Abbildung \ref{fig:sioc_aufbau_diagramm} in der mittleren Spalte zu sehen. Die Klasse \texttt{Site} ist für die Beschreibung von allgemeinen Webseiten in denen Beiträge innerhalb von Containern verfasst werden. Ein solcher Container ist die Klasse \texttt{Forum}und steht für einen Ort an dem Diskussionen geführt werden. Enthält ein Forum unterschiedliche Diskussionen zu unterschiedlichen Themen, kann es noch einmal in unterschiedliche \texttt{Thread} unterteilt werden, welche immer ein Forum als Elternteil haben (\texttt{has\_parent}). Beide Klassen leiten sich von der Klasse \texttt{Container} als einen allgemeinen Ort für Beiträge ab. Die einzelnen Beiträge werden durch die Klasse \texttt{Post} beziehungsweise von der übergeordneten Klasse \texttt{Item} modelliert. Beiträge gehören in der Regel immer zu einen bestimmten Container oder mindesten zu einer Webseite. Es ist auch mögliche Beiträge als Kommentar zu anderen Beiträgen über die Eigenschaft \texttt{has\_reply} abzubilden. Jeder Beitrag besitzt mindesten einen Autor der ein Benutzerkonto auf der betreffenden Seite besitzt. Für die Beschreibung eines solchen Benutzerkontos wird die Klasse \texttt{UserAccount} verwendet. Dieses Benutzerkonto kann nun zu einer Gruppe von anderen Konten gehören, zum Beispiel einer Lerngruppe. Über die Klasse \texttt{Role} keine einen Benutzerkonto eine bestimmte Rolle innerhalb eine Seite, Forum und so weiter zugeteilt werden. Ein Beispiel dafür wäre die Rolle eines Moderator, der überwacht ob die Regel der Seite in den einzelnen Foren eingehalten werden.
 
-% subsection semantically_interlinked_online_communities (end)
+% subsubsection semantically_interlinked_online_communities (end)
+
+% subsection ontologien (end)
 
 % section datenintegration (end)
 

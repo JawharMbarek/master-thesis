@@ -193,40 +193,22 @@ Innerhalb der Mappingbeschreibungen zwischen den Format der einzelnen SOC und SI
     \item viel API Funktionen wohl nicht extern nutzbar (UserProfil lesen, vll. Falsche Berechtigung -> test nötig)
 \end{itemize}
 
-\subsubsection{SIOC Mapping} % (fold)
-\label{ssub:canvas_sioc_mapping}
-
-\begin{table}[h]
-    \centering
-    \caption{Format der URIs für Canvas}
-    \begin{tabular}{l|p{11cm}}
-        \textbf{URI Platzhalter} & URI-Format \\ 
-        \hline
-        \texttt{\{serviceUri\}} & 
-        \texttt{\{rootUri\}/api/v1} \\
-
-        \texttt{\{userAccountUri\}} & 
-        \texttt{\{rootUri\}/about/\{userId\}} \\
-
-        \texttt{\{siteUri\}} & 
-        \texttt{\{rootUri\}} \\
-
-        \texttt{\{forumUri\}} & 
-        \texttt{\{rootUri\}/courses/\{courseId\}} \\
-
-        \texttt{\{threadUri\}} & 
-        \texttt{\{forumUri\}/discussion\_topics/\{topicId\}} \\
-
-        \texttt{\{postUri\}} & 
-        \texttt{\{threadUri\}/entries/\{entryId\}}, \texttt{\{threadUri\}\#discussion\_topic} \\
-    \end{tabular}
-    \label{tbl:canvas_uri_platzhalter}
-\end{table}
-
-
-\subsubsection{API} % (fold)
+\subsubsection{Canvas REST-API} % (fold)
 \label{ssub:canvas_api}
 
+Der öffentliche Zugriff auf die Daten von der Lernplattform Canvas basiert auf einer REST-API und OAuth 2.0 zur Autorisierung der Zugriffe. Die Adresse, über die auf die API zugegriffen werden kann, besteht aus der URI für die verwendete Canvas Instanz (\texttt{\{rootUri\}}) und gefolgt von dem Pfad \enquote{/api/v1}. Für die Demo Instanz von Instructre würde dies der URI \texttt{https://canvas.instructure.com/api/v1} entsprechen. An diese können dann weitere Pfade für den Zugriff auf die einzelnen Ressourcen angehängt werden. Zur Autorisierung wird von OAuth nur der Accesstoken benötigt, der bei der REST-Abfrage als HTTP Authorization Header mitgeschickt wird. Listing \ref{lst:canvas_authorization_header} zeigt eine eine Beispielanfrage und Angabe des Accesstokens mit dem Programm \emph{curl}\footnote{\url{http://curl.haxx.se/}}. Der Platzhalter \texttt{\{accessToken\}} muss dann natürlich erst durch einen validen Accesstoken ersetzt werden. Diesen kann jeder Benutzter in seinem Canvas Profil unter \enquote{Settings} und im Abschnitt \enquote{Approved Integrations} selbst erstellen. Die Angabe von ClientId und ClientSecret von OAuth 2.0 sind nicht nötig.
+
+\begin{lstlisting}[
+    caption={Canvas Authorization Header}\label{lst:canvas_authorization_header},
+    captionpos=t]
+curl -H "Authorization: Bearer {accessToken}" https://canvas.instructure.com/api/v1/courses
+\end{lstlisting}
+
+Als Datenformat für die zurückgelieferten Daten wird von der Canvas API auf JSON gesetzt. Für die Verwendung von POST und PUT Operationen zum Schreiben nach Canvas können die Daten entweder nach dem HTML Form Encoding\footnote{\url{http://www.w3.org/TR/html4/interact/forms.html\#h-17.13.4}} Standard oder ebenfalls in JSON angegeben werden. 
+
+Da einige Anfragen eine Liste von Ergebnissen zurückliefern und diese möglicher Weise lang werden können, teilt die Canvas API diese Listen auf mehrere Seiten auf, die jede einzeln abgefragt werden müssen. Für jede Seite schickt die Canvas API mehrere URIs als HTTP Link Header\footnote{\url{http://www.w3.org/Protocols/9707-link-header.html}} der Antwort mit. Diese URIs erhalten zusätzlich noch ein Attribut \texttt{rel}, das beschreibt in welcher Relation die URI zu dieser Seite steht.  Als Wert für diese Relation können \enquote{current} für eine URI auf die aktuelle, \enquote{next} auf die nächste, \enquote{prev} auf die vorherige, \enquote{first} auf die erste und \enquote{last} für eine URI auf die letzte Seite vorkommen. Um also die nächste Seite vom Ergebnis zu bekommen, muss eine neue REST-Anfrage mit der Relation \enquote{next} ausgeführt werden. Fehlt eine URI mit dieser Relation, ist das die letzte Seite erreicht. 
+
+% subsubsection canvas_api (end)
 
 \subsubsection{CanvasLMS4J} % (fold)
 \label{ssub:canvaslms4j}
@@ -238,7 +220,7 @@ Anhand der für die REST API verwendeten URIs ist auffällig, dass die einzelnen
 \begin{figure}[ht]
     \centering
     \includegraphics[
-        width=.9\textwidth,
+        width=\textwidth,
         keepaspectratio=true,]
     {assets/images/canvaslms4j_uml_classdiagramm}
     \caption{UML Klassendiagramm von CanvasLMS4J}
@@ -274,10 +256,39 @@ for ( List<DiscussionTopic> discussions : discussionPages ) {
 
 In Listing \ref{lst:canvaslms4j_beispiel} ist ein Beispiel für die Anwendung der CanvasLMS4J API zu sehen. In den ersten drei Zeilen wird eine neuer CanvasLmsClient für die Canvas Instanz auf \texttt{https://canvas.instructure.com} und einem AccessToken erstellt. Als nächstes soll für einen Kurs mit der ID \enquote{798152} alle Diskussionen aufgelistet werden. Mit dem Aufruf der Methode \texttt{courses()} des Clients wir der Endpunkt für die Kurse und von diesem aus der Endpunkt für die Diskussionen im Kurs \enquote{798152} über die Methode \texttt{.discussionTopics( 798152 )}. In der siebten Zeile wird die Art der Abfrage genauer festgelegt. Da eine Liste alle Diskussionen gesucht ist, wird die Methode \texttt{list()} aufgerufen die ein CanvasLmsRequest Objekt für die gewünschte Abfrage erstellt. Da die Antwort aus mehrere Objekten mit der Beschreibung der einzelnen Diskussionen besteht, wird die Anfrage in Zeile Acht mit der Methode \texttt{executePagination()} ausgeführt. Die einzelnen Seiten des Ergebnisses werden dann in der elften Zeile mit einer For-Schleife durchlaufen. Das nachladen der Seiten erfolgt dabei automatisch durch die Pagination Klasse. Jede Seite besteht nun aus einer Liste mit den Beschreibung der Diskussionen in einem \texttt{DiskussionTopic} Objekt, welche dann wieder in einer weiteren Schleife ausgegeben werden.
 
-
 % subsubsection canvaslms4j (end)
 
-% subsubsection canvas_api (end)
+\subsubsection{Canvas Mapping nach SIOC} % (fold)
+\label{ssub:canvas_sioc_mapping}
+
+\begin{table}[h]
+    \centering
+    \caption{Format der URIs für Canvas}
+    \begin{tabular}{l|p{11cm}}
+        \textbf{URI Platzhalter} & URI-Format \\ 
+        \hline
+        \texttt{\{serviceUri\}} & 
+        \texttt{\{rootUri\}/api/v1} \\
+
+        \texttt{\{userAccountUri\}} & 
+        \texttt{\{rootUri\}/about/\{userId\}} \\
+
+        \texttt{\{siteUri\}} & 
+        \texttt{\{rootUri\}} \\
+
+        \texttt{\{forumUri\}} & 
+        \texttt{\{rootUri\}/courses/\{courseId\}},
+        \texttt{\{rootUri\}/groups/\{groupId\}} \\
+
+        \texttt{\{threadUri\}} & 
+        \texttt{\{forumUri\}/discussion\_topics/\{topicId\}} \\
+
+        \texttt{\{postUri\}} & 
+        \texttt{\{threadUri\}/entries/\{entryId\}},
+        \texttt{\{threadUri\}\#discussion\_topic} \\
+    \end{tabular}
+    \label{tbl:canvas_uri_platzhalter}
+\end{table}
 
 % subsubsection canvas_sioc_mapping (end)
 

@@ -13,5 +13,6 @@
 \contentsline {lstlisting}{\numberline {4.1}{ACL Beispiel}}{35}{lstlisting.4.1}
 \contentsline {lstlisting}{\numberline {4.2}{SOCC-Camel Konfigurations URI}}{39}{lstlisting.4.2}
 \addvspace {10\p@ }
+\contentsline {lstlisting}{\numberline {5.1}{CanvasLMS4J Beispielprogramm}}{47}{lstlisting.5.1}
 \addvspace {10\p@ }
 \addvspace {10\p@ }

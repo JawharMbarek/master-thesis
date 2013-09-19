@@ -1,7 +1,7 @@
 %!TEX root = ../thesis.tex
 
-\chapter{Implementierung} % (fold)
-\label{cha:implementierung}
+\chapter{Implementierung und Evaluation} % (fold)
+\label{cha:implementierung_und_evaluation}
 
 \section{Verwendete Bibliotheken} % (fold)
 \label{sec:verwendete_bibliotheken}
@@ -218,14 +218,26 @@ Innerhalb der Mappingbeschreibungen zwischen den Format der einzelnen SOC und SI
         \texttt{\{forumUri\}/discussion\_topics/\{topicId\}} \\
 
         \texttt{\{postUri\}} & 
-        \texttt{\{threadUri\}/entries/\{entryId\}}, \texttt{\{threadUri\}#discussion\_topic} \\
+        \texttt{\{threadUri\}/entries/\{entryId\}}, \texttt{\{threadUri\}\#discussion\_topic} \\
     \end{tabular}
-    \label{tbl:platzhalter_fuer_sioc_mapping}
+    \label{tbl:canvas_uri_platzhalter}
 \end{table}
 
 
 \subsubsection{API} % (fold)
 \label{ssub:canvas_api}
+
+
+\subsubsection{CanvasLMS4J} % (fold)
+\label{ssub:canvaslms4j}
+
+Ein Problem mit der API von Canvas war es, dass es zwar eine gute REST Anbindung gab, aber noch keine Bibliothek um sie mit der Programmiersprache Java anzusprechen. Es musste also erst eine eigne Java API dazu entwickelt werden die den Namen \emph{CanvasLMS4J} (Kurzform für \enquote{CanvasLMS API für Java}) bekam. 
+
+Anhand der für die REST API verwendeten URIs ist auffällig, dass die einzelnen Bestandteile aufeinander aufbauen. Zum Beispiel ist der Ablauf für den REST-Zugriff auf DiscussionTopics in Gruppen und Kursen der gleiche, nur die verwendete URI unterscheidet sich. Aus diesem Grund wurden die einzelnen Ressource (Course, Groupe, DiscussionTopic, Entries, ...) als einzelne Endpunkte implementiert die sich von der Klasse \texttt{IEnpoint} ableiten. Jeder Endpunkt kann einen Eltern-Endpunkt haben, wobei sich die endgültige URI für die REST-Abfrage aus dem Pfad des Eltern-Endpunktes und dem des aktuellen Endpunktes zusammensetzt. Zur Verdeutlichung sei hier die URI \texttt{https:\{canvasUri\}/api/v1/courses/1/discussion\_topics} als Demonstration genannt. Sie besteht aus den statischen Teil \texttt{https:\{canvasUri\}/api/v1/} der den Ort für die verwendete Canvas Instanz angibt. Darauf folgt ein Kurs als erster Endpunkt mit der Kurs-ID \enquote{1}. Für diesen Kurs sollen nun alle Diskussionen abgefragt werden. Dies geschieht durch die Angabe des zweiten Endpunktes \texttt{/discussion\_topics}. \enquote{/courses/1} bildet hier also den Eltern-Endpunkt von \texttt{/discussion\_topics}. Sollen aber nun alle Diskussionen in einer Gruppe abgefragt werden, reicht es aus den Kurs-Endpunkt durch einen Gruppen-Endpunkt auszutauschen. 
+
+
+
+% subsubsection canvaslms4j (end)
 
 \subsubsection{Herausforderungen} % (fold)
 \label{ssub:canvas_herausforderungen}
@@ -240,4 +252,9 @@ Innerhalb der Mappingbeschreibungen zwischen den Format der einzelnen SOC und SI
 
 % section implementierung_einiger_connectoren (end)
 
-% chapter implementierung (end)
+\section{Evaluation} % (fold)
+\label{sec:evaluation}
+
+% section evaluation (end)
+
+% chapter implementierung_und_evaluation (end)

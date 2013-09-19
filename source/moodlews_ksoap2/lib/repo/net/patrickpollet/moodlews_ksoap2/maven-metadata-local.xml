@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>net.patrickpollet</groupId>
+  <artifactId>moodlews_ksoap2</artifactId>
+  <versioning>
+    <release>1.8.5</release>
+    <versions>
+      <version>1.8.5</version>
+    </versions>
+    <lastUpdated>20130802120703</lastUpdated>
+  </versioning>
+</metadata>

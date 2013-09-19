@@ -20,65 +20,66 @@ package de.m0ep.canvas;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 public abstract class AbstractEndpoint implements IEndpoint {
-    protected CanvasLmsClient client;
-    protected String endpoint;
-    protected String parentEndpoint;
+	protected CanvasLmsClient client;
+	protected String endpoint;
+	protected String parentEndpointPath;
 
-    public AbstractEndpoint() {
-        super();
-    }
+	public AbstractEndpoint() {
 
-    @Override
-    public CanvasLmsClient getClient() {
-        return client;
-    }
+	}
 
-    @Override
-    public void setClient(CanvasLmsClient client) {
-        this.client = Preconditions.checkNotNull(
-                client,
-                "Required parameter client must be specified.");
-    }
+	@Override
+	public CanvasLmsClient getClient() {
+		return client;
+	}
 
-    @Override
-    public String getEndpoint() {
-        return endpoint;
-    }
+	@Override
+	public void setClient( CanvasLmsClient client ) {
+		this.client = Preconditions.checkNotNull(
+		        client,
+		        "Required parameter client must be specified." );
+	}
 
-    @Override
-    public void setEndpoint(String endpoint) {
-        this.endpoint = Preconditions.checkNotNull(
-                endpoint,
-                "Required parameter endpoint must be specified.");
-    }
+	@Override
+	public String getEndpointPath() {
+		return endpoint;
+	}
 
-    @Override
-    public String getParentEndpoint() {
-        return parentEndpoint;
-    }
+	@Override
+	public void setEndpointPath( String endpoint ) {
+		this.endpoint = Preconditions.checkNotNull(
+		        endpoint,
+		        "Required parameter endpoint must be specified." );
+	}
 
-    @Override
-    public void setParentEndpoint(String parentEndpoint) {
-        this.parentEndpoint = parentEndpoint;
-    }
+	@Override
+	public String getParentEndpointPath() {
+		return Strings.nullToEmpty( parentEndpointPath );
+	}
 
-    public void initializeRequest(final CanvasLmsRequest<?> request) {
-        request.setOauthToken(getClient().getOAuthToken());
-    }
+	@Override
+	public void setParentEndpointPath( String parentEndpointPath ) {
+		this.parentEndpointPath = Strings.nullToEmpty( parentEndpointPath );
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(client, endpoint, parentEndpoint);
-    }
+	public void initializeRequest( final CanvasLmsRequest<?> request ) {
+		request.setOauthToken( getClient().getOAuthToken() );
+	}
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this)
-                .add("client", client)
-                .add("endpoint", endpoint)
-                .add("parentEndmpoint", parentEndpoint)
-                .toString();
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hashCode( client, endpoint, parentEndpointPath );
+	}
+
+	@Override
+	public String toString() {
+		return Objects.toStringHelper( this )
+		        .add( "client", client )
+		        .add( "endpoint", endpoint )
+		        .add( "parentEndmpointPath", parentEndpointPath )
+		        .toString();
+	}
 }

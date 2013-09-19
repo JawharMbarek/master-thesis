@@ -20,16 +20,16 @@ package de.m0ep.canvas;
 
 public interface IEndpoint {
 
-    public CanvasLmsClient getClient();
+	public CanvasLmsClient getClient();
 
-    public void setClient(CanvasLmsClient client);
+	public void setClient( CanvasLmsClient client );
 
-    public String getEndpoint();
+	public String getEndpointPath();
 
-    public void setEndpoint(String endpoint);
+	public void setEndpointPath( String endpointPath );
 
-    public String getParentEndpoint();
+	public String getParentEndpointPath();
 
-    public void setParentEndpoint(String parentEndpoint);
+	public void setParentEndpointPath( String parentEndpointPath );
 
 }

@@ -29,7 +29,7 @@ public class Entries extends AbstractEndpoint {
 		public List() {
 			super( Entries.this.getClient(),
 			        HttpGet.class,
-			        getEndpoint(),
+			        getEndpointPath(),
 			        Entry.class );
 		}
 
@@ -48,7 +48,7 @@ public class Entries extends AbstractEndpoint {
 			super( Entries.this.getClient(),
 			        HttpGet.class,
 			        UriTemplate.fromTemplate(
-			                getParentEndpoint() + PATH_ENTRY_LIST )
+			                getParentEndpointPath() + PATH_ENTRY_LIST )
 			                .set( PARAM_ENTRY_ID, entryId )
 			                .expand(),
 			        Entry.class );
@@ -79,7 +79,7 @@ public class Entries extends AbstractEndpoint {
 		public Post( final String message ) {
 			super( Entries.this.getClient(),
 			        HttpPost.class,
-			        getEndpoint(),
+			        getEndpointPath(),
 			        Entry.class );
 
 			setContent( new UrlEncodedFormEntity(
@@ -103,7 +103,7 @@ public class Entries extends AbstractEndpoint {
 		public ListReplies( final long entryId ) {
 			super( Entries.this.getClient(),
 			        HttpGet.class,
-			        UriTemplate.fromTemplate( getParentEndpoint() + PATH_REPLIES )
+			        UriTemplate.fromTemplate( getParentEndpointPath() + PATH_REPLIES )
 			                .set( PARAM_ENTRY_ID, entryId ).expand(),
 			        Entry.class );
 		}
@@ -121,7 +121,7 @@ public class Entries extends AbstractEndpoint {
 		public PostReply( final String message, final long entryId ) {
 			super( Entries.this.getClient(),
 			        HttpPost.class,
-			        UriTemplate.fromTemplate( getParentEndpoint() + PATH_REPLIES )
+			        UriTemplate.fromTemplate( getParentEndpointPath() + PATH_REPLIES )
 			                .set( PARAM_ENTRY_ID, entryId ).expand(),
 			        Entry.class );
 
@@ -143,10 +143,10 @@ public class Entries extends AbstractEndpoint {
 
 	public Entries( final CanvasLmsClient client, final String parentEndpointPath ) {
 		setClient( client );
-		setParentEndpoint( parentEndpointPath );
-		setEndpoint( getParentEndpoint() + PATH );
+		setParentEndpointPath( parentEndpointPath );
+		setEndpointPath( getParentEndpointPath() + PATH );
 
-		LOG.info( "Create Entries for '{}' endpoint.", getParentEndpoint() );
+		LOG.info( "Create Entries for '{}' endpoint.", getParentEndpointPath() );
 	}
 
 	public List list() {

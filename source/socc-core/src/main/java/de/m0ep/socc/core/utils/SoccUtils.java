@@ -22,11 +22,24 @@
 
 package de.m0ep.socc.core.utils;
 
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.ontoware.rdf2go.model.node.Node;
+import org.ontoware.rdf2go.model.node.URI;
+import org.rdfs.sioc.Container;
+import org.rdfs.sioc.SiocVocabulary;
+import org.rdfs.sioc.UserAccount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3.ns.auth.acl.AclVocabulary;
 
+import com.google.common.collect.Sets;
+import com.xmlns.foaf.Person;
+
+import de.m0ep.socc.core.acl.IAccessControl;
+import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 
 /**
@@ -35,6 +48,8 @@ import de.m0ep.socc.core.connector.IConnector.IPostWriter;
  * @author "Florian Mueller"
  */
 public final class SoccUtils {
+	private static final Logger LOG = LoggerFactory.getLogger( SoccUtils.class );
+
 	private SoccUtils() {
 	}
 
@@ -98,5 +113,73 @@ public final class SoccUtils {
 		        + IPostWriter.MESSAGE_WATERMARK_PREFIX
 		        + siteNode
 		        + IPostWriter.MESSAGE_WATERMARK_POSTFIX;
+	}
+
+	public static boolean haveAccess(
+	        final IConnector connector,
+	        final UserAccount userAccount,
+	        final Container container,
+	        final URI accessModeClass ) {
+		if ( null != userAccount ) {
+			final Set<URI> readSet = Sets.newHashSet( accessModeClass );
+
+			try {
+				Person person = UserAccountUtils.findPerson(
+				        connector.getContext().getModel(),
+				        userAccount );
+				IAccessControl accessControl = connector.getContext().getAccessControl();
+
+				// check public access to for all posts
+				if ( accessControl.checkAccessToClass(
+				        person,
+				        SiocVocabulary.Post,
+				        readSet ) ) {
+					return true;
+				}
+
+				// check public access for site
+				if ( accessControl.checkAccessTo(
+				        person,
+				        connector.getStructureReader().getSite().asURI(),
+				        readSet ) ) {
+					return true;
+				}
+
+				// check access for containers
+				Container tmpContainer = container;
+				while ( null != tmpContainer ) {
+					if ( accessControl.checkAccessTo(
+					        person,
+					        tmpContainer.asURI(),
+					        readSet ) ) {
+						return true;
+					}
+
+					tmpContainer = ( tmpContainer.hasParent() )
+					        ? connector.getStructureReader().getContainer(
+					                tmpContainer.getParent().asURI() )
+					        : null;
+				}
+
+			} catch ( Exception e ) {
+				LOG.info( "No Person found for UserAccount '{}'", userAccount );
+			}
+		}
+
+		return false;
+	}
+
+	public static boolean haveReadAccess(
+	        final IConnector connector,
+	        final UserAccount userAccount,
+	        final Container container ) {
+		return haveAccess( connector, userAccount, container, AclVocabulary.Read );
+	}
+
+	public static boolean haveWriteAccess(
+	        final IConnector connector,
+	        final UserAccount userAccount,
+	        final Container container ) {
+		return haveAccess( connector, userAccount, container, AclVocabulary.Write );
 	}
 }

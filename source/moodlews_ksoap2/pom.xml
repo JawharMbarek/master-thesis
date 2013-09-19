@@ -1,22 +1,36 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<!-- The Basics -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.m0ep.moodle</groupId>
 	<artifactId>moodlews_ksoap2</artifactId>
 	<version>0.1</version>
-	
+	<dependencies>
+	   <dependency>
+            <groupId>net.patrickpollet</groupId>
+            <artifactId>moodlews_ksoap2</artifactId>
+            <version>1.8.5</version>
+        </dependency>
+		<dependency>
+			<groupId>com.google.code.ksoap2-android</groupId>
+			<artifactId>ksoap2-j2se</artifactId>
+			<version>3.0.0-RC.4</version>
+		</dependency>
+	</dependencies>
 	<properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-	
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<!-- More Project Information -->
+	<name>moodlews_ksoap</name>
+	<description>Generated ksoap2 classes for the MoosleWS Moodle webservice plugin</description>
 	<licenses>
 		<license>
 			<name>The MIT License</name>
 			<url>http://fm.mit-license.org/</url>
-			<distribution>repo</distribution>
 		</license>
 	</licenses>
-
 	<developers>
 		<developer>
 			<id>m0ep</id>
@@ -34,15 +48,7 @@
 		</developer>
 	</developers>
 
-	<scm>
-		<url>https://github.com/m0ep/master-thesis</url>
-		<connection>scm:git:https://github.com/m0ep/master-thesis</connection>
-		<developerConnection>scm:git:https://github.com/m0ep/master-thesis</developerConnection>
-		<tag>HEAD</tag>
-	</scm>
-
 	<!-- Build Settings -->
-
 	<build>
 		<plugins>
 			<plugin>
@@ -56,21 +62,18 @@
 			</plugin>
 		</plugins>
 	</build>
-	
-	<!-- Dependencies -->
 
-	<dependencies>
-		<dependency>
-			<groupId>net.patrickpollet</groupId>
-			<artifactId>moodlews_ksoap2</artifactId>
-			<version>1.8.5</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.ksoap2-android</groupId>
-			<artifactId>ksoap2-j2se</artifactId>
-			<version>3.0.0-RC.4</version>
-		</dependency>
-	</dependencies>
-	<name>moodlews_ksoap</name>
-	<description>Generated ksoap2 classes for the MoosleWS Moodle webservice plugin</description>
+	<!-- Environment Settings -->
+	<repositories>
+		<repository>
+			<id>googlecode-ksoap2-android</id>
+			<name>googlecode-ksoap2-android</name>
+			<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url>
+		</repository>
+		<repository>
+			<id>moodlews_ksaop_repo</id>
+			<url>file://${basedir}/lib/repo/</url>
+		</repository>
+	</repositories>
+
 </project>

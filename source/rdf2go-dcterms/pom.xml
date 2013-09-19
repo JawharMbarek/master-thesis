@@ -5,9 +5,9 @@
 	<artifactId>rdf2go-dcterms</artifactId>
 	<version>0.0.1</version>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<build>
 		<plugins>
@@ -40,4 +40,24 @@
 			<version>4.8.3</version>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<releases />
+			<id>semweb4j-repo</id>
+			<name>Semweb4j.org maven repo</name>
+			<url>http://semweb4j.org/repo/</url>
+		</repository>
+		<repository>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<id>semweb4j-snapshots</id>
+			<name>Semweb4j.org maven snapshot repo</name>
+			<url>http://semweb4j.org/snapshots/</url>
+		</repository>
+	</repositories>
 </project>

@@ -100,20 +100,45 @@ Innerhalb der Mappingbeschreibungen zwischen den Format der einzelnen SOC und SI
     \item beim herunterladen einzelner Posts nicht immer erkennbar wo sie geschrieben wurden
 \end{itemize}
 
-\subsubsection{SIOC Mapping} % (fold)
-\label{ssub:facebook_sioc_mapping}
+\subsubsection{Facebook Graph API} % (fold)
+\label{ssub:facebook_graph_api}
 
-\subsubsection{API} % (fold)
-\label{ssub:facebook_api}
+Die primäre Weg an die von Facebook gespeicherten Daten zu gelangen, geht über die \emph{Graph API}. Sie erlaubt einen REST basierten Zugriff auf den von Facebook sogenannten \emph{Social Graph} \cite{FacebookGraphAPI}. Dieser Graph enthält alle Beziehungen die ein Person auf Facebook zwischen anderen Personen, Gruppen, Seiten, Beiträge, Fotos und so weiter besitzt. Der einfachste Weg zum Kennenlernen der Graph API ist der \emph{Graph API Explorer}\footnote{\url{https://developers.facebook.com/tools/explorer}}. Er ist eine Onlineanwendung REST-Abfragen an die Graph API schnell ausprobiert und das Ergebnis begutachtet werden kann.
 
-\subsubsection{Herausforderungen} % (fold)
-\label{ssub:facebook_herausforderungen}
+Jede Ressource im Social Graph von Facebook hat seine eigen, eindeutige ID. Wegen diesem Merkmal besteht eine URI für den REST-Zugriff nur aus \texttt{https://graph.facebook.com/} gefolgt von der ID und optionalen Parametern. Dies macht die Form der URIs zwar sehr einheitlich, aber es ist so unmöglich anhand der URI herauszufinden welcher Typ von Ressource sich dahinter befindet. Dies widerspricht zwar nicht die am Anfang von Kapitel \ref{cha:eigener_ansatz_social_online_community_connectors_socc_} beschreiben Prinzipien von Berners-Lee macht aber die spätere Verarbeitung etwas komplizierter.
 
-% subsubsection facebook_herausforderungen (end)
+Die Graph API verwendet zur Autorisierung der Anfragen OAuth 2.0 auch \emph{Facebook Login}\footnote{\url{https://developers.facebook.com/docs/facebook-login/}} genannt. Accesstoken gelten bei Facebook nur für zwei Stunden. Es ist aber möglich einen sogenannten \emph{Extended Accesstoken}\footnote{\url{https://developers.facebook.com/docs/facebook-login/access-tokens/}} zu erstellen der zwei Monate gültig ist. Ist ein Accesstoken irgendwann abgelaufen, muss ein neuer erstellt werden. Da aber die Graph API hauptsächlich nur für Webanwendungen gedacht ist, kann dies ein Desktopprogramm nur mit dem Umweg über einen Internetbrowser machen. Für das Anlegen eines neuen Accesstokens werden vom Programm eine OAuth 2.0 ClientId und das ClientSecret benötigt. Diese bekommt man von Facebook, wenn man für sein Programm auf der Webseite \url{https://developers.facebook.com/apps} eine \enquote{App} anlegt. Die Daten befinden sich dann in den \enquote{Einstellungen} unter \enquote{Grundlegendes} und werden dort \enquote{App ID} und \enquote{App Secret} genannt.
 
-% subsubsection facebook_api (end)
+Jeder Accesstoken hat nur Zugriff auf bestimmte Bereiche der Graph API die beim Erstellen des selbigen als \enquote{Permission}\footnote{\url{https://developers.facebook.com/docs/reference/login/\#permissions}} (engl. für Erlaubnis oder Befugnis), beziehungsweise von OAuth 2.0 \enquote{Scope} (engl. für Geltungsbereich) genannt, angegeben werden muss. Die für SOCC wichtigen Permissons sind in der Tabelle \ref{tbl:socc_facebook_persmissons} beschrieben.
 
-% subsubsection facebook_sioc_mapping (end)
+\begin{table}[h]
+    \centering
+    \caption{Für SOCC wichtige Facebook Permissons}
+    \begin{tabular}{r|p{10cm}}
+        \textbf{Permission} & 
+        \textbf{Beschreibung} \\ 
+        \hline
+        \textit{read\_stream} & 
+        Lesen von Beiträgen und Kommentaren eines Benutzers \\
+        \textit{publish\_actions} & 
+        Schreiben von Beiträgen und Kommentarten für einen Benutzer \\
+        \textit{user\_groups} & 
+        Zugriff auf die Lister der beigetretenen Gruppen eines Benutzers
+    \end{tabular}
+    \label{tbl:socc_facebook_persmissons}
+\end{table}
+
+% subsubsection facebook_graph_api (end)
+
+\subsubsection{RestFB} % (fold)
+\label{ssub:restfb}
+
+% subsubsection restfb (end)
+
+\subsubsection{Facebook Mapping nach SIOC} % (fold)
+\label{ssub:facebook_mapping_nach_sioc}
+
+% subsubsection facebook_mapping_nach_sioc (end)
 
 % subsection facebook_connector (end)
 

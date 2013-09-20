@@ -14,6 +14,6 @@
 \contentsline {lstlisting}{\numberline {4.2}{SOCC-Camel Konfigurations URI}}{39}{lstlisting.4.2}
 \addvspace {10\p@ }
 \contentsline {lstlisting}{\numberline {5.1}{Canvas Authorization Header}}{47}{lstlisting.5.1}
-\contentsline {lstlisting}{\numberline {5.2}{CanvasLMS4J Beispielprogramm}}{48}{lstlisting.5.2}
+\contentsline {lstlisting}{\numberline {5.2}{CanvasLMS4J Beispielprogramm}}{49}{lstlisting.5.2}
 \addvspace {10\p@ }
 \addvspace {10\p@ }

@@ -3,6 +3,8 @@
 \chapter{Implementierung und Evaluation} % (fold)
 \label{cha:implementierung_und_evaluation}
 
+\todo[inline]{Auf die verschiedenen Klassen von Facebook und Co eingehen, REST, SOAP, OAUTH, Client/Passwort, Art der Plattforn, Forum, OSN, Videoplatform}
+
 \section{Verwendete Bibliotheken} % (fold)
 \label{sec:verwendete_bibliotheken}
 
@@ -91,7 +93,7 @@ Innerhalb der Mappingbeschreibungen zwischen den Format der einzelnen SOC und SI
     \item GraphAPI, Facebook Query Language
     \item OAuth 2.x
     \begin{itemize}
-        \item kein Refreshtoke
+        \item kein Refreshtoken
         \item Token Haltbarkeit 2h (2 Monate, wen extended)
         \item token nur über webbrowser
     \end{itemize}
@@ -105,9 +107,19 @@ Innerhalb der Mappingbeschreibungen zwischen den Format der einzelnen SOC und SI
 
 Die primäre Weg an die von Facebook gespeicherten Daten zu gelangen, geht über die \emph{Graph API}. Sie erlaubt einen REST basierten Zugriff auf den von Facebook sogenannten \emph{Social Graph} \cite{FacebookGraphAPI}. Dieser Graph enthält alle Beziehungen die ein Person auf Facebook zwischen anderen Personen, Gruppen, Seiten, Beiträge, Fotos und so weiter besitzt. Der einfachste Weg zum Kennenlernen der Graph API ist der \emph{Graph API Explorer}\footnote{\url{https://developers.facebook.com/tools/explorer}}. Er ist eine Onlineanwendung REST-Abfragen an die Graph API schnell ausprobiert und das Ergebnis begutachtet werden kann.
 
-Jede Ressource im Social Graph von Facebook hat seine eigen, eindeutige ID. Wegen diesem Merkmal besteht eine URI für den REST-Zugriff nur aus \texttt{https://graph.facebook.com/} gefolgt von der ID und optionalen Parametern. Dies macht die Form der URIs zwar sehr einheitlich, aber es ist so unmöglich anhand der URI herauszufinden welcher Typ von Ressource sich dahinter befindet. Dies widerspricht zwar nicht die am Anfang von Kapitel \ref{cha:eigener_ansatz_social_online_community_connectors_socc_} beschreiben Prinzipien von Berners-Lee macht aber die spätere Verarbeitung etwas komplizierter.
+Jede Ressource im Social Graph von Facebook hat seine eigen, eindeutige ID. Wegen diesem Merkmal besteht eine URI für den REST-Zugriff nur aus \texttt{https://graph.facebook.com/} gefolgt von der ID und optionalen Parametern. Dies macht die Form der URIs zwar sehr einheitlich, aber es ist so unmöglich anhand der URI herauszufinden welcher Typ von Ressource sich dahinter befindet. Dies widerspricht zwar nicht die am Anfang von Kapitel \ref{cha:eigener_ansatz_social_online_community_connectors_socc_} beschreiben Prinzipien von Berners-Lee macht aber die spätere Verarbeitung etwas komplizierter. 
 
-Die Graph API verwendet zur Autorisierung der Anfragen OAuth 2.0 auch \emph{Facebook Login}\footnote{\url{https://developers.facebook.com/docs/facebook-login/}} genannt. Accesstoken gelten bei Facebook nur für zwei Stunden. Es ist aber möglich einen sogenannten \emph{Extended Accesstoken}\footnote{\url{https://developers.facebook.com/docs/facebook-login/access-tokens/}} zu erstellen der zwei Monate gültig ist. Ist ein Accesstoken irgendwann abgelaufen, muss ein neuer erstellt werden. Da aber die Graph API hauptsächlich nur für Webanwendungen gedacht ist, kann dies ein Desktopprogramm nur mit dem Umweg über einen Internetbrowser machen. Für das Anlegen eines neuen Accesstokens werden vom Programm eine OAuth 2.0 ClientId und das ClientSecret benötigt. Diese bekommt man von Facebook, wenn man für sein Programm auf der Webseite \url{https://developers.facebook.com/apps} eine \enquote{App} anlegt. Die Daten befinden sich dann in den \enquote{Einstellungen} unter \enquote{Grundlegendes} und werden dort \enquote{App ID} und \enquote{App Secret} genannt.
+\paragraph{Graph API Datenformat} % (fold)
+\label{par:graph_api_datenformat}
+
+Also Datenformat setzt Facebook mit der Graph API auf das unter Webanwendungen weit verbreitete JSON. Neben den eigentlichen Daten enthalten Ressourcen noch Verbindungen zu anderen Ressourcen. Diese Verbindungen werden \enquote{Connections} genannt. Um zu lesen welche Connections eine Ressource besitzt muss bei der Abfrage der Parameter \texttt{metadata=1} angehängt werden. Ist die geschehen enthalten die JSON Daten einen neuen Eintrag \texttt{metadata} und darin unter dem Eintrag \texttt{connections} eine Liste der vorhandenen Connections. Die wichtigsten Connections für diese Arbeit sind \texttt{feed}und \texttt{comments}. Die Connection \texttt{feed} sagt über die Ressource aus, dass sie eine Liste von Beiträgen enthält. Das könnten zum Beispiel die Wall einer Person oder die einer Gruppe sein. Dahingegen zeigt die Connection \texttt{comments}, dass die betreffende Ressource Kommentare enthält und auch kommentiert werden kann. Um die Beiträge eines Feeds lesen zu können, muss nur die ÜRI zu der Ressource mit den Pfad \texttt{/feed} erweitert werden: \texttt{http:/graph.facebook.com/me/feed}. Die ID \texttt{me} ist dabei ein spezielle ID die sich auf den aktuell angemeldete Benutzer bezieht. Möchte man nun nicht alle Daten einer Ressource abfragen sondern zum Beispiel nur den Name und das Datum der letzten Änderung, kann der Parameter \texttt{fields} für die URI eingesetzt werden. Als Wert wird dann eine Liste mit den Namen der gesuchten Daten angegeben, wobei jeder Name durch ein Komma getrennt wird. 
+
+% paragraph graph_api_datenformat (end)
+
+\paragraph{Facebook Login} % (fold)
+\label{par:facebook_login}
+
+Die Graph API verwendet zur Autorisierung der Anfragen OAuth 2.0 auch \emph{Facebook Login}\footnote{\url{https://developers.facebook.com/docs/facebook-login/}} genannt. Accesstoken gelten bei Facebook nur für zwei Stunden. Es ist aber möglich einen sogenannten \emph{Extended Accesstoken}\footnote{\url{https://developers.facebook.com/docs/facebook-login/access-tokens/}} zu erstellen der zwei Monate gültig ist. Ist ein Accesstoken irgendwann abgelaufen, muss ein neuer erstellt werden. Da aber die Graph API hauptsächlich nur für Webanwendungen gedacht ist, kann dies ein Desktopprogramm nur mit dem Umweg über einen Internetbrowser machen. Für das Anlegen eines neuen Accesstokens werden vom Programm eine OAuth 2.0 ClientID und das ClientSecret benötigt. Diese bekommt man von Facebook, wenn man für sein Programm auf der Webseite \url{https://developers.facebook.com/apps} eine \enquote{App} anlegt. Die Daten befinden sich dann in den \enquote{Einstellungen} unter \enquote{Grundlegendes} und werden dort \enquote{App ID} und \enquote{App Secret} genannt.
 
 Jeder Accesstoken hat nur Zugriff auf bestimmte Bereiche der Graph API die beim Erstellen des selbigen als \enquote{Permission}\footnote{\url{https://developers.facebook.com/docs/reference/login/\#permissions}} (engl. für Erlaubnis oder Befugnis), beziehungsweise von OAuth 2.0 \enquote{Scope} (engl. für Geltungsbereich) genannt, angegeben werden muss. Die für SOCC wichtigen Permissons sind in der Tabelle \ref{tbl:socc_facebook_persmissons} beschrieben.
 
@@ -128,10 +140,60 @@ Jeder Accesstoken hat nur Zugriff auf bestimmte Bereiche der Graph API die beim 
     \label{tbl:socc_facebook_persmissons}
 \end{table}
 
+Um nun einen Accesstoken für einen Benutzer zu Erstellen muss in einen Internetbrowser folgende URI aufgerufen werden:
+
+\begin{lstlisting}[
+    caption={Facebook Login: OAuth URI}\label{lst:fblogin__oauth_uri},
+    captionpos=t]
+https://www.facebook.com/dialog/oauth?client_id={appId}   &redirect_uri={redirectUri}&responseType=code&scope={scopeList}
+\end{lstlisting}
+
+Anstatt den Platzhalter \texttt{\{appId\}} muss dann natürlich die oben angesprochene ClientID beziehungsweise App ID eingetragen werden. Mit dem Parameter \texttt{redirect\_uri} muss bei dieser URI eine Adresse angegeben werden, auf die der Internetbrowser nach der Anfrage mit der Antwort umgeleitet wird. Dies kann die Adresse eines externen Webservers oder die eines Webservers den die Anwendung nur für diesen Zweck laufen lässt. Einen solchen extra Webserver könnte man mit der Jetty\footnote{\url{http://www.eclipse.org/jetty}} Bibliothek erstellen und würde dann als \texttt{redirect\_uri} die URI \texttt{http://localhost:{port}/} angeben. Der Parameter \texttt{responseType=code} besagt, dass diese Anfrage einen Code zurück liefert mit dem dann der eigentliche AccessToken geholt werden kann. Dies ist der Standardweg. Mit dem letzten Parameter \texttt{scope} können dann noch die oben erwähnten Permissons übergeben werden, wobei alle durch eine Komma getrennt hintereinander zu schreiben sind. Wird dann diese URI im Browser aufgerufen, wird er danach bei Erfolg auf die Adresse \texttt{{redirectUri}?code={code}} umgeleitet. Der Platzhalter \texttt{\{code\}} würde dann einen beliebigen Code darstellen, mit dem über eine weitere Anfrage mit der folgenden URI der Accesstoken geholt werden kann:
+
+\begin{lstlisting}[
+    caption={Facebook Login: URI für den Tausch von Code genen Accesstoken}\label{lst:fblogin_tausch_code_gegen_accessToken},
+    captionpos=t]
+https://www..facebook.com/oauth/access_token?client_id={appId}&redirect_uri={redirectUri}&client_secret={appSecret}&code={code}
+\end{lstlisting}
+
+Der Platzhalter \texttt{\{appId\}} und \texttt{\{appSecret\}} entsprechen wieder der ClientID und Client Secret. Bei dieser URI ist es sehr wichtig, dass \texttt{\{redirectUri\}} den selben Wert hat, wie er weiter oben angegeben wurde. Für \texttt{\{code\}} muss dann noch der oben zurückgeliefert Code angegeben werden. Die Anfrage mit dieser URI muss dann nicht über einen Internetbrowser geschehen sondern kann normal aus einen Programm erfolgen. Als Antwort wird dem Programm dann dies \texttt{access\_token={accessToken}\&expires={secondsTilExpiration}} zurück geliefert. Der Wert des Parameters \texttt{access\_token} ist der gewollte Accesstoken und der Wert von \texttt{expires} ist die Haltbarkeit des Accesstokens in Sekunden.
+
+Soll nun die Haltbarkeitsdauer des Tokens auf zwei Monate verlängert werden muss eine neue Anfrage an die folgende URI gemacht werden:
+
+\begin{lstlisting}[
+    caption={Facebook Login: Extended Accesstoken}\label{lst:fblogin_extendet_accesstoken},
+    captionpos=t]
+https://www.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id={appId}&client_secret={app-secret}&fb_exchange_token={accessToken}
+\end{lstlisting} 
+
+Die Werte für die einzelnen Parameter dürften nun offensichtlich sein. Als Antwort kommt dann ein Accesstoken mit verlängerter Haltbarkeit zurück. Dabei kann es passieren, dass er genau so aussieht wie der alte, was aber kein Problem darstellt.
+
+% paragraph facebook_login (end)
+
 % subsubsection facebook_graph_api (end)
 
 \subsubsection{RestFB} % (fold)
 \label{ssub:restfb}
+
+Facebook selber bietet direkt keine API für die Verwendung der Graph API für Desktopprogramme an. Speziell für die Programmiersprache Java existiert von Facebook nur eine API für das mobile Betriebssystem Android\footnote{\url{https://developers.facebook.com/docs/android/}}. Als Alternative dazu kann die \emph{RestFB} Java-Bibliothek von Mark Allen verwendet werden \cite{MarkAllenRestFB}. RestFB bietet dabei die Möglichkeit von Java aus die Graph API von Facebook zu benutzen. Eine Abfrage könnte wie in Listing \ref{lst:restfb_beispielprogramm} aussehen.
+
+\begin{lstlisting}[
+    caption={RestFB Beispielprogramm}\label{lst:restfb_beispielprogramm},
+    captionpos=t]
+FacebookClient facebookClient = new DefaultFacebookClient(USER_ACCESS_TOKEN);
+
+User user = facebookClient.fetchObject("me", User.class);
+System.out.println("User name: " + user.getName());
+
+Connection<Post> myFeed = facebookClient.fetchConnection("me/feed", Post.class);
+for (List<Post> feedPage : myFeed){
+    for (Post post : feedpage){
+        System.out.println("Post: " + post);
+    }
+}
+\end{lstlisting} 
+
+In Zeile 1 wird eine Objekt der Klasse \texttt{FacebookClient} mit einem Accesstoken als Argument erstellt über dem die Methoden für die Abfragen aufgerufen werden können. Die Zeile 3 zeigt eine solche Abfrage nach den Benutzerdaten für den aktuell angemeldeten Benutzer mit der speziellen ID \enquote{me}. Der Anfangsteil der URI für die Graph API \texttt{https://graph.facebook.com/} muss dabei weggelassen werden. Zurück gegeben wird ein Objekt der Klasse \texttt{User} und damit wird dann der Benutzername ausgegeben. Die Angabe der Klasse mit \texttt{User.class} ist ebenfalls wichtig, so dass RestFB weiß in welche Klasse es die von der Graph API zurückgelieferten JSON-Daten konvertieren soll. Zeile 6 zeigt noch wie man an die Daten einer Connection, hier der Beiträge auf der Wall des aktuellen Benutzers, gelangen kann. Enthält eine Antwort eine Liste mit zu vielen Einträgen, wird die Antwort auf mehrere Seiten aufgeteilt und ein Verweis auf die nächste Seite der aktuellen Seite mitgegeben. Die Klasse \texttt{Connection} sorgt dann alleine dafür, dass die neue Seite gelesen wird, wenn die alte abgearbeitet wurde. Die erste For-Schleife in Zeile 7 iteriert dann über alle vorhandenen Seiten und die zweite in Zeile 8 über alle Einträge auf der aktuellen Seite.
 
 % subsubsection restfb (end)
 

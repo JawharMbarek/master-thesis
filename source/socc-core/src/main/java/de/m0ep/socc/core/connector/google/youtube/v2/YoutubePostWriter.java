@@ -50,133 +50,139 @@ import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
 import de.m0ep.socc.core.utils.UserAccountUtils;
 
 public class YoutubePostWriter extends
         DefaultConnectorIOComponent<YoutubeConnector> implements
         IPostWriter<YoutubeConnector> {
-	private static final Logger LOG = LoggerFactory.getLogger( YoutubePostWriter.class );
+    private static final Logger LOG = LoggerFactory
+            .getLogger(YoutubePostWriter.class);
 
-	public YoutubePostWriter( YoutubeConnector connector ) {
-		super( connector );
-	}
+    public YoutubePostWriter(YoutubeConnector connector) {
+        super(connector);
+    }
 
-	@Override
-	public void writePost( URI targetUri, String rdfString, Syntax syntax )
-	        throws NotFoundException,
-	        AuthenticationException,
-	        IOException {
-		boolean isVideo = YoutubeSiocUtils.isVideoUri( targetUri );
-		boolean isComment = YoutubeSiocUtils.isCommentUri( targetUri );
+    @Override
+    public void writePost(URI targetUri, String rdfString, Syntax syntax)
+            throws NotFoundException,
+            AuthenticationException,
+            IOException {
+        boolean isVideo = YoutubeSiocUtils.isVideoUri(targetUri);
+        boolean isComment = YoutubeSiocUtils.isCommentUri(targetUri);
 
-		if ( isVideo || isComment ) {
-			Model tmpModel = RDFTool.stringToModel( rdfString, syntax );
-			ClosableIterator<Resource> postIter = Post
-			        .getAllInstances( tmpModel );
-			try {
-				while ( postIter.hasNext() ) {
-					Resource resource = postIter.next();
-					Post post = Post.getInstance( tmpModel, resource );
+        if (isVideo || isComment) {
+            Model tmpModel = RDFTool.stringToModel(rdfString, syntax);
+            ClosableIterator<Resource> postIter = Post
+                    .getAllInstances(tmpModel);
+            try {
+                while (postIter.hasNext()) {
+                    Resource resource = postIter.next();
+                    Post post = Post.getInstance(tmpModel, resource);
 
-					// skip all posts that are already forwarded from this site
-					if ( SoccUtils.hasContentWatermark(
-					        getConnector().getStructureReader().getSite(),
-					        post.getContent() ) ) {
-						continue;
-					}
+                    // skip all posts that are already forwarded from this site
+                    if (SoccUtils.hasContentWatermark(
+                            getConnector().getStructureReader().getSite(),
+                            post.getContent())) {
+                        continue;
+                    }
 
-					YoutubeClientWrapper client = null;
-					String content = post.getContent();
+                    YoutubeClientWrapper client = null;
+                    String content = post.getContent();
 
-					UserAccount creatorAccount = UserAccount.getInstance(
-					        getModel(),
-					        post.getCreator().getResource() );
-					if ( null != creatorAccount ) {
-						try {
-							UserAccount serviceAccount = UserAccountUtils.findUserAccountOfService(
-							        getModel(),
-							        creatorAccount,
-							        getConnector().getService() );
+                    UserAccount creatorAccount = UserAccount.getInstance(
+                            getModel(),
+                            post.getCreator().getResource());
+                    if (null != creatorAccount) {
+                        try {
+                            UserAccount serviceAccount = UserAccountUtils
+                                    .findUserAccountOfService(
+                                            getModel(),
+                                            creatorAccount,
+                                            getConnector().getService());
 
-							client = getConnector().getClientManager().get( serviceAccount );
-						} catch ( Exception e ) {
-							LOG.warn( "", e );
-							LOG.debug( "No client found for UserAccount {}", creatorAccount );
-							client = null;
-						}
-					}
+                            client = getConnector().getClientManager().get(
+                                    serviceAccount);
+                        } catch (Exception e) {
+                            LOG.warn("", e);
+                            LOG.debug("No client found for UserAccount {}",
+                                    creatorAccount);
+                            client = null;
+                        }
+                    }
 
-					if ( null == client ) {
-						LOG.debug( "Using default client" );
-						client = getConnector().getClientManager().getDefaultClient();
-						content = PostWriterUtils.formatUnknownMessage(
-						        getConnector(),
-						        post );
-					}
+                    if (null == client) {
+                        LOG.debug("Using default client");
+                        client = getConnector().getClientManager()
+                                .getDefaultClient();
+                        content = SoccUtils.formatUnknownMessage(
+                                getConnector(),
+                                post);
+                    }
 
-					if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
-						// add watermark for 'already forwarded' check
-						content = SoccUtils.addContentWatermark( post.getIsPartOf(), content );
-					}
+                    if (!SoccUtils.hasAnyContentWatermark(content)) {
+                        // add watermark for 'already forwarded' check
+                        content = SoccUtils.addContentWatermark(post
+                                .getIsPartOf(), content);
+                    }
 
-					CommentEntry entry = new CommentEntry();
-					entry.setContent( new PlainTextConstruct( content ) );
+                    CommentEntry entry = new CommentEntry();
+                    entry.setContent(new PlainTextConstruct(content));
 
-					if ( isComment ) {
-						entry.getLinks().add(
-						        new Link( YouTubeNamespace.IN_REPLY_TO,
-						                "application/atom+xml",
-						                targetUri.toString() ) );
-					}
+                    if (isComment) {
+                        entry.getLinks().add(
+                                new Link(YouTubeNamespace.IN_REPLY_TO,
+                                        "application/atom+xml",
+                                        targetUri.toString()));
+                    }
 
-					// find video ID by regular expression
-					Pattern pattern = Pattern
-					        .compile( YoutubeSiocUtils.REGEX_VIDEO_URI );
-					Matcher matcher = pattern.matcher( targetUri.toString() );
+                    // find video ID by regular expression
+                    Pattern pattern = Pattern
+                            .compile(YoutubeSiocUtils.REGEX_VIDEO_URI);
+                    Matcher matcher = pattern.matcher(targetUri.toString());
 
-					if ( matcher.find() ) {
-						CommentEntry result = null;
-						try {
-							result = client.getService().insert(
-							        new URL(
-							                YoutubeSiocUtils.createVideoUri(
-							                        matcher.group( 1 ) )
-							                        .toString()
-							                        + "/comments" ),
-							        entry );
-						} catch ( MalformedURLException e ) {
-							// shouldn't happened
-							Throwables.propagate( e );
-						} catch ( ServiceException e ) {
-							YoutubeConnector.handleYoutubeExceptions( e );
-						}
+                    if (matcher.find()) {
+                        CommentEntry result = null;
+                        try {
+                            result = client.getService().insert(
+                                    new URL(
+                                            YoutubeSiocUtils.createVideoUri(
+                                                    matcher.group(1))
+                                                    .toString()
+                                                    + "/comments"),
+                                    entry);
+                        } catch (MalformedURLException e) {
+                            // shouldn't happened
+                            Throwables.propagate(e);
+                        } catch (ServiceException e) {
+                            YoutubeConnector.handleYoutubeExceptions(e);
+                        }
 
-						if ( null != result ) {
-							Post parentPost = getConnector().getPostReader()
-							        .getPost( targetUri );
-							Post resultPost = YoutubeSiocUtils.createSiocPost(
-							        getConnector(),
-							        result,
-							        parentPost );
+                        if (null != result) {
+                            Post parentPost = getConnector().getPostReader()
+                                    .getPost(targetUri);
+                            Post resultPost = YoutubeSiocUtils.createSiocPost(
+                                    getConnector(),
+                                    result,
+                                    parentPost);
 
-							resultPost.setSibling( post );
+                            resultPost.setSibling(post);
 
-							return;
-						} else {
-							LOG.warn( "Failed to write post(s) to uri " + targetUri );
-						}
-					}
-				}
-			} finally {
-				postIter.close();
-				tmpModel.close();
-			}
-		}
-		throw new IOException(
-		        "Failed to write post to target uri "
-		                + targetUri
-		                + ", it's neither a conainer nor a post od comment" );
-	}
+                            return;
+                        } else {
+                            LOG.warn("Failed to write post(s) to uri "
+                                    + targetUri);
+                        }
+                    }
+                }
+            } finally {
+                postIter.close();
+                tmpModel.close();
+            }
+        }
+        throw new IOException(
+                "Failed to write post to target uri "
+                        + targetUri
+                        + ", it's neither a conainer nor a post od comment");
+    }
 }

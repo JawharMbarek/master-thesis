@@ -33,28 +33,28 @@ import de.m0ep.socc.core.acl.IAccessControl;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
 public class SoccContext implements ISoccContext {
-	private final Model model;
-	private final IAccessControl accessControl;
+    private final Model model;
+    private final IAccessControl accessControl;
 
-	public SoccContext( final Model model ) throws AuthenticationException,
-	        IOException {
-		this.model = Preconditions.checkNotNull(
-		        model,
-		        "Required parameter model must be specified." );
-		Preconditions.checkArgument(
-		        model.isOpen(),
-		        "Required paramater model is not open" );
+    public SoccContext(final Model model) throws AuthenticationException,
+            IOException {
+        this.model = Preconditions.checkNotNull(
+                model,
+                "Required parameter model must be specified.");
+        Preconditions.checkArgument(
+                model.isOpen(),
+                "Required paramater model is not open");
 
-		accessControl = new AccessControl( this.model );
-	}
+        accessControl = new AccessControl(this.model);
+    }
 
-	@Override
-	public Model getModel() {
-		return model;
-	}
+    @Override
+    public Model getModel() {
+        return model;
+    }
 
-	@Override
-	public IAccessControl getAccessControl() {
-		return accessControl;
-	}
+    @Override
+    public IAccessControl getAccessControl() {
+        return accessControl;
+    }
 }

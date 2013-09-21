@@ -23,170 +23,160 @@
 package de.m0ep.socc.core.connector.google.youtube.v2;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.rdfs.sioc.Container;
-import org.rdfs.sioc.Item;
+import org.ontoware.aifbcommons.collection.ClosableIterator;
+import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.Syntax;
+import org.ontoware.rdf2go.model.node.Resource;
+import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.damnhandy.uri.template.UriTemplate;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.gdata.data.Link;
 import com.google.gdata.data.PlainTextConstruct;
 import com.google.gdata.data.youtube.CommentEntry;
 import com.google.gdata.data.youtube.YouTubeNamespace;
 import com.google.gdata.util.ServiceException;
-import com.xmlns.foaf.Person;
 
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
+import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
+import de.m0ep.socc.core.utils.SoccUtils;
+import de.m0ep.socc.core.utils.UserAccountUtils;
 
 public class YoutubePostWriter extends
-        DefaultConnectorIOComponent<YoutubeConnector> implements IPostWriter<YoutubeConnector> {
-	private static final Logger LOG = LoggerFactory
-	        .getLogger( YoutubePostWriter.class );
+        DefaultConnectorIOComponent<YoutubeConnector> implements
+        IPostWriter<YoutubeConnector> {
+	private static final Logger LOG = LoggerFactory.getLogger( YoutubePostWriter.class );
 
 	public YoutubePostWriter( YoutubeConnector connector ) {
 		super( connector );
 	}
 
 	@Override
-	public boolean canPostTo( Container container ) {
-		return false;
-	}
-
-	@Override
-	public void writePost( Post post, Container container )
-	        throws AuthenticationException,
+	public void writePost( URI targetUri, String rdfString, Syntax syntax )
+	        throws NotFoundException,
+	        AuthenticationException,
 	        IOException {
-		throw new UnsupportedOperationException(
-		        "Can't write posts to containers with this service." );
-	}
+		boolean isVideo = YoutubeSiocUtils.isVideoUri( targetUri );
+		boolean isComment = YoutubeSiocUtils.isCommentUri( targetUri );
 
-	@Override
-	public boolean canReplyTo( Post post ) {
-		return post.toString().startsWith( getServiceEndpoint().toString() )
-		        &&
-		        post.hasId()
-		        &&
-		        ( post.getId().startsWith( YoutubeSiocConverter.VIDEO_ID_PREFIX ) ||
-		        post.getId().startsWith( YoutubeSiocConverter.COMMENT_ID_PREFIX ) );
-	}
+		if ( isVideo || isComment ) {
+			Model tmpModel = RDFTool.stringToModel( rdfString, syntax );
+			ClosableIterator<Resource> postIter = Post
+			        .getAllInstances( tmpModel );
+			try {
+				while ( postIter.hasNext() ) {
+					Resource resource = postIter.next();
+					Post post = Post.getInstance( tmpModel, resource );
 
-	@Override
-	public void writeReply( Post replyPost, Post parentPost )
-	        throws AuthenticationException,
-	        IOException {
-		Preconditions.checkNotNull( replyPost,
-		        "Required parameter replyPost must be specified." );
-		Preconditions.checkNotNull( parentPost,
-		        "Required parameter parentPost must be specified." );
-		Preconditions.checkArgument( parentPost.hasId(),
-		        "The parameter parentPost has no id." );
+					// skip all posts that are already forwarded from this site
+					if ( SoccUtils.hasContentWatermark(
+					        getConnector().getStructureReader().getSite(),
+					        post.getContent() ) ) {
+						continue;
+					}
 
-		LOG.debug( "Fetch creator UserAccount of replyPost" );
-		UserAccount creatorAccount = replyPost.getCreator();
-		Person creatorPerson = PostWriterUtils.getPersonOfCreatorOrNull(
-		        getConnector(), creatorAccount );
+					YoutubeClientWrapper client = null;
+					String content = post.getContent();
 
-		YoutubeClientWrapper client = null;
-		if ( null != creatorPerson ) {
-			UserAccount serviceAccount = PostWriterUtils
-			        .getServiceAccountOfPersonOrNull(
-			                getConnector(),
-			                creatorPerson,
-			                getServiceEndpoint() );
-			if ( null != serviceAccount ) {
-				client = (YoutubeClientWrapper) PostWriterUtils
-				        .getClientOfServiceAccountOrNull(
-				                getConnector(),
-				                serviceAccount );
+					UserAccount creatorAccount = UserAccount.getInstance(
+					        getModel(),
+					        post.getCreator().getResource() );
+					if ( null != creatorAccount ) {
+						try {
+							UserAccount serviceAccount = UserAccountUtils.findUserAccountOfService(
+							        getModel(),
+							        creatorAccount,
+							        getConnector().getService() );
+
+							client = getConnector().getClientManager().get( serviceAccount );
+						} catch ( Exception e ) {
+							LOG.warn( "", e );
+							LOG.debug( "No client found for UserAccount {}", creatorAccount );
+							client = null;
+						}
+					}
+
+					if ( null == client ) {
+						LOG.debug( "Using default client" );
+						client = getConnector().getClientManager().getDefaultClient();
+						content = PostWriterUtils.formatUnknownMessage(
+						        getConnector(),
+						        post );
+					}
+
+					if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
+						// add watermark for 'already forwarded' check
+						content = SoccUtils.addContentWatermark( post.getIsPartOf(), content );
+					}
+
+					CommentEntry entry = new CommentEntry();
+					entry.setContent( new PlainTextConstruct( content ) );
+
+					if ( isComment ) {
+						entry.getLinks().add(
+						        new Link( YouTubeNamespace.IN_REPLY_TO,
+						                "application/atom+xml",
+						                targetUri.toString() ) );
+					}
+
+					// find video ID by regular expression
+					Pattern pattern = Pattern
+					        .compile( YoutubeSiocUtils.REGEX_VIDEO_URI );
+					Matcher matcher = pattern.matcher( targetUri.toString() );
+
+					if ( matcher.find() ) {
+						CommentEntry result = null;
+						try {
+							result = client.getService().insert(
+							        new URL(
+							                YoutubeSiocUtils.createVideoUri(
+							                        matcher.group( 1 ) )
+							                        .toString()
+							                        + "/comments" ),
+							        entry );
+						} catch ( MalformedURLException e ) {
+							// shouldn't happened
+							Throwables.propagate( e );
+						} catch ( ServiceException e ) {
+							YoutubeConnector.handleYoutubeExceptions( e );
+						}
+
+						if ( null != result ) {
+							Post parentPost = getConnector().getPostReader()
+							        .getPost( targetUri );
+							Post resultPost = YoutubeSiocUtils.createSiocPost(
+							        getConnector(),
+							        result,
+							        parentPost );
+
+							resultPost.setSibling( post );
+
+							return;
+						} else {
+							LOG.warn( "Failed to write post(s) to uri " + targetUri );
+						}
+					}
+				}
+			} finally {
+				postIter.close();
+				tmpModel.close();
 			}
 		}
-
-		String content = replyPost.getContent();
-		if ( null == client ) { // No client found, get default one an adapt
-			                    // message content
-			client = getConnector().getServiceClientManager()
-			        .getDefaultClient();
-			content = PostWriterUtils.createContentOfUnknownAccount(
-			        replyPost,
-			        creatorAccount,
-			        creatorPerson );
-		}
-
-		String videoId = getParentVideoId( parentPost );
-		String commentsUri = UriTemplate.fromTemplate(
-		        "http://gdata.youtube.com/feeds/api/videos/{videoId}/comments" )
-		        .set( "videoId", videoId )
-		        .expand(); // FIXME: magic strings
-
-		CommentEntry insertEntry = new CommentEntry();
-		insertEntry.setContent( new PlainTextConstruct( content ) );
-
-		if ( parentPost.getId().startsWith(
-		        YoutubeSiocConverter.COMMENT_ID_PREFIX ) ) {
-			String commentId = parentPost.getId().substring(
-			        parentPost.getId().lastIndexOf(
-			                YoutubeSiocConverter.ID_SEPERATOR ) + 1 );
-
-			String replyToUri = UriTemplate
-			        .fromTemplate(
-			                "http://gdata.youtube.com/feeds/api/videos/{videoId}/comments/{commentId}" )
-			        .set( "videoId", videoId )
-			        .set( "commentId", commentId )
-			        .expand(); // FIXME: magic strings
-
-			insertEntry.getLinks().add( new Link( YouTubeNamespace.IN_REPLY_TO,
-			        "application/atom+xml",
-			        replyToUri ) );
-		}
-
-		CommentEntry resultEntry = null;
-		try {
-			getConnector().waitForCooldown();
-			resultEntry = client.getService()
-			        .insert(
-			                new URL( commentsUri ),
-			                insertEntry );
-			LOG.debug( "Write post {} to {}", replyPost, commentsUri );
-		} catch ( com.google.gdata.util.AuthenticationException e ) {
-			throw new AuthenticationException( e );
-		} catch ( ServiceException e ) {
-			throw Throwables.propagate( e );
-		}
-
-		if ( null != resultEntry ) {
-			Post resultPost = YoutubeSiocConverter.createSiocPost(
-			        getConnector(),
-			        resultEntry,
-			        parentPost );
-
-			resultPost.addSibling( parentPost );
-			parentPost.addSibling( resultPost );
-		}
-	}
-
-	private String getParentVideoId( Post post ) {
-		Item replyOf = post;
-		do {
-			if ( replyOf.getId()
-			        .startsWith( YoutubeSiocConverter.VIDEO_ID_PREFIX ) ) {
-				return replyOf.getId().substring(
-				        replyOf.getId().lastIndexOf(
-				                YoutubeSiocConverter.ID_SEPERATOR ) + 1 );
-			}
-
-			replyOf = ( replyOf.hasReplyOf() ) ? ( replyOf.getReplyOf() ) : ( null );
-		} while ( null != replyOf );
-
-		throw new IllegalArgumentException(
-		        "Couldn't found the id of the parent video." );
+		throw new IOException(
+		        "Failed to write post to target uri "
+		                + targetUri
+		                + ", it's neither a conainer nor a post od comment" );
 	}
 }

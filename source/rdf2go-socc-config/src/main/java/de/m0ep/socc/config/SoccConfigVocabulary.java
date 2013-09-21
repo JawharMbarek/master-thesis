@@ -44,4 +44,17 @@ public interface SoccConfigVocabulary {
 	 */
 	public static final URI service = new URIImpl( "http://www.m0ep.de/socc/config#service", false );
 
+	/**
+	 * Comment: http://www.m0ep.de/socc/config#messageTemplate Range:
+	 * http://www.w3.org/2001/XMLSchema#string
+	 */
+	public static final URI unknownMessageTemplate = new URIImpl(
+	        "http://www.m0ep.de/socc/config#unknownMessageTemplate",
+	        false );
+	/**
+	 * Comment: http://www.m0ep.de/socc/config#mappedTo Range:
+	 * http://rdfs.org/sioc/ns#UserAccount
+	 */
+	public static final URI MAPPED_TO = new URIImpl(
+	        "http://www.m0ep.de/socc/config#mappedTo", false );
 }

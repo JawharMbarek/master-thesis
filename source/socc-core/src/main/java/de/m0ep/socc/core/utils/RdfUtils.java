@@ -36,6 +36,7 @@ import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.model.node.Variable;
 import org.ontoware.rdf2go.model.node.impl.URIImpl;
+import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.ontoware.rdf2go.vocabulary.RDF;
 import org.ontoware.rdfreactor.runtime.ReactorRuntimeEntity;
@@ -50,9 +51,6 @@ import com.google.common.collect.Lists;
  */
 public final class RdfUtils {
 
-	/**
-	 * Private constructor, because this class has only static methods.
-	 */
 	private RdfUtils() {
 	}
 
@@ -278,5 +276,26 @@ public final class RdfUtils {
 	 */
 	public static String modelToString( final Model model ) {
 		return modelToString( model, Syntax.RdfXml );
+	}
+
+	/**
+	 * Removes '/' character at the end of an URI, if there is any.
+	 * 
+	 * @param uri
+	 *            Uri to normalize
+	 * @return Normalized URI
+	 * @throws NullPointerException
+	 *             Thrown if <code>uri</code> is <code>null</code>.
+	 */
+	public static URI normalizeUri( final URI uri ) {
+		Preconditions.checkNotNull( uri,
+		        "Required parameter uri must be specified." );
+
+		String uriString = uri.toString();
+		if ( uriString.endsWith( "/" ) ) {
+			return Builder.createURI( uriString.substring( 0, uriString.length() - 1 ) );
+		}
+
+		return uri;
 	}
 }

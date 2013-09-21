@@ -1,0 +1,209 @@
+%!TEX root = ../thesis.tex
+
+\chapter{Analyse} % (fold)
+\label{cha:analyse}
+
+%\todo[inline]{Inhalt: wass gibt es, was muss neu gemacht werden}
+\todo[inline]{Aufteilen in Szenarien: Datenaustausch, Übertragung...}
+
+Bevor nun ein System entwickelt werden kann, das die Synchronisation von Diskussionen auf Lernplattformen und sozialen Online-Netzwerken ermöglicht, muss erst analysiert werden, welche Aufgaben das System erfüllen muss und welche Techniken dafür geeignet sind. Alle diese Schritte sollen im folgenden Abschnitt an einen kleinen Beispiel gezeigt werden.
+
+\section{Ein Beispiel} % (fold)
+\label{sec:analyse_beispiel}
+
+% section neuen_beitrag_verfassen (end)
+Am Anfang muss irgendjemand auf einer Webseite einen Beitrag schreiben der synchronisiert werden kann. Zum Beispiel geht ein Student in das Forum seiner Veranstaltung auf der Webseite A und in den Thread zur aktuellen Übung, weil er zu ihr eine Frage hat. Er schreibt also einen neuen Beitrag in das Eingabefeld und schickt es ab. Dieser wird dann an die Webseite A geschickt, im dortigen Format (Format A) in eine Datenbank oder Ähnliches geschrieben und als neuer Beitrag im Thread angezeigt (siehe Abbildung \ref{fig:beutzer_erstellt_beitrag_a}). Da eine andere Webseite B das Format von Webseite A in der Regel nicht versteht, muss in einen nächsten Schritt der Beitrag aus der Datenbank gelesen und auf irgendeine Art konvertiert werden. 
+
+\begin{figure}[ht]
+     \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true,
+        clip=true,
+        trim= 0 338 0 27
+    ]{assets/images/activitydiagram_post_as_user_check_authorization.pdf}
+    \caption{Benutzer erstellt einen Beitrag im sozialen Netzwerk A.}
+    \label{fig:beutzer_erstellt_beitrag_a}
+\end{figure}
+
+\subsection{Beiträge lesen und konvertieren} % (fold)
+\label{sub:beiträge_lesen_und_konvertieren}
+
+Abbildung \ref{fig:lesen_von_beitrag_und_convertieren} zeigt den Ablauf, wie Beiträge von der Webseite A gelesen, konvertiert und weiterverarbeitet werden. Dazu müssen zuerst die Daten über eine öffentliche API vom Server des Webseite A heruntergeladen werden. Da im Allgemeinen nicht automatisch bekannt ist, wann ein neuer Beitrag vorhanden ist, müssen die Server in zeitlichen Abständen abgefragt (\emph{Polling} genannt) und die zurückgelieferten Daten nach neuen Beiträgen durchsucht werden. Sind ein oder mehrere neue Beiträge gefunden worden, können diese nicht direkt an die Webseite B geschickt werden, da sich diese in der Regel im verwendeten Datenformat unterscheiden. Diese müssen zuvor konvertiert werden.
+
+Die einfachste Möglichkeit wäre die Daten von Webseite A, die in Format A vorliegen, in das Format B von Webseite B zu konvertieren. Bei zwei Formaten ist dies noch sehr einfach. Es müsste lediglich ein Konverter von Format A nach Format B und einer in die umgekehrte Richtung implementiert werden. Für den Fall, dass ein weiteres Webseite C unterstützt werden soll, würde ich die Anzahl an notwendigen Konvertern , wie Tabelle \ref{tbl:anzahl_konvertern_bei_drei_netzwerken} zeigt, auf Sechs erhöhen.
+
+\begin{table}[ht]
+    \centering
+    \caption{Anzahl Konverter bei drei Webseiten}
+    
+    \begin{tabular}{c|c|c|c|c}
+        % Zeile 1
+        \multicolumn{2}{c|}{\multirow{2}{*}{}} & 
+        \multicolumn{3}{|c}{\textbf{Nach}}   \\ 
+        \cline{3-5} 
+
+        % Zeile 2
+        \multicolumn{2}{c|}{} & 
+        \textbf{Webseite A} & 
+        \textbf{Webseite B} & 
+        \textbf{Webseite C} \\ 
+        \hline
+
+        % Zeile 3
+        \multirow{3}{*}{Von} & 
+        \textbf{Webseite A} & 
+        -&            
+        $ \times $ &            
+        $ \times $ \\ 
+        \cline{2-5} 
+
+        % Zeile 4
+        & 
+        \textbf{Webseite B} &            
+        $ \times $ &            
+        -&            
+        $ \times $ \\ 
+        \cline{2-5} 
+         
+        % Zeile 5
+        & 
+        \textbf{Webseite C} &            
+        $ \times $ &            
+        $ \times $ &            
+        -\\
+    \end{tabular}
+    \label{tbl:anzahl_konvertern_bei_drei_netzwerken}
+\end{table}
+
+Nimmt man an $n_{ws}$ sei eine beliebige Anzahl sozialer Netzwerke, entspricht die Anzahl der notwendiger Konverter $ n_{k1} = n_{ws}*(n_{ws}-1) $, da für jedes Netzwerk ein Konverter in alle anderen Netzwerke erzeugt werden muss. Sollen nur Zwei oder Drei Netzwerke unterstützt werden ist der Aufwand noch sehr überschaubar, bei mehr kann dies aber sehr Aufwendig werden. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[
+        width=0.7\textwidth,
+        keepaspectratio=true
+    ]{assets/images/interlingua_vs_allvsall}
+    \caption{Komplexität ohne und mit dem Einsatz eines Zwischenformats - Originalbild: \cite{Uschold1996a}}
+    \label{fig:interlingua_vs_all}
+\end{figure}
+
+Eine elegantere Methode für die Lösung dieses Problems, welche die Anzahl zu implementierender Konverter in Grenzen halten kann, wäre die Einführung eines Zwischenformates (auch Inter-Lingua, in Abbildung \ref{fig:lesen_von_beitrag_und_convertieren} als \enquote{IM Format} bezeichnet) \cite[S.\,9]{Uschold1996a}. Geht man davon aus, dass die Daten aller Webseiten nur in dieses Zwischenformat geschrieben und aus diesem gelesen werden müssen, würde sich der Aufwand auf maximal zwei Konverter je Webseite reduzieren. Für eine beliebige Anzahl Webseiten wären also $ n_{k2} = n_{ws} * 2 $ Konverter nötig. Nachteile hätte dieser Ansatz nur für $ n_{ws} = 2 $ und $ n_{ws}=3$ , da in diesen Fällen mehr beziehungsweise gleich viele Konverter gegenüber der ersten Methode erforderlich wären. Erhöht man die Anzahl Webseiten jedoch nur geringfügig, sinkt die Menge an Konvertern sichtbar. Für $ n_{ws} = 4 $ wären es $ n_{k2} = 8 $ statt $ n_{k1} = 12 $ (siehe Abbildung \ref{fig:interlingua_vs_all}) und für $ n_{ws} = 5 $ ergibt sich $ n_{k2} = 10 $ statt $ n_{k1} = 20 $ Konvertern. Gleichzeitig können so syntaktische Unterschiede in den einzelnen Formaten angeglichen werden, was sie leichter handhabbar macht. 
+
+\begin{figure}[ht]
+    \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true,
+        clip=true,
+        trim= 0 193 0 113
+    ]{assets/images/activitydiagram_post_as_user_check_authorization.pdf}
+    \caption{Lesen des erstellten Beitrags und konvertieren in das Zwischenformat.}
+% section beiträge_von_solzialen_netzwerk_a_lesen (end)
+    \label{fig:lesen_von_beitrag_und_convertieren}
+\end{figure}
+
+Bei der automatischen Sammlung von benutzergenerierten Inhalten stellt sich immer die Frage der Privatsphäre. Nicht jeder möchte, dass vielleicht sensible Informationen von ihnen weitergegeben werden. Aus diesem Grund ist die Einführung eines Mechanismus sinnvoll mit dem ein Benutzer das Lesen seiner Beiträge komplett erlaubt oder auf bestimmte Seiten, Foren oder nur für einzelne Threads beschränkt \cite{Bojars2011}. Sollte eine solche Erlaubnis nicht vorliegen, wird der gelesene Beitrag verworfen.
+
+Da das Eintreffen neuer Beitrage nicht vorhersagbar ist, ist es angebracht beim Synchronisieren das Lesen und Schreiben zeitlich zu entkoppeln. Eine der weit verbreitetsten Techniken dazu ist das Versenden von Nachrichten über einen Nachrichtenkanal den die schreibende Komponente nach neuen Beiträgen abhört. Diesen Kanal können mehrere Gleichzeitig abhören und stellen so eine gute Flexibilität sicher. 
+
+% subsection beiträge_lesen_und_konvertieren (end)
+
+\subsection{Beiträge in eine andere Webseite schreiben} % (fold)
+\label{sub:beiträge_in_eine_andere_webseite_schreiben}
+
+
+Empfängt nun eine Komponente, die für das Schreiben zuständig ist, eine Nachricht von einen neuen Beitrags der Webseite A ist der Ablauf ähnlich wie beim Lesen nur in umgekehrter Reihenfolge (Siehe Abbildung \ref{fig:konvertieren_formatb_und_schreiben} links, oberer Ablauf). Der neue Beitrag wird vor dem Schreiben aus dem Zwischenformat in das Format B konvertiert. Da bei einer Synchronisation vom Vorteil wäre, wenn der synchronisierte Beitrag so aussehen würde, als hätte ihn der original Autor geschrieben. Hierzu muss das System Zugriff auf die Benutzerkonto haben und diese in einer Datenbank verwalten. Dort kann dann nach einen passenden Benutzerkonto des Autors gesucht und dieses dann zum Schreiben verwendet werden. Steht ein solches Benutzerkonto nicht zur Verfügung, ist das Ausweichen auf ein vorgegebenes Benutzerkonto hilfreich. Manche Benutzer sind vielleicht damit einverstanden, dass ihre Beiträge weitergegeben werden, aber nicht dass andere Programme automatisch in ihren Namen Beiträge schreiben. Deswegen ist wichtig davor noch einmal zu prüfen, ob eine entsprechende Erlaubnis gegen wurde. Sind alle Voraussetzungen gegeben, kann der Beitrag über das ausgewählte Benutzerkonto auf die Webseite B geschrieben werden.
+
+\begin{figure}[ht]
+     \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true,
+        clip=true,
+        trim= 0 0 0 257
+    ]{assets/images/activitydiagram_post_as_user_check_authorization.pdf}
+    \caption{Konvertierten des Beitrags in das Format B und schreiben n das soziale Netzwerk B}
+    \label{fig:konvertieren_formatb_und_schreiben}
+\end{figure}
+
+% subsection beiträge_in_eine_andere_webseite_schreiben (end)
+
+\section{Identifizierung der Komponenten} % (fold)
+\label{sec:identifizierung_der_komponenten}
+
+Anhand dieses kurzen Ablaufbeispiels kann man einige Komponenten ablesen, aus denen das neue System auf jeden Fall bestehen beziehungsweise enthalten muss und welche ergänzend dazu Wünschenswert wären:
+
+\begin{itemize} 
+    \item Eine Komponente muss Daten von einen Webseite über deren öffentlicher API in das System einlesen und diese in ein geeignetes Zwischenformat konvertieren können.
+    \item Es muss ein passendes Nachrichtensystem zum Entkoppeln von Lesen und Schreiben gewählt und/oder erstellt werden.
+    \item Eine weitere Komponente nimmt Beiträte im Zwischenformat entgegen, konvertiert diese in das Format des entsprechenden Netzwerkes und schreibt diese dorthin.
+    \item Um stellvertretend für einen Benutzer schreiben zu können, muss es möglich sein nach dem Konto eines Benutzer zu einer bestimmten Webseite suchen zu können.
+    \item Um die Privatsphäre der Benutzer zu wahren, wäre eine Mechanismus zum festlegen von Zugriffsrechen sinnvoll.
+\end{itemize}   
+
+% section identifizierung_der_komponenten (end)
+
+\section{Wahl vorhandener Techniken} % (fold)
+\label{sec:wahl_vorhandener_techniken}
+
+\todo[inline]{vielleicht doch eher an den Anfang von "Eigener Ansatz"!?}
+
+\subsection{Welches Zwischenformat?} % (fold)
+\label{sub:welches_zwischenformat}
+
+Ein passendes Zwischenformat wurde im Kapitel \enquote{\ref{cha:grundlagen}} mit SIOC beziehungsweise die Kombination aus SIOC und FOAF bereits vorgestellt. Damit ist es nicht nur möglich einzelne Beiträge plattformunabhängig zu speichern, sondern es kann auch die Struktur der Plattform als auch der Benutzer mit eingebunden werden. Auch können Maschinen aus den RDF-Daten einfach Wissen für neue, hilfreiche Informationen ableiten. Doch warum sollte man auf RDF und Ontologien setzen anstatt etwas eigenes zu Entwickeln wie auf Basis des weitverbreiteten und vielseitigen XML Formats?
+
+Hier gibt es mehrere Vorteile, warum man RDF einer mit XML-Schema definierten XML-Datei vorziehen sollte. XML hat das Problem, dass die selbe Aussage auf verschiedene Art repräsentiert werden kann. Listing \ref{lst:xml_vs_rdf_multiple_rep} zeigt ein Beispiel für die Repräsentation der Aussage \enquote{Max Hiwi ist der Autor des Beitrags mit der ID 42} in XML.
+
+\begin{lstlisting}[
+    language=XML,
+    caption={XML: Unterschiedliche Syntax, gleiche Semantik }\label{lst:xml_vs_rdf_multiple_rep},
+    captionpos=t]
+    <post>
+        <id>42</id>
+        <author>Max Hiwi</author>
+    </post>
+
+    <post id="42">
+        <author>Max Hiwi</author>
+    </post>
+
+    <post id="42" author="Max Hiwi" />
+\end{lstlisting}
+
+Alle drei XML-Elemente beschreiben die selbe Aussage, aber auf unterschiedliche Art und Weise. Für einen Menschen haben diese drei Schreibweisen die selbe Aussage, für eine Maschine ist dies aber nicht mehr ganz so offensichtlich. Auch kann nicht die Bedeutung der einzelnen Element und Tags von Maschinen erfasst werde. Dies muss der Programmierer erledigen.Zusätzlich erschweren diese Unterschiedlichen Strukturen das ausführen von Abfragen auf diesen Daten, da ein Mapping zwischen einer logischen Abfrage und den Daten nicht eindeutig erfolgen kann (vgl. \cite[s.\,41]{Schroder2003a}).
+
+% subsection welches_zwischenformat (end)
+
+\subsection{Welches Nachrichtensystem?} % (fold)
+\label{sub:welches_nachrichtensystem}
+
+\subsubsection{JMS} % (fold)
+\label{ssub:analyse_jms}
+\begin{itemize}
+    \item zum reinen verschicken ausreichend
+    \item fast alles muss selber gemacht werden.
+\end{itemize}
+    
+\subsubsection{Apache Camel} % (fold)
+\label{ssub:analyse_apache_camel}
+    \begin{itemize}
+        \item erweitern der "Pipeline" z.B. mit Filtern einfach möglich
+    \end{itemize}
+
+\subsubsection{JMS + Apache Camel} % (fold)
+\label{ssub:analyse_jms_apache_camel}
+
+\begin{itemize}
+    \item gute kombination -> durable subscriber
+\end{itemize}
+
+% subsubsection analyse_jms_apache_camel (end)
+
+% subsubsection analyse_apache_camel (end)
+
+% subsubsection analyse_jms (end)
+
+% subsection welches_nachrichtensystem (end)
+
+% section wahl_vorhandener_techniken (end)
+
+% chapter analyse (end)

@@ -1,53 +1,416 @@
 %!TEX root = ../thesis.tex
 
-\chapter{Implementierung} % (fold)
-\label{cha:implementierung}
+\chapter{Implementierung und Evaluation} % (fold)
+\label{cha:implementierung_und_evaluation}
+
+\todo[inline]{Auf die verschiedenen Klassen von Facebook und Co eingehen, REST, SOAP, OAUTH, Client/Passwort, Art der Plattforn, Forum, OSN, Videoplatform}
+
+\section{Verwendete Bibliotheken} % (fold)
+\label{sec:verwendete_bibliotheken}
+
+\subsection{RDF2Go} % (fold)
+\label{sub:rdf2go}
+
+% subsection rdf2go (end)
 
 
+
+% section verwendete_bibliotheken (end)
+
+\section{Implementierung der Connectoren} % (fold)
+\label{sec:implementierung_der_connectoren}
+
+Das muss rein:
 \begin{itemize}
-    \item Probleme und deren Lösung während der Umsetzung
-    \item Beispiel: Zugriff auf Moodle über Webservice
+    \item Mapping nach SIOC
+    \item Zugriff über die API
+    \item Probleme bei der Implementierung
 \end{itemize}
 
+Innerhalb der Mappingbeschreibungen zwischen den Format der einzelnen SOC und SIOC werden zur besseren Übersicht und einfacheren Lesbarkeit Platzhalt für einige URIs benutzt. Welche Platzhalten dies sind und für welche URI sie stehen ist aus Tabelle \ref{tbl:platzhalter_fuer_sioc_mapping} zu entnehmen. Für die einzelnen SOC werden noch einmal gesonderte Platzhalter definiert, diese werden aber gesondert in den einzelnen Abschnitten beschrieben. 
 
-%------------------------------------------------------------------------------
-
-\section{Verwalten SIOC Daten} % (fold)
-\label{sec:zugriff_auf_sioc_daten}
-
-\begin{itemize}
-    \item Sesame, Jena -> RDF2Go
-    \item In Memory, XML/RDF File, Tripplestore 
-\end{itemize}
-
-%------------------------------------------------------------------------------
-
-\section{Zugriff auf Online Netzwerke und Abbildung in SIOC} % (fold)
-\label{sec:zugriff_auf_online_netzwerke_und_abbildung_in_sioc}
+\begin{table}[h]
+    \centering
+    \caption{Allgemeine Platzhalter und deren Beschreibung für das Mapping nach SIOC}
+    \begin{tabular}{l|p{11cm}}
+        \textbf{Platzhalter} & \textbf{Bedeutung} \\ 
+        \hline
+        \texttt{\{serviceUri\}} & URI für einen Service \\
+        \texttt{\{userAccountUri\}} & URI für einen UserAccount \\
+        \texttt{\{siteUri\}} & URI für eine Site \\
+        \texttt{\{forumUri\}} & URI für ein Forum \\
+        \texttt{\{threadUri\}} & URI für ein Thread \\
+        \texttt{\{postUri\}} & URI für ein Post \\
+        \texttt{\{rootUri\}} & Die WurzelUri einer SOC. Für Facebook wäre dies zum Beispiel \texttt{https://www.facebook.com}
+    \end{tabular}
+    \label{tbl:platzhalter_fuer_sioc_mapping}
+\end{table}
 
 \subsection{Moodle} % (fold)
-\label{sub:moodle}
-
-\subsection{Canvas LMS} % (fold)
-\label{sub:canvas_lms}
-
-\subsection{Facebook} % (fold)
-\label{sub:facebook}
-
-\subsection{Google Plus} % (fold)
-\label{sub:google_plus}
-
-\subsection{Youtupe} % (fold)
-\label{sub:youtupe}
-
-%------------------------------------------------------------------------------
-
-
-\section{Implementieren der Connectoren} % (fold)
-\label{sec:implementieren_der_connectoren}
+\label{sub:moodle_connector}
 
 \begin{itemize}
-    \item 
+    \item Eingebaute REST Schnittstelle, aber kein Lesen von Beiträgen
+    \item WebService Plugin MoodleWS (REST oder SOAP)
+    \begin{itemize}
+        \item https://github.com/patrickpollet/moodlews
+        \item ClientAPI existieren von selber Autor
+        \item REST defekt, kein schreiben von Beiträgen möglich
+        \item SOAP funktioniert mehr oder weniger
+        \item Verschluckt Fehlermeldungen
+        \item kein lesen einzelner Posts/Threads/Foren
+        \item SOAP ClientAPI neu generieren, weil vorhandene nicht mit 2.4 funktioniert.
+        \item Username/Password + Session Token/Id
+        \item “Use an auto generated wsdl” -> No
+        \item schreiben von neuen Beitrag direkt in thread nur als Antwort auf ersten Beitrag möglich
+        \item Rückgabe aller Beiträge in einem Objekt
+    \end{itemize}
 \end{itemize}
 
-% chapter implementierung (end)
+% subsection moodle_connector (end)
+
+\subsection{Facebook} % (fold)
+\label{sub:facebook_connector}
+
+\begin{itemize}
+    \item REST API + JSON
+    \item keine offizielle Java API für Desktop -> Web + Mobile only
+    \item GraphAPI, Facebook Query Language
+    \item OAuth 2.x
+    \begin{itemize}
+        \item kein Refreshtoken
+        \item Token Haltbarkeit 2h (2 Monate, wen extended)
+        \item token nur über webbrowser
+    \end{itemize}
+    \item RestFB alternative Java API für die REST Schnittstelle der GraphAPI
+    \item Typ der zurückgelieferten Daten nicht anhand der URI erkennbar, häufig erst durch Angabe von \emph{metadata=1}
+    \item beim herunterladen einzelner Posts nicht immer erkennbar wo sie geschrieben wurden
+\end{itemize}
+
+\subsubsection{Facebook Graph API} % (fold)
+\label{ssub:facebook_graph_api}
+
+Die primäre Weg an die von Facebook gespeicherten Daten zu gelangen, geht über die \emph{Graph API}. Sie erlaubt einen REST basierten Zugriff auf den von Facebook sogenannten \emph{Social Graph} \cite{FacebookGraphAPI}. Dieser Graph enthält alle Beziehungen die ein Person auf Facebook zwischen anderen Personen, Gruppen, Seiten, Beiträge, Fotos und so weiter besitzt. Der einfachste Weg zum Kennenlernen der Graph API ist der \emph{Graph API Explorer}\footnote{\url{https://developers.facebook.com/tools/explorer}}. Er ist eine Onlineanwendung REST-Abfragen an die Graph API schnell ausprobiert und das Ergebnis begutachtet werden kann.
+
+Jede Ressource im Social Graph von Facebook hat seine eigen, eindeutige ID. Wegen diesem Merkmal besteht eine URI für den REST-Zugriff nur aus \texttt{https://graph.facebook.com/} gefolgt von der ID und optionalen Parametern. Dies macht die Form der URIs zwar sehr einheitlich, aber es ist so unmöglich anhand der URI herauszufinden welcher Typ von Ressource sich dahinter befindet. Dies widerspricht zwar nicht die am Anfang von Kapitel \ref{cha:eigener_ansatz_social_online_community_connectors_socc_} beschreiben Prinzipien von Berners-Lee macht aber die spätere Verarbeitung etwas komplizierter. 
+
+\paragraph{Graph API Datenformat} % (fold)
+\label{par:graph_api_datenformat}
+
+Also Datenformat setzt Facebook mit der Graph API auf das unter Webanwendungen weit verbreitete JSON. Neben den eigentlichen Daten enthalten Ressourcen noch Verbindungen zu anderen Ressourcen. Diese Verbindungen werden \enquote{Connections} genannt. Um zu lesen welche Connections eine Ressource besitzt muss bei der Abfrage der Parameter \texttt{metadata=1} angehängt werden. Ist die geschehen enthalten die JSON Daten einen neuen Eintrag \texttt{metadata} und darin unter dem Eintrag \texttt{connections} eine Liste der vorhandenen Connections. Die wichtigsten Connections für diese Arbeit sind \texttt{feed}und \texttt{comments}. Die Connection \texttt{feed} sagt über die Ressource aus, dass sie eine Liste von Beiträgen enthält. Das könnten zum Beispiel die Wall einer Person oder die einer Gruppe sein. Dahingegen zeigt die Connection \texttt{comments}, dass die betreffende Ressource Kommentare enthält und auch kommentiert werden kann. Um die Beiträge eines Feeds lesen zu können, muss nur die ÜRI zu der Ressource mit den Pfad \texttt{/feed} erweitert werden: \texttt{http:/graph.facebook.com/me/feed}. Die ID \texttt{me} ist dabei ein spezielle ID die sich auf den aktuell angemeldete Benutzer bezieht. Möchte man nun nicht alle Daten einer Ressource abfragen sondern zum Beispiel nur den Name und das Datum der letzten Änderung, kann der Parameter \texttt{fields} für die URI eingesetzt werden. Als Wert wird dann eine Liste mit den Namen der gesuchten Daten angegeben, wobei jeder Name durch ein Komma getrennt wird. 
+
+% paragraph graph_api_datenformat (end)
+
+\paragraph{Facebook Login} % (fold)
+\label{par:facebook_login}
+
+Die Graph API verwendet zur Autorisierung der Anfragen OAuth 2.0 auch \emph{Facebook Login}\footnote{\url{https://developers.facebook.com/docs/facebook-login/}} genannt. Accesstoken gelten bei Facebook nur für zwei Stunden. Es ist aber möglich einen sogenannten \emph{Extended Accesstoken}\footnote{\url{https://developers.facebook.com/docs/facebook-login/access-tokens/}} zu erstellen der zwei Monate gültig ist. Ist ein Accesstoken irgendwann abgelaufen, muss ein neuer erstellt werden. Da aber die Graph API hauptsächlich nur für Webanwendungen gedacht ist, kann dies ein Desktopprogramm nur mit dem Umweg über einen Internetbrowser machen. Für das Anlegen eines neuen Accesstokens werden vom Programm eine OAuth 2.0 ClientID und das ClientSecret benötigt. Diese bekommt man von Facebook, wenn man für sein Programm auf der Webseite \url{https://developers.facebook.com/apps} eine \enquote{App} anlegt. Die Daten befinden sich dann in den \enquote{Einstellungen} unter \enquote{Grundlegendes} und werden dort \enquote{App ID} und \enquote{App Secret} genannt.
+
+Jeder Accesstoken hat nur Zugriff auf bestimmte Bereiche der Graph API die beim Erstellen des selbigen als \enquote{Permission}\footnote{\url{https://developers.facebook.com/docs/reference/login/\#permissions}} (engl. für Erlaubnis oder Befugnis), beziehungsweise von OAuth 2.0 \enquote{Scope} (engl. für Geltungsbereich) genannt, angegeben werden muss. Die für SOCC wichtigen Permissons sind in der Tabelle \ref{tbl:socc_facebook_persmissons} beschrieben.
+
+\begin{table}[ht]
+    \centering
+    \caption{Für SOCC wichtige Facebook Permissons}
+    \begin{tabular}{r|p{10cm}}
+        \textbf{Permission} & 
+        \textbf{Beschreibung} \\ 
+        \hline
+        \textit{read\_stream} & 
+        Lesen von Beiträgen und Kommentaren eines Benutzers \\
+        \textit{publish\_actions} & 
+        Schreiben von Beiträgen und Kommentarten für einen Benutzer \\
+        \textit{user\_groups} & 
+        Zugriff auf die Lister der beigetretenen Gruppen eines Benutzers
+    \end{tabular}
+    \label{tbl:socc_facebook_persmissons}
+\end{table}
+
+Um nun einen Accesstoken für einen Benutzer zu Erstellen muss in einen Internetbrowser folgende URI aufgerufen werden:
+
+\begin{lstlisting}[
+    caption={Facebook Login: OAuth URI}\label{lst:fblogin__oauth_uri},
+    captionpos=t]
+https://www.facebook.com/dialog/oauth?client_id={appId}   &redirect_uri={redirectUri}&responseType=code&scope={scopeList}
+\end{lstlisting}
+
+Anstatt den Platzhalter \texttt{\{appId\}} muss dann natürlich die oben angesprochene ClientID beziehungsweise App ID eingetragen werden. Mit dem Parameter \texttt{redirect\_uri} muss bei dieser URI eine Adresse angegeben werden, auf die der Internetbrowser nach der Anfrage mit der Antwort umgeleitet wird. Dies kann die Adresse eines externen Webservers oder die eines Webservers den die Anwendung nur für diesen Zweck laufen lässt. Einen solchen extra Webserver könnte man mit der Jetty\footnote{\url{http://www.eclipse.org/jetty}} Bibliothek erstellen und würde dann als \texttt{redirect\_uri} die URI \texttt{http://localhost:{port}/} angeben. Der Parameter \texttt{responseType=code} besagt, dass diese Anfrage einen Code zurück liefert mit dem dann der eigentliche AccessToken geholt werden kann. Dies ist der Standardweg. Mit dem letzten Parameter \texttt{scope} können dann noch die oben erwähnten Permissons übergeben werden, wobei alle durch eine Komma getrennt hintereinander zu schreiben sind. Wird dann diese URI im Browser aufgerufen, wird er danach bei Erfolg auf die Adresse \texttt{{redirectUri}?code={code}} umgeleitet. Der Platzhalter \texttt{\{code\}} würde dann einen beliebigen Code darstellen, mit dem über eine weitere Anfrage mit der folgenden URI der Accesstoken geholt werden kann:
+
+\begin{lstlisting}[
+    caption={Facebook Login: URI für den Tausch von Code genen Accesstoken}\label{lst:fblogin_tausch_code_gegen_accessToken},
+    captionpos=t]
+https://www..facebook.com/oauth/access_token?client_id={appId}&redirect_uri={redirectUri}&client_secret={appSecret}&code={code}
+\end{lstlisting}
+
+Der Platzhalter \texttt{\{appId\}} und \texttt{\{appSecret\}} entsprechen wieder der ClientID und Client Secret. Bei dieser URI ist es sehr wichtig, dass \texttt{\{redirectUri\}} den selben Wert hat, wie er weiter oben angegeben wurde. Für \texttt{\{code\}} muss dann noch der oben zurückgeliefert Code angegeben werden. Die Anfrage mit dieser URI muss dann nicht über einen Internetbrowser geschehen sondern kann normal aus einen Programm erfolgen. Als Antwort wird dem Programm dann dies \texttt{access\_token={accessToken}\&expires={secondsTilExpiration}} zurück geliefert. Der Wert des Parameters \texttt{access\_token} ist der gewollte Accesstoken und der Wert von \texttt{expires} ist die Haltbarkeit des Accesstokens in Sekunden.
+
+Soll nun die Haltbarkeitsdauer des Tokens auf zwei Monate verlängert werden muss eine neue Anfrage an die folgende URI gemacht werden:
+
+\begin{lstlisting}[
+    caption={Facebook Login: Extended Accesstoken}\label{lst:fblogin_extendet_accesstoken},
+    captionpos=t]
+https://www.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id={appId}&client_secret={app-secret}&fb_exchange_token={accessToken}
+\end{lstlisting} 
+
+Die Werte für die einzelnen Parameter dürften nun offensichtlich sein. Als Antwort kommt dann ein Accesstoken mit verlängerter Haltbarkeit zurück. Dabei kann es passieren, dass er genau so aussieht wie der alte, was aber kein Problem darstellt.
+
+% paragraph facebook_login (end)
+
+% subsubsection facebook_graph_api (end)
+
+\subsubsection{RestFB} % (fold)
+\label{ssub:restfb}
+
+Facebook selber bietet direkt keine API für die Verwendung der Graph API für Desktopprogramme an. Speziell für die Programmiersprache Java existiert von Facebook nur eine API für das mobile Betriebssystem Android\footnote{\url{https://developers.facebook.com/docs/android/}}. Als Alternative dazu kann die \emph{RestFB} Java-Bibliothek von Mark Allen verwendet werden \cite{MarkAllenRestFB}. RestFB bietet dabei die Möglichkeit von Java aus die Graph API von Facebook zu benutzen. Eine Abfrage könnte wie in Listing \ref{lst:restfb_beispielprogramm} aussehen.
+
+\begin{lstlisting}[
+    caption={RestFB Beispielprogramm}\label{lst:restfb_beispielprogramm},
+    captionpos=t]
+FacebookClient facebookClient = new DefaultFacebookClient(USER_ACCESS_TOKEN);
+
+User user = facebookClient.fetchObject("me", User.class);
+System.out.println("User name: " + user.getName());
+
+Connection<Post> myFeed = facebookClient.fetchConnection("me/feed", Post.class);
+for (List<Post> feedPage : myFeed){
+    for (Post post : feedpage){
+        System.out.println("Post: " + post);
+    }
+}
+\end{lstlisting} 
+
+In Zeile 1 wird eine Objekt der Klasse \texttt{FacebookClient} mit einem Accesstoken als Argument erstellt über dem die Methoden für die Abfragen aufgerufen werden können. Die Zeile 3 zeigt eine solche Abfrage nach den Benutzerdaten für den aktuell angemeldeten Benutzer mit der speziellen ID \enquote{me}. Der Anfangsteil der URI für die Graph API \texttt{https://graph.facebook.com/} muss dabei weggelassen werden. Zurück gegeben wird ein Objekt der Klasse \texttt{User} und damit wird dann der Benutzername ausgegeben. Die Angabe der Klasse mit \texttt{User.class} ist ebenfalls wichtig, so dass RestFB weiß in welche Klasse es die von der Graph API zurückgelieferten JSON-Daten konvertieren soll. Zeile 6 zeigt noch wie man an die Daten einer Connection, hier der Beiträge auf der Wall des aktuellen Benutzers, gelangen kann. Enthält eine Antwort eine Liste mit zu vielen Einträgen, wird die Antwort auf mehrere Seiten aufgeteilt und ein Verweis auf die nächste Seite der aktuellen Seite mitgegeben. Die Klasse \texttt{Connection} sorgt dann alleine dafür, dass die neue Seite gelesen wird, wenn die alte abgearbeitet wurde. Die erste For-Schleife in Zeile 7 iteriert dann über alle vorhandenen Seiten und die zweite in Zeile 8 über alle Einträge auf der aktuellen Seite.
+
+% subsubsection restfb (end)
+
+\subsubsection{Facebook Mapping nach SIOC} % (fold)
+\label{ssub:facebook_mapping_nach_sioc}
+
+% subsubsection facebook_mapping_nach_sioc (end)
+
+\subsubsection{Besonderheiten bei der Entwicklung des FacebookConnectors} % (fold)
+\label{ssub:besonderheiten_bei_der_entwicklung_des_facebookconnectors}
+
+
+
+% subsubsection besonderheiten_bei_der_entwicklung_des_facebookconnectors (end)
+
+% subsection facebook_connector (end)
+
+\subsection{Google+} % (fold)
+\label{sub:google_plus_connector}
+
+\begin{itemize}
+    \item Einfach REST API + JSON
+    \item OAuth
+    \begin{itemize}
+        \item Refreshtoken (token laufen quasi nie ab)
+        \item holen von token ohne webbrowser möglich
+    \end{itemize}
+    \item Objekte aufgebaut aus Actor (wer machte was), Verb(wie machte er es), Object (wtas machte er) + Metadata
+    \item verschieden Sprachen + Plattformen
+    \item lesen nur von öffentlichen Beiträgen
+    \item kein Schreiben von Beiträgen
+\end{itemize}
+
+% subsection google_plus_connector (end)
+
+\subsection{Youtube} % (fold)
+\label{sub:youtube_connector}
+
+\begin{itemize}
+    \item Aktueller Umbau der API (ähnlich google+) v3
+    \begin{itemize}
+        \item keine lesen von kommentaren
+        \item kein schreiben
+    \end{itemize}
+    \item alte GData Feed API v2 basiert auf RSS + Youtube Erweiterung
+    \item Mapping teilweise durch basis auf RSS einfach, manchmal auch nicht
+    \item Wichtigen Metadaten nur implizit vorhanden (comment id in uri aber nicht in datenformat)
+\end{itemize}
+
+\subsubsection{Youtube Data API} % (fold)
+\label{ssub:youtube_data_api}
+
+Für Youtube existieren zur Zeit zwei verschiedene APIs, eine Version 3 und die ältere Version 2. \emph{Die Youtube Data API \textbf{v3}} befindet sich noch im Entwicklungsstadium. Dort ist es zum Beispiel noch nicht möglich ist Kommentare von Video zu lesen, geschweige denn zu schreiben. Aus diesem Grund muss für einen YoutubeConnector die älter \emph{Youtube Data API \textbf{v2}} benutzt werden, welche diese Funktionen noch bietet. 
+
+Die Youtube Data API v2 baut noch auf dem Google Data Protokoll auf, eine API nach dem REST-Prinzip mit Atom und JSON als Datenformat. Für Youtube wird aber primär Atom eingesetzt (umschalten auf JSON ist möglich). Die einzelnen Ressourcen können als Atom-Feed, also eine Liste einzelnen Einträgen wie die einer Playliste, oder als ein einzelnes Entry-Element, zum Beispiel Informationen zu einen Benutzerkonto, zurückgegeben werden. Youtube verwendet aber nicht nur die vom Atom-Standard definierten Element, sondern erweitert das Format durch eine große Zahl eigener Erweiterungen wie Spieldauer eines Videos, Statistiken, Bewertungen oder Informationen zu Benutzerkonten. Jeder Feed/Eintrag enthält mehrere Link-Element die auf weiterführenden Ressourcen verweisen. Ist die Menge der Einträge eines Feedes zu groß, wird das Ergebnis auf mehrere Feeds aufgeteilt. Um zwischen diesen Teilergebnissen zu navigieren enthalten die Teilfeeds Links auf ihren Vorgänger und/oder Nachfolge-Feed (siehe Listing \ref{lst:ytdataapi_navigation_through_results}).
+
+\begin{lstlisting}[
+    language=xml
+    caption={Youtube Data API v2: Navigation durch Ergebnisse}\label{lst:ytdataapi_navigation_through_results},
+    captionpos=t]
+<link rel='previous' type='application/atom+xml'
+  href='http://gdata.youtube.com/feeds/api/videos?start-index=1&max-results=25...'/>
+<link rel='next' type='application/atom+xml'
+  href='http://gdata.youtube.com/feeds/api/videos?start-index=51&max-results=25...'/>
+\end{lstlisting}
+
+Alle Ressourcen auf die öffentlich zugegriffen werden kann brauchen keine vorherige Anmeldung. Sollen aber zum Beispiel Kommentare geschrieben werden ist eine Anmeldung notwendig. Für der Programm muss ein ein API-Schlüssel (von Google \enquote{Developer Key} genannt) im \emph{Product Dashboard}\footnote{\url{http://code.google.com/apis/youtube/dashboard/}} erstellt werden. Dieser API-Schlüssel wird dann jeder Anfrage als URI Parameter \texttt{key={apiKey}} angehängt. Soll auch stellvertretend für einen Benutzer Kommentare geschrieben werden, ist noch zusätzlich der Username und das Password von ihm Voraussetzung.
+
+Google bietet selber eine Java API für die Youtube Data API v2 an, mit der das Auslesen, Verarbeiten und Senden der Atom Feeds und Einträge sehr einfach ist. Das Programmbeispiel in Listing \ref{lst:ytdataapi_youtube_service} zeigt eine Beispiel für die Verwendung der Youtube Data API in Java. Ausgangspunkt in Zeile 1 ist die Klasse \texttt{YouTubeService} die als Client eingesetzt wird. Bei der Erzeugung eines Objektes dieser Klasse wird eine beliebige Zeichenkette als ClientID (nicht zu verwechseln mit der ClientID von OAuth 2.0) und der oben beschriebene API-Schlüssel benötigt. In der zweiten Zeile werden der Benutzername und ein Password an den Client übergeben. Für das Auslesen eines Atom-Feeds wird die Methode \texttt{getFeed(\dots)} eingesetzt. Ihr werden in Zeile 5 die URI zum gesuchten Feed und in Zeile 6 die Klasse in die der Feed aus dem XML-Format konvertiert werden soll. In diesen Falls steckt hinter der URI eine Playliste mit mehreren Videoeinträgen. In Zeile 8 bis 11 werden dann die Titel und der Link auf das Video ausgegeben.
+
+\begin{lstlisting}[
+    caption={Youtube Data API v2: Java YouTubeService}\label{lst:ytdataapi_youtube_service},
+    captionpos=t]
+YouTubeService service = new YouTubeService(clientId, apiKey);
+service.setUserCredentials(username, password);
+
+VideoFeed videoFeed = service.getFeed(
+    new URL("http://gdata.youtube.com/feeds/api/playlists/PL59AFCB0F92BB89A9"), 
+    VideoFeed.class);
+
+for(VideoEntry videoEntry : videoFeed.getEntries() ) {
+    System.out.println(videoEntry.getTitle() 
+        + ": " 
+        + videoEntry.getSelfLink());
+}
+\end{lstlisting}
+
+Wurde das Ergebnis in mehrere Teilfeeds aufgeteilt dann ist der Rückgabewert der Funktion \texttt{videoFeed.getNextLink()} ungleich \texttt{null}. Ist dies der Fall kann der nächste Teilfeed wieder mit der Methode \texttt{service.getFeed(\dots)} und der von URI des von \texttt{getNextLink()} zurückgegebenen Links geholt werden.
+
+\begin{lstlisting}[
+    caption={Youtube Data API v2: Kommentar schreiben}\label{lst:ytdataapi_kommentar_schreiben},
+    captionpos=t]
+commentUrl = "http://gdata.youtube.com/feeds/api/videos/oHg5SJYRHA0/comments";
+CommentEntry newComment = new CommentEntry();
+newComment.setContent(new PlainTextConstruct("Tolles Video!! :)"));
+service.insert(new URL(commentUrl), newComment);
+\end{lstlisting}
+
+Das Schreiben eines Eintrags ist in Listing \ref{lst:ytdataapi_kommentar_schreiben} beschrieben. Die URI zum Schreiben in Zeile 1 zeigt auf einen Kommentar-Feed für das Video mit der ID \enquote{oHg5SJYRHA0}. In der zweiten Zeile wird dann zunächst eine Objekt der Klasse \texttt{CommentEntry} erstellt und in Zeile 3 mit einer Kommentarnachricht befüllt. Dieses Objekt wird dann zusammen mit der URI aus Zeile 1 der Methode \texttt{insert(\dots)} übergeben. Für diese Methode ist das vorherige übergeben von Username und Passwort Pflicht, da sonst Youtube mit einen Fehler antwortet.
+
+\subsubsection{Youtube Mapping nach SIOC} % (fold)
+\label{ssub:youtube_mapping_nach_sioc}
+
+% subsubsection youtube_mapping_nach_sioc (end)
+
+\subsubsection{Besonderheiten bei der Implementierungs des YoutubeConnectors} % (fold)
+\label{ssub:besonderheiten_bei_der_implementierungs_des_youtubeconnectors}
+
+% subsubsection besonderheiten_bei_der_implementierungs_des_youtubeconnectors (end)
+
+% subsubsection youtube_data_api (end)
+
+% subsection youtube_connector (end)
+
+\subsection{Canvas} % (fold)
+\label{sub:canvas_connector}
+
+\begin{itemize}
+    \item relativ neues LMS
+    \item super Bedienung
+    \item super REST API
+    \item keine Java API
+    \item rudimentäre Eigenentwicklung einer Java API, Funktionsweise ähnlich  G+
+    \item viel API Funktionen wohl nicht extern nutzbar (UserProfil lesen, vll. Falsche Berechtigung -> test nötig)
+\end{itemize}
+
+\subsubsection{Canvas REST-API} % (fold)
+\label{ssub:canvas_api}
+
+Der öffentliche Zugriff auf die Daten von der Lernplattform Canvas basiert auf einer REST-API und OAuth 2.0 zur Autorisierung der Zugriffe. Die Adresse, über die auf die API zugegriffen werden kann, besteht aus der URI für die verwendete Canvas Instanz (\texttt{\{rootUri\}}) und gefolgt von dem Pfad \enquote{/api/v1}. Für die Demo Instanz von Instructre würde dies der URI \texttt{https://canvas.instructure.com/api/v1} entsprechen. An diese können dann weitere Pfade für den Zugriff auf die einzelnen Ressourcen angehängt werden. Zur Autorisierung wird von OAuth nur der Accesstoken benötigt, der bei der REST-Abfrage als HTTP Authorization Header mitgeschickt wird. Listing \ref{lst:canvas_authorization_header} zeigt eine eine Beispielanfrage und Angabe des Accesstokens mit dem Programm \emph{curl}\footnote{\url{http://curl.haxx.se/}}. Der Platzhalter \texttt{\{accessToken\}} muss dann natürlich erst durch einen validen Accesstoken ersetzt werden. Diesen kann jeder Benutzter in seinem Canvas Profil unter \enquote{Settings} und im Abschnitt \enquote{Approved Integrations} selbst erstellen. Die Angabe von ClientId und ClientSecret von OAuth 2.0 sind nicht nötig.
+
+\begin{lstlisting}[
+    caption={Canvas Authorization Header}\label{lst:canvas_authorization_header},
+    captionpos=t]
+curl -H "Authorization: Bearer {accessToken}" https://canvas.instructure.com/api/v1/courses
+\end{lstlisting}
+
+Als Datenformat für die zurückgelieferten Daten wird von der Canvas API auf JSON gesetzt. Für die Verwendung von POST und PUT Operationen zum Schreiben nach Canvas können die Daten entweder nach dem HTML Form Encoding\footnote{\url{http://www.w3.org/TR/html4/interact/forms.html\#h-17.13.4}} Standard oder ebenfalls in JSON angegeben werden. 
+
+Da einige Anfragen eine Liste von Ergebnissen zurückliefern und diese möglicher Weise lang werden können, teilt die Canvas API diese Listen auf mehrere Seiten auf, die jede einzeln abgefragt werden müssen. Für jede Seite schickt die Canvas API mehrere URIs als HTTP Link Header\footnote{\url{http://www.w3.org/Protocols/9707-link-header.html}} der Antwort mit. Diese URIs erhalten zusätzlich noch ein Attribut \texttt{rel}, das beschreibt in welcher Relation die URI zu dieser Seite steht.  Als Wert für diese Relation können \enquote{current} für eine URI auf die aktuelle, \enquote{next} auf die nächste, \enquote{prev} auf die vorherige, \enquote{first} auf die erste und \enquote{last} für eine URI auf die letzte Seite vorkommen. Um also die nächste Seite vom Ergebnis zu bekommen, muss eine neue REST-Anfrage mit der Relation \enquote{next} ausgeführt werden. Fehlt eine URI mit dieser Relation, ist das die letzte Seite erreicht. 
+
+% subsubsection canvas_api (end)
+
+\subsubsection{CanvasLMS4J} % (fold)
+\label{ssub:canvaslms4j}
+
+Ein Problem mit der API von Canvas war es, dass es zwar eine gute REST Anbindung gab, aber noch keine Bibliothek um sie mit der Programmiersprache Java anzusprechen. Es musste also erst eine eigne Java API dazu entwickelt werden, die den Namen \emph{CanvasLMS4J} (Kurzform für \enquote{Canvas LMS API für Java}) bekam. 
+
+Anhand der für die REST API verwendeten URIs ist auffällig, dass die einzelnen Bestandteile aufeinander aufbauen. Zum Beispiel ist der Ablauf für den REST-Zugriff auf DiscussionTopics in Gruppen und Kursen der gleiche, nur die verwendete URI unterscheidet sich. Aus diesem Grund wurden die einzelnen Ressource (Course, Groupe, DiscussionTopic, Entries, ...) als einzelne Endpunkte implementiert die sich von der Klasse \texttt{IEnpoint} ableiten. Jeder Endpunkt kann einen Eltern-Endpunkt haben, wobei sich die endgültige URI für die REST-Abfrage aus dem Pfad des Eltern-Endpunktes und dem des aktuellen Endpunktes zusammensetzt. Zur Verdeutlichung sei hier die URI \texttt{https:\{canvasUri\}/api/v1/courses/1/discussion\_topics} als Demonstration genannt. Sie besteht aus den statischen Teil \texttt{https:\{canvasUri\}/api/v1/} der den Ort für die verwendete Canvas Instanz angibt. Darauf folgt ein Kurs als erster Endpunkt mit der Kurs-ID \enquote{1}. Für diesen Kurs sollen nun alle Diskussionen abgefragt werden. Dies geschieht durch die Angabe des zweiten Endpunktes \texttt{/discussion\_topics}. \enquote{/courses/1} bildet hier also den Eltern-Endpunkt von \texttt{/discussion\_topics}. Sollen aber nun alle Diskussionen in einer Gruppe abgefragt werden, reicht es aus den Kurs-Endpunkt durch einen Gruppen-Endpunkt auszutauschen.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true,]
+    {assets/images/canvaslms4j_uml_classdiagramm}
+    \caption{UML Klassendiagramm von CanvasLMS4J}
+    \label{fig:canvaslms4j_uml_classdiagram}
+\end{figure} 
+
+Ausgangspunkt für CanvasLMS4J ist die Klasse \texttt{CanvasLmsClient} (siehe Abbildung \ref{fig:canvaslms4j_uml_classdiagram}). Über sie werden alle Endpunkte verwaltet die keinen Eltern-Endpunkt besitzen. Bei der Erzeugung eines Objektes dieser Klasse, werden ihr die URI zur verwendenden Canvas Instanz und der AccessToken des Benutzerkontos übergeben. Im aktuellen Stadium können von einem Client aus nur Endpunkte für Kurse oder Gruppe erstellt werden.
+
+Endpunkte können dann über die Klasse \texttt{CanvasLmsRequest} REST-Anfragen an die Canvas API stellen. Hierzu verwendet CanvasLMS4J die \emph{HttpClient}\footnote{\url{http://hc.apache.org/httpclient-3.x/}} Bibliothek von Apache mit die einzelnen HTTP-Operationen ausgeführt werden. Um die im JSON-Format zurück gelieferten Antworten der Canvas API in Java verwenden zu können, wir auf die Funktionen der von Google entwickelten \emph{Gson}\footnote{\url{https://code.google.com/p/google-gson/}} Bibliothek zurück gegriffen. Sie erlaubt es Java Objekte in das JSON-Format zu konvertieren und genauso aus Daten in JSON ein Java Objekt zu machen. Dadurch verringert sich der Aufwand für das Verarbeiten der Daten von Canvas auf das Erstellen der entsprechenden Java Klassen. CanvasLmsRequest können mit zwei verschiedenen Methoden ausgeführt werden. Die erste \texttt{execute()} wird dazu verwendet, wenn die REST-Abfrage nur die Rückgabe eines Objektes zu Folge hat. Also zum Beispiel, wenn nur die Daten eines bestimmten Kurses abgefragt werden soll. Die zweite Methode ist \texttt{executePagination}. Diese Methode dient für Abfragen die eine in Seiten aufgeteilte Liste von Ergebnissen zurückliefert und gibt für eine einfache Handhabbarkeit ein Objekt der Klasse \texttt{Pagination} zurück. 
+
+Die Klasse Pagination ist nach dem Iterator Muster aufgebaut und liefert vom kompletten Ergebnis bei jedem Iterationsschritt eine Seite zurück. Diese Seite enthält dann je eine Teilliste der angefragten Objekten. Ist eine Seite fertig ausgelesen, holt Pagination über eine vorgegeben REST Abfrage die nächste Seite. Dies geschieht solange bis keine Seiten mehr geladen werden können oder das Programm das Lesen abbricht.
+
+\begin{lstlisting}[
+    caption={CanvasLMS4J Beispielprogramm}\label{lst:canvaslms4j_beispiel},
+    captionpos=t]
+CanvasLmsClient client = new CanvasLmsClient(
+                "https://canvas.instructure.com",
+                "7~LUpV7B3lJY...");
+
+Pagination<DiscussionTopic> discussionPages = client.courses()
+    .discussionTopics( 798152 )
+    .list()
+    .executePagination();
+
+
+for ( List<DiscussionTopic> discussions : discussionPages ) {
+    for ( DiscussionTopic discussion : discussions ) {
+        System.out.println( discussion );
+    }
+}
+
+\end{lstlisting}
+
+In Listing \ref{lst:canvaslms4j_beispiel} ist ein Beispiel für die Anwendung der CanvasLMS4J API zu sehen. In den ersten drei Zeilen wird eine neuer CanvasLmsClient für die Canvas Instanz auf \texttt{https://canvas.instructure.com} und einem AccessToken erstellt. Als nächstes soll für einen Kurs mit der ID \enquote{798152} alle Diskussionen aufgelistet werden. Mit dem Aufruf der Methode \texttt{courses()} des Clients wir der Endpunkt für die Kurse und von diesem aus der Endpunkt für die Diskussionen im Kurs \enquote{798152} über die Methode \texttt{.discussionTopics( 798152 )}. In der siebten Zeile wird die Art der Abfrage genauer festgelegt. Da eine Liste alle Diskussionen gesucht ist, wird die Methode \texttt{list()} aufgerufen die ein CanvasLmsRequest Objekt für die gewünschte Abfrage erstellt. Da die Antwort aus mehrere Objekten mit der Beschreibung der einzelnen Diskussionen besteht, wird die Anfrage in Zeile Acht mit der Methode \texttt{executePagination()} ausgeführt. Die einzelnen Seiten des Ergebnisses werden dann in der elften Zeile mit einer For-Schleife durchlaufen. Das nachladen der Seiten erfolgt dabei automatisch durch die Pagination Klasse. Jede Seite besteht nun aus einer Liste mit den Beschreibung der Diskussionen in einem \texttt{DiskussionTopic} Objekt, welche dann wieder in einer weiteren Schleife ausgegeben werden.
+
+% subsubsection canvaslms4j (end)
+
+\subsubsection{Canvas Mapping nach SIOC} % (fold)
+\label{ssub:canvas_sioc_mapping}
+
+\begin{table}[h]
+    \centering
+    \caption{Format der URIs für Canvas}
+    \begin{tabular}{l|p{11cm}}
+        \textbf{URI Platzhalter} & URI-Format \\ 
+        \hline
+        \texttt{\{serviceUri\}} & 
+        \texttt{\{rootUri\}/api/v1} \\
+
+        \texttt{\{userAccountUri\}} & 
+        \texttt{\{rootUri\}/about/\{userId\}} \\
+
+        \texttt{\{siteUri\}} & 
+        \texttt{\{rootUri\}} \\
+
+        \texttt{\{forumUri\}} & 
+        \texttt{\{rootUri\}/courses/\{courseId\}},
+        \texttt{\{rootUri\}/groups/\{groupId\}} \\
+
+        \texttt{\{threadUri\}} & 
+        \texttt{\{forumUri\}/discussion\_topics/\{topicId\}} \\
+
+        \texttt{\{postUri\}} & 
+        \texttt{\{threadUri\}/entries/\{entryId\}},
+        \texttt{\{threadUri\}\#discussion\_topic} \\
+    \end{tabular}
+    \label{tbl:canvas_uri_platzhalter}
+\end{table}
+
+% subsubsection canvas_sioc_mapping (end)
+
+% subsection canvas_connector (end)
+
+% section implementierung_einiger_connectoren (end)
+
+\section{Evaluation} % (fold)
+\label{sec:evaluation}
+
+% section evaluation (end)
+
+% chapter implementierung_und_evaluation (end)

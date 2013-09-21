@@ -74,7 +74,7 @@ public class GooglePlusClientWrapper implements CredentialRefreshListener {
         return refreshToken;
     }
 
-    public Plus getService() {
+    public Plus getGooglePlusService() {
         return service;
     }
 

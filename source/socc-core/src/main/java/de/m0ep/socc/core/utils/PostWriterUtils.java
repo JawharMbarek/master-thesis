@@ -22,114 +22,90 @@
 
 package de.m0ep.socc.core.utils;
 
-import org.ontoware.rdf2go.model.node.URI;
+import java.text.ParseException;
+import java.util.Map;
+
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.xmlns.foaf.Person;
+import com.google.api.client.util.Maps;
+import com.google.common.base.Preconditions;
+import com.java2s.code.java.i18n.MapFormat;
 
 import de.m0ep.socc.core.connector.IConnector;
-import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 
+/**
+ * Utility methods so the PostWriters are not a huge mess ;)
+ * 
+ * @author "Florian Mueller"
+ */
 public final class PostWriterUtils {
 	private static final Logger LOG = LoggerFactory
 	        .getLogger( PostWriterUtils.class );
 
-	/**
-	 * Private constructor, because this class has only static methods.
-	 */
 	private PostWriterUtils() {
 	}
 
-	public static String createContentOfUnknownAccount( Post post,
-	        UserAccount creatorAccount,
-	        Person creatorPerson ) {
-		String creator = creatorAccount.toString();
+	/**
+	 * Formats the content of a post with the
+	 * <code>unknownMessageTemplate</code> of the <code>connector</code>. If the
+	 * creator of the post has no sioc:name property set,
+	 * {@link IConnector#MESSAGE_TEMPLATE_UNKNOWN_AUTHOR_NAME} will be used as
+	 * <code>{authorName}</code>.
+	 * 
+	 * 
+	 * @param connector
+	 *            Used Connector
+	 * @param post
+	 *            The Post from where the content should be formated.
+	 * @return The formated content as {@link String}.
+	 * @throws NullPointerException
+	 *             Thrown if <code>connector</code> or <code>post</code> are
+	 *             <code>null</code>.
+	 */
+	public static String formatUnknownMessage(
+	        final IConnector connector,
+	        final Post post ) {
+		Preconditions.checkNotNull( connector,
+		        "Required parameter connector must be specified." );
+		Preconditions.checkNotNull( post,
+		        "Required parameter post must be specified." );
+		Preconditions.checkArgument( post.hasContent(),
+		        "The parameter post has no content." );
 
-		if ( null != creatorPerson ) {
-			if ( creatorPerson.hasNickname() ) {
-				creator = creatorPerson.getNickname();
-			} else if ( creatorPerson.hasName() ) {
-				creator = creatorPerson.getName();
-			}
-		} else if ( creatorAccount.hasName() ) {
-			creator = creatorAccount.getName();
+		Map<String, Object> args = Maps.newHashMap();
+		UserAccount creatorAccount = post.hasCreator() ? post.getCreator() : null;
+		String authorName = ( null != creatorAccount && creatorAccount.hasName() )
+		        ? creatorAccount.getName()
+		        : "an unknown user";
+
+		args.put( IPostWriter.MESSAGE_TEMPLATE_VAR_MESSAGE, post.getContent() );
+		args.put( IPostWriter.MESSAGE_TEMPLATE_VAR_CONNECTOR_ID, connector.getId() );
+		args.put( IPostWriter.MESSAGE_TEMPLATE_VAR_AUTHOR_NAME, authorName );
+		args.put( IPostWriter.MESSAGE_TEMPLATE_VAR_SOURCE_URI, post.getResource() );
+
+		if ( connector.getService().hasName() ) {
+			args.put(
+			        IPostWriter.MESSAGE_TEMPLATE_VAR_SERVICE_NAME,
+			        connector.getService().getName() );
 		}
 
-		if ( creatorAccount.hasAccountServiceHomepage() ) {
-			return creator
-			        + " wrote at "
-			        + creatorAccount.getAccountServiceHomepage().toString()
-			        + ": \n"
-			        + post.getContent();
-		} else {
-			return creator
-			        + " wrote: \n"
-			        + post.getContent();
-		}
-	}
-
-	public static Object getClientOfServiceAccountOrNull( IConnector connector,
-	        UserAccount serviceAccount ) {
-		try {
-			if ( connector.getServiceClientManager().contains( serviceAccount ) ) {
-				return connector.getServiceClientManager().get( serviceAccount );
-			} else {
-				try {
-					Object client = connector.getServiceClientManager()
-					        .createClientFromAccount( serviceAccount );
-
-					connector.getServiceClientManager().add( serviceAccount,
-					        client );
-					return client;
-				} catch ( Exception e ) {
-					LOG.debug( "Failed to create client form userAccount "
-					        + connector.getService().getServiceEndpoint() );
-				}
-			}
-		} catch ( Exception e ) {
-			LOG.debug( "Failed to load client form userAccount "
-			        + connector.getService().getServiceEndpoint(),
-			        e );
-		}
-
-		return null;
-	}
-
-	public static UserAccount getServiceAccountOfPersonOrNull(
-	        IConnector connector,
-	        Person creatorPerson,
-	        URI serviceEndpoint ) {
-		try {
-			return UserAccountUtils.findUserAccountOfService(
-			        connector.getContext().getModel(),
-			        creatorPerson,
-			        serviceEndpoint );
-		} catch ( NotFoundException e ) {
-			LOG.debug( "Person {} has no userAccount at the {} service",
-			        creatorPerson,
-			        connector.getService().getServiceEndpoint() );
-			return null;
-		}
-	}
-
-	public static Person getPersonOfCreatorOrNull( IConnector connector,
-	        UserAccount creatorAccount ) {
-		if ( creatorAccount.hasAccountOf() ) {
-			return Person.getInstance(
-			        connector.getContext().getModel(),
-			        creatorAccount.getAccountOf().getResource() );
-		} else {
+		if ( post.hasCreated() ) {
 			try {
-				return UserAccountUtils.findPerson(
-				        connector.getContext().getModel(),
-				        creatorAccount );
-			} catch ( NotFoundException e ) {
-				LOG.debug( "No corresponding person found for " + creatorAccount );
-				return null;
+				args.put(
+				        IPostWriter.MESSAGE_TEMPLATE_VAR_CREATION_DATE,
+				        DateUtils.parseISO8601( post.getCreated() ) );
+			} catch ( ParseException e ) {
+				LOG.warn(
+				        "Failed to parse date {} from post {}",
+				        post.getCreated(),
+				        post.getResource() );
 			}
 		}
+
+		return MapFormat.format( connector.getUnknownMessageTemplate(), args );
 	}
 }

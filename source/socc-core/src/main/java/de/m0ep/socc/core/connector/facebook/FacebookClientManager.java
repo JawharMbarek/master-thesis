@@ -34,11 +34,11 @@ import de.m0ep.sioc.services.auth.ClientId;
 import de.m0ep.sioc.services.auth.ClientSecret;
 import de.m0ep.sioc.services.auth.Credentials;
 import de.m0ep.sioc.services.auth.ServicesAuthVocabulary;
-import de.m0ep.socc.core.connector.DefauktClientManager;
+import de.m0ep.socc.core.connector.DefaultClientManager;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 public class FacebookClientManager extends
-        DefauktClientManager<FacebookClientWrapper> {
+        DefaultClientManager<FacebookClientWrapper> {
     private ClientId clientId;
     private ClientSecret clientSecret;
 
@@ -108,7 +108,7 @@ public class FacebookClientManager extends
     }
 
     @Override
-    public FacebookClientWrapper createClientFromAccount(UserAccount userAccount)
+    public FacebookClientWrapper createClient(UserAccount userAccount)
             throws Exception {
         Preconditions.checkState(null != clientId,
                 "Client id missing.");

@@ -32,7 +32,7 @@ import de.m0ep.canvas.CanvasLmsClient;
 import de.m0ep.sioc.services.auth.AuthenticationMechanism;
 import de.m0ep.sioc.services.auth.Credentials;
 import de.m0ep.sioc.services.auth.ServicesAuthVocabulary;
-import de.m0ep.socc.core.connector.DefauktClientManager;
+import de.m0ep.socc.core.connector.DefaultClientManager;
 import de.m0ep.socc.core.utils.RdfUtils;
 
 /**
@@ -41,7 +41,7 @@ import de.m0ep.socc.core.utils.RdfUtils;
  * @author Florian Müller
  */
 public class CanvasLmsClientManager extends
-        DefauktClientManager<CanvasLmsClient> {
+        DefaultClientManager<CanvasLmsClient> {
 
     /**
      * Constructs a new {@link CanvasLmsClientManager} for a
@@ -74,7 +74,7 @@ public class CanvasLmsClientManager extends
      *             Thrown if has missing parameters to create a client.
      */
     @Override
-    public CanvasLmsClient createClientFromAccount(final UserAccount userAccount)
+    public CanvasLmsClient createClient(final UserAccount userAccount)
             throws Exception {
         Preconditions.checkNotNull(userAccount,
                 "Required parameter userAccount must be specified.");

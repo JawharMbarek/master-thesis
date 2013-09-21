@@ -68,6 +68,12 @@ public class Moodle2StructureReader extends
 	}
 
 	@Override
+	public boolean isContainer( URI uri ) {
+		return Moodle2SiocUtils.isForumDiscussionUri( uri, getServiceEndpoint() )
+		        || Moodle2SiocUtils.isForumUri( uri, getServiceEndpoint() );
+	}
+
+	@Override
 	public Container getContainer( URI uri ) throws NotFoundException, AuthenticationException,
 	        IOException {
 		if ( getModel().contains( uri, Variable.ANY, Variable.ANY ) ) {
@@ -76,7 +82,7 @@ public class Moodle2StructureReader extends
 
 		if ( Moodle2SiocUtils.isForumUri( uri, getServiceEndpoint() ) ) {
 			return getForum( uri );
-		} else if ( Moodle2SiocUtils.isThreadUri( uri, getServiceEndpoint() ) ) {
+		} else if ( Moodle2SiocUtils.isForumDiscussionUri( uri, getServiceEndpoint() ) ) {
 			return getThread( uri );
 		}
 
@@ -109,6 +115,11 @@ public class Moodle2StructureReader extends
 		}
 
 		return result;
+	}
+
+	@Override
+	public boolean hasChildContainer( URI uri ) {
+		return Moodle2SiocUtils.isForumDiscussionUri( uri, getServiceEndpoint() );
 	}
 
 	@Override
@@ -179,11 +190,12 @@ public class Moodle2StructureReader extends
 			return Thread.getInstance( getModel(), uri );
 		}
 
-		Matcher matcher = Pattern
-		        .compile( getServiceEndpoint() + Moodle2SiocUtils.REGEX_DISCUSSION_URI )
-		        .matcher( uri.toString() );
+		Pattern pattern = Pattern.compile( "^"
+		        + getServiceEndpoint()
+		        + Moodle2SiocUtils.REGEX_DISCUSSION_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
 
-		if ( matcher.matches() ) {
+		if ( matcher.find() ) {
 			int id = Integer.parseInt( matcher.group( 1 ) );
 			ForumRecord[] forumArray = loadForums();
 
@@ -196,7 +208,7 @@ public class Moodle2StructureReader extends
 					ForumDiscussionRecord[] discussionsArray = loadForumDiscussions( forum.getId() );
 					if ( null != discussionsArray ) {
 						for ( ForumDiscussionRecord discussion : discussionsArray ) {
-							if ( id == discussion.getId() ) {
+							if ( id == discussion.getPost().getDiscussion() ) {
 								return Moodle2SiocUtils.createSiocThread(
 								        getConnector(),
 								        discussion, parentForum );

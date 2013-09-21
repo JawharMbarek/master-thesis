@@ -45,7 +45,6 @@ import de.m0ep.socc.core.exceptions.NotFoundException;
  * @author Florian Müller
  */
 public interface IConnector {
-
 	/**
 	 * Returns the Id of this connector.
 	 */
@@ -60,6 +59,11 @@ public interface IConnector {
 	 * Returns the service informations of this connector.
 	 */
 	public Service getService();
+
+	/**
+	 * Returns the message template for unknown {@link UserAccount}s
+	 */
+	public String getUnknownMessageTemplate();
 
 	/**
 	 * Returns the default {@link UserAccount} of this connector.
@@ -142,6 +146,16 @@ public interface IConnector {
 		public Site getSite();
 
 		/**
+		 * Checks if the parameter <code>uri</code> is a container.
+		 * 
+		 * @param uri
+		 *            {@link URI} to check
+		 * @return <code>true</code> if there is a container behind the
+		 *         <code>uri</code>, <b>false</b> otherwise.
+		 */
+		public boolean isContainer( URI uri );
+
+		/**
 		 * Returns a {@link Container} that is located at the provided
 		 * {@link URI}
 		 * 
@@ -178,6 +192,8 @@ public interface IConnector {
 		        AuthenticationException,
 		        IOException;
 
+		public boolean hasChildContainer( URI uri );
+
 		/**
 		 * List all child {@link Container}s of the parent at the
 		 * <code>parentUri</code>.
@@ -195,6 +211,7 @@ public interface IConnector {
 		public List<Container> listContainer( URI parentURI ) throws
 		        AuthenticationException,
 		        IOException;
+
 	}
 
 	/**
@@ -205,7 +222,11 @@ public interface IConnector {
 	 */
 	public static interface IPostReader<T extends IConnector> extends IConnectorIOComponent<T> {
 
-		public Post readPost( URI uri ) throws
+		public boolean isPost( URI uri );
+
+		public boolean hasPosts( URI uri );
+
+		public Post getPost( URI uri ) throws
 		        NotFoundException,
 		        AuthenticationException,
 		        IOException;
@@ -222,6 +243,35 @@ public interface IConnector {
 	 * @author Florian Müller
 	 */
 	public static interface IPostWriter<T extends IConnector> extends IConnectorIOComponent<T> {
+		public static final String MESSAGE_TEMPLATE_VAR_AUTHOR_NAME = "authorName";
+
+		public static final String MESSAGE_TEMPLATE_VAR_MESSAGE = "message";
+
+		public static final String MESSAGE_TEMPLATE_VAR_CONNECTOR_ID = "connectorId";
+
+		public static final String MESSAGE_TEMPLATE_VAR_SERVICE_NAME = "serviceName";
+
+		public static final String MESSAGE_TEMPLATE_VAR_SOURCE_URI = "sourceUri";
+
+		public static final String MESSAGE_TEMPLATE_VAR_CREATION_DATE = "creationDate";
+
+		public static final String MESSAGE_TEMPLATE_UNKNOWN_AUTHOR_NAME = "an unknown user";
+
+		public static final String DEFAULT_MESSAGE_TEMPLATE = "{"
+		        + MESSAGE_TEMPLATE_VAR_AUTHOR_NAME
+		        + "} wrote: {"
+		        + MESSAGE_TEMPLATE_VAR_MESSAGE
+		        + "}";
+
+		public static final String MESSAGE_WATERMARK_PREFIX = "--- forwarded by SOCC from ";
+
+		public static final String MESSAGE_WATERMARK_POSTFIX = " ---";
+
+		public static final String REGEX_MESSAGE_WATERMARK =
+		        MESSAGE_WATERMARK_PREFIX
+		                + "(.+)"
+		                + MESSAGE_WATERMARK_POSTFIX;
+
 		public void writePost( URI targetUri, String rdfString, Syntax syntax ) throws
 		        NotFoundException,
 		        AuthenticationException,

@@ -90,6 +90,12 @@ public class CanvasLmsStructureReader
 	}
 
 	@Override
+	public boolean isContainer( URI uri ) {
+		return CanvasLmsSiocUtils.isDiscussionTopicUri( uri, getServiceEndpoint() )
+		        || CanvasLmsSiocUtils.isCourseUri( uri, getServiceEndpoint() );
+	}
+
+	@Override
 	public Container getContainer( URI uri ) throws
 	        NotFoundException,
 	        AuthenticationException,
@@ -139,6 +145,11 @@ public class CanvasLmsStructureReader
 		}
 
 		return result;
+	}
+
+	@Override
+	public boolean hasChildContainer( URI uri ) {
+		return CanvasLmsSiocUtils.isCourseUri( uri, getServiceEndpoint() );
 	}
 
 	@Override

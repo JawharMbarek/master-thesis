@@ -18,7 +18,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
 import de.m0ep.socc.core.ISoccContext;
-import de.m0ep.socc.core.connector.DefaultConnector;
+import de.m0ep.socc.core.connector.ConnectorFactory;
 import de.m0ep.socc.core.connector.IConnector;
 
 public class SoccComponent extends DefaultComponent {
@@ -29,24 +29,22 @@ public class SoccComponent extends DefaultComponent {
 	public SoccComponent( final CamelContext camelContext, final ISoccContext soccContext ) {
 		super( camelContext );
 		setSoccContext( soccContext );
-		useRawUri();
 	}
 
 	public ISoccContext getSoccContext() {
 		return soccContext;
 	}
 
-	public void setSoccContext( ISoccContext soccContext ) {
+	public void setSoccContext( final ISoccContext soccContext ) {
 		Preconditions.checkNotNull( soccContext,
 		        "Required parameter soccContext must be specified." );
 		this.soccContext = soccContext;
 	}
 
 	@Override
-	protected Endpoint createEndpoint( String uri, String remaining,
+	protected Endpoint createEndpoint( final String uri, final String remaining,
 	        Map<String, Object> parameters )
 	        throws Exception {
-
 		LOG.debug( "create endpoint: uri={} remaining={}", uri, remaining );
 
 		URI remainingUri = null;
@@ -62,19 +60,22 @@ public class SoccComponent extends DefaultComponent {
 			throw new CamelException( "invalid endpointUri" );
 		}
 
-		List<String> pathElements = getRemainingPathElements( path );
+		List<String> pathElements = splitUriPath( path );
 		String connectorId = pathElements.remove( 0 );
-		IConnector connector = DefaultConnector.createConnector( getSoccContext(), connectorId );
+		IConnector connector = ConnectorFactory.getInstance().createConnector(
+		        getSoccContext(),
+		        connectorId );
+		if ( !connector.isInitialized() ) {
+			connector.initialize();
+		}
 
-		SoccEndpoint endpoint = new SoccEndpoint( uri, this, connector, pathElements );
-
+		SoccEndpoint endpoint = new SoccEndpoint( uri, this, connector );
 		endpoint.configureProperties( parameters );
-		endpoint.setConsumerProperties( parameters );
 
 		return endpoint;
 	}
 
-	private List<String> getRemainingPathElements( String path ) {
+	private List<String> splitUriPath( final String path ) {
 		Iterable<String> iter = Splitter.on( "/" )
 		        .omitEmptyStrings()
 		        .trimResults()

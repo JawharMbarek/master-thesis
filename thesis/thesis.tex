@@ -43,21 +43,55 @@
 		\tableofcontents
 		\listoffigures
 		\listoftables
+		\lstlistoflistings
 		\cleardoublepage
 	
 	\pagenumbering{arabic}
-		\listoftodos
+		%\listoftodos
 		\input{content/einleitung}
 		\input{content/grundlagen}
-		\input{content/verwandte_arbeiten}
-		\input{content/anforderungsanalyse}
-		\input{content/design}
+		\input{content/analyse}
+		\input{content/eigener_ansatz}
 		\input{content/implementierung}
 		\input{content/abschluss}
 		\cleardoublepage
 
 	\appendix
-		\input{pages/bibliography}
 	    \input{pages/appendix}
+		\input{pages/bibliography}
 
 \end{document}
+
+% Einleitung
+%     (Motivation)
+%     (Anforderungen)
+%     (Kapitelübersicht)
+
+% Grundlagen und verwandte Arbeiten
+%     Datenintegration 
+%         (Zusammenführen von Daten aus verschiedenen Quellen)
+%         RDF
+%         SIOC
+%     Verwandte Arbeiten/Projekte
+%         Reclaim
+%         Glue!-PS
+
+% Analyse
+%     (Was fehlt bei verwandten Arbeiten)
+%     Einheitliche Schnittstelle
+%     MessagePassing
+%         JMS vs Apache Camel  vs JMS + Apache Camel
+
+% Eigener Ansatz
+%     Verwendung von SIOC (RDF2Go...)
+%     Connectoren Konzept
+%         Moodle
+%         Canvas LMS
+%         Facebook
+%         Youtube
+%         Google+
+
+% Evaluation
+%     Auswertung was alles erreicht wurde
+
+% Fazit und Ausblick

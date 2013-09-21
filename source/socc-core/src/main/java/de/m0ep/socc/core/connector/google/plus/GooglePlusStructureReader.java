@@ -24,14 +24,15 @@ package de.m0ep.socc.core.connector.google.plus;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Site;
-import org.rdfs.sioc.Thread;
 
-import com.google.api.client.repackaged.com.google.common.base.Throwables;
+import com.google.api.services.plus.model.ActivityFeed;
 import com.google.api.services.plus.model.Person;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -46,20 +47,12 @@ public class GooglePlusStructureReader extends
         IStructureReader<GooglePlusConnector> {
 
 	private final GooglePlusClientWrapper defaultClient;
-	private Forum defaultForum;
+	private Container defaultsPublicFeed;
 
 	public GooglePlusStructureReader( GooglePlusConnector connector ) {
 		super( connector );
 
-		this.defaultClient = getConnector().getClientManager()
-		        .getDefaultClient();
-		try {
-			this.defaultForum = getForum(
-			        GooglePlusSiocConverter.PUBLIC_FEED_ID_PREFIX
-			                + defaultClient.getPerson().getId() );
-		} catch ( Exception e ) {
-			Throwables.propagate( e );
-		}
+		this.defaultClient = getConnector().getClientManager().getDefaultClient();
 	}
 
 	@Override
@@ -69,74 +62,88 @@ public class GooglePlusStructureReader extends
 			result = Site.getInstance( getModel(), getServiceEndpoint() );
 		} else {
 			result = new Site( getModel(), getServiceEndpoint(), true );
+			result.setName( "Google Plus" );
 		}
-
-		result.setName( "Google Plus" );
 
 		return result;
 	}
 
 	@Override
-	public Container getContainer( URI uri ) {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean isContainer( URI uri ) {
+		return GooglePlusSiocUtils.isActivityFeedUri( uri );
 	}
 
 	@Override
-	public List<Container> listContainer() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public Container getContainer( URI uri )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		Preconditions.checkNotNull( uri,
+		        "Required parameter uri must be specified." );
 
-	@Override
-	public List<Container> listContainer( URI parent ) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		if ( Forum.hasInstance( getModel(), uri ) ) {
+			return Forum.getInstance( getModel(), uri );
+		}
 
-	@Override
-	public Forum getForum( String id ) throws NotFoundException,
-	        AuthenticationException, IOException {
-		Preconditions.checkNotNull( id,
-		        "Required parameter id must be specified." );
-		Preconditions.checkArgument( !id.isEmpty(),
-		        "Required parameter id may not be empty." );
+		Pattern pattern = Pattern.compile( "^"
+		        + GooglePlusSiocUtils.GOOGLE_PLUS_API_ROOT_URI
+		        + GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
 
-		if ( id.startsWith( GooglePlusSiocConverter.PUBLIC_FEED_ID_PREFIX ) ) {
-			String gId = id.substring( id.lastIndexOf( ':' ) + 1 );
+		if ( matcher.find() && 3 <= matcher.groupCount() ) {
+			String userId = matcher.group( 1 );
+			String collection = matcher.group( 2 );
 
-			Person person = null;
 			try {
-				person = defaultClient.getService().people().get( gId ).execute();
-			} catch ( Exception e ) {
-				throw new NotFoundException( "No forum found with the id " + id );
-			}
+				// check if this activity feed really exists
+				ActivityFeed activityFeed = defaultClient.getGooglePlusService()
+				        .activities()
+				        .list( userId, collection )
+				        .setMaxResults( 1L )
+				        .setFields( "title" )
+				        .execute();
+				if ( null != activityFeed ) {
+					Person person = defaultClient.getGooglePlusService()
+					        .people()
+					        .get( userId )
+					        .execute();
 
-			if ( null != person ) {
-				return GooglePlusSiocConverter.createSiocForum( getConnector(),
-				        person );
+					return GooglePlusSiocUtils.createSiocForum(
+					        getConnector(),
+					        person,
+					        collection );
+				}
+			} catch ( Exception e ) {
+				GooglePlusConnector.handleGoogleException( e );
 			}
 		}
 
-		throw new NotFoundException( "No forum found with the id " + id );
+		throw new NotFoundException( "No Google+ container found at uri " + uri );
 	}
 
 	@Override
-	public List<Forum> listForums() throws AuthenticationException, IOException {
-		return Lists.newArrayList( defaultForum );
+	public List<Container> listContainer()
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		if ( null == defaultsPublicFeed ) {
+			URI publicFeedUri = GooglePlusSiocUtils.createActivityFeedUri(
+			        defaultClient.getPerson().getId(),
+			        GooglePlusSiocUtils.COLLECTION_PUBLIC );
+			defaultsPublicFeed = getContainer( publicFeedUri );
+		}
+
+		return Lists.newArrayList( defaultsPublicFeed );
 	}
 
 	@Override
-	public Thread getThread( String id, Container container )
-	        throws NotFoundException, AuthenticationException, IOException {
+	public boolean hasChildContainer( URI uri ) {
+		return false;
+	}
+
+	@Override
+	public List<Container> listContainer( URI parentUri ) {
 		throw new UnsupportedOperationException(
-		        "Google Plus doesn't no something like 'threads'." );
-	}
-
-	@Override
-	public List<Thread> listThreads( Container container )
-	        throws AuthenticationException, IOException {
-		throw new UnsupportedOperationException(
-		        "Google Plus doesn't no something like 'threads'." );
+		        "listContainers is not supported by Google+ Connector" );
 	}
 }

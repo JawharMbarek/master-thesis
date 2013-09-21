@@ -1,4 +1,3 @@
-
 package de.m0ep.oauth;
 
 import java.awt.Desktop;
@@ -16,99 +15,99 @@ import org.apache.http.util.EntityUtils;
 
 public class OAuthTest {
 
-    // private static String AUTH_URL =
-    // "https://accounts.google.com/o/oauth2/auth?scope=%s&redirect_uri=%s&response_type=code&client_id=%s";
-    // private static String SCOPE =
-    // "https://www.googleapis.com/auth/plus.login";
-    // private static String CLIENT_ID =
-    // "733024832603-patciplam4cqq0dnv7a5qdhuq262n6ia.apps.googleusercontent.com";
-    // private static String CLIENT_SECRET = "LckucP4MA1jJsZQKjk9okhAu";
+	// private static String AUTH_URL =
+	// "https://accounts.google.com/o/oauth2/auth?scope=%s&redirect_uri=%s&response_type=code&client_id=%s";
+	// private static String SCOPE =
+	// "https://www.googleapis.com/auth/plus.login";
+	// private static String CLIENT_ID =
+	// "733024832603-patciplam4cqq0dnv7a5qdhuq262n6ia.apps.googleusercontent.com";
+	// private static String CLIENT_SECRET = "LckucP4MA1jJsZQKjk9okhAu";
 
-    public static final String AUTH_URL = "https://www.facebook.com/dialog/oauth?scope=%s&redirect_uri=%s&client_id=%s";
-    public static final String TOKEN_URL = "https://graph.facebook.com/oauth/access_token?client_id=%s&redirect_uri=%s&client_secret=%s&code=%s";;
-    public static final String EXTENDED_URL = "https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s";;
-    public static final String SCOPE = "create_note,email,photo_upload,publish_actions,publish_stream,read_stream,share_item,status_update,user_about_me,user_groups,video_upload";
-    public static final String CLIENT_ID = "218182098322396";
-    public static final String CLIENT_SECRET = "f4ed27b621c0f6476c2741f7cf9c4dc5";
+	public static final String AUTH_URL = "https://www.facebook.com/dialog/oauth?scope=%s&redirect_uri=%s&client_id=%s";
+	public static final String TOKEN_URL = "https://graph.facebook.com/oauth/access_token?client_id=%s&redirect_uri=%s&client_secret=%s&code=%s";;
+	public static final String EXTENDED_URL = "https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s";;
+	public static final String SCOPE = "create_note,email,photo_upload,publish_actions,publish_stream,read_stream,share_item,status_update,user_about_me,user_groups,video_upload";
+	public static final String CLIENT_ID = "218182098322396";
+	public static final String CLIENT_SECRET = "f4ed27b621c0f6476c2741f7cf9c4dc5";
 
-    /**
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-        CodeReceiverServer receiverServer = new CodeReceiverServer();
+	/**
+	 * @param args
+	 * @throws Exception
+	 */
+	public static void main( String[] args ) throws Exception {
+		CodeReceiverServer receiverServer = new CodeReceiverServer();
 
-        String redirectUri = receiverServer.getRedirectUlAndStartServer();
+		String redirectUri = receiverServer.getRedirectUlAndStartServer();
 
-        URI uri = new URI(String
-                .format(AUTH_URL, SCOPE, redirectUri, CLIENT_ID));
+		URI uri = new URI( String
+		        .format( AUTH_URL, SCOPE, redirectUri, CLIENT_ID ) );
 
-        System.out.println("Start browser with: " + uri.toString());
-        Desktop.getDesktop().browse(uri);
+		System.out.println( "Start browser with: " + uri.toString() );
+		Desktop.getDesktop().browse( uri );
 
-        System.out.println("wait for code...");
-        String code = receiverServer.waitForCode();
-        receiverServer.stopServer();
+		System.out.println( "wait for code..." );
+		String code = receiverServer.waitForCode();
+		receiverServer.stopServer();
 
-        System.out.println("Code: " + code);
+		System.out.println( "Code: " + code );
 
-        /*
-         * Get access token from authorization code
-         */
-        String accessTokenUri = String.format(
-                TOKEN_URL,
-                CLIENT_ID,
-                redirectUri,
-                CLIENT_SECRET,
-                code);
+		/*
+		 * Get access token from authorization code
+		 */
+		String accessTokenUri = String.format(
+		        TOKEN_URL,
+		        CLIENT_ID,
+		        redirectUri,
+		        CLIENT_SECRET,
+		        code );
 
-        HttpClient client = new DefaultHttpClient();
-        HttpPost postRequest = new HttpPost(accessTokenUri);
-        HttpResponse response = client.execute(postRequest);
+		HttpClient client = new DefaultHttpClient();
+		HttpPost postRequest = new HttpPost( accessTokenUri );
+		HttpResponse response = client.execute( postRequest );
 
-        System.out.println(response.getStatusLine().getStatusCode());
-        String body = EntityUtils.toString(response.getEntity());
+		System.out.println( response.getStatusLine().getStatusCode() );
+		String body = EntityUtils.toString( response.getEntity() );
 
-        List<NameValuePair> pairs = URLEncodedUtils.parse(body, Charset
-                .defaultCharset());
+		List<NameValuePair> pairs = URLEncodedUtils.parse( body, Charset
+		        .defaultCharset() );
 
-        String accessToken = null;
-        for (NameValuePair nvp : pairs) {
-            if ("access_token".equals(nvp.getName())) {
-                accessToken = nvp.getValue();
-            }
+		String accessToken = null;
+		for ( NameValuePair nvp : pairs ) {
+			if ( "access_token".equals( nvp.getName() ) ) {
+				accessToken = nvp.getValue();
+			}
 
-            System.out.print(nvp.getName());
-            System.out.print(" = ");
-            System.out.println(nvp.getValue());
-        }
+			System.out.print( nvp.getName() );
+			System.out.print( " = " );
+			System.out.println( nvp.getValue() );
+		}
 
-        System.out.println("--------------------");
+		System.out.println( "--------------------" );
 
-        if (null != accessToken) {
-            /*
-             * extend access token
-             */
-            postRequest = new HttpPost(
-                    String.format(
-                            EXTENDED_URL,
-                            CLIENT_ID,
-                            CLIENT_SECRET,
-                            accessToken));
+		if ( null != accessToken ) {
+			/*
+			 * extend access token
+			 */
+			postRequest = new HttpPost(
+			        String.format(
+			                EXTENDED_URL,
+			                CLIENT_ID,
+			                CLIENT_SECRET,
+			                accessToken ) );
 
-            response = client.execute(postRequest);
+			response = client.execute( postRequest );
 
-            System.out.println(response.getStatusLine().getStatusCode());
-            body = EntityUtils.toString(response.getEntity());
+			System.out.println( response.getStatusLine().getStatusCode() );
+			body = EntityUtils.toString( response.getEntity() );
 
-            pairs = URLEncodedUtils.parse(body, Charset
-                    .defaultCharset());
+			pairs = URLEncodedUtils.parse( body, Charset
+			        .defaultCharset() );
 
-            for (NameValuePair nvp : pairs) {
-                System.out.print(nvp.getName());
-                System.out.print(" = ");
-                System.out.println(nvp.getValue());
-            }
-        }
-    }
+			for ( NameValuePair nvp : pairs ) {
+				System.out.print( nvp.getName() );
+				System.out.print( " = " );
+				System.out.println( nvp.getValue() );
+			}
+		}
+	}
 }

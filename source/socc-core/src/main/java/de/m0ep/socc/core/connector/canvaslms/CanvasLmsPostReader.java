@@ -28,9 +28,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -46,6 +49,8 @@ import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.utils.SoccUtils;
 
 /**
  * @author Florian Müller
@@ -53,6 +58,7 @@ import de.m0ep.socc.core.exceptions.NotFoundException;
 public class CanvasLmsPostReader extends
         DefaultConnectorIOComponent<CanvasLmsConnector> implements
         IPostReader<CanvasLmsConnector> {
+	private static final Logger LOG = LoggerFactory.getLogger( CanvasLmsPostReader.class );
 
 	private final CanvasLmsClient defaultClient;
 
@@ -66,7 +72,15 @@ public class CanvasLmsPostReader extends
 	}
 
 	@Override
-	public Post readPost( URI uri ) throws NotFoundException, AuthenticationException, IOException {
+	public boolean isPost( URI uri ) {
+		return CanvasLmsSiocUtils.isInitialEntryUri( uri, getServiceEndpoint() )
+		        || CanvasLmsSiocUtils.isEntryUri( uri, getServiceEndpoint() );
+	}
+
+	@Override
+	public Post getPost( URI uri ) throws NotFoundException, AuthenticationException, IOException {
+		LOG.info( "Read posts from uri='{}'", uri );
+
 		if ( Post.hasInstance( getModel(), uri ) ) {
 			return Post.getInstance( getModel(), uri );
 		}
@@ -89,12 +103,20 @@ public class CanvasLmsPostReader extends
 			throw Throwables.propagate( e );
 		}
 
-		return null;
+		throw new NotFoundException( "No Canvas LMS post found at uri " + uri );
+	}
+
+	@Override
+	public boolean hasPosts( URI uri ) {
+		return CanvasLmsSiocUtils.isDiscussionTopicUri( uri, getServiceEndpoint() )
+		        || CanvasLmsSiocUtils.isInitialEntryUri( uri, getServiceEndpoint() )
+		        || CanvasLmsSiocUtils.isEntryUri( uri, getServiceEndpoint() );
 	}
 
 	@Override
 	public List<Post> pollPosts( URI sourceUri, Date since, int limit )
 	        throws AuthenticationException, IOException {
+		LOG.info( "Poll posts from sourceUri='{}' since='{}' limit='{}'", sourceUri, since, limit );
 
 		try {
 			if ( CanvasLmsSiocUtils.isDiscussionTopicUri( sourceUri, getServiceEndpoint() )
@@ -194,7 +216,7 @@ public class CanvasLmsPostReader extends
 				                courseId,
 				                topicId ) );
 
-				return CanvasLmsSiocUtils.createInitialEntryPost(
+				return CanvasLmsSiocUtils.createSiocPost(
 				        getConnector(),
 				        container,
 				        discussionTopic,
@@ -326,6 +348,16 @@ public class CanvasLmsPostReader extends
 	        AuthenticationException,
 	        IOException {
 
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Read new entry from '{}' json:'{}'",
+			        getServiceEndpoint(),
+			        entry );
+		} else {
+			LOG.debug( "Read new entry from '{}' entryID='{}'",
+			        getServiceEndpoint(),
+			        entry.getId() );
+		}
+
 		if ( 0 > limit || limit < result.size() ) {
 			Date createdDate = entry.getCreatedAt();
 
@@ -335,13 +367,28 @@ public class CanvasLmsPostReader extends
 			        container,
 			        parentPost );
 
-			if ( null == since || createdDate.after( since ) ) {
-				result.add( post );
+			if ( LOG.isDebugEnabled() ) {
+				LOG.debug( "Convert entry to socc post:\n{}",
+				        RdfUtils.resourceToString( post, Syntax.RdfXml ) );
+			} else {
+				LOG.debug( "Convert entry to socc post:'{}'", post );
+			}
+
+			if ( SoccUtils.haveReadAccess(
+			        getConnector(),
+			        post.getCreator(),
+			        post.getContainer() ) ) {
+				if ( null == since || createdDate.after( since ) ) {
+					result.add( post );
+				}
+			} else {
+				LOG.info( "Have no permission to read Post for this UserAccount='{}'",
+				        post.getCreator() );
+				Post.deleteAllProperties( post.getModel(), post );
 			}
 
 			Entry[] recentReplies = entry.getRecentReplies();
 			if ( null != recentReplies ) {
-
 				for ( Entry reply : recentReplies ) {
 					addEntryToList(
 					        result,

@@ -38,7 +38,12 @@ public class Moodle2PostReader extends
 	}
 
 	@Override
-	public Post readPost( URI uri ) throws AuthenticationException, IOException {
+	public boolean isPost( URI uri ) {
+		return Moodle2SiocUtils.isForumPostUri( uri, getServiceEndpoint() );
+	}
+
+	@Override
+	public Post getPost( URI uri ) throws AuthenticationException, IOException {
 		Preconditions.checkNotNull( uri,
 		        "Required parameter uri must be specified." );
 
@@ -46,7 +51,7 @@ public class Moodle2PostReader extends
 			return Post.getInstance( getModel(), uri );
 		}
 
-		Pattern pattern = Pattern.compile( Moodle2SiocUtils.REGEX_ENTRY_URI );
+		Pattern pattern = Pattern.compile( Moodle2SiocUtils.REGEX_FORUM_POST_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
 		if ( matcher.matches() ) {
@@ -71,7 +76,7 @@ public class Moodle2PostReader extends
 
 			if ( null != postRecord ) {
 				Container discussion = getConnector().getStructureReader().getContainer(
-				        Moodle2SiocUtils.createSiocThreadUri(
+				        Moodle2SiocUtils.createForumDiscussionUri(
 				                getServiceEndpoint(),
 				                discussionId ) );
 
@@ -87,6 +92,12 @@ public class Moodle2PostReader extends
 	}
 
 	@Override
+	public boolean hasPosts( URI uri ) {
+		return Moodle2SiocUtils.isForumDiscussionUri( uri, getServiceEndpoint() )
+		        || Moodle2SiocUtils.isForumPostUri( uri, getServiceEndpoint() );
+	}
+
+	@Override
 	public List<Post> pollPosts( URI sourceUri, Date since, int limit ) throws
 	        AuthenticationException,
 	        IOException {
@@ -94,10 +105,10 @@ public class Moodle2PostReader extends
 		        "Required parameter uri must be specified." );
 		limit = Math.max( -1, limit );
 
-		if ( Moodle2SiocUtils.isPostUri( sourceUri, getServiceEndpoint() ) ) {
-			Post post = readPost( sourceUri );
+		if ( Moodle2SiocUtils.isForumPostUri( sourceUri, getServiceEndpoint() ) ) {
+			Post post = getPost( sourceUri );
 			return pollRepliesAtPost( post, since, limit );
-		} else if ( Moodle2SiocUtils.isThreadUri( sourceUri, getServiceEndpoint() ) ) {
+		} else if ( Moodle2SiocUtils.isForumDiscussionUri( sourceUri, getServiceEndpoint() ) ) {
 			Container container = getConnector().getStructureReader().getContainer( sourceUri );
 			return pollPostsAtContainer( container, since, limit );
 		}

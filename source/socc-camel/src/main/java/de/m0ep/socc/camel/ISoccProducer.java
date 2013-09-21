@@ -1,7 +1,7 @@
 package de.m0ep.socc.camel;
 
 import org.apache.camel.Producer;
-import org.rdfs.sioc.Container;
+import org.ontoware.rdf2go.model.node.URI;
 
 import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
@@ -11,8 +11,7 @@ public interface ISoccProducer extends Producer {
 
 	public abstract void setPostWriter( IPostWriter<? extends IConnector> postWriter );
 
-	public abstract Container getContainer();
+	public abstract URI getUri();
 
-	public abstract void setContainer( Container container );
-
+	public abstract void setUri( URI uri );
 }

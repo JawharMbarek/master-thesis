@@ -33,18 +33,20 @@ import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Site;
 import org.rdfs.sioc.UserAccount;
+import org.rdfs.sioc.services.Service;
+import org.rdfs.sioc.services.Thing;
 
 import com.damnhandy.uri.template.UriTemplate;
 import com.google.common.base.Preconditions;
 import com.restfb.json.JsonObject;
-import com.xmlns.foaf.Person;
 
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.DateUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.UserAccountUtils;
 
-public class FacebookSiocUtils {
+public final class FacebookSiocUtils {
+
 	// Connection names
 	public static final class Connections {
 		static final String COMMENTS = "comments";
@@ -67,7 +69,7 @@ public class FacebookSiocUtils {
 		public static final String DESCRIPTION = "description";
 		public static final String FROM = "from";
 		public static final String GENDER = "gender";
-		public static final String ID = "id";
+		public static final String ID = TEMPLATE_VAR_ID;
 		public static final String LINK = "link";
 		public static final String MESSAGE = "message";
 		public static final String METADATA = "metadata";
@@ -96,14 +98,21 @@ public class FacebookSiocUtils {
 		}
 	}
 
-	static final String REGEX_FACEBOOK_URI = "^https://[\\w]+.facebook.com/([^/\\s?=]+)";
+	public static final String REGEX_FACEBOOK_URI = "^https://[\\w]+.facebook.com/([^/\\s?=]+)";
 
-	// Request fields lists	
-	static final String FIELDS_GROUP = Fields.ID + ","
+	public static final String TEMPLATE_VAR_ID = "id";
+
+	public static final String TEMPLATE_FACEBOOK_URI =
+	        "https://graph.facebook.com/{"
+	                + TEMPLATE_VAR_ID
+	                + "}";
+
+	// Request fields lists
+	public static final String FIELDS_GROUP = Fields.ID + ","
 	        + Fields.NAME + ","
 	        + Fields.DESCRIPTION;
 
-	static final String FIELDS_POST = Fields.ID + ","
+	public static final String FIELDS_POST = Fields.ID + ","
 	        + Fields.FROM + ","
 	        + Fields.MESSAGE + ","
 	        + Fields.STORY + ","
@@ -115,13 +124,39 @@ public class FacebookSiocUtils {
 	        + Fields.UPDATED_TIME + ","
 	        + Fields.DESCRIPTION;
 
-	static final String FIELDS_COMMENT = Fields.ID + ","
+	public static final String FIELDS_COMMENT = Fields.ID + ","
 	        + Fields.FROM + ","
 	        + Fields.MESSAGE + ","
 	        + Fields.CREATED_TIME + ","
 	        + Fields.ATTACHMENT;
 
-	public static Forum createSiocForum( final FacebookConnector connector, final JsonObject object ) {
+	public static UserAccount createSiocUserAccount(
+	        final FacebookConnector connector,
+	        final JsonObject jsonObject ) {
+		Preconditions.checkNotNull( connector,
+		        "Required parameter connector must be specified." );
+		Preconditions.checkNotNull( jsonObject,
+		        "Required parameter jsonObject must be specified." );
+
+		Model model = connector.getContext().getModel();
+		Service service = connector.getService();
+		String id = jsonObject.getString( Fields.ID );
+		URI uri = createSiocUri( id );
+
+		UserAccount result = new UserAccount( model, uri, true );
+		result.setId( id );
+		result.setName( jsonObject.getString( Fields.NAME ) );
+		result.setAccountName( id );
+		result.setAccountServiceHomepage( service.getServiceEndpoint() );
+
+		Thing.setService( result.getModel(), result.getResource(), service );
+		service.addServiceOf( result );
+
+		return result;
+	}
+
+	public static Forum createSiocForum( final FacebookConnector connector,
+	        final JsonObject object ) {
 		Model model = connector.getContext().getModel();
 		URI uri = FacebookSiocUtils.createSiocUri( object.getString( Fields.ID ) );
 
@@ -160,8 +195,7 @@ public class FacebookSiocUtils {
 		        "Required parameter object must be specified." );
 
 		Model model = connector.getContext().getModel();
-		URI serviceEndpoint = connector.getService().getServiceEndpoint()
-		        .asURI();
+		URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
 		URI uri = createSiocUri( object.getString( Fields.ID ) );
 
 		Post result;
@@ -176,14 +210,14 @@ public class FacebookSiocUtils {
 				        DateUtils.formatISO8601( modifiedDate ) );
 
 				if ( !result.hasModified( modifiedNode ) ) {
+					result.setModified( modifiedNode );
 					result.removeAllAttachments();
 					setPostCoreProperties( result, object );
-					result.setModified( modifiedNode );
 				}
 			}
 		} else {
 			result = new Post( model, uri, true );
-
+			result.setIsPartOf( connector.getStructureReader().getSite() );
 			result.setId( object.getString( Fields.ID ) );
 
 			JsonObject fromObject = object.getJsonObject( Fields.FROM );
@@ -231,6 +265,33 @@ public class FacebookSiocUtils {
 		}
 
 		return result;
+	}
+
+	public static URI createSiocUri( final String id ) {
+		Preconditions.checkNotNull( id,
+		        "Required parameter id must be specified." );
+		Preconditions.checkArgument( !id.isEmpty(),
+		        "Required parameter id may not be empty." );
+
+		return Builder.createURI(
+		        UriTemplate.fromTemplate( TEMPLATE_FACEBOOK_URI )
+		                .set( TEMPLATE_VAR_ID, id )
+		                .expand() );
+	}
+
+	public static boolean hasConnection( JsonObject object, String connection ) {
+		if ( null != object && object.has( Fields.METADATA ) ) {
+			JsonObject metadata = object.getJsonObject( Fields.METADATA );
+
+			if ( metadata.has( Fields.CONNECTIONS ) ) {
+				JsonObject connections = metadata
+				        .getJsonObject( Fields.CONNECTIONS );
+
+				return connections.has( connection );
+			}
+		}
+
+		return false;
 	}
 
 	private static void setPostCoreProperties(
@@ -288,62 +349,5 @@ public class FacebookSiocUtils {
 				                        .getString( Fields.URL ) ) );
 			}
 		}
-	}
-
-	public static UserAccount createSiocUserAccount(
-	        final FacebookConnector connector,
-	        final JsonObject jsonObject ) {
-		Preconditions.checkNotNull( connector,
-		        "Required parameter connector must be specified." );
-		Preconditions.checkNotNull( jsonObject,
-		        "Required parameter jsonObject must be specified." );
-
-		Model model = connector.getContext().getModel();
-		URI serviceEndpoint = connector.getService()
-		        .getServiceEndpoint()
-		        .asURI();
-		String id = jsonObject.getString( Fields.ID );
-		URI uri = createSiocUri( id );
-
-		UserAccount result = new UserAccount( model, uri, true );
-		result.setId( id );
-		result.setName( jsonObject.getString( Fields.NAME ) );
-		result.setAccountName( id );
-		result.setAccountServiceHomepage( serviceEndpoint );
-
-		// create a new Person for unknown account.
-		Person person = new Person( model, true );
-		person.setName( jsonObject.getString( Fields.NAME ) );
-
-		person.addAccount( result );
-		result.setAccountOf( person );
-
-		return result;
-	}
-
-	public static URI createSiocUri( final String id ) {
-		Preconditions.checkNotNull( id,
-		        "Required parameter id must be specified." );
-		Preconditions.checkArgument( !id.isEmpty(),
-		        "Required parameter id may not be empty." );
-
-		return Builder.createURI(
-		        UriTemplate.fromTemplate( "https://graph.facebook.com/{id}" )
-		                .set( "id", id )
-		                .expand() );
-	}
-
-	public static boolean hasConnection( JsonObject object, String connection ) {
-		if ( object.has( Fields.METADATA ) ) {
-			JsonObject metadata = object.getJsonObject( Fields.METADATA );
-
-			if ( metadata.has( Fields.CONNECTIONS ) ) {
-				JsonObject connections = metadata.getJsonObject( Fields.CONNECTIONS );
-
-				return connections.has( connection );
-			}
-		}
-
-		return false;
 	}
 }

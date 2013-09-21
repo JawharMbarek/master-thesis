@@ -30,7 +30,7 @@ Am Anfang muss irgendjemand auf einer Webseite einen Beitrag schreiben der synch
 
 Abbildung \ref{fig:lesen_von_beitrag_und_convertieren} zeigt den Ablauf, wie Beiträge von der Webseite A gelesen, konvertiert und weiterverarbeitet werden. Dazu müssen zuerst die Daten über eine öffentliche API vom Server des Webseite A heruntergeladen werden. Da im Allgemeinen nicht automatisch bekannt ist, wann ein neuer Beitrag vorhanden ist, müssen die Server in zeitlichen Abständen abgefragt (\emph{Polling} genannt) und die zurückgelieferten Daten nach neuen Beiträgen durchsucht werden. Sind ein oder mehrere neue Beiträge gefunden worden, können diese nicht direkt an die Webseite B geschickt werden, da sich diese in der Regel im verwendeten Datenformat unterscheiden. Diese müssen zuvor konvertiert werden.
 
-Die einfachste Möglichkeit wäre die Daten von Webseite A, die in Format A vorliegen, in das Format B von Webseite B zu konvertieren. Bei zwei Formaten ist dies noch sehr einfach. Es müsste lediglich ein Konverter von Format A nach Format B und einer in die umgekehrte Richtung implementiert werden. Für den Fall, dass ein weiteres Webseite C unterstützt werden soll, würde ich die Anzahl an notwendigen Konvertern , wie Tabelle \ref{tbl:anzahl_konvertern_bei_drei_netzwerken} zeigt, auf Sechs erhöhen. 
+Die einfachste Möglichkeit wäre die Daten von Webseite A, die in Format A vorliegen, in das Format B von Webseite B zu konvertieren. Bei zwei Formaten ist dies noch sehr einfach. Es müsste lediglich ein Konverter von Format A nach Format B und einer in die umgekehrte Richtung implementiert werden. Für den Fall, dass ein weiteres Webseite C unterstützt werden soll, würde ich die Anzahl an notwendigen Konvertern , wie Tabelle \ref{tbl:anzahl_konvertern_bei_drei_netzwerken} zeigt, auf Sechs erhöhen.
 
 \begin{table}[ht]
     \centering
@@ -149,10 +149,27 @@ Anhand dieses kurzen Ablaufbeispiels kann man einige Komponenten ablesen, aus de
 \subsection{Welches Zwischenformat?} % (fold)
 \label{sub:welches_zwischenformat}
 
-\begin{itemize}
-    \item SIOC + FOAF  als geeignetes Zwischenformat
-    \item warum Ontologie und keine neues XML Schema!?
-\end{itemize}
+Ein passendes Zwischenformat wurde im Kapitel \enquote{\ref{cha:grundlagen}} mit SIOC beziehungsweise die Kombination aus SIOC und FOAF bereits vorgestellt. Damit ist es nicht nur möglich einzelne Beiträge plattformunabhängig zu speichern, sondern es kann auch die Struktur der Plattform als auch der Benutzer mit eingebunden werden. Auch können Maschinen aus den RDF-Daten einfach Wissen für neue, hilfreiche Informationen ableiten. Doch warum sollte man auf RDF und Ontologien setzen anstatt etwas eigenes zu Entwickeln wie auf Basis des weitverbreiteten und vielseitigen XML Formats?
+
+Hier gibt es mehrere Vorteile, warum man RDF einer mit XML-Schema definierten XML-Datei vorziehen sollte. XML hat das Problem, dass die selbe Aussage auf verschiedene Art repräsentiert werden kann. Listing \ref{lst:xml_vs_rdf_multiple_rep} zeigt ein Beispiel für die Repräsentation der Aussage \enquote{Max Hiwi ist der Autor des Beitrags mit der ID 42} in XML.
+
+\begin{lstlisting}[
+    language=XML,
+    caption={XML: Unterschiedliche Syntax, gleiche Semantik }\label{lst:xml_vs_rdf_multiple_rep},
+    captionpos=t]
+    <post>
+        <id>42</id>
+        <author>Max Hiwi</author>
+    </post>
+
+    <post id="42">
+        <author>Max Hiwi</author>
+    </post>
+
+    <post id="42" author="Max Hiwi" />
+\end{lstlisting}
+
+Alle drei XML-Elemente beschreiben die selbe Aussage, aber auf unterschiedliche Art und Weise. Für einen Menschen haben diese drei Schreibweisen die selbe Aussage, für eine Maschine ist dies aber nicht mehr ganz so offensichtlich. Auch kann nicht die Bedeutung der einzelnen Element und Tags von Maschinen erfasst werde. Dies muss der Programmierer erledigen.Zusätzlich erschweren diese Unterschiedlichen Strukturen das ausführen von Abfragen auf diesen Daten, da ein Mapping zwischen einer logischen Abfrage und den Daten nicht eindeutig erfolgen kann (vgl. \cite[s.\,41]{Schroder2003a}).
 
 % subsection welches_zwischenformat (end)
 

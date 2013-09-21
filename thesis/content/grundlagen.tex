@@ -132,7 +132,7 @@ Doch nicht jeder davon ist in jeden Teil des Tripels erlaubt. Das Subjekt ist en
 
 % subsubsection resource_description_framework (end)
 
-\subsubsection{Darstellung von RDF-Graphen} % (fold)
+\subsubsection{Repräsentation von RDF-Graphen} % (fold)
 \label{ssub:darstellung_von_rdf_graphen}
 
 In Laufe der Zeit von RDF wurde verschiedene Möglichkeiten erfunden einen RDF-Graphen darzustellen. In diesem Abschnitt werden drei Formen vorgestellt die auch in dieser Arbeit zur Visualisierung benutzt werden. 
@@ -400,6 +400,8 @@ camelContext.start();
 \end{lstlisting}
 
 Listing \ref{lst:camel_beispiel} zeig ein kleines Beispiel, wie eine Nachrichtenroute in Java definiert werden kann. In der ersten Zeile wird über die Klasse \texttt{RouteDefinition} eine neue Route erstellt. Über die Methode \texttt{from} wird der Endpunkt vom dem die Route ausgeht festgelegt. Welcher Endpunkt das genau seien soll kann auf zwei Arten definiert werden. Man übergibt der Methode direkt ein Objekt einer Klasse die das Interface \texttt{Endpoint} implementiert oder man macht es, wie hier im Beispiel, über eine URI. Die URI baut sich auf folgende Weise zusammen. Der Teil bis zum Doppelpunkt, das sogenannte \enquote{Schema}, legt die Komponente (engl. \texttt{Component}) fest, von der ein Endpunkt erzeugen werden soll. In diesem Falls ist es eine Timer-Komponente, deren Endpunkt im periodischen Abstand Event-Nachrichten verschickt. Der Rest der URI wird zur Konfiguration an den Endpunkt übergeben. \enquote{helloTimer} steht hier für einen Namen für den Timer und der Parameter \enquote{period} gibt den zeitlichen Abstand zwischen zwei Event-Nachrichten an. Das Ziel der Route wird mit der Methode \texttt{to} in Zeile Drei festgelegt. Für das Ziel wird hier eine Log-Komponente mit dem Namen \enquote{helloLog} festgelegt, die alle reinkommenden Nachrichten protokolliert. In der fünften Zeile wird ein \texttt{CamelContext} Objekt, das für die Verwaltung und Ausführung der Routen verantwortliche ist. Die eben erstellte Route wird dann dem CamelContext hinzugefügt und die Ausführung in der letzten Zeile gestartet. Nun Wird der Timer alle 3000 Millisekunden eine neue Event-Nachricht erzeugen und an den CamelContext schicken. Dieser leitet die Nachricht dann an das durch die Route definierte Ziel und wird dort von der Log-Komponente
+
+Für Camel existieren schon eine Menge vorgefertigter Komponenten\footnote{\url{http://camel.apache.org/components.html}} die ein großes Spektrum an Anwendungsmöglichkeiten Abdeckt. Es gibt Komponenten für die Anbindung an HTTP-Webserver, JMS-Provider, E-Mail-Server, RSS/Atom-Feeds und viele mehr. 
 
 % subsubsection apache_camel (end)
 

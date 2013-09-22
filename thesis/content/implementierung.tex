@@ -29,7 +29,7 @@ Das muss rein:
 
 Innerhalb der Mappingbeschreibungen zwischen den Format der einzelnen SOC und SIOC werden zur besseren Übersicht und einfacheren Lesbarkeit Platzhalt für einige URIs benutzt. Welche Platzhalten dies sind und für welche URI sie stehen ist aus Tabelle \ref{tbl:platzhalter_fuer_sioc_mapping} zu entnehmen. Für die einzelnen SOC werden noch einmal gesonderte Platzhalter definiert, diese werden aber gesondert in den einzelnen Abschnitten beschrieben. 
 
-\begin{table}[h]
+\begin{table}[ht]
     \centering
     \caption{Allgemeine Platzhalter und deren Beschreibung für das Mapping nach SIOC}
     \begin{tabular}{l|p{11cm}}
@@ -212,6 +212,50 @@ In Zeile 1 wird eine Objekt der Klasse \texttt{FacebookClient} mit einem Accesst
     \item kein Schreiben von Beiträgen
 \end{itemize}
 
+\subsubsection{Google+ API} % (fold)
+\label{ssub:google_api}
+
+Die API von Google für den Zugriff auf sein soziales Online-Netzwerk Google+ baut wie viele auf andere auf den REST-Prinzipien auf (siehe \cite{GooglePlusApi}). Die URIs für die Anfragen fangen mit \texttt{https://www.googleapis.com/plus/v1/} an und danach folgt der Pfad zu den REssourcen und etwaige Parameter. Die für hier wichtigsten Parameter sind \texttt{access\_token} zum Angeben eines OAuth 2.0 Accesstoken und \texttt{fields} mit dem nur die dort angegebenen Datenfelder im Ergebnis zurück geliefert werden. Als Datenformat wird, wie schon bei Facebook, JSON eingesetzt, aber mit einen von Facebook vollkommen unterschiedlichen Aufbau. Activitys und Comments bestehen im Grunde aus drei Teilen:
+
+\begin{description}
+    \item[\textbf{Actor:}] Der Actor-Eintragt sagt über die Ressource aus von wem sie erstellt wurde. 
+    \item[\textbf{Verb:}] Das Verb beschreibt auf welche Weise diese Ressource erstellt wurde. Für Activitys ist die Angabe von \enquote{post}, wenn ein Beitrag vom Actor selber geschrieben oder \enquote{share}, wenn dieser nur geteilt wurde und von jemand anderem stammt. 
+    \item[\textbf{Object:}] Der Object-Eintrag enthält den eigentlichen Inhalt.
+\end{description}
+
+Neben diesen drei enthält eine Ressource noch Metadaten wie ID, Zeitpunkt der Veröffentlichung oder Änderung, Ortsdaten und andere mehr.
+
+Die Google+ API teilt zu lange Ergebnislisten, ebenfalls wie Facebook, in mehrere Teillisten die auf einzelne Seiten aufgeteilt werden. Ob eine Seite der aktuellen folgt, kann über die Existenz des \texttt{nextPageToken} Eintrags im JSON-Objekt erkannt werden. Dieser \emph{PageToken} muss für die Abfrage der nächsten Seite an die gleiche URI als Parameter \texttt{pageToken} angehängt werden. 
+
+Wie schon erwähnt setzt die Google+ API für die Autorisierung auf OAuth 2.0. Ein Accesstoken ist aber nur nötig, wenn Operationen stellvertretend für einen Benutzer ausgeführt werden müssen. Für alle anderen Fälle ist ein API-Schlüssel vollkommen ausreichend. Zusätzlich zum Accesstoken liefert Google+ auch einen Refreshtoken mit. So können abgelaufene Accesstoken vom Programm automatisch wieder reaktiviert werden, ohne dass der Benutzer dies von Hand machen muss. Die für die Erstellung von Access- und Refreshtoken gebrauchten ClientID und ClientSecret können über die Google API Console\footnote{\url{https://code.google.com/apis/console}} erstellt werden. Wichtig dabei ist eine \enquote{Client ID for installed applications} auszuwählen. 
+
+Sowohl für den Zugriff auf die REST-API, als auch für die Erstellung der Token, stellt Google eine Java-Bibliothek zur Verfügung. 
+
+\begin{lstlisting}[
+    caption={Google+ API Java: Access- und Refreshtoken}\label{lst:gplus_java_accesstoken},
+    captionpos=t]
+MemoryCredentialStore credentialStore = new MemoryCredentialStore();
+GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+        new NetHttpTransport(),
+        new JacksonFactory(),
+        CLIENT_ID,
+        CLIENT_SECRET,
+        Arrays.asList("https://www.googleapis.com/auth/plus.login"))
+    .setCredentialStore(credentialStore)
+    .build();
+
+Credential credentials = new AuthorizationCodeInstalledApp(
+        flow,
+        new LocalServerReceiver())
+    .authorize("user");
+\end{lstlisting}
+
+Listing \ref{lst:gplus_java_accesstoken} zeigt wie man sich Access- und Refreshtoken für Google+ in Java holen kann. In der ersten Zeile wird ein \texttt{MemoryCredentialStore} erstellt, mit dem die Token im flüchtigen Speicher des Systems zwischen gespeichert werden können. Es gibt aber auch Klassen die alles in einer einer Datei auf der Festplatte ablegen. So können sie auch zwischen Programmstarts benutzt werden. Von Zeile 2 bis 9 wir ein sogenannter \enquote{AuthorizationCodeFlow} erzeugt. Dieser dieser abstrahiert für den Benutzer den OAuht-Mechanismus über den man die Token von Google bekommt. In der Zeile 3 und 4 bekommt dieser CodeFlow externe Objekte übergeben mit dem er HTTP-Operationen ausführen und die zurückgelieferten Daten verarbeiten kann. In den zwei Folgezeilen werden die ClientID und das ClientSecret übergeben. In der siebten Zeile muss, wie schon bei Facebook, ein Geltungsbereich (Scope) für den Accesstoken festgelegt werden. In diesem Falle wollen wir mit \texttt{https://www.googleapis.com/auth/plus.login} Operationen stellvertretend für einen Benutzer ausführen. In Zeile 8 wird noch der oben erstellte texttt{MemoryCredentialStore} übergeben und das Code-Flow-Objekt in Zeile 9 über die \texttt{build()} Methode erzeugt. Für Desktopprogramme wird wieder eine externer Internetbrowser zum Holen der Token benötigt. Doch auch dafür bietet Google eine fertige Klasse an, die (fast) alle Schritte automatisiert. Diese Klasse ist \texttt{AuthorizationCodeInstalledApp}. Ihr werden der obige CodeFlow und ein lokaler Webserver (ebenfalls schon fertig vorhanden) übergeben und über die Methode \texttt{authorize(\dots)} die Token erzeugt. Die Zeichenkette \enquote{user} legt dabei fest, unter welchen Namen die Token im texttt{MemoryCredentialStore} abgelegt werden.
+
+Leider ist es mit der aktuellen Version der Google+ API nur möglich auf Ressourcen zuzugreifen, die von den Benutzer auf als \enquote{öffentlich} markiert wurde. Zugleich sind keine Operationen vorhanden um irgendwelche Beiträge zu Schreiben.
+
+% subsubsection google_api (end)
+
 % subsection google_plus_connector (end)
 
 \subsection{Youtube} % (fold)
@@ -236,8 +280,8 @@ Für Youtube existieren zur Zeit zwei verschiedene APIs, eine Version 3 und die 
 Die Youtube Data API v2 baut noch auf dem Google Data Protokoll auf, eine API nach dem REST-Prinzip mit Atom und JSON als Datenformat. Für Youtube wird aber primär Atom eingesetzt (umschalten auf JSON ist möglich). Die einzelnen Ressourcen können als Atom-Feed, also eine Liste einzelnen Einträgen wie die einer Playliste, oder als ein einzelnes Entry-Element, zum Beispiel Informationen zu einen Benutzerkonto, zurückgegeben werden. Youtube verwendet aber nicht nur die vom Atom-Standard definierten Element, sondern erweitert das Format durch eine große Zahl eigener Erweiterungen wie Spieldauer eines Videos, Statistiken, Bewertungen oder Informationen zu Benutzerkonten. Jeder Feed/Eintrag enthält mehrere Link-Element die auf weiterführenden Ressourcen verweisen. Ist die Menge der Einträge eines Feedes zu groß, wird das Ergebnis auf mehrere Feeds aufgeteilt. Um zwischen diesen Teilergebnissen zu navigieren enthalten die Teilfeeds Links auf ihren Vorgänger und/oder Nachfolge-Feed (siehe Listing \ref{lst:ytdataapi_navigation_through_results}).
 
 \begin{lstlisting}[
-    language=xml
-    caption={Youtube Data API v2: Navigation durch Ergebnisse}\label{lst:ytdataapi_navigation_through_results},
+    language=XML,
+    caption={Youtube Data API v2: Navigation durch die Ergebnisse}\label{lst:ytdataapi_navigation_through_results},
     captionpos=t]
 <link rel='previous' type='application/atom+xml'
   href='http://gdata.youtube.com/feeds/api/videos?start-index=1&max-results=25...'/>
@@ -373,7 +417,7 @@ In Listing \ref{lst:canvaslms4j_beispiel} ist ein Beispiel für die Anwendung de
 \subsubsection{Canvas Mapping nach SIOC} % (fold)
 \label{ssub:canvas_sioc_mapping}
 
-\begin{table}[h]
+\begin{table}[ht]
     \centering
     \caption{Format der URIs für Canvas}
     \begin{tabular}{l|p{11cm}}

@@ -18,9 +18,11 @@
 \contentsline {lstlisting}{\numberline {5.2}{Facebook Login: URI f\IeC {\"u}r den Tausch von Code genen Accesstoken}}{46}{lstlisting.5.2}
 \contentsline {lstlisting}{\numberline {5.3}{Facebook Login: Extended Accesstoken}}{47}{lstlisting.5.3}
 \contentsline {lstlisting}{\numberline {5.4}{RestFB Beispielprogramm}}{47}{lstlisting.5.4}
-\contentsline {lstlisting}{\numberline {5.5}{Youtube Data API v2: Java YouTubeService}}{50}{lstlisting.5.5}
-\contentsline {lstlisting}{\numberline {5.6}{Youtube Data API v2: Kommentar schreiben}}{50}{lstlisting.5.6}
-\contentsline {lstlisting}{\numberline {5.7}{Canvas Authorization Header}}{51}{lstlisting.5.7}
-\contentsline {lstlisting}{\numberline {5.8}{CanvasLMS4J Beispielprogramm}}{53}{lstlisting.5.8}
+\contentsline {lstlisting}{\numberline {5.5}{Google+ API Java: Access- und Refreshtoken}}{49}{lstlisting.5.5}
+\contentsline {lstlisting}{\numberline {5.6}{Youtube Data API v2: Navigation durch die Ergebnisse}}{51}{lstlisting.5.6}
+\contentsline {lstlisting}{\numberline {5.7}{Youtube Data API v2: Java YouTubeService}}{51}{lstlisting.5.7}
+\contentsline {lstlisting}{\numberline {5.8}{Youtube Data API v2: Kommentar schreiben}}{52}{lstlisting.5.8}
+\contentsline {lstlisting}{\numberline {5.9}{Canvas Authorization Header}}{53}{lstlisting.5.9}
+\contentsline {lstlisting}{\numberline {5.10}{CanvasLMS4J Beispielprogramm}}{54}{lstlisting.5.10}
 \addvspace {10\p@ }
 \addvspace {10\p@ }

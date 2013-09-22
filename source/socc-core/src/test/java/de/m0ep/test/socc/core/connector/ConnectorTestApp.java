@@ -197,11 +197,11 @@ public class ConnectorTestApp {
             post.setCreator(florianUserAccountMoodle);
             post.setContent("ich bin ein kommentar auf http://example.com/post/1");
 
-            postWriter
-                    .writePost(
-                            Builder.createURI("https://canvas.instructure.com/api/v1/courses/798152/discussion_topics/1440783"),
-                            RdfUtils.resourceToString(post, Syntax.RdfXml),
-                            Syntax.RdfXml);
+            // postWriter
+            // .writePost(
+            // Builder.createURI("https://canvas.instructure.com/api/v1/courses/798152/discussion_topics/1440783"),
+            // RdfUtils.resourceToString(post, Syntax.RdfXml),
+            // Syntax.RdfXml);
 
             // Post post = new Post( model, true );
             // post.setContent( "Hallo, welt <br>" );

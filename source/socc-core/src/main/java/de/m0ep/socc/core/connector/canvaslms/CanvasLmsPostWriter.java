@@ -50,6 +50,7 @@ import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
 import de.m0ep.socc.core.utils.UserAccountUtils;
 
@@ -235,6 +236,17 @@ public class CanvasLmsPostWriter extends
                         null);
 
                 resultPost.hasSibling(post);
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Writing successful, result post:\n{}",
+                            RdfUtils.resourceToString(
+                                    resultPost,
+                                    Syntax.Turtle));
+                } else {
+                    LOG.info("Writing successful, result post:\n{}",
+                            resultPost);
+                }
+
                 return;
             } catch (CanvasLmsException e) {
                 if (e instanceof NetworkException) {
@@ -350,6 +362,16 @@ public class CanvasLmsPostWriter extends
                         targetPost);
 
                 resultPost.hasSibling(post);
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Writing successful, result post:\n{}",
+                            RdfUtils.resourceToString(
+                                    resultPost,
+                                    Syntax.Turtle));
+                } else {
+                    LOG.info("Writing successful, result post:\n{}",
+                            resultPost);
+                }
                 return;
             } catch (CanvasLmsException e) {
                 if (e instanceof NetworkException) {

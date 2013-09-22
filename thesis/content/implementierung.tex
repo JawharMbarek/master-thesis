@@ -252,6 +252,30 @@ Credential credentials = new AuthorizationCodeInstalledApp(
 
 Listing \ref{lst:gplus_java_accesstoken} zeigt wie man sich Access- und Refreshtoken für Google+ in Java holen kann. In der ersten Zeile wird ein \texttt{MemoryCredentialStore} erstellt, mit dem die Token im flüchtigen Speicher des Systems zwischen gespeichert werden können. Es gibt aber auch Klassen die alles in einer einer Datei auf der Festplatte ablegen. So können sie auch zwischen Programmstarts benutzt werden. Von Zeile 2 bis 9 wir ein sogenannter \enquote{AuthorizationCodeFlow} erzeugt. Dieser dieser abstrahiert für den Benutzer den OAuht-Mechanismus über den man die Token von Google bekommt. In der Zeile 3 und 4 bekommt dieser CodeFlow externe Objekte übergeben mit dem er HTTP-Operationen ausführen und die zurückgelieferten Daten verarbeiten kann. In den zwei Folgezeilen werden die ClientID und das ClientSecret übergeben. In der siebten Zeile muss, wie schon bei Facebook, ein Geltungsbereich (Scope) für den Accesstoken festgelegt werden. In diesem Falle wollen wir mit \texttt{https://www.googleapis.com/auth/plus.login} Operationen stellvertretend für einen Benutzer ausführen. In Zeile 8 wird noch der oben erstellte texttt{MemoryCredentialStore} übergeben und das Code-Flow-Objekt in Zeile 9 über die \texttt{build()} Methode erzeugt. Für Desktopprogramme wird wieder eine externer Internetbrowser zum Holen der Token benötigt. Doch auch dafür bietet Google eine fertige Klasse an, die (fast) alle Schritte automatisiert. Diese Klasse ist \texttt{AuthorizationCodeInstalledApp}. Ihr werden der obige CodeFlow und ein lokaler Webserver (ebenfalls schon fertig vorhanden) übergeben und über die Methode \texttt{authorize(\dots)} die Token erzeugt. Die Zeichenkette \enquote{user} legt dabei fest, unter welchen Namen die Token im texttt{MemoryCredentialStore} abgelegt werden.
 
+\begin{lstlisting}[
+    caption={Google+ API: Zugriff auf Activity-Feed mit Java}\label{lst:gplus_activity_feed_java},
+    captionpos=t]
+Plus plus = new Plus.Builder(
+        new NetHttpTransport(), 
+        new JacksonFactory(),
+        credential)
+    .setApplicationName(APPLICATION_NAME)
+    .build();
+
+ActivityFeed activityFeed = plus.activities()
+    .list( "me","public" )
+    .execute();
+
+for(Activity activity : activityFeed.getItems()){
+    System.out.println(
+        activity.getActor().getDisplayName() 
+        + ": " 
+        + activity.getObject().getContent());
+}
+\end{lstlisting}
+
+Das Listing \ref{lst:gplus_activity_feed_java} ist eine kleines Beispiel wie auf den Activity-Feed, also die Liste der geschriebenen Beiträge eines Benutzer, in Google+ mit der Java-Bibliothek zugegriffen werden kann. 
+
 Leider ist es mit der aktuellen Version der Google+ API nur möglich auf Ressourcen zuzugreifen, die von den Benutzer auf als \enquote{öffentlich} markiert wurde. Zugleich sind keine Operationen vorhanden um irgendwelche Beiträge zu Schreiben.
 
 % subsubsection google_api (end)

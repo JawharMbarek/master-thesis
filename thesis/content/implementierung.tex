@@ -27,15 +27,9 @@ Für die Entwicklung der Programme und Bibliotheken dieser Arbeit wurde das Buil
 \section{Implementierung der Connectoren} % (fold)
 \label{sec:implementierung_der_connectoren}
 
-Das muss rein:
-\begin{itemize}
-    \item Mapping nach SIOC
-    \item Zugriff über die API
-    \item Probleme bei der Implementierung
-\end{itemize}
+An dieser Stelle soll beschrieben werden wie Connectoren für die in Abschnitt \ref{sec:lernplattformen_und_soziale_online_netzwerke} vorgestellten Plattformen implementiert werden können. Dafür wird darauf eingegangen mit welcher Art von API auf die Daten der einzelnen Plattformen zugegriffen werden und wie man deren Datenstruktur in SIOC abbilden kann. Ebenfalls werden auftretende Probleme und wenn möglich deren Lösung gezeigt.
 
-Innerhalb der Mappingbeschreibungen zwischen den Format der einzelnen SOC und SIOC werden zur besseren Übersicht und einfacheren Lesbarkeit Platzhalt für einige URIs benutzt. Welche Platzhalten dies sind und für welche URI sie stehen ist aus Tabelle \ref{tbl:platzhalter_fuer_sioc_mapping} zu entnehmen. Für die einzelnen SOC werden noch einmal gesonderte Platzhalter definiert, diese werden aber gesondert in den einzelnen Abschnitten beschrieben. 
-
+Innerhalb der Beschreibungen des Mappings nach SIOC werden zur besseren Übersicht und einfacheren Lesbarkeit Platzhalt für einige URIs benutzt. Welche Platzhalten dies sind und für welche URI sie stehen ist aus Tabelle \ref{tbl:platzhalter_fuer_sioc_mapping} zu entnehmen.
 \begin{table}[ht]
     \centering
     \caption{Allgemeine Platzhalter und deren Beschreibung für das Mapping nach SIOC}
@@ -53,26 +47,31 @@ Innerhalb der Mappingbeschreibungen zwischen den Format der einzelnen SOC und SI
     \label{tbl:platzhalter_fuer_sioc_mapping}
 \end{table}
 
+\\subsection{Allgemeine Probleme} % (fold)
+\label{sub:allgemeine_probleme}
+
+% subsection allgemeine_probleme (end)
+
 \subsection{Moodle} % (fold)
 \label{sub:moodle_connector}
 
-\begin{itemize}
-    \item Eingebaute REST Schnittstelle, aber kein Lesen von Beiträgen
-    \item WebService Plugin MoodleWS (REST oder SOAP)
-    \begin{itemize}
-        \item https://github.com/patrickpollet/moodlews
-        \item ClientAPI existieren von selber Autor
-        \item REST defekt, kein schreiben von Beiträgen möglich
-        \item SOAP funktioniert mehr oder weniger
-        \item Verschluckt Fehlermeldungen
-        \item kein lesen einzelner Posts/Threads/Foren
-        \item SOAP ClientAPI neu generieren, weil vorhandene nicht mit 2.4 funktioniert.
-        \item Username/Password + Session Token/Id
-        \item “Use an auto generated wsdl” -> No
-        \item schreiben von neuen Beitrag direkt in thread nur als Antwort auf ersten Beitrag möglich
-        \item Rückgabe aller Beiträge in einem Objekt
-    \end{itemize}
-\end{itemize}
+% \begin{itemize}
+%     \item Eingebaute REST Schnittstelle, aber kein Lesen von Beiträgen
+%     \item WebService Plugin MoodleWS (REST oder SOAP)
+%     \begin{itemize}
+%         \item https://github.com/patrickpollet/moodlews
+%         \item ClientAPI existieren von selber Autor
+%         \item REST defekt, kein schreiben von Beiträgen möglich
+%         \item SOAP funktioniert mehr oder weniger
+%         \item Verschluckt Fehlermeldungen
+%         \item kein lesen einzelner Posts/Threads/Foren
+%         \item SOAP ClientAPI neu generieren, weil vorhandene nicht mit 2.4 funktioniert.
+%         \item Username/Password + Session Token/Id
+%         \item “Use an auto generated wsdl” -> No
+%         \item schreiben von neuen Beitrag direkt in thread nur als Antwort auf ersten Beitrag möglich
+%         \item Rückgabe aller Beiträge in einem Objekt
+%     \end{itemize}
+% \end{itemize}
 
 \subsubsection{Moodle Webservice API} % (fold)
 \label{ssub:moodle_webservice}
@@ -164,20 +163,20 @@ Ebenfalls ungewöhnlich ist der Inhalt der Klasse \texttt{ForumDiscussionRecord}
 \subsection{Facebook} % (fold)
 \label{sub:facebook_connector}
 
-\begin{itemize}
-    \item REST API + JSON
-    \item keine offizielle Java API für Desktop -> Web + Mobile only
-    \item GraphAPI, Facebook Query Language
-    \item OAuth 2.x
-    \begin{itemize}
-        \item kein Refreshtoken
-        \item Token Haltbarkeit 2h (2 Monate, wen extended)
-        \item token nur über webbrowser
-    \end{itemize}
-    \item RestFB alternative Java API für die REST Schnittstelle der GraphAPI
-    \item Typ der zurückgelieferten Daten nicht anhand der URI erkennbar, häufig erst durch Angabe von \emph{metadata=1}
-    \item beim herunterladen einzelner Posts nicht immer erkennbar wo sie geschrieben wurden
-\end{itemize}
+% \begin{itemize}
+%     \item REST API + JSON
+%     \item keine offizielle Java API für Desktop -> Web + Mobile only
+%     \item GraphAPI, Facebook Query Language
+%     \item OAuth 2.x
+%     \begin{itemize}
+%         \item kein Refreshtoken
+%         \item Token Haltbarkeit 2h (2 Monate, wen extended)
+%         \item token nur über webbrowser
+%     \end{itemize}
+%     \item RestFB alternative Java API für die REST Schnittstelle der GraphAPI
+%     \item Typ der zurückgelieferten Daten nicht anhand der URI erkennbar, häufig erst durch Angabe von \emph{metadata=1}
+%     \item beim herunterladen einzelner Posts nicht immer erkennbar wo sie geschrieben wurden
+% \end{itemize}
 
 \subsubsection{Facebook Graph API} % (fold)
 \label{ssub:facebook_graph_api}
@@ -257,12 +256,12 @@ Facebook selber bietet direkt keine API für die Verwendung der Graph API für D
 \begin{lstlisting}[
     caption={RestFB Beispielprogramm}\label{lst:restfb_beispielprogramm},
     captionpos=t]
-FacebookClient facebookClient = new DefaultFacebookClient(USER_ACCESS_TOKEN);
+FacebookClient client = new DefaultFacebookClient(USER_ACCESS_TOKEN);
 
-User user = facebookClient.fetchObject("me", User.class);
+User user = client.fetchObject("me", User.class);
 System.out.println("User name: " + user.getName());
 
-Connection<Post> myFeed = facebookClient.fetchConnection("me/feed", Post.class);
+Connection<Post> myFeed = client.fetchConnection("me/feed", Post.class);
 for (List<Post> feedPage : myFeed){
     for (Post post : feedpage){
         System.out.println("Post: " + post);
@@ -271,6 +270,17 @@ for (List<Post> feedPage : myFeed){
 \end{lstlisting} 
 
 In Zeile 1 wird eine Objekt der Klasse \texttt{FacebookClient} mit einem Accesstoken als Argument erstellt über dem die Methoden für die Abfragen aufgerufen werden können. Die Zeile 3 zeigt eine solche Abfrage nach den Benutzerdaten für den aktuell angemeldeten Benutzer mit der speziellen ID \enquote{me}. Der Anfangsteil der URI für die Graph API \texttt{https://graph.facebook.com/} muss dabei weggelassen werden. Zurück gegeben wird ein Objekt der Klasse \texttt{User} und damit wird dann der Benutzername ausgegeben. Die Angabe der Klasse mit \texttt{User.class} ist ebenfalls wichtig, so dass RestFB weiß in welche Klasse es die von der Graph API zurückgelieferten JSON-Daten konvertieren soll. Zeile 6 zeigt noch wie man an die Daten einer Connection, hier der Beiträge auf der Wall des aktuellen Benutzers, gelangen kann. Enthält eine Antwort eine Liste mit zu vielen Einträgen, wird die Antwort auf mehrere Seiten aufgeteilt und ein Verweis auf die nächste Seite der aktuellen Seite mitgegeben. Die Klasse \texttt{Connection} sorgt dann alleine dafür, dass die neue Seite gelesen wird, wenn die alte abgearbeitet wurde. Die erste For-Schleife in Zeile 7 iteriert dann über alle vorhandenen Seiten und die zweite in Zeile 8 über alle Einträge auf der aktuellen Seite.
+
+\begin{lstlisting}[
+    caption={RestFB: Schreiben von Beiträgen auf eine Wall}\label{lst:restfb_write_post},
+    captionpos=t]
+FacebookType result = client.publish(
+        userId + "/feed,
+        FacebookType.class,
+        Parameter.with("message", "Tolles Wetter heute \o/"));
+\end{lstlisting}
+
+Beiträge können bei Facebook nur an Ressourcen geschrieben werden die eine \enquote{feed} oder \enquote{comment} Connection haben. In Listing \ref{lst:restfb_write_post} ist zu sehen wie ein neuer Beitrag auf die Wall eines Benutzers geschrieben werden kann. Zu diesem Zweck enthält der Client aus RestFB die Methode \texttt{publish(\dots)} zum Schreiben von Daten nach Ressourcen. Das erste Argument ist die Zielressource, die in Zeile 2 aus der ID des Benutzers gefolgt von einen \enquote{/} und dem Namen der Connection, hier \enquote{feed}. Da \texttt{publish(\dots)} bei Erfolgt die ID des erstellten Beitrags zurückliefert, wird als Klasse für das erwartete Ergebnis die Basisklasse \texttt{FacebookType} angegeben. Als letztes muss noch der Inhalt des Beitrags festgelegt werden. Dies geschieht nicht nicht im JSON-Format sondern wird als Parameter in der URI für die HTTP-POST-Operation angegeben. RestFB bietet dazu die Klasse \texttt{Parameter} an, mit der ein Parameter mit den Namen \enquote{message} und dem Inhalt als Wert erzeugt wird.
 
 % subsubsection restfb (end)
 
@@ -291,18 +301,18 @@ In Zeile 1 wird eine Objekt der Klasse \texttt{FacebookClient} mit einem Accesst
 \subsection{Google+} % (fold)
 \label{sub:google_plus_connector}
 
-\begin{itemize}
-    \item Einfach REST API + JSON
-    \item OAuth
-    \begin{itemize}
-        \item Refreshtoken (token laufen quasi nie ab)
-        \item holen von token ohne webbrowser möglich
-    \end{itemize}
-    \item Objekte aufgebaut aus Actor (wer machte was), Verb(wie machte er es), Object (wtas machte er) + Metadata
-    \item verschieden Sprachen + Plattformen
-    \item lesen nur von öffentlichen Beiträgen
-    \item kein Schreiben von Beiträgen
-\end{itemize}
+% \begin{itemize}
+%     \item Einfach REST API + JSON
+%     \item OAuth
+%     \begin{itemize}
+%         \item Refreshtoken (token laufen quasi nie ab)
+%         \item holen von token ohne webbrowser möglich
+%     \end{itemize}
+%     \item Objekte aufgebaut aus Actor (wer machte was), Verb(wie machte er es), Object (wtas machte er) + Metadata
+%     \item verschieden Sprachen + Plattformen
+%     \item lesen nur von öffentlichen Beiträgen
+%     \item kein Schreiben von Beiträgen
+% \end{itemize}
 
 \subsubsection{Google+ API} % (fold)
 \label{ssub:google_api}
@@ -456,14 +466,14 @@ Das Schreiben eines Eintrags ist in Listing \ref{lst:ytdataapi_kommentar_schreib
 \subsection{Canvas} % (fold)
 \label{sub:canvas_connector}
 
-\begin{itemize}
-    \item relativ neues LMS
-    \item super Bedienung
-    \item super REST API
-    \item keine Java API
-    \item rudimentäre Eigenentwicklung einer Java API, Funktionsweise ähnlich  G+
-    \item viel API Funktionen wohl nicht extern nutzbar (UserProfil lesen, vll. Falsche Berechtigung -> test nötig)
-\end{itemize}
+% \begin{itemize}
+%     \item relativ neues LMS
+%     \item super Bedienung
+%     \item super REST API
+%     \item keine Java API
+%     \item rudimentäre Eigenentwicklung einer Java API, Funktionsweise ähnlich  G+
+%     \item viel API Funktionen wohl nicht extern nutzbar (UserProfil lesen, vll. Falsche Berechtigung -> test nötig)
+% \end{itemize}
 
 \subsubsection{Canvas REST-API} % (fold)
 \label{ssub:canvas_api}

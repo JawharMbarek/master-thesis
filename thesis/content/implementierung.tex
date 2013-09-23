@@ -5,17 +5,24 @@
 
 \todo[inline]{Auf die verschiedenen Klassen von Facebook und Co eingehen, REST, SOAP, OAUTH, Client/Passwort, Art der Plattforn, Forum, OSN, Videoplatform}
 
-\section{Verwendete Bibliotheken} % (fold)
-\label{sec:verwendete_bibliotheken}
+\section{Verwendete Programme und Bibliotheken} % (fold)
+\label{sec:verwendete_bibliotheken_und_programme}
+
+An dieser Stelle soll noch kurz auf zusätzliche Programm und Bibliotheken eingegangen werden, die für die Entwicklung der einzelnen Connectoren hilfreich waren. 
+
+\subsection{Apache Maven} % (fold)
+\label{sub:apache_maven}
+
+Für die Entwicklung der Programme und Bibliotheken dieser Arbeit wurde das Buil-Management Programm \texttt{Maven}\footnote{http://maven.apache.org/} von Apache eingesetzt. Mit diesem ist es auf einfache Art möglich Java-Programme zu verwalten und zu erstellen. So ist nur mit einer einzigen XML-Datei (\texttt{pom.xml}) die Abhängigkeiten festzulegen, das Programm zu kompilieren, zu testen und es auszuliefern. Maven schreibt eine feste Ordnerstruktur für ein Projekt vor wie der Produktivquellcode, dafür nötige Ressource (Bilder, Teste,\dots) und der Code zum Testen geordnet werden sollen. Die Abhängigkeiten werden automatisch aus zentralen Repositories heruntergeladen und ins Projekt eingebunden. So muss dies nicht immer von Handgeschehen und spart so Arbeit.
+
+% subsection apache_maven (end)
 
 \subsection{RDF2Go} % (fold)
 \label{sub:rdf2go}
 
 % subsection rdf2go (end)
 
-
-
-% section verwendete_bibliotheken (end)
+% section verwendete_bibliotheken_und_programme (end)
 
 \section{Implementierung der Connectoren} % (fold)
 \label{sec:implementierung_der_connectoren}
@@ -66,6 +73,91 @@ Innerhalb der Mappingbeschreibungen zwischen den Format der einzelnen SOC und SI
         \item Rückgabe aller Beiträge in einem Objekt
     \end{itemize}
 \end{itemize}
+
+\subsubsection{Moodle Webservice API} % (fold)
+\label{ssub:moodle_webservice}
+
+Moodle bringt von Haus aus schon eine Webservice-Schnittstelle für einen Zugriff auf seine Daten mit. Diese API unterstützt dabei Protokolle für REST, SOAP und oder XML-RPC\footnote{\url{http://xmlrpc.scripting.com/}}. Mit ihr können Kurse, Foren und deren Threads (in Moodle Discussion Topics genannt), Benutzerprofile, Gruppen und viele andere Ressourcen ausgelesen oder geschrieben werden. Leider gilt dies nicht für Beiträge innerhalb von Foren Threads. Die aktuelle Version (Beim verfassen dieser Arbeit war dies 2.5.1) erlaubt es nicht Beiträge weder zu lesen noch zu schreiben.
+
+Doch existiert ein Plugin für Moodle, dass auf dieser Webservice API aufbaut und erweitert - \emph{MoodleWS}\footnote{\url{https://github.com/patrickpollet/moodlews}}. MoodleWS bietet den Zugriff über REST und SOAP, wobei bei der Verwendung von REST JSON als Datenformat verwendet wird und nicht XML wie mit SOAP. Mit diesem Plugin ist ein Programm nun auch in der Lage Beiträge aus Threads zu lesen. Die REST-Schnittstelle hat aber noch eine paar Fehler und so können damit noch keine neuen Beiträge geschrieben werden. Mit SOAP ist dies aber problemlos möglich.
+
+Für die Benutzung der muss sich ein Client mit dem Benutzernamen und Passwort eines vorhandenen Benutzers anmelden. Ist dies erfolgreich, bekommt der Client einen zufällig ID und einen Sitzungsschlüssel die er bei jeder Abfrage angeben muss. Dieser Sitzungsschlüssel ist nur eine begrenzte Zeit gültig, so kann es passieren, dass eine Operation fehlschlägt und der Client sich neu anmelden muss.
+
+Für die Verwendung der API in Java wird auch eine Bibliothek moodle\_ksoap2\footnote{\url{https://github.com/patrickpollet/moodlews\_ksoap2}} zur Verfügung gestellt. Sie abstrahiert komplett das SOAP-Protokoll im Hintergrund und enthält für alle Moodle-Ressource Java-Klassen und Methoden für den Zugriff. Bevor moodlews\_ksoap2 benutzt werden kann, ist darauf zu achten in Moodle unter \enquote{Site administration}, \enquote{Development}, \enquote {OK Tech Webservices ( aka wspp)} die Einstellung \enquote{Use an auto generated wsdl} auszuschalten, da es sonst zu Problemen mit moodlws\_ksoap2 kommen kann.
+
+\begin{lstlisting}[
+    caption={MoodleWS mit moodlews\_ksoap2: Lesebeispiel}\label{lst:moodlews_java_beispiel},
+    captionpos=t]
+Mdl_soapserverBindingStub client = new Mdl_soapserverBindingStub(
+        MOODLE_URI + "/wspp/service_pp2.php",
+        MOODLE_URI + "/wspp/wsdl2",
+        false );
+
+LoginReturn loginReturn = client.login(username, password);
+
+ForumRecord[] forumRecords = client.get_all_forums(
+        loginReturn.getClient(),
+        loginReturn.getSessionKey(),
+        "",
+        "" );
+
+for(ForumRecord forum : forumRecords){
+    System.out.println(forum.getId() + " " + Forum.getName());
+}
+\end{lstlisting}
+
+Wie in der ersten Zeile von Listing \ref{lst:moodlews_java_beispiel} zu sehen wird als ist der Client eine Objekt der Klasse \texttt{Mdl\_soapserverBindingStub} aus moodlews\_ksoap2. Dem Konstruktor wird die URI auf die Datei \enquote{service\_pp2.php} (Zeile 3) und der XML-Namespace der WSDL-Datei des MoodleWS-Plugins übergeben. Das dritte Argument besagt, ob der Client im Debugmodus laufen und mehr Logging-Ausgaben macht über die einzelnen internen Abläufe ausgeben soll. In Zeile 6 meldet sich der Client mit einen Benutzernamen und einem Passwort bei MoodleWS an und bekommt ein Objekt der Klasse \texttt{LoginResult} mit der oben angesprochenen ID für den Client und einen Sitzungsschlüssel zurück. Mit der Methode \texttt{get\_all\_forums(\dots)} können nun ein Array mit allen Foren angefordert werden, auf die der angemeldete Benutzer Zugriff hat. Die ersten zwei Argumente dieser Methode sind die ID des Clients und der Sitzungsschlüssel. Mit den letzten zwei Argumenten kann das Ergebnis gefiltert werden. Dazu wird als erstes ein Spaltenname aus der Foren-Tabelle der Moodle-Datenbank angeben und als zweites welcher Wert dieser haben soll. Am Ende werden dann alle Ergebnisse mit der ID und Name des Forums ausgegeben.
+
+\begin{lstlisting}[
+    caption={MoodleWS mit moodlews\_ksoap2: Beitrag schreiben}\label{lst:moodlews_beitrag schreiben},
+    captionpos=t]
+ForumPostDatum postDatum = new ForumPostDatum(client
+                    .getBindingStub()
+                    .getNAMESPACE());
+
+postDatum.setMessage("War kam bei der Aufgabe raus?");
+postDatum.setSubject("Aufgabe 2.1");
+
+client.forum_add_reply(
+        client.getAuthClient(),
+        client.getSessionKey(),
+        postId,
+        postDatum);
+\end{lstlisting}
+
+Beiträge können nur als Kommentare geschrieben werden und dessen ID bekannt sein. Alle Daten für den Beitrag werden in einem Objekt der Klasse \texttt{ForumPostDatum} gespeichert, wie in der ersten Zeile des Listings \ref{lst:moodlews_beitrag schreiben} zu sehen ist. Das Argument ist der beim Client angegebene XML-Namespace der WDSL-Datei. Als Daten können wie in Zeile 5 und 6 nur eine Nachricht (Message) und ein Thema (Subject) übergeben werden. Dieses Objekt wird dann an die Methode \texttt{forum\_add\_reply} mit der ID des Clients, dem Sitzungsschlüssel und der ID des Beitrags wohin geschrieben werden soll übergeben und an Moodle übertragen.s
+
+% subsubsection moodle_webservice (end)
+
+\subsubsection{Moodle Mapping nach SIOC} % (fold)
+\label{ssub:moodle_mapping_nach_sioc}
+
+
+
+% subsubsection moodle_mapping_nach_sioc (end)
+
+\subsubsection{Besonderheiten bei der Implementierung des MoodleConnectors} % (fold)
+\label{ssub:herausforderungen_bei_der_implementierung_des_moodleconnectors}
+
+Der Connector für Moodle war wohl einer der herausforderndsten bei der Implementieren von allen fünf Connectoren. Nicht nur weil erst nach mehreren Test sich herausstellte, dass die favorisierte REST-Schnittstelle von MoodleWS kein schreiben von Beiträgen möglich macht sondern dass auch die Java-Bibliothek moodlews\_ksoap2 so ihre kleinen Eigenheiten hat. 
+
+Zuerst mussten die Klasse für moodlews\_ksoap2 komplett neu generiert werden. In der Dokumentation wird beschrieben, dass dieser Schritt nötig ist, wenn sich an der WSDL-Datei von MoodleWS was geändert hat. Der passende Generator wird vom Entwickler gleich mitgeliefert und ist mit dem folgenden Befehl schnell bewerkstelligt.
+
+\begin{lstlisting}[
+    caption={Neugenerierung von moodlews\_ksoap2}\label{lst:neugenerierung_moodlews_ksoap2},
+    captionpos=t]
+    java  org.ksoap2.wsdl.WSDL2ksoap -p de.m0ep.moodlews.soap -o /tmp http://localhost/moodle/wspp/wsdl_pp2.php
+\end{lstlisting}
+
+Mit dem Parameter \enquote{-p} wir das Java-Package für die Java-Klassen festgelegt und mit \enquote{-o} der Ordner in dem die Klassen geschrieben werden. Die URI am Ende gibt den Pfad zur Datei \enquote{wsdl\_pp2.php} vom MoodleWS-Plugin. Diese ist dann an die jeweilige Moodle Instanz anzupassen.
+
+Eine sehr nervende Eigenheit von moodlews\_ksoap2 ist die Tatsache, dass Java-Exceptions und Gründe für Fehler gerne verschluckt und nicht weitergegeben werden. So ist es zum Beispiel nicht möglich zu wissen ob eine Operation aufgrund eines Netzwerkfehlers, eines abgelaufenen Sitzungsschlüssels oder falschen Daten fehlschlug. Aus diesem Grund wurde der Client von moodlews\_ksoap2 für den ClientManager (siehe Abschnitt \ref{sub:clientmanager}) in eine extra Klasse \texttt{Moodle2ClientWrapper} gepackt und um Mechanismen zur Fehlererkennung und Wiederherstellung erweitert. Alle Funktionsaufrufe des Clients wie \texttt{get\_all\_forums(\dots)} werden dazu zuerst in die Methode \texttt{call} eines Objekts des Java-Interfaces \texttt{Callable<V>} verpackt, so dass diese Funktion, ohne zu wissen um welche es sich genau handelt, mehrfach aufrufen werden kann. Diese Objekt wird dann an die Methode \texttt{callMethod(\dots)} der Klasse \texttt{Moodle2ClientWrapper} übergeben. Diese Methode ruft dann zuerst die \texttt{call()} Methode des Callabel-Objekts und prüft ob ein gültiges Ergebnis zurückgegeben wurde. Dies ist der Fall wenn es ungleich \texttt{null} ist. Ist dies nicht der Fall, wird geschaut ob die Moodleinstanz erreichbar ist. Sollte hier alles in Ordnung sein, muss geschaut werden ob der Sitzungsschlüssel abgelaufen ist. Als Test reicht hier es hier aus, ob die Methode \texttt{get\_my\_id(\dots)} des moodlews\_ksoap2 Clients eine Zahl ungleich 0 (Null) zurück gibt. Diese liefert die ID des aktuell angemeldeten Benutzers zurück und im Fehlerfall ist dieser gleich 0. Ist dieser Test positiv, also der Sitzungsschlüssel abgelaufen, wird versucht sich neu anzumelden und die Anfrage erneut ausgeführt.
+
+Eine Funktion mit der nur ein Beitrag mit einer bestimmten ID abgefragt werden könnte fehlt ebenfalls. Wenn nur ein Beitrag geladen werden soll, müssen zunächst alle innerhalb des selben Threads angefordert und diese nach dem passenden Beitrag durch werden. 
+
+Ebenfalls ungewöhnlich ist der Inhalt der Klasse \texttt{ForumDiscussionRecord}. Normalerweise würde mit erwarten, dass die Methode \texttt{getId()} die ID des Diskussionsthread zurück geben wird. Doch stattdessen entspricht der Wert der ID des ersten Beitrags dieses Threads. An die richtige ID kommt man erst rann, wenn man sich mit der Methode \texttt{getPost()} ein Objekt des ersten Beitrags und darin den Rückgabewert von \texttt{getDiscussion()} benutzt.
+
+% subsubsection herausforderungen_bei_der_implementierung_des_moodleconnectors (end)
 
 % subsection moodle_connector (end)
 
@@ -274,7 +366,7 @@ for(Activity activity : activityFeed.getItems()){
 }
 \end{lstlisting}
 
-Das Listing \ref{lst:gplus_activity_feed_java} ist eine kleines Beispiel wie auf den Activity-Feed, also die Liste der geschriebenen Beiträge eines Benutzer, in Google+ mit der Java-Bibliothek zugegriffen werden kann. 
+Das kleine Beispiel in Listing \ref{lst:gplus_activity_feed_java} zeigt wie auf einen Activity-Feed, also die Liste der geschriebenen Beiträge eines Benutzers, in Google+ mit Java zugegriffen werden kann. Von Zeile 1 bis 6 wird das Clientobjekt für den Zugriff auf Google+ mit einen Builder\footnote{\enquote{Builder} Entwurfsmuster: \url{http://www.oodesign.com/builder-pattern.html}} gebaut. Als Argument wird wieder das Objekt einer Klasse für die Verwendung des HTTP und eines für das Arbeiten mit JSON übergeben. Als dritter Parameter in Zeile 4 kommen noch die Credentials aus Listing \ref{lst:gplus_java_accesstoken} mit dazu. Mit der Methode \texttt{setApplicationName(\dots)} kann noch ein Name für die Anwendung angegeben werden bevor der Client mit der Methode \texttt{build()} in Zeile 6 erstellt wird. Das Clientobjekt enthält mehrere Methoden mit denen man auf die verschiedenen Ressource wie Activitys, Kommentare und Personen zugreifen kann. In Zeile 8 wird die Methode \texttt{activities()} eingesetzt, um an eine Hilfsklasse für alle Activitys zu gelange, welche die Operationen zum Lesen eines Activity-Feeds, nur eines einzelnen Activitys oder der Suche nach anderen Activitys. Mit \texttt{list("me", "public")} wird eine Abfrage für den \enquote{public} Activity-Feed (nur dieser ist aktuell verfügbar) des Benutzers mit der ID \enquote{me} (Steht immer für den aktuell angemeldeten Benutzer) erstellt, die dann mit dem Aufruf der Methode \texttt{execute()} des zurückgelieferten Objekts ausgeführt wird. Das Ergebnis dieser Abfrage enthält ein Array von Activitys, das von der Methode \texttt{getItems()} zurückgegeben wird. Zum Schluss werden von allen Activitys der Name des Autors und der Inhalt ausgegeben. Ist ein oben erwähnter Pagetoke für eine weiter Ergebnisseite vorhanden, kann dieser an das Objekt, was von \texttt{list("me", "public")} zurückgegeben wird, mit der Methode \texttt{setPageToken(\dots)} übergeben werden.
 
 Leider ist es mit der aktuellen Version der Google+ API nur möglich auf Ressourcen zuzugreifen, die von den Benutzer auf als \enquote{öffentlich} markiert wurde. Zugleich sind keine Operationen vorhanden um irgendwelche Beiträge zu Schreiben.
 

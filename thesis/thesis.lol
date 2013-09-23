@@ -14,16 +14,19 @@
 \contentsline {lstlisting}{\numberline {4.1}{ACL Beispiel}}{35}{lstlisting.4.1}
 \contentsline {lstlisting}{\numberline {4.2}{SOCC-Camel Konfigurations URI}}{39}{lstlisting.4.2}
 \addvspace {10\p@ }
-\contentsline {lstlisting}{\numberline {5.1}{Facebook Login: OAuth URI}}{46}{lstlisting.5.1}
-\contentsline {lstlisting}{\numberline {5.2}{Facebook Login: URI f\IeC {\"u}r den Tausch von Code genen Accesstoken}}{46}{lstlisting.5.2}
-\contentsline {lstlisting}{\numberline {5.3}{Facebook Login: Extended Accesstoken}}{47}{lstlisting.5.3}
-\contentsline {lstlisting}{\numberline {5.4}{RestFB Beispielprogramm}}{47}{lstlisting.5.4}
-\contentsline {lstlisting}{\numberline {5.5}{Google+ API Java: Access- und Refreshtoken}}{49}{lstlisting.5.5}
-\contentsline {lstlisting}{\numberline {5.6}{Google+ API: Zugriff auf Activity-Feed mit Java}}{50}{lstlisting.5.6}
-\contentsline {lstlisting}{\numberline {5.7}{Youtube Data API v2: Navigation durch die Ergebnisse}}{51}{lstlisting.5.7}
-\contentsline {lstlisting}{\numberline {5.8}{Youtube Data API v2: Java YouTubeService}}{52}{lstlisting.5.8}
-\contentsline {lstlisting}{\numberline {5.9}{Youtube Data API v2: Kommentar schreiben}}{52}{lstlisting.5.9}
-\contentsline {lstlisting}{\numberline {5.10}{Canvas Authorization Header}}{53}{lstlisting.5.10}
-\contentsline {lstlisting}{\numberline {5.11}{CanvasLMS4J Beispielprogramm}}{55}{lstlisting.5.11}
+\contentsline {lstlisting}{\numberline {5.1}{MoodleWS mit moodlews\_ksoap2: Lesebeispiel}}{45}{lstlisting.5.1}
+\contentsline {lstlisting}{\numberline {5.2}{MoodleWS mit moodlews\_ksoap2: Beitrag schreiben}}{46}{lstlisting.5.2}
+\contentsline {lstlisting}{\numberline {5.3}{Neugenerierung von moodlews\_ksoap2}}{47}{lstlisting.5.3}
+\contentsline {lstlisting}{\numberline {5.4}{Facebook Login: OAuth URI}}{49}{lstlisting.5.4}
+\contentsline {lstlisting}{\numberline {5.5}{Facebook Login: URI f\IeC {\"u}r den Tausch von Code genen Accesstoken}}{50}{lstlisting.5.5}
+\contentsline {lstlisting}{\numberline {5.6}{Facebook Login: Extended Accesstoken}}{50}{lstlisting.5.6}
+\contentsline {lstlisting}{\numberline {5.7}{RestFB Beispielprogramm}}{50}{lstlisting.5.7}
+\contentsline {lstlisting}{\numberline {5.8}{Google+ API Java: Access- und Refreshtoken}}{52}{lstlisting.5.8}
+\contentsline {lstlisting}{\numberline {5.9}{Google+ API: Zugriff auf Activity-Feed mit Java}}{53}{lstlisting.5.9}
+\contentsline {lstlisting}{\numberline {5.10}{Youtube Data API v2: Navigation durch die Ergebnisse}}{55}{lstlisting.5.10}
+\contentsline {lstlisting}{\numberline {5.11}{Youtube Data API v2: Java YouTubeService}}{55}{lstlisting.5.11}
+\contentsline {lstlisting}{\numberline {5.12}{Youtube Data API v2: Kommentar schreiben}}{56}{lstlisting.5.12}
+\contentsline {lstlisting}{\numberline {5.13}{Canvas Authorization Header}}{57}{lstlisting.5.13}
+\contentsline {lstlisting}{\numberline {5.14}{CanvasLMS4J Beispielprogramm}}{58}{lstlisting.5.14}
 \addvspace {10\p@ }
 \addvspace {10\p@ }

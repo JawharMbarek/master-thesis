@@ -29,6 +29,9 @@ Für die Entwicklung der Programme und Bibliotheken dieser Arbeit wurde das Buil
 
 An dieser Stelle soll beschrieben werden wie Connectoren für die in Abschnitt \ref{sec:lernplattformen_und_soziale_online_netzwerke} vorgestellten Plattformen implementiert werden können. Dafür wird darauf eingegangen mit welcher Art von API auf die Daten der einzelnen Plattformen zugegriffen werden und wie man deren Datenstruktur in SIOC abbilden kann. Ebenfalls werden auftretende Probleme und wenn möglich deren Lösung gezeigt.
 
+\subsection{Allgemeine Informationen zum Mapping nach SIOC} % (fold)
+\label{sub:allgemeine_informationen_zum_mapping_nach_sioc}
+
 Innerhalb der Beschreibungen des Mappings nach SIOC werden zur besseren Übersicht und einfacheren Lesbarkeit Platzhalt für einige URIs benutzt. Welche Platzhalten dies sind und für welche URI sie stehen ist aus Tabelle \ref{tbl:platzhalter_fuer_sioc_mapping} zu entnehmen.
 \begin{table}[ht]
     \centering
@@ -36,19 +39,63 @@ Innerhalb der Beschreibungen des Mappings nach SIOC werden zur besseren Übersic
     \begin{tabular}{l|p{11cm}}
         \textbf{Platzhalter} & \textbf{Bedeutung} \\ 
         \hline
-        \texttt{\{serviceUri\}} & URI für einen Service \\
-        \texttt{\{userAccountUri\}} & URI für einen UserAccount \\
-        \texttt{\{siteUri\}} & URI für eine Site \\
-        \texttt{\{forumUri\}} & URI für ein Forum \\
-        \texttt{\{threadUri\}} & URI für ein Thread \\
-        \texttt{\{postUri\}} & URI für ein Post \\
+        \texttt{\{serviceUri\}} & URI für einen SIOC Service \\
+        \texttt{\{userAccountUri\}} & URI für einen SIOC UserAccount \\
+        \texttt{\{siteUri\}} & URI für eine SIOC Site \\
+        \texttt{\{forumUri\}} & URI für ein SIOC Forum \\
+        \texttt{\{threadUri\}} & URI für ein SIOC Thread \\
+        \texttt{\{postUri\}} & URI für ein SIOC Post \\
         \texttt{\{rootUri\}} & Die WurzelUri einer SOC. Für Facebook wäre dies zum Beispiel \texttt{https://www.facebook.com}
     \end{tabular}
     \label{tbl:platzhalter_fuer_sioc_mapping}
 \end{table}
 
-\\subsection{Allgemeine Probleme} % (fold)
+Da einige Eigenschaften der Klassen von SIOC bei allen Plattformen mit ähnlichen Werten belegt werden und sich nur vom Aufruf der API unterscheiden, sollen zuvor für die Klassen UserAccount, Forum, Thread und Post die Eigenschaften beschrieben werden, die überall verwendet werden.
+
+\begin{description}
+    \item[\textbf{UserAccount:}]  Für die Klasse UserAccount ist die Angabe von vier Eigenschaften wichtig. Die erste ist \texttt{sioc:Id} mit der die ID des Benutzerkontos angegeben wird und \texttt{sioc:name} für den den Benutzernamen. Aus Kompatibilitätsgründen mit FOAF wird die ID des Benutzers noch mit \texttt{foaf:accountName} angegeben und die URI zum verwendeten Service mit \texttt{foaf:accountServiceHomepage}. Die Angabe der Daten zu Autorisierung erfolgt mit der Eigenschaft \texttt{siocsa:accountAuthentication}.
+
+    \item[\textbf{Forum:}] Jedes Forum hat seine eigene ID, die wie bei UserAccount unter der Eigenschaft \texttt{sioc:id} abgelegt wird. Ebenfalls bekommt jedes Forum einen Namen mit \texttt{sioc:name}. Jedes Forum hat eine Site von der es gehostet wird (\texttt{sioc:has\_host}). Ein Forum dient als Container für Post, die mit der Eigenschaft \texttt{sioc:container\_of} gekennzeichnet werden. Zugleich kann es auch Threads mit \texttt{sioc:parent\_of} enthalten. 
+
+    \item[\textbf{Thread:}] Ein Thread enthält ebenfalls wieder eine ID und einen Namen. Enthält nur Beiträger der Klasse Post mit \texttt{sioc:container\_of} und ist immer ein Teil eines Forums mit \texttt{sioc:has\_parent}.
+
+    \item[\textbf{Post:}] Jeder Post hat eine, für die Seite eindeutige ID mit \texttt{sioc:id}. Mit der Eigenschaft \texttt{sioc:creator} wird der UserAccount des Autors festgelegt und mit \texttt{sioc:content} der Inhalt des Beitrags. Besitzt ein Beitrag eine Titel, wird dieser mit \texttt{sioc:title} gespeichert. Der Zeitpunkt der Erstellung kommt nach \texttt{dcterms:created} und der bei eine Modifikation nach \texttt{dcterms:modified}. Beiträge gehören immer zu einen Forum oder Thread welches mit \texttt{sioc:has\_container} angegeben wird. Auch können Beiträge Kommentare mit \texttt{sioc:has\_reply} enthalten oder selber Kommentare auf andere Beiträge mit \texttt{sioc:reply\_of} sein.
+\end{description}
+
+% subsection allgemeine_informationen_zum_mapping_nach_sioc (end)
+
+\subsection{Allgemeine Probleme und Lösungen bei der Implementierung} % (fold)
 \label{sub:allgemeine_probleme}
+
+Bei der Implementierung der Connectoren treten ab und zu Probleme auf, die unabhängig von der verwendeten API gelöst werden müssen. Hier sollen diese Probleme und deren Lösung beschrieben werden. 
+
+\subsubsection{Doppelte Beiträge beim Synchronisieren} % (fold)
+\label{ssub:doppelte_beitraege_beim_synchronisieren}
+
+Sollen zwei Threads auf unterschiedlichen Plattformen synchronisiert werden, tritt automatisch das Problem auf, dass Beiträge die von A nach B geschrieben wurden beim auslesen von B wieder bei A als \enquote{neuer} Beitrag landen würde, obwohl er ursprünglich von dort kam. Dies würde ohne Eingreifen zu einer Dauerschleife führen, bei der die selben Beiträge immer hin und her geschrieben werden. 
+
+Aus diesem Grund wird vor dem Schreiben eines Beitrags eine Art Wasserzeichen an diesen Angebracht. Diese Wasserzeichen besteht aus der Zeichenkette \texttt{--- forwarded by SOCC {siteUri} ---}. Hierzu muss jedem Beitrag mit der Eigenschaft \texttt{dcterms:isPartOf} die URI des Site Objekts zu dem der Beitrag gehört, hinzugefügt werden. Wird nun eine Beitrag gelesen, der ursprünglich von der Site des Connectors kam, wird dieser ignoriert. Enthält dagegen der Beitrag schon eine Wasserzeichen mit der URI einer anderen Site, wird kein neues Wasserzeichen hinzugefügt.
+
+% subsubsection synchronisieren_von_beitrage (end)
+
+\subsubsection{Rekonstruktion der Kommentarstruktur} % (fold)
+\label{ssub:rekonstruktion_der_kommentarstruktur}
+
+Bei der Synchronisation ist es ebenso wichtig die Struktur von Kommentaren beizubehalten. Wenn Beitrag A2 ein Kommantar auf Beitrag A1 auf Seite A muss diese Struktur beim Synchronisieren mit Seite B mit den Beiträgen B1 und B2 erhalten bleiben.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[
+        width=0.7\textwidth,
+        keepaspectratio=true
+    ]{assets/images/comment_structuring}
+    \caption{Erhalten der Kommentarstruktur beim Schreiben von Beiträgen}
+    \label{fig:kommentarsturktur_beim_schreiben}
+\end{figure}
+
+Hierzu wird nach dem Schreiben eines Beitrags mit der Eigenschaft \texttt{sioc:sibling} (Englisch für Geschwister) die URI zum original Beitrag beim geschriebenen Beitrag festgehalten. Taucht nun beim Schreiben ein Beitrag auf, der ein Kommentar auf den mit \texttt{sioc:sibling} gespeicherten Beitrags ist, kann dieser an die richtige Stelle als Kommentar geschrieben werden. Der RDF-Graph nach dem Synchronisieren ist in Abbildung zu sehen. 
+
+% subsubsection rekonstruktion_der_kommentarstruktur (end)
 
 % subsection allgemeine_probleme (end)
 

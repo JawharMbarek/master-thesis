@@ -99,7 +99,7 @@ Hierzu wird nach dem Schreiben eines Beitrags mit der Eigenschaft \texttt{sioc:s
 
 % subsection allgemeine_probleme (end)
 
-\subsection{Moodle} % (fold)
+\subsection{Moodle Connector} % (fold)
 \label{sub:moodle_connector}
 
 % \begin{itemize}
@@ -179,7 +179,6 @@ Beiträge können nur als Kommentare geschrieben werden und dessen ID bekannt se
 \label{ssub:moodle_mapping_nach_sioc}
 
 
-
 % subsubsection moodle_mapping_nach_sioc (end)
 
 \subsubsection{Besonderheiten bei der Implementierung des MoodleConnectors} % (fold)
@@ -207,7 +206,7 @@ Ebenfalls ungewöhnlich ist der Inhalt der Klasse \texttt{ForumDiscussionRecord}
 
 % subsection moodle_connector (end)
 
-\subsection{Facebook} % (fold)
+\subsection{Facebook Connector} % (fold)
 \label{sub:facebook_connector}
 
 % \begin{itemize}
@@ -339,13 +338,13 @@ Beiträge können bei Facebook nur an Ressourcen geschrieben werden die eine \en
 \subsubsection{Besonderheiten bei der Entwicklung des FacebookConnectors} % (fold)
 \label{ssub:besonderheiten_bei_der_entwicklung_des_facebookconnectors}
 
-
+Wie im Abschnitt über die Graph API schon beschrieben, ist es nahezu unmöglich an der URI einer Ressource von Facebook zu erkenne welche Typ sich dahinter befindet. Deshalb muss bei jeder unbekannten URI erst einmal alle Informationen mit dem Parameter \texttt{metadata=1} heruntergeladen geladen werden und anhand der vorhanden Connections ermittelt werden, ob es sich ium einen Beitrag oder um einen Container handelt. Deshalb ist es wichtig solche Erkenntnisse sofort in den Triplestore zu speichern um weitere Abfragen zu vermeide.
 
 % subsubsection besonderheiten_bei_der_entwicklung_des_facebookconnectors (end)
 
 % subsection facebook_connector (end)
 
-\subsection{Google+} % (fold)
+\subsection{Google+ Connector} % (fold)
 \label{sub:google_plus_connector}
 
 % \begin{itemize}
@@ -429,21 +428,26 @@ Leider ist es mit der aktuellen Version der Google+ API nur möglich auf Ressour
 
 % subsubsection google_api (end)
 
+\subsubsection{Google+ Mapping nach SIOC} % (fold)
+\label{ssub:google_mapping_nach_sioc}
+
+% subsubsection google_mapping_nach_sioc (end)
+
 % subsection google_plus_connector (end)
 
-\subsection{Youtube} % (fold)
+\subsection{Youtube Connector} % (fold)
 \label{sub:youtube_connector}
 
-\begin{itemize}
-    \item Aktueller Umbau der API (ähnlich google+) v3
-    \begin{itemize}
-        \item keine lesen von kommentaren
-        \item kein schreiben
-    \end{itemize}
-    \item alte GData Feed API v2 basiert auf RSS + Youtube Erweiterung
-    \item Mapping teilweise durch basis auf RSS einfach, manchmal auch nicht
-    \item Wichtigen Metadaten nur implizit vorhanden (comment id in uri aber nicht in datenformat)
-\end{itemize}
+% \begin{itemize}
+%     \item Aktueller Umbau der API (ähnlich google+) v3
+%     \begin{itemize}
+%         \item keine lesen von kommentaren
+%         \item kein schreiben
+%     \end{itemize}
+%     \item alte GData Feed API v2 basiert auf RSS + Youtube Erweiterung
+%     \item Mapping teilweise durch basis auf RSS einfach, manchmal auch nicht
+%     \item Wichtigen Metadaten nur implizit vorhanden (comment id in uri aber nicht in datenformat)
+% \end{itemize}
 
 \subsubsection{Youtube Data API} % (fold)
 \label{ssub:youtube_data_api}
@@ -504,13 +508,15 @@ Das Schreiben eines Eintrags ist in Listing \ref{lst:ytdataapi_kommentar_schreib
 \subsubsection{Besonderheiten bei der Implementierungs des YoutubeConnectors} % (fold)
 \label{ssub:besonderheiten_bei_der_implementierungs_des_youtubeconnectors}
 
+Vorteil bei der Youtube Data API v2 ist die Basis von Atom als Datenformat. So sind schon viele URIs auf weiterführende Ressourcen vorhanden. Leider wird eine Anwendung sehr schnell von Youtube blockiert, wenn diese zu oft hintereinander Anfragen sendet. Aus diesem Grund muss zwischen zwei Abfragen immer eine bestimmte Zeit vergangen bevor die nächste abgeschickt wird. Am besten hat sich eine Zeitspanne von 500\,ms gezeigt, welche aber ab und zu immer noch Probleme macht. Diesen Wert aber höher zu stellen verlangsamt das komplette System, da manchmal einige Abfragen nötig sind bis alle gesuchten Informationen vorhanden sind. Zusätzlich sind nicht alle Informationen explizit über die Java-API zugänglich. Zum Beispiel erhält die Klasse für Kommentare keine Methode für den Zugriff auf die Video und Kommentar ID. Diese muss aus der URI des Kommentar erste extrahiert werden.
+
 % subsubsection besonderheiten_bei_der_implementierungs_des_youtubeconnectors (end)
 
 % subsubsection youtube_data_api (end)
 
 % subsection youtube_connector (end)
 
-\subsection{Canvas} % (fold)
+\subsection{Canvas Connector} % (fold)
 \label{sub:canvas_connector}
 
 % \begin{itemize}

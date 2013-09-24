@@ -33,8 +33,7 @@ public class Moodle2PostReader extends
 
 	public Moodle2PostReader( Moodle2Connector connector ) {
 		super( connector );
-		this.defaultClient = connector.getClientManager()
-		        .getDefaultClient();
+		this.defaultClient = connector.getClientManager().getDefaultClient();
 	}
 
 	@Override

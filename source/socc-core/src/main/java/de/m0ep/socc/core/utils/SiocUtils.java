@@ -320,6 +320,13 @@ public final class SiocUtils {
 		        .getInstance( container.getModel(), container.getResource() );
 	}
 
+	public static Post asPost( Item item ) {
+		Preconditions.checkNotNull( item,
+		        "Required parameter item must be specified." );
+
+		return Post.getInstance( item.getModel(), item.getResource() );
+	}
+
 	public static Post getPost( Model model, String id, Container container )
 	        throws NotFoundException {
 		String queryTemplate =

@@ -39,13 +39,13 @@ Innerhalb der Beschreibungen des Mappings nach SIOC werden zur besseren Übersic
     \begin{tabular}{l|p{11cm}}
         \textbf{Platzhalter} & \textbf{Bedeutung} \\ 
         \hline
+        \texttt{\{rootUri\}} & Die WurzelUri einer SOC. Für Facebook wäre dies zum Beispiel \texttt{https://www.facebook.com} \\
+        \texttt{\{siteUri\}} & URI für eine SIOC Site \\
         \texttt{\{serviceUri\}} & URI für einen SIOC Service \\
         \texttt{\{userAccountUri\}} & URI für einen SIOC UserAccount \\
-        \texttt{\{siteUri\}} & URI für eine SIOC Site \\
         \texttt{\{forumUri\}} & URI für ein SIOC Forum \\
         \texttt{\{threadUri\}} & URI für ein SIOC Thread \\
-        \texttt{\{postUri\}} & URI für ein SIOC Post \\
-        \texttt{\{rootUri\}} & Die WurzelUri einer SOC. Für Facebook wäre dies zum Beispiel \texttt{https://www.facebook.com}
+        \texttt{\{postUri\}} & URI für ein SIOC Post
     \end{tabular}
     \label{tbl:platzhalter_fuer_sioc_mapping}
 \end{table}
@@ -178,6 +178,39 @@ Beiträge können nur als Kommentare geschrieben werden und dessen ID bekannt se
 \subsubsection{Moodle Mapping nach SIOC} % (fold)
 \label{ssub:moodle_mapping_nach_sioc}
 
+Da Beiträge in Moodle in einer Forumsstruktur geschrieben werden, ist das Mapping nach SIOC, wie in Tabelle \ref{tbl:klassen_mapping_sioc_moodle} zu sehen, problemlos möglich. Bei dem Objekt der Klasse Service, die den Moodle Service beschreibt, ist es wichtig dass die Eigenschaft \texttt{siocs:serviceEndpoint} mit der URI zur verwendeten Moodleinstanz gesetzt ist. Diese ist für die Funktion 
+
+\begin{table}[ht]
+    \centering
+    \caption{Mapping zwischen SIOC und Moodle Klassen}
+    \begin{tabular}{l|p{11cm}}
+        \textbf{SIOC Klasse} & \textbf{Moodle Klasse} \\ 
+        \hline
+        UserAccount & User \\
+        Forum & Forum\\
+        Thread & ForumDiscussionTopic\\
+        Post & ForumPost\\
+    \end{tabular}
+    \label{tbl:klassen_mapping_sioc_moodle}
+\end{table}
+
+Die Tabelle \ref{tbl:moodle_sioc_uris} zeigt das Aussehen der URIs, mit denen die Objekte der SIOC-Klassen in RDF benannt werden.
+
+\begin{table}[ht]
+    \centering
+    \caption{URI Format für SIOC-Objekte aus Moodle }
+    \begin{tabular}{l|p{11cm}}
+        \textbf{SIOC Klasse} & \textbf{URI-Format} \\ 
+        \hline
+        Site & \texttt{\{rootUri\}}\\
+        Service & \texttt{\{rootUri\}/wspp}\\
+        UserAccount & \texttt{\{rootUri\}/user/profile.php?id=\{userId\}} \\
+        Forum & \texttt{\{rootUri\}/mod/forum/view.php?id=\{forumId\}} \\
+        Thread & \texttt{\{rootUri\}/mod/forum/discuss.php?d=\{discussionId\}} \\
+        Post & \texttt{\{rootUri\}/mod/forum/discuss.php?d=\{discussionId\}\#p\{postId\}} \\
+    \end{tabular}
+    \label{tbl:moodle_sioc_uris}
+\end{table}
 
 % subsubsection moodle_mapping_nach_sioc (end)
 
@@ -431,6 +464,20 @@ Leider ist es mit der aktuellen Version der Google+ API nur möglich auf Ressour
 \subsubsection{Google+ Mapping nach SIOC} % (fold)
 \label{ssub:google_mapping_nach_sioc}
 
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{l|p{11cm}}
+        \textbf{SIOC Klasse} & \textbf{URI-Format} \\ 
+        \hline
+        Site & \\
+        Service & \\
+        UserAccount & \\
+        Forum & \\
+        Thread & \\
+        Post & \\
+    \end{tabular}
+\end{table}
+
 % subsubsection google_mapping_nach_sioc (end)
 
 % subsection google_plus_connector (end)
@@ -502,6 +549,20 @@ Das Schreiben eines Eintrags ist in Listing \ref{lst:ytdataapi_kommentar_schreib
 
 \subsubsection{Youtube Mapping nach SIOC} % (fold)
 \label{ssub:youtube_mapping_nach_sioc}
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{l|p{11cm}}
+        \textbf{SIOC Klasse} & \textbf{URI-Format} \\ 
+        \hline
+        Site & \\
+        Service & \\
+        UserAccount & \\
+        Forum & \\
+        Thread & \\
+        Post & \\
+    \end{tabular}
+\end{table}
 
 % subsubsection youtube_mapping_nach_sioc (end)
 
@@ -595,6 +656,20 @@ In Listing \ref{lst:canvaslms4j_beispiel} ist ein Beispiel für die Anwendung de
 
 \subsubsection{Canvas Mapping nach SIOC} % (fold)
 \label{ssub:canvas_sioc_mapping}
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{l|p{11cm}}
+        \textbf{SIOC Klasse} & \textbf{URI-Format} \\ 
+        \hline
+        Site & \\
+        Service & \\
+        UserAccount & \\
+        Forum & \\
+        Thread & \\
+        Post & \\
+    \end{tabular}
+\end{table}
 
 \begin{table}[ht]
     \centering

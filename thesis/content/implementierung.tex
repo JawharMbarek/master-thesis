@@ -178,23 +178,9 @@ Beiträge können nur als Kommentare geschrieben werden und dessen ID bekannt se
 \subsubsection{Moodle Mapping nach SIOC} % (fold)
 \label{ssub:moodle_mapping_nach_sioc}
 
-Da Beiträge in Moodle in einer Forumsstruktur geschrieben werden, ist das Mapping nach SIOC, wie in Tabelle \ref{tbl:klassen_mapping_sioc_moodle} zu sehen, problemlos möglich. Bei dem Objekt der Klasse Service, die den Moodle Service beschreibt, ist es wichtig dass die Eigenschaft \texttt{siocs:serviceEndpoint} mit der URI zur verwendeten Moodleinstanz gesetzt ist. Diese ist für die Funktion 
+Da Beiträge in Moodle in einer Forumsstruktur geschrieben werden, ist das Mapping nach SIOC problemlos möglich. Die Struktur von Moodle besteht aus der Klasse \texttt{Forum} und kann der gleich lautenden Klasse aus SIOC zugeordnet werden. Jedes Moodle Forum besteht aus einzelnen Objekten der Klasse \texttt{ForumDiscussions} welche der Klasse Thread aus SIOC entsprechen. Letztendlich werden die Beiträge mit der Klasse \texttt{ForumPost} aus Moodle modelliert, welche der Klasse Post aus SIOC zugeordnet werden kann. 
 
-\begin{table}[ht]
-    \centering
-    \caption{Mapping zwischen SIOC und Moodle Klassen}
-    \begin{tabular}{l|p{11cm}}
-        \textbf{SIOC Klasse} & \textbf{Moodle Klasse} \\ 
-        \hline
-        UserAccount & User \\
-        Forum & Forum\\
-        Thread & ForumDiscussionTopic\\
-        Post & ForumPost\\
-    \end{tabular}
-    \label{tbl:klassen_mapping_sioc_moodle}
-\end{table}
-
-Die Tabelle \ref{tbl:moodle_sioc_uris} zeigt das Aussehen der URIs, mit denen die Objekte der SIOC-Klassen in RDF benannt werden.
+Die Tabelle \ref{tbl:moodle_sioc_uris} zeigt das Format der URIs, mit denen die Objekte der SIOC-Klassen in RDF benannt werden.
 
 \begin{table}[ht]
     \centering

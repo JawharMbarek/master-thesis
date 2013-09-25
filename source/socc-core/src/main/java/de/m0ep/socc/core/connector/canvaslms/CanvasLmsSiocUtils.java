@@ -44,8 +44,9 @@ public final class CanvasLmsSiocUtils {
 
 	public static final String REGEX_USER_URI =
 	        REGEX_API_PATH
-	                + "/about/"
+	                + "/users/"
 	                + REGEX_INT_ID_GROUP
+	                + "/profile"
 	                + REGEX_QUERY_PARAMETER;
 
 	public static final String REGEX_COURSE_URI =
@@ -64,7 +65,7 @@ public final class CanvasLmsSiocUtils {
 
 	public static final String REGEX_ENTRY_URI =
 	        REGEX_DISCUSSION_TOPIC_URI
-	                + "#entry-"
+	                + "/entries/"
 	                + REGEX_INT_ID_GROUP;
 
 	public static final String TEMPLATE_VAR_USER_ID = "userId";
@@ -77,9 +78,9 @@ public final class CanvasLmsSiocUtils {
 
 	public static final String TEMPLATE_USER_URI =
 	        CANVAS_LMS_API_PATH
-	                + "/about/{"
+	                + "/users/{"
 	                + TEMPLATE_VAR_USER_ID
-	                + "}";
+	                + "}/profile";
 
 	public static final String TEMPLATE_COURSE_URI =
 	        CANVAS_LMS_API_PATH
@@ -99,7 +100,7 @@ public final class CanvasLmsSiocUtils {
 
 	public static final String TEMPLATE_ENTRY_URI =
 	        TEMPLATE_DISCUSSION_TOPIC_URI
-	                + "#entry-{"
+	                + "/entries/{"
 	                + TEMPLATE_VAR_ENTRY_ID
 	                + "}";
 

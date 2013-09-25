@@ -82,12 +82,6 @@ public class SoccPostPollConsumer extends ScheduledPollConsumer implements ISocc
 		List<Post> posts = postReader.pollPosts( uri, since, limit );
 
 		for ( Post post : posts ) {
-			if ( LOG.isDebugEnabled() ) {
-				LOG.debug( "polled message:\n {}", RdfUtils.resourceToString( post, Syntax.Turtle ) );
-			} else {
-				LOG.debug( "polled message: {}", post.toString() );
-			}
-
 			Message msg = new DefaultMessage();
 			msg.setBody( RdfUtils.resourceToString( post, Syntax.RdfXml ) );
 			msg.setHeader( Exchange.CONTENT_TYPE, Syntax.RdfXml.getMimeType() );
@@ -96,6 +90,8 @@ public class SoccPostPollConsumer extends ScheduledPollConsumer implements ISocc
 			ex.setIn( msg );
 			getProcessor().process( ex );
 		}
+
+		LOG.info( "polled {} posts.", posts.size() );
 
 		return posts.size();
 	}

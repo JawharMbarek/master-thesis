@@ -1,15 +1,14 @@
 package de.m0ep.test.socc.core.connector;
 
-import java.util.List;
-
 import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.util.Builder;
+import org.ontoware.rdf2go.vocabulary.RDF;
 import org.ontoware.rdf2go.vocabulary.XSD;
 import org.purl.dc.terms.DCTermsVocabulary;
-import org.rdfs.sioc.Post;
 import org.rdfs.sioc.SiocVocabulary;
+import org.rdfs.sioc.services.ServicesVocabulary;
 import org.rdfs.sioc.services.Thing;
 import org.w3.ns.auth.acl.AclVocabulary;
 import org.w3.ns.auth.acl.Authorization;
@@ -25,10 +24,12 @@ import de.m0ep.sioc.services.auth.Direct;
 import de.m0ep.sioc.services.auth.OAuth;
 import de.m0ep.sioc.services.auth.Password;
 import de.m0ep.sioc.services.auth.Service;
+import de.m0ep.sioc.services.auth.ServicesAuthVocabulary;
 import de.m0ep.sioc.services.auth.UserAccount;
 import de.m0ep.sioc.services.auth.Username;
 import de.m0ep.sioc.services.auth.WebAPI;
 import de.m0ep.socc.config.ConnectorConfig;
+import de.m0ep.socc.config.SoccConfigVocabulary;
 import de.m0ep.socc.core.SoccContext;
 import de.m0ep.socc.core.connector.ConnectorFactory;
 import de.m0ep.socc.core.connector.IConnector;
@@ -73,6 +74,12 @@ public class ConnectorTestApp {
 		model.setNamespace( "foaf", FoafVocabulary.NS_FOAF.toString() );
 		model.setNamespace( "dcterms", DCTermsVocabulary.NS_DCTerms.toString() );
 		model.setNamespace( "xsd", XSD.XSD_NS );
+		model.setNamespace( "ccfg", SoccConfigVocabulary.NS_SoccConfigVocabulary.toString() );
+		model.setNamespace( "siocs", ServicesVocabulary.NS_ServicesVocabulary.toString() );
+		model.setNamespace( "siocsa", ServicesAuthVocabulary.NS_ServicesAuthVocabulary.toString() );
+		model.setNamespace( "acl", AclVocabulary.NS_ACLVocabulary.toString() );
+		model.setNamespace( "waa", "http://purl.oclc.org/NET/WebApiAuthentication#" );
+		model.setNamespace( "rdf", RDF.RDF_NS );
 
 		try {
 			SoccContext context = new SoccContext( model );
@@ -109,9 +116,9 @@ public class ConnectorTestApp {
 			// kaiAuthorization.setAccessToClass( SiocVocabulary.Post );
 			// kaiAuthorization.addAccessMode( AclVocabulary.Read );
 
-			addMoodleRdfData( model );
-			//addCanvasLmsRdfData( model );
-			addFacebookRdfData( model );
+			//			addMoodleRdfData( model );
+			addCanvasLmsRdfData( model );
+			//			addFacebookRdfData( model );
 			// addYoutubeRdfData( model );
 
 			//			IConnector connector =
@@ -119,14 +126,14 @@ public class ConnectorTestApp {
 			//			                context,
 			//			                MOODLE_CONNECTOR_ID );
 
-			//            IConnector connector = ConnectorFactory.getInstance()
-			//                    .createConnector(
-			//                            context,
-			//                            CANVAS_LMS_CONNECTOR_ID);
+			IConnector connector = ConnectorFactory.getInstance()
+			        .createConnector(
+			                context,
+			                CANVAS_LMS_CONNECTOR_ID );
 
-			IConnector connector = ConnectorFactory.getInstance().createConnector(
-			        context,
-			        FACEBOOK_CONNECTOR_ID );
+			//			IConnector connector = ConnectorFactory.getInstance().createConnector(
+			//			        context,
+			//			        FACEBOOK_CONNECTOR_ID );
 
 			// IConnector connector = ConnectorFactory.getInstance()
 			// .createConnector(
@@ -233,12 +240,12 @@ public class ConnectorTestApp {
 			// System.out.println(
 			// "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<o>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 			// );
-			List<Post> posts = postReader.pollPosts( Builder.createURI(
-			        "https://www.facebook.com/100003876610187" ), null, 25 );
-			for ( Post post : posts ) {
-				System.out.println( RdfUtils.resourceToString( post,
-				        Syntax.Turtle ) );
-			}
+			//			List<Post> posts = postReader.pollPosts( Builder.createURI(
+			//			        "https://www.facebook.com/100003876610187" ), null, 25 );
+			//			for ( Post post : posts ) {
+			//				System.out.println( RdfUtils.resourceToString( post,
+			//				        Syntax.Turtle ) );
+			//			}
 
 		} finally {
 			System.err

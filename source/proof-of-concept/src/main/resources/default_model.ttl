@@ -1,0 +1,80 @@
+@prefix ccfg: <http://www.m0ep.de/socc/config#> .
+@prefix sioc: <http://rdfs.org/sioc/ns#> .
+@prefix waa: <http://purl.oclc.org/NET/WebApiAuthentication#> .
+@prefix siocs: <http://rdfs.org/sioc/services#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix acl: <http://www.w3.org/ns/auth/acl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix siocsa: <http://www.m0ep.de/sioc/services/auth#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+###################################################################################################
+# Definitions of the default User
+###################################################################################################
+
+<http://www.example.org#bot> a foaf:Person ;
+    foaf:account <https://canvas.instructure.com/api/v1/users/3478501/profile> ;
+    foaf:name "Socc Bot" .
+    
+[] a acl:Authorization ;
+    acl:accessToClass sioc:Post ;
+    acl:agentClass foaf:Agent ;
+    acl:mode acl:Read;
+    acl:owner <http://www.example.org#bot> .
+    
+<https://canvas.instructure.com/api/v1/users/3478501/profile> a sioc:UserAccount ;
+    sioc:account_of <http://www.example.org#bot> ;
+    siocs:has_service <https://canvas.instructure.com/api/v1> ;
+    foaf:accountName "3478501" ;
+    foaf:accountServiceHomepage <https://canvas.instructure.com/api/v1> ;
+    siocsa:accountAuthentication [
+        a waa:OAuth ; 
+        siocsa:credentials [
+            a siocsa:AccessToken ;
+            rdf:value "7~wCpRKiFl91vrGdUHQ8gQFIVlVc9KiUe396TbAsfOXPMp6qWBUbqbjxAsKnDOZcc9"
+        ]
+    ] .
+    
+###################################################################################################
+# Definition of another User
+###################################################################################################
+
+<http://www.example.org#florian> a foaf:Person ;
+    foaf:account <https://canvas.instructure.com/api/v1/users/3457836/profile> ;
+    foaf:name "Florian" .
+
+<https://canvas.instructure.com/api/v1/users/3457836/profile> a sioc:UserAccount ;
+    sioc:account_of <http://www.example.org#florian> ;
+    siocs:has_service <https://canvas.instructure.com/api/v1> ;
+    foaf:accountName "3457836" ;
+    foaf:accountServiceHomepage <https://canvas.instructure.com/api/v1> ;
+    siocsa:accountAuthentication [
+        a waa:OAuth ;
+        siocsa:credentials [
+            a siocsa:AccessToken ;
+            rdf:value "7~45nTvodrOtuaDNbsjParF4vMd4xqljGD76LLoeTVbxyg8d2ECHN55KEsL1045G5V"
+        ]
+    ] .
+    
+[] a acl:Authorization ;
+    acl:accessToClass sioc:Post ;
+    acl:agentClass foaf:Agent ;
+    acl:mode acl:Read;
+    acl:owner <http://www.example.org#florian> .
+    
+###################################################################################################
+# Definition of the Canvas Service and Connector
+###################################################################################################
+
+<https://canvas.instructure.com/api/v1> a siocs:Service ;
+    siocs:service_endpoint <https://canvas.instructure.com> ;
+    siocs:service_of <https://canvas.instructure.com/api/v1/users/3478501/profile> , 
+        <https://canvas.instructure.com/api/v1/users/3478501/profile> .
+
+[] a ccfg:ConnectorConfig
+    ccfg:connectorClassName "de.m0ep.socc.core.connector.canvaslms.CanvasLmsConnector" ;
+    ccfg:defaultUserAccount <https://canvas.instructure.com/api/v1/users/3478501/profile> ;
+    ccfg:id "poc-canvas" ;
+    ccfg:service <https://canvas.instructure.com/api/v1> ;
+    ccfg:unknownMessageTemplate "{authorName} wrote:<br>{message}" ;

@@ -29,7 +29,7 @@ http://maxhiwi.de#me<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="ellipse"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -49,7 +49,7 @@ http://youtube.com#Max
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="ellipse"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -68,7 +68,7 @@ http://gdata.youtube.com<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="ellipse"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -87,7 +87,7 @@ https://plus.google.com#Max<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="ellipse"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -106,7 +106,7 @@ https://plus.google.com#MaxHiwi<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="ellipse"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -125,7 +125,7 @@ https://www.googleapis.com/plus<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="ellipse"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>

@@ -29,7 +29,7 @@ Factory<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="rectangle"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -47,7 +47,7 @@ Factory<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="rectangle"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -65,7 +65,7 @@ Factory<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="rectangle"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -84,7 +84,7 @@ Producer<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="rectangle"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -103,7 +103,7 @@ Consumer<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="rectangle"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -131,7 +131,6 @@ Consumer<y:LabelModel>
       </data>
     </node>
     <node id="n6">
-      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.bpmn.Artifact.withShadow">
           <y:Geometry height="60.0" width="100.0" x="67.0" y="437.0"/>
@@ -154,7 +153,6 @@ Consumer<y:LabelModel>
       </data>
     </node>
     <node id="n7">
-      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.bpmn.Artifact.withShadow">
           <y:Geometry height="60.0" width="100.0" x="467.0" y="437.0"/>

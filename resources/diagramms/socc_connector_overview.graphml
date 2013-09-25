@@ -57,7 +57,7 @@
                 </y:ModelParameter>
               </y:NodeLabel>
               <y:Shape type="roundrectangle"/>
-              <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+              <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
             </y:ShapeNode>
           </data>
         </node>
@@ -75,7 +75,7 @@
                 </y:ModelParameter>
               </y:NodeLabel>
               <y:Shape type="roundrectangle"/>
-              <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+              <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
             </y:ShapeNode>
           </data>
         </node>
@@ -93,7 +93,7 @@
                 </y:ModelParameter>
               </y:NodeLabel>
               <y:Shape type="roundrectangle"/>
-              <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+              <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
             </y:ShapeNode>
           </data>
         </node>
@@ -126,8 +126,7 @@ Community<y:LabelModel>
           <y:Geometry height="100.0" width="175.0" x="396.0" y="532.9280000000003"/>
           <y:Fill color="#FFFFFF" color2="#C0C0C0" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="48.103515625" modelName="custom" textColor="#000000" visible="true" width="52.69140625" x="61.154296875" y="25.9482421875">Message
-Passing
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="custom" textColor="#000000" visible="true" width="62.03125" x="56.484375" y="33.298828125">Messaging
 Network<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
@@ -155,7 +154,7 @@ Network<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="rectangle"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>

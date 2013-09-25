@@ -28,7 +28,7 @@
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="ellipse"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -46,7 +46,7 @@
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="ellipse"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -64,7 +64,7 @@
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="ellipse"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -82,7 +82,7 @@
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="rectangle"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -100,7 +100,7 @@
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="rectangle"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -118,7 +118,7 @@
             </y:ModelParameter>
           </y:NodeLabel>
           <y:Shape type="rectangle"/>
-          <y:DropShadow color="#B3A691" offsetX="5" offsetY="5"/>
+          <y:DropShadow color="#A8A8A8" offsetX="5" offsetY="5"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -180,7 +180,6 @@
       </data>
     </edge>
     <edge id="e4" source="n0" target="n5">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="60.0" sy="14.96875" tx="0.0" ty="-25.0">

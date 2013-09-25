@@ -81,7 +81,6 @@ public class CanvasLmsPostWriter extends
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {
-		Model tmpModel = RDFTool.stringToModel( rdfString, syntax );
 
 		boolean isDiscussionTopicUri = CanvasLmsSiocUtils.isDiscussionTopicUri(
 		        targetUri,
@@ -108,6 +107,7 @@ public class CanvasLmsPostWriter extends
 			                + ", it's neither a conainer nor a post od comment" );
 		}
 
+		Model tmpModel = RDFTool.stringToModel( rdfString, syntax );
 		ClosableIterator<Resource> postIter = Post.getAllInstances( tmpModel );
 		try {
 			while ( postIter.hasNext() ) {

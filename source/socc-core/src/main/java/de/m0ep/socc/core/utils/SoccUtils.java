@@ -39,6 +39,7 @@ import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.SiocVocabulary;
 import org.rdfs.sioc.Site;
+import org.rdfs.sioc.Thing;
 import org.rdfs.sioc.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -275,10 +276,7 @@ public final class SoccUtils {
 	 * @return Returns {@link Post} if a sibling is found, <code>null</code>
 	 *         otherwise.
 	 */
-	public static Post findSibling(
-	        final Model model,
-	        final Post post,
-	        final Site site ) {
+	public static Post findSibling( final Model model, final Post post, final Site site ) {
 		ClosableIterator<Statement> stmtIter = model.findStatements(
 		        Variable.ANY,
 		        SiocVocabulary.sibling,
@@ -299,7 +297,7 @@ public final class SoccUtils {
 		return null;
 	}
 
-	public static void logPost( Logger log, Post post, String prefix ) {
+	public static void logPost( final Logger log, final Post post, final String prefix ) {
 		if ( log.isDebugEnabled() ) {
 			log.debug( "{}:\n{}",
 			        prefix,
@@ -309,5 +307,31 @@ public final class SoccUtils {
 			        prefix,
 			        post );
 		}
+	}
+
+	public static String addAttachmentsToContent(
+	        final Post post,
+	        final String content,
+	        final String lineBreak ) {
+		StringBuffer strBuffer = new StringBuffer( content );
+		strBuffer.append( lineBreak ).append( "Attachments:" );
+
+		ClosableIterator<Thing> attachIter = post.getAllAttachments();
+		try {
+			while ( attachIter.hasNext() ) {
+				strBuffer.append( lineBreak ).append( attachIter.next() );
+			}
+
+		} finally {
+			attachIter.close();
+		}
+
+		return strBuffer.toString();
+	}
+
+	public static void anonymisePost( Post post ) {
+		post.removeAllCreators();
+		post.removeAllContent();
+		post.removeAllAttachments();
 	}
 }

@@ -26,9 +26,9 @@ public class OAuthTest {
 	public static final String AUTH_URL = "https://www.facebook.com/dialog/oauth?scope=%s&redirect_uri=%s&client_id=%s";
 	public static final String TOKEN_URL = "https://graph.facebook.com/oauth/access_token?client_id=%s&redirect_uri=%s&client_secret=%s&code=%s";;
 	public static final String EXTENDED_URL = "https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s";;
-	public static final String SCOPE = "create_note,email,photo_upload,publish_actions,publish_stream,read_stream,share_item,status_update,user_about_me,user_groups,video_upload";
-	public static final String CLIENT_ID = "218182098322396";
-	public static final String CLIENT_SECRET = "f4ed27b621c0f6476c2741f7cf9c4dc5";
+	public static final String SCOPE = "publish_actions,read_stream,user_groups";
+	public static final String CLIENT_ID = "410334369012894";
+	public static final String CLIENT_SECRET = "5988954e39fc9ca4d39bd7b374a7d72b";
 
 	/**
 	 * @param args

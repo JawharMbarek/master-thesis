@@ -32,6 +32,8 @@ import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -48,9 +50,11 @@ import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.Fields;
 import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.RequestParameters;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.SoccUtils;
 
 public class FacebookPostReader extends
         DefaultConnectorIOComponent<FacebookConnector> implements IPostReader<FacebookConnector> {
+	private static final Logger LOG = LoggerFactory.getLogger( FacebookPostReader.class );
 
 	private final FacebookClientWrapper defaultClient;
 
@@ -86,6 +90,10 @@ public class FacebookPostReader extends
 			if ( FacebookSiocUtils.hasConnection( object, Connections.COMMENTS ) ) {
 				FacebookSiocUtils.createSiocPost( getConnector(), object, null, null );
 				return true;
+			} else if ( FacebookSiocUtils.hasConnection( object, Connections.FEED ) ) {
+				// if the resource has a feed, create a SIOC Forum so we haven't to load it another time.
+				FacebookSiocUtils.createSiocForum( getConnector(), object );
+				return false;
 			}
 		}
 
@@ -110,8 +118,7 @@ public class FacebookPostReader extends
 			JsonObject object = null;
 
 			try {
-				object = defaultClient.getFacebookClient().fetchObject(
-				        "/" + id,
+				object = defaultClient.getFacebookClient().fetchObject( "/" + id,
 				        JsonObject.class,
 				        Parameter.with( RequestParameters.METADATA, 1 ) );
 			} catch ( FacebookException e ) {
@@ -120,18 +127,24 @@ public class FacebookPostReader extends
 				Throwables.propagate( e );
 			}
 
-			if ( null != object ) {
-				if ( FacebookSiocUtils.hasConnection( object, Connections.COMMENTS ) ) {
-					return FacebookSiocUtils.createSiocPost( getConnector(), object, null, null );
+			if ( null != object && FacebookSiocUtils.hasConnection( object, Connections.COMMENTS ) ) {
+				if ( LOG.isDebugEnabled() ) {
+					LOG.debug( "Loaded post:\n{}", object.toString( 4 ) );
+				} else {
+					LOG.info( "Loaded post with id='{}'",
+					        object.get( FacebookSiocUtils.Fields.ID ) );
 				}
+
+				Post resultPost = FacebookSiocUtils.createSiocPost( getConnector(), object, null,
+				        null );
+
+				SoccUtils.logPost( LOG, resultPost, "Converted post to SIOC" );
+
+				return resultPost;
 			}
 		}
 
-		throw new NotFoundException(
-		        "The uri "
-		                + uri
-		                + " is no post at "
-		                + getServiceEndpoint() );
+		throw new NotFoundException( "The uri " + uri + " is no post at " + getServiceEndpoint() );
 	}
 
 	@Override
@@ -144,8 +157,7 @@ public class FacebookPostReader extends
 			JsonObject object = null;
 
 			try {
-				object = defaultClient.getFacebookClient().fetchObject(
-				        "/" + id,
+				object = defaultClient.getFacebookClient().fetchObject( "/" + id,
 				        JsonObject.class,
 				        Parameter.with( RequestParameters.METADATA, 1 ) );
 			} catch ( Exception e ) {
@@ -153,8 +165,13 @@ public class FacebookPostReader extends
 			}
 
 			if ( null != object ) {
-				return FacebookSiocUtils.hasConnection( object, Connections.FEED )
-				        || FacebookSiocUtils.hasConnection( object, Connections.COMMENTS );
+				if ( FacebookSiocUtils.hasConnection( object, Connections.FEED ) ) {
+					FacebookSiocUtils.createSiocForum( getConnector(), object );
+					return true;
+				} else if ( FacebookSiocUtils.hasConnection( object, Connections.COMMENTS ) ) {
+					FacebookSiocUtils.createSiocPost( getConnector(), object, null, null );
+					return true;
+				}
 			}
 		}
 
@@ -212,14 +229,14 @@ public class FacebookPostReader extends
 		                + getServiceEndpoint() );
 	}
 
-	public List<Post> pollPostsAtContainer( Container container, Date since, long limit )
+	public List<Post> pollPostsAtContainer( Container sourceContainer, Date since, long limit )
 	        throws AuthenticationException, IOException {
+		Preconditions.checkNotNull( sourceContainer,
+		        "Required parameter sourceContainer must be specified." );
+
 		if ( 0 == limit ) {
 			return Lists.newArrayList();
 		}
-
-		Preconditions.checkNotNull( container,
-		        "Required parameter container must be specified." );
 
 		Parameter paramSince = Parameter.with(
 		        RequestParameters.SINCE,
@@ -229,10 +246,10 @@ public class FacebookPostReader extends
 		        RequestParameters.LIMIT,
 		        ( 0 < limit || limit < 25 ) ? ( limit ) : ( 25 ) );
 
-		Connection<JsonObject> feed = null;
+		Connection<JsonObject> postFeed = null;
 		try {
-			feed = defaultClient.getFacebookClient().fetchConnection(
-			        container.getId()
+			postFeed = defaultClient.getFacebookClient().fetchConnection(
+			        sourceContainer.getId()
 			                + "/"
 			                + Connections.FEED,
 			        JsonObject.class,
@@ -242,11 +259,11 @@ public class FacebookPostReader extends
 			FacebookConnector.handleFacebookException( e );
 		}
 
-		List<Post> results = Lists.newArrayList();
-		if ( null != feed ) {
-			for ( List<JsonObject> objectList : feed ) {
+		List<Post> result = Lists.newArrayList();
+		if ( null != postFeed ) {
+			for ( List<JsonObject> objectList : postFeed ) {
 				for ( JsonObject object : objectList ) {
-					if ( 0 > limit || limit > results.size() ) {
+					if ( 0 > limit || limit > result.size() ) {
 						Date createdDate = null;
 						if ( object.has( Fields.CREATED_TIME ) ) {
 							createdDate = com.restfb.util.DateUtils
@@ -255,28 +272,48 @@ public class FacebookPostReader extends
 						}
 
 						if ( null == since || null == createdDate || createdDate.after( since ) ) {
-							results.add( FacebookSiocUtils.createSiocPost(
+							Post post = FacebookSiocUtils.createSiocPost(
 							        getConnector(),
 							        object,
-							        container,
-							        null ) );
+							        sourceContainer,
+							        null );
+
+							if ( SoccUtils.haveReadAccess(
+							        getConnector(),
+							        post.getCreator(),
+							        post.getContainer() ) ) {
+								result.add( post );
+							} else {
+								LOG.info(
+								        "Have no permission to read posts for this UserAccount='{}'",
+								        post.getCreator() );
+								SoccUtils.anonymisePost( post );
+							}
+
+							// poll all comments
+							pollRepliesAtPost( post, since, Math.max( -1, limit - result.size() ) );
+
 						} else {
-							return results;
+							return result;
 						}
 					} else {
-						return results;
+						return result;
 					}
 				}
 			}
 		}
 
-		return results;
+		return result;
 	}
 
-	public List<Post> pollRepliesAtPost( Post parentPost, Date since, long limit )
+	public List<Post> pollRepliesAtPost( Post sourcePost, Date since, long limit )
 	        throws AuthenticationException, IOException {
-		Preconditions.checkNotNull( parentPost,
-		        "Required parameter parentPost must be specified." );
+		Preconditions.checkNotNull( sourcePost,
+		        "Required parameter sourcePost must be specified." );
+
+		if ( 0 == limit ) {
+			return Lists.newArrayList();
+		}
 
 		Parameter paramSince = Parameter.with(
 		        RequestParameters.SINCE,
@@ -289,10 +326,10 @@ public class FacebookPostReader extends
 		        RequestParameters.FIELDS,
 		        FacebookSiocUtils.FIELDS_COMMENT );
 
-		Connection<JsonObject> feed = null;
+		Connection<JsonObject> commentFeed = null;
 		try {
-			feed = defaultClient.getFacebookClient().fetchConnection(
-			        parentPost.getId()
+			commentFeed = defaultClient.getFacebookClient().fetchConnection(
+			        sourcePost.getId()
 			                + "/"
 			                + Connections.COMMENTS,
 			        JsonObject.class,
@@ -303,11 +340,11 @@ public class FacebookPostReader extends
 			FacebookConnector.handleFacebookException( e );
 		}
 
-		List<Post> results = Lists.newArrayList();
-		if ( null != feed ) {
-			for ( List<JsonObject> objectList : feed ) {
+		List<Post> result = Lists.newArrayList();
+		if ( null != commentFeed ) {
+			for ( List<JsonObject> objectList : commentFeed ) {
 				for ( JsonObject object : objectList ) {
-					if ( 0 > limit || limit > results.size() ) {
+					if ( 0 > limit || limit > result.size() ) {
 						Date createdDate = null;
 						if ( object.has( Fields.CREATED_TIME ) ) {
 							createdDate = com.restfb.util.DateUtils
@@ -316,23 +353,34 @@ public class FacebookPostReader extends
 						}
 
 						if ( null == since || null == createdDate || createdDate.after( since ) ) {
-							results.add( FacebookSiocUtils.createSiocPost(
+							Post post = FacebookSiocUtils.createSiocPost(
 							        getConnector(),
 							        object,
-							        parentPost.hasContainer()
-							                ? parentPost.getContainer()
-							                : null,
-							        null ) );
+							        sourcePost.getContainer(),
+							        sourcePost );
+
+							if ( SoccUtils.haveReadAccess(
+							        getConnector(),
+							        post.getCreator(),
+							        post.getContainer() ) ) {
+								result.add( post );
+							} else {
+								LOG.info(
+								        "Have no permission to read posts for this UserAccount='{}'",
+								        post.getCreator() );
+								SoccUtils.anonymisePost( post );
+							}
+
 						} else {
-							return results;
+							return result;
 						}
 					} else {
-						return results;
+						return result;
 					}
 				}
 			}
 		}
 
-		return results;
+		return result;
 	}
 }

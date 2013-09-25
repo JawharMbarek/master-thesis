@@ -66,7 +66,7 @@ public class Moodle2PostWriter extends
 	}
 
 	@Override
-	public void writePost( URI targetUri, String rdfString, Syntax syntax )
+	public void writePost( final URI targetUri, final String rdfString, final Syntax syntax )
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {
@@ -134,7 +134,7 @@ public class Moodle2PostWriter extends
 		}
 	}
 
-	private void writePostToContainer( Container targetContainer, Post post )
+	private void writePostToContainer( final Container targetContainer, final Post post )
 	        throws AuthenticationException,
 	        IOException {
 		final int discussionId;
@@ -268,7 +268,7 @@ public class Moodle2PostWriter extends
 		}
 	}
 
-	private void writeReplyToPost( Post targetPost, Post post )
+	private void writeReplyToPost( final Post targetPost, final Post post )
 	        throws AuthenticationException,
 	        IOException {
 		final int postId;
@@ -324,6 +324,7 @@ public class Moodle2PostWriter extends
 		replyDatum.setMessage( content );
 		replyDatum.setSubject( Strings.nullToEmpty( post.getTitle() ) );
 
+		// returns an array with all posts in the parent thread
 		ForumPostRecord[] resultPostRecords = client
 		        .callMethod( new Callable<ForumPostRecord[]>() {
 			        @Override
@@ -336,46 +337,56 @@ public class Moodle2PostWriter extends
 			        }
 		        } );
 
-		if ( null != resultPostRecords && 0 < resultPostRecords.length ) {
-			ForumPostRecord parentPostRecord = findPostRecordWithId(
-			        resultPostRecords,
-			        postId );
+		ForumPostRecord parentPostRecord = findForumPostRecord( resultPostRecords, postId );
+		if ( null != parentPostRecord
+		        && null != parentPostRecord.getChildren()
+		        && 0 < parentPostRecord.getChildren().length ) {
+			int numChildren = parentPostRecord.getChildren().length;
+			// get last children of the parent post -> the previously written reply
+			ForumPostRecord postRecord = parentPostRecord.getChildren()[numChildren - 1];
 
-			if ( null != parentPostRecord ) {
-				int numChildren = parentPostRecord.getChildren().length;
-				ForumPostRecord postRecord = parentPostRecord.getChildren()[numChildren - 1];
+			Container container = targetPost.getContainer();
+			Post addedPost = Moodle2SiocUtils.createSiocPost(
+			        getConnector(),
+			        postRecord,
+			        SiocUtils.asThread( container ),
+			        targetPost );
 
-				Container container = targetPost.getContainer();
-				Post addedPost = Moodle2SiocUtils.createSiocPost(
-				        getConnector(),
-				        postRecord,
-				        SiocUtils.asThread( container ),
-				        targetPost );
+			addedPost.addSibling( post );
 
-				addedPost.addSibling( post );
-			}
+			SoccUtils.logPost( LOG, addedPost, "Writing successful, result post" );
 		} else {
 			LOG.warn( "Failed to write post(s) to uri " + targetPost );
 		}
 	}
 
-	private ForumPostRecord findPostRecordWithId(
-	        ForumPostRecord[] postRecordArray, int postId ) {
-		for ( ForumPostRecord postRecord : postRecordArray ) {
-			if ( postId == postRecord.getId() ) {
-				return postRecord;
-			}
+	/**
+	 * Searchs through the an array of {@link ForumPostRecord}s and searchs for
+	 * a post whit an specific ID.
+	 * 
+	 * @param forumPostRecords
+	 * @param postId
+	 * @return
+	 */
+	private ForumPostRecord findForumPostRecord(
+	        final ForumPostRecord[] forumPostRecords,
+	        final int postId ) {
+		if ( null != forumPostRecords ) {
+			for ( ForumPostRecord postRecord : forumPostRecords ) {
+				if ( postId == postRecord.getId() ) {
+					return postRecord;
+				}
 
-			ForumPostRecord[] children = postRecord.getChildren();
-			if ( null != children && 0 < children.length ) {
-				ForumPostRecord result = findPostRecordWithId( children, postId );
+				// iterate through all replies
+				ForumPostRecord result = findForumPostRecord(
+				        postRecord.getChildren(),
+				        postId );
 
 				if ( null != result ) {
 					return result;
 				}
 			}
 		}
-
 		return null;
 	}
 }

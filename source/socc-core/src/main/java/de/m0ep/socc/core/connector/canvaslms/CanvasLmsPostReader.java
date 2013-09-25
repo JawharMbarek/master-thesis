@@ -399,18 +399,18 @@ public class CanvasLmsPostReader extends
 
 			SoccUtils.logPost( LOG, post, "Convert entry to SIOC post" );
 
-			if ( SoccUtils.haveReadAccess(
-			        getConnector(),
-			        post.getCreator(),
-			        post.getContainer() ) ) {
-				if ( null == since || createdDate.after( since ) ) {
+			if ( null == since || createdDate.after( since ) ) {
+				if ( SoccUtils.haveReadAccess(
+				        getConnector(),
+				        post.getCreator(),
+				        post.getContainer() ) ) {
+
 					result.add( post );
+				} else {
+					LOG.info( "Have no permission to read posts for this UserAccount='{}'",
+					        post.getCreator() );
+					SoccUtils.anonymisePost( post );
 				}
-			} else {
-				LOG.info(
-				        "Have no permission to read posts for this UserAccount='{}'",
-				        post.getCreator() );
-				Post.deleteAllProperties( post.getModel(), post.getResource() );
 			}
 
 			// read recentReplies

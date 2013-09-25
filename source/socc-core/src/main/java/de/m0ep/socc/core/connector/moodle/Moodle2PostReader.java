@@ -23,6 +23,7 @@ import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.SiocUtils;
+import de.m0ep.socc.core.utils.SoccUtils;
 
 public class Moodle2PostReader extends
         DefaultConnectorIOComponent<Moodle2Connector> implements IPostReader<Moodle2Connector> {
@@ -53,7 +54,7 @@ public class Moodle2PostReader extends
 		Pattern pattern = Pattern.compile( Moodle2SiocUtils.REGEX_FORUM_POST_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		if ( matcher.matches() ) {
+		if ( matcher.find() ) {
 			final int discussionId = Integer.parseInt( matcher.group( 1 ) );
 			final int postId = Integer.parseInt( matcher.group( 2 ) );
 
@@ -79,11 +80,21 @@ public class Moodle2PostReader extends
 				                getServiceEndpoint(),
 				                discussionId ) );
 
-				return Moodle2SiocUtils.createSiocPost(
+				if ( LOG.isDebugEnabled() ) {
+					LOG.debug( "Loaded ForumPost:\n {}", postRecord );
+				} else {
+					LOG.info( "Loaded ForumPost with id='{}'", postRecord.getId() );
+				}
+
+				Post result = Moodle2SiocUtils.createSiocPost(
 				        getConnector(),
 				        postRecord,
 				        SiocUtils.asThread( discussion ),
 				        null );
+
+				SoccUtils.logPost( LOG, result, "Converted ForumPost to SIOC" );
+
+				return result;
 			}
 		}
 
@@ -97,26 +108,24 @@ public class Moodle2PostReader extends
 	}
 
 	@Override
-	public List<Post> pollPosts( URI sourceUri, Date since, int limit ) throws
+	public List<Post> pollPosts( final URI sourceUri, final Date since, final int limit ) throws
 	        AuthenticationException,
 	        IOException {
 		Preconditions.checkNotNull( sourceUri,
 		        "Required parameter uri must be specified." );
-		limit = Math.max( -1, limit );
 
 		if ( Moodle2SiocUtils.isForumPostUri( sourceUri, getServiceEndpoint() ) ) {
 			Post post = getPost( sourceUri );
-			return pollRepliesAtPost( post, since, limit );
+			return pollRepliesAtPost( post, since, Math.max( -1, limit ) );
 		} else if ( Moodle2SiocUtils.isForumDiscussionUri( sourceUri, getServiceEndpoint() ) ) {
 			Container container = getConnector().getStructureReader().getContainer( sourceUri );
-			return pollPostsAtContainer( container, since, limit );
+			return pollPostsAtContainer( container, since, Math.max( -1, limit ) );
 		}
 
-		throw new IOException(
-		        "Can't poll posts from uri "
-		                + sourceUri
-		                + " at service "
-		                + getServiceEndpoint() );
+		throw new IOException( "Can't poll posts from uri "
+		        + sourceUri
+		        + " at service "
+		        + getServiceEndpoint() );
 	}
 
 	/**
@@ -159,13 +168,12 @@ public class Moodle2PostReader extends
 
 		List<Post> result = Lists.newArrayList();
 		if ( null != postRecordArray && 0 < postRecordArray.length ) {
-			result.addAll(
-			        extractPosts(
-			                since,
-			                limit,
-			                SiocUtils.asThread( container ),
-			                null,
-			                postRecordArray ) );
+			result.addAll( extractPosts(
+			        since,
+			        limit,
+			        SiocUtils.asThread( container ),
+			        null,
+			        postRecordArray ) );
 		}
 
 		return result;
@@ -185,8 +193,8 @@ public class Moodle2PostReader extends
 	        throws
 	        AuthenticationException,
 	        IOException {
-		Container container = getConnector().getStructureReader().getContainer(
-		        post.getContainer().asURI() );
+		Container container = getConnector().getStructureReader()
+		        .getContainer( post.getContainer().asURI() );
 
 		final int discussionId;
 		try {
@@ -227,13 +235,12 @@ public class Moodle2PostReader extends
 			if ( null != postRecord ) {
 				ForumPostRecord[] children = postRecord.getChildren();
 				if ( null != children && 0 < children.length ) {
-					result.addAll(
-					        extractPosts(
-					                since,
-					                limit,
-					                SiocUtils.asThread( container ),
-					                post,
-					                children ) );
+					result.addAll( extractPosts(
+					        since,
+					        limit,
+					        SiocUtils.asThread( container ),
+					        post,
+					        children ) );
 				}
 			} else {
 				LOG.warn(
@@ -261,7 +268,15 @@ public class Moodle2PostReader extends
 				        parentPost );
 
 				if ( null == since || createdDate.after( since ) ) {
+					if ( LOG.isDebugEnabled() ) {
+						LOG.debug( "Loaded ForumPost:\n {}", postRecord );
+					} else {
+						LOG.info( "Loaded ForumPost with id='{}'", postRecord.getId() );
+					}
+
 					results.add( post );
+
+					SoccUtils.logPost( LOG, post, "Converted ForumPost to SIOC" );
 				}
 
 				ForumPostRecord[] children = postRecord.getChildren();

@@ -28,6 +28,7 @@ import org.ontoware.aifbcommons.collection.ClosableIterator;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.QueryResultTable;
 import org.ontoware.rdf2go.model.QueryRow;
+import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.Node;
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.SiocVocabulary;
@@ -276,14 +277,22 @@ public final class UserAccountUtils {
 
 		ClosableIterator<de.m0ep.socc.config.UserAccount> mappedIter =
 		        de.m0ep.socc.config.UserAccount.getAllMappedTo(
-		                userAccount.getModel(),
+		                model,
 		                userAccount.getResource() );
+		System.err.println( "get all mappedTo from " + userAccount );
+
 		try {
 			while ( mappedIter.hasNext() ) {
-				UserAccount nextUserAccount = mappedIter.next();
+				UserAccount nextUserAccount = UserAccount.getInstance(
+				        model,
+				        mappedIter.next().getResource() );
+
+				System.err.println( "mapped: " + nextUserAccount );
+				System.err.println( "mapped:"
+				        + RdfUtils.resourceToString( nextUserAccount, Syntax.Turtle ) );
 				if ( service.hasServiceOf( nextUserAccount )
 				        || model.contains(
-				                userAccount,
+				                nextUserAccount,
 				                ServicesVocabulary.has_service,
 				                service ) ) {
 					return nextUserAccount;

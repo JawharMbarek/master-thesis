@@ -25,7 +25,6 @@ package de.m0ep.socc.core.connector.facebook;
 import java.util.Date;
 
 import org.ontoware.rdf2go.model.Model;
-import org.ontoware.rdf2go.model.node.Node;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.Builder;
 import org.rdfs.sioc.Container;
@@ -162,26 +161,22 @@ public final class FacebookSiocUtils {
 		        object.getString( Fields.ID ),
 		        Connections.FEED );
 
-		Forum result = null;
-		if ( Forum.hasInstance( model, uri ) ) {
-			result = Forum.getInstance( model, uri );
-		} else {
-			result = new Forum( model, uri, true );
-			result.setId( object.getString( Fields.ID ) );
-			result.setName( object.getString( Fields.NAME ) + "'s Wall" );
+		Forum result = ( Forum.hasInstance( model, uri ) )
+		        ? Forum.getInstance( model, uri )
+		        : new Forum( model, uri, true );
 
-			result.setNumItems( 0 );
-
-			Site site = connector.getStructureReader().getSite();
-			result.setHost( site );
-			site.addHostOf( result );
-		}
+		result.setId( object.getString( Fields.ID ) );
+		result.setName( object.getString( Fields.NAME ) + "'s Wall" );
 
 		if ( object.has( Fields.DESCRIPTION ) ) {
 			result.setDescription( object.getString( Fields.DESCRIPTION ) );
 		} else if ( object.has( Fields.ABOUT ) ) {
 			result.setDescription( object.getString( Fields.ABOUT ) );
 		}
+
+		Site site = connector.getStructureReader().getSite();
+		result.setHost( site );
+		site.addHostOf( result );
 
 		return result;
 	}
@@ -200,70 +195,111 @@ public final class FacebookSiocUtils {
 		URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
 		URI uri = createSiocUri( object.getString( Fields.ID ) );
 
-		Post result;
-		if ( Post.hasInstance( model, uri ) ) {
-			result = Post.getInstance( model, uri );
+		Post result = ( Post.hasInstance( model, uri ) )
+		        ? result = Post.getInstance( model, uri )
+		        : new Post( model, uri, true );
 
-			if ( object.has( Fields.UPDATED_TIME ) ) {
-				Date modifiedDate = com.restfb.util.DateUtils
-				        .toDateFromLongFormat(
-				        object.getString( Fields.UPDATED_TIME ) );
-				Node modifiedNode = Builder.createPlainliteral(
-				        DateUtils.formatISO8601( modifiedDate ) );
+		result.setIsPartOf( connector.getStructureReader().getSite() );
+		result.setId( object.getString( Fields.ID ) );
 
-				if ( !result.hasModified( modifiedNode ) ) {
-					result.setModified( modifiedNode );
-					result.removeAllAttachments();
-					setPostCoreProperties( result, object );
-				}
-			}
-		} else {
-			result = new Post( model, uri, true );
-			result.setIsPartOf( connector.getStructureReader().getSite() );
-			result.setId( object.getString( Fields.ID ) );
+		JsonObject fromObject = object.getJsonObject( Fields.FROM );
+		String creatorId = fromObject.getString( Fields.ID );
 
-			JsonObject fromObject = object.getJsonObject( Fields.FROM );
-			String creatorId = fromObject.getString( Fields.ID );
-
-			// check if we already know the author, else create a new
-			// UserAccount + Person
-			try {
-				result.setCreator( UserAccountUtils.findUserAccount(
-				        connector.getContext().getModel(),
-				        creatorId,
-				        serviceEndpoint ) );
-			} catch ( NotFoundException e ) {
-				result.setCreator( createSiocUserAccount( connector, fromObject ) );
-			}
-
-			if ( object.has( Fields.CREATED_TIME ) ) {
-				Date date = com.restfb.util.DateUtils
-				        .toDateFromLongFormat(
-				        object.getString( Fields.CREATED_TIME ) );
-				result.setCreated( DateUtils.formatISO8601( date ) );
-			}
-
-			if ( object.has( Fields.UPDATED_TIME ) ) {
-				Date date = com.restfb.util.DateUtils
-				        .toDateFromLongFormat(
-				        object.getString( Fields.UPDATED_TIME ) );
-				result.setModified( DateUtils.formatISO8601( date ) );
-			}
-
-			setPostCoreProperties( result, object );
-
+		// check if we already know the author, else create a new
+		// UserAccount + Person
+		try {
+			result.setCreator( UserAccountUtils.findUserAccount(
+			        connector.getContext().getModel(),
+			        creatorId,
+			        serviceEndpoint ) );
+		} catch ( NotFoundException e ) {
+			result.setCreator( createSiocUserAccount( connector, fromObject ) );
 		}
 
-		if ( null != container && !result.hasContainer() ) {
+		// timestamps 
+		Date createdDate = null;
+		if ( object.has( Fields.CREATED_TIME ) ) {
+			createdDate = com.restfb.util.DateUtils
+			        .toDateFromLongFormat(
+			        object.getString( Fields.CREATED_TIME ) );
+			result.setCreated( DateUtils.formatISO8601( createdDate ) );
+		}
+
+		if ( object.has( Fields.UPDATED_TIME ) ) {
+			Date date = com.restfb.util.DateUtils
+			        .toDateFromLongFormat(
+			        object.getString( Fields.UPDATED_TIME ) );
+			result.setModified( DateUtils.formatISO8601( date ) );
+		}
+
+		// content
+		if ( object.has( Fields.MESSAGE ) ) {
+			result.setContent(
+			        object.getString( Fields.MESSAGE ) );
+		} else if ( object.has( Fields.DESCRIPTION ) ) {
+			result.setContent(
+			        object.getString( Fields.DESCRIPTION ) );
+		} else if ( object.has( Fields.STORY ) ) {
+			result.setContent(
+			        object.getString( Fields.STORY ) );
+		}
+
+		// title
+		if ( object.has( Fields.NAME ) ) {
+			result.setTitle( object.getString( Fields.NAME ) );
+		} else if ( object.has( Fields.CAPTION ) ) {
+			result.setTitle( Fields.CAPTION );
+		}
+
+		// attachments
+		if ( object.has( Fields.LINK ) ) {
+			result.setAttachment(
+			        Builder.createURI(
+			                object.getString( Fields.LINK ) ) );
+		} else if ( object.has( Fields.SOURCE ) ) {
+			result.setAttachment(
+			        Builder.createURI(
+			                object.getString( Fields.SOURCE ) ) );
+		} else if ( object.has( Fields.ATTACHMENT ) ) {
+			JsonObject attachment = object
+			        .getJsonObject( Fields.ATTACHMENT );
+
+			if ( attachment.has( Fields.TARGET ) ) {
+				JsonObject target = attachment
+				        .getJsonObject( Fields.TARGET );
+				if ( target.has( Fields.URL ) ) {
+					result.addAttachment(
+					        Builder.createURI(
+					                target.getString( Fields.URL ) ) );
+				}
+			} else if ( attachment.has( Fields.URL ) ) {
+				result.addAttachment(
+				        Builder.createURI(
+				                attachment
+				                        .getString( Fields.URL ) ) );
+			}
+		}
+
+		// update relationships
+
+		if ( null != container ) {
 			result.setContainer( container );
 			container.addContainerOf( result );
 			SiocUtils.incNumItems( container );
+
+			if ( null != createdDate ) {
+				SiocUtils.updateLastItemDate( container, createdDate );
+			}
 		}
 
-		if ( null != parentPost && !result.hasReplyOf() ) {
+		if ( null != parentPost ) {
 			result.setReplyOf( parentPost );
 			parentPost.addReply( result );
 			SiocUtils.incNumReplies( parentPost );
+
+			if ( null != createdDate ) {
+				SiocUtils.updateLastReplyDate( parentPost, createdDate );
+			}
 		}
 
 		return result;
@@ -306,62 +342,5 @@ public final class FacebookSiocUtils {
 		}
 
 		return false;
-	}
-
-	private static void setPostCoreProperties(
-	        final Post result,
-	        final JsonObject object ) {
-		Preconditions.checkNotNull( result,
-		        "Required parameter result must be specified." );
-		Preconditions.checkNotNull( object,
-		        "Required parameter object must be specified." );
-
-		// content
-		if ( object.has( Fields.MESSAGE ) ) {
-			result.setContent(
-			        object.getString( Fields.MESSAGE ) );
-		} else if ( object.has( Fields.DESCRIPTION ) ) {
-			result.setContent(
-			        object.getString( Fields.DESCRIPTION ) );
-		} else if ( object.has( Fields.STORY ) ) {
-			result.setContent(
-			        object.getString( Fields.STORY ) );
-		}
-
-		// title
-		if ( object.has( Fields.NAME ) ) {
-			result.setTitle( object.getString( Fields.NAME ) );
-		} else if ( object.has( Fields.CAPTION ) ) {
-			result.setTitle( Fields.CAPTION );
-		}
-
-		// attachment
-		if ( object.has( Fields.LINK ) ) {
-			result.setAttachment(
-			        Builder.createURI(
-			                object.getString( Fields.LINK ) ) );
-		} else if ( object.has( Fields.SOURCE ) ) {
-			result.setAttachment(
-			        Builder.createURI(
-			                object.getString( Fields.SOURCE ) ) );
-		} else if ( object.has( Fields.ATTACHMENT ) ) {
-			JsonObject attachment = object
-			        .getJsonObject( Fields.ATTACHMENT );
-
-			if ( attachment.has( Fields.TARGET ) ) {
-				JsonObject target = attachment
-				        .getJsonObject( Fields.TARGET );
-				if ( target.has( Fields.URL ) ) {
-					result.addAttachment(
-					        Builder.createURI(
-					                target.getString( Fields.URL ) ) );
-				}
-			} else if ( attachment.has( Fields.URL ) ) {
-				result.addAttachment(
-				        Builder.createURI(
-				                attachment
-				                        .getString( Fields.URL ) ) );
-			}
-		}
 	}
 }

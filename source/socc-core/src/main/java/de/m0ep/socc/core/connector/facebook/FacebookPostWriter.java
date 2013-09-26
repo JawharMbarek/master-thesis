@@ -34,6 +34,7 @@ import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.RequestParameters;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
+import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
 
@@ -113,12 +114,20 @@ public class FacebookPostWriter extends
 			        + ", it's neither a conainer nor a post od comment" );
 		}
 
+		System.err.println( rdfString );
+
 		Model tmpModel = RDFTool.stringToModel( rdfString, syntax );
 		ClosableIterator<Resource> postIter = Post.getAllInstances( tmpModel );
 		try {
 			while ( postIter.hasNext() ) {
-				Resource resource = postIter.next();
-				Post post = Post.getInstance( tmpModel, resource );
+				Post post = Post.getInstance( tmpModel, postIter.next() );
+
+				if ( LOG.isDebugEnabled() ) {
+					LOG.debug( "Try to write Post:\n{}",
+					        RdfUtils.resourceToString(
+					                post,
+					                Syntax.Turtle ) );
+				}
 
 				// skip all posts that are already forwarded from this site
 				if ( SoccUtils.hasContentWatermark(
@@ -137,6 +146,8 @@ public class FacebookPostWriter extends
 						LOG.debug( "Write {} as reply to {}.", post, sibling );
 						writeReplyToPost( sibling, post );
 						return;
+					} else {
+						LOG.debug( "No sibling found for {}", post.getReplyOf() );
 					}
 				}
 
@@ -213,7 +224,13 @@ public class FacebookPostWriter extends
 			Post resultPost = getConnector().getPostReader().getPost(
 			        FacebookSiocUtils.createSiocUri( result.getId() ) );
 			resultPost.setSibling( post );
-			return;
+
+			if ( LOG.isDebugEnabled() ) {
+				LOG.debug( "Post written to Facebook as:\n{}",
+				        RdfUtils.resourceToString(
+				                resultPost,
+				                Syntax.Turtle ) );
+			}
 		}
 	}
 
@@ -239,7 +256,7 @@ public class FacebookPostWriter extends
 			        .getDefaultClient();
 			content = SoccUtils.formatUnknownMessage(
 			        getConnector(),
-			        targetPost );
+			        post );
 		}
 
 		// Add Attachments to message content
@@ -247,30 +264,53 @@ public class FacebookPostWriter extends
 
 		if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
 			// add watermark for 'already forwarded' check
-			content = SoccUtils.addContentWatermark( targetPost
+			content = SoccUtils.addContentWatermark( post
 			        .getIsPartOf(), content );
 		}
 
-		FacebookType result = null;
 		try {
-			result = client.getFacebookClient()
+			LOG.debug( "Write to {}, message='{}'", targetPost.getId()
+			        + "/"
+			        + Connections.COMMENTS, content );
+
+			String result = client.getFacebookClient()
 			        .publish( targetPost.getId()
 			                + "/"
 			                + Connections.COMMENTS,
-			                FacebookType.class,
+			                String.class,
 			                Parameter.with(
 			                        Fields.MESSAGE,
 			                        content ) );
-		} catch ( FacebookException e ) {
-			FacebookConnector.handleFacebookException( e );
-		}
 
-		if ( null != result && null != result.getId() ) {
+			result.trim();
+			String resultId = null;
+			if ( result.startsWith( "{" ) ) {
+				FacebookType type = client.getFacebookClient().getJsonMapper().toJavaObject(
+				        result,
+				        FacebookType.class );
+
+				resultId = type.getId();
+			} else {
+				resultId = result;
+			}
+
 			Post resultPost = getConnector().getPostReader().getPost(
 			        FacebookSiocUtils.createSiocUri(
-			                result.getId() ) );
+			                resultId ) );
 
-			resultPost.setSibling( targetPost );
+			resultPost.setSibling( post );
+
+			if ( LOG.isDebugEnabled() ) {
+				LOG.debug( "Post written to Facebook as:\n{}",
+				        RdfUtils.resourceToString(
+				                post,
+				                Syntax.Turtle ) );
+			}
+
+		} catch ( FacebookException e ) {
+			FacebookConnector.handleFacebookException( e );
+		} catch ( Exception e ) {
+			Throwables.propagate( e );
 		}
 	}
 }

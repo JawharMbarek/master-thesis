@@ -49,9 +49,8 @@ public class ProofOfConcept {
 		}
 
 		try {
-			Thread.sleep( 30000 );
-		} catch ( InterruptedException e ) {
-			LOG.warn( "Thread was interrupted", e );
+			System.in.read();
+		} catch ( IOException e1 ) {
 		}
 
 		try {
@@ -60,6 +59,8 @@ public class ProofOfConcept {
 		} catch ( Exception e ) {
 			LOG.error( "Errors while shutting down", e );
 		}
+
+		System.err.println( RdfUtils.modelToString( model, Syntax.Turtle ) );
 	}
 
 	private void initModel() {
@@ -82,7 +83,7 @@ public class ProofOfConcept {
 			}
 
 			model = RDFTool.stringToModel( turtleContent, Syntax.Turtle );
-			System.err.println( RdfUtils.modelToString( model, Syntax.Turtle ) );
+			//			System.err.println( RdfUtils.modelToString( model, Syntax.Turtle ) );
 		} catch ( IOException e ) {
 			LOG.error( "Failed to load default model", e );
 			System.exit( 1 );
@@ -92,12 +93,26 @@ public class ProofOfConcept {
 	private final RouteBuilder routeBuilder = new RouteBuilder() {
 		@Override
 		public void configure() throws Exception {
-			from( "socc://poc-canvas?uri=https://canvas.instructure.com/courses/798152/"
-			        + "discussion_topics/1440784&delay=10000" )
+
+			// Route 1: with an ActiveMQ JMS Topic between the Canvas discussion topic and Facebook 
+			// group feed 
+			from( "socc://poc-canvas?uri=https://canvas.instructure.com/"
+			        + "courses/798152/discussion_topics/1539776"
+			        + "&delay=10000" )
 			        .to( "activemq:topic:" + CANVAS_TOPIC );
 
 			from( "activemq:topic:" + CANVAS_TOPIC )
-			        .to( "socc://poc-facebook?uri=https://graph.facebook.com/520312298060793" );
+			        .to( "socc://poc-facebook?uri=https://graph.facebook.com/"
+			                + "520312298060793_520417398050283" );
+
+			// Route 2: direkt route from facebook group feed to canvas discussion topic 
+			from(
+			        "socc://poc-facebook?uri=https://graph.facebook.com/"
+			                + "520312298060793_520417398050283"
+			                + "&delay=20000" )
+			        .to( "socc://poc-canvas?uri=https://canvas.instructure.com/"
+			                + "courses/798152/discussion_topics/1539776" );
+
 		}
 	};
 

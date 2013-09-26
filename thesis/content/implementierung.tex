@@ -243,6 +243,11 @@ Ebenfalls ungewöhnlich ist der Inhalt der Klasse \texttt{ForumDiscussionRecord}
 %     \item beim herunterladen einzelner Posts nicht immer erkennbar wo sie geschrieben wurden
 % \end{itemize}
 
+\todo[inline][Keine Schreiben mit fremden Benutzerkonnte auf die Wall eines Benutzers]
+
+% Removing ability to post to friends walls via Graph API 
+% We will remove the ability to post to a user's friends' walls via the Graph API. Specifically, posts against [user_id]/feed where [user_id] is different from the session user, or stream.publish calls where the target_id user is different from the session user, will fail. If you want to allow people to post to their friends' timelines, invoke the feed dialog. Stories that include friends via user mentions tagging or action tagging will show up on the friend’s timeline (assuming the friend approves the tag). For more info, see this blog post.
+
 \subsubsection{Facebook Graph API} % (fold)
 \label{ssub:facebook_graph_api}
 

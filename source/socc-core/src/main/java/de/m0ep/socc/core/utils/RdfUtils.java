@@ -259,7 +259,7 @@ public final class RdfUtils {
 			Collections.sort( sortedStmts );
 			tmpModel.addAll( sortedStmts.iterator() );
 
-			return RDFTool.modelToString( tmpModel, Syntax.Turtle );
+			return RDFTool.modelToString( tmpModel, syntax );
 		} finally {
 			tmpModel.close();
 		}

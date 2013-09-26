@@ -1,5 +1,7 @@
 package de.m0ep.test.socc.core.connector;
 
+import java.util.List;
+
 import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Syntax;
@@ -7,6 +9,7 @@ import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.vocabulary.RDF;
 import org.ontoware.rdf2go.vocabulary.XSD;
 import org.purl.dc.terms.DCTermsVocabulary;
+import org.rdfs.sioc.Post;
 import org.rdfs.sioc.SiocVocabulary;
 import org.rdfs.sioc.services.ServicesVocabulary;
 import org.rdfs.sioc.services.Thing;
@@ -240,12 +243,12 @@ public class ConnectorTestApp {
 			// System.out.println(
 			// "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<o>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 			// );
-			//			List<Post> posts = postReader.pollPosts( Builder.createURI(
-			//			        "https://www.facebook.com/100003876610187" ), null, 25 );
-			//			for ( Post post : posts ) {
-			//				System.out.println( RdfUtils.resourceToString( post,
-			//				        Syntax.Turtle ) );
-			//			}
+			List<Post> posts = postReader.pollPosts( Builder.createURI(
+			        "https://graph.facebook.com/520312298060793" ), null, 25 );
+			for ( Post post : posts ) {
+				System.out.println( RdfUtils.resourceToString( post,
+				        Syntax.Turtle ) );
+			}
 
 		} finally {
 			System.err

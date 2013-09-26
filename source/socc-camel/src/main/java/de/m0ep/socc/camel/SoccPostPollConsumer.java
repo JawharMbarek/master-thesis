@@ -2,6 +2,7 @@ package de.m0ep.socc.camel;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -9,6 +10,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.ontoware.rdf2go.RDF2Go;
+import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
@@ -81,14 +84,41 @@ public class SoccPostPollConsumer extends ScheduledPollConsumer implements ISocc
 		LOG.debug( "Polling posts uri='{}' since='{}' limit='{}'", uri, since, limit );
 		List<Post> posts = postReader.pollPosts( uri, since, limit );
 
-		for ( Post post : posts ) {
-			Message msg = new DefaultMessage();
-			msg.setBody( RdfUtils.resourceToString( post, Syntax.RdfXml ) );
-			msg.setHeader( Exchange.CONTENT_TYPE, Syntax.RdfXml.getMimeType() );
+		//		Collections.sort( posts, new Comparator<Post>() {
+		//			@Override
+		//			public int compare( Post o1, Post o2 ) {
+		//
+		//				try {
+		//					Date date1 = DateUtils.parseISO8601( o1.getCreated() );
+		//					Date date2 = DateUtils.parseISO8601( o2.getCreated() );
+		//
+		//					return date1.compareTo( date2 );
+		//				} catch ( Exception e ) {
+		//					return 0;
+		//				}
+		//			}
+		//		} );
 
+		if ( !posts.isEmpty() ) {
+			Model tmpModel = RDF2Go.getModelFactory().createModel();
+			tmpModel.open();
+			Model model = postReader.getConnector().getContext().getModel();
+			for ( Entry<String, String> entry : model.getNamespaces().entrySet() ) {
+				tmpModel.setNamespace( entry.getKey(), entry.getValue() );
+			}
+
+			for ( Post post : posts ) {
+				tmpModel.addAll( RdfUtils.getAllStatements( model, post ).iterator() );
+			}
+
+			Message msg = new DefaultMessage();
+			msg.setBody( RdfUtils.modelToString( tmpModel, Syntax.RdfXml ) );
+			msg.setHeader( Exchange.CONTENT_TYPE, Syntax.RdfXml.getMimeType() );
 			Exchange ex = getEndpoint().createExchange();
 			ex.setIn( msg );
 			getProcessor().process( ex );
+
+			tmpModel.close();
 		}
 
 		LOG.info( "polled {} posts.", posts.size() );

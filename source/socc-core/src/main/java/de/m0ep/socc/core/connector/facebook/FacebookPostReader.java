@@ -234,27 +234,33 @@ public class FacebookPostReader extends
 		Preconditions.checkNotNull( sourceContainer,
 		        "Required parameter sourceContainer must be specified." );
 
+		LOG.info( "Polling posts from '{}' since='{}' limit='{}'", sourceContainer,
+		        since.getTime(), limit );
+
 		if ( 0 == limit ) {
 			return Lists.newArrayList();
 		}
 
-		Parameter paramSince = Parameter.with(
-		        RequestParameters.SINCE,
-		        ( null != since ) ? ( since.getTime() / 1000L ) : ( 0 ) );
+		List<Parameter> paramList = Lists.newArrayList();
 
-		Parameter paramLimit = Parameter.with(
-		        RequestParameters.LIMIT,
-		        ( 0 < limit || limit < 25 ) ? ( limit ) : ( 25 ) );
+		if ( 0 < limit ) {
+			paramList.add( Parameter.with(
+			        RequestParameters.LIMIT,
+			        Math.min( 25, limit ) ) );
+		}
 
 		Connection<JsonObject> postFeed = null;
 		try {
-			postFeed = defaultClient.getFacebookClient().fetchConnection(
-			        sourceContainer.getId()
-			                + "/"
-			                + Connections.FEED,
+			LOG.debug( "polling facebook resource {}", "/"
+			        + sourceContainer.getId()
+			        + "/"
+			        + Connections.FEED );
+			postFeed = defaultClient.getFacebookClient().fetchConnection( "/"
+			        + sourceContainer.getId()
+			        + "/"
+			        + Connections.FEED,
 			        JsonObject.class,
-			        paramSince,
-			        paramLimit );
+			        paramList.toArray( new Parameter[0] ) );
 		} catch ( FacebookException e ) {
 			FacebookConnector.handleFacebookException( e );
 		}
@@ -291,10 +297,12 @@ public class FacebookPostReader extends
 							}
 
 							// poll all comments
-							pollRepliesAtPost( post, since, Math.max( -1, limit - result.size() ) );
-
+							result.addAll( pollRepliesAtPost(
+							        post,
+							        since,
+							        Math.max( -1, limit - result.size() ) ) );
 						} else {
-							return result;
+							LOG.debug( "Skip post Facebookpost, it's to old." );
 						}
 					} else {
 						return result;
@@ -311,37 +319,45 @@ public class FacebookPostReader extends
 		Preconditions.checkNotNull( sourcePost,
 		        "Required parameter sourcePost must be specified." );
 
+		LOG.info( "Polling replies from '{}' since='{}' limit='{}'", sourcePost, since, limit );
+
 		if ( 0 == limit ) {
 			return Lists.newArrayList();
 		}
 
-		Parameter paramSince = Parameter.with(
-		        RequestParameters.SINCE,
-		        ( null != since ) ? ( since.getTime() / 1000L ) : ( 0 ) );
-		Parameter paramLimit = Parameter.with(
-		        RequestParameters.LIMIT,
-		        ( 0 < limit || limit < 25 ) ? ( limit ) : ( 25 ) );
+		List<Parameter> paramList = Lists.newArrayList();
 
-		Parameter paramFields = Parameter.with(
-		        RequestParameters.FIELDS,
-		        FacebookSiocUtils.FIELDS_COMMENT );
+		if ( 0 < limit ) {
+			paramList.add( Parameter.with(
+			        RequestParameters.LIMIT,
+			        Math.min( 25, limit ) ) );
+		}
+
+		//		paramList.add( Parameter.with(
+		//		        RequestParameters.FIELDS,
+		//		        FacebookSiocUtils.FIELDS_COMMENT ) );
 
 		Connection<JsonObject> commentFeed = null;
 		try {
-			commentFeed = defaultClient.getFacebookClient().fetchConnection(
-			        sourcePost.getId()
-			                + "/"
-			                + Connections.COMMENTS,
+			LOG.debug( "polling facebook resource {}", "/"
+			        + sourcePost.getId()
+			        + "/"
+			        + Connections.COMMENTS );
+
+			commentFeed = defaultClient.getFacebookClient().fetchConnection( "/"
+			        + sourcePost.getId()
+			        + "/"
+			        + Connections.COMMENTS,
 			        JsonObject.class,
-			        paramSince,
-			        paramLimit,
-			        paramFields );
+			        paramList.toArray( new Parameter[0] ) );
 		} catch ( FacebookException e ) {
 			FacebookConnector.handleFacebookException( e );
 		}
 
 		List<Post> result = Lists.newArrayList();
 		if ( null != commentFeed ) {
+			System.err.println( commentFeed.getData().size() );
+
 			for ( List<JsonObject> objectList : commentFeed ) {
 				for ( JsonObject object : objectList ) {
 					if ( 0 > limit || limit > result.size() ) {
@@ -372,7 +388,7 @@ public class FacebookPostReader extends
 							}
 
 						} else {
-							return result;
+							LOG.debug( "Skip post Facebookpost, it's to old." );
 						}
 					} else {
 						return result;

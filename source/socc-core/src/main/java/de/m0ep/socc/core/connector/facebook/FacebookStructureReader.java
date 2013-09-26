@@ -146,9 +146,6 @@ public class FacebookStructureReader extends
 	        IOException {
 		List<Container> result = Lists.newArrayList();
 
-		result.add( getContainer( FacebookSiocUtils.createSiocUri(
-		        defaultClient.getUser().getId() ) ) );
-
 		Connection<JsonObject> groupsConnections = null;
 		try {
 			Parameter fields = Parameter.with(

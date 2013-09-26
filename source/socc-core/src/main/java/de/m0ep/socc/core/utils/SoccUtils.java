@@ -314,16 +314,19 @@ public final class SoccUtils {
 	        final String content,
 	        final String lineBreak ) {
 		StringBuffer strBuffer = new StringBuffer( content );
-		strBuffer.append( lineBreak ).append( "Attachments:" );
 
-		ClosableIterator<Thing> attachIter = post.getAllAttachments();
-		try {
-			while ( attachIter.hasNext() ) {
-				strBuffer.append( lineBreak ).append( attachIter.next() );
+		if ( post.hasAttachments() ) {
+			strBuffer.append( lineBreak ).append( "Attachments:" );
+
+			ClosableIterator<Thing> attachIter = post.getAllAttachments();
+			try {
+				while ( attachIter.hasNext() ) {
+					strBuffer.append( lineBreak ).append( attachIter.next() );
+				}
+
+			} finally {
+				attachIter.close();
 			}
-
-		} finally {
-			attachIter.close();
 		}
 
 		return strBuffer.toString();
@@ -331,7 +334,10 @@ public final class SoccUtils {
 
 	public static void anonymisePost( Post post ) {
 		post.removeAllCreators();
-		post.removeAllContent();
 		post.removeAllAttachments();
+		post.removeAllCreated();
+		post.removeAllModified();
+		post.setComment( "--- anonymised ---" );
+		;
 	}
 }

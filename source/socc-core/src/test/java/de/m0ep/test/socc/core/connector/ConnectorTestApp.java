@@ -117,8 +117,8 @@ public class ConnectorTestApp {
 			// kaiAuthorization.addAccessMode( AclVocabulary.Read );
 
 			//			addMoodleRdfData( model );
-			addCanvasLmsRdfData( model );
-			//			addFacebookRdfData( model );
+			//			addCanvasLmsRdfData( model );
+			addFacebookRdfData( model );
 			// addYoutubeRdfData( model );
 
 			//			IConnector connector =
@@ -126,14 +126,14 @@ public class ConnectorTestApp {
 			//			                context,
 			//			                MOODLE_CONNECTOR_ID );
 
-			IConnector connector = ConnectorFactory.getInstance()
-			        .createConnector(
-			                context,
-			                CANVAS_LMS_CONNECTOR_ID );
+			//			IConnector connector = ConnectorFactory.getInstance()
+			//			        .createConnector(
+			//			                context,
+			//			                CANVAS_LMS_CONNECTOR_ID );
 
-			//			IConnector connector = ConnectorFactory.getInstance().createConnector(
-			//			        context,
-			//			        FACEBOOK_CONNECTOR_ID );
+			IConnector connector = ConnectorFactory.getInstance().createConnector(
+			        context,
+			        FACEBOOK_CONNECTOR_ID );
 
 			// IConnector connector = ConnectorFactory.getInstance()
 			// .createConnector(

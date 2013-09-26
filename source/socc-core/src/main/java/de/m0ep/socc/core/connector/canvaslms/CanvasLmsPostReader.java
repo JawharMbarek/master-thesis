@@ -399,32 +399,33 @@ public class CanvasLmsPostReader extends
 
 			SoccUtils.logPost( LOG, post, "Convert entry to SIOC post" );
 
-			if ( null == since || createdDate.after( since ) ) {
-				if ( SoccUtils.haveReadAccess(
-				        getConnector(),
-				        post.getCreator(),
-				        post.getContainer() ) ) {
-
+			if ( SoccUtils.haveReadAccess(
+			        getConnector(),
+			        post.getCreator(),
+			        post.getContainer() ) ) {
+				if ( null == since || createdDate.after( since ) ) {
 					result.add( post );
 				} else {
-					LOG.info( "Have no permission to read posts for this UserAccount='{}'",
-					        post.getCreator() );
-					SoccUtils.anonymisePost( post );
+					LOG.info( "Skip Post '{}', it's to old.", post );
 				}
+			} else {
+				LOG.info( "Have no permission to read posts for this UserAccount='{}'",
+				        post.getCreator() );
+				SoccUtils.anonymisePost( post );
 			}
 
 			// read recentReplies
 			Entry[] recentReplies = entry.getRecentReplies();
 			if ( null != recentReplies ) {
-				for ( Entry reply : recentReplies ) {
+				for ( Entry replyEntry : recentReplies ) {
 					addEntryToList(
 					        result,
 					        since,
 					        Math.max( -1, limit - result.size() ),
-					        reply,
+					        replyEntry,
 					        container,
 					        post,
-					        topicId,
+					        courseId,
 					        topicId );
 				}
 			}
@@ -438,15 +439,15 @@ public class CanvasLmsPostReader extends
 				        .executePagination();
 
 				for ( List<Entry> replyPage : pagination ) {
-					for ( Entry reply : replyPage ) {
+					for ( Entry replyEntry : replyPage ) {
 						addEntryToList(
 						        result,
 						        since,
 						        Math.max( -1, limit - result.size() ),
-						        reply,
+						        replyEntry,
 						        container,
 						        post,
-						        topicId,
+						        courseId,
 						        topicId );
 					}
 				}

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import de.m0ep.socc.camel.SoccComponent;
 import de.m0ep.socc.core.SoccContext;
+import de.m0ep.socc.core.utils.RdfUtils;
 
 public class ProofOfConcept {
 	private static final Logger LOG = LoggerFactory.getLogger( ProofOfConcept.class );
@@ -81,6 +82,7 @@ public class ProofOfConcept {
 			}
 
 			model = RDFTool.stringToModel( turtleContent, Syntax.Turtle );
+			System.err.println( RdfUtils.modelToString( model, Syntax.Turtle ) );
 		} catch ( IOException e ) {
 			LOG.error( "Failed to load default model", e );
 			System.exit( 1 );
@@ -95,7 +97,7 @@ public class ProofOfConcept {
 			        .to( "activemq:topic:" + CANVAS_TOPIC );
 
 			from( "activemq:topic:" + CANVAS_TOPIC )
-			        .to( "log:poc-log" );
+			        .to( "socc://poc-facebook?uri=https://graph.facebook.com/520312298060793" );
 		}
 	};
 

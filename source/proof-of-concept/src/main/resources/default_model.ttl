@@ -15,6 +15,7 @@
 
 <http://www.example.org#bot> a foaf:Person ;
     foaf:account <https://canvas.instructure.com/api/v1/users/3478501/profile> ;
+    foaf:account <http://graph.facebook.com/100003876610187> ;
     foaf:name "Socc Bot" .
     
 [] a acl:Authorization ;
@@ -24,10 +25,11 @@
     acl:owner <http://www.example.org#bot> .
     
 <https://canvas.instructure.com/api/v1/users/3478501/profile> a sioc:UserAccount ;
-    sioc:account_of <http://www.example.org#bot> ;
-    siocs:has_service <https://canvas.instructure.com/api/v1> ;
+    ccfg:mappedTo <http://graph.facebook.com/100003876610187> ;
     foaf:accountName "3478501" ;
     foaf:accountServiceHomepage <https://canvas.instructure.com/api/v1> ;
+    sioc:account_of <http://www.example.org#bot> ;
+    siocs:has_service <https://canvas.instructure.com/api/v1> ;
     siocsa:accountAuthentication [
         a waa:OAuth ; 
         siocsa:credentials [
@@ -36,19 +38,41 @@
         ]
     ] .
     
+<http://graph.facebook.com/100003876610187> a sioc:UserAccount ;
+    ccfg:mappedTo <https://canvas.instructure.com/api/v1/users/3478501/profile> ;
+    foaf:accountName "100003876610187" ;
+    foaf:accountServiceHomepage <https://graph.facebook.com> ;
+    sioc:account_of <http://www.example.org#bot> ;
+    siocs:has_service <http://graph.facebook.com> ;
+    siocsa:accountAuthentication [
+        a waa:OAuth ;
+        siocsa:credentials [
+            a siocsa:AccessToken ;
+            rdf:value "CAADGb3p3g9wBALMReiBNZCJ9vwqAWHhs5ZA8inqtZC14M4ZA0U9OaH7MOjGimBzpeksokjvsmTCH3lZAAeQAxciYV4hAXEBQEmvEJKdviZAzFVLDhs7o1srqCbfo1ZBMABPMv05OCGZBOnMZCJxTc5HGt6aT1L4c0fMIZCFZBRsYdUZAJS2cmcAhzgyvCZAwfIj4FS7UZD"
+        ] 
+    ] .
+    
 ###################################################################################################
 # Definition of another User
 ###################################################################################################
 
 <http://www.example.org#florian> a foaf:Person ;
     foaf:account <https://canvas.instructure.com/api/v1/users/3457836/profile> ;
+    foaf:account <http://graph.facebook.com/100000490230885> ;
     foaf:name "Florian" .
 
+[] a acl:Authorization ;
+    acl:accessToClass sioc:Post ;
+    acl:agentClass foaf:Agent ;
+    acl:mode acl:Read;
+    acl:owner <http://www.example.org#florian> .
+
 <https://canvas.instructure.com/api/v1/users/3457836/profile> a sioc:UserAccount ;
-    sioc:account_of <http://www.example.org#florian> ;
-    siocs:has_service <https://canvas.instructure.com/api/v1> ;
+    ccfg:mappedTo <http://graph.facebook.com/100000490230885> ;
     foaf:accountName "3457836" ;
     foaf:accountServiceHomepage <https://canvas.instructure.com/api/v1> ;
+    sioc:account_of <http://www.example.org#florian> ;
+    siocs:has_service <https://canvas.instructure.com/api/v1> ;
     siocsa:accountAuthentication [
         a waa:OAuth ;
         siocsa:credentials [
@@ -57,11 +81,19 @@
         ]
     ] .
     
-[] a acl:Authorization ;
-    acl:accessToClass sioc:Post ;
-    acl:agentClass foaf:Agent ;
-    acl:mode acl:Read;
-    acl:owner <http://www.example.org#florian> .
+<http://graph.facebook.com/100000490230885> a sioc:UserAccount ;
+    ccfg:mappedTo <https://canvas.instructure.com/api/v1/users/3457836/profile> ;
+    foaf:accountName "100000490230885" ;
+    foaf:accountServiceHomepage <https://graph.facebook.com> ;
+    sioc:account_of <http://www.example.org#florian> ;
+    siocs:has_service <http://graph.facebook.com> ;
+    siocsa:accountAuthentication [
+        a waa:OAuth ;
+        siocsa:credentials [
+            a siocsa:AccessToken ;
+            rdf:value "CAADGb3p3g9wBALMReiBNZCJ9vwqAWHhs5ZA8inqtZC14M4ZA0U9OaH7MOjGimBzpeksokjvsmTCH3lZAAeQAxciYV4hAXEBQEmvEJKdviZAzFVLDhs7o1srqCbfo1ZBMABPMv05OCGZBOnMZCJxTc5HGt6aT1L4c0fMIZCFZBRsYdUZAJS2cmcAhzgyvCZAwfIj4FS7UZD" 
+        ]
+    ] .
     
 ###################################################################################################
 # Definition of the Canvas Service and Connector
@@ -77,4 +109,30 @@
     ccfg:defaultUserAccount <https://canvas.instructure.com/api/v1/users/3478501/profile> ;
     ccfg:id "poc-canvas" ;
     ccfg:service <https://canvas.instructure.com/api/v1> ;
-    ccfg:unknownMessageTemplate "{authorName} wrote:<br>{message}" ;
+    ccfg:unknownMessageTemplate "{authorName} wrote:<br>{message}" .
+
+###################################################################################################
+# Definition of the Facebook Service and Connector
+###################################################################################################
+
+<http://graph.facebook.com> a siocs:Service ;
+    siocs:service_endpoint <https://graph.facebook.com> ;
+    siocs:service_of <http://graph.facebook.com/100003876610187> , 
+        <http://graph.facebook.com/100000490230885> ;
+    siocsa:serviceAuthentication [
+        a waa:OAuth ;
+        siocsa:credentials [
+            a siocsa:ClientId ;
+            rdf:value "410334369012894"
+        ] , [
+            a siocsa:ClientSecret ;
+            rdf:value "5988954e39fc9ca4d39bd7b374a7d72b"
+        ]
+    ] .
+
+[] a ccfg:ConnectorConfig ;
+    ccfg:connectorClassName "de.m0ep.socc.core.connector.facebook.FacebookConnector" ;
+    ccfg:defaultUserAccount <http://graph.facebook.com/100003876610187> ;
+    ccfg:id "poc-facebook" ;
+    ccfg:service <http://graph.facebook.com> ;
+    ccfg:unknownMessageTemplate "{authorName} wrote: {message}" .

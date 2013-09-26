@@ -49,9 +49,9 @@ import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
-import de.m0ep.socc.core.utils.UserAccountUtils;
 
 public class Moodle2PostWriter extends
         DefaultConnectorIOComponent<Moodle2Connector> implements
@@ -146,37 +146,15 @@ public class Moodle2PostWriter extends
 			                + targetContainer.getId() );
 		}
 
-		UserAccount creatorAccount = UserAccount.getInstance(
-		        getModel(),
-		        post.getCreator().getResource() );
+		UserAccount creatorAccount = PostWriterUtils.getCreatorUserAccount(
+		        getConnector(),
+		        post );
 
-		// Check for write access.
-		if ( !SoccUtils.haveWriteAccess( getConnector(), creatorAccount, targetContainer ) ) {
-			LOG.info( "Have no permission to write Post for this UserAccount='{}'",
-			        post.getCreator() );
-			return;
-		}
+		Moodle2ClientWrapper client = PostWriterUtils.getClientOfCreator(
+		        getConnector(),
+		        creatorAccount );
 
-		String content = post.getContent();
-		Moodle2ClientWrapper client = null;
-		if ( null != creatorAccount ) {
-			try {
-				UserAccount serviceAccount = UserAccountUtils
-				        .findUserAccountOfService(
-				                getModel(),
-				                creatorAccount,
-				                getConnector().getService() );
-
-				client = getConnector().getClientManager().get( serviceAccount );
-			} catch ( Exception e ) {
-				LOG.debug(
-				        "No client found for UserAccount {}: exception -> {}\n{}",
-				        creatorAccount,
-				        e.getMessage(),
-				        Throwables.getStackTraceAsString( e ) );
-				client = null;
-			}
-		}
+		String content = Strings.nullToEmpty( post.getContent() );
 
 		if ( null == client ) {
 			LOG.debug( "Using default client" );
@@ -185,6 +163,9 @@ public class Moodle2PostWriter extends
 			        getConnector(),
 			        post );
 		}
+
+		// Add Attachments to message content
+		content = SoccUtils.addAttachmentsToContent( post, content, "<br>" );
 
 		if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
 			// add watermark for 'already forwarded' check
@@ -280,29 +261,15 @@ public class Moodle2PostWriter extends
 			                + targetPost.getId() );
 		}
 
-		UserAccount creatorAccount = UserAccount.getInstance(
-		        getModel(),
-		        post.getCreator().getResource() );
-		String content = post.getContent();
-		Moodle2ClientWrapper client = null;
-		if ( null != creatorAccount ) {
-			try {
-				UserAccount serviceAccount = UserAccountUtils
-				        .findUserAccountOfService(
-				                getModel(),
-				                creatorAccount,
-				                getConnector().getService() );
+		UserAccount creatorAccount = PostWriterUtils.getCreatorUserAccount(
+		        getConnector(),
+		        post );
 
-				client = getConnector().getClientManager().get( serviceAccount );
-			} catch ( Exception e ) {
-				LOG.debug(
-				        "No client found for UserAccount {}: exception -> {}\n{}",
-				        creatorAccount,
-				        e.getMessage(),
-				        Throwables.getStackTraceAsString( e ) );
-				client = null;
-			}
-		}
+		Moodle2ClientWrapper client = PostWriterUtils.getClientOfCreator(
+		        getConnector(),
+		        creatorAccount );
+
+		String content = Strings.nullToEmpty( post.getContent() );
 
 		if ( null == client ) {
 			LOG.debug( "Using default client" );
@@ -311,6 +278,9 @@ public class Moodle2PostWriter extends
 			        getConnector(),
 			        post );
 		}
+
+		// Add Attachments to message content
+		content = SoccUtils.addAttachmentsToContent( post, content, "<br>" );
 
 		if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
 			// add watermark for 'already forwarded' check

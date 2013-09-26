@@ -98,7 +98,7 @@ public final class FacebookSiocUtils {
 		}
 	}
 
-	public static final String REGEX_FACEBOOK_URI = "^https://[\\w]+.facebook.com/([^/\\s?=]+)";
+	public static final String REGEX_FACEBOOK_URI = "^https://[\\w]+.facebook.com/([^/\\s?=]+)(?:/feed)?";
 
 	public static final String TEMPLATE_VAR_ID = "id";
 
@@ -158,7 +158,9 @@ public final class FacebookSiocUtils {
 	public static Forum createSiocForum( final FacebookConnector connector,
 	        final JsonObject object ) {
 		Model model = connector.getContext().getModel();
-		URI uri = FacebookSiocUtils.createSiocUri( object.getString( Fields.ID ) );
+		URI uri = FacebookSiocUtils.createSiocUri(
+		        object.getString( Fields.ID ),
+		        Connections.FEED );
 
 		Forum result = null;
 		if ( Forum.hasInstance( model, uri ) ) {
@@ -275,6 +277,18 @@ public final class FacebookSiocUtils {
 
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( TEMPLATE_FACEBOOK_URI )
+		                .set( TEMPLATE_VAR_ID, id )
+		                .expand() );
+	}
+
+	public static URI createSiocUri( final String id, final String connection ) {
+		Preconditions.checkNotNull( id,
+		        "Required parameter id must be specified." );
+		Preconditions.checkArgument( !id.isEmpty(),
+		        "Required parameter id may not be empty." );
+
+		return Builder.createURI(
+		        UriTemplate.fromTemplate( TEMPLATE_FACEBOOK_URI + "/" + connection )
 		                .set( TEMPLATE_VAR_ID, id )
 		                .expand() );
 	}

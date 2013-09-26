@@ -50,9 +50,9 @@ import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
-import de.m0ep.socc.core.utils.UserAccountUtils;
 
 /**
  * Class to write post to a Canvas LMS instance through a
@@ -171,38 +171,15 @@ public class CanvasLmsPostWriter extends
 			long courseId = Long.parseLong( matcher.group( 1 ) );
 			long topicId = Long.parseLong( matcher.group( 2 ) );
 
-			UserAccount creatorAccount = UserAccount.getInstance(
-			        getModel(),
-			        post.getCreator().getResource() );
+			UserAccount creatorAccount = PostWriterUtils.getCreatorUserAccount(
+			        getConnector(),
+			        post );
 
-			// Check for write access.
-			if ( !SoccUtils.haveWriteAccess( getConnector(), creatorAccount, targetContainer ) ) {
-				LOG.info( "Have no permission to write Post for this UserAccount='{}'",
-				        post.getCreator() );
-				return;
-			}
+			CanvasLmsClient client = PostWriterUtils.getClientOfCreator(
+			        getConnector(),
+			        creatorAccount );
 
-			CanvasLmsClient client = null;
 			String content = post.getContent();
-			if ( null != creatorAccount ) {
-				try {
-					UserAccount serviceAccount = UserAccountUtils
-					        .findUserAccountOfService(
-					                getModel(),
-					                creatorAccount,
-					                getConnector().getService() );
-
-					client = getConnector().getClientManager().get(
-					        serviceAccount );
-				} catch ( Exception e ) {
-					LOG.debug(
-					        "No client found for UserAccount {}: exception -> {}\n{}",
-					        creatorAccount,
-					        e.getMessage(),
-					        Throwables.getStackTraceAsString( e ) );
-					client = null;
-				}
-			}
 
 			if ( null == client ) {
 				LOG.debug( "Using default client" );
@@ -211,6 +188,9 @@ public class CanvasLmsPostWriter extends
 				        getConnector(),
 				        post );
 			}
+
+			// Add Attachments to message content
+			content = SoccUtils.addAttachmentsToContent( post, content, "<br>" );
 
 			if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
 				// add watermark for 'already forwarded' check
@@ -244,9 +224,9 @@ public class CanvasLmsPostWriter extends
 
 				throw Throwables.propagate( e );
 			}
+		} else {
+			LOG.warn( "Failed to write, invalid targetContainer URI: '{}' ", targetContainer );
 		}
-
-		LOG.warn( "Failed to write post(s) to uri " + targetContainer );
 	}
 
 	/**
@@ -266,9 +246,8 @@ public class CanvasLmsPostWriter extends
 	private void writeReplyToPost( Post targetPost, Post post )
 	        throws AuthenticationException,
 	        IOException {
-		Pattern pattern = Pattern.compile(
-		        getServiceEndpoint()
-		                + CanvasLmsSiocUtils.REGEX_ENTRY_URI );
+		Pattern pattern = Pattern.compile( getServiceEndpoint()
+		        + CanvasLmsSiocUtils.REGEX_ENTRY_URI );
 		Matcher matcher = pattern.matcher( targetPost.toString() );
 
 		if ( matcher.find() ) {
@@ -276,31 +255,17 @@ public class CanvasLmsPostWriter extends
 			long topicId = Long.parseLong( matcher.group( 2 ) );
 			long entryId = Long.parseLong( matcher.group( 3 ) );
 
-			UserAccount creatorAccount = UserAccount.getInstance(
-			        getModel(),
-			        post.getCreator().getResource() );
-			CanvasLmsClient client = null;
+			UserAccount creatorAccount = PostWriterUtils.getCreatorUserAccount(
+			        getConnector(),
+			        post );
+
+			CanvasLmsClient client = PostWriterUtils.getClientOfCreator(
+			        getConnector(),
+			        creatorAccount );
+
 			String content = post.getContent();
-			if ( null != creatorAccount ) {
-				try {
-					UserAccount serviceAccount = UserAccountUtils
-					        .findUserAccountOfService(
-					                getModel(),
-					                creatorAccount,
-					                getConnector().getService() );
 
-					client = getConnector().getClientManager().get(
-					        serviceAccount );
-				} catch ( Exception e ) {
-					LOG.debug(
-					        "No client found for UserAccount {}: exception -> {}\n{}",
-					        creatorAccount,
-					        e.getMessage(),
-					        Throwables.getStackTraceAsString( e ) );
-					client = null;
-				}
-			}
-
+			// Get the default client, if no client of the creator was found
 			if ( null == client ) {
 				LOG.debug( "Using default client" );
 				client = getConnector().getClientManager().getDefaultClient();
@@ -309,10 +274,13 @@ public class CanvasLmsPostWriter extends
 				        post );
 			}
 
+			// Add Attachments to message content
+			content = SoccUtils.addAttachmentsToContent( post, content, "<br>" );
+
+			// Check if the post has no watermark
 			if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
 				// add watermark for 'already forwarded' check
-				content = SoccUtils.addContentWatermark( post.getIsPartOf(),
-				        content );
+				content = SoccUtils.addContentWatermark( post.getIsPartOf(), content );
 			}
 
 			try {
@@ -322,26 +290,6 @@ public class CanvasLmsPostWriter extends
 				        .postReply( content, entryId )
 				        .execute();
 
-				if ( !targetPost.hasContainer() ) {
-					try {
-						Container container = getConnector()
-						        .getStructureReader()
-						        .getContainer(
-						                CanvasLmsSiocUtils
-						                        .createDiscussionTopicUri(
-						                                getServiceEndpoint(),
-						                                courseId,
-						                                topicId ) );
-
-						targetPost.setContainer( container );
-					} catch ( Exception e ) {
-						LOG.warn(
-						        "Failed to get discussion topic course='{}' topic='{}' ",
-						        courseId,
-						        topicId );
-					}
-				}
-
 				Post resultPost = CanvasLmsSiocUtils.createSiocPost(
 				        getConnector(),
 				        resultEntry,
@@ -349,7 +297,7 @@ public class CanvasLmsPostWriter extends
 				        targetPost );
 
 				resultPost.addSibling( post );
-				SoccUtils.logPost( LOG, resultPost, "Writing successful, result post" );
+				SoccUtils.logPost( LOG, resultPost, "Writing successful" );
 
 				return;
 			} catch ( CanvasLmsException e ) {
@@ -361,8 +309,8 @@ public class CanvasLmsPostWriter extends
 
 				throw Throwables.propagate( e );
 			}
+		} else {
+			LOG.warn( "Failed to write, invalid targetPost URI: '{}'", targetPost );
 		}
-
-		LOG.warn( "Failed to write post(s) to uri " + targetPost );
 	}
 }

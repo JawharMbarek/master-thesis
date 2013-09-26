@@ -20,7 +20,6 @@ import org.rdfs.sioc.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.restfb.Parameter;
 import com.restfb.exception.FacebookException;
@@ -34,9 +33,9 @@ import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.Fields;
 import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.RequestParameters;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.PostWriterUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
-import de.m0ep.socc.core.utils.UserAccountUtils;
 
 public class FacebookPostWriter extends
         DefaultConnectorIOComponent<FacebookConnector> implements
@@ -160,30 +159,15 @@ public class FacebookPostWriter extends
 	        throws AuthenticationException,
 	        NotFoundException,
 	        IOException {
-		UserAccount creatorAccount = UserAccount.getInstance(
-		        getModel(),
-		        post.getCreator().getResource() );
-		FacebookClientWrapper client = null;
-		String content = Strings.nullToEmpty( post.getContent() );
-		if ( null != creatorAccount ) {
-			try {
-				UserAccount serviceAccount = UserAccountUtils
-				        .findUserAccountOfService(
-				                getModel(),
-				                creatorAccount,
-				                getConnector().getService() );
+		UserAccount creatorAccount = PostWriterUtils.getCreatorUserAccount(
+		        getConnector(),
+		        post );
 
-				client = getConnector().getClientManager().get(
-				        serviceAccount );
-			} catch ( Exception e ) {
-				LOG.debug(
-				        "No client found for UserAccount {}: exception -> {}\n{}",
-				        creatorAccount,
-				        e.getMessage(),
-				        Throwables.getStackTraceAsString( e ) );
-				client = null;
-			}
-		}
+		FacebookClientWrapper client = PostWriterUtils.getClientOfCreator(
+		        getConnector(),
+		        creatorAccount );
+
+		String content = post.getContent();
 
 		if ( null == client ) {
 			LOG.debug( "Using default client" );
@@ -194,6 +178,7 @@ public class FacebookPostWriter extends
 			        post );
 		}
 
+		// Add Attachments to message content
 		content = SoccUtils.addAttachmentsToContent( post, content, "\n" );
 
 		if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
@@ -238,30 +223,15 @@ public class FacebookPostWriter extends
 	        throws AuthenticationException,
 	        NotFoundException,
 	        IOException {
-		UserAccount creatorAccount = UserAccount.getInstance(
-		        getModel(),
-		        targetPost.getCreator().getResource() );
-		FacebookClientWrapper client = null;
-		String content = Strings.nullToEmpty( post.getContent() );
-		if ( null != creatorAccount ) {
-			try {
-				UserAccount serviceAccount = UserAccountUtils
-				        .findUserAccountOfService(
-				                getModel(),
-				                creatorAccount,
-				                getConnector().getService() );
+		UserAccount creatorAccount = PostWriterUtils.getCreatorUserAccount(
+		        getConnector(),
+		        post );
 
-				client = getConnector().getClientManager().get(
-				        serviceAccount );
-			} catch ( Exception e ) {
-				LOG.debug(
-				        "No client found for UserAccount {}: exception -> {}\n{}",
-				        creatorAccount,
-				        e.getMessage(),
-				        Throwables.getStackTraceAsString( e ) );
-				client = null;
-			}
-		}
+		FacebookClientWrapper client = PostWriterUtils.getClientOfCreator(
+		        getConnector(),
+		        creatorAccount );
+
+		String content = post.getContent();
 
 		if ( null == client ) {
 			LOG.debug( "Using default client" );
@@ -272,6 +242,7 @@ public class FacebookPostWriter extends
 			        targetPost );
 		}
 
+		// Add Attachments to message content
 		content = SoccUtils.addAttachmentsToContent( post, content, "\n" );
 
 		if ( !SoccUtils.hasAnyContentWatermark( content ) ) {

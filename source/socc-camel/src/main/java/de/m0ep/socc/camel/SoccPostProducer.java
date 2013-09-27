@@ -20,7 +20,7 @@ public class SoccPostProducer extends DefaultProducer implements ISoccProducer {
 	private IPostWriter<? extends IConnector> postWriter;
 	private URI uri;
 
-	public SoccPostProducer( Endpoint endpoint ) {
+	public SoccPostProducer( final Endpoint endpoint ) {
 		super( endpoint );
 	}
 
@@ -30,7 +30,7 @@ public class SoccPostProducer extends DefaultProducer implements ISoccProducer {
 	}
 
 	@Override
-	public void setPostWriter( IPostWriter<? extends IConnector> postWriter ) {
+	public void setPostWriter( final IPostWriter<? extends IConnector> postWriter ) {
 		this.postWriter = Preconditions.checkNotNull( postWriter,
 		        "Required parameter postWriter must be specified." );
 	}
@@ -41,25 +41,32 @@ public class SoccPostProducer extends DefaultProducer implements ISoccProducer {
 	}
 
 	@Override
-	public void setUri( URI uri ) {
-		this.uri = uri;
+	public void setUri( final URI uri ) {
+		this.uri = Preconditions.checkNotNull( uri,
+		        "Required parameter uri must be specified." );
 	}
 
 	@Override
-	public void process( Exchange exchange ) throws Exception {
+	public void process( final Exchange exchange ) throws Exception {
 		Message msg = exchange.getIn();
 		String contentType = msg.getHeader( Exchange.CONTENT_TYPE ).toString();
 		String rdfString = msg.getBody().toString();
-
 		Syntax syntax = getSyntax( contentType );
 
-		postWriter.writePost( uri, rdfString, syntax );
-
 		if ( LOG.isDebugEnabled() ) {
-			LOG.debug( "Write post(s) to uri='{}' syntax='{}':\n{}", uri, syntax, rdfString );
+			LOG.debug( "Write post(s) to uri='{}' syntax='{}' with connector '{}':\n{}",
+			        uri,
+			        syntax,
+			        postWriter.getConnector().getId(),
+			        rdfString );
 		} else {
-			LOG.debug( "Write post(s) to uri='{}' syntax='{}'", uri, syntax );
+			LOG.info( "Write post(s) to uri='{}' syntax='{}' with connector '{}'",
+			        uri,
+			        syntax,
+			        postWriter.getConnector().getId() );
 		}
+
+		postWriter.writePost( uri, rdfString, syntax );
 	}
 
 	private Syntax getSyntax( String contentType ) {
@@ -80,6 +87,8 @@ public class SoccPostProducer extends DefaultProducer implements ISoccProducer {
 		} else if ( Syntax.Trix.getMimeType().equals( contentType ) ) {
 			return Syntax.Trix;
 		}
+
+		LOG.warn( "Received message with unknown content-type: '{}'", contentType );
 
 		return null;
 	}

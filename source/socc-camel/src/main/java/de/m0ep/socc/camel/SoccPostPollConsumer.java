@@ -27,10 +27,13 @@ import com.google.common.base.Throwables;
 import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.DateUtils;
 import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 
 public class SoccPostPollConsumer extends ScheduledPollConsumer implements ISoccConsumer {
+	private static final Syntax DEFAULT_SYNTAX = Syntax.RdfXml;
+
 	private static final Logger LOG = LoggerFactory.getLogger( SoccPostPollConsumer.class );
 
 	private IPostReader<? extends IConnector> postReader;
@@ -76,52 +79,50 @@ public class SoccPostPollConsumer extends ScheduledPollConsumer implements ISocc
 
 	@Override
 	protected int poll() throws Exception {
+		// Lazy loading of the polling source
 		if ( null == thing ) {
 			thing = createThing( postReader.getConnector(), uri );
 		}
 
 		Date since = getSince( thing );
-		LOG.debug( "Polling posts uri='{}' since='{}' limit='{}'", uri, since, limit );
 		List<Post> posts = postReader.pollPosts( uri, since, limit );
 
-		//		Collections.sort( posts, new Comparator<Post>() {
-		//			@Override
-		//			public int compare( Post o1, Post o2 ) {
-		//
-		//				try {
-		//					Date date1 = DateUtils.parseISO8601( o1.getCreated() );
-		//					Date date2 = DateUtils.parseISO8601( o2.getCreated() );
-		//
-		//					return date1.compareTo( date2 );
-		//				} catch ( Exception e ) {
-		//					return 0;
-		//				}
-		//			}
-		//		} );
+		LOG.info( "Polling posts from connector '{}' uri='{}' since='{}' limit='{}'",
+		        postReader.getConnector().getId(),
+		        uri,
+		        ( null != since ) ? DateUtils.formatISO8601( since ) : "",
+		        limit );
 
 		if ( !posts.isEmpty() ) {
 			Model tmpModel = RDF2Go.getModelFactory().createModel();
 			tmpModel.open();
-			Model model = postReader.getConnector().getContext().getModel();
-			for ( Entry<String, String> entry : model.getNamespaces().entrySet() ) {
-				tmpModel.setNamespace( entry.getKey(), entry.getValue() );
+
+			try {
+				// copy namespaces
+				Model model = postReader.getConnector().getContext().getModel();
+				for ( Entry<String, String> entry : model.getNamespaces().entrySet() ) {
+					tmpModel.setNamespace( entry.getKey(), entry.getValue() );
+				}
+				// add posts to temporary model
+				for ( Post post : posts ) {
+					tmpModel.addAll( RdfUtils.getAllStatements( model, post ).iterator() );
+				}
+				Message msg = new DefaultMessage();
+				msg.setBody( RdfUtils.modelToString( tmpModel, DEFAULT_SYNTAX ) );
+				msg.setHeader( Exchange.CONTENT_TYPE, DEFAULT_SYNTAX.getMimeType() );
+
+				Exchange ex = getEndpoint().createExchange();
+				ex.setIn( msg );
+
+				getProcessor().process( ex );
+			} finally {
+				tmpModel.close();
 			}
-
-			for ( Post post : posts ) {
-				tmpModel.addAll( RdfUtils.getAllStatements( model, post ).iterator() );
-			}
-
-			Message msg = new DefaultMessage();
-			msg.setBody( RdfUtils.modelToString( tmpModel, Syntax.RdfXml ) );
-			msg.setHeader( Exchange.CONTENT_TYPE, Syntax.RdfXml.getMimeType() );
-			Exchange ex = getEndpoint().createExchange();
-			ex.setIn( msg );
-			getProcessor().process( ex );
-
-			tmpModel.close();
 		}
 
-		LOG.info( "polled {} posts.", posts.size() );
+		LOG.info( "Polled {} posts from connector '{}'.",
+		        posts.size(),
+		        postReader.getConnector().getId() );
 
 		return posts.size();
 	}

@@ -1,8 +1,6 @@
 package de.m0ep.socc.core.connector.facebook;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -109,12 +107,11 @@ public class FacebookPostWriter extends
 		}
 
 		if ( null == targetResource ) {
-			throw new IOException( "Failed to write post to target uri "
-			        + targetUri
-			        + ", it's neither a conainer nor a post od comment" );
+			throw new IOException( "Invalid URI to write post to "
+			        + getServiceEndpoint()
+			        + ": "
+			        + targetUri );
 		}
-
-		System.err.println( rdfString );
 
 		Model tmpModel = RDFTool.stringToModel( rdfString, syntax );
 		ClosableIterator<Resource> postIter = Post.getAllInstances( tmpModel );
@@ -123,7 +120,8 @@ public class FacebookPostWriter extends
 				Post post = Post.getInstance( tmpModel, postIter.next() );
 
 				if ( LOG.isDebugEnabled() ) {
-					LOG.debug( "Try to write Post:\n{}",
+					LOG.debug( "Try to write Post to {}:\n{}",
+					        getServiceEndpoint(),
 					        RdfUtils.resourceToString(
 					                post,
 					                Syntax.Turtle ) );
@@ -181,7 +179,7 @@ public class FacebookPostWriter extends
 		String content = post.getContent();
 
 		if ( null == client ) {
-			LOG.debug( "Using default client" );
+			LOG.info( "Using default client" );
 			client = getConnector().getClientManager()
 			        .getDefaultClient();
 			content = SoccUtils.formatUnknownMessage(
@@ -198,24 +196,15 @@ public class FacebookPostWriter extends
 			        content );
 		}
 
-		// create Facebook Graph API publish parameter
-		List<Parameter> params = new ArrayList<Parameter>();
-		params.add( Parameter.with( Fields.MESSAGE, content ) );
-
-		if ( post.hasAttachments() ) {
-			params.add( Parameter.with(
-			        Fields.LINK,
-			        post.getAttachment().toString() ) );
-		}
+		// Add Attachments to message content
+		content = SoccUtils.addAttachmentsToContent( post, content, "<br>" );
 
 		FacebookType result = null;
 		try {
 			result = client.getFacebookClient().publish(
-			        targetContainer.getId()
-			                + "/"
-			                + Connections.FEED,
+			        targetContainer.getId() + "/" + Connections.FEED,
 			        FacebookType.class,
-			        params.toArray( new Parameter[params.size()] ) );
+			        Parameter.with( Fields.MESSAGE, content ) );
 		} catch ( FacebookException e ) {
 			FacebookConnector.handleFacebookException( e );
 		}
@@ -223,14 +212,21 @@ public class FacebookPostWriter extends
 		if ( null != result && null != result.getId() ) {
 			Post resultPost = getConnector().getPostReader().getPost(
 			        FacebookSiocUtils.createSiocUri( result.getId() ) );
+
 			resultPost.setSibling( post );
 
 			if ( LOG.isDebugEnabled() ) {
-				LOG.debug( "Post written to Facebook as:\n{}",
-				        RdfUtils.resourceToString(
-				                resultPost,
-				                Syntax.Turtle ) );
+				LOG.debug( "Writing a post to {} was successful:\n{}",
+				        getServiceEndpoint(),
+				        RdfUtils.resourceToString( resultPost, Syntax.Turtle ) );
+			} else {
+				LOG.info( "Writing a post to {} was successful '{}'",
+				        getServiceEndpoint(),
+				        resultPost );
 			}
+		} else {
+			LOG.warn( "Failed write post to {}, result was null or has no id",
+			        getServiceEndpoint() );
 		}
 	}
 
@@ -249,7 +245,6 @@ public class FacebookPostWriter extends
 		        creatorAccount );
 
 		String content = post.getContent();
-
 		if ( null == client ) {
 			LOG.debug( "Using default client" );
 			client = getConnector().getClientManager()
@@ -267,27 +262,30 @@ public class FacebookPostWriter extends
 			content = SoccUtils.addContentWatermark( post
 			        .getIsPartOf(), content );
 		}
-
+		String result = null;
 		try {
-			LOG.debug( "Write to {}, message='{}'", targetPost.getId()
-			        + "/"
-			        + Connections.COMMENTS, content );
+			result = client.getFacebookClient().publish(
+			        targetPost.getId() + "/" + Connections.COMMENTS,
+			        String.class,
+			        Parameter.with( Fields.MESSAGE, content ) );
+		} catch ( FacebookException e ) {
+			FacebookConnector.handleFacebookException( e );
+		} catch ( Exception e ) {
+			Throwables.propagate( e );
+		}
 
-			String result = client.getFacebookClient()
-			        .publish( targetPost.getId()
-			                + "/"
-			                + Connections.COMMENTS,
-			                String.class,
-			                Parameter.with(
-			                        Fields.MESSAGE,
-			                        content ) );
-
-			result.trim();
+		if ( null != result ) {
+			result = result.trim();
 			String resultId = null;
 			if ( result.startsWith( "{" ) ) {
-				FacebookType type = client.getFacebookClient().getJsonMapper().toJavaObject(
-				        result,
-				        FacebookType.class );
+				FacebookType type = null;
+				try {
+					type = client.getFacebookClient().getJsonMapper().toJavaObject(
+					        result,
+					        FacebookType.class );
+				} catch ( Exception e ) {
+					throw new IOException( "Failed to parse result of the writing query: " + result );
+				}
 
 				resultId = type.getId();
 			} else {
@@ -295,22 +293,22 @@ public class FacebookPostWriter extends
 			}
 
 			Post resultPost = getConnector().getPostReader().getPost(
-			        FacebookSiocUtils.createSiocUri(
-			                resultId ) );
+			        FacebookSiocUtils.createSiocUri( resultId ) );
 
 			resultPost.setSibling( post );
 
 			if ( LOG.isDebugEnabled() ) {
-				LOG.debug( "Post written to Facebook as:\n{}",
-				        RdfUtils.resourceToString(
-				                post,
-				                Syntax.Turtle ) );
+				LOG.debug( "Writing a post to {} was successful:\n{}",
+				        getServiceEndpoint(),
+				        RdfUtils.resourceToString( resultPost, Syntax.Turtle ) );
+			} else {
+				LOG.info( "Writing a post to {} was successful '{}'",
+				        getServiceEndpoint(),
+				        resultPost );
 			}
-
-		} catch ( FacebookException e ) {
-			FacebookConnector.handleFacebookException( e );
-		} catch ( Exception e ) {
-			Throwables.propagate( e );
+		} else {
+			LOG.warn( "Failed write post to {}, result was null",
+			        getServiceEndpoint() );
 		}
 	}
 }

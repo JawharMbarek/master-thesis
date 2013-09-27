@@ -11,6 +11,9 @@
             <pattern>%d{HH:mm:ss.SSS} %-5level [%thread][%logger{0}]  %m %caller{99}%n</pattern>
         </encoder>
     </appender>
+    
+    <logger name="org.ontoware" level="OFF" />
+    <logger name="org.openrdf" level="OFF" />
 
 	<root level="debug">
 		<appender-ref ref="STDOUT" />

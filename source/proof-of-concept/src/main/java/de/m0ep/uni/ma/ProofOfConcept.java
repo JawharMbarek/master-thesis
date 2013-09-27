@@ -96,9 +96,9 @@ public class ProofOfConcept {
 
 			// Route 1: with an ActiveMQ JMS Topic between the Canvas discussion topic and Facebook 
 			// group feed 
-			from( "socc://poc-canvas?uri=https://canvas.instructure.com/"
-			        + "courses/798152/discussion_topics/1539776"
-			        + "&delay=10000" )
+			from( "socc://poc-canvas?uri=https://canvas.instructure.com/api/v1/"
+			        + "courses/798152/discussion_topics/1540697"
+			        + "&delay=20000" )
 			        .to( "activemq:topic:" + CANVAS_TOPIC );
 
 			from( "activemq:topic:" + CANVAS_TOPIC )
@@ -110,9 +110,8 @@ public class ProofOfConcept {
 			        "socc://poc-facebook?uri=https://graph.facebook.com/"
 			                + "520312298060793_520417398050283"
 			                + "&delay=20000" )
-			        .to( "socc://poc-canvas?uri=https://canvas.instructure.com/"
-			                + "courses/798152/discussion_topics/1539776" );
-
+			        .to( "socc://poc-canvas?uri=https://canvas.instructure.com/api/v1/"
+			                + "courses/798152/discussion_topics/1540697" );
 		}
 	};
 
@@ -138,15 +137,14 @@ public class ProofOfConcept {
 	private void initCamelContext() {
 		LOG.info( "Starting CamelContext..." );
 		camelContext = new DefaultCamelContext();
-		camelContext.addComponent( "activemq",
+		camelContext.addComponent(
+		        "activemq",
 		        ActiveMQComponent.activeMQComponent( "tcp://localhost:61616" ) );
 
 		try {
 			camelContext.addComponent(
 			        "socc",
-			        new SoccComponent(
-			                camelContext,
-			                new SoccContext( model ) ) );
+			        new SoccComponent( camelContext, new SoccContext( model ) ) );
 		} catch ( Exception e ) {
 			LOG.error( "Failed to add SoccComponent to CamelContext.", e );
 			System.exit( 1 );

@@ -27,10 +27,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Site;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -45,10 +48,11 @@ import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.Connections;
 import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.RequestParameters;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.RdfUtils;
 
-public class FacebookStructureReader extends
-        DefaultConnectorIOComponent<FacebookConnector>
+public class FacebookStructureReader extends DefaultConnectorIOComponent<FacebookConnector>
         implements IStructureReader<FacebookConnector> {
+	private static final Logger LOG = LoggerFactory.getLogger( FacebookStructureReader.class );
 
 	private final FacebookClientWrapper defaultClient;
 
@@ -63,6 +67,8 @@ public class FacebookStructureReader extends
 		if ( !Site.hasInstance( getModel(), getServiceEndpoint() ) ) {
 			Site result = new Site( getModel(), getServiceEndpoint(), true );
 			result.setName( "Facebook" );
+
+			LOG.info( "Created Facebook site {}", result );
 			return result;
 		}
 
@@ -129,16 +135,38 @@ public class FacebookStructureReader extends
 
 			if ( null != object ) {
 				if ( FacebookSiocUtils.hasConnection( object, Connections.FEED ) ) {
-					return FacebookSiocUtils.createSiocForum( getConnector(), object );
+					if ( LOG.isDebugEnabled() ) {
+						LOG.debug( "Read post feed {} from {}:\n{}",
+						        object.get( FacebookSiocUtils.Fields.ID ),
+						        uri,
+						        object.toString( 2 ) );
+					} else {
+						LOG.info( "Read post feed {} from {}.",
+						        object.get( FacebookSiocUtils.Fields.ID ),
+						        uri );
+					}
+
+					Forum resultForum = FacebookSiocUtils.createSiocForum( getConnector(), object );
+
+					if ( LOG.isDebugEnabled() ) {
+						LOG.debug( "Convert post feed {} to SIOC:\n{}",
+						        resultForum.getId(),
+						        RdfUtils.resourceToString( resultForum, Syntax.Turtle ) );
+					} else {
+						LOG.info( "Read post feed {} to SIOC {}.",
+						        resultForum.getId(),
+						        resultForum );
+					}
+
+					return resultForum;
 				}
 			}
 		}
 
-		throw new NotFoundException(
-		        "The uri "
-		                + uri
-		                + " is no container at "
-		                + getServiceEndpoint() );
+		throw new NotFoundException( "No container of "
+		        + getServiceEndpoint()
+		        + " found at "
+		        + uri );
 	}
 
 	@Override
@@ -146,14 +174,14 @@ public class FacebookStructureReader extends
 	        IOException {
 		List<Container> result = Lists.newArrayList();
 
-		Connection<JsonObject> groupsConnections = null;
+		Connection<JsonObject> groupConnection = null;
 		try {
 			Parameter fields = Parameter.with(
 			        RequestParameters.FIELDS,
 			        FacebookSiocUtils.FIELDS_GROUP );
 
-			groupsConnections = defaultClient.getFacebookClient().fetchConnection(
-			        "me/" + Connections.GROUPS,
+			groupConnection = defaultClient.getFacebookClient().fetchConnection(
+			        "/me/" + Connections.GROUPS,
 			        JsonObject.class,
 			        fields );
 		} catch ( FacebookException e ) {
@@ -162,14 +190,39 @@ public class FacebookStructureReader extends
 			Throwables.propagate( e );
 		}
 
-		if ( null != groupsConnections ) {
-			for ( List<JsonObject> list : groupsConnections ) {
+		if ( null != groupConnection ) {
+			for ( List<JsonObject> list : groupConnection ) {
 				for ( JsonObject object : list ) {
-					result.add( FacebookSiocUtils.createSiocForum(
+					if ( LOG.isDebugEnabled() ) {
+						LOG.debug( "Read group feed {} from {}:\n{}",
+						        object.get( FacebookSiocUtils.Fields.ID ),
+						        getServiceEndpoint(),
+						        object.toString( 2 ) );
+					} else {
+						LOG.info( "Read group feed {} from {}.",
+						        object.get( FacebookSiocUtils.Fields.ID ),
+						        getServiceEndpoint() );
+					}
+
+					Forum resultForum = FacebookSiocUtils.createSiocForum(
 					        getConnector(),
-					        object ) );
+					        object );
+
+					result.add( resultForum );
+
+					if ( LOG.isDebugEnabled() ) {
+						LOG.debug( "Convert group feed {} to SIOC:\n{}",
+						        resultForum.getId(),
+						        RdfUtils.resourceToString( resultForum, Syntax.Turtle ) );
+					} else {
+						LOG.info( "Read group feed {} to SIOC {}.",
+						        resultForum.getId(),
+						        resultForum );
+					}
 				}
 			}
+		} else {
+			LOG.warn( "GroupConnection was null" );
 		}
 
 		return result;

@@ -19,8 +19,8 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
 public class SoccEndpoint extends ScheduledPollEndpoint {
-	public static final String PROPERTY_LIMIT = "limit";
-	public static final String PROPERTY_URI = "uri";
+	public static final String PARAMETER_LIMIT = "limit";
+	public static final String PARAMETER_URI = "uri";
 
 	private static final Logger LOG = LoggerFactory.getLogger( SoccEndpoint.class );
 
@@ -39,7 +39,7 @@ public class SoccEndpoint extends ScheduledPollEndpoint {
 		this.connector = Preconditions.checkNotNull( connector,
 		        "Required parameter connector must be specified." );
 
-		LOG.debug( "create Endpoint uri={}  connector={} containerIds={} postId={}",
+		LOG.info( "Create Endpoint uri='{}'  connectorId='{}'",
 		        endpointUri,
 		        connector.getId() );
 	}
@@ -72,15 +72,15 @@ public class SoccEndpoint extends ScheduledPollEndpoint {
 
 	@Override
 	public void configureProperties( final Map<String, Object> options ) {
-		if ( options.containsKey( PROPERTY_URI ) ) {
-			setUri( Builder.createURI( (String) options.remove( PROPERTY_URI ) ) );
-			LOG.debug( "Found property uri='{}'", getUri() );
+		if ( options.containsKey( PARAMETER_URI ) ) {
+			setUri( Builder.createURI( (String) options.remove( PARAMETER_URI ) ) );
+			LOG.debug( "Found parameter uri='{}'", getUri() );
 		}
 
-		if ( options.containsKey( PROPERTY_LIMIT ) ) {
+		if ( options.containsKey( PARAMETER_LIMIT ) ) {
 			try {
-				setLimit( Integer.parseInt( (String) options.remove( PROPERTY_LIMIT ) ) );
-				LOG.debug( "Found property limit='{}'", getLimit() );
+				setLimit( Integer.parseInt( (String) options.remove( PARAMETER_LIMIT ) ) );
+				LOG.debug( "Found parameter limit='{}'", getLimit() );
 			} catch ( Exception e ) {
 				LOG.warn( "Failed to parse 'limit' parameter: was {}", limit );
 				setLimit( -1 );
@@ -92,6 +92,7 @@ public class SoccEndpoint extends ScheduledPollEndpoint {
 
 	@Override
 	public Consumer createConsumer( final Processor processor ) throws Exception {
+		LOG.info( "Create Consumer for connector '{}", connector.getId() );
 		ISoccConsumer pollConsumer = new SoccPostPollConsumer( this, processor );
 		configureConsumer( pollConsumer );
 		return pollConsumer;
@@ -111,6 +112,7 @@ public class SoccEndpoint extends ScheduledPollEndpoint {
 
 	@Override
 	public Producer createProducer() throws Exception {
+		LOG.info( "Create Producer for connector '{}", connector.getId() );
 		ISoccProducer producer = new SoccPostProducer( this );
 		configureProducer( producer );
 

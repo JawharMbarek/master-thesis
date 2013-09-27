@@ -51,6 +51,7 @@ import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
+import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
 
@@ -101,10 +102,10 @@ public class CanvasLmsPostWriter extends
 		} else if ( isEntryUri ) {
 			targetResource = getConnector().getPostReader().getPost( targetUri );
 		} else {
-			throw new IOException(
-			        "Failed to write post to target uri "
-			                + targetUri
-			                + ", it's neither a conainer nor a post od comment" );
+			throw new IOException( "Invalid URI to write post to "
+			        + getServiceEndpoint()
+			        + ": "
+			        + targetUri );
 		}
 
 		Model tmpModel = RDFTool.stringToModel( rdfString, syntax );
@@ -114,11 +115,19 @@ public class CanvasLmsPostWriter extends
 				Resource resource = postIter.next();
 				Post post = Post.getInstance( tmpModel, resource );
 
+				if ( LOG.isDebugEnabled() ) {
+					LOG.debug( "Try to write Post to {}:\n{}",
+					        getServiceEndpoint(),
+					        RdfUtils.resourceToString(
+					                post,
+					                Syntax.Turtle ) );
+				}
+
 				// skip all posts that are already forwarded from this site
 				if ( SoccUtils.hasContentWatermark(
 				        getConnector().getStructureReader().getSite(),
 				        post.getContent() ) ) {
-					LOG.info( "Skip this post, posted already at this site" );
+					LOG.info( "Skip this post, posted was from this site" );
 					continue;
 				}
 
@@ -132,6 +141,8 @@ public class CanvasLmsPostWriter extends
 						LOG.debug( "Write {} as reply to {}.", post, sibling );
 						writeReplyToPost( sibling, post );
 						return;
+					} else {
+						LOG.debug( "No sibling found for {}", post.getReplyOf() );
 					}
 				}
 
@@ -182,7 +193,7 @@ public class CanvasLmsPostWriter extends
 			String content = post.getContent();
 
 			if ( null == client ) {
-				LOG.debug( "Using default client" );
+				LOG.info( "Using default client to access {}", getServiceEndpoint() );
 				client = getConnector().getClientManager().getDefaultClient();
 				content = SoccUtils.formatUnknownMessage(
 				        getConnector(),
@@ -205,16 +216,10 @@ public class CanvasLmsPostWriter extends
 				        .post( content )
 				        .execute();
 
-				Post resultPost = CanvasLmsSiocUtils.createSiocPost(
-				        getConnector(),
-				        resultEntry,
-				        targetContainer,
-				        null );
-
-				resultPost.addSibling( post );
-				SoccUtils.logPost( LOG, resultPost, "Writing successful, result post" );
-
-				return;
+				if ( null != resultEntry ) {
+					convertWrittenEntryToSioc( post, resultEntry, targetContainer, null );
+					return;
+				}
 			} catch ( CanvasLmsException e ) {
 				if ( e instanceof NetworkException ) {
 					throw new IOException( e );
@@ -225,7 +230,7 @@ public class CanvasLmsPostWriter extends
 				throw Throwables.propagate( e );
 			}
 		} else {
-			LOG.warn( "Failed to write, invalid targetContainer URI: '{}' ", targetContainer );
+			LOG.warn( "Invalid URI to write post to {}: {}", getServiceEndpoint(), targetContainer );
 		}
 	}
 
@@ -267,7 +272,7 @@ public class CanvasLmsPostWriter extends
 
 			// Get the default client, if no client of the creator was found
 			if ( null == client ) {
-				LOG.debug( "Using default client" );
+				LOG.info( "Using default client" );
 				client = getConnector().getClientManager().getDefaultClient();
 				content = SoccUtils.formatUnknownMessage(
 				        getConnector(),
@@ -290,16 +295,14 @@ public class CanvasLmsPostWriter extends
 				        .postReply( content, entryId )
 				        .execute();
 
-				Post resultPost = CanvasLmsSiocUtils.createSiocPost(
-				        getConnector(),
-				        resultEntry,
-				        targetPost.getContainer(),
-				        targetPost );
-
-				resultPost.addSibling( post );
-				SoccUtils.logPost( LOG, resultPost, "Writing successful" );
-
-				return;
+				if ( null != resultEntry ) {
+					convertWrittenEntryToSioc(
+					        post,
+					        resultEntry,
+					        targetPost.getContainer(),
+					        targetPost );
+					return;
+				}
 			} catch ( CanvasLmsException e ) {
 				if ( e instanceof NetworkException ) {
 					throw new IOException( e );
@@ -310,7 +313,46 @@ public class CanvasLmsPostWriter extends
 				throw Throwables.propagate( e );
 			}
 		} else {
-			LOG.warn( "Failed to write, invalid targetPost URI: '{}'", targetPost );
+			LOG.warn( "Invalid URI to write post to {}: {}", getServiceEndpoint(), targetPost );
 		}
+	}
+
+	private Post convertWrittenEntryToSioc(
+	        final Post post,
+	        final Entry entry,
+	        final Container container,
+	        final Post parentPost )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Received written entry:\n{}",
+			        getServiceEndpoint(),
+			        entry );
+		} else {
+			LOG.info( "Received written entry '{}'",
+			        getServiceEndpoint(),
+			        entry.getId() );
+		}
+
+		Post resultPost = CanvasLmsSiocUtils.createSiocPost(
+		        getConnector(),
+		        entry,
+		        container,
+		        parentPost );
+
+		resultPost.addSibling( post );
+
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Writing a post to {} was successful:\n{}",
+			        getServiceEndpoint(),
+			        RdfUtils.resourceToString( resultPost, Syntax.Turtle ) );
+		} else {
+			LOG.info( "Writing a post to {} was successful '{}'",
+			        getServiceEndpoint(),
+			        resultPost );
+		}
+
+		return resultPost;
 	}
 }

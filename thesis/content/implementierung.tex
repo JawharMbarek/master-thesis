@@ -1,6 +1,6 @@
 %!TEX root = ../thesis.tex
 
-\chapter{Implementierung und Evaluation} % (fold)
+\chapter{Implementierung und Proof of Concept} % (fold)
 \label{cha:implementierung_und_evaluation}
 
 \todo[inline]{Auf die verschiedenen Klassen von Facebook und Co eingehen, REST, SOAP, OAUTH, Client/Passwort, Art der Plattforn, Forum, OSN, Videoplatform}
@@ -632,7 +632,6 @@ Pagination<DiscussionTopic> discussionPages = client.courses()
     .list()
     .executePagination();
 
-
 for ( List<DiscussionTopic> discussions : discussionPages ) {
     for ( DiscussionTopic discussion : discussions ) {
         System.out.println( discussion );
@@ -641,7 +640,7 @@ for ( List<DiscussionTopic> discussions : discussionPages ) {
 
 \end{lstlisting}
 
-In Listing \ref{lst:canvaslms4j_beispiel} ist ein Beispiel für die Anwendung der CanvasLMS4J API zu sehen. In den ersten drei Zeilen wird eine neuer CanvasLmsClient für die Canvasinstanz auf \texttt{https://canvas.instructure.com} und einem AccessToken erstellt. Als nächstes soll für einen Kurs mit der ID \enquote{798152} alle Diskussionen aufgelistet werden. Mit dem Aufruf der Methode \texttt{courses()} des Clients wir der Endpunkt für die Kurse und von diesem aus der Endpunkt für die Diskussionen im Kurs \enquote{798152} über die Methode \texttt{.discussionTopics( 798152 )}. In der siebten Zeile wird die Art der Abfrage genauer festgelegt. Da eine Liste alle Diskussionen gesucht ist, wird die Methode \texttt{list()} aufgerufen die ein CanvasLmsRequest Objekt für die gewünschte Abfrage erstellt. Da die Antwort aus mehrere Objekten mit der Beschreibung der einzelnen Diskussionen besteht, wird die Anfrage in Zeile Acht mit der Methode \texttt{executePagination()} ausgeführt. Die einzelnen Seiten des Ergebnisses werden dann in der elften Zeile mit einer For-Schleife durchlaufen. Das nachladen der Seiten erfolgt dabei automatisch durch die Pagination Klasse. Jede Seite besteht nun aus einer Liste mit den Beschreibung der Diskussionen in einem \texttt{DiskussionTopic} Objekt, welche dann wieder in einer weiteren Schleife ausgegeben werden.
+In Listing \ref{lst:canvaslms4j_beispiel} ist ein Beispiel für die Anwendung der CanvasLMS4J API zu sehen. In den ersten drei Zeilen wird eine neuer CanvasLmsClient für die Canvasinstanz auf \texttt{https://canvas.instructure.com} und einem AccessToken erstellt. Als nächstes soll für einen Kurs mit der ID \enquote{798152} alle Diskussionen aufgelistet werden. Mit dem Aufruf der Methode \texttt{courses()} des Clients wir der Endpunkt für die Kurse und von diesem aus der Endpunkt für die Diskussionen im Kurs \enquote{798152} über die Methode \texttt{.discussionTopics( 798152 )}. In der siebten Zeile wird die Art der Abfrage genauer festgelegt. Da eine Liste alle Diskussionen gesucht ist, wird die Methode \texttt{list()} aufgerufen die ein CanvasLmsRequest Objekt für die gewünschte Abfrage erstellt. Da die Antwort aus mehrere Objekten mit der Beschreibung der einzelnen Diskussionen besteht, wird die Anfrage in Zeile Acht mit der Methode \texttt{executePagination()} ausgeführt. Die einzelnen Seiten des Ergebnisses werden dann in der zehnten Zeile mit einer For-Schleife durchlaufen. Das nachladen der Seiten erfolgt dabei automatisch durch die Pagination Klasse. Jede Seite besteht nun aus einer Liste mit den Beschreibung der Diskussionen in einem \texttt{DiskussionTopic} Objekt, welche dann wieder in einer weiteren Schleife ausgegeben werden.
 
 % subsubsection canvaslms4j (end)
 
@@ -697,9 +696,188 @@ In Listing \ref{lst:canvaslms4j_beispiel} ist ein Beispiel für die Anwendung de
 
 % section implementierung_einiger_connectoren (end)
 
-\section{Evaluation} % (fold)
-\label{sec:evaluation}
+\section{Proof of Concept} % (fold)
+\label{sec:proof_of_concept}
 
-% section evaluation (end)
+Um zu die Funktionsweise von SOCC und SOCC-Camel zu demonstrieren, soll nun ein \enquote{Proof of Concept} (Englisch für Machbarkeitsnachweis) erstellt werden. Hierzu wird ein Programm vorgestellt, das die Beiträge einer Diskussion aus Canvas mit den Kommentaren eines Beitrags aus einer  Facebookgruppe synchronisiert. 
+
+\subsection{Vorbereitungen} % (fold)
+\label{sub:vorbereitungen}
+
+
+Die Konfigurationsdaten für dieses Programm befinden sich im Anhang \ref{sec:anhang_proof_of_concept_konfigurationsdaten} im Turtle-Format. Dort befindet sich die Definitionen von den zwei Personen \enquote{Max Hiwi} und \enquote{Florian} mit jeweils ihren Benutzerkonto für Canvas und Facebook. Sowohl für Canvas als auch für Facebook wurde für die Benutzerkonten Accesstoken erstellt und dort hinterlegt (Durch \dots abgekürzt). Beide Personen erlauben einen öffentlichen Zugriff auf all ihre Beiträge durch eine Autorisierung. Ebenfalls wurden die Servicebeschreibungen und die Konfigurationen für die Canvas und Facebook Connectoren angegeben. Der Service für Facebook enthält zusätzlich die ClientID und den ClientSecret, um aus kurzlebigen Accesstoken welche mit einer Haltbarkeit von zwei Monaten generieren zu lassen.
+
+Die Synchronisation zwischen Canvas und Facebook mit Camel soll dabei auf zwei Arten demonstriert werden. Der Nachrichtenweg von Canvas aus wird dabei erst an ein JMS Topic geschickt bevor die Beiträge an den FacebookConnector weitergeben werden. Der umgekehrte Weg von Facebook nach Canvas erfolgt direkt durch Camel ohne eine Verwendung von JMS. Als JMS-Provider wird das frei ActiveMQ von Apache eingesetzt. Dieser kann sowohl als eigener Server als auch eingebettet in einem Programm ausgeführt werden.
+
+Zuerst muss für die Verwendung von ActiveMQ und SOCC der CamelContext mit den entsprechenden Komponenten vorbereitet werden. In Zeile 1 des Listings \ref{lst:poc_prepare_camel} wird ein Objekt dieses CamelContextes aus der Klasse \texttt{DefaultCamelContext} erzeugt. Um auf ActiveMQ von Camel aus nutzen zu können muss ein Objekt der Klasse \texttt{ActiveMQComponent}\footnote{\url{http://camel.apache.org/activemq.html}} in Zeile 2 unter dem Namen \enquote{activemq} registriert und die Adresse zum ActiveMQ Server angegeben werden. Danach folgt in Zile 5 die Registrierung des SOCC-Camel Moduls mit den Namen \enquote{socc}. Übergeben wird das Objekt des CamelContextes und ein SoccContext mit einem RDF2Go Model in das zuvor die Konfigurationsdaten geladen wurden.  
+
+\begin{lstlisting}[
+    caption={Proof of Concept: CamelContext vorbereiten} \label{lst:poc_prepare_camel},
+    captionpos=t]
+DefaultCamelContext camelContext = new DefaultCamelContext();
+camelContext.addComponent(
+        "activemq",
+        ActiveMQComponent.activeMQComponent( "tcp://localhost:61616" ) );
+camelContext.addComponent(
+        "socc",
+        new SoccComponent( camelContext, new SoccContext( model ) ) );
+\end{lstlisting}
+
+Neben den in Abschnitt \ref{ssub:apache_camel} beschrieben Methode mit der Klasse \texttt{RouteDefinition} können Routen auch mit der Klasse \texttt{RouteBilder} erstellt werden. Wie in Listing\ref{lst:poc_prepare_camel_routes} zu sehen. Die erste Route in Zeile 4 ist die von der Diskussion aus Canvas in das JMS-Topic mit dem Bezeichner \enquote{canvas-topic}. Die URI für den Start-Endpunkt enthält die ID des konfigurierten CanvasConnectors \enquote{poc-canvas}, der URI zur Diskussion \texttt{https://[\dots]/api/v1/courses/798152/discussion\_topics/1540697} und soll dieses alle fünf Minuten (300000 Millisekunden) nach neuen Beiträgen abfragen. Die zweite Route in Zeile 9 beschreibt den Weg aus dem JMS-Topic \enquote{canvas-topic} in den Connector mit der ID \enquote{poc-facebook}, der dann die Beiträge als Kommentare in den Beitrag auf Facebook hinter der URI \texttt{https://graph.facebook.com/520312298060793\_520417398050283} schreibt. Die letzte Route in Zeile 13 definiert den umgekehrten Weg wobei der FacebookConnector ebenfalls alle fünf Minuten nach neuen Beiträgen schauen soll. Der eben erstellte RouteBuilder muss jetzt noch in Zeile 21 an den CamelContext übergeben und in Zeile 22 Camel gestartet werden.  
+
+\begin{lstlisting}[
+    caption={Proof of Concept: Routen vorbereiten} \label{lst:poc_prepare_camel_routes},
+    captionpos=t]
+RouteBuilder routeBuilder = new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        from("socc://poc-canvas?uri=https://canvas.instructure.com/api/v1/"
+            + "courses/798152/discussion_topics/1540697"
+            + "&delay=300000" )
+            .to("activemq:topic:canvas-topic");
+
+        from( "activemq:topic:canvas-topic" )
+            .to("socc://poc-facebook?uri=https://graph.facebook.com/"
+                + "520312298060793_520417398050283");
+
+        from("socc://poc-facebook?uri=https://graph.facebook.com/"
+            + "520312298060793_520417398050283"
+            + "&delay=300000" )
+            .to( "socc://poc-canvas?uri=https://canvas.instructure.com/api/v1/"
+                + "courses/798152/discussion_topics/1540697");
+        }
+    };
+
+camelContext.addRoutes( routeBuilder );
+camelContext.start();
+\end{lstlisting}
+
+% subsubsection vorbereitungen (end)
+
+\subsection{Ausgangssituation} % (fold)
+\label{sub:ausgangssituation}
+
+% subsubsection ausgangssituation (end)
+
+\begin{wrapfigure}{r}{11cm}
+    \centering
+    \includegraphics[
+        width=11cm,
+        keepaspectratio=true,]
+    {assets/images/poc/0_canvas}
+    \caption{Proof of Concept: Ausgangssituation}
+    \label{fig:poc_ausgangssituation}
+\end{wrapfigure} 
+
+Für einen Kurs werden mehrere Gruppenübungen über das Semester verteilt durchgeführt. Für jede Gruppenübung existiert in Canvas eine Diskussion in der über allgemeine Dinge zu jeweiligen diskutiert werden kann. In Facebook wird dafür die Kommentarfunktion von Beiträgen genutzt. 
+
+Vor den Start des Programm befinden sich in der Canvas Diskussion für die erste Gruppenübung schon zwei Beiträge, wie in der rechten Abbildung \ref{fig:poc_ausgangssituation} zu sehen ist. Der Benutzer Florian stellt eine Frage und diese wird von Max Hiwi mit einer Gegenfrage kommentiert. Der Beitrag auf Facebook ist dagegen noch leer (Hier nicht abgebildet).
+
+\wrapfill
+
+\subsection{Ablauf der Synchronisierung} % (fold)
+\label{sub:ablauf_der_synchronisierung}
+
+Nach dem Camel gestartet wurde in den Routen definierten Komponenten anzulegen und zu starten. Der PostReader des CanvasConnectors beginnt also die Beiträge mit den eingestellten Defaultuser aus der durch die URI angegeben Diskussion zu lesen. Da dies der erste Aufruf ist, werden die Beiträge noch nicht nach den Erstellungszeitpunk gefiltert. Beide Beiträge von Florian und Max Hiwi kommen also in die Ergebnisliste, werden in das SIOC Format konvertiert und im Triplestore gespeichert. Das Resultat der Konvertierung wird im Listing \ref{lst:poc_init_posts} gezeigt. In Zeile 11 ist zu sehen, dass der erste Beitrag einen Kommentar und zwar den zweiten Beitrag besitzt. Genau so ist im Zeile 22 zu sehe, dass der zweite Beitrag ein Kommentar auf den ersten ist. Diese stimmt mit dem Aussehen der Ausgangssituation überein. Diese beiden Ergebnisse werden dann an den aufrufenden SoccPostPollingConsumer zurückgeben. Dieser serialisiert das Ergebnis dann in das RDF/XML Format, verpackt diese in eine Nachricht und gibt diese an Camel weiter.
+
+% subsubsection ablauf_der_synchronisierung (end)
+
+\begin{lstlisting}[
+    language={},
+    caption={Die gelsenen Beiträge aus Canvas im SIOC-Format} \label{lst:poc_init_posts},
+    captionpos=t]
+<https://canvas.instructure.com/api/v1/courses/798152/discussion_topics/1540697/entries/3284842> a sioc:Post ;
+    dcterms:created "2013-09-27T10:54:43+02:00" ;
+    dcterms:isPartOf <https://canvas.instructure.com> ;
+    dcterms:modified "2013-09-27T10:54:43+02:00" ;
+    sioc:content "Hi, kann mir wer bei der zweiten Aufgabe helfen?" ;
+    sioc:has_container <https://canvas.instructure.com/api/v1/courses/798152/discussion_topics/1540697> ;
+    sioc:has_creator <https://canvas.instructure.com/api/v1/users/3457836/profile> ;
+    sioc:has_reply <https://canvas.instructure.com/api/v1/courses/798152/discussion_topics/1540697/entries/3284844> ;
+    sioc:id "3284842" ;
+    sioc:last_reply_date "2013-09-27T10:55:48+02:00" ;
+    sioc:num_replies "1"^^xsd:int ;
+    sioc:reply_of <https://canvas.instructure.com/api/v1/courses/798152/discussion_topics/1540697#discussion_topic> .
+
+<https://canvas.instructure.com/api/v1/courses/798152/discussion_topics/1540697/entries/3284844> a sioc:Post ;
+    dcterms:created "2013-09-27T10:55:48+02:00" ;
+    dcterms:isPartOf <https://canvas.instructure.com> ;
+    dcterms:modified "2013-09-27T10:55:48+02:00" ;
+    sioc:content "Wo ist denn genau das Problem?" ;
+    sioc:has_container <https://canvas.instructure.com/api/v1/courses/798152/discussion_topics/1540697> ;
+    sioc:has_creator <https://canvas.instructure.com/api/v1/users/3478501/profile> ;
+    sioc:id "3284844" ;
+    sioc:reply_of <https://canvas.instructure.com/api/v1/courses/798152/discussion_topics/1540697/entries/3284842> .
+\end{lstlisting}
+
+Camel schaut nun anhand der definierten Routen, wohin diese Nachricht weitergeleitet werden soll. In diesem Fall wird sie an die ActiveMQ Komponente übergeben, die sie in das JMS-Topic \enquote{cnavas-topic} schickt. Von dort kann sie von jedem JMS-Client gelesen werden, der dieses Topic abonniert hat, die zum Beispiel in der zweiten Route von vorhin. Dies nimmt also die über das Topic gesendete Nachricht, gibt es Camel und kommt letztendlich an den SoccPostProducer. Dieser holt die serialisierten RDF-Daten und die Syntaxbeschreibung aus der Nachricht und gibt diese an den PostWriter des FacebookConnectors weiter. Dieser de-serialisiert die beiden Beiträge wieder in RDF und sucht dann im Triplestore nach den passenden Benutzerkonten für Facebook von den beiden Autoren und schreibt die Beiträge als Kommentare für den festgelegten Facebook Beitrag.
+
+\begin{wrapfigure}[19]{r}{11cm}
+    \centering
+    \includegraphics[
+        width=11cm,
+        keepaspectratio=true,]
+    {assets/images/poc/1_facebook_blurred}
+    \caption{Proof of Concept: Beiträge aus Canvas in Facebook}
+    \label{fig:poc_beitraege_aus_canvas_in_facebook}
+\end{wrapfigure}
+
+In der Rechten Abbildung \ref{fig:poc_beitraege_aus_canvas_in_facebook} sind die eben nach Facebook geschriebenen Beiträge aus Canvas zu sehen. Da Facebook kommentieren von anderen Kommentaren in Gruppen nicht ermöglicht, sind diese nun untereinander geschrieben. Zugleich ist zusehen, dass Florian gleich danach die Gegenfrage von Max Hiwi, der auf Facebook das Benutzerkonto \enquote{TK Hiwi} benutzt, in Facebook beantwortet.
+
+Im Hintergrund arbeitet derweil Camal weiter und alle 20 Sekunden den PostReader des FacebookConnectors aus der dritten Route an. Dieser liest nun diese drei für ihn neuen Beiträge und konvertiert diese dann aus dem Facebook- in das SIOC-Format (Siehe Listing \ref{lst:poc_facebook_posts}). Die Beiträge werden dann wieder an den SoccPostPollingConsumer zurück gegeben, serialisiert und als Nachricht an Camel geschickt. Diesmal geht geht diese Nachricht auf direkten Wege an den SoccPostProducer und an den PostWriter des CanvasConnectors. Dieser verarbeitet nun die gesendeten Beiträge und merkt, dass zwei von ihnen ursprüngliche aus Canvas kommen, worauf er diese verwirft. Der dritte Beitrag wird aber dann mit den Benutzerkonto von Florian in die Diskussion geschrieben.
+
+wie in Abbildung \ref{fig:poc_final_at_canas} ist zu sehen, das die Diskussion in Canvas und in Facebook die gleichen Beiträge enthalten. Dieser Ablauf wiederholt sich nun so lange wie Camel die Routen und Connectoren ausführt. Es wurde also gezeigt, dass mittels SOCC, SOCC-Camel zwei verteilte Diskussionen synchronisiert werden können. 
+
+
+\begin{minipage}{\textwidth}
+    \centering
+    \includegraphics[
+        width=0.8\textwidth,
+        keepaspectratio=true,
+        clip=true,
+        trim= 0 0 0 265]
+    {assets/images/poc/all_canvas}
+    \captionof{figure}{Proof of Concept: Finales Ergebnis in Canvas}
+    \label{fig:poc_final_at_canas}
+\end{minipage}
+
+\begin{lstlisting}[
+    language={},
+    caption={Die gelesenen Beiträge aus Facebook im SIOC-Format} \label{lst:poc_facebook_posts},
+    captionpos=t]
+<https://graph.facebook.com/520890111336345> a sioc:Post ;
+    dcterms:created "2013-09-27T10:56:09+02:00" ;
+    dcterms:isPartOf <https://www.facebook.com> ;
+    sioc:attachment <https://canvas.instructure.com/> ;
+    sioc:content """Hi, kann mir wer bei der zweiten Aufgabe helfen?
+--- forwarded by SOCC from https://canvas.instructure.com ---""";
+    sioc:has_creator <https://graph.facebook.com/100000490230885> ;
+    sioc:id "520890111336345" ;
+    sioc:reply_of <https://graph.facebook.com/520312298060793_520417398050283> ;
+    sioc:sibling <https://canvas.instructure.com/api/v1/courses/798152/discussion_topics/1540697/entries/3284842> .
+
+<https://graph.facebook.com/520890124669677> a sioc:Post ;
+    dcterms:created "2013-09-27T10:56:13+02:00" ;
+    dcterms:isPartOf <https://www.facebook.com> ;
+    sioc:attachment <https://canvas.instructure.com/> ;
+    sioc:content """Wo ist denn genau das Problem?
+--- forwarded by SOCC from https://canvas.instructure.com ---""";
+    sioc:has_creator <https://graph.facebook.com/100003876610187> ;
+    sioc:id "520890124669677" ;
+    sioc:reply_of <https://graph.facebook.com/520312298060793_520417398050283> ;
+    sioc:sibling <https://canvas.instructure.com/api/v1/courses/798152/discussion_topics/1540697/entries/3284844> .
+
+<https://graph.facebook.com/520890171336339> a sioc:Post ;
+    dcterms:created "2013-09-27T11:00:23+02:00" ;
+    dcterms:isPartOf <https://www.facebook.com> ;
+    sioc:content "hallo welt" ;
+    sioc:has_creator <https://graph.facebook.com/100003876610187> ;
+    sioc:id "520890171336339" ;
+    sioc:reply_of <https://graph.facebook.com/520312298060793_520417398050283> .
+\end{lstlisting}
+
+\wrapfill
+
+% section proof_of_concept (end)
 
 % chapter implementierung_und_evaluation (end)

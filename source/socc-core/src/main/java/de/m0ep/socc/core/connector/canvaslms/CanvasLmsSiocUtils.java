@@ -161,7 +161,6 @@ public final class CanvasLmsSiocUtils {
 
 			result.setId( Long.toString( course.getId() ) );
 			result.setName( course.getName() );
-			result.setNumThreads( 0 );
 
 			Site site = connector.getStructureReader().getSite();
 			result.setHost( site );
@@ -199,7 +198,6 @@ public final class CanvasLmsSiocUtils {
 			        true );
 			result.setId( Long.toString( discussionTopic.getId() ) );
 			result.setName( discussionTopic.getTitle() );
-			result.setNumItems( 0 );
 
 			result.setParent( parent );
 			parent.addParentOf( result );
@@ -255,7 +253,6 @@ public final class CanvasLmsSiocUtils {
 		result.setContent( StringUtils.stripHTML( discussionTopic.getMessage() ) );
 		result.setCreator( creator );
 		result.setCreated( createdDate );
-		result.setNumReplies( 0 );
 
 		result.removeAllAttachments();
 
@@ -337,7 +334,6 @@ public final class CanvasLmsSiocUtils {
 		result.setCreator( creator );
 		result.setCreated( DateUtils.formatISO8601( entry.getCreatedAt() ) );
 		result.setContent( StringUtils.stripHTML( entry.getMessage() ) );
-		result.setNumReplies( 0 );
 
 		if ( null != entry.getUpdatedAt() ) {
 			result.setModified( DateUtils.formatISO8601( entry.getUpdatedAt() ) );

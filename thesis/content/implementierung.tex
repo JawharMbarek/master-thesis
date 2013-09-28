@@ -690,43 +690,55 @@ In Listing \ref{lst:canvaslms4j_beispiel} ist ein Beispiel für die Anwendung de
 \subsubsection{Canvas Mapping nach SIOC} % (fold)
 \label{ssub:canvas_sioc_mapping}
 
-\begin{table}[ht]
+Die Struktur von Canvas ist der von Moodle sehr ähnliche (siehe Abbildung \ref{fig:canvas_sioc_mapping}), nur dass es explizit keine Foren gibt sondern die Diskussionen innerhalb der Kurse stattfindet. Demzufolge kann ein Kurs (Course) der SIOC-Klasse \texttt{sioc:Forum} zugeordnet werden. Dies gilt ebenfalls für Gruppen, in denen separate Diskussionen geführt werden können. Die Diskussionsthemen in Canvas werden durch die Klasse DiscussionTopic modelliert und entspricht \texttt{sioc:Thread} . Beiträge werden in Canvas als Entry bezeichnet und sind entweder ein Kommentar auf den ersten Beitrag, der beim Erstellen der Diskussion  erzeugt wurde, oder eines auf dessen Kommentare. Die SIOC-Klasse für einen Entry entspricht dann natürlich \texttt{sioc:Post}
+ 
+\begin{minipage}{\textwidth}
     \centering
-    \begin{tabular}{l|p{11cm}}
-        \textbf{SIOC Klasse} & \textbf{URI-Format} \\ 
-        \hline
-        Site & \\
-        Service & \\
-        UserAccount & \\
-        Forum & \\
-        Thread & \\
-        Post & \\
-    \end{tabular}
-\end{table}
+    \includegraphics[
+        width=0.8\textwidth,
+        keepaspectratio=true]
+    {assets/images/mapping/canvas_sioc_mapping}
+    \captionof{figure}{Struktur von Canvas und Mapping nach SIOC}
+    \label{fig:canvas_sioc_mapping}
+\end{minipage}
+
+Zum benutzen der REST-API von Canvas muss eine Accesstoken für den betreffenden \texttt{sioc:UserAccount} des Benutzerkontos vorliegen. Wie in Abbildung \ref{fig:canvas_useraccount_mapping} wird der Accesstoken dem \texttt{sioc:UserAccount} mit \texttt{siocsa:accountAuthentication} als Credential der Klasse \texttt{waa:OAuth} mitgegeben. In der Servicebeschreibung ist wieder die Angabe von \texttt{siocs:serviceEndpoint} mit der Adresse der Canvasinstanz für die API Voraussetzung für den Betrieb des CanvasConnectors.
+
+\begin{minipage}{\textwidth}
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true]
+    {assets/images/mapping/canvas_useraccount_mapping}
+    \captionof{figure}{ Authentifizierungsdaten für Canvas in SIOC}
+    \label{fig:canvas_useraccount_mapping}
+\end{minipage}
+
+Die URIs für RDF bei Canvas wurden so gewählt, dass sie denen der URIs für die REST Abfragen entsprechen. An ihnen ist sehr leicht zu erkennen wo sich die Ressource sich innerhalb der Canvasstruktur befindet, da sie aufeinander aufbauen. Das einzige Problem liegt nur in der URI für den Startbeitrag einer Diskussion, da dieser nur zusammen innerhalb des DiskusionTopics existiert und keine eigene ID besitzt. Aus diesem Grund wurde für die URI des Startbeitrags aus der eines DiscussionTopic mit angehängten Fragment \enquote{\texttt{\#discussion\_topic}} gewählt. Dieser Zusatz wurde nicht zufällig gewählt. Die ID \enquote{\texttt{discussion\_topic}} wird von Canvas innerhalb der HTML-Darstellung für diesen Beitrag benutzt. 
 
 \begin{table}[ht]
     \centering
     \caption{Format der URIs für Canvas}
-    \begin{tabular}{l|p{11cm}}
-        \textbf{URI Platzhalter} & URI-Format \\ 
+    \begin{tabular}{l|p{13cm}}
+        \textbf{SIOC Klasse} & \textbf{URI-Format}\\ 
         \hline
-        \texttt{\{serviceUri\}} & 
-        \texttt{\{rootUri\}/api/v1} \\
-
-        \texttt{\{userAccountUri\}} & 
-        \texttt{\{rootUri\}/about/\{userId\}} \\
-
-        \texttt{\{siteUri\}} & 
+        \texttt{sioc:Site} & 
         \texttt{\{rootUri\}} \\
 
-        \texttt{\{forumUri\}} & 
-        \texttt{\{rootUri\}/courses/\{courseId\}},
-        \texttt{\{rootUri\}/groups/\{groupId\}} \\
+        \texttt{sioc:Service} & 
+        \texttt{\{rootUri\}/api/v1} \\
 
-        \texttt{\{threadUri\}} & 
+        \texttt{sioc:UserAccount} & 
+        \texttt{\{rootUri\}/api/v1/users/\{userId\}/profile} \\
+
+        \texttt{sioc:Forum} & 
+        \texttt{\{rootUri\}/api/v1/courses/\{courseId\}},
+        \texttt{\{rootUri\}/api/v1/groups/\{groupId\}} \\
+
+        \texttt{sioc:Thread} & 
         \texttt{\{forumUri\}/discussion\_topics/\{topicId\}} \\
 
-        \texttt{\{postUri\}} & 
+        \texttt{sioc:Post} & 
         \texttt{\{threadUri\}/entries/\{entryId\}},
         \texttt{\{threadUri\}\#discussion\_topic} \\
     \end{tabular}
@@ -802,10 +814,10 @@ camelContext.start();
 
 % subsubsection ausgangssituation (end)
 
-\begin{wrapfigure}{r}{11cm}
+\begin{wrapfigure}{r}{10cm}
     \centering
     \includegraphics[
-        width=11cm,
+        width=10cm,
         keepaspectratio=true,]
     {assets/images/poc/poc_ausgangssituation}
     \caption{Proof of Concept: Ausgangssituation}
@@ -814,7 +826,7 @@ camelContext.start();
 
 Für einen Kurs werden mehrere Gruppenübungen über das Semester verteilt durchgeführt. Für jede Gruppenübung existiert in Canvas eine Diskussion in der über allgemeine Dinge zu jeweiligen diskutiert werden kann. In Facebook wird dafür die Kommentarfunktion von Beiträgen genutzt. 
 
-Vor den Start des Programm befinden sich in der Canvas Diskussion für die erste Gruppenübung schon zwei Beiträge, wie in der rechten Abbildung \ref{fig:poc_ausgangssituation} zu sehen ist. Der Benutzer Florian stellt eine Frage und diese wird von Max Hiwi mit einer Gegenfrage kommentiert. Der Beitrag auf Facebook ist dagegen noch leer.
+Vor den Start des Programm befinden sich in der Canvas Diskussion für die erste Gruppenübung schon zwei Beiträge, wie in der rechten Abbildung \ref{fig:poc_ausgangssituation} oben zu sehen ist. Der Benutzer Florian stellt eine Frage und diese wird von Max Hiwi mit einer Gegenfrage kommentiert. Der Beitrag auf Facebook ist dagegen noch leer (Rechte Abbildung unten).
 %(Hier nicht abgebildet).
 
 \wrapfill

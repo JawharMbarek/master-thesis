@@ -1,7 +1,0 @@
-<div style="text-align: center;">
-
-Creator: Florian Müller <a href="mailto:email.mufl@gmail.com">email.mufl@gmail.com</a><br>
-<br>
-Icons: Mark James <a href="http://www.famfamfam.com">www.famfamfam.com</a><br>
-<br>
-</div>

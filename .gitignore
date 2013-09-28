@@ -23,3 +23,6 @@ target/
 client_secrets.json
 local.properties
 user.properties
+
+# Projekt
+backup/

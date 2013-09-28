@@ -27,7 +27,7 @@ Für die Programmiersprache Java gibt es einige Bibliotheken mit denen RDF-Daten
 \subsection{Handy-URI-Templates} % (fold)
 \label{sub:handy_uri_templates}
 
-Bei der Arbeit mit RDF kommt man zwangsläufig um das Verarbeiten von URI nicht herum. Um diese Arbeit zu erleichtern wird bei der Implementierung die \emph{Handy-URI-Templates}\footnote{\url{https://github.com/damnhandy/Handy-URI-Templates}} eingesetzt. Diese Java-Bibliothek implementiert \emph{RFC6570}\footnote{\url{http://tools.ietf.org/html/rfc6570}} welches eine Sprache für URI-Vorlagen definiert. Zum erzeugen einer URI muss nur eine solche Vorlage definiert und mit der API Handy-URI-Templates mit Werten gefüllt werden. Die Vorlage \texttt{http://www.example.org\{?x,y\}} würde mit den Werten \texttt{x=42} und \texttt{y=23} die URI \texttt{http://www.example.org?x=42&y=23} entstehen lassen.
+Bei der Arbeit mit RDF kommt man zwangsläufig um das Verarbeiten von URI nicht herum. Um diese Arbeit zu erleichtern wird bei der Implementierung die \emph{Handy-URI-Templates}\footnote{\url{https://github.com/damnhandy/Handy-URI-Templates}} eingesetzt. Diese Java-Bibliothek implementiert \emph{RFC6570}\footnote{\url{http://tools.ietf.org/html/rfc6570}}, welches eine Sprache für URI-Vorlagen definiert. Zum erzeugen einer URI muss nur eine solche Vorlage definiert und mit der API Handy-URI-Templates mit Werten gefüllt werden. Die Vorlage \texttt{http://www.example.org\{?x,y\}} würde mit den Werten \texttt{x=42} und \texttt{y=23} die URI \texttt{http://www.example.org?x=42\&y=23} entstehen lassen.
 
 % subsection handy_uri_templates (end)
 
@@ -773,14 +773,15 @@ camelContext.start();
     \includegraphics[
         width=11cm,
         keepaspectratio=true,]
-    {assets/images/poc/0_canvas}
+    {assets/images/poc/poc_ausgangssituation}
     \caption{Proof of Concept: Ausgangssituation}
     \label{fig:poc_ausgangssituation}
 \end{wrapfigure} 
 
 Für einen Kurs werden mehrere Gruppenübungen über das Semester verteilt durchgeführt. Für jede Gruppenübung existiert in Canvas eine Diskussion in der über allgemeine Dinge zu jeweiligen diskutiert werden kann. In Facebook wird dafür die Kommentarfunktion von Beiträgen genutzt. 
 
-Vor den Start des Programm befinden sich in der Canvas Diskussion für die erste Gruppenübung schon zwei Beiträge, wie in der rechten Abbildung \ref{fig:poc_ausgangssituation} zu sehen ist. Der Benutzer Florian stellt eine Frage und diese wird von Max Hiwi mit einer Gegenfrage kommentiert. Der Beitrag auf Facebook ist dagegen noch leer (Hier nicht abgebildet).
+Vor den Start des Programm befinden sich in der Canvas Diskussion für die erste Gruppenübung schon zwei Beiträge, wie in der rechten Abbildung \ref{fig:poc_ausgangssituation} zu sehen ist. Der Benutzer Florian stellt eine Frage und diese wird von Max Hiwi mit einer Gegenfrage kommentiert. Der Beitrag auf Facebook ist dagegen noch leer.
+%(Hier nicht abgebildet).
 
 \wrapfill
 
@@ -826,7 +827,7 @@ Camel schaut nun anhand der definierten Routen, wohin diese Nachricht weitergele
     \includegraphics[
         width=11cm,
         keepaspectratio=true,]
-    {assets/images/poc/1_facebook_blurred}
+    {assets/images/poc/poc_facebook}
     \caption{Proof of Concept: Beiträge aus Canvas in Facebook}
     \label{fig:poc_beitraege_aus_canvas_in_facebook}
 \end{wrapfigure}
@@ -845,7 +846,7 @@ wie in Abbildung \ref{fig:poc_final_at_canas} ist zu sehen, das die Diskussion i
         keepaspectratio=true,
         clip=true,
         trim= 0 0 0 265]
-    {assets/images/poc/all_canvas}
+    {assets/images/poc/poc_canvas}
     \captionof{figure}{Proof of Concept: Finales Ergebnis in Canvas}
     \label{fig:poc_final_at_canas}
 \end{minipage}

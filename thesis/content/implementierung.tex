@@ -104,6 +104,8 @@ Bei der Synchronisation ist es ebenso wichtig die Struktur von Kommentaren beizu
 
 Hierzu wird nach dem Schreiben eines Beitrags mit der Eigenschaft \texttt{sioc:sibling} (Englisch für Geschwister) die URI zum original Beitrag beim geschriebenen Beitrag festgehalten. Taucht nun beim Schreiben ein Beitrag auf, der ein Kommentar auf den mit \texttt{sioc:sibling} gespeicherten Beitrags ist, kann dieser an die richtige Stelle als Kommentar geschrieben werden. Der RDF-Graph nach dem Synchronisieren ist in Abbildung zu sehen. 
 
+Leider funktioniert diese Methode erst wenn die entsprechenden Beziehungen vorhanden sind. Werden Beiträge von Seite A nach Seite B geschrieben funktioniert dies tadellos. Wird aber nun auf Seite B ein Kommentar auf einen dieser Beiträge geschrieben und zu Seite A geschickt, kann diese den Beitrag nicht richtig einfügen, da \texttt{sioc:reply\_of} natürlich auf einen Beitrag von Seite B zeigt und die \texttt{sioc:sibling} Informationen auf Seite A fehlen.
+
 % subsubsection rekonstruktion_der_kommentarstruktur (end)
 
 % subsection allgemeine_probleme (end)
@@ -187,22 +189,44 @@ Beiträge können nur als Kommentare geschrieben werden und dessen ID bekannt se
 \subsubsection{Moodle Mapping nach SIOC} % (fold)
 \label{ssub:moodle_mapping_nach_sioc}
 
-Da Beiträge in Moodle in einer Forumsstruktur geschrieben werden, ist das Mapping nach SIOC problemlos möglich. Die Struktur von Moodle besteht aus der Klasse \texttt{Forum} und kann der gleich lautenden Klasse aus SIOC zugeordnet werden. Jedes Moodle Forum besteht aus einzelnen Objekten der Klasse \texttt{ForumDiscussions} welche der Klasse Thread aus SIOC entsprechen. Letztendlich werden die Beiträge mit der Klasse \texttt{ForumPost} aus Moodle modelliert, welche der Klasse Post aus SIOC zugeordnet werden kann. 
+Die interne Struktur von Diskussionen in Moodle entspricht der klassischen eines Forums. Das Forum enthält alle Beiträge zu einen übergeordneten Thema. Einzelne Unterthemen teilen sich dann vom Forum in Threads auf, die dann die einzelnen Beiträge enthalten. Die Abbildung \ref{fig:moodle_sioc_mapping} zeigt die Zuordnung von Moodle- zu SIOC-Klassen. Das \texttt{Forum} in Moodle entspricht dem \texttt{sioc:Forum}, dieses enthält mehrere Objekte der Klasse \texttt{ForumDiscussion}, welche dem \texttt{sioc:Thread} zugeordnet werden können. Die Beiträge werden von Moodel mit der Klasse \texttt{ForumPost} modelliert und stimmen mit der SIOC-Klasse \texttt{sioc:Post} überein. Besonderheit bei den Beiträgen in Moodle ist, dass alle Beiträge in einem Thread entweder ein Kommentar auf den ersten Beitrag oder Kommentare auf diesen. 
 
-Die Tabelle \ref{tbl:moodle_sioc_uris} zeigt das Format der URIs, mit denen die Objekte der SIOC-Klassen in RDF benannt werden.
+\begin{minipage}{\textwidth}
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true]
+    {assets/images/mapping/moodle_sioc_mapping}
+    \captionof{figure}{Struktur von Moodle und Mapping nach SIOC}
+    \label{fig:moodle_sioc_mapping}
+\end{minipage}
+
+Für die Authentifizierung der Benutzerkonten werden für Moodle der entsprechende Benutzername und das Passwort benötigt. Diese werden als Credential für den \texttt{waa:Direct} Authentifizierungsmechanismus gespeichert, wie in der Abbildung \ref{fig:moodle_useraccount_mapping} zu sehen ist. Für die Servicebeschreibung mit der Klasse Service aus dem SIOC Services Modul ist die Angabe der Adresse der Moodleinstanz mit der Eigenschaft \texttt{siocs:serviceEndpoint} für die API äußerst wichtig. 
+
+\begin{minipage}{\textwidth}
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true]
+    {assets/images/mapping/moodle_useraccount_mapping}
+    \captionof{figure}{Authentifizierungsdaten für Moodle in SIOC}
+    \label{fig:moodle_useraccount_mapping}
+\end{minipage}
+
+Die URIs für die Objekte der SIOC-Klassen für Moodle entsprechen den URIs der graphischen Weboberfläche. Das genaue Format ist in der Tabelle \ref{tbl:moodle_sioc_uris} beschrieben. der Platzhalter \texttt{\{rootId\}} entspricht den Wert der Eigenschaft \texttt{siocs:serviceEndpoint} aus der Servicebeschreibung.
 
 \begin{table}[ht]
     \centering
     \caption{URI Format für SIOC-Objekte aus Moodle }
-    \begin{tabular}{l|p{11cm}}
+    \begin{tabular}{l|p{13cm}}
         \textbf{SIOC Klasse} & \textbf{URI-Format} \\ 
         \hline
-        Site & \texttt{\{rootUri\}}\\
-        Service & \texttt{\{rootUri\}/wspp}\\
-        UserAccount & \texttt{\{rootUri\}/user/profile.php?id=\{userId\}} \\
-        Forum & \texttt{\{rootUri\}/mod/forum/view.php?id=\{forumId\}} \\
-        Thread & \texttt{\{rootUri\}/mod/forum/discuss.php?d=\{discussionId\}} \\
-        Post & \texttt{\{rootUri\}/mod/forum/discuss.php?d=\{discussionId\}\#p\{postId\}} \\
+        \texttt{sioc:Site} & \texttt{\{rootUri\}}\\
+        \texttt{sioc:Service} & \texttt{\{rootUri\}/wspp}\\
+        \texttt{sioc:UserAccount} & \texttt{\{rootUri\}/user/profile.php?id=\{userId\}} \\
+        \texttt{sioc:Forum} & \texttt{\{rootUri\}/mod/forum/view.php?id=\{forumId\}} \\
+        \texttt{sioc:Thread} & \texttt{\{rootUri\}/mod/forum/discuss.php?d=\{discussionId\}} \\
+        \texttt{sioc:Post} & \texttt{\{rootUri\}/mod/forum/discuss.php?d=\{discussionId\}\#p\{postId\}} \\
     \end{tabular}
     \label{tbl:moodle_sioc_uris}
 \end{table}
@@ -252,17 +276,12 @@ Ebenfalls ungewöhnlich ist der Inhalt der Klasse \texttt{ForumDiscussionRecord}
 %     \item beim herunterladen einzelner Posts nicht immer erkennbar wo sie geschrieben wurden
 % \end{itemize}
 
-\todo[inline][Keine Schreiben mit fremden Benutzerkonnte auf die Wall eines Benutzers]
-
-% Removing ability to post to friends walls via Graph API 
-% We will remove the ability to post to a user's friends' walls via the Graph API. Specifically, posts against [user_id]/feed where [user_id] is different from the session user, or stream.publish calls where the target_id user is different from the session user, will fail. If you want to allow people to post to their friends' timelines, invoke the feed dialog. Stories that include friends via user mentions tagging or action tagging will show up on the friend’s timeline (assuming the friend approves the tag). For more info, see this blog post.
-
 \subsubsection{Facebook Graph API} % (fold)
 \label{ssub:facebook_graph_api}
 
 Die primäre Weg an die von Facebook gespeicherten Daten zu gelangen, geht über die \emph{Graph API}\footnote{Graph API Dokumentation:  \url{https://developers.facebook.com/docs/reference/api}}. Sie erlaubt einen REST basierten Zugriff auf den von Facebook sogenannten \emph{Social Graph} \cite{FacebookGraphAPI}. Dieser Graph enthält alle Beziehungen die ein Person auf Facebook zwischen anderen Personen, Gruppen, Seiten, Beiträge, Fotos und so weiter besitzt. Der einfachste Weg zum Kennenlernen der Graph API ist der \emph{Graph API Explorer}\footnote{Graph API Explorer: \url{https://developers.facebook.com/tools/explorer}}. Er ist eine Onlineanwendung REST-Abfragen an die Graph API schnell ausprobiert und das Ergebnis begutachtet werden kann.
 
-Jede Ressource im Social Graph von Facebook hat seine eigen, eindeutige ID. Wegen diesem Merkmal besteht eine URI für den REST-Zugriff nur aus \texttt{https://graph.facebook.com/} gefolgt von der ID und optionalen Parametern. Dies macht die Form der URIs zwar sehr einheitlich, aber es ist so unmöglich anhand der URI herauszufinden welcher Typ von Ressource sich dahinter befindet. Dies widerspricht zwar nicht die am Anfang von Kapitel \ref{cha:eigener_ansatz_social_online_community_connectors_socc_} beschreiben Prinzipien von Berners-Lee macht aber die spätere Verarbeitung etwas komplizierter. 
+Jede Ressource im Social Graph von Facebook hat seine eigene, eindeutige ID. Die URI für den REST-Zugriff auf eine Ressource besteht aus \texttt{https://graph.facebook.com/} gefolgt von der ID und optionalen Parametern. Dies macht die Form der URIs zwar sehr einheitlich, aber es ist so unmöglich anhand der URI herauszufinden welcher Typ von Ressource sich dahinter befindet. Dies widerspricht zwar nicht die am Anfang von Kapitel \ref{cha:eigener_ansatz_social_online_community_connectors_socc_} beschreiben Prinzipien von Berners-Lee macht aber die spätere Verarbeitung etwas komplizierter. 
 
 \paragraph{Graph API Datenformat} % (fold)
 \label{par:graph_api_datenformat}
@@ -295,7 +314,7 @@ Jeder Accesstoken hat nur Zugriff auf bestimmte Bereiche der Graph API die beim 
     \label{tbl:socc_facebook_persmissons}
 \end{table}
 
-Um nun einen Accesstoken für einen Benutzer zu Erstellen muss in einen Internetbrowser folgende URI aufgerufen werden:
+Um nun einen Accesstoken für einen Benutzer zu Erstellen, muss in einen Internetbrowser folgende URI eingegeben werden:
 
 \begin{lstlisting}[
     caption={Facebook Login: OAuth URI}\label{lst:fblogin__oauth_uri},
@@ -303,7 +322,7 @@ Um nun einen Accesstoken für einen Benutzer zu Erstellen muss in einen Internet
 https://www.facebook.com/dialog/oauth?client_id={appId}   &redirect_uri={redirectUri}&responseType=code&scope={scopeList}
 \end{lstlisting}
 
-Anstatt den Platzhalter \texttt{\{appId\}} muss dann natürlich die oben angesprochene ClientID beziehungsweise App ID eingetragen werden. Mit dem Parameter \texttt{redirect\_uri} muss bei dieser URI eine Adresse angegeben werden, auf die der Internetbrowser nach der Anfrage mit der Antwort umgeleitet wird. Dies kann die Adresse eines externen Webservers oder die eines Webservers den die Anwendung nur für diesen Zweck laufen lässt. Einen solchen extra Webserver könnte man mit der Jetty\footnote{Jetty Webserver: \url{http://www.eclipse.org/jetty}} Bibliothek erstellen und würde dann als \texttt{redirect\_uri} die URI \texttt{http://localhost:{port}/} angeben. Der Parameter \texttt{responseType=code} besagt, dass diese Anfrage einen Code zurück liefert mit dem dann der eigentliche AccessToken geholt werden kann. Dies ist der Standardweg. Mit dem letzten Parameter \texttt{scope} können dann noch die oben erwähnten Permissons übergeben werden, wobei alle durch eine Komma getrennt hintereinander zu schreiben sind. Wird dann diese URI im Browser aufgerufen, wird er danach bei Erfolg auf die Adresse \texttt{{redirectUri}?code={code}} umgeleitet. Der Platzhalter \texttt{\{code\}} würde dann einen beliebigen Code darstellen, mit dem über eine weitere Anfrage mit der folgenden URI der Accesstoken geholt werden kann:
+Anstatt den Platzhalter \texttt{\{appId\}} muss dann die oben angesprochene ClientID beziehungsweise App ID eingetragen werden. Mit dem Parameter \texttt{redirect\_uri} muss bei dieser URI eine Adresse angegeben werden, auf die der Internetbrowser nach der Anfrage mit der Antwort umgeleitet wird. Dies kann die Adresse eines externen Webservers oder die eines Webservers den die Anwendung nur für diesen Zweck laufen lässt. Einen solchen extra Webserver könnte man mit der Jetty\footnote{Jetty Webserver: \url{http://www.eclipse.org/jetty}} Bibliothek erstellen und würde dann als \texttt{redirect\_uri} die URI \texttt{http://localhost:{port}/} angeben. Der Parameter \texttt{responseType=code} besagt, dass diese Anfrage einen Code zurück liefert mit dem dann der eigentliche AccessToken geholt werden kann. Dies ist der Standardweg. Mit dem letzten Parameter \texttt{scope} können dann noch die oben erwähnten Permissons übergeben werden, wobei alle durch eine Komma getrennt hintereinander zu schreiben sind. Wird dann diese URI im Browser aufgerufen, wird er danach bei Erfolg auf die Adresse \texttt{{redirectUri}?code={code}} umgeleitet. Der Platzhalter \texttt{\{code\}} würde dann einen beliebigen Code darstellen, mit dem über eine weitere Anfrage mit der folgenden URI der Accesstoken geholt werden kann:
 
 \begin{lstlisting}[
     caption={Facebook Login: URI für den Tausch von Code genen Accesstoken}\label{lst:fblogin_tausch_code_gegen_accessToken},
@@ -330,7 +349,7 @@ Die Werte für die einzelnen Parameter dürften nun offensichtlich sein. Als Ant
 \subsubsection{RestFB} % (fold)
 \label{ssub:restfb}
 
-Facebook selber bietet direkt keine API für die Verwendung der Graph API für Desktopprogramme an. Speziell für die Programmiersprache Java existiert von Facebook nur eine API für das mobile Betriebssystem Android\footnote{Facebook Android API: \url{https://developers.facebook.com/docs/android/}}. Als Alternative dazu kann die \emph{RestFB}\footnote{RestFB Dokumentation: \url{ http://restfb.com/}} Java-Bibliothek von Mark Allen verwendet werden. RestFB bietet dabei die Möglichkeit von Java aus die Graph API von Facebook zu benutzen. Eine Abfrage könnte wie in Listing \ref{lst:restfb_beispielprogramm} aussehen.
+Facebook selber bietet direkt keine API für die Verwendung der Graph API in Desktopprogramme an. Speziell für die Programmiersprache Java existiert von Facebook nur eine API für das mobile Betriebssystem Android\footnote{\url{https://developers.facebook.com/docs/android/}}. Als Alternative dazu kann die \emph{RestFB}\footnote{\url{ http://restfb.com/}} Java-Bibliothek von Mark Allen verwendet werden. RestFB bietet dabei die Möglichkeit von Java aus die Graph API von Facebook zu benutzen. Eine Abfrage könnte wie in Listing \ref{lst:restfb_beispielprogramm} aussehen.
 
 \begin{lstlisting}[
     caption={RestFB Beispielprogramm}\label{lst:restfb_beispielprogramm},
@@ -359,12 +378,40 @@ FacebookType result = client.publish(
         Parameter.with("message", "Tolles Wetter heute \o/"));
 \end{lstlisting}
 
-Beiträge können bei Facebook nur an Ressourcen geschrieben werden die eine \enquote{feed} oder \enquote{comment} Connection haben. In Listing \ref{lst:restfb_write_post} ist zu sehen wie ein neuer Beitrag auf die Wall eines Benutzers geschrieben werden kann. Zu diesem Zweck enthält der Client aus RestFB die Methode \texttt{publish(\dots)} zum Schreiben von Daten nach Ressourcen. Das erste Argument ist die Zielressource, die in Zeile 2 aus der ID des Benutzers gefolgt von einen \enquote{/} und dem Namen der Connection, hier \enquote{feed}. Da \texttt{publish(\dots)} bei Erfolgt die ID des erstellten Beitrags zurückliefert, wird als Klasse für das erwartete Ergebnis die Basisklasse \texttt{FacebookType} angegeben. Als letztes muss noch der Inhalt des Beitrags festgelegt werden. Dies geschieht nicht nicht im JSON-Format sondern wird als Parameter in der URI für die HTTP-POST-Operation angegeben. RestFB bietet dazu die Klasse \texttt{Parameter} an, mit der ein Parameter mit den Namen \enquote{message} und dem Inhalt als Wert erzeugt wird.
+Beiträge können bei Facebook nur an Ressourcen geschrieben werden die eine \enquote{feed} oder \enquote{comment} Connection haben. In Listing \ref{lst:restfb_write_post} ist zu sehen wie ein neuer Beitrag auf die Wall eines Benutzers geschrieben werden kann. Zu diesem Zweck enthält der Client aus RestFB die Methode \texttt{publish(\dots)} zum Schreiben von Daten nach Ressourcen. Das erste Argument ist die Zielressource, die in Zeile 2 aus der ID des Benutzers gefolgt von einen \enquote{/} und dem Namen der Connection, hier \enquote{feed}. Da \texttt{publish(\dots)} bei Erfolgt die ID des erstellten Beitrags zurückliefert, wird als Klasse für das erwartete Ergebnis die Basisklasse \texttt{FacebookType} angegeben. Als letztes muss noch der Inhalt des Beitrags festgelegt werden. Dies geschieht nicht nicht im JSON-Format sondern wird als Parameter in der URI für die HTTP-POST-Operation angegeben. RestFB bietet dazu die Klasse \texttt{Parameter} an, mit der ein Parameter \enquote{message} und dem Inhalt des Beitrags als Wert erzeugt wird.
+
+Facebook erlaubt mir der Graph API das schreiben von Beitragen auf die Wall eines Benutzers nur, wenn das beim schreiben das verwendete Benutzerkonto mit diesem übereinstimmt. Also das stellvertretende Schreiben auf eine fremde Wall ist nicht Möglich. Diese Einschränkung gilt aber nicht für Walls von Facebook-Gruppen.
 
 % subsubsection restfb (end)
 
 \subsubsection{Facebook Mapping nach SIOC} % (fold)
 \label{ssub:facebook_mapping_nach_sioc}
+
+Die Struktur von Facebook baut Walls, oder auch Pinnwand, von Benutzer, Gruppen und Facebook-Seiten auf. Darin können Beiträge geschrieben und diese kommentiert werden. Solch eine Wall entspricht der SIOC-Klasse \texttt{sioc:Forum}. Diese enthält aber keine weiteren Threads, sondern die Beiträge und Kommentare als \texttt{sioc:Post} Objekte. Abgesehen von Facebook-Seiten können Kommentare in Facebook zum aktuellen Zeitpunkt nicht kommentiert werden.Abbildung \ref{fig:facebook_sioc_mapping} zeigt dies noch einmal graphisch mit einer Gruppen Wall als Beispiel.
+
+\begin{minipage}{\textwidth}
+    \centering
+    \includegraphics[
+        width=0.8\textwidth,
+        keepaspectratio=true]
+    {assets/images/mapping/facebook_sioc_mapping}
+    \captionof{figure}{Struktur von Facebook und Mapping nach SIOC}
+    \label{fig:facebook_sioc_mapping}
+\end{minipage}
+
+Wie weiter oben erklärt, verwendet Facebook für die Authentifizierung in der Graph API OAuth 2.0. Die Benutzerkonten, die für das stellvertretende Schreiben verwendet werden sollen müssen also einen Accesstoken für das Konto enthalten. Das gleiche gilt für die Servicebeschreibung für die Graph API mit der \texttt{siocs:Service} Klasse. Die Eigenschaft \texttt{siocsa:serviceAuthentication} zeigen auf ein Objekt der Klasse \texttt{waa:OAuth} das die ClientID und das ClientSecret enthält, wie es in der Abbildung \ref{fig:facebook_useraccount_mapping} zu sehen ist.
+
+\begin{minipage}{\textwidth}
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true]
+    {assets/images/mapping/facebook_useraccount_mapping}
+    \captionof{figure}{ Authentifizierungsdaten für Facebook in SIOC}
+    \label{fig:facebook_useraccount_mapping}
+\end{minipage}
+
+Die in RDF verwendeten URIs für die Klassen \texttt{sioc:Post} und \texttt{sioc:UserAccount} von Facebook bekommen das Format \\texttt{https://graph.facebook.com/{facebookId}}, wobei \texttt{\{facebookId\}} der ID der Ressource entspricht. Ausnahme bildete die URIs für die Klasse \texttt{sioc:Forum}. Da die ID eines Benutzers sowohl für sein Konto als auch für seine Wall stehen würden, wird der URI für die Wall noch der Pfad \enquote{\texttt{/feed}} angehängt. Die URI \texttt{https://graph.facebook.com/{facebookId/feed}} ist dann immer noch gültig und liefert von der Graph API die enthaltenen Beiträge zurück. Als URI für die Klasse \texttt{sioc:Site} wurde \enquote{\texttt{https://www.facebook.com}} und für \texttt{siocs:Service} wurde \texttt{https://graph.facebook.com} genommen.
 
 % subsubsection facebook_mapping_nach_sioc (end)
 
@@ -396,7 +443,7 @@ Wie im Abschnitt über die Graph API schon beschrieben, ist es nahezu unmöglich
 \subsubsection{Google+ API} % (fold)
 \label{ssub:google_api}
 
-Die API von Google für den Zugriff auf sein soziales Online-Netzwerk Google+\footnote{Google+ API Dokumentation: \url{. https://developers.google.com/+/api/}} baut wie viele auf andere auf den REST-Prinzipien auf. Die URIs für die Anfragen fangen mit \texttt{https://www.googleapis.com/plus/v1/} an und danach folgt der Pfad zu den REssourcen und etwaige Parameter. Die für hier wichtigsten Parameter sind \texttt{access\_token} zum Angeben eines OAuth 2.0 Accesstoken und \texttt{fields} mit dem nur die dort angegebenen Datenfelder im Ergebnis zurück geliefert werden. Als Datenformat wird, wie schon bei Facebook, JSON eingesetzt, aber mit einen von Facebook vollkommen unterschiedlichen Aufbau. Activitys und Comments bestehen im Grunde aus drei Teilen:
+Die API von Google für den Zugriff auf sein soziales Online-Netzwerk Google+\footnote{\url{. https://developers.google.com/+/api/}} baut wie viele auf andere auf den REST-Prinzipien auf. Die URIs für die Anfragen fangen mit \texttt{https://www.googleapis.com/plus/v1/} an und danach folgt der Pfad zu den REssourcen und etwaige Parameter. Die für hier wichtigsten Parameter sind \texttt{access\_token} zum Angeben eines OAuth 2.0 Accesstoken und \texttt{fields} mit dem nur die dort angegebenen Datenfelder im Ergebnis zurück geliefert werden. Als Datenformat wird, wie schon bei Facebook, JSON eingesetzt, aber mit einen von Facebook vollkommen unterschiedlichen Aufbau. Activitys und Comments bestehen im Grunde aus drei Teilen:
 
 \begin{description}
     \item[\textbf{Actor:}] Der Actor-Eintragt sagt über die Ressource aus von wem sie erstellt wurde. 
@@ -464,19 +511,6 @@ Leider ist es mit der aktuellen Version der Google+ API nur möglich auf Ressour
 \subsubsection{Google+ Mapping nach SIOC} % (fold)
 \label{ssub:google_mapping_nach_sioc}
 
-\begin{table}[ht]
-    \centering
-    \begin{tabular}{l|p{11cm}}
-        \textbf{SIOC Klasse} & \textbf{URI-Format} \\ 
-        \hline
-        Site & \\
-        Service & \\
-        UserAccount & \\
-        Forum & \\
-        Thread & \\
-        Post & \\
-    \end{tabular}
-\end{table}
 
 % subsubsection google_mapping_nach_sioc (end)
 

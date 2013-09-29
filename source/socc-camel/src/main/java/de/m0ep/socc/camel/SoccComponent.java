@@ -22,66 +22,67 @@ import de.m0ep.socc.core.connector.ConnectorFactory;
 import de.m0ep.socc.core.connector.IConnector;
 
 public class SoccComponent extends DefaultComponent {
-	private static final Logger LOG = LoggerFactory.getLogger( SoccComponent.class );
+    private static final Logger LOG = LoggerFactory.getLogger( SoccComponent.class );
 
-	private ISoccContext soccContext;
+    private ISoccContext soccContext;
 
-	public SoccComponent( final CamelContext camelContext, final ISoccContext soccContext ) {
-		super( camelContext );
-		setSoccContext( soccContext );
-	}
+    public SoccComponent( final CamelContext camelContext, final ISoccContext soccContext ) {
+        super( camelContext );
+        setSoccContext( soccContext );
+    }
 
-	public ISoccContext getSoccContext() {
-		return soccContext;
-	}
+    public ISoccContext getSoccContext() {
+        return soccContext;
+    }
 
-	public void setSoccContext( final ISoccContext soccContext ) {
-		Preconditions.checkNotNull( soccContext,
-		        "Required parameter soccContext must be specified." );
-		this.soccContext = soccContext;
-	}
+    public void setSoccContext( final ISoccContext soccContext ) {
+        Preconditions.checkNotNull( soccContext,
+                "Required parameter soccContext must be specified." );
+        this.soccContext = soccContext;
+    }
 
-	@Override
-	protected Endpoint createEndpoint( final String uri, final String remaining,
-	        Map<String, Object> parameters )
-	        throws Exception {
-		LOG.debug( "create endpoint: uri={} remaining={}", uri, remaining );
+    @Override
+    protected Endpoint createEndpoint( final String uri, final String remaining,
+            Map<String, Object> parameters )
+            throws Exception {
+        LOG.debug( "create endpoint: uri={} remaining={}", uri, remaining );
 
-		URI remainingUri = null;
-		try {
-			remainingUri = new URI( remaining );
-		} catch ( URISyntaxException e ) {
-			LOG.debug( "Invalid uri: was {}", uri );
-			Throwables.propagateIfPossible( e, URISyntaxException.class );
-		}
+        URI remainingUri = null;
+        try {
+            remainingUri = new URI( remaining );
+        } catch ( URISyntaxException e ) {
+            LOG.debug( "Invalid uri: was {}", uri );
+            Throwables.propagateIfPossible( e, URISyntaxException.class );
+        }
 
-		String path = remainingUri.getPath();
-		if ( null == path ) {
-			throw new CamelException( "invalid endpointUri" );
-		}
+        String path = remainingUri.getPath();
+        if ( null == path ) {
+            throw new CamelException( "invalid endpointUri" );
+        }
 
-		List<String> pathElements = splitUriPath( path );
-		String connectorId = pathElements.remove( 0 );
-		IConnector connector = ConnectorFactory.getInstance().createConnector(
-		        getSoccContext(),
-		        connectorId );
-		if ( !connector.isInitialized() ) {
-			connector.initialize();
-		}
+        List<String> pathElements = splitUriPath( path );
+        String connectorId = pathElements.remove( 0 );
+        IConnector connector = ConnectorFactory.getInstance().createConnector(
+                getSoccContext(),
+                connectorId );
 
-		SoccEndpoint endpoint = new SoccEndpoint( uri, this, connector );
-		endpoint.configureProperties( parameters );
+        if ( !connector.isInitialized() ) {
+            connector.initialize();
+        }
 
-		return endpoint;
-	}
+        SoccEndpoint endpoint = new SoccEndpoint( uri, this, connector );
+        endpoint.configureProperties( parameters );
 
-	private List<String> splitUriPath( final String path ) {
-		Iterable<String> iter = Splitter.on( "/" )
-		        .omitEmptyStrings()
-		        .trimResults()
-		        .split( path );
+        return endpoint;
+    }
 
-		return Lists.newArrayList( iter );
-	}
+    private List<String> splitUriPath( final String path ) {
+        Iterable<String> iter = Splitter.on( "/" )
+                .omitEmptyStrings()
+                .trimResults()
+                .split( path );
+
+        return Lists.newArrayList( iter );
+    }
 
 }

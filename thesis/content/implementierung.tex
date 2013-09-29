@@ -10,26 +10,13 @@
 
 An dieser Stelle soll noch kurz auf zusätzliche Programm und Bibliotheken eingegangen werden, die für die Entwicklung der einzelnen Connectoren hilfreich waren. 
 
-\subsection{Apache Maven} % (fold)
-\label{sub:apache_maven}
+\begin{description}
+    \item[\textbf{Apache Maven:}] Für die Entwicklung der Programme und Bibliotheken dieser Arbeit wurde das Buil-Management Programm \texttt{Maven}\footnote{http://maven.apache.org/} von Apache eingesetzt. Mit diesem ist es auf einfache Art möglich Java-Programme zu verwalten und zu erstellen. So ist nur mit einer einzigen XML-Datei (\texttt{pom.xml}) die Abhängigkeiten festzulegen, das Programm zu kompilieren, zu testen und es auszuliefern. Maven schreibt eine feste Ordnerstruktur für ein Projekt vor wie der Produktivquellcode, dafür nötige Ressource (Bilder, Teste,\dots) und der Code zum Testen geordnet werden sollen. Die Abhängigkeiten werden automatisch aus zentralen Repositories heruntergeladen und ins Projekt eingebunden. So muss dies nicht immer von Handgeschehen und spart so Arbeit.
 
-Für die Entwicklung der Programme und Bibliotheken dieser Arbeit wurde das Buil-Management Programm \texttt{Maven}\footnote{http://maven.apache.org/} von Apache eingesetzt. Mit diesem ist es auf einfache Art möglich Java-Programme zu verwalten und zu erstellen. So ist nur mit einer einzigen XML-Datei (\texttt{pom.xml}) die Abhängigkeiten festzulegen, das Programm zu kompilieren, zu testen und es auszuliefern. Maven schreibt eine feste Ordnerstruktur für ein Projekt vor wie der Produktivquellcode, dafür nötige Ressource (Bilder, Teste,\dots) und der Code zum Testen geordnet werden sollen. Die Abhängigkeiten werden automatisch aus zentralen Repositories heruntergeladen und ins Projekt eingebunden. So muss dies nicht immer von Handgeschehen und spart so Arbeit.
+    \item[\textbf{RDF2Go:}] Für die Programmiersprache Java gibt es einige Bibliotheken mit denen RDF-Daten verarbeitet werden können. Wie zum Beispiel \emph{Sesame}\footnote{\url{http://www.openrdf.org}}, \emph{Apache Jena}\footnote{\url{http://jena.apache.org}} oder \emph{JRDF}\footnote{\url{http://jrdf.sourceforge.net/}}. Jede dieser Bibliotheken bietet einen Triplestore und eine API für das Arbeiten mit RDF-Triples. Stellt sich nur die Frage welche man auszuwählen soll? Einen Ausweg aus dieser Misere bietet \emph{RDF2Go}\footnote{\url{http://semanticweb.org/wiki/RDF2Go}}. RDF2Go abstrahiert andere Triplestores über eine einheitliche API und erlaubt es den Triplestore später wechseln zu können. Dazu muss für den Triplestore nur ein Adapter an RDF2Go implementiert werden, welche aktuell für Sesame und Apache Jena. Für RDF2Go existiert auch ein Programm RDFReactor. Mit ihm lassen sich aus Ontologien in RDFS und OWL Java-Klassen generieren mit denen statt mit Triple gearbeitet werden kann. 
 
-% subsection apache_maven (end)
-
-\subsection{RDF2Go} % (fold)
-\label{sub:rdf2go}
-
-Für die Programmiersprache Java gibt es einige Bibliotheken mit denen RDF-Daten verarbeitet werden können. Wie zum Beispiel \emph{Sesame}\footnote{\url{http://www.openrdf.org}}, \emph{Apache Jena}\footnote{\url{http://jena.apache.org}} oder \emph{JRDF}\footnote{\url{http://jrdf.sourceforge.net/}}. Jede dieser Bibliotheken bietet einen Triplestore und eine API für das Arbeiten mit RDF-Triples. Stellt sich nur die Frage welche man auszuwählen soll? Einen Ausweg aus dieser Misere bietet \emph{RDF2Go}\footnote{\url{http://semanticweb.org/wiki/RDF2Go}}. RDF2Go abstrahiert andere Triplestores über eine einheitliche API und erlaubt es den Triplestore später wechseln zu können. Dazu muss für den Triplestore nur ein Adapter an RDF2Go implementiert werden, welche aktuell für Sesame und Apache Jena. Für RDF2Go existiert auch ein Programm RDFReactor. Mit ihm lassen sich aus Ontologien in RDFS und OWL Java-Klassen generieren mit denen statt mit Triple gearbeitet werden kann. 
-
-% subsection rdf2go (end)
-
-\subsection{Handy-URI-Templates} % (fold)
-\label{sub:handy_uri_templates}
-
-Bei der Arbeit mit RDF kommt man zwangsläufig um das Verarbeiten von URI nicht herum. Um diese Arbeit zu erleichtern wird bei der Implementierung die \emph{Handy-URI-Templates}\footnote{\url{https://github.com/damnhandy/Handy-URI-Templates}} eingesetzt. Diese Java-Bibliothek implementiert \emph{RFC6570}\footnote{\url{http://tools.ietf.org/html/rfc6570}}, welches eine Sprache für URI-Vorlagen definiert. Zum erzeugen einer URI muss nur eine solche Vorlage definiert und mit der API Handy-URI-Templates mit Werten gefüllt werden. Die Vorlage \texttt{http://www.example.org\{?x,y\}} würde mit den Werten \texttt{x=42} und \texttt{y=23} die URI \texttt{http://www.example.org?x=42\&y=23} entstehen lassen.
-
-% subsection handy_uri_templates (end)
+    \item[\textbf{Handy-URI-Templates:}] Bei der Arbeit mit RDF kommt man zwangsläufig um das Verarbeiten von URI nicht herum. Um diese Arbeit zu erleichtern wird bei der Implementierung die \emph{Handy-URI-Templates}\footnote{\url{https://github.com/damnhandy/Handy-URI-Templates}} eingesetzt. Diese Java-Bibliothek implementiert \emph{RFC6570}\footnote{\url{http://tools.ietf.org/html/rfc6570}}, welches eine Sprache für URI-Vorlagen definiert. Zum erzeugen einer URI muss nur eine solche Vorlage definiert und mit der API Handy-URI-Templates mit Werten gefüllt werden. Die Vorlage \texttt{http://www.example.org\{?x,y\}} würde mit den Werten \texttt{x=42} und \texttt{y=23} die URI \texttt{http://www.example.org?x=42\&y=23} entstehen lassen.
+\end{description}
 
 % section verwendete_bibliotheken_und_programme (end)
 
@@ -840,6 +827,13 @@ Vorteil bei der Youtube Data API v2 ist die Basis von Atom als Datenformat. So s
 % subsection youtube_connector (end)
 
 % section implementierung_einiger_connectoren (end)
+
+\section{Implementierung von SOCC-Camel} % (fold)
+\label{sec:implementierung_von_socc_camel}
+
+
+
+% section implementierung_von_socc_camel (end)
 
 \section{Proof of Concept} % (fold)
 \label{sec:proof_of_concept}

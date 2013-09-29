@@ -30,7 +30,7 @@ URIs sind also das wichtigste Element mit denen SOCC arbeitet. Soll zum Beispiel
 \end{figure}
 
 
-Intern besteht ein Connector aus drei Teilkomponenten die zum Einen für das Lesen (\emph{PostReader}) und Schreiben (\emph{PostWriter}) von Beiträgen verwendet werden, zum Andren aus einen \emph{StructureReader} der für das auslesen der Struktur der einzelnen Diskussionen verantwortlich ist. Eine genaue Beschreibung dieser Komponenten folgt in Abschnitt \ref{sec:design_eines_connectors}.
+Intern besteht ein Connector aus drei Komponenten die zum Einen für das Lesen (\emph{PostReader}) und Schreiben (\emph{PostWriter}) von Beiträgen verwendet werden, zum Andren aus einen \emph{StructureReader} der für das auslesen der Struktur der einzelnen Diskussionen verantwortlich ist. Eine genaue Beschreibung dieser Komponenten folgt in Abschnitt \ref{sec:design_eines_connectors}.
 
 Jeder Connector hat Zugriff auf eine als \emph{Triplestore} bezeichnete Datenbank in der RDF-Triple gespeichert und unter anderen mit SPARQL abgefragt werden. Der Connector benutzt diesen Triplesore als Speicher in dem seine Konfigurationsdaten lagern, aber auch zusätzliche Daten die er von Außerhalb, wie eine Liste von Benutzerkonten, benötigt. Er wird aber auch benutzt um Daten zu speichern die während des Betriebes anfallen, da sie so irgendwann wieder verwendet werden können ohne sie erneut zusammenzusuchen. Zum Beispiel die Daten über die Struktur der verwendeten SOC.
 
@@ -203,7 +203,21 @@ Das Listing \ref{lst:acl_beispiel} zeigt ein Beispiel, wie eine Autorisierung mi
 \section{Design eines Connectors} % (fold)
 \label{sec:design_eines_connectors}
 
-Dieser Abschnitt widmet sich den internen Aufbau eines Connectors und beschreibt alle Komponenten aus denen er besteht und wie sie zusammenarbeiten. Im einzelnen sind dies der \texttt{SOCC Context}, die \emph{AccessControl}, der \texttt{ClientManager}, der \emph{StructureReader}, der \emph{PostReader} und der \emph{PostWriter}. Das vollständige UML Klassendiagramm mit allen Zusammenhängen ist in Abbildung \ref{fig:connector_uml_classdiagram} zu sehen.
+\begin{wrapfigure}{r}{9cm}
+    \centering
+    \includegraphics[
+        width=9cm,
+        keepaspectratio=true,
+        clip=true,
+        trim= 246 258 259 8]
+    {assets/images/socc_uml_classdiagram}
+    \caption{PostReader}
+    \label{fig:uml_connector_interface}
+\end{wrapfigure}
+
+Die rechte Abbildung \ref{fig:uml_connector_interface} zeigt die Schnittstelle \texttt{IConnector} gegen die ein Connector implementiert werden muss. Sie bietet Zugriff auf die Eigenschaften die mit der Klasse ConnectorConfig für die Konfiguration eines Connectors im Triplestore bereitgestellt werden. Diese Schnittstelle definiert Methoden, um auf die einzelnen Komponenten zum Lesen der Seitenstruktur mit dem StructureReader sowie zum Lesen und Schreiben von Beiträgen mit PostReader und PostWriter zuzugreifen. Zuzüglich werden noch Methoden für den Zugriff Hilfskomponenten wie den \emph{SOCC Context}, \emph{AccessControl} und \emph{ClientManger} bereitgestellt. Das UML Klassendiagramm in Abbildung \ref{fig:connector_uml_classdiagram} zeigt die Beziehung zwischen den Connector und den Komponenten aus dem er besteht, welche in den folgenden Unterabschnitten noch weiter erklärt werden.
+
+Für den Lebenszyklus eines Connectors sind noch die Methoden \texttt{initialize()} und \texttt{shutdown()} wichtig. Nach dem Erzeugen eines Connectors muss die Methode \texttt{initialize()} aufgerufen, um noch mögliche Vorarbeiten durchzuführen bevor der Connector genutzt werden kann. Ob eine Connector schon initialisiert wurde, kann mit der Methode \texttt{isInitialized()} überprüft werden. Bevor eine Connector gelöscht werden soll, sollte nicht die Methode \texttt{shutdown()} aufgerufen werden. Sie dient dazu ob verwendete Ressourcen wieder freizugeben.
 
 \begin{minipage}{\textwidth}
     \centering

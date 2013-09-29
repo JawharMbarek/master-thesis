@@ -282,12 +282,12 @@ public class FacebookPostReader extends
 			for ( List<JsonObject> objectList : postFeed ) {
 				for ( JsonObject object : objectList ) {
 					if ( LOG.isDebugEnabled() ) {
-						LOG.debug( "Read post '{}' from {}:\n{}",
+						LOG.debug( "Read post id='{}' from {}:\n{}",
 						        object.get( FacebookSiocUtils.Fields.ID ),
 						        sourceContainer,
 						        object.toString( 2 ) );
 					} else {
-						LOG.info( "Read post '{}' from {}.",
+						LOG.info( "Read post id='{}' from {}.",
 						        object.get( FacebookSiocUtils.Fields.ID ),
 						        sourceContainer );
 					}
@@ -312,7 +312,7 @@ public class FacebookPostReader extends
 								        post.getId(),
 								        RdfUtils.resourceToString( post, Syntax.Turtle ) );
 							} else {
-								LOG.info( "Converted entry '{}' to SIOC {}",
+								LOG.info( "Converted post '{}' to SIOC {}",
 								        post.getId(),
 								        post );
 							}
@@ -338,7 +338,8 @@ public class FacebookPostReader extends
 							        since,
 							        Math.max( -1, limit - result.size() ) ) );
 						} else {
-							LOG.debug( "Skip post Facebookpost, it's to old." );
+							LOG.debug( "Skip post id='{}', it's to old.", object
+							        .get( FacebookSiocUtils.Fields.ID ) );
 						}
 					} else {
 						return result;

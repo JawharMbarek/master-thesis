@@ -172,6 +172,21 @@ public class FacebookPostWriter extends
 		        getConnector(),
 		        post );
 
+		// check if the creator has an UserAccount and a corresponding Person 
+		// in the connectors triplestore, then check if we can write with the client
+		if ( null != creatorAccount
+		        && UserAccount.hasInstance( getModel(), creatorAccount )
+		        && creatorAccount.hasAccountOf() ) {
+			// skip post, if we have no write permission
+			if ( !SoccUtils.haveWriteAccess(
+			        getConnector(),
+			        creatorAccount,
+			        targetContainer ) ) {
+				LOG.info( "Skip writing post {}, have no writing permission.", post );
+				return;
+			}
+		}
+
 		FacebookClientWrapper client = PostWriterUtils.getClientOfCreator(
 		        getConnector(),
 		        creatorAccount );
@@ -225,7 +240,7 @@ public class FacebookPostWriter extends
 				        resultPost );
 			}
 		} else {
-			LOG.warn( "Failed write post to {}, result was null or has no id",
+			LOG.warn( "Failed to write post to {}, result was null or has no id",
 			        getServiceEndpoint() );
 		}
 	}
@@ -239,6 +254,21 @@ public class FacebookPostWriter extends
 		UserAccount creatorAccount = PostWriterUtils.getCreatorUserAccount(
 		        getConnector(),
 		        post );
+
+		// check if the creator has an UserAccount and a corresponding Person 
+		// in the connectors triplestore, then check if we can write with the client
+		if ( null != creatorAccount
+		        && UserAccount.hasInstance( getModel(), creatorAccount )
+		        && creatorAccount.hasAccountOf() ) {
+			// skip post, if we have no write permission
+			if ( !SoccUtils.haveWriteAccess(
+			        getConnector(),
+			        creatorAccount,
+			        targetPost.getContainer() ) ) {
+				LOG.info( "Skip writing post {}, have no writing permission.", post );
+				return;
+			}
+		}
 
 		FacebookClientWrapper client = PostWriterUtils.getClientOfCreator(
 		        getConnector(),
@@ -302,12 +332,12 @@ public class FacebookPostWriter extends
 				        getServiceEndpoint(),
 				        RdfUtils.resourceToString( resultPost, Syntax.Turtle ) );
 			} else {
-				LOG.info( "Writing a post to {} was successful '{}'",
+				LOG.info( "Writing a post to {} was successful: '{}'",
 				        getServiceEndpoint(),
 				        resultPost );
 			}
 		} else {
-			LOG.warn( "Failed write post to {}, result was null",
+			LOG.warn( "Failed to write post to {}, result was null",
 			        getServiceEndpoint() );
 		}
 	}

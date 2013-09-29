@@ -174,9 +174,9 @@ Da für viele Menschen im Internet ihre Privatsphäre wichtig ist und sie nicht 
 \end{figure}
 
 
-Zugriffsrechte für Ressourcen werden in dieser ACL mit der Klasse \texttt{acl:Access} modelliert. Von dieser Klasse werden einzelne Rechte wie \texttt{acl:Read} für das Lesen und \texttt{acl:Write} für das Schreiben abgeleitet. Nebenbei existieren noch Ableitungen \texttt{acl:Control} zum Ausführen und \texttt{acl:Append} zum Anfügen von Daten an die Ressource. In SOCC werden aber nur Rechte für das Lesen von Ressourcen gebraucht. 
+Zugriffsrechte für Ressourcen werden in dieser ACL mit der Klasse \texttt{acl:Access} modelliert. Von dieser Klasse werden einzelne Rechte wie \texttt{acl:Read} für das Lesen und \texttt{acl:Write} für das Schreiben abgeleitet. Nebenbei existieren noch Ableitungen \texttt{acl:Control} zum Ausführen und \texttt{acl:Append} zum Anfügen von Daten an die Ressource.
 
-Die Verbindung von einen Zugriffsrecht mit eine Ressource wird über die Klasse \texttt{acl:Authorization} erreicht. Der Besitzer dieser Autorisierung wird durch die Eigenschaft \texttt{alc:owner} festgelegt und gehört zur Klasse \texttt{foaf:Agent} beziehungsweise in SOCC zur Unterklasse \texttt{foaf:Person}. Mittels der Eigenschaft \texttt{acl:agent} wird festgelegt für welche Person/Agenten diese Autorisierung gilt. Das selbe wird auch über die Eigenschaft \texttt{acl:agentClass} festgelegt, wobei hier eine abstrakte Klasse statt eine Instanz davon gemeint ist. Soll zum Beispiel der öffentlicher Zugriff für eine Ressource definiert werden, wird bei \texttt{acl:agentClass} die Klasse \texttt{foaf:Agent} eingesetzt \cite[\enquote{Public Access}]{wiki:wacl}. Dies besagt, dass alle Agenten auf diese Ressource zugreifen können. Innerhalb von SOCC werden Ressourcen verarbeiten, die öffentlich zugänglich sind. Welches Recht für eine Ressource eingeräumt wird, wird über die Eigenschaft \texttt{acl:mode} festgelegt. Erlaubt ist hier die Angabe jeder beliebigen Klasse, SOCC testet aber nur ob das Recht \texttt{acl:Read} zum Lesen von Beiträgen eingeräumt wurde. Auf welche Ressource  sich letztendlich eine Autorisierung bezieht, wird über die Eigenschaft \texttt{acl:accessTo} geregelt. Die Angabe von \enquote{http://www.facebook.com} würde sich für SOCC zum Beispiel auf alle Beiträge des Besitzers auf Facebook beziehen, \enquote{https://canvas.instructure.com/courses/798152} dahingegen nur auf alle Beiträge innerhalb eines Canvas Kurses mit der ID \enquote{798152}. Für einen Zugriff auf alle Beiträge prüft SOCC ob die Eigenschaft \texttt{acl:accessToClass} auf die Klasse \texttt{sioc:Post} verweist. So müsste nicht jede einzelne Webseite angegeben werden, wenn man ein generelles Zugriffsrecht einräumt.
+Die Verbindung von einen Zugriffsrecht mit eine Ressource wird über die Klasse \texttt{acl:Authorization} erreicht. Der Besitzer dieser Autorisierung wird durch die Eigenschaft \texttt{alc:owner} festgelegt und gehört zur Klasse \texttt{foaf:Agent} beziehungsweise der davon abgeleiteten Klasse \texttt{foaf:Person}. Mittels der Eigenschaft \texttt{acl:agent} wird festgelegt für welche Person/Agenten diese Autorisierung gilt. Das selbe wird auch über die Eigenschaft \texttt{acl:agentClass} festgelegt, wobei hier eine abstrakte Klasse statt eine Instanz davon gemeint ist. Soll zum Beispiel der öffentlicher Zugriff für eine Ressource definiert werden, wird bei \texttt{acl:agentClass} die Klasse \texttt{foaf:Agent} eingesetzt \cite[\enquote{Public Access}]{wiki:wacl}. Dies besagt, dass alle Agenten auf diese Ressource zugreifen können. Innerhalb von SOCC werden Ressourcen verarbeiten, die öffentlich zugänglich sind. Welches Recht für eine Ressource eingeräumt wird, wird über die Eigenschaft \texttt{acl:mode} festgelegt. Erlaubt ist hier die Angabe jeder beliebigen Klasse, SOCC testet aber nur ob das Recht \texttt{acl:Read} zum Lesen oder \texttt{acl:Write} zum Schreiben von Beiträgen eingeräumt wurde. Auf welche Ressource  sich letztendlich eine Autorisierung bezieht, wird über die Eigenschaft \texttt{acl:accessTo} geregelt. Die Angabe von \enquote{http://www.facebook.com} würde sich für SOCC zum Beispiel auf alle Beiträge des Besitzers auf Facebook beziehen, \enquote{https://canvas.instructure.com/courses/798152} dahingegen nur auf alle Beiträge innerhalb eines Canvas Kurses mit der ID \enquote{798152}. Für einen Zugriff auf alle Beiträge prüft SOCC ob die Eigenschaft \texttt{acl:accessToClass} auf die Klasse \texttt{sioc:Post} verweist. So müsste nicht jede einzelne Webseite angegeben werden, wenn man ein generelles Zugriffsrecht einräumt.
 
 % access und accessClass fehlen
 
@@ -205,16 +205,16 @@ Das Listing \ref{lst:acl_beispiel} zeigt ein Beispiel, wie eine Autorisierung mi
 
 Dieser Abschnitt widmet sich den internen Aufbau eines Connectors und beschreibt alle Komponenten aus denen er besteht und wie sie zusammenarbeiten. Im einzelnen sind dies der \texttt{SOCC Context}, die \emph{AccessControl}, der \texttt{ClientManager}, der \emph{StructureReader}, der \emph{PostReader} und der \emph{PostWriter}. Das vollständige UML Klassendiagramm mit allen Zusammenhängen ist in Abbildung \ref{fig:connector_uml_classdiagram} zu sehen.
 
-\begin{figure}[ht]
+\begin{minipage}{\textwidth}
     \centering
     \includegraphics[
         scale=0.95,
         keepaspectratio=true,
         angle=90]
     {assets/images/socc_uml_classdiagram}
-    \caption{UML Klassendiagramm eines Connectors}
+    \captionof{figure}{UML Klassendiagramm eines Connectors}
     \label{fig:connector_uml_classdiagram}
-\end{figure}
+\end{minipage}
 
 % subsection design_eines_connectors (end)
 
@@ -343,7 +343,8 @@ Der \texttt{PostReader} dient als Schnittstelle für das Lesen geschriebener Bei
 \label{sub:postwriter}
 %% korrigiert am 2013-09-26 21:35
 
-In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein Sequenzdiagramm der PostWriter Komponente zu sehen. Dort ist visualisiert, welche Schritte für das stellvertretende Schreiben von Beiträgen eines Benutzers unternommen werden müssen. Soll nun ein Beitrag in Plattform des Connectors geschrieben werden, wird die Methode \texttt{writePost(URI, String, Syntax)} mit dem Zielort als URI, dem Beitrag als serialisiertes RDF Objekt und dem verwendeten Serialisierungsformat aufgerufen. Es beginnt damit, dass zuerst nach einem Benutzerkonto des Beitragautors für die Plattform des aktuellen Connectors gesucht wird. Dieser sollte im Idealfall im Triplestore des Connectors nach dem im Abschnitt \ref{sub:benutzerdaten} Schema vorliegen. Mit diesem Benutzerkonto, in Form der Klasse UserAccount von SIOC, kann dann vom ClientManager ein Client für die verwendete API geholt werden. Sollte die Suche negativ verlaufen, steht noch der Defaultclient zur Verfügung. Mit dem Client, ob mit der des Autors oder dem Defaultclient, wird im letzten Schritt der Beitrag in das von der API verwendete Format konvertiert und an die richtige Stellen der Plattform geschrieben.
+In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein Sequenzdiagramm der PostWriter Komponente zu sehen. Dort ist visualisiert, welche Schritte für das stellvertretende Schreiben von Beiträgen eines Benutzers unternommen werden müssen. Soll nun ein Beitrag in Plattform des Connectors geschrieben werden, wird die Methode \texttt{writePost(URI, String, Syntax)} mit dem Zielort als URI, dem Beitrag als serialisiertes RDF Objekt und dem verwendeten Serialisierungsformat aufgerufen. Es beginnt damit, dass zuerst nach einem Benutzerkonto des Beitragautors für die Plattform des aktuellen Connectors gesucht wird. Dieser sollte im Idealfall im Triplestore des Connectors nach dem im Abschnitt \ref{sub:benutzerdaten} Schema vorliegen. Mit diesem Benutzerkonto, in Form der Klasse UserAccount von SIOC, kann dann vom ClientManager ein Client für die verwendete API geholt werden. Sollte die Suche negativ verlaufen, steht noch der Defaultclient zur Verfügung. 
+Bevor der Beitrag aber geschrieben werden kann, muss nachgeschaut werden, ob eine Erlaubnis für das Schreiben mit dem Client vorliegt. Ist dies der Fall kann der Beitrag in das von der API verwendete Format konvertiert und an die richtige Stellen der Plattform geschrieben werden.
 
 \begin{minipage}{\textwidth}
     \centering
@@ -351,7 +352,7 @@ In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein Sequenzdiagramm der Po
         width=\textwidth,
         keepaspectratio=true,
         clip=true,
-        trim= 90 200 220 75]
+        trim= 90 180 220 75]
     {assets/images/postwriter_sequencediagram}
     \captionof{figure}{UML Sequenzdiagramm eines PostWriters}
     \label{fig:postwriter_sequenzdiagramm}
@@ -370,11 +371,12 @@ In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein Sequenzdiagramm der Po
 \emph{SOCC-Camel} ist eine Modul der SOCC für die Integration von Connectoren in Camel. Durch dieses ist auf flexible Weise möglich die gelesenen Beiträge von einer Plattform über die Connectoren in eine andere zu schreiben. Abbildung \ref{fig:uebersicht_socc_camel} zeigt SOCC-Camel als EIP-Diagramm. 
 
 \begin{minipage}{\textwidth}
+    \centering
      \includegraphics[
         width=\textwidth,
         keepaspectratio=true]
         {assets/images/socc_camel_overview}
-    \caption{Übersicht des Socc-Camel Moduls in EIP-Notation}
+    \captionof{figure}{Übersicht des Socc-Camel Moduls in EIP-Notation}
     \label{fig:uebersicht_socc_camel}
 \end{minipage}
 

@@ -186,7 +186,7 @@ Beiträge können nur als Kommentare geschrieben werden und dessen ID bekannt se
 
 % subsubsection moodle_webservice (end)
 
-\subsubsection{Moodle Mapping nach SIOC} % (fold)
+\subsubsection{Mapping von Moodle nach SIOC} % (fold)
 \label{ssub:moodle_mapping_nach_sioc}
 
 Die interne Struktur von Diskussionen in Moodle entspricht der klassischen eines Forums. Das Forum enthält alle Beiträge zu einen übergeordneten Thema. Einzelne Unterthemen teilen sich dann vom Forum in Threads auf, die dann die einzelnen Beiträge enthalten. Die Abbildung \ref{fig:moodle_sioc_mapping} zeigt die Zuordnung von Moodle- zu SIOC-Klassen. Das \texttt{Forum} in Moodle entspricht dem \texttt{sioc:Forum}, dieses enthält mehrere Objekte der Klasse \texttt{ForumDiscussion}, welche dem \texttt{sioc:Thread} zugeordnet werden können. Die Beiträge werden von Moodel mit der Klasse \texttt{ForumPost} modelliert und stimmen mit der SIOC-Klasse \texttt{sioc:Post} überein. Besonderheit bei den Beiträgen in Moodle ist, dass alle Beiträge in einem Thread entweder ein Kommentar auf den ersten Beitrag oder Kommentare auf diesen. 
@@ -217,7 +217,7 @@ Die URIs für die Objekte der SIOC-Klassen für Moodle entsprechen den URIs der 
 
 \begin{table}[ht]
     \centering
-    \caption{URI Format für SIOC-Objekte aus Moodle }
+    \caption{URI Format für Moodle in RDF}
     \begin{tabular}{l|p{13cm}}
         \textbf{SIOC Klasse} & \textbf{URI-Format} \\ 
         \hline
@@ -257,6 +257,142 @@ Ebenfalls ungewöhnlich ist der Inhalt der Klasse \texttt{ForumDiscussionRecord}
 % subsubsection herausforderungen_bei_der_implementierung_des_moodleconnectors (end)
 
 % subsection moodle_connector (end)
+
+\subsection{Canvas Connector} % (fold)
+\label{sub:canvas_connector}
+
+% \begin{itemize}
+%     \item relativ neues LMS
+%     \item super Bedienung
+%     \item super REST API
+%     \item keine Java API
+%     \item rudimentäre Eigenentwicklung einer Java API, Funktionsweise ähnlich  G+
+%     \item viel API Funktionen wohl nicht extern nutzbar (UserProfil lesen, vll. Falsche Berechtigung -> test nötig)
+% \end{itemize}
+
+\subsubsection{Canvas REST-API} % (fold)
+\label{ssub:canvas_api}
+
+Der öffentliche Zugriff auf die Daten von der Lernplattform Canvas basiert auf einer REST-API und OAuth 2.0 zur Autorisierung der Zugriffe. Die Adresse, über die auf die API zugegriffen werden kann, besteht aus der URI für die verwendete Canvasinstanz (\texttt{\{rootUri\}}) und gefolgt von dem Pfad \enquote{/api/v1}. Für die Demoinstanz von Instructre würde dies der URI \texttt{https://canvas.instructure.com/api/v1} entsprechen. An diese können dann weitere Pfade für den Zugriff auf die einzelnen Ressourcen angehängt werden. Zur Autorisierung wird von OAuth nur der Accesstoken benötigt, der bei der REST-Abfrage als HTTP Authorization Header mitgeschickt wird. Listing \ref{lst:canvas_authorization_header} zeigt eine eine Beispielanfrage und Angabe des Accesstokens mit dem Programm \emph{curl}\footnote{\url{http://curl.haxx.se/}}. Der Platzhalter \texttt{\{accessToken\}} muss dann natürlich erst durch einen validen Accesstoken ersetzt werden. Diesen kann jeder Benutzter in seinem Canvas Profil unter \enquote{Settings} und im Abschnitt \enquote{Approved Integrations} selbst erstellen. Die Angabe von ClientId und ClientSecret von OAuth 2.0 sind nicht nötig.
+
+\begin{lstlisting}[
+    caption={Canvas Authorization Header}\label{lst:canvas_authorization_header},
+    captionpos=t]
+curl -H "Authorization: Bearer {accessToken}" https://canvas.instructure.com/api/v1/courses
+\end{lstlisting}
+
+Als Datenformat für die zurückgelieferten Daten wird von der Canvas API auf JSON gesetzt. Für die Verwendung von POST und PUT Operationen zum Schreiben nach Canvas können die Daten entweder nach dem HTML Form Encoding\footnote{\url{http://www.w3.org/TR/html4/interact/forms.html\#h-17.13.4}} Standard oder ebenfalls in JSON angegeben werden. 
+
+Da einige Anfragen eine Liste von Ergebnissen zurückliefern und diese möglicher Weise lang werden können, teilt die Canvas API diese Listen auf mehrere Seiten auf, die jede einzeln abgefragt werden müssen. Für jede Seite schickt die Canvas API mehrere URIs als HTTP Link Header\footnote{\url{http://www.w3.org/Protocols/9707-link-header.html}} der Antwort mit. Diese URIs erhalten zusätzlich noch ein Attribut \texttt{rel}, das beschreibt in welcher Relation die URI zu dieser Seite steht.  Als Wert für diese Relation können \enquote{current} für eine URI auf die aktuelle, \enquote{next} auf die nächste, \enquote{prev} auf die vorherige, \enquote{first} auf die erste und \enquote{last} für eine URI auf die letzte Seite vorkommen. Um also die nächste Seite vom Ergebnis zu bekommen, muss eine neue REST-Anfrage mit der Relation \enquote{next} ausgeführt werden. Fehlt eine URI mit dieser Relation, ist das die letzte Seite erreicht. 
+
+% subsubsection canvas_api (end)
+
+\subsubsection{CanvasLMS4J} % (fold)
+\label{ssub:canvaslms4j}
+
+Ein Problem mit der API von Canvas war es, dass es zwar eine gute REST Anbindung gab, aber noch keine Bibliothek um sie mit der Programmiersprache Java anzusprechen. Es musste also erst eine eigne Java API dazu entwickelt werden, die den Namen \emph{CanvasLMS4J} (Kurzform für \enquote{Canvas LMS API für Java}) bekam. 
+
+Anhand der für die REST API verwendeten URIs ist auffällig, dass die einzelnen Bestandteile aufeinander aufbauen. Zum Beispiel ist der Ablauf für den REST-Zugriff auf DiscussionTopics in Gruppen und Kursen der gleiche, nur die verwendete URI unterscheidet sich. Aus diesem Grund wurden die einzelnen Ressource (Course, Groupe, DiscussionTopic, Entries, ...) als einzelne Endpunkte implementiert die sich von der Klasse \texttt{IEnpoint} ableiten. Jeder Endpunkt kann einen Eltern-Endpunkt haben, wobei sich die endgültige URI für die REST-Abfrage aus dem Pfad des Eltern-Endpunktes und dem des aktuellen Endpunktes zusammensetzt. Zur Verdeutlichung sei hier die URI \texttt{https:\{canvasUri\}/api/v1/courses/1/discussion\_topics} als Demonstration genannt. Sie besteht aus den statischen Teil \texttt{https:\{canvasUri\}/api/v1/} der den Ort für die verwendete Canvasinstanz angibt. Darauf folgt ein Kurs als erster Endpunkt mit der Kurs-ID \enquote{1}. Für diesen Kurs sollen nun alle Diskussionen abgefragt werden. Dies geschieht durch die Angabe des zweiten Endpunktes \texttt{/discussion\_topics}. \enquote{/courses/1} bildet hier also den Eltern-Endpunkt von \texttt{/discussion\_topics}. Sollen aber nun alle Diskussionen in einer Gruppe abgefragt werden, reicht es aus den Kurs-Endpunkt durch einen Gruppen-Endpunkt auszutauschen.
+
+\begin{minipage}{\textwidth}
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true,]
+    {assets/images/canvaslms4j_uml_classdiagramm}
+    \captionof{figure}{UML Klassendiagramm von CanvasLMS4J}
+    \label{fig:canvaslms4j_uml_classdiagram}
+\end{minipage} 
+
+Ausgangspunkt für CanvasLMS4J ist die Klasse \texttt{CanvasLmsClient} (siehe Abbildung \ref{fig:canvaslms4j_uml_classdiagram}). Über sie werden alle Endpunkte verwaltet die keinen Eltern-Endpunkt besitzen. Bei der Erzeugung eines Objektes dieser Klasse, werden ihr die URI zur verwendenden Canvasinstanz und der AccessToken des Benutzerkontos übergeben. Im aktuellen Stadium können von einem Client aus nur Endpunkte für Kurse oder Gruppe erstellt werden.
+
+Endpunkte können dann über die Klasse \texttt{CanvasLmsRequest} REST-Anfragen an die Canvas API stellen. Hierzu verwendet CanvasLMS4J die \emph{HttpClient}\footnote{\url{http://hc.apache.org/httpclient-3.x/}} Bibliothek von Apache mit die einzelnen HTTP-Operationen ausgeführt werden. Um die im JSON-Format zurück gelieferten Antworten der Canvas API in Java verwenden zu können, wir auf die Funktionen der von Google entwickelten \emph{Gson}\footnote{\url{https://code.google.com/p/google-gson/}} Bibliothek zurück gegriffen. Sie erlaubt es Java Objekte in das JSON-Format zu konvertieren und genauso aus Daten in JSON ein Java Objekt zu machen. Dadurch verringert sich der Aufwand für das Verarbeiten der Daten von Canvas auf das Erstellen der entsprechenden Java Klassen. CanvasLmsRequest können mit zwei verschiedenen Methoden ausgeführt werden. Die erste \texttt{execute()} wird dazu verwendet, wenn die REST-Abfrage nur die Rückgabe eines Objektes zu Folge hat. Also zum Beispiel, wenn nur die Daten eines bestimmten Kurses abgefragt werden soll. Die zweite Methode ist \texttt{executePagination}. Diese Methode dient für Abfragen die eine in Seiten aufgeteilte Liste von Ergebnissen zurückliefert und gibt für eine einfache Handhabbarkeit ein Objekt der Klasse \texttt{Pagination} zurück. 
+
+Die Klasse Pagination ist nach dem Iterator Muster aufgebaut und liefert vom kompletten Ergebnis bei jedem Iterationsschritt eine Seite zurück. Diese Seite enthält dann je eine Teilliste der angefragten Objekten. Ist eine Seite fertig ausgelesen, holt Pagination über eine vorgegeben REST Abfrage die nächste Seite. Dies geschieht solange bis keine Seiten mehr geladen werden können oder das Programm das Lesen abbricht.
+
+\begin{lstlisting}[
+    caption={CanvasLMS4J Beispielprogramm}\label{lst:canvaslms4j_beispiel},
+    captionpos=t]
+CanvasLmsClient client = new CanvasLmsClient(
+                "https://canvas.instructure.com",
+                "7~LUpV7B3lJY...");
+
+Pagination<DiscussionTopic> discussionPages = client.courses()
+    .discussionTopics( 798152 )
+    .list()
+    .executePagination();
+
+for ( List<DiscussionTopic> discussions : discussionPages ) {
+    for ( DiscussionTopic discussion : discussions ) {
+        System.out.println( discussion );
+    }
+}
+
+\end{lstlisting}
+
+In Listing \ref{lst:canvaslms4j_beispiel} ist ein Beispiel für die Anwendung der CanvasLMS4J API zu sehen. In den ersten drei Zeilen wird eine neuer CanvasLmsClient für die Canvasinstanz auf \texttt{https://canvas.instructure.com} und einem AccessToken erstellt. Als nächstes soll für einen Kurs mit der ID \enquote{798152} alle Diskussionen aufgelistet werden. Mit dem Aufruf der Methode \texttt{courses()} des Clients wir der Endpunkt für die Kurse und von diesem aus der Endpunkt für die Diskussionen im Kurs \enquote{798152} über die Methode \texttt{.discussionTopics( 798152 )}. In der siebten Zeile wird die Art der Abfrage genauer festgelegt. Da eine Liste alle Diskussionen gesucht ist, wird die Methode \texttt{list()} aufgerufen die ein CanvasLmsRequest Objekt für die gewünschte Abfrage erstellt. Da die Antwort aus mehrere Objekten mit der Beschreibung der einzelnen Diskussionen besteht, wird die Anfrage in Zeile Acht mit der Methode \texttt{executePagination()} ausgeführt. Die einzelnen Seiten des Ergebnisses werden dann in der zehnten Zeile mit einer For-Schleife durchlaufen. Das nachladen der Seiten erfolgt dabei automatisch durch die Pagination Klasse. Jede Seite besteht nun aus einer Liste mit den Beschreibung der Diskussionen in einem \texttt{DiskussionTopic} Objekt, welche dann wieder in einer weiteren Schleife ausgegeben werden.
+
+% subsubsection canvaslms4j (end)
+
+\subsubsection{Mapping von Canvas nach SIOC} % (fold)
+\label{ssub:canvas_sioc_mapping}
+
+Die Struktur von Canvas ist der von Moodle sehr ähnliche (siehe Abbildung \ref{fig:canvas_sioc_mapping}), nur dass es explizit keine Foren gibt sondern die Diskussionen innerhalb der Kurse stattfindet. Demzufolge kann ein Kurs (Course) der SIOC-Klasse \texttt{sioc:Forum} zugeordnet werden. Dies gilt ebenfalls für Gruppen, in denen separate Diskussionen geführt werden können. Die Diskussionsthemen in Canvas werden durch die Klasse DiscussionTopic modelliert und entspricht \texttt{sioc:Thread} . Beiträge werden in Canvas als Entry bezeichnet und sind entweder ein Kommentar auf den ersten Beitrag, der beim Erstellen der Diskussion  erzeugt wurde, oder eines auf dessen Kommentare. Die SIOC-Klasse für einen Entry entspricht dann natürlich \texttt{sioc:Post}
+ 
+\begin{minipage}{\textwidth}
+    \centering
+    \includegraphics[
+        width=0.8\textwidth,
+        keepaspectratio=true]
+    {assets/images/mapping/canvas_sioc_mapping}
+    \captionof{figure}{Struktur von Canvas und Mapping nach SIOC}
+    \label{fig:canvas_sioc_mapping}
+\end{minipage}
+
+Zum benutzen der REST-API von Canvas muss eine Accesstoken für den betreffenden \texttt{sioc:UserAccount} des Benutzerkontos vorliegen. Wie in Abbildung \ref{fig:canvas_useraccount_mapping} wird der Accesstoken dem \texttt{sioc:UserAccount} mit \texttt{siocsa:accountAuthentication} als Credential der Klasse \texttt{waa:OAuth} mitgegeben. In der Servicebeschreibung ist wieder die Angabe von \texttt{siocs:serviceEndpoint} mit der Adresse der Canvasinstanz für die API Voraussetzung für den Betrieb des CanvasConnectors.
+
+\begin{minipage}{\textwidth}
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true]
+    {assets/images/mapping/canvas_useraccount_mapping}
+    \captionof{figure}{ Authentifizierungsdaten für Canvas in SIOC}
+    \label{fig:canvas_useraccount_mapping}
+\end{minipage}
+
+Die URIs für RDF bei Canvas wurden so gewählt, dass sie den URIs für die REST Abfragen entsprechen. An ihnen ist sehr leicht zu erkennen wo sich die Ressource sich innerhalb der Canvasstruktur befindet, da sie aufeinander aufbauen. Das einzige Problem liegt nur in der URI für den Startbeitrag einer Diskussion, da dieser nur zusammen innerhalb des DiskusionTopics existiert und keine eigene ID besitzt. Aus diesem Grund wurde für die URI des Startbeitrags aus der eines DiscussionTopic mit angehängten Fragment \enquote{\texttt{\#discussion\_topic}} gewählt. Dieser Zusatz wurde nicht zufällig gewählt. Die ID \enquote{\texttt{discussion\_topic}} wird von Canvas innerhalb der HTML-Darstellung für diesen Beitrag benutzt. 
+
+\begin{table}[ht]
+    \centering
+    \caption{Format der URIs für Canvas in RDF}
+    \begin{tabular}{l|p{13cm}}
+        \textbf{SIOC Klasse} & \textbf{URI-Format}\\ 
+        \hline
+        \texttt{sioc:Site} & 
+        \texttt{\{rootUri\}} \\
+
+        \texttt{sioc:Service} & 
+        \texttt{\{rootUri\}/api/v1} \\
+
+        \texttt{sioc:UserAccount} & 
+        \texttt{\{rootUri\}/api/v1/users/\{userId\}/profile} \\
+
+        \texttt{sioc:Forum} & 
+        \texttt{\{rootUri\}/api/v1/courses/\{courseId\}} \emph{oder} \newline  \texttt{\{rootUri\}/api/v1/groups/\{groupId\}} \\
+
+        \texttt{sioc:Thread} & 
+        \texttt{\{forumUri\}/discussion\_topics/\{topicId\}} \\
+
+        \texttt{sioc:Post} & 
+        \texttt{\{threadUri\}/entries/\{entryId\}} \emph{oder} \newline \texttt{\{threadUri\}\#discussion\_topic} \\
+    \end{tabular}
+    \label{tbl:canvas_uri_platzhalter}
+\end{table}
+
+% subsubsection canvas_sioc_mapping (end)
+
+% subsection canvas_connector (end)
 
 \subsection{Facebook Connector} % (fold)
 \label{sub:facebook_connector}
@@ -384,7 +520,7 @@ Facebook erlaubt mir der Graph API das schreiben von Beitragen auf die Wall eine
 
 % subsubsection restfb (end)
 
-\subsubsection{Facebook Mapping nach SIOC} % (fold)
+\subsubsection{Mapping von Facebook nach SIOC} % (fold)
 \label{ssub:facebook_mapping_nach_sioc}
 
 Die Struktur von Facebook baut Walls, oder auch Pinnwand, von Benutzer, Gruppen und Facebook-Seiten auf. Darin können Beiträge geschrieben und diese kommentiert werden. Solch eine Wall entspricht der SIOC-Klasse \texttt{sioc:Forum}. Diese enthält aber keine weiteren Threads, sondern die Beiträge und Kommentare als \texttt{sioc:Post} Objekte. Abgesehen von Facebook-Seiten können Kommentare in Facebook zum aktuellen Zeitpunkt nicht kommentiert werden.Abbildung \ref{fig:facebook_sioc_mapping} zeigt dies noch einmal graphisch mit einer Gruppen Wall als Beispiel.
@@ -411,7 +547,7 @@ Wie weiter oben erklärt, verwendet Facebook für die Authentifizierung in der G
     \label{fig:facebook_useraccount_mapping}
 \end{minipage}
 
-Die in RDF verwendeten URIs für die Klassen \texttt{sioc:Post} und \texttt{sioc:UserAccount} von Facebook bekommen das Format \\texttt{https://graph.facebook.com/{facebookId}}, wobei \texttt{\{facebookId\}} der ID der Ressource entspricht. Ausnahme bildete die URIs für die Klasse \texttt{sioc:Forum}. Da die ID eines Benutzers sowohl für sein Konto als auch für seine Wall stehen würden, wird der URI für die Wall noch der Pfad \enquote{\texttt{/feed}} angehängt. Die URI \texttt{https://graph.facebook.com/{facebookId/feed}} ist dann immer noch gültig und liefert von der Graph API die enthaltenen Beiträge zurück. Als URI für die Klasse \texttt{sioc:Site} wurde \enquote{\texttt{https://www.facebook.com}} und für \texttt{siocs:Service} wurde \texttt{https://graph.facebook.com} genommen.
+Die in RDF verwendeten URIs für die Klassen \texttt{sioc:Post} und \texttt{sioc:UserAccount} von Facebook bekommen das Format \texttt{https://graph.facebook.com/{facebookId}}, wobei \texttt{\{facebookId\}} der ID der Ressource entspricht. Ausnahme bildete die URIs für die Klasse \texttt{sioc:Forum}. Da die ID eines Benutzers sowohl für sein Konto als auch für seine Wall stehen würden, wird der URI für die Wall noch der Pfad \enquote{\texttt{/feed}} angehängt. Die URI \texttt{https://graph.facebook.com/{facebookId/feed}} ist dann immer noch gültig und liefert von der Graph API die enthaltenen Beiträge zurück. Als URI für die Klasse \texttt{sioc:Site} wurde \enquote{\texttt{https://www.facebook.com}} und für \texttt{siocs:Service} wurde \texttt{https://graph.facebook.com} genommen.
 
 % subsubsection facebook_mapping_nach_sioc (end)
 
@@ -508,9 +644,61 @@ Leider ist es mit der aktuellen Version der Google+ API nur möglich auf Ressour
 
 % subsubsection google_api (end)
 
-\subsubsection{Google+ Mapping nach SIOC} % (fold)
+\subsubsection{Mapping von Google+ nach SIOC} % (fold)
 \label{ssub:google_mapping_nach_sioc}
 
+Die Struktur in Google+ die annähernd mit der von Facebook gleich. Jeder Benutzer hat seinen eigenen ActivityFeed auf dem er Beiträge in der Form von Activitys schreiben kann. Demzufolge entspricht ein ActivityFeed der SIOC-Klasse \texttt{sioc:Forum}, wobei dieser die Activitys als \texttt{sioc:Post} enthält. Kommentare auf Activitiys werden ebenfalls \texttt{sioc:Post} zugeordnet, wobei sie sich immer genau auf ein Activity beziehen und niemals auf ein anderen Kommentar (Siehe Abbildung \ref{fig:googleplus_sioc_mapping}). 
+
+\begin{minipage}{\textwidth}
+    \centering
+    \includegraphics[
+        width=0.8\textwidth,
+        keepaspectratio=true]
+    {assets/images/mapping/googleplus_sioc_mapping}
+    \captionof{figure}{Struktur von Google+ und Mapping nach SIOC}
+    \label{fig:googleplus_sioc_mapping}
+\end{minipage}
+
+Wie schon Facebook setzt Google+ auf OAuth 2.0 für die Google+ API. Jedoch verwendet Google+ für den Client noch einen zusätzlichen Refreshtoken, um die Accesstoken automatisch aktualisieren zu können, falls dieser abgelaufen ist (Siehe Abbildung \ref{fig:googleplus_useraccount_mapping}). Bei der Servicebeschreibung muss wieder die ClientID und das ClientSecret als Credentials einem Objekt einer \texttt{waa:OAuth} Klasse mit der Eigenschaft \texttt{siocsa:serviceAuthentication} mitgegeben werden.
+
+\begin{minipage}{\textwidth}
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true]
+    {assets/images/mapping/googleplus_useraccount_mapping}
+    \captionof{figure}{ Authentifizierungsdaten für Google+ in SIOC}
+    \label{fig:googleplus_useraccount_mapping}
+\end{minipage}
+
+Wie schon bei vorherigen REST-APIs wurde die in Tabelle \ref{googleülus_rdf_uri_format} stehenden URIs für die Google+ Ressourcen in RDF als die gleichen wie für die REST-Abfragen gewählt. Die einzige einschränke ist, dass in der aktuellen Version der Google+ API bei der URI für den ActivityFeed (\texttt{sioc:Forum}) für den Platzhalter \enquote{\texttt{\{collection\}}} nur der Wert \enquote{public} zulässig ist. Andere Werte verbietet die API.
+
+\begin{table}[ht]
+    \centering
+    \caption{Format der URIs für Youtube in RDF}
+    \begin{tabular}{l|p{13cm}}
+        \textbf{SIOC Klasse} & \textbf{URI-Format}\\ 
+        \hline
+        \texttt{sioc:Site} & 
+        \texttt{http://plus.google.com/} \\
+
+        \texttt{sioc:Service} & 
+        \texttt{https://www.googleapis.com/plus/v1} \\
+
+        \texttt{sioc:UserAccount} & 
+        \texttt{https://www.googleapis.com/plus/v1/people/\{userId\}} \\
+
+        \texttt{sioc:Forum} & 
+        \texttt{\{userAccountUri\}/activities/\{collection\}} \\
+
+        \texttt{sioc:Thread} & 
+        \texttt{https://www.googleapis.com/plus/v1/activities/\{activityId\}} \\
+
+        \texttt{sioc:Post} & 
+        \texttt{https://www.googleapis.com/plus/v1/comments/\{commentId\}} \\
+    \end{tabular}
+    \label{tbl:googleülus_rdf_uri_format}
+\end{table}
 
 % subsubsection google_mapping_nach_sioc (end)
 
@@ -581,22 +769,62 @@ service.insert(new URL(commentUrl), newComment);
 
 Das Schreiben eines Eintrags ist in Listing \ref{lst:ytdataapi_kommentar_schreiben} beschrieben. Die URI zum Schreiben in Zeile 1 zeigt auf einen Kommentar-Feed für das Video mit der ID \enquote{oHg5SJYRHA0}. In der zweiten Zeile wird dann zunächst eine Objekt der Klasse \texttt{CommentEntry} erstellt und in Zeile 3 mit einer Kommentarnachricht befüllt. Dieses Objekt wird dann zusammen mit der URI aus Zeile 1 der Methode \texttt{insert(\dots)} übergeben. Für diese Methode ist das vorherige übergeben von Username und Passwort Pflicht, da sonst Youtube mit einen Fehler antwortet.
 
-\subsubsection{Youtube Mapping nach SIOC} % (fold)
+\subsubsection{Mapping von Youtube nach SIOC} % (fold)
 \label{ssub:youtube_mapping_nach_sioc}
+
+Der Aufbau von Youtube unterscheidet sich etwas von den anderen vier Plattformen, das es vorrangig zum Austausch von Videos gedacht ist. Nichtsdestotrotz können in den Kommentaren in über diese Video diskutiert werden. Videos können dabei an zwei unterschiedlichen Orten liegen, entweder sind sie unter den hochgeladenen Videos eines Benutzers zu finden oder in einer von ihm angelegen Playliste. Sowohl die Liste der hochgeladenen Videos (Uploads) als auch die Menge angelegter Playlisten (Playlists) können der SIOC-Klasse \texttt{sioc:Forum} zugeordnet werden. Eine Playliste enthält in der Regel Videos mit einem thematischen Schwerpunkt, wie zum Beispiel Musik Genre, Rezepte, Katzenvideos und so weiter. Dies ist den Threads in einen Forum sehr ähnlich, wodurch \texttt{sioc:Thread} für eine Playliste die beste Wahl für das Mapping nach SIOC ist. Die in den Uploads und Playlisten enthaltenen Videos entsprechen den Startbeitrag einer Diskussion, die den Inhalt des Videos als Thema hat. Eine Zuordnung von Videos zu \texttt{sioc:Post} ist daher naheliegend. Das Video wird dann als \texttt{sioc:Attachtment} an diesen \texttt{sioc:Post} angehängt. Videos können seit September 2013 nicht mehr als Antwort auf ein anderes Video sein (siehe \cite{YTCreators2013}). Somit sind Kommentare die einzigen Beiträge die mit einem Video verbunden sind. Die genauen Beziehungen sind noch einmal in Abbildung \ref{fig:youtube_sioc_mapping} zu sehen.
+
+\begin{minipage}{\textwidth}
+    \centering
+    \includegraphics[
+        width=0.8\textwidth,
+        keepaspectratio=true]
+    {assets/images/mapping/youtube_sioc_mapping}
+    \captionof{figure}{Struktur von Youtube und Mapping nach SIOC}
+    \label{fig:youtube_sioc_mapping}
+\end{minipage}
+
+Der Zugriff auf die Funktionen der Youtube Data API die Daten verändern können wird nur gewährt, wenn der Benutzername und das Password eines Benutzers angegeben werden. Die Angabe erfolgt schon wie bei Moodle Über die Klasse \texttt{waa:Direct} mit der Eigenschaft \texttt{siocsa:accountAuthentication} des betreffenden \texttt{sioc:UserAccount}s. Zusätzlich muss der API-Schlüssel, der für das Programm erstellt wurde, der Servicebeschreibung mit \texttt{sioc:Service} hinzugefügt werden. Dies gelingt über die Eigenschaft \texttt{siocsa:serviceAuthentication} mit der Klasse \texttt{waa:WebAPI} und dem API-Schlüssel als Credential.
+
+\begin{minipage}{\textwidth}
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        keepaspectratio=true]
+    {assets/images/mapping/youtube_useraccount_mapping}
+    \captionof{figure}{ Authentifizierungsdaten für Youtube in SIOC}
+    \label{fig:youtube_sioc_mapping_useraccount_mapping}
+\end{minipage}
+
+Für die URIs der Youtube Ressource wurden die gleiche wie für den Zugriff auf die Youtube Data API verwendet (Siehe Tabelle \ref{tbl:youtube_rdf_uri_format}. Die URIs bauen teilweise wieder aufeinander auf, so dass ein Teil der Struktur in der sie sich befinden rekonstruiert werden kann. Zum Beispiel baut die URI für ein Kommentar auf der für ein Video auf. So kann anhand dieser ebenfalls das Video selber referenziert werden. 
 
 \begin{table}[ht]
     \centering
-    \begin{tabular}{l|p{11cm}}
-        \textbf{SIOC Klasse} & \textbf{URI-Format} \\ 
+    \caption{Format der URIs für Youtube in RDF}
+    \begin{tabular}{l|p{13cm}}
+        \textbf{SIOC Klasse} & \textbf{URI-Format}\\ 
         \hline
-        Site & \\
-        Service & \\
-        UserAccount & \\
-        Forum & \\
-        Thread & \\
-        Post & \\
+        \texttt{sioc:Site} & 
+        \texttt{http://www.youtube.com/} \\
+
+        \texttt{sioc:Service} & 
+        \texttt{http://gdata.youtube.com} \\
+
+        \texttt{sioc:UserAccount} & 
+        \texttt{http://gdata.youtube.com/feeds/api/users/\{userId\}} \\
+
+        \texttt{sioc:Forum} & 
+        \texttt{\{userAccountUri\}/uploads} \emph{oder} \newline \texttt{\{userAccountUri\}/playlists} \\
+
+        \texttt{sioc:Thread} & 
+        \texttt{http://gdata.youtube.com/feeds/api/playlists/\{playlistId\}} \\
+
+        \texttt{sioc:Post} & 
+        \texttt{http://gdata.youtube.com/feeds/api/videos/\{videoId\}} \emph{oder} \newline \texttt{http://gdata.youtube.com/feeds/api/videos/\{videoId\} \newline /comments/\{commentId\}} \\
     \end{tabular}
+    \label{tbl:youtube_rdf_uri_format}
 \end{table}
+
 
 % subsubsection youtube_mapping_nach_sioc (end)
 
@@ -611,144 +839,6 @@ Vorteil bei der Youtube Data API v2 ist die Basis von Atom als Datenformat. So s
 
 % subsection youtube_connector (end)
 
-\subsection{Canvas Connector} % (fold)
-\label{sub:canvas_connector}
-
-% \begin{itemize}
-%     \item relativ neues LMS
-%     \item super Bedienung
-%     \item super REST API
-%     \item keine Java API
-%     \item rudimentäre Eigenentwicklung einer Java API, Funktionsweise ähnlich  G+
-%     \item viel API Funktionen wohl nicht extern nutzbar (UserProfil lesen, vll. Falsche Berechtigung -> test nötig)
-% \end{itemize}
-
-\subsubsection{Canvas REST-API} % (fold)
-\label{ssub:canvas_api}
-
-Der öffentliche Zugriff auf die Daten von der Lernplattform Canvas basiert auf einer REST-API und OAuth 2.0 zur Autorisierung der Zugriffe. Die Adresse, über die auf die API zugegriffen werden kann, besteht aus der URI für die verwendete Canvasinstanz (\texttt{\{rootUri\}}) und gefolgt von dem Pfad \enquote{/api/v1}. Für die Demoinstanz von Instructre würde dies der URI \texttt{https://canvas.instructure.com/api/v1} entsprechen. An diese können dann weitere Pfade für den Zugriff auf die einzelnen Ressourcen angehängt werden. Zur Autorisierung wird von OAuth nur der Accesstoken benötigt, der bei der REST-Abfrage als HTTP Authorization Header mitgeschickt wird. Listing \ref{lst:canvas_authorization_header} zeigt eine eine Beispielanfrage und Angabe des Accesstokens mit dem Programm \emph{curl}\footnote{\url{http://curl.haxx.se/}}. Der Platzhalter \texttt{\{accessToken\}} muss dann natürlich erst durch einen validen Accesstoken ersetzt werden. Diesen kann jeder Benutzter in seinem Canvas Profil unter \enquote{Settings} und im Abschnitt \enquote{Approved Integrations} selbst erstellen. Die Angabe von ClientId und ClientSecret von OAuth 2.0 sind nicht nötig.
-
-\begin{lstlisting}[
-    caption={Canvas Authorization Header}\label{lst:canvas_authorization_header},
-    captionpos=t]
-curl -H "Authorization: Bearer {accessToken}" https://canvas.instructure.com/api/v1/courses
-\end{lstlisting}
-
-Als Datenformat für die zurückgelieferten Daten wird von der Canvas API auf JSON gesetzt. Für die Verwendung von POST und PUT Operationen zum Schreiben nach Canvas können die Daten entweder nach dem HTML Form Encoding\footnote{\url{http://www.w3.org/TR/html4/interact/forms.html\#h-17.13.4}} Standard oder ebenfalls in JSON angegeben werden. 
-
-Da einige Anfragen eine Liste von Ergebnissen zurückliefern und diese möglicher Weise lang werden können, teilt die Canvas API diese Listen auf mehrere Seiten auf, die jede einzeln abgefragt werden müssen. Für jede Seite schickt die Canvas API mehrere URIs als HTTP Link Header\footnote{\url{http://www.w3.org/Protocols/9707-link-header.html}} der Antwort mit. Diese URIs erhalten zusätzlich noch ein Attribut \texttt{rel}, das beschreibt in welcher Relation die URI zu dieser Seite steht.  Als Wert für diese Relation können \enquote{current} für eine URI auf die aktuelle, \enquote{next} auf die nächste, \enquote{prev} auf die vorherige, \enquote{first} auf die erste und \enquote{last} für eine URI auf die letzte Seite vorkommen. Um also die nächste Seite vom Ergebnis zu bekommen, muss eine neue REST-Anfrage mit der Relation \enquote{next} ausgeführt werden. Fehlt eine URI mit dieser Relation, ist das die letzte Seite erreicht. 
-
-% subsubsection canvas_api (end)
-
-\subsubsection{CanvasLMS4J} % (fold)
-\label{ssub:canvaslms4j}
-
-Ein Problem mit der API von Canvas war es, dass es zwar eine gute REST Anbindung gab, aber noch keine Bibliothek um sie mit der Programmiersprache Java anzusprechen. Es musste also erst eine eigne Java API dazu entwickelt werden, die den Namen \emph{CanvasLMS4J} (Kurzform für \enquote{Canvas LMS API für Java}) bekam. 
-
-Anhand der für die REST API verwendeten URIs ist auffällig, dass die einzelnen Bestandteile aufeinander aufbauen. Zum Beispiel ist der Ablauf für den REST-Zugriff auf DiscussionTopics in Gruppen und Kursen der gleiche, nur die verwendete URI unterscheidet sich. Aus diesem Grund wurden die einzelnen Ressource (Course, Groupe, DiscussionTopic, Entries, ...) als einzelne Endpunkte implementiert die sich von der Klasse \texttt{IEnpoint} ableiten. Jeder Endpunkt kann einen Eltern-Endpunkt haben, wobei sich die endgültige URI für die REST-Abfrage aus dem Pfad des Eltern-Endpunktes und dem des aktuellen Endpunktes zusammensetzt. Zur Verdeutlichung sei hier die URI \texttt{https:\{canvasUri\}/api/v1/courses/1/discussion\_topics} als Demonstration genannt. Sie besteht aus den statischen Teil \texttt{https:\{canvasUri\}/api/v1/} der den Ort für die verwendete Canvasinstanz angibt. Darauf folgt ein Kurs als erster Endpunkt mit der Kurs-ID \enquote{1}. Für diesen Kurs sollen nun alle Diskussionen abgefragt werden. Dies geschieht durch die Angabe des zweiten Endpunktes \texttt{/discussion\_topics}. \enquote{/courses/1} bildet hier also den Eltern-Endpunkt von \texttt{/discussion\_topics}. Sollen aber nun alle Diskussionen in einer Gruppe abgefragt werden, reicht es aus den Kurs-Endpunkt durch einen Gruppen-Endpunkt auszutauschen.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[
-        width=\textwidth,
-        keepaspectratio=true,]
-    {assets/images/canvaslms4j_uml_classdiagramm}
-    \caption{UML Klassendiagramm von CanvasLMS4J}
-    \label{fig:canvaslms4j_uml_classdiagram}
-\end{figure} 
-
-Ausgangspunkt für CanvasLMS4J ist die Klasse \texttt{CanvasLmsClient} (siehe Abbildung \ref{fig:canvaslms4j_uml_classdiagram}). Über sie werden alle Endpunkte verwaltet die keinen Eltern-Endpunkt besitzen. Bei der Erzeugung eines Objektes dieser Klasse, werden ihr die URI zur verwendenden Canvasinstanz und der AccessToken des Benutzerkontos übergeben. Im aktuellen Stadium können von einem Client aus nur Endpunkte für Kurse oder Gruppe erstellt werden.
-
-Endpunkte können dann über die Klasse \texttt{CanvasLmsRequest} REST-Anfragen an die Canvas API stellen. Hierzu verwendet CanvasLMS4J die \emph{HttpClient}\footnote{\url{http://hc.apache.org/httpclient-3.x/}} Bibliothek von Apache mit die einzelnen HTTP-Operationen ausgeführt werden. Um die im JSON-Format zurück gelieferten Antworten der Canvas API in Java verwenden zu können, wir auf die Funktionen der von Google entwickelten \emph{Gson}\footnote{\url{https://code.google.com/p/google-gson/}} Bibliothek zurück gegriffen. Sie erlaubt es Java Objekte in das JSON-Format zu konvertieren und genauso aus Daten in JSON ein Java Objekt zu machen. Dadurch verringert sich der Aufwand für das Verarbeiten der Daten von Canvas auf das Erstellen der entsprechenden Java Klassen. CanvasLmsRequest können mit zwei verschiedenen Methoden ausgeführt werden. Die erste \texttt{execute()} wird dazu verwendet, wenn die REST-Abfrage nur die Rückgabe eines Objektes zu Folge hat. Also zum Beispiel, wenn nur die Daten eines bestimmten Kurses abgefragt werden soll. Die zweite Methode ist \texttt{executePagination}. Diese Methode dient für Abfragen die eine in Seiten aufgeteilte Liste von Ergebnissen zurückliefert und gibt für eine einfache Handhabbarkeit ein Objekt der Klasse \texttt{Pagination} zurück. 
-
-Die Klasse Pagination ist nach dem Iterator Muster aufgebaut und liefert vom kompletten Ergebnis bei jedem Iterationsschritt eine Seite zurück. Diese Seite enthält dann je eine Teilliste der angefragten Objekten. Ist eine Seite fertig ausgelesen, holt Pagination über eine vorgegeben REST Abfrage die nächste Seite. Dies geschieht solange bis keine Seiten mehr geladen werden können oder das Programm das Lesen abbricht.
-
-\begin{lstlisting}[
-    caption={CanvasLMS4J Beispielprogramm}\label{lst:canvaslms4j_beispiel},
-    captionpos=t]
-CanvasLmsClient client = new CanvasLmsClient(
-                "https://canvas.instructure.com",
-                "7~LUpV7B3lJY...");
-
-Pagination<DiscussionTopic> discussionPages = client.courses()
-    .discussionTopics( 798152 )
-    .list()
-    .executePagination();
-
-for ( List<DiscussionTopic> discussions : discussionPages ) {
-    for ( DiscussionTopic discussion : discussions ) {
-        System.out.println( discussion );
-    }
-}
-
-\end{lstlisting}
-
-In Listing \ref{lst:canvaslms4j_beispiel} ist ein Beispiel für die Anwendung der CanvasLMS4J API zu sehen. In den ersten drei Zeilen wird eine neuer CanvasLmsClient für die Canvasinstanz auf \texttt{https://canvas.instructure.com} und einem AccessToken erstellt. Als nächstes soll für einen Kurs mit der ID \enquote{798152} alle Diskussionen aufgelistet werden. Mit dem Aufruf der Methode \texttt{courses()} des Clients wir der Endpunkt für die Kurse und von diesem aus der Endpunkt für die Diskussionen im Kurs \enquote{798152} über die Methode \texttt{.discussionTopics( 798152 )}. In der siebten Zeile wird die Art der Abfrage genauer festgelegt. Da eine Liste alle Diskussionen gesucht ist, wird die Methode \texttt{list()} aufgerufen die ein CanvasLmsRequest Objekt für die gewünschte Abfrage erstellt. Da die Antwort aus mehrere Objekten mit der Beschreibung der einzelnen Diskussionen besteht, wird die Anfrage in Zeile Acht mit der Methode \texttt{executePagination()} ausgeführt. Die einzelnen Seiten des Ergebnisses werden dann in der zehnten Zeile mit einer For-Schleife durchlaufen. Das nachladen der Seiten erfolgt dabei automatisch durch die Pagination Klasse. Jede Seite besteht nun aus einer Liste mit den Beschreibung der Diskussionen in einem \texttt{DiskussionTopic} Objekt, welche dann wieder in einer weiteren Schleife ausgegeben werden.
-
-% subsubsection canvaslms4j (end)
-
-\subsubsection{Canvas Mapping nach SIOC} % (fold)
-\label{ssub:canvas_sioc_mapping}
-
-Die Struktur von Canvas ist der von Moodle sehr ähnliche (siehe Abbildung \ref{fig:canvas_sioc_mapping}), nur dass es explizit keine Foren gibt sondern die Diskussionen innerhalb der Kurse stattfindet. Demzufolge kann ein Kurs (Course) der SIOC-Klasse \texttt{sioc:Forum} zugeordnet werden. Dies gilt ebenfalls für Gruppen, in denen separate Diskussionen geführt werden können. Die Diskussionsthemen in Canvas werden durch die Klasse DiscussionTopic modelliert und entspricht \texttt{sioc:Thread} . Beiträge werden in Canvas als Entry bezeichnet und sind entweder ein Kommentar auf den ersten Beitrag, der beim Erstellen der Diskussion  erzeugt wurde, oder eines auf dessen Kommentare. Die SIOC-Klasse für einen Entry entspricht dann natürlich \texttt{sioc:Post}
- 
-\begin{minipage}{\textwidth}
-    \centering
-    \includegraphics[
-        width=0.8\textwidth,
-        keepaspectratio=true]
-    {assets/images/mapping/canvas_sioc_mapping}
-    \captionof{figure}{Struktur von Canvas und Mapping nach SIOC}
-    \label{fig:canvas_sioc_mapping}
-\end{minipage}
-
-Zum benutzen der REST-API von Canvas muss eine Accesstoken für den betreffenden \texttt{sioc:UserAccount} des Benutzerkontos vorliegen. Wie in Abbildung \ref{fig:canvas_useraccount_mapping} wird der Accesstoken dem \texttt{sioc:UserAccount} mit \texttt{siocsa:accountAuthentication} als Credential der Klasse \texttt{waa:OAuth} mitgegeben. In der Servicebeschreibung ist wieder die Angabe von \texttt{siocs:serviceEndpoint} mit der Adresse der Canvasinstanz für die API Voraussetzung für den Betrieb des CanvasConnectors.
-
-\begin{minipage}{\textwidth}
-    \centering
-    \includegraphics[
-        width=\textwidth,
-        keepaspectratio=true]
-    {assets/images/mapping/canvas_useraccount_mapping}
-    \captionof{figure}{ Authentifizierungsdaten für Canvas in SIOC}
-    \label{fig:canvas_useraccount_mapping}
-\end{minipage}
-
-Die URIs für RDF bei Canvas wurden so gewählt, dass sie denen der URIs für die REST Abfragen entsprechen. An ihnen ist sehr leicht zu erkennen wo sich die Ressource sich innerhalb der Canvasstruktur befindet, da sie aufeinander aufbauen. Das einzige Problem liegt nur in der URI für den Startbeitrag einer Diskussion, da dieser nur zusammen innerhalb des DiskusionTopics existiert und keine eigene ID besitzt. Aus diesem Grund wurde für die URI des Startbeitrags aus der eines DiscussionTopic mit angehängten Fragment \enquote{\texttt{\#discussion\_topic}} gewählt. Dieser Zusatz wurde nicht zufällig gewählt. Die ID \enquote{\texttt{discussion\_topic}} wird von Canvas innerhalb der HTML-Darstellung für diesen Beitrag benutzt. 
-
-\begin{table}[ht]
-    \centering
-    \caption{Format der URIs für Canvas}
-    \begin{tabular}{l|p{13cm}}
-        \textbf{SIOC Klasse} & \textbf{URI-Format}\\ 
-        \hline
-        \texttt{sioc:Site} & 
-        \texttt{\{rootUri\}} \\
-
-        \texttt{sioc:Service} & 
-        \texttt{\{rootUri\}/api/v1} \\
-
-        \texttt{sioc:UserAccount} & 
-        \texttt{\{rootUri\}/api/v1/users/\{userId\}/profile} \\
-
-        \texttt{sioc:Forum} & 
-        \texttt{\{rootUri\}/api/v1/courses/\{courseId\}},
-        \texttt{\{rootUri\}/api/v1/groups/\{groupId\}} \\
-
-        \texttt{sioc:Thread} & 
-        \texttt{\{forumUri\}/discussion\_topics/\{topicId\}} \\
-
-        \texttt{sioc:Post} & 
-        \texttt{\{threadUri\}/entries/\{entryId\}},
-        \texttt{\{threadUri\}\#discussion\_topic} \\
-    \end{tabular}
-    \label{tbl:canvas_uri_platzhalter}
-\end{table}
-
-% subsubsection canvas_sioc_mapping (end)
-
-% subsection canvas_connector (end)
-
 % section implementierung_einiger_connectoren (end)
 
 \section{Proof of Concept} % (fold)
@@ -758,7 +848,6 @@ Um zu die Funktionsweise von SOCC und SOCC-Camel zu demonstrieren, soll nun ein 
 
 \subsection{Vorbereitungen} % (fold)
 \label{sub:vorbereitungen}
-
 
 Die Konfigurationsdaten für dieses Programm befinden sich im Anhang \ref{sec:anhang_proof_of_concept_konfigurationsdaten} im Turtle-Format. Dort befindet sich die Definitionen von den zwei Personen \enquote{Max Hiwi} und \enquote{Florian} mit jeweils ihren Benutzerkonto für Canvas und Facebook. Sowohl für Canvas als auch für Facebook wurde für die Benutzerkonten Accesstoken erstellt und dort hinterlegt (Durch \dots abgekürzt). Beide Personen erlauben einen öffentlichen Zugriff auf all ihre Beiträge durch eine Autorisierung. Ebenfalls wurden die Servicebeschreibungen und die Konfigurationen für die Canvas und Facebook Connectoren angegeben. Der Service für Facebook enthält zusätzlich die ClientID und den ClientSecret, um aus kurzlebigen Accesstoken welche mit einer Haltbarkeit von zwei Monaten generieren zu lassen.
 

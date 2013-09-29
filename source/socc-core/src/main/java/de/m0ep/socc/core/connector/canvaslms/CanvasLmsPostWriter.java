@@ -186,6 +186,21 @@ public class CanvasLmsPostWriter extends
 			        getConnector(),
 			        post );
 
+			// check if the creator has an UserAccount and a corresponding Person 
+			// in the connectors triplestore, then check if we can write with the client
+			if ( null != creatorAccount
+			        && UserAccount.hasInstance( getModel(), creatorAccount )
+			        && creatorAccount.hasAccountOf() ) {
+				// skip post, if we have no write permission  
+				if ( !SoccUtils.haveWriteAccess(
+				        getConnector(),
+				        creatorAccount,
+				        targetContainer ) ) {
+					LOG.info( "Skip writing post {}, have no writing permission.", post );
+					return;
+				}
+			}
+
 			CanvasLmsClient client = PostWriterUtils.getClientOfCreator(
 			        getConnector(),
 			        creatorAccount );
@@ -263,6 +278,21 @@ public class CanvasLmsPostWriter extends
 			UserAccount creatorAccount = PostWriterUtils.getCreatorUserAccount(
 			        getConnector(),
 			        post );
+
+			// check if the creator has an UserAccount and a corresponding Person 
+			// in the connectors triplestore, then check if we can write with the client
+			if ( null != creatorAccount
+			        && UserAccount.hasInstance( getModel(), creatorAccount )
+			        && creatorAccount.hasAccountOf() ) {
+				// skip post, if we have no write permission
+				if ( !SoccUtils.haveWriteAccess(
+				        getConnector(),
+				        creatorAccount,
+				        targetPost.getContainer() ) ) {
+					LOG.info( "Skip writing post {}, have no writing permission.", post );
+					return;
+				}
+			}
 
 			CanvasLmsClient client = PostWriterUtils.getClientOfCreator(
 			        getConnector(),
@@ -348,7 +378,7 @@ public class CanvasLmsPostWriter extends
 			        getServiceEndpoint(),
 			        RdfUtils.resourceToString( resultPost, Syntax.Turtle ) );
 		} else {
-			LOG.info( "Writing a post to {} was successful '{}'",
+			LOG.info( "Writing a post to {} was successful: '{}'",
 			        getServiceEndpoint(),
 			        resultPost );
 		}

@@ -21,7 +21,7 @@
 [] a acl:Authorization ;
     acl:accessToClass sioc:Post ;
     acl:agentClass foaf:Agent ;
-    acl:mode acl:Read;
+    acl:mode acl:Read , acl:Write ;
     acl:owner <http://www.example.org#max> .
     
 <https://canvas.instructure.com/api/v1/users/3478501/profile> a sioc:UserAccount ;
@@ -64,7 +64,7 @@
 [] a acl:Authorization ;
     acl:accessToClass sioc:Post ;
     acl:agentClass foaf:Agent ;
-    acl:mode acl:Read;
+    acl:mode acl:Read , acl:Write ;
     acl:owner <http://www.example.org#florian> .
 
 <https://canvas.instructure.com/api/v1/users/3457836/profile> a sioc:UserAccount ;

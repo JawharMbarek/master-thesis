@@ -270,12 +270,12 @@ public class CanvasLmsPostReader extends
 				        courseId );
 
 				if ( LOG.isDebugEnabled() ) {
-					LOG.debug( "Convert initial entry to socc post:\n{}",
+					LOG.debug( "Converted initial entry to SIOC:\n{}",
 					        RdfUtils.resourceToString(
 					                result,
 					                Syntax.Turtle ) );
 				} else {
-					LOG.info( "Convert entry to socc post:'{}'", result );
+					LOG.info( "Converted entry to SIOC:'{}'", result );
 				}
 
 				return result;

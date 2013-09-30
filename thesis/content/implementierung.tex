@@ -107,6 +107,8 @@ Leider funktioniert diese Methode erst wenn die entsprechenden Beziehungen vorha
 \subsection{Moodle Connector} % (fold)
 \label{sub:moodle_connector}
 
+\todo[inline]{Einleitung schreiben}
+
 % \begin{itemize}
 %     \item Eingebaute REST Schnittstelle, aber kein Lesen von Beiträgen
 %     \item WebService Plugin MoodleWS (REST oder SOAP)
@@ -255,6 +257,8 @@ Ebenfalls ungewöhnlich ist der Inhalt der Klasse \texttt{ForumDiscussionRecord}
 \subsection{Canvas Connector} % (fold)
 \label{sub:canvas_connector}
 
+\todo[inline]{Einleitung schreiben}
+
 % \begin{itemize}
 %     \item relativ neues LMS
 %     \item super Bedienung
@@ -390,6 +394,8 @@ Die URIs für RDF bei Canvas wurden so gewählt, dass sie den URIs für die REST
 
 \subsection{Facebook Connector} % (fold)
 \label{sub:facebook_connector}
+
+\todo[inline]{Einleitung schreiben}
 
 % \begin{itemize}
 %     \item REST API + JSON
@@ -557,6 +563,8 @@ Wie im Abschnitt über die Graph API schon beschrieben, ist es nahezu unmöglich
 \subsection{Google+ Connector} % (fold)
 \label{sub:google_plus_connector}
 
+\todo[inline]{Einleitung schreiben}
+
 % \begin{itemize}
 %     \item Einfach REST API + JSON
 %     \item OAuth
@@ -701,6 +709,8 @@ Wie schon bei vorherigen REST-APIs wurde die in Tabelle \ref{tbl:googleplus_rdf_
 \subsection{Youtube Connector} % (fold)
 \label{sub:youtube_connector}
 
+\todo[inline]{Einleitung schreiben}
+
 % \begin{itemize}
 %     \item Aktueller Umbau der API (ähnlich google+) v3
 %     \begin{itemize}
@@ -766,7 +776,7 @@ Das Schreiben eines Eintrags ist in Listing \ref{lst:ytdataapi_kommentar_schreib
 \subsubsection{Mapping von Youtube nach SIOC} % (fold)
 \label{ssub:youtube_mapping_nach_sioc}
 
-Der Aufbau von Youtube unterscheidet sich etwas von den anderen vier Plattformen, das es vorrangig zum Austausch von Videos gedacht ist. Nichtsdestotrotz können in den Kommentaren in über diese Video diskutiert werden. Videos können dabei an zwei unterschiedlichen Orten liegen, entweder sind sie unter den hochgeladenen Videos eines Benutzers zu finden oder in einer von ihm angelegen Playliste. Sowohl die Liste der hochgeladenen Videos (Uploads) als auch die Menge angelegter Playlisten (Playlists) können der SIOC-Klasse \texttt{sioc:Forum} zugeordnet werden. Eine Playliste enthält in der Regel Videos mit einem thematischen Schwerpunkt, wie zum Beispiel Musik Genre, Rezepte, Katzenvideos und so weiter. Dies ist den Threads in einen Forum sehr ähnlich, wodurch \texttt{sioc:Thread} für eine Playliste die beste Wahl für das Mapping nach SIOC ist. Die in den Uploads und Playlisten enthaltenen Videos entsprechen den Startbeitrag einer Diskussion, die den Inhalt des Videos als Thema hat. Eine Zuordnung von Videos zu \texttt{sioc:Post} ist daher naheliegend. Das Video wird dann als \texttt{sioc:Attachtment} an diesen \texttt{sioc:Post} angehängt. Videos können seit September 2013 nicht mehr als Antwort auf ein anderes Video sein (siehe \cite{YTCreators2013}). Somit sind Kommentare die einzigen Beiträge die mit einem Video verbunden sind. Die genauen Beziehungen sind noch einmal in Abbildung \ref{fig:youtube_sioc_mapping} zu sehen.
+Der Aufbau von Youtube unterscheidet sich etwas von den anderen vier Plattformen, das es vorrangig zum Austausch von Videos gedacht ist. Nichtsdestotrotz können in den Kommentaren in über diese Video diskutiert werden. Videos können dabei an zwei unterschiedlichen Orten liegen, entweder sind sie unter den hochgeladenen Videos eines Benutzers zu finden oder in einer von ihm angelegen Playliste. Sowohl die Liste der hochgeladenen Videos (Uploads) als auch die Menge angelegter Playlisten (Playlists) können der SIOC-Klasse \texttt{sioc:Forum} zugeordnet werden. Eine Playliste enthält in der Regel Videos mit einem thematischen Schwerpunkt, wie zum Beispiel Musik Genre, Rezepte, Katzenvideos und so weiter. Dies ist den Threads in einen Forum sehr ähnlich, wodurch \texttt{sioc:Thread} für eine Playliste die beste Wahl für das Mapping nach SIOC ist. Die in den Uploads und Playlisten enthaltenen Videos entsprechen den Startbeitrag einer Diskussion, die den Inhalt des Videos als Thema hat. Eine Zuordnung von Videos zu \texttt{sioc:Post} ist daher naheliegend. Das Video wird dann als \texttt{sioc:Attachtment} an diesen \texttt{sioc:Post} angehängt. Videos können seit September 2013 nicht mehr eine Antwort auf ein anderes Video sein (siehe \cite{YTCreators2013}). Somit sind Kommentare die einzigen Beiträge die mit einem Video verbunden sind. Die genauen Beziehungen sind noch einmal in Abbildung \ref{fig:youtube_sioc_mapping} zu sehen.
 
 \begin{minipage}{\textwidth}
     \centering
@@ -838,7 +848,64 @@ Vorteil bei der Youtube Data API v2 ist die Basis von Atom als Datenformat. So s
 \section{Implementierung von SOCC-Camel} % (fold)
 \label{sec:implementierung_von_socc_camel}
 
+Die Implementierung des SOCC-Camel Moduls als Komponente für Camel ist relativ unkompliziert. Die Java-API von Camel enthält schon viele vorbereitet Klassen von denen die Klassen aus SOCC-Camel abgeleitet werden können. Nebenbei ist dann nur noch wenig zusätzlich zu machen.
 
+\begin{description}
+    \item[\textbf{SoccComponent:}] Die SoccComponent muss die in der Konfigurations-URI angegeben Connectoren mit den Daten aus den Triplestore erzeugen und verwalten und für jeden Endpunkt eine Objekt der Klasse SoccEndpoint mit dem Parametern und dem Connector erzeugen. 
+
+    \item[\textbf{SoccEndpoint:}] Der SoccEndpoint ist wiederum nur eine Fabrik für den SoccPostPollConsumer und den SoccPostProducer. 
+
+    \item[\textbf{SoccPostPollConsumer:}] Die komplette Arbeit des SoccPostPollConsumer findet in der Methode \texttt{poll()} statt, die aus der abgeleiteten Klasse ScheduledPollConsumer von Camel überschreiben wird. In Listing \ref{lst:socc_camel_polling_code} zeigt den Quellecode dieser Methode. In der zweiten Zeile wird der PostReader aufgerufen, wobei die Variable \texttt{lastPollTime} den Zeitpunkt enthält, an dem die Methode das letzte mal aufgerufen wurde. Ist mindesten ein Beitrag in der zurückgelieferten Liste, werden diese ab Zeile 4 serialisiert, in eine Nachricht verpackt und an Camel zum Versenden übergeben. Mit RDF2Go können leider nur komplette Triplestores serialisiert werden, deswegen müssen die Daten der Beiträge erst einen neuen kopiert werden, dass nicht auch unerwünschte Daten mitgeschickt werden, die noch im Triplestore des Connectors liegen. Dieser temporäre Triplestore wird in Zeile 5 und 6 angelegt. Der Quellcode in den Zeilen 9 bis 13 kopiert erst alle Prefixe aus dem original Triplestore. Dieser Schritt ist zwar nicht zwingend notwendig, erleichtert aber das lesen der serialisierten RDF-Daten für das Debuggen. In den Zeilen 15 bis 20 werden dann alle RDF-Daten der Beiträge in das temporäre Model kopiert. Danach kann ab Zeile 22 angefangen werden die zu sendende Nachricht zusammen zu bauen. Die serialisierten Daten kommen dann in Zeile 23 als \enquote{Body} in die Nachricht. Zusätzlich wird in Zeile 27 das verwendete Serialisierungsformat als MIME-Type angegeben. Nachrichten werden in Camel zusätzlich in eine Art Umschlagt der Klasse \texttt{Exchange} verpackt. Das verwenden der Methode \texttt{setIn(\dots)} sagt dabei Camel, dass diese Nachricht als eingehende Nachricht für einen Endpunkt gedacht ist. Möchte man auf eine Nachricht eine Antwort schicken, macht man dies mit der Methode \texttt{setOut(\dots)}. In Zeile 33 wird die Nachricht dann abgeschickt. Am Ende muss dann nur noch die Variable \texttt{lastPollTime} aktualisiert werden.
+ 
+\begin{lstlisting}[
+caption={Quellcode zum Polling im  SoccPostPollConsumer}\label{lst:socc_camel_polling_code},
+captionpos=t]
+protected int poll() throws Exception {
+    List<Post> posts = postReader.pollPosts(uri, lastPollTime, limit);
+    if ( !posts.isEmpty() ) {
+        Model tmpModel = RDF2Go.getModelFactory().createModel();
+        tmpModel.open();
+
+        try {
+            Model model = postReader.getConnector().getContext()
+            .getModel();
+            for (Entry<String, String> entry : model.getNamespaces().entrySet()) {
+            tmpModel.setNamespace(entry.getKey(), entry.getValue());
+            }
+
+            for (Post post : posts) {
+                tmpModel.addAll( 
+                    RdfUtils.getAllStatements( 
+                        model, 
+                        post ).iterator() );
+            }
+
+            Message msg = new DefaultMessage();
+            msg.setBody( 
+                RdfUtils.modelToString(
+                    tmpModel, 
+                    Syntax.RdfXml));
+            msg.setHeader(
+                Exchange.CONTENT_TYPE, 
+                Syntax.RdfXml.getMimeType());
+
+            Exchange ex = getEndpoint().createExchange();
+            ex.setIn(msg);
+            getProcessor().process(ex);
+        } finally {
+            tmpModel.close();
+        }
+    }
+
+    lastPollTime.setTime( System.currentTimeMillis() );
+}
+\end{lstlisting}
+
+    \item[\textbf{SoccPostProducer:}] Der Post nimmt nur alle ankommenden Nachrichten, holt nur die serialisierten Daten aus der Nachricht, überprüft, ob ein gültiger MIME-Type vorliegt und gibt alles an den PostWriter weiter. 
+    
+\end{description}
+
+%\todo[inline]{Text schreiben}
 
 % section implementierung_von_socc_camel (end)
 
@@ -1021,8 +1088,6 @@ wie in Abbildung \ref{fig:poc_final_at_canas} ist zu sehen, das die Diskussion i
     sioc:id "520890171336339" ;
     sioc:reply_of <https://graph.facebook.com/520312298060793_520417398050283> .
 \end{lstlisting}
-
-\wrapfill
 
 % section proof_of_concept (end)
 

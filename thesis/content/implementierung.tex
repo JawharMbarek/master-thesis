@@ -3,7 +3,13 @@
 \chapter{Implementierung und Proof of Concept} % (fold)
 \label{cha:implementierung_und_evaluation}
 
-\todo[inline]{Auf die verschiedenen Klassen von Facebook und Co eingehen, REST, SOAP, OAUTH, Client/Passwort, Art der Plattforn, Forum, OSN, Videoplatform}
+Dieses Kapitel beinhaltet Informationen über die Implementierung von Connectoren für die im Abschnitt \ref{sec:lernplattformen_und_soziale_online_netzwerke} vorgestellten Plattformen. Diese wurden nicht nur ausgewählt weil sie fast alle weit verbreitet sind, sondern weil sie auch verschiedenen Klassen von Plattformen angehören. Moodle und Canvas gehören zu der Klasse der Lernplattformen und beinhalten eine klassische Forenstruktur für Diskussionen. Die Plattformen Facebook und Google+ sind soziale Online-Netzwerke, die zur Zeit einen großen Aufschwung erleben. Und zuletzt noch Youtube, das als Videoportal anderen das bereitstellen von Videomaterial und das Diskutieren über diese ermöglicht. Während alle fünf Plattformen auf REST (Moodle auch SOAP) als Architektur ihrer APIs setzten, sind die Formen für die Autorisierung teils sehr unterschiedlich, auch wenn sie den selben Mechanismus einsetzten.
+
+In den folgenden Abschnitten wird erklärt wie man auf die Daten der einzelnen Plattformen über ihre APIs zugreifen kann und welche Voraussetzungen dafür erfüllt sein müssen. Gleichfalls wird beschreiben, wie der Zugriff auf diese API innerhalb der Programmiersprache  Java geschehen kann, da diese APIs in der Regel für Webanwendungen ausgelegt sind. Danach wird noch gezeigt welches Mapping zwischen den Ressource der Plattformen und dem SIOC-Format gewählt wurde. Traten bei der Implementierung Besonderheiten auf, die für andere Entwickler interessant sein könnten, wurden diese in einen eigenen Abschnitt des betreffenden Connectors aufgeführt.
+
+Der Schluss des Kapitels bildet ein \enquote{Proof of Concept} (Englisch für Machbarkeitsnachweis), der demonstrieren soll wie ein Programm zu Synchronisation von Beiträgen mit SOCC aussehen kann und wie es funktioniert.
+
+%\todo[inline]{Auf die verschiedenen Klassen von Facebook und Co eingehen, REST, SOAP, OAUTH, Client/Passwort, Art der Plattform, Forum, OSN, Videoplatform}
 
 \section{Verwendete Programme und Bibliotheken} % (fold)
 \label{sec:verwendete_bibliotheken_und_programme}
@@ -29,22 +35,6 @@ An dieser Stelle soll beschrieben werden wie Connectoren für die in Abschnitt \
 \label{sub:allgemeine_informationen_zum_mapping_nach_sioc}
 
 Innerhalb der Beschreibungen des Mappings nach SIOC werden zur besseren Übersicht und einfacheren Lesbarkeit Platzhalt für einige URIs benutzt. Welche Platzhalten dies sind und für welche URI sie stehen ist aus Tabelle \ref{tbl:platzhalter_fuer_sioc_mapping} zu entnehmen.
-\begin{table}[ht]
-    \centering
-    \caption{Allgemeine Platzhalter und deren Beschreibung für das Mapping nach SIOC}
-    \begin{tabular}{l|p{11cm}}
-        \textbf{Platzhalter} & \textbf{Bedeutung} \\ 
-        \hline
-        \texttt{\{rootUri\}} & Die WurzelUri einer SOC. Für Facebook wäre dies zum Beispiel \texttt{https://www.facebook.com} \\
-        \texttt{\{siteUri\}} & URI für eine SIOC Site \\
-        \texttt{\{serviceUri\}} & URI für einen SIOC Service \\
-        \texttt{\{userAccountUri\}} & URI für einen SIOC UserAccount \\
-        \texttt{\{forumUri\}} & URI für ein SIOC Forum \\
-        \texttt{\{threadUri\}} & URI für ein SIOC Thread \\
-        \texttt{\{postUri\}} & URI für ein SIOC Post
-    \end{tabular}
-    \label{tbl:platzhalter_fuer_sioc_mapping}
-\end{table}
 
 Da einige Eigenschaften der Klassen von SIOC bei allen Plattformen mit ähnlichen Werten belegt werden und sich nur vom Aufruf der API unterscheiden, sollen zuvor für die Klassen UserAccount, Forum, Thread und Post die Eigenschaften beschrieben werden, die überall verwendet werden.
 
@@ -57,6 +47,23 @@ Da einige Eigenschaften der Klassen von SIOC bei allen Plattformen mit ähnliche
 
     \item[\textbf{Post:}] Jeder Post hat eine, für die Seite eindeutige ID mit \texttt{sioc:id}. Mit der Eigenschaft \texttt{sioc:creator} wird der UserAccount des Autors festgelegt und mit \texttt{sioc:content} der Inhalt des Beitrags. Besitzt ein Beitrag eine Titel, wird dieser mit \texttt{sioc:title} gespeichert. Der Zeitpunkt der Erstellung kommt nach \texttt{dcterms:created} und der bei eine Modifikation nach \texttt{dcterms:modified}. Beiträge gehören immer zu einen Forum oder Thread welches mit \texttt{sioc:has\_container} angegeben wird. Auch können Beiträge Kommentare mit \texttt{sioc:has\_reply} enthalten oder selber Kommentare auf andere Beiträge mit \texttt{sioc:reply\_of} sein.
 \end{description}
+
+\begin{table}[ht]
+    \centering
+    \caption{Allgemeine Platzhalter und deren Beschreibung für das Mapping nach SIOC}
+    \begin{tabular}{l|p{11cm}}
+        \textbf{Platzhalter} & \textbf{Bedeutung} \\ 
+        \hline
+        \texttt{\{rootUri\}} & Die Basis-URI einer Webseite (Schema + Authority\footnote{\url{http://tools.ietf.org/html/rfc3986\#section-3}}). Für Facebook wäre dies zum Beispiel \texttt{https://www.facebook.com} \\
+        \texttt{\{siteUri\}} & URI für eine SIOC Site \\
+        \texttt{\{serviceUri\}} & URI für einen SIOC Service \\
+        \texttt{\{userAccountUri\}} & URI für einen SIOC UserAccount \\
+        \texttt{\{forumUri\}} & URI für ein SIOC Forum \\
+        \texttt{\{threadUri\}} & URI für ein SIOC Thread \\
+        \texttt{\{postUri\}} & URI für ein SIOC Post
+    \end{tabular}
+    \label{tbl:platzhalter_fuer_sioc_mapping}
+\end{table}
 
 % subsection allgemeine_informationen_zum_mapping_nach_sioc (end)
 
@@ -658,7 +665,7 @@ Wie schon Facebook setzt Google+ auf OAuth 2.0 für die Google+ API. Jedoch verw
     \label{fig:googleplus_useraccount_mapping}
 \end{minipage}
 
-Wie schon bei vorherigen REST-APIs wurde die in Tabelle \ref{googleülus_rdf_uri_format} stehenden URIs für die Google+ Ressourcen in RDF als die gleichen wie für die REST-Abfragen gewählt. Die einzige einschränke ist, dass in der aktuellen Version der Google+ API bei der URI für den ActivityFeed (\texttt{sioc:Forum}) für den Platzhalter \enquote{\texttt{\{collection\}}} nur der Wert \enquote{public} zulässig ist. Andere Werte verbietet die API.
+Wie schon bei vorherigen REST-APIs wurde die in Tabelle \ref{tbl:googleplus_rdf_uri_format} stehenden URIs für die Google+ Ressourcen in RDF als die gleichen wie für die REST-Abfragen gewählt. Die einzige einschränke ist, dass in der aktuellen Version der Google+ API bei der URI für den ActivityFeed (\texttt{sioc:Forum}) für den Platzhalter \enquote{\texttt{\{collection\}}} nur der Wert \enquote{public} zulässig ist. Andere Werte verbietet die API.
 
 \begin{table}[ht]
     \centering
@@ -684,7 +691,7 @@ Wie schon bei vorherigen REST-APIs wurde die in Tabelle \ref{googleülus_rdf_uri
         \texttt{sioc:Post} & 
         \texttt{https://www.googleapis.com/plus/v1/comments/\{commentId\}} \\
     \end{tabular}
-    \label{tbl:googleülus_rdf_uri_format}
+    \label{tbl:googleplus_rdf_uri_format}
 \end{table}
 
 % subsubsection google_mapping_nach_sioc (end)
@@ -838,7 +845,7 @@ Vorteil bei der Youtube Data API v2 ist die Basis von Atom als Datenformat. So s
 \section{Proof of Concept} % (fold)
 \label{sec:proof_of_concept}
 
-Um zu die Funktionsweise von SOCC und SOCC-Camel zu demonstrieren, soll nun ein \enquote{Proof of Concept} (Englisch für Machbarkeitsnachweis) erstellt werden. Hierzu wird ein Programm vorgestellt, das die Beiträge einer Diskussion aus Canvas mit den Kommentaren eines Beitrags aus einer  Facebookgruppe synchronisiert. 
+Um zu die Funktionsweise von SOCC und SOCC-Camel zu demonstrieren, soll nun ein \enquote{Proof of Concept} erstellt werden. Hierzu wird ein Programm vorgestellt, das die Beiträge einer Diskussion aus Canvas mit den Kommentaren eines Beitrags aus einer  Facebookgruppe synchronisiert. 
 
 \subsection{Vorbereitungen} % (fold)
 \label{sub:vorbereitungen}

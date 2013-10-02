@@ -3,13 +3,11 @@
 \chapter{Implementierung und Proof of Concept} % (fold)
 \label{cha:implementierung_und_evaluation}
 
-Dieses Kapitel beinhaltet Informationen über die Implementierung von Connectoren für die im Abschnitt \ref{sec:lernplattformen_und_soziale_online_netzwerke} vorgestellten Plattformen. Diese wurden nicht nur ausgewählt weil sie fast alle weit verbreitet sind, sondern weil sie auch verschiedenen Klassen von Plattformen angehören. Moodle und Canvas gehören zu der Klasse der Lernplattformen und beinhalten eine klassische Forenstruktur für Diskussionen. Die Plattformen Facebook und Google+ sind soziale Online-Netzwerke, die zur Zeit einen großen Aufschwung erleben. Und zuletzt noch Youtube, das als Videoportal anderen das bereitstellen von Videomaterial und das Diskutieren über diese ermöglicht. Während alle fünf Plattformen auf REST (Moodle auch SOAP) als Architektur ihrer APIs setzten, sind die Formen für die Autorisierung teils sehr unterschiedlich, auch wenn sie den selben Mechanismus einsetzten.
+Dieses Kapitel beinhaltet Informationen über die Implementierung von Connectoren für die im Abschnitt \ref{sec:lernplattformen_und_soziale_online_netzwerke} vorgestellten Plattformen. Diese wurden nicht nur ausgewählt, weil sie fast alle weit verbreitet sind, sondern weil sie auch verschiedenen Klassen von Plattformen angehören. Moodle und Canvas gehören zu der Klasse der Lernplattformen und beinhalten eine klassische Forenstruktur für Diskussionen. Die Plattformen Facebook und Google+ sind soziale Online-Netzwerke, die zur Zeit einen großen Aufschwung erleben. Und zuletzt noch Youtube, das als Videoportal anderen das bereitstellen von Videomaterial und das Diskutieren über diese ermöglicht. Während alle fünf Plattformen auf REST (Moodle auch SOAP) als Architektur ihrer APIs setzten, sind die Formen für die Autorisierung teils sehr unterschiedlich, auch wenn sie den selben Mechanismus einsetzten.
 
-In den folgenden Abschnitten wird erklärt wie man auf die Daten der einzelnen Plattformen über ihre APIs zugreifen kann und welche Voraussetzungen dafür erfüllt sein müssen. Gleichfalls wird beschreiben, wie der Zugriff auf diese API innerhalb der Programmiersprache  Java geschehen kann, da diese APIs in der Regel für Webanwendungen ausgelegt sind. Danach wird noch gezeigt welches Mapping zwischen den Ressource der Plattformen und dem SIOC-Format gewählt wurde. Traten bei der Implementierung Besonderheiten auf, die für andere Entwickler interessant sein könnten, wurden diese in einen eigenen Abschnitt des betreffenden Connectors aufgeführt.
+In den folgenden Abschnitten wird erklärt wie man auf die Daten der einzelnen Plattformen über ihre APIs zugreifen kann und welche Voraussetzungen dafür erfüllt sein müssen. Gleichfalls wird beschreiben, wie der Zugriff auf diese API innerhalb der Programmiersprache Java funktionieren kann, da diese APIs in der Regel für Webanwendungen ausgelegt sind. Danach wird noch gezeigt welches Mapping zwischen den Ressourcen der Plattformen und dem SIOC-Format gewählt wurde. Traten bei der Implementierung Besonderheiten auf, die für andere Entwickler interessant sein könnten, wurden diese in einen eigenen Abschnitt des betreffenden Connectors aufgeführt.
 
 Der Schluss des Kapitels bildet ein \enquote{Proof of Concept} (Englisch für Machbarkeitsnachweis), der demonstrieren soll wie ein Programm zu Synchronisation von Beiträgen mit SOCC aussehen kann und wie es funktioniert.
-
-%\todo[inline]{Auf die verschiedenen Klassen von Facebook und Co eingehen, REST, SOAP, OAUTH, Client/Passwort, Art der Plattform, Forum, OSN, Videoplatform}
 
 \section{Verwendete Programme und Bibliotheken} % (fold)
 \label{sec:verwendete_bibliotheken_und_programme}
@@ -17,11 +15,13 @@ Der Schluss des Kapitels bildet ein \enquote{Proof of Concept} (Englisch für Ma
 An dieser Stelle soll noch kurz auf zusätzliche Programm und Bibliotheken eingegangen werden, die für die Entwicklung der einzelnen Connectoren hilfreich waren. 
 
 \begin{description}
-    \item[\textbf{Apache Maven:}] Für die Entwicklung der Programme und Bibliotheken dieser Arbeit wurde das Buil-Management Programm \texttt{Maven}\footnote{http://maven.apache.org/} von Apache eingesetzt. Mit diesem ist es auf einfache Art möglich Java-Programme zu verwalten und zu erstellen. So ist nur mit einer einzigen XML-Datei (\texttt{pom.xml}) die Abhängigkeiten festzulegen, das Programm zu kompilieren, zu testen und es auszuliefern. Maven schreibt eine feste Ordnerstruktur für ein Projekt vor wie der Produktivquellcode, dafür nötige Ressource (Bilder, Teste,\dots) und der Code zum Testen geordnet werden sollen. Die Abhängigkeiten werden automatisch aus zentralen Repositories heruntergeladen und ins Projekt eingebunden. So muss dies nicht immer von Handgeschehen und spart so Arbeit.
+    \item[\textbf{Apache Maven:}] Für die Entwicklung der Programme und Bibliotheken dieser Arbeit wurde das Build-Management Programm \texttt{Maven}\footnote{http://maven.apache.org/} von Apache eingesetzt. Mit diesem ist es auf einfache Art möglich Java-Programme zu Verwalten und zu Vrstellen. So ist nur mit einer einzigen XML-Datei (\texttt{pom.xml}) möglich die Abhängigkeiten festzulegen, das Programm zu kompilieren, zu testen und es auszuliefern. Maven schreibt eine feste Ordnerstruktur für ein Projekt vor wie der Produktivquellcode, dafür nötige Ressource (Bilder, Texte,\dots) und der Quellcode zum Testen geordnet werden sollen. Die Abhängigkeiten werden automatisch aus zentralen Repositorien heruntergeladen und in das Projekt eingebunden. So muss dies nicht umständlich von Hand geschehen und spart so Arbeit.
 
-    \item[\textbf{RDF2Go:}] Für die Programmiersprache Java gibt es einige Bibliotheken mit denen RDF-Daten verarbeitet werden können. Wie zum Beispiel \emph{Sesame}\footnote{\url{http://www.openrdf.org}}, \emph{Apache Jena}\footnote{\url{http://jena.apache.org}} oder \emph{JRDF}\footnote{\url{http://jrdf.sourceforge.net/}}. Jede dieser Bibliotheken bietet einen Triplestore und eine API für das Arbeiten mit RDF-Triples. Stellt sich nur die Frage welche man auszuwählen soll? Einen Ausweg aus dieser Misere bietet \emph{RDF2Go}\footnote{\url{http://semanticweb.org/wiki/RDF2Go}}. RDF2Go abstrahiert andere Triplestores über eine einheitliche API und erlaubt es den Triplestore später wechseln zu können. Dazu muss für den Triplestore nur ein Adapter an RDF2Go implementiert werden, welche aktuell für Sesame und Apache Jena. Für RDF2Go existiert auch ein Programm RDFReactor. Mit ihm lassen sich aus Ontologien in RDFS und OWL Java-Klassen generieren mit denen statt mit Triple gearbeitet werden kann. 
+    \item[\textbf{RDF2Go:}] Für die Programmiersprache Java gibt es einige Bibliotheken mit denen RDF-Daten verarbeitet werden können. Wie zum Beispiel \emph{Sesame}\footnote{\url{http://www.openrdf.org}}, \emph{Apache Jena}\footnote{\url{http://jena.apache.org}} oder \emph{JRDF}\footnote{\url{http://jrdf.sourceforge.net/}}. Jede dieser Bibliotheken bietet einen Triplestore und eine API für das Arbeiten mit RDF-Triples. Stellt sich nur die Frage welche man von ihnen auszuwählen soll? 
 
-    \item[\textbf{Handy-URI-Templates:}] Bei der Arbeit mit RDF kommt man zwangsläufig um das Verarbeiten von URI nicht herum. Um diese Arbeit zu erleichtern wird bei der Implementierung die \emph{Handy-URI-Templates}\footnote{\url{https://github.com/damnhandy/Handy-URI-Templates}} eingesetzt. Diese Java-Bibliothek implementiert \emph{RFC6570}\footnote{\url{http://tools.ietf.org/html/rfc6570}}, welches eine Sprache für URI-Vorlagen definiert. Zum erzeugen einer URI muss nur eine solche Vorlage definiert und mit der API Handy-URI-Templates mit Werten gefüllt werden. Die Vorlage \texttt{http://www.example.org\{?x,y\}} würde mit den Werten \texttt{x=42} und \texttt{y=23} die URI \texttt{http://www.example.org?x=42\&y=23} entstehen lassen.
+    Einen Ausweg aus dieser Misere bietet \emph{RDF2Go}\footnote{\url{http://semanticweb.org/wiki/RDF2Go}}. RDF2Go abstrahiert andere Triplestores über eine einheitliche API und erlaubt es den Triplestore später wechseln zu können. Dazu muss für den Triplestore nur ein Adapter für RDF2Go implementiert werden, welche aktuell für Sesame und Apache Jena vorhanden sind. Für RDF2Go existiert auch ein Programm RDFReactor mit dem aus Ontologien in RDFS und OWL Java-Klassen generieren werden können. So muss nicht jedes Objekt mühevoll Triple für Triple zusammengebaut werden. 
+
+    \item[\textbf{Handy-URI-Templates:}] Bei der Arbeit mit RDF kommt man zwangsläufig um das Verarbeiten von URIs nicht herum. Um diese Arbeit zu erleichtern, wird bei der Implementierung die Java-Bibliothek \emph{Handy-URI-Templates}\footnote{\url{https://github.com/damnhandy/Handy-URI-Templates}} eingesetzt. Diese implementiert den \emph{RFC6570}\footnote{\url{http://tools.ietf.org/html/rfc6570}}, welches eine Sprache für URI-Vorlagen definiert. Zum Erzeugen einer URI muss nur eine solche Vorlage definiert und mit der API von Handy-URI-Templates mit Werten gefüllt werden. Die Vorlage \texttt{http://www.example.org\{?x,y\}} würde so mit den Werten \texttt{x=42} und \texttt{y=23} die URI \texttt{http://www.example.org?x=42\&y=23} entstehen lassen.
 \end{description}
 
 % section verwendete_bibliotheken_und_programme (end)
@@ -29,23 +29,23 @@ An dieser Stelle soll noch kurz auf zusätzliche Programm und Bibliotheken einge
 \section{Implementierung der Connectoren} % (fold)
 \label{sec:implementierung_der_connectoren}
 
-An dieser Stelle soll beschrieben werden wie Connectoren für die in Abschnitt \ref{sec:lernplattformen_und_soziale_online_netzwerke} vorgestellten Plattformen implementiert werden können. Dafür wird darauf eingegangen mit welcher Art von API auf die Daten der einzelnen Plattformen zugegriffen werden und wie man deren Datenstruktur in SIOC abbilden kann. Ebenfalls werden auftretende Probleme und wenn möglich deren Lösung gezeigt.
+In diesen Abschnitt soll nun beschrieben werden, wie Connectoren für die in Abschnitt \ref{sec:lernplattformen_und_soziale_online_netzwerke} vorgestellten Plattformen implementiert werden können. Dafür wird darauf eingegangen mit welcher Art von API auf die Ressourcen der einzelnen Plattformen zugegriffen werden und wie man deren Datenstruktur in SIOC abbilden kann. Ebenfalls werden auftretende Probleme und wenn möglich deren Lösung gezeigt.
 
 \subsection{Allgemeine Informationen zum Mapping nach SIOC} % (fold)
 \label{sub:allgemeine_informationen_zum_mapping_nach_sioc}
 
-Innerhalb der Beschreibungen des Mappings nach SIOC werden zur besseren Übersicht und einfacheren Lesbarkeit Platzhalt für einige URIs benutzt. Welche Platzhalten dies sind und für welche URI sie stehen ist aus Tabelle \ref{tbl:platzhalter_fuer_sioc_mapping} zu entnehmen.
+Innerhalb der Beschreibungen des Mappings nach SIOC werden, zur besseren Übersicht und einfacheren Lesbarkeit, Platzhalt für einige URIs benutzt. Welche Platzhalten dies sind und für welche URI sie stehen ist aus Tabelle \ref{tbl:platzhalter_fuer_sioc_mapping} zu entnehmen.
 
-Da einige Eigenschaften der Klassen von SIOC bei allen Plattformen mit ähnlichen Werten belegt werden und sich nur vom Aufruf der API unterscheiden, sollen zuvor für die Klassen UserAccount, Forum, Thread und Post die Eigenschaften beschrieben werden, die überall verwendet werden.
+Da einige Eigenschaften der Klassen von SIOC bei allen Plattformen mit ähnlichen Werten belegt werden und sich nur vom Aufruf der API unterscheiden, sollen zuvor für die SIOC-Klassen \texttt{sioc:UserAccount}, \texttt{sioc:Forum}, \texttt{sioc:Thread} und \texttt{sioc:Post} die Eigenschaften beschrieben werden, die überall verwendet werden.
 
 \begin{description}
-    \item[\textbf{UserAccount:}]  Für die Klasse UserAccount ist die Angabe von vier Eigenschaften wichtig. Die erste ist \texttt{sioc:Id} mit der die ID des Benutzerkontos angegeben wird und \texttt{sioc:name} für den den Benutzernamen. Aus Kompatibilitätsgründen mit FOAF wird die ID des Benutzers noch mit \texttt{foaf:accountName} angegeben und die URI zum verwendeten Service mit \texttt{foaf:accountServiceHomepage}. Die Angabe der Daten zu Autorisierung erfolgt mit der Eigenschaft \texttt{siocsa:accountAuthentication}.
+    \item[\textbf{\texttt{sioc:UserAccount}:}]  Für die Klasse \texttt{sioc:UserAccount} ist die Angabe von vier Eigenschaften wichtig. Die erste ist \texttt{sioc:Id} mit der die ID des Benutzerkontos angegeben wird und \texttt{sioc:name} für den den Benutzernamen. Aus Kompatibilitätsgründen mit FOAF und für den ClientManager wird die ID des Benutzers noch mit \texttt{foaf:accountName} angegeben und die URI zum verwendeten Service mit \texttt{foaf:accountServiceHomepage}. Die Angabe der Daten zu Authentifizierung erfolgt mit der Eigenschaft \texttt{siocsa:accountAuthentication}.
 
-    \item[\textbf{Forum:}] Jedes Forum hat seine eigene ID, die wie bei UserAccount unter der Eigenschaft \texttt{sioc:id} abgelegt wird. Ebenfalls bekommt jedes Forum einen Namen mit \texttt{sioc:name}. Jedes Forum hat eine Site von der es gehostet wird (\texttt{sioc:has\_host}). Ein Forum dient als Container für Post, die mit der Eigenschaft \texttt{sioc:container\_of} gekennzeichnet werden. Zugleich kann es auch Threads mit \texttt{sioc:parent\_of} enthalten. 
+    \item[\textbf{\texttt{sioc:Forum}:}] Jedes Forum hat seine eigene ID, die wie bei \texttt{sioc:UserAccount} unter der Eigenschaft \texttt{sioc:id} abgelegt wird. Ebenfalls bekommt jedes Forum einen Namen mit \texttt{sioc:name}. Jedes Forum hat eine \texttt{sioc:Site} von der es gehostet wird (\texttt{sioc:has\_host}). Ein Forum kann als Container für Beiträge deinen, die mit der Eigenschaft \texttt{sioc:container\_of} mit dem Forum verbunden werden. Zugleich kann es auch Threads mit \texttt{sioc:parent\_of} enthalten. 
 
-    \item[\textbf{Thread:}] Ein Thread enthält ebenfalls wieder eine ID und einen Namen. Enthält nur Beiträger der Klasse Post mit \texttt{sioc:container\_of} und ist immer ein Teil eines Forums mit \texttt{sioc:has\_parent}.
+    \item[\textbf{\texttt{sioc:Thread}:}] Ein Thread enthält ebenfalls wieder eine ID und einen Namen und enthält nur Beiträger der Klasse \texttt{sioc:Post} mit \texttt{sioc:container\_of} und ist immer ein Teil eines bestimmten Forums mit \texttt{sioc:has\_parent}.
 
-    \item[\textbf{Post:}] Jeder Post hat eine, für die Seite eindeutige ID mit \texttt{sioc:id}. Mit der Eigenschaft \texttt{sioc:creator} wird der UserAccount des Autors festgelegt und mit \texttt{sioc:content} der Inhalt des Beitrags. Besitzt ein Beitrag eine Titel, wird dieser mit \texttt{sioc:title} gespeichert. Der Zeitpunkt der Erstellung kommt nach \texttt{dcterms:created} und der bei eine Modifikation nach \texttt{dcterms:modified}. Beiträge gehören immer zu einen Forum oder Thread welches mit \texttt{sioc:has\_container} angegeben wird. Auch können Beiträge Kommentare mit \texttt{sioc:has\_reply} enthalten oder selber Kommentare auf andere Beiträge mit \texttt{sioc:reply\_of} sein.
+    \item[\textbf{\texttt{sioc:Post}:}] Jeder Beitrag hat eine, für die Seite der Plattform eindeutige ID mit \texttt{sioc:id}. Mit der Eigenschaft \texttt{sioc:creator} wird der \texttt{sioc:UserAccount} des Autors festgelegt und mit \texttt{sioc:content} der Inhalt des Beitrags. Besitzt ein Beitrag eine Titel, wird dieser mit \texttt{sioc:title} gespeichert. Der Zeitpunkt der Erstellung kommt nach \texttt{dcterms:created} und der bei einer Modifikation nach \texttt{dcterms:modified}. Beiträge gehören immer zu einen Forum oder Thread welches mit \texttt{sioc:has\_container} angegeben wird. Auch können Beiträge Kommentare mit \texttt{sioc:has\_reply} enthalten oder selber Kommentare auf andere Beiträge mit \texttt{sioc:reply\_of} sein.
 \end{description}
 
 \begin{table}[ht]
@@ -55,12 +55,12 @@ Da einige Eigenschaften der Klassen von SIOC bei allen Plattformen mit ähnliche
         \textbf{Platzhalter} & \textbf{Bedeutung} \\ 
         \hline
         \texttt{\{rootUri\}} & Die Basis-URI einer Webseite (Schema + Authority\footnotemark). Für Facebook wäre dies zum Beispiel \texttt{https://www.facebook.com} \\
-        \texttt{\{siteUri\}} & URI für eine SIOC Site \\
-        \texttt{\{serviceUri\}} & URI für einen SIOC Service \\
-        \texttt{\{userAccountUri\}} & URI für einen SIOC UserAccount \\
-        \texttt{\{forumUri\}} & URI für ein SIOC Forum \\
-        \texttt{\{threadUri\}} & URI für ein SIOC Thread \\
-        \texttt{\{postUri\}} & URI für ein SIOC Post
+        \texttt{\{siteUri\}} & URI für eine \texttt{sioc:Site} \\
+        \texttt{\{serviceUri\}} & URI für einen \texttt{sioc:Service} \\
+        \texttt{\{userAccountUri\}} & URI für einen \texttt{sioc:UserAccount} \\
+        \texttt{\{forumUri\}} & URI für ein \texttt{sioc:Forum} \\
+        \texttt{\{threadUri\}} & URI für ein \texttt{sioc:Thread} \\
+        \texttt{\{postUri\}} & URI für ein \texttt{sioc:Post}
     \end{tabular}
     \label{tbl:platzhalter_fuer_sioc_mapping}
 \end{table}
@@ -71,21 +71,21 @@ Da einige Eigenschaften der Klassen von SIOC bei allen Plattformen mit ähnliche
 \subsection{Allgemeine Probleme und Lösungen bei der Implementierung} % (fold)
 \label{sub:allgemeine_probleme}
 
-Bei der Implementierung der Connectoren treten ab und zu Probleme auf, die unabhängig von der verwendeten API gelöst werden müssen. Hier sollen diese Probleme und deren Lösung beschrieben werden. 
+Bei der Implementierung der Connectoren treten ab und zu Probleme auf, die unabhängig von der verwendeten API gelöst werden mussten. Hier sollen diese Probleme und deren Lösung vorgestellt werden. 
 
 \subsubsection{Doppelte Beiträge beim Synchronisieren} % (fold)
 \label{ssub:doppelte_beitraege_beim_synchronisieren}
 
-Sollen zwei Threads auf unterschiedlichen Plattformen synchronisiert werden, tritt automatisch das Problem auf, dass Beiträge die von A nach B geschrieben wurden beim auslesen von B wieder bei A als \enquote{neuer} Beitrag landen würde, obwohl er ursprünglich von dort kam. Dies würde ohne Eingreifen zu einer Dauerschleife führen, bei der die selben Beiträge immer hin und her geschrieben werden. 
+Sollen zwei Container auf unterschiedlichen Plattformen synchronisiert werden, tritt automatisch das Problem auf, dass Beiträge die von A nach B geschrieben wurden beim auslesen von B wieder bei A als \enquote{neuer} Beitrag landen würde, obwohl er ursprünglich von dort kam. Dies würde ohne Eingreifen zu einer Dauerschleife führen, bei der die selben Beiträge immer hin und her geschrieben werden. 
 
-Aus diesem Grund wird vor dem Schreiben eines Beitrags eine Art Wasserzeichen an diesen Angebracht. Diese Wasserzeichen besteht aus der Zeichenkette \texttt{--- forwarded by SOCC {siteUri} ---}. Hierzu muss jedem Beitrag mit der Eigenschaft \texttt{dcterms:isPartOf} die URI des Site Objekts zu dem der Beitrag gehört, hinzugefügt werden. Wird nun eine Beitrag gelesen, der ursprünglich von der Site des Connectors kam, wird dieser ignoriert. Enthält dagegen der Beitrag schon eine Wasserzeichen mit der URI einer anderen Site, wird kein neues Wasserzeichen hinzugefügt.
+Aus diesem Grund wird vor dem Schreiben eines Beitrags eine Art Wasserzeichen zum Inhalt hinzugefügt. Dieses Wasserzeichen besteht aus der Zeichenkette \texttt{--- forwarded by SOCC {siteUri} ---}. Der Platzhalter \enquote{\texttt{\{siteUri\}}} wird dabei durch die URI der Seite ersetzt von der der Beitrag gekommen ist. Hierzu muss jedem Beitrag mit der Eigenschaft \texttt{dcterms:isPartOf} die URI des \texttt{sioc:Site}-Objekts zu dem der Beitrag gehört, hinzugefügt werden. Wird nun eine Beitrag gelesen, der ursprünglich von der Seite des Connectors kam, wird dieser ignoriert. Enthält dagegen der Beitrag schon eine Wasserzeichen mit der URI einer anderen Seite, wird kein neues Wasserzeichen hinzugefügt.
 
 % subsubsection synchronisieren_von_beitrage (end)
 
 \subsubsection{Rekonstruktion der Kommentarstruktur} % (fold)
 \label{ssub:rekonstruktion_der_kommentarstruktur}
 
-Bei der Synchronisation ist es ebenso wichtig die Struktur von Kommentaren beizubehalten. Wenn Beitrag A2 ein Kommantar auf Beitrag A1 auf Seite A muss diese Struktur beim Synchronisieren mit Seite B mit den Beiträgen B1 und B2 erhalten bleiben.
+Bei der Synchronisation ist es ebenso wichtig die Struktur von Kommentaren beizubehalten. Wenn Beitrag A2 ein Kommentar auf Beitrag A1 in Seite A muss diese Struktur beim Synchronisieren auf Seite B mit den Beiträgen B1 und B2 erhalten bleiben.
 
 \begin{figure}[ht]
     \centering
@@ -97,18 +97,19 @@ Bei der Synchronisation ist es ebenso wichtig die Struktur von Kommentaren beizu
     \label{fig:kommentarsturktur_beim_schreiben}
 \end{figure}
 
-Hierzu wird nach dem Schreiben eines Beitrags mit der Eigenschaft \texttt{sioc:sibling} (Englisch für Geschwister) die URI zum original Beitrag beim geschriebenen Beitrag festgehalten. Taucht nun beim Schreiben ein Beitrag auf, der ein Kommentar auf den mit \texttt{sioc:sibling} gespeicherten Beitrags ist, kann dieser an die richtige Stelle als Kommentar geschrieben werden. Der RDF-Graph nach dem Synchronisieren ist in Abbildung zu sehen. 
+Hierzu wird nach dem Schreiben eines Beitrags mit der Eigenschaft \texttt{sioc:sibling} (Englisch für Geschwister) die URI zum original Beitrag beim geschriebenen Beitrag festgehalten. Taucht nun beim Schreiben ein Beitrag auf, der ein Kommentar auf den mit \texttt{sioc:sibling} gespeicherten Beitrags ist, kann dieser an die richtige Stelle als Kommentar geschrieben werden. Der RDF-Graph nach dem Synchronisieren ist in Abbildung \ref{ssub:rekonstruktion_der_kommentarstruktur} zu sehen. 
 
-Leider funktioniert diese Methode erst wenn die entsprechenden Beziehungen vorhanden sind. Werden Beiträge von Seite A nach Seite B geschrieben funktioniert dies tadellos. Wird aber nun auf Seite B ein Kommentar auf einen dieser Beiträge geschrieben und zu Seite A geschickt, kann diese den Beitrag nicht richtig einfügen, da \texttt{sioc:reply\_of} natürlich auf einen Beitrag von Seite B zeigt und die \texttt{sioc:sibling} Informationen auf Seite A fehlen.
+Leider funktioniert diese Methode erst wenn die entsprechenden Beziehungen vorhanden sind. Werden Beiträge von Seite A zur Seite B geschrieben funktioniert dies tadellos. Wird aber nun auf Seite B ein Kommentar auf einen dieser Beiträge geschrieben und zu Seite A geschickt, kann diese den Beitrag nicht richtig einfügen, da \texttt{sioc:reply\_of} natürlich auf einen Beitrag von Seite B zeigt und die \texttt{sioc:sibling} Informationen auf Seite A fehlen.
 
 % subsubsection rekonstruktion_der_kommentarstruktur (end)
 
 % subsection allgemeine_probleme (end)
 
-\subsection{Moodle Connector} % (fold)
+\subsection{MoodleConnector} % (fold)
 \label{sub:moodle_connector}
 
-\todo[inline]{Einleitung schreiben}
+Der \emph{MoodleConnector} die die Implementierung eines Connectors für Moodle. Da Diskussionen in Moodle in Foren geführt werden, war ein Mapping ohne Probleme möglich. Jedoch der Zugriff über die vorhandene Webservice API gestaltete sich mehr als schwierig. 
+
 
 % \begin{itemize}
 %     \item Eingebaute REST Schnittstelle, aber kein Lesen von Beiträgen
@@ -131,13 +132,13 @@ Leider funktioniert diese Methode erst wenn die entsprechenden Beziehungen vorha
 \subsubsection{Moodle Webservice API} % (fold)
 \label{ssub:moodle_webservice}
 
-Moodle bringt von Haus aus schon eine Webservice-Schnittstelle für einen Zugriff auf seine Daten mit. Diese API unterstützt dabei Protokolle für REST, SOAP und oder XML-RPC\footnote{\url{http://xmlrpc.scripting.com/}}. Mit ihr können Kurse, Foren und deren Threads (in Moodle Discussion Topics genannt), Benutzerprofile, Gruppen und viele andere Ressourcen ausgelesen oder geschrieben werden. Leider gilt dies nicht für Beiträge innerhalb von Foren Threads. Die aktuelle Version (Beim verfassen dieser Arbeit war dies 2.5.1) erlaubt es nicht Beiträge weder zu lesen noch zu schreiben.
+Moodle bringt von Haus aus eine Webservice-Schnittstelle für den Zugriff auf seine Daten mit. Diese API unterstützt die Protokolle REST, SOAP und oder XML-RPC\footnote{\url{http://xmlrpc.scripting.com/}}. Mit ihr können Kurse, Foren und deren Threads (in Moodle Discussion Topics genannt), Benutzerprofile, Gruppen und viele andere Ressourcen ausgelesen oder geschrieben werden. Leider gilt dies nicht für Beiträge innerhalb von Threads. Die aktuelle Version (Beim verfassen dieser Arbeit war dies 2.5.1) erlaubt es nicht Beiträge weder zu lesen noch zu schreiben.
 
-Doch existiert ein Plugin für Moodle, dass auf dieser Webservice API aufbaut und erweitert - \emph{MoodleWS}\footnote{\url{https://github.com/patrickpollet/moodlews}}. MoodleWS bietet den Zugriff über REST und SOAP, wobei bei der Verwendung von REST JSON als Datenformat verwendet wird und nicht XML wie mit SOAP. Mit diesem Plugin ist ein Programm nun auch in der Lage Beiträge aus Threads zu lesen. Die REST-Schnittstelle hat aber noch eine paar Fehler und so können damit noch keine neuen Beiträge geschrieben werden. Mit SOAP ist dies aber problemlos möglich.
+Doch es existiert ein Plugin für Moodle, dass auf dieser Webservice API aufbaut und sie erweitert - \emph{MoodleWS}\footnote{\url{https://github.com/patrickpollet/moodlews}}. MoodleWS bietet den Zugriff über REST und SOAP an, wobei bei der Verwendung von REST JSON als Datenformat verwendet wird und nicht XML wie mit SOAP. Mit diesem Plugin ist ein Programm nun auch in der Lage Beiträge aus Threads zu lesen. Die REST-Schnittstelle hat aber noch eine paar Fehler und so können damit noch keine neuen Beiträge geschrieben werden. Mit SOAP ist dies aber problemlos möglich.
 
-Für die Benutzung der muss sich ein Client mit dem Benutzernamen und Passwort eines vorhandenen Benutzers anmelden. Ist dies erfolgreich, bekommt der Client einen zufällig ID und einen Sitzungsschlüssel die er bei jeder Abfrage angeben muss. Dieser Sitzungsschlüssel ist nur eine begrenzte Zeit gültig, so kann es passieren, dass eine Operation fehlschlägt und der Client sich neu anmelden muss.
+Für die Benutzung der API muss sich ein Client mit dem Benutzernamen und Passwort eines vorhandenen Benutzers anmelden. Ist dies erfolgreich, bekommt der Client einen zufällig ID und einen Sitzungsschlüssel die er bei jeder Abfrage angeben muss. Dieser Sitzungsschlüssel ist nur eine begrenzte Zeit gültig. So kann es passieren, dass eine Operation deswegen fehlschlägt und der Client sich neu anmelden muss.
 
-Für die Verwendung der API in Java wird auch eine Bibliothek moodle\_ksoap2\footnote{\url{https://github.com/patrickpollet/moodlews\_ksoap2}} zur Verfügung gestellt. Sie abstrahiert komplett das SOAP-Protokoll im Hintergrund und enthält für alle Moodle-Ressource Java-Klassen und Methoden für den Zugriff. Bevor moodlews\_ksoap2 benutzt werden kann, ist darauf zu achten in Moodle unter \enquote{Site administration}, \enquote{Development}, \enquote {OK Tech Webservices ( aka wspp)} die Einstellung \enquote{Use an auto generated wsdl} auszuschalten, da es sonst zu Problemen mit moodlws\_ksoap2 kommen kann.
+Für die Verwendung der API in Java wird auch eine Bibliothek \emph{moodle\_ksoap2}\footnote{\url{https://github.com/patrickpollet/moodlews\_ksoap2}} zur Verfügung gestellt. Sie abstrahiert komplett das SOAP-Protokoll im Hintergrund und enthält für alle Moodle-Ressource Java-Klassen und Methoden für den Zugriff. Bevor moodlews\_ksoap2 benutzt werden kann, ist darauf zu achten in Moodle unter \enquote{Site administration}, \enquote{Development}, \enquote {OK Tech Webservices ( aka wspp)} die Einstellung \enquote{Use an auto generated wsdl} des MoodleWS Plugins auszuschalten, da es sonst zu Problemen mit moodlws\_ksoap2 kommen kann.
 
 \begin{lstlisting}[
     caption={MoodleWS mit moodlews\_ksoap2: Lesebeispiel}\label{lst:moodlews_java_beispiel},
@@ -160,7 +161,7 @@ for(ForumRecord forum : forumRecords){
 }
 \end{lstlisting}
 
-Wie in der ersten Zeile von Listing \ref{lst:moodlews_java_beispiel} zu sehen wird als ist der Client eine Objekt der Klasse \texttt{Mdl\_soapserverBindingStub} aus moodlews\_ksoap2. Dem Konstruktor wird die URI auf die Datei \enquote{service\_pp2.php} (Zeile 3) und der XML-Namespace der WSDL-Datei des MoodleWS-Plugins übergeben. Das dritte Argument besagt, ob der Client im Debugmodus laufen und mehr Logging-Ausgaben macht über die einzelnen internen Abläufe ausgeben soll. In Zeile 6 meldet sich der Client mit einen Benutzernamen und einem Passwort bei MoodleWS an und bekommt ein Objekt der Klasse \texttt{LoginResult} mit der oben angesprochenen ID für den Client und einen Sitzungsschlüssel zurück. Mit der Methode \texttt{get\_all\_forums(\dots)} können nun ein Array mit allen Foren angefordert werden, auf die der angemeldete Benutzer Zugriff hat. Die ersten zwei Argumente dieser Methode sind die ID des Clients und der Sitzungsschlüssel. Mit den letzten zwei Argumenten kann das Ergebnis gefiltert werden. Dazu wird als erstes ein Spaltenname aus der Foren-Tabelle der Moodle-Datenbank angeben und als zweites welcher Wert dieser haben soll. Am Ende werden dann alle Ergebnisse mit der ID und Name des Forums ausgegeben.
+Wie in der ersten Zeile von Listing \ref{lst:moodlews_java_beispiel} zu sehen, wird als Client ein Objekt der Klasse \texttt{Mdl\_soapserverBindingStub} aus moodlews\_ksoap2 verwendet. Dem Konstruktor wird die URI auf die Datei \enquote{service\_pp2.php} (Zeile 3) und der XML-Namespace der WSDL-Datei des MoodleWS-Plugins übergeben. Das dritte Argument besagt, ob der Client im Debugmodus laufen soll. In Zeile 6 meldet man sich über den Client mit einem Benutzernamen und Passwort bei MoodleWS an und bekommt ein Objekt der Klasse \texttt{LoginResult} mit der oben angesprochenen ID für den Client und einen Sitzungsschlüssel zurück. Mit der Methode \texttt{get\_all\_forums(\dots)} in Zeile 8 kann nun ein Array mit allen Foren angefordert werden, auf die der angemeldete Benutzer Zugriff hat. Die ersten zwei Argumente dieser Methode sind die ID des Clients und der Sitzungsschlüssel. Mit den letzten zwei Argumenten kann das Ergebnis gefiltert werden. Dazu wird als erstes ein Spaltenname aus der Foren-Tabelle der Moodle-Datenbank angeben und als zweites welcher Wert dieser haben soll. Am Ende werden dann alle Ergebnisse in den Zeilen 14 bis 16 mit der ID und Name des Forums ausgegeben.
 
 \begin{lstlisting}[
     caption={MoodleWS mit moodlews\_ksoap2: Beitrag schreiben}\label{lst:moodlews_beitrag schreiben},
@@ -179,14 +180,14 @@ client.forum_add_reply(
         postDatum);
 \end{lstlisting}
 
-Beiträge können nur als Kommentare geschrieben werden und dessen ID bekannt sein. Alle Daten für den Beitrag werden in einem Objekt der Klasse \texttt{ForumPostDatum} gespeichert, wie in der ersten Zeile des Listings \ref{lst:moodlews_beitrag schreiben} zu sehen ist. Das Argument ist der beim Client angegebene XML-Namespace der WDSL-Datei. Als Daten können wie in Zeile 5 und 6 nur eine Nachricht (Message) und ein Thema (Subject) übergeben werden. Dieses Objekt wird dann an die Methode \texttt{forum\_add\_reply} mit der ID des Clients, dem Sitzungsschlüssel und der ID des Beitrags wohin geschrieben werden soll übergeben und an Moodle übertragen.s
+Beiträge können nur als Kommentare mit der ID des kommentierten Beitrags geschrieben werden. Alle Daten für den Beitrag werden in einem Objekt der Klasse \texttt{ForumPostDatum} gespeichert, wie in der ersten Zeile des Listings \ref{lst:moodlews_beitrag schreiben} zu sehen ist. Das Argument ist der beim Client angegebene XML-Namespace der WDSL-Datei. Als Daten können wie in Zeile 5 und 6 nur eine Nachricht (Message) und ein Thema (Subject) übergeben werden. Dieses Objekt wird dann an die Methode \texttt{forum\_add\_reply} mit der ID des Clients, dem Sitzungsschlüssel und der ID des Beitrags der kommentiert werden soll übergeben und dann zur Moodleinstanz übertragen.
 
-% subsubsection moodle_webservice (end)
+% subsubsection moodle_webservice (end)s
 
 \subsubsection{Mapping von Moodle nach SIOC} % (fold)
 \label{ssub:moodle_mapping_nach_sioc}
 
-Die interne Struktur von Diskussionen in Moodle entspricht der klassischen eines Forums. Das Forum enthält alle Beiträge zu einen übergeordneten Thema. Einzelne Unterthemen teilen sich dann vom Forum in Threads auf, die dann die einzelnen Beiträge enthalten. Die Abbildung \ref{fig:moodle_sioc_mapping} zeigt die Zuordnung von Moodle- zu SIOC-Klassen. Das \texttt{Forum} in Moodle entspricht dem \texttt{sioc:Forum}, dieses enthält mehrere Objekte der Klasse \texttt{ForumDiscussion}, welche dem \texttt{sioc:Thread} zugeordnet werden können. Die Beiträge werden von Moodel mit der Klasse \texttt{ForumPost} modelliert und stimmen mit der SIOC-Klasse \texttt{sioc:Post} überein. Besonderheit bei den Beiträgen in Moodle ist, dass alle Beiträge in einem Thread entweder ein Kommentar auf den ersten Beitrag oder Kommentare auf diesen. 
+Die interne Struktur von Diskussionen in Moodle entspricht der klassischen eines Forums. Das Forum enthält alle Beiträge zu einen übergeordneten Thema. Einzelne Unterthemen teilen sich dann vom Forum in Threads auf, die dann die einzelnen Beiträge enthalten. Die Abbildung \ref{fig:moodle_sioc_mapping} zeigt die Zuordnung von Moodle- zu SIOC-Klassen. Das Forum in Moodle entspricht dem \texttt{sioc:Forum}, dieses enthält mehrere Objekte der Klasse \texttt{ForumDiscussion}, welche dem \texttt{sioc:Thread} zugeordnet werden können. Die Beiträge werden von Moodel mit der Klasse \texttt{ForumPost} modelliert und stimmen mit der SIOC-Klasse \texttt{sioc:Post} überein. Besonderheit bei den Beiträgen in Moodle ist, dass alle Beiträge in einem Thread entweder ein Kommentar auf den ersten Beitrag im Thread oder auf andere Kommentare ist. 
 
 \begin{minipage}{\textwidth}
     \centering
@@ -198,19 +199,19 @@ Die interne Struktur von Diskussionen in Moodle entspricht der klassischen eines
     \label{fig:moodle_sioc_mapping}
 \end{minipage}
 
-Für die Authentifizierung der Benutzerkonten werden für Moodle der entsprechende Benutzername und das Passwort benötigt. Diese werden als Credential für den \texttt{waa:Direct} Authentifizierungsmechanismus gespeichert, wie in der Abbildung \ref{fig:moodle_useraccount_mapping} zu sehen ist. Für die Servicebeschreibung mit der Klasse Service aus dem SIOC Services Modul ist die Angabe der Adresse der Moodleinstanz mit der Eigenschaft \texttt{siocs:serviceEndpoint} für die API äußerst wichtig. 
+Für die Authentifizierung der Benutzerkonten werden für Moodle der entsprechende Benutzername und das Passwort benötigt. Diese werden als Credential für den \texttt{waa:Direct} Authentifizierungsmechanismus gespeichert, wie es in der Abbildung \ref{fig:moodle_useraccount_mapping} zu sehen ist. Für die Servicebeschreibung mit der Klasse \texttt{sioc:Service} aus dem SIOC Services Modul ist die Angabe der Adresse der Moodleinstanz mit der Eigenschaft \texttt{siocs:serviceEndpoint} für die API äußerst wichtig. Sie bestimmt den Endpunkt an dem die API-Abfragen gesendet werden.
 
 \begin{minipage}{\textwidth}
     \centering
     \includegraphics[
-        width=\textwidth,
+        width=0.95\textwidth,
         keepaspectratio=true]
     {assets/images/mapping/moodle_useraccount_mapping}
     \captionof{figure}{Authentifizierungsdaten für Moodle in SIOC}
     \label{fig:moodle_useraccount_mapping}
 \end{minipage}
 
-Die URIs für die Objekte der SIOC-Klassen für Moodle entsprechen den URIs der graphischen Weboberfläche. Das genaue Format ist in der Tabelle \ref{tbl:moodle_sioc_uris} beschrieben. der Platzhalter \texttt{\{rootId\}} entspricht den Wert der Eigenschaft \texttt{siocs:serviceEndpoint} aus der Servicebeschreibung.
+Die URIs für die Objekte der SIOC-Klassen für Moodle entsprechen den URIs der graphischen Weboberfläche, da SOAP keine expliziten URIs für Ressourcen besitzt. Das genaue Format ist in der Tabelle \ref{tbl:moodle_sioc_uris} beschrieben. Der Platzhalter \texttt{\{rootId\}} entspricht den Wert der Eigenschaft \texttt{siocs:serviceEndpoint} aus der Servicebeschreibung.
 
 \begin{table}[ht]
     \centering
@@ -233,9 +234,9 @@ Die URIs für die Objekte der SIOC-Klassen für Moodle entsprechen den URIs der 
 \subsubsection{Besonderheiten bei der Implementierung des MoodleConnectors} % (fold)
 \label{ssub:herausforderungen_bei_der_implementierung_des_moodleconnectors}
 
-Der Connector für Moodle war wohl einer der herausforderndsten bei der Implementieren von allen fünf Connectoren. Nicht nur weil erst nach mehreren Test sich herausstellte, dass die favorisierte REST-Schnittstelle von MoodleWS kein schreiben von Beiträgen möglich macht sondern dass auch die Java-Bibliothek moodlews\_ksoap2 so ihre kleinen Eigenheiten hat. 
+Der Connector für Moodle war wohl einer der herausforderndsten bei der Implementieren von allen fünf Connectoren. Nicht nur weil erst nach mehreren Test sich herausstellte, dass die favorisierte REST-Schnittstelle von MoodleWS kein Schreiben von Beiträgen möglich macht, sondern dass auch die Java-Bibliothek moodlews\_ksoap2 so ihre kleinen Eigenheiten hat. 
 
-Zuerst mussten die Klasse für moodlews\_ksoap2 komplett neu generiert werden. In der Dokumentation wird beschrieben, dass dieser Schritt nötig ist, wenn sich an der WSDL-Datei von MoodleWS was geändert hat. Der passende Generator wird vom Entwickler gleich mitgeliefert und ist mit dem folgenden Befehl schnell bewerkstelligt.
+Zuerst mussten die Klassen für moodlews\_ksoap2 komplett neu generiert werden, das die auf GitHub bereitgestellten Klassen nicht kompatibel zur aktuellsten WSDL-Datei des MoodleWS Plugins waren. Der passende Generator wird aber vom Entwickler gleich mitgeliefert und ist mit dem folgenden Befehl schnell erledigt.
 
 \begin{lstlisting}[
     caption={Neugenerierung von moodlews\_ksoap2}\label{lst:neugenerierung_moodlews_ksoap2},
@@ -243,22 +244,22 @@ Zuerst mussten die Klasse für moodlews\_ksoap2 komplett neu generiert werden. I
     java  org.ksoap2.wsdl.WSDL2ksoap -p de.m0ep.moodlews.soap -o /tmp http://localhost/moodle/wspp/wsdl_pp2.php
 \end{lstlisting}
 
-Mit dem Parameter \enquote{-p} wir das Java-Package für die Java-Klassen festgelegt und mit \enquote{-o} der Ordner in dem die Klassen geschrieben werden. Die URI am Ende gibt den Pfad zur Datei \enquote{wsdl\_pp2.php} vom MoodleWS-Plugin. Diese ist dann an die jeweilige Moodleinstanz anzupassen.
+Mit dem Parameter \enquote{-p} wir das Java-Package für die Java-Klassen festgelegt und mit \enquote{-o} der Ordner in dem die Klassen geschrieben werden. Die URI am Ende gibt den Pfad zur Datei \enquote{wsdl\_pp2.php} vom MoodleWS-Plugin an. Diese URI ist dann an die jeweilige Moodleinstanz anzupassen.
 
-Eine sehr nervende Eigenheit von moodlews\_ksoap2 ist die Tatsache, dass Java-Exceptions und Gründe für Fehler gerne verschluckt und nicht weitergegeben werden. So ist es zum Beispiel nicht möglich zu wissen ob eine Operation aufgrund eines Netzwerkfehlers, eines abgelaufenen Sitzungsschlüssels oder falschen Daten fehlschlug. Aus diesem Grund wurde der Client von moodlews\_ksoap2 für den ClientManager (siehe Abschnitt \ref{sub:clientmanager}) in eine extra Klasse \texttt{Moodle2ClientWrapper} gepackt und um Mechanismen zur Fehlererkennung und Wiederherstellung erweitert. Alle Funktionsaufrufe des Clients wie \texttt{get\_all\_forums(\dots)} werden dazu zuerst in die Methode \texttt{call} eines Objekts des Java-Interfaces \texttt{Callable<V>} verpackt, so dass diese Funktion, ohne zu wissen um welche es sich genau handelt, mehrfach aufrufen werden kann. Diese Objekt wird dann an die Methode \texttt{callMethod(\dots)} der Klasse \texttt{Moodle2ClientWrapper} übergeben. Diese Methode ruft dann zuerst die \texttt{call()} Methode des Callabel-Objekts und prüft ob ein gültiges Ergebnis zurückgegeben wurde. Dies ist der Fall wenn es ungleich \texttt{null} ist. Ist dies nicht der Fall, wird geschaut ob die Moodleinstanz erreichbar ist. Sollte hier alles in Ordnung sein, muss geschaut werden ob der Sitzungsschlüssel abgelaufen ist. Als Test reicht hier es hier aus, ob die Methode \texttt{get\_my\_id(\dots)} des moodlews\_ksoap2 Clients eine Zahl ungleich 0 (Null) zurück gibt. Diese liefert die ID des aktuell angemeldeten Benutzers zurück und im Fehlerfall ist dieser gleich 0. Ist dieser Test positiv, also der Sitzungsschlüssel abgelaufen, wird versucht sich neu anzumelden und die Anfrage erneut ausgeführt.
+Eine sehr nervende Eigenheit von moodlews\_ksoap2 ist die Tatsache, dass Java-Exceptions und Gründe für Fehler gerne verschluckt und nicht weitergegeben werden. So ist es zum Beispiel unmöglich zu wissen, ob eine Operation aufgrund eines Netzwerkfehlers, eines abgelaufenen Sitzungsschlüssels oder falschen Daten fehlschlug. Aus diesem Grund wurde der Client von moodlews\_ksoap2 für den ClientManager (siehe Abschnitt \ref{sub:clientmanager}) in eine extra Klasse \texttt{Moodle2ClientWrapper} gepackt und um Mechanismen zur Fehlererkennung und Wiederherstellung des Clients erweitert. Alle Funktionsaufrufe des Clients wie \texttt{get\_all\_forums(\dots)} werden dazu zuerst in die Methode \texttt{call} eines Objekts der Java-Schnittstelle \texttt{Callable<V>}\footnote{\url{http://docs.oracle.com/javase/7/docs/api/index.html?java/util/concurrent/Callable.html}} verpackt, so dass diese Funktion, ohne zu wissen um welche es sich genau handelt, mehrfach aufgerufen werden kann. Diese Objekt wird dann an die Methode \texttt{callMethod(\dots)} der Klasse \texttt{Moodle2ClientWrapper} übergeben. Diese Methode ruft dann zuerst die \texttt{call()}-Methode des Callable-Objekts auf und prüft ob ein gültiges Ergebnis zurückgegeben wurde. Dies ist der Fall wenn es ungleich \texttt{null} ist. Ist dies nicht der Fall, wird geschaut ob die Moodleinstanz erreichbar ist. Sollte hier alles in Ordnung sein, muss geschaut werden ob der Sitzungsschlüssel abgelaufen ist. Als Test reicht es hier aus zu testen, ob die Methode \texttt{get\_my\_id(\dots)} des moodlews\_ksoap2 Clients eine Zahl ungleich Null zurück gibt. Diese liefert die ID des aktuell angemeldeten Benutzers zurück und im Fehlerfall ist dieser gleich Null. Ist dieser Test positiv, also der Sitzungsschlüssel abgelaufen, wird versucht sich neu anzumelden und die Anfrage erneut ausgeführt. Ansonsten wird ein Fehler gemeldet.
 
 Eine Funktion mit der nur ein Beitrag mit einer bestimmten ID abgefragt werden könnte fehlt ebenfalls. Wenn nur ein Beitrag geladen werden soll, müssen zunächst alle innerhalb des selben Threads angefordert und diese nach dem passenden Beitrag durch werden. 
 
-Ebenfalls ungewöhnlich ist der Inhalt der Klasse \texttt{ForumDiscussionRecord}. Normalerweise würde mit erwarten, dass die Methode \texttt{getId()} die ID des Diskussionsthread zurück geben wird. Doch stattdessen entspricht der Wert der ID des ersten Beitrags dieses Threads. An die richtige ID kommt man erst rann, wenn man sich mit der Methode \texttt{getPost()} ein Objekt des ersten Beitrags und darin den Rückgabewert von \texttt{getDiscussion()} benutzt.
+Als ungewöhnlich kann auch der Inhalt der Klasse \texttt{ForumDiscussionRecord} bezeichnet werden, welche die Informationen zu einen Thread enthält. Normalerweise würde man erwarten, dass die Methode \texttt{getId()} die ID des Threads zurück geben wird. Doch stattdessen entspricht der Wert der ID des ersten Beitrags dieses Threads. An die richtige ID kommt man erst heran, wenn man sich mit der Methode \texttt{getPost()} ein Objekt des ersten Beitrags und darin den Rückgabewert von \texttt{getDiscussion()} benutzt.
 
 % subsubsection herausforderungen_bei_der_implementierung_des_moodleconnectors (end)
 
 % subsection moodle_connector (end)
 
-\subsection{Canvas Connector} % (fold)
+\subsection{CanvasConnector} % (fold)
 \label{sub:canvas_connector}
 
-\todo[inline]{Einleitung schreiben}
+Für den Zugriff auf die Lernplattform Canvas über SIOC wurde der \emph{CanvasConnecor} implementiert. Wie schon bei Moodle war das Mapping nach SIOC aufgrund der Forenstruktur unkompliziert. Das gleiche gilt auch für die bereitgestellte REST-API die einwandfrei funktionierte. Da aber noch keine API für Java existierte, musste erst eine eigne entwickelt werde. Diese unterstützt leider noch nicht alle Ressourcen von Canvas, ist aber für die Zwecke des CanvasConnectors erst einmal völlig ausreichend. 
 
 % \begin{itemize}
 %     \item relativ neues LMS
@@ -272,7 +273,7 @@ Ebenfalls ungewöhnlich ist der Inhalt der Klasse \texttt{ForumDiscussionRecord}
 \subsubsection{Canvas REST-API} % (fold)
 \label{ssub:canvas_api}
 
-Der öffentliche Zugriff auf die Daten von der Lernplattform Canvas basiert auf einer REST-API und OAuth 2.0 zur Autorisierung der Zugriffe. Die Adresse, über die auf die API zugegriffen werden kann, besteht aus der URI für die verwendete Canvasinstanz (\texttt{\{rootUri\}}) und gefolgt von dem Pfad \enquote{/api/v1}. Für die Demoinstanz von Instructre würde dies der URI \texttt{https://canvas.instructure.com/api/v1} entsprechen. An diese können dann weitere Pfade für den Zugriff auf die einzelnen Ressourcen angehängt werden. Zur Autorisierung wird von OAuth nur der Accesstoken benötigt, der bei der REST-Abfrage als HTTP Authorization Header mitgeschickt wird. Listing \ref{lst:canvas_authorization_header} zeigt eine eine Beispielanfrage und Angabe des Accesstokens mit dem Programm \emph{curl}\footnote{\url{http://curl.haxx.se/}}. Der Platzhalter \texttt{\{accessToken\}} muss dann natürlich erst durch einen validen Accesstoken ersetzt werden. Diesen kann jeder Benutzter in seinem Canvas Profil unter \enquote{Settings} und im Abschnitt \enquote{Approved Integrations} selbst erstellen. Die Angabe von ClientId und ClientSecret von OAuth 2.0 sind nicht nötig.
+Der öffentliche Zugriff auf die Daten der Lernplattform Canvas basiert auf einer REST-API und OAuth 2.0 zur Authentifizierung. Die Adresse, über die auf die API zugegriffen werden kann, besteht aus der URI für die verwendete Canvasinstanz (\texttt{\{rootUri\}}) gefolgt von dem Pfad \enquote{/api/v1}. Für die Demoinstanz von Instructre würde dies der URI \texttt{https://canvas.instructure.com/api/v1} entsprechen. An diese können dann weitere Pfade für den Zugriff auf die einzelnen Ressourcen angehängt werden. Zur Autorisierung wird von OAuth nur der Accesstoken benötigt, der bei der REST-Abfrage als HTTP Authorization Header mitgeschickt wird. Listing \ref{lst:canvas_authorization_header} zeigt eine Beispielanfrage und Angabe des Accesstokens mit dem Programm \emph{curl}\footnote{\url{http://curl.haxx.se/}}. Der Platzhalter \texttt{\{accessToken\}} muss dann natürlich erst durch einen validen Accesstoken ersetzt werden. Diesen kann jeder Benutzer in seinem Canvas-Profil unter \enquote{Settings} und im Abschnitt \enquote{Approved Integrations} selbst erstellen. Die Angabe von ClientId und ClientSecret sind nicht nötig.
 
 \begin{lstlisting}[
     caption={Canvas Authorization Header}\label{lst:canvas_authorization_header},
@@ -280,18 +281,18 @@ Der öffentliche Zugriff auf die Daten von der Lernplattform Canvas basiert auf 
 curl -H "Authorization: Bearer {accessToken}" https://canvas.instructure.com/api/v1/courses
 \end{lstlisting}
 
-Als Datenformat für die zurückgelieferten Daten wird von der Canvas API auf JSON gesetzt. Für die Verwendung von POST und PUT Operationen zum Schreiben nach Canvas können die Daten entweder nach dem HTML Form Encoding\footnote{\url{http://www.w3.org/TR/html4/interact/forms.html\#h-17.13.4}} Standard oder ebenfalls in JSON angegeben werden. 
+Als Datenformat für die zurückgelieferten Daten wird von Canvas auf JSON gesetzt. Für die Verwendung von POST und PUT Operationen, zum Schreiben nach Canvas, können die Daten entweder im \emph{HTML Form Encoding}\footnote{\url{http://www.w3.org/TR/html4/interact/forms.html\#h-17.13.4}} Standard oder ebenfalls in JSON angegeben werden. 
 
-Da einige Anfragen eine Liste von Ergebnissen zurückliefern und diese möglicher Weise lang werden können, teilt die Canvas API diese Listen auf mehrere Seiten auf, die jede einzeln abgefragt werden müssen. Für jede Seite schickt die Canvas API mehrere URIs als HTTP Link Header\footnote{\url{http://www.w3.org/Protocols/9707-link-header.html}} der Antwort mit. Diese URIs erhalten zusätzlich noch ein Attribut \texttt{rel}, das beschreibt in welcher Relation die URI zu dieser Seite steht.  Als Wert für diese Relation können \enquote{current} für eine URI auf die aktuelle, \enquote{next} auf die nächste, \enquote{prev} auf die vorherige, \enquote{first} auf die erste und \enquote{last} für eine URI auf die letzte Seite vorkommen. Um also die nächste Seite vom Ergebnis zu bekommen, muss eine neue REST-Anfrage mit der Relation \enquote{next} ausgeführt werden. Fehlt eine URI mit dieser Relation, ist das die letzte Seite erreicht. 
+Da einige Abfragen eine Liste von Ergebnissen zurückliefern und diese möglicher Weise sehr lang werden können, teilt Canvas diese Listen auf mehrere Seiten auf, die jede einzeln abgefragt werden müssen. Für jede Seite schickt Canvas mehrere URIs als \emph{HTTP Link Header}\footnote{\url{http://www.w3.org/Protocols/9707-link-header.html}} der Antwort mit. Diese URIs erhalten zusätzlich noch ein Attribut \texttt{rel} mit, das beschreibt in welcher Relation die URI zu dieser Seite steht.  Als Wert für diese Relation können \enquote{current} für eine URI auf die aktuelle, \enquote{next} auf die nächste, \enquote{prev} auf die vorherige, \enquote{first} auf die erste und \enquote{last} für eine URI auf die letzte Seite vorkommen. Um also die nächste Seite vom Ergebnis zu bekommen, muss eine neue REST-Abfrage mit der URI aus dem Link mit der Relation \enquote{next} ausgeführt werden. Fehlt eine URI mit dieser Relation, ist die letzte Seite des Ergebnisses erreicht. 
 
 % subsubsection canvas_api (end)
 
 \subsubsection{CanvasLMS4J} % (fold)
 \label{ssub:canvaslms4j}
 
-Ein Problem mit der API von Canvas war es, dass es zwar eine gute REST Anbindung gab, aber noch keine Bibliothek um sie mit der Programmiersprache Java anzusprechen. Es musste also erst eine eigne Java API dazu entwickelt werden, die den Namen \emph{CanvasLMS4J} (Kurzform für \enquote{Canvas LMS API für Java}) bekam. 
+Ein Problem mit der API von Canvas war es, dass es zwar eine gute REST-basierte Anbindung gab, aber noch keine Bibliothek, um sie mit der Programmiersprache Java anzusprechen. Es musste also erst eine eigne Java API  entwickelt werden, die den Namen \emph{CanvasLMS4J} (Kurzform für \enquote{Canvas LMS API für Java}) bekam. 
 
-Anhand der für die REST API verwendeten URIs ist auffällig, dass die einzelnen Bestandteile aufeinander aufbauen. Zum Beispiel ist der Ablauf für den REST-Zugriff auf DiscussionTopics in Gruppen und Kursen der gleiche, nur die verwendete URI unterscheidet sich. Aus diesem Grund wurden die einzelnen Ressource (Course, Groupe, DiscussionTopic, Entries, ...) als einzelne Endpunkte implementiert die sich von der Klasse \texttt{IEnpoint} ableiten. Jeder Endpunkt kann einen Eltern-Endpunkt haben, wobei sich die endgültige URI für die REST-Abfrage aus dem Pfad des Eltern-Endpunktes und dem des aktuellen Endpunktes zusammensetzt. Zur Verdeutlichung sei hier die URI \texttt{https:\{canvasUri\}/api/v1/courses/1/discussion\_topics} als Demonstration genannt. Sie besteht aus den statischen Teil \texttt{https:\{canvasUri\}/api/v1/} der den Ort für die verwendete Canvasinstanz angibt. Darauf folgt ein Kurs als erster Endpunkt mit der Kurs-ID \enquote{1}. Für diesen Kurs sollen nun alle Diskussionen abgefragt werden. Dies geschieht durch die Angabe des zweiten Endpunktes \texttt{/discussion\_topics}. \enquote{/courses/1} bildet hier also den Eltern-Endpunkt von \texttt{/discussion\_topics}. Sollen aber nun alle Diskussionen in einer Gruppe abgefragt werden, reicht es aus den Kurs-Endpunkt durch einen Gruppen-Endpunkt auszutauschen.
+Anhand der für die REST-API verwendeten URIs ist auffällig, dass die einzelnen Bestandteile aufeinander aufbauen. Zum Beispiel ist der Ablauf für den REST-Zugriff auf DiscussionTopics in Gruppen und Kursen der gleiche, nur der Anfang der verwendeten URIs unterscheidet sich. Aus diesem Grund wurden die einzelnen Ressource (Course, Groupe, DiscussionTopic, Entries, ...) als einzelne Endpunkte implementiert, die sich von der Klasse \texttt{IEnpoint} ableiten. Jeder Endpunkt kann einen Eltern-Endpunkt haben, wobei sich die endgültige URI für die REST-Abfrage aus dem Pfad des Eltern-Endpunktes und dem des aktuellen Endpunktes zusammensetzt. Zur Verdeutlichung sei hier die URI \texttt{https:\{canvasUri\}/api/v1/courses/1/discussion\_topics} als Demonstration genannt. Sie besteht aus den statischen Teil \texttt{https:\{canvasUri\}/api/v1/} der den Ort für die verwendete Canvasinstanz angibt. Darauf folgt ein Kurs als erster Endpunkt mit der Kurs-ID \enquote{1}. Für diesen Kurs sollen nun alle Diskussionen abgefragt werden. Dies geschieht durch die Angabe des zweiten Endpunktes \texttt{/discussion\_topics}. der Pfad \enquote{/courses/1} bildet hier also den Eltern-Endpunkt von \texttt{/discussion\_topics}. Sollen aber nun alle Diskussionen in einer Gruppe abgefragt werden, reicht es aus den Kurs-Endpunkt durch einen Gruppen-Endpunkt auszutauschen: \texttt{https:\{canvasUri\}/api/v1/groups/42/discussion\_topics}.
 
 \begin{minipage}{\textwidth}
     \centering
@@ -303,11 +304,11 @@ Anhand der für die REST API verwendeten URIs ist auffällig, dass die einzelnen
     \label{fig:canvaslms4j_uml_classdiagram}
 \end{minipage} 
 
-Ausgangspunkt für CanvasLMS4J ist die Klasse \texttt{CanvasLmsClient} (siehe Abbildung \ref{fig:canvaslms4j_uml_classdiagram}). Über sie werden alle Endpunkte verwaltet die keinen Eltern-Endpunkt besitzen. Bei der Erzeugung eines Objektes dieser Klasse, werden ihr die URI zur verwendenden Canvasinstanz und der AccessToken des Benutzerkontos übergeben. Im aktuellen Stadium können von einem Client aus nur Endpunkte für Kurse oder Gruppe erstellt werden.
+Ausgangspunkt für CanvasLMS4J ist der Client mir der Klasse \texttt{CanvasLmsClient} (siehe Abbildung \ref{fig:canvaslms4j_uml_classdiagram}). Über sie werden alle Endpunkte verwaltet, die keinen Eltern-Endpunkt besitzen. Bei der Erzeugung eines Objektes dieser Klasse, werden ihr die URI zur verwendenden Canvasinstanz (ohne \enquote{\texttt{/api/v1}}) und der Accesstoken des Benutzerkontos übergeben. Im aktuellen Stadium können von einem Client aus nur auf Endpunkte für Kurse oder Gruppe zugegriffen werden.
 
-Endpunkte können dann über die Klasse \texttt{CanvasLmsRequest} REST-Anfragen an die Canvas API stellen. Hierzu verwendet CanvasLMS4J die \emph{HttpClient}\footnote{\url{http://hc.apache.org/httpclient-3.x/}} Bibliothek von Apache mit die einzelnen HTTP-Operationen ausgeführt werden. Um die im JSON-Format zurück gelieferten Antworten der Canvas API in Java verwenden zu können, wir auf die Funktionen der von Google entwickelten \emph{Gson}\footnote{\url{https://code.google.com/p/google-gson/}} Bibliothek zurück gegriffen. Sie erlaubt es Java Objekte in das JSON-Format zu konvertieren und genauso aus Daten in JSON ein Java Objekt zu machen. Dadurch verringert sich der Aufwand für das Verarbeiten der Daten von Canvas auf das Erstellen der entsprechenden Java Klassen. CanvasLmsRequest können mit zwei verschiedenen Methoden ausgeführt werden. Die erste \texttt{execute()} wird dazu verwendet, wenn die REST-Abfrage nur die Rückgabe eines Objektes zu Folge hat. Also zum Beispiel, wenn nur die Daten eines bestimmten Kurses abgefragt werden soll. Die zweite Methode ist \texttt{executePagination}. Diese Methode dient für Abfragen die eine in Seiten aufgeteilte Liste von Ergebnissen zurückliefert und gibt für eine einfache Handhabbarkeit ein Objekt der Klasse \texttt{Pagination} zurück. 
+Endpunkte können dann mit die Klasse \texttt{CanvasLmsRequest} REST-Anfragen an die Canvas API stellen. Hierzu verwendet CanvasLMS4J die \emph{HttpClient}\footnote{\url{http://hc.apache.org/httpclient-3.x/}} Bibliothek von Apache mit der einzelne HTTP-Operationen ausgeführt werden können. Um die im JSON-Format zurück gelieferten Antworten der von Canvas in Java verwenden zu können, wir auf die Funktionen der von Google entwickelten \emph{Gson}\footnote{\url{https://code.google.com/p/google-gson/}} Bibliothek zurück gegriffen. Sie erlaubt es Java Objekte in das JSON-Format zu konvertieren und genauso aus Daten in JSON ein Java-Objekt zu erzeugen (eine passende Klasse muss aber vorhanden sein). Dadurch verringert sich der Aufwand für das Verarbeiten der Daten von Canvas auf das Erstellen der entsprechenden Java-Klassen. CanvasLmsRequests können mit zwei verschiedenen Methoden ausgeführt werden. Die erste \texttt{execute()} wird dazu verwendet, wenn die REST-Abfrage nur die Rückgabe eines Objektes zur Folge hat. Also zum Beispiel, wenn nur die Daten eines bestimmten Kurses abgefragt werden sollen. Die zweite Methode ist \texttt{executePagination}. Diese Methode dient für Abfragen die eine in Seiten aufgeteilte Liste von Ergebnissen zurückliefern und gibt für eine einfache Handhabbarkeit ein Objekt der Klasse \texttt{Pagination} zurück. 
 
-Die Klasse Pagination ist nach dem Iterator Muster aufgebaut und liefert vom kompletten Ergebnis bei jedem Iterationsschritt eine Seite zurück. Diese Seite enthält dann je eine Teilliste der angefragten Objekten. Ist eine Seite fertig ausgelesen, holt Pagination über eine vorgegeben REST Abfrage die nächste Seite. Dies geschieht solange bis keine Seiten mehr geladen werden können oder das Programm das Lesen abbricht.
+Diese Klasse Pagination ist nach dem Iterator-Muster aufgebaut und liefert vom kompletten Ergebnis bei jedem Iterationsschritt eine einzelne Seite zurück. Diese Seite enthält dann je eine Teilliste der angefragten Objekte. Ist eine Seite fertig ausgelesen, holt Pagination über eine vorgegeben REST-Abfrage die nächste Seite. Dies geschieht solange bis keine Seiten mehr geladen werden können oder das Programm das Lesen abbricht.
 
 \begin{lstlisting}[
     caption={CanvasLMS4J Beispielprogramm}\label{lst:canvaslms4j_beispiel},
@@ -329,14 +330,14 @@ for ( List<DiscussionTopic> discussions : discussionPages ) {
 
 \end{lstlisting}
 
-In Listing \ref{lst:canvaslms4j_beispiel} ist ein Beispiel für die Anwendung der CanvasLMS4J API zu sehen. In den ersten drei Zeilen wird eine neuer CanvasLmsClient für die Canvasinstanz auf \texttt{https://canvas.instructure.com} und einem AccessToken erstellt. Als nächstes soll für einen Kurs mit der ID \enquote{798152} alle Diskussionen aufgelistet werden. Mit dem Aufruf der Methode \texttt{courses()} des Clients wir der Endpunkt für die Kurse und von diesem aus der Endpunkt für die Diskussionen im Kurs \enquote{798152} über die Methode \texttt{.discussionTopics( 798152 )}. In der siebten Zeile wird die Art der Abfrage genauer festgelegt. Da eine Liste alle Diskussionen gesucht ist, wird die Methode \texttt{list()} aufgerufen die ein CanvasLmsRequest Objekt für die gewünschte Abfrage erstellt. Da die Antwort aus mehrere Objekten mit der Beschreibung der einzelnen Diskussionen besteht, wird die Anfrage in Zeile Acht mit der Methode \texttt{executePagination()} ausgeführt. Die einzelnen Seiten des Ergebnisses werden dann in der zehnten Zeile mit einer For-Schleife durchlaufen. Das nachladen der Seiten erfolgt dabei automatisch durch die Pagination Klasse. Jede Seite besteht nun aus einer Liste mit den Beschreibung der Diskussionen in einem \texttt{DiskussionTopic} Objekt, welche dann wieder in einer weiteren Schleife ausgegeben werden.
+In Listing \ref{lst:canvaslms4j_beispiel} ist ein Beispiel für die Anwendung der CanvasLMS4J API zu sehen. In den ersten drei Zeilen wird eine neuer CanvasLmsClient für die Canvasinstanz auf \texttt{https://canvas.instructure.com} und einem AccessToken erstellt. Als nächstes soll für einen Kurs mit der ID \enquote{798152} alle Diskussionen aufgelistet werden. Mit dem Aufruf der Methode \texttt{courses()} des Clients wir der Endpunkt für die Kurse und von diesem aus der Endpunkt für die Diskussionen im Kurs \enquote{798152} abgefragt. In der siebten Zeile wird die Art der Abfrage genauer festgelegt. Da eine Liste aller Diskussionen gesucht ist, wird die Methode \texttt{list()} aufgerufen die ein CanvasLmsRequest-Objekt für die gewünschte Abfrage erstellt. Da die Antwort aus mehrere Objekten mit der Beschreibung der einzelnen Diskussionen besteht, wird die Anfrage in Zeile 8 mit der Methode \texttt{executePagination()} ausgeführt. Die einzelnen Seiten des Ergebnisses werden dann in der zehnten Zeile mit einer For-Schleife durchlaufen. Das nachladen der Seiten erfolgt dabei automatisch durch die Pagination-Klasse. Jede Seite besteht nun aus einer Liste mit den Beschreibung der Diskussionen in einem \texttt{DiskussionTopic}-Objekt, welche dann wiederum in einer weiteren Schleife ausgegeben werden.
 
 % subsubsection canvaslms4j (end)
 
 \subsubsection{Mapping von Canvas nach SIOC} % (fold)
 \label{ssub:canvas_sioc_mapping}
 
-Die Struktur von Canvas ist der von Moodle sehr ähnliche (siehe Abbildung \ref{fig:canvas_sioc_mapping}), nur dass es explizit keine Foren gibt sondern die Diskussionen innerhalb der Kurse stattfindet. Demzufolge kann ein Kurs (Course) der SIOC-Klasse \texttt{sioc:Forum} zugeordnet werden. Dies gilt ebenfalls für Gruppen, in denen separate Diskussionen geführt werden können. Die Diskussionsthemen in Canvas werden durch die Klasse DiscussionTopic modelliert und entspricht \texttt{sioc:Thread} . Beiträge werden in Canvas als Entry bezeichnet und sind entweder ein Kommentar auf den ersten Beitrag, der beim Erstellen der Diskussion  erzeugt wurde, oder eines auf dessen Kommentare. Die SIOC-Klasse für einen Entry entspricht dann natürlich \texttt{sioc:Post}
+Die Struktur von Canvas ist der von Moodle sehr ähnlich (siehe Abbildung \ref{fig:canvas_sioc_mapping}), nur dass es explizit keine Foren gibt sondern die Diskussionen innerhalb der Kurse stattfindet. Demzufolge kann ein Kurs (\texttt{Course}) der SIOC-Klasse \texttt{sioc:Forum} zugeordnet werden. Dies gilt ebenfalls für Gruppen, in denen separate Diskussionen geführt werden können. Die Diskussionsthemen in Canvas werden durch die Klasse \texttt{DiscussionTopic} modelliert und entspricht \texttt{sioc:Thread} . Die Klasse für Beiträge in Canvas ist \texttt{Entry} und ist entweder ein Kommentar auf den ersten Beitrag einer Diskussion oder eins auf dessen Kommentare. Die SIOC-Klasse für einen Entry entspricht demzufolge \texttt{sioc:Post}.
  
 \begin{minipage}{\textwidth}
     \centering
@@ -348,7 +349,7 @@ Die Struktur von Canvas ist der von Moodle sehr ähnliche (siehe Abbildung \ref{
     \label{fig:canvas_sioc_mapping}
 \end{minipage}
 
-Zum benutzen der REST-API von Canvas muss eine Accesstoken für den betreffenden \texttt{sioc:UserAccount} des Benutzerkontos vorliegen. Wie in Abbildung \ref{fig:canvas_useraccount_mapping} wird der Accesstoken dem \texttt{sioc:UserAccount} mit \texttt{siocsa:accountAuthentication} als Credential der Klasse \texttt{waa:OAuth} mitgegeben. In der Servicebeschreibung ist wieder die Angabe von \texttt{siocs:serviceEndpoint} mit der Adresse der Canvasinstanz für die API Voraussetzung für den Betrieb des CanvasConnectors.
+Zum Benutzen der REST-API von Canvas muss eine Accesstoken für den betreffenden \texttt{sioc:UserAccount} des Benutzerkontos vorliegen. Wie in Abbildung \ref{fig:canvas_useraccount_mapping} wird der Accesstoken dem \texttt{sioc:UserAccount} mit \texttt{siocsa:accountAuthentication} als Credential der Klasse \texttt{waa:OAuth} mitgegeben. In der Servicebeschreibung ist wieder die Angabe von \texttt{siocs:serviceEndpoint} mit der Adresse der Canvasinstanz für die API Voraussetzung für den Betrieb des CanvasConnectors.
 
 \begin{minipage}{\textwidth}
     \centering
@@ -360,7 +361,7 @@ Zum benutzen der REST-API von Canvas muss eine Accesstoken für den betreffenden
     \label{fig:canvas_useraccount_mapping}
 \end{minipage}
 
-Die URIs für RDF bei Canvas wurden so gewählt, dass sie den URIs für die REST Abfragen entsprechen. An ihnen ist sehr leicht zu erkennen wo sich die Ressource sich innerhalb der Canvasstruktur befindet, da sie aufeinander aufbauen. Das einzige Problem liegt nur in der URI für den Startbeitrag einer Diskussion, da dieser nur zusammen innerhalb des DiskusionTopics existiert und keine eigene ID besitzt. Aus diesem Grund wurde für die URI des Startbeitrags aus der eines DiscussionTopic mit angehängten Fragment \enquote{\texttt{\#discussion\_topic}} gewählt. Dieser Zusatz wurde nicht zufällig gewählt. Die ID \enquote{\texttt{discussion\_topic}} wird von Canvas innerhalb der HTML-Darstellung für diesen Beitrag benutzt. 
+Die URIs für RDF bei Canvas wurden so gewählt, dass sie den URIs für die REST-Abfragen entsprechen. An ihnen ist sehr leicht zu erkennen, wo die Ressource sich innerhalb der Canvasstruktur befindet, da sie aufeinander aufbauen. Das einzige Problem liegt nur in der URI für den Startbeitrag einer Diskussion, da dieser nur innerhalb des DiskusionTopics existiert und keine eigene ID besitzt. Aus diesem Grund wurde für die URI des Startbeitrags die Zusammensetzung aus der URI eines DiscussionTopics mit angehängten Fragment \enquote{\texttt{\#discussion\_topic}} gewählt. Dieser Zusatz wurde nicht zufällig ausgewählt. Die ID \enquote{\texttt{discussion\_topic}} wird von Canvas innerhalb der HTML-Darstellung für genau diesen Beitrag verwendet. 
 
 \begin{table}[ht]
     \centering
@@ -393,7 +394,7 @@ Die URIs für RDF bei Canvas wurden so gewählt, dass sie den URIs für die REST
 
 % subsection canvas_connector (end)
 
-\subsection{Facebook Connector} % (fold)
+\subsection{FacebookConnector} % (fold)
 \label{sub:facebook_connector}
 
 \todo[inline]{Einleitung schreiben}
@@ -561,7 +562,7 @@ Wie im Abschnitt über die Graph API schon beschrieben, ist es nahezu unmöglich
 
 % subsection facebook_connector (end)
 
-\subsection{Google+ Connector} % (fold)
+\subsection{GooglePlusConnector} % (fold)
 \label{sub:google_plus_connector}
 
 \todo[inline]{Einleitung schreiben}
@@ -707,7 +708,7 @@ Wie schon bei vorherigen REST-APIs wurde die in Tabelle \ref{tbl:googleplus_rdf_
 
 % subsection google_plus_connector (end)
 
-\subsection{Youtube Connector} % (fold)
+\subsection{YoutubeConnector} % (fold)
 \label{sub:youtube_connector}
 
 \todo[inline]{Einleitung schreiben}

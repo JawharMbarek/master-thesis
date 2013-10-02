@@ -149,7 +149,6 @@ Diese Erweiterungen und die übernommenen Teile der Authentication Ontology wurd
 
 \subsection{Autorisierung} % (fold)
 \label{sub:autorisierung}
-%% korrigiert am 2013-09-26 20:10
 
 Da für viele Menschen im Internet ihre Privatsphäre wichtig ist, sollte von den Benutzern für das Lesen und Schreiben ihrer Beiträge erst ihre Erlaubnis dazu eingeholt werden. Ein verbreitetes Mittel für eine solche Zugriffssteuerung sind Access Control Lists (ACL) (engl. für Zugriffsteuerungsliste). Mit ihnen wird geregelt wer bestimmte Operationen auf eine Ressource durchführen darf. Für den Einsatz in dieser Arbeit wurde die \emph{Basic Access Control Ontologie} (siehe \cite{Hollenbach2009,wiki:wacl})(RDF-Präfix \texttt{acl:}) ausgewählt (Im Folgenden nur als ACL bezeichnet). Da sie Teilweise auf FOAF aufbaut, ließ sie sich sehr einfach in das bestehende System integrieren.
 
@@ -162,7 +161,6 @@ Da für viele Menschen im Internet ihre Privatsphäre wichtig ist, sollte von de
     \caption{Basic Access Control Ontologie}
     \label{fig:w3c_web_acl}
 \end{figure}
-
 
 Zugriffsrechte für Ressourcen werden in dieser ACL mit der Klasse \texttt{acl:Access} modelliert. Von dieser Klasse werden einzelne Rechte wie \texttt{acl:Read} für das Lesen und \texttt{acl:Write} für das Schreiben abgeleitet. Nebenbei existieren noch die Ableitungen \texttt{acl:Control} für die Kontrolle über die ACL und \texttt{acl:Append} zum Anfügen von Daten an die Ressource. Die letzten beiden Rechte sind aber für SOCC unbedeutend.
 
@@ -199,7 +197,7 @@ Das Listing \ref{lst:acl_beispiel} zeigt ein Beispiel, wie eine Autorisierung mi
     \label{fig:uml_connector_interface}
 \end{wrapfigure}
 
-Die rechte Abbildung \ref{fig:uml_connector_interface} zeigt die Schnittstelle \texttt{IConnector} gegen die ein Connector implementiert werden muss. Sie bietet Zugriff auf die Eigenschaften die mit der Klasse \texttt{ccfg:ConnectorConfig} für die Konfiguration eines Connectors im Triplestore bereitgestellt werden. Diese Schnittstelle definiert Methodenüber welche die Komponenten zum Lesen der Seitenstruktur mit dem StructureReader sowie zum Lesen und Schreiben von Beiträgen mit PostReader und PostWriter zugänglich sind. Zuzüglich werden noch Methoden für den Zugriff auf Hilfskomponenten wie den \emph{SOCC Context}, \emph{AccessControl} und \emph{ClientManger} bereitgestellt. Das UML Klassendiagramm in Abbildung \ref{fig:connector_uml_classdiagram} zeigt die Beziehung zwischen den Connector und den anderen Komponenten aus dem er besteht, welche in den folgenden Unterabschnitten noch weiter erklärt werden.
+Die rechte Abbildung \ref{fig:uml_connector_interface} zeigt die Schnittstelle \texttt{IConnector} gegen die ein Connector implementiert werden muss. Sie bietet Zugriff auf die Eigenschaften die mit der Klasse \texttt{ccfg:ConnectorConfig} für die Konfiguration eines Connectors im Triplestore bereitgestellt werden. Diese Schnittstelle definiert Methodenüber welche die Komponenten zum Lesen der Seitenstruktur mit dem StructureReader sowie zum Lesen und Schreiben von Beiträgen mit PostReader und PostWriter zugänglich sind. Zuzüglich werden noch Methoden für den Zugriff auf Hilfskomponenten wie den \emph{SOCC Context}, \emph{AccessControl} und \emph{ClientManger} bereitgestellt. Das UML-Klassendiagramm in Abbildung \ref{fig:connector_uml_classdiagram} zeigt die Beziehung zwischen den Connector und den anderen Komponenten aus dem er besteht, welche in den folgenden Unterabschnitten noch weiter erklärt werden.
 
 Für den Lebenszyklus eines Connectors sind noch die Methoden \texttt{initialize()} und \texttt{shutdown()} wichtig. Nach dem Erzeugen eines Connectors muss die Methode \texttt{initialize()} aufgerufen, um noch mögliche Vorarbeiten durchzuführen bevor der Connector genutzt werden kann. Ob ein Connector schon initialisiert wurde, kann mit der Methode \texttt{isInitialized()} überprüft werden. Bevor eine Connector gelöscht werden kann, sollte noch die Methode \texttt{shutdown()} aufgerufen werden. Sie dient dazu verwendete Ressourcen wieder freizugeben.
 
@@ -210,7 +208,7 @@ Für den Lebenszyklus eines Connectors sind noch die Methoden \texttt{initialize
         keepaspectratio=true,
         angle=90]
     {assets/images/socc_uml_classdiagram}
-    \captionof{figure}{UML Klassendiagramm eines Connectors}
+    \captionof{figure}{UML-Klassendiagramm eines Connectors}
     \label{fig:connector_uml_classdiagram}
 \end{minipage}
 
@@ -218,7 +216,6 @@ Für den Lebenszyklus eines Connectors sind noch die Methoden \texttt{initialize
 
 \subsection{SOCC Context} % (fold)
 \label{sub:socc_context}
-%% korrigiert am 2013-09-26 20:35
 
 \begin{wrapfigure}{r}{6cm}
     \centering
@@ -238,7 +235,6 @@ Der SOCCContext eines Connectors, beschreibt die Umgebung die er zum Arbeiten br
 
 \subsection{AccessControl} % (fold)
 \label{sub:accesscontrol}
-%% korrigiert am 2013-09-26 20:38
 
 \begin{wrapfigure}{r}{12cm}
     \centering
@@ -258,7 +254,6 @@ Die AccessControl-Schnittstelle ist sehr einfach gehalten und dient für den Zug
 
 \subsection{ClientManager} % (fold)
 \label{sub:clientmanager}
-%% korrigiert am 2013-09-26 20:50
 
 \begin{wrapfigure}{r}{7cm}
     \centering
@@ -272,13 +267,12 @@ Die AccessControl-Schnittstelle ist sehr einfach gehalten und dient für den Zug
     \label{fig:uml_clientmanager}
 \end{wrapfigure}
 
-Der Zugriff auf eine API innerhalb des Programms erfolgt in der Regel über ein spezielles Clientobjekt (kurz Client). Dieser Client erlaubt es mit den Anmeldedaten für ein Benutzerkonto auf die Funktionen der API über verschiedene Methoden zu zugreifen. Da ein Client immer nur mit einem Benutzerkonto verknüpft ist und von diesen eine große Anzahl verwaltet werden müssen, enthält jeder Connector einen eigen ClientManager für diese Aufgaben. Der interne Aufbau eines Client ist dabei stark von der verwendeten API abhängig und wird als generischer Parameter der Klasse beim erzeugen eines Objekts übergeben. Für alle vom Benutzer unabhängigen Daten erhält der ClientManager ein, wie Abschnitt \ref{sub:services} beschriebenes, Objekt der Klasse Service, dass zum Beispiel die Basis-URI für die API enthält. Das Erzeugen eines neuen Clients erfolgt dann durch den Aufruf der Methode \texttt{createClient(\dots)}. Als Parameter wird er ein Benutzerkonto, in Form eines SIOC UserAccounts, übergeben. Sind alle erforderlichen Authentifizierungsinformation aus Abschnitt \ref{sub:authentifizierung} vorhanden, wird ein neuer Client erzeugt und zurück an den Aufrufer gegeben. Dieser Client wird aber dadurch nicht automatisch vom ClientManager verwaltet. Hierzu muss der im vorherigen Schritt erzeugte Client durch die Übergabe an \texttt{add(userAccount: UserAccount, client: T )} dauerhaft mit den angegeben UserAccount verknüpft und intern gespeichert werden. In der aktuellen Implementierung ist es wichtig, dass die Eigenschaften \texttt{accountName} und \texttt{accountServiceHomepage} des UserAccount Objekts gesetzt sind. Aus diesen wird ein eindeutiger Schlüssel generiert, der zur Zuordnung von UserAccount und Client innerhalb des ClientManagers dient. Des weiteren stehen noch Methoden \texttt{remove(userAccount: UserAccount)} zum Entfernen und \texttt{get(userAccount: UserAccount)} zum Holen von Clients, sowie \texttt{contains(userAccount: UserAccount)} für Tests, ob ein Client zu einem UserAccount existiert, zur Verfügung. Sollen zum Beispiel am Ende der Laufzeit des Programms alle erzeugten Clients auf einmal abgemeldet und gelöscht werden, kann dies über die Methode \texttt{clear()} erfolgen. Der ClientManager verwaltet ebenfalls den Client für den in Abschnitt \ref{sub:connector_config_ontologie} angesprochenen Defaultuser. Dieser Defaultclient genannte Client kann über die Methode  \texttt{setDefaultClient(client: T)} gesetzt und durch \texttt{getDefaultClient()} jederzeit wieder abgerufen werden. 
+Der Zugriff innerhalb des Programms auf eine API erfolgt in der Regel über einen Client. Dieser Client erlaubt es mit den Anmeldedaten für ein Benutzerkonto auf die Funktionen der API über verschiedene Methoden zu zugreifen. Da ein Client immer nur mit einem Benutzerkonto verknüpft ist und von diesen eine große Anzahl verwaltet werden müssen, enthält jeder Connector einen eigen ClientManager für diese Aufgaben. Für alle vom Benutzer unabhängigen Daten erhält der ClientManager ein wie Abschnitt \ref{sub:services} beschriebenes Objekt der Klasse Service das oftmals wichtige Daten wie ClientID und ClientSecret enthält. Das Erzeugen eines neuen Clients erfolgt dann durch den Aufruf der Methode \texttt{createClient(\dots)}. Als Parameter wird er ein Benutzerkonto (\texttt{sioc:UserAccount}) übergeben. Sind alle erforderlichen Authentifizierungsinformation aus Abschnitt \ref{sub:authentifizierung} vorhanden, wird ein neuer Client erstellt und zurück an den Aufrufer gegeben. Dieser Client wird aber dadurch nicht automatisch vom ClientManager verwaltet. Hierzu muss der im vorherigen Schritt erzeugte Client durch die Übergabe an \texttt{add(userAccount: UserAccount, client: T )} dauerhaft mit den angegeben Benutzerkonto verknüpft und intern gespeichert werden. In der aktuellen Implementierung ist es wichtig, dass die Eigenschaften \texttt{foaf:accountName} und \texttt{foaf:accountServiceHomepage} des \texttt{sioc:UserAccount}-Objekts gesetzt sind. Aus diesen wird ein eindeutiger Schlüssel generiert, der zur Zuordnung von Benutzerkonto und Client innerhalb des ClientManagers dient. Des weiteren stehen noch Methoden \texttt{remove(userAccount: UserAccount)} zum Entfernen, \texttt{get(userAccount: UserAccount)} zum Suchen von Clients sowie \texttt{contains(userAccount: UserAccount)} zum Testen, ob ein Client zu einem Benutzerkonto existiert zur Verfügung. Sollen zum Beispiel am Ende der Laufzeit des Programms alle erzeugten Clients auf einmal abgemeldet und gelöscht werden, kann dies über die Methode \texttt{clear()} erfolgen. Der ClientManager verwaltet ebenfalls den Client für den in Abschnitt \ref{sub:connector_config_ontologie} angesprochenen Defaultuser. Dieser \emph{Defaultclient} kann über die Methode  \texttt{setDefaultClient(client: T)} gesetzt und durch \texttt{getDefaultClient()} jederzeit wieder abgerufen werden. 
 
 % subsubsection clientmanager (end)
 
 \subsection{StructureReader} % (fold)
 \label{sub:structurereader}
-%% korrigiert am 2013-09-26 21:07
 
 \begin{wrapfigure}[11]{r}{9cm}
     \centering
@@ -291,25 +285,25 @@ Der Zugriff auf eine API innerhalb des Programms erfolgt in der Regel über ein 
     \caption{StructurReader}
     \label{fig:uml_structure_reader}
 \end{wrapfigure}
-Um auf Informationen über die Struktur von Foren, sozialen Online-Netzwerken und so weiter im SIOC-Format zugreifen zu können, implementiert jeder Connector dazu einen StructureReader. Die Struktur lässt sich, wie im Abschnitt \ref{ssub:semantically_interlinked_online_communities} vorgestellt, durch die SIOC Klassen \emph{Site} und \emph{Container} (sowie Unterklassen davon) beschrieben. Für den Zugriff auf diese Struktur, enthält der StructureReader mehrere Methoden die in der UML Klasse rechts in Abbildung \ref{fig:uml_structure_reader}) zu sehen sind. \wrapfill
+
+Um auf Informationen über die Struktur von Foren, sozialen Online-Netzwerken und so weiter im SIOC-Format zugreifen zu können, implementiert jeder Connector dazu einen StructureReader. Die Struktur lässt sich, wie im Abschnitt \ref{ssub:semantically_interlinked_online_communities} vorgestellt, durch die SIOC Klassen \texttt{sioc:Site} und \texttt{sioc:Container} (sowie Unterklassen davon) beschreiben. Für den Zugriff auf diese Struktur, enthält der StructureReader mehrere Methoden die in der UML-Klasse rechts in Abbildung \ref{fig:uml_structure_reader}) zu sehen sind. \wrapfill
 
 \begin{description}
-    \item[\texttt{getSite()}] ist eine Methode, welche die Beschreibung einer Seite (Forum, Blog, soziales Online-Netzwerk) als Objekt der SIOC-Klasse \texttt{Site} zurücklieft. Dieses wird relativ häufig gebraucht um die Zugehörigkeit anderer Objekte durch einen Verweis zu dieser Seite zu verdeutlichen. Dies kann bei einigen APIs nützlich sein, da dort manchmal keine Information zum Ursprungsort eines Beitrags mitgeliefert werden, über den man sonst eine Beziehung zwischen Seite und Beitrag herstellen könnte.
+    \item[\textbf{\texttt{getSite()}}] ist eine Methode, welche die Beschreibung einer Seite (Forum, Blog, soziales Online-Netzwerk) als Objekt der SIOC-Klasse \texttt{sioc:Site} zurücklieft. Dieses wird relativ häufig gebraucht, um die Zugehörigkeit anderer Objekte durch einen Verweis auf diese Seite zu verdeutlichen. Dies kann bei einigen APIs nützlich sein, da dort manchmal keine Information zum Ursprungsort eines Beitrags mitgeliefert werden, über den man sonst eine Beziehung zwischen Seite und Beitrag herstellen könnte.
 
-    \item[\texttt{isContainer(uri: URI)}] wird zu Überprüfung verwendet, ob sich hinter einer URI ein potenzieller Container befindet. 
+    \item[\textbf{\texttt{isContainer(uri: URI)}}] wird zu Überprüfung verwendet, ob sich hinter einer URI ein potenzieller Container für Beiträge oder andere Container befindet. 
 
-    \item[\texttt{getContainer(URI)}] liefert Informationen zu einen Container im SIOC-Format, der sich hinter der übergeben URI befindet.
+    \item[\textbf{\texttt{getContainer(URI)}}] liefert Informationen zu einen Container im SIOC-Format, der sich hinter der übergeben URI befindet.
 
-    \item[\texttt{hasChildContainer(uri: URI)}] überprüft, ob der Container hinter der übergeben URI weitere Container als Kinder besitzt. Diese Methode wird dazu eingesetzt, um vorab zu testen, ob der Aufruf von \texttt{listContainer(URI)} das gewünschte Ergebnis liefert oder ein Fehler auftreten würde. 
+    \item[\textbf{\texttt{hasChildContainer(uri: URI)}}] überprüft, ob der Container hinter der übergeben URI weitere Container als Kinder besitzt. Diese Methode wird dazu eingesetzt, um vorab zu testen, ob der Aufruf von \texttt{listContainer(URI)} das gewünschte Ergebnis liefert oder ein Fehler auftreten würde. 
 
-    \item[\texttt{listContainer(\dots)}] sind Methoden, welche für den die Auflisten aller Container einer Seite aus der Sicht des Defaultusers zur Verfügung stehen. Die Methode ohne Parameter listet alle Container auf der ersten Ebene der Seitenstruktur auf . Dies könnten zum Beispiel alle Kurse auf innerhalb einer Canvasinstanz oder alle beigetretenen Gruppen auf Facebook sein. Die zweite Methode mit einer URI als Parameter gibt eine Liste alle Container, welche den Container hinter der übergeben URI als Elternteil haben, zurück. Dies könnten im Falle von Canvas alle Diskussionsthemen innerhalb eines Kurses sein.
+    \item[\textbf{\texttt{listContainer(\dots)}}] sind Methoden, welche für den das Auflisten aller Container einer Seite (aus der Sicht des Defaultusers) zur Verfügung stehen. Die Methode ohne Parameter listet alle Container auf der ersten Ebene der Seitenstruktur auf . Dies könnten zum Beispiel alle Kurse innerhalb von Canvas oder alle beigetretenen Gruppen auf Facebook sein. Die zweite Methode mit einer URI als Parameter gibt eine Liste alle Container, welche den Container hinter der übergeben URI als Elternteil haben zurück. Dies könnten im Falle von Canvas alle Diskussionsthemen innerhalb eines Kurses sein.
 \end{description}
 
 % subsubsection structurereader (end)
 
 \subsection{PostReader} % (fold)
 \label{sub:postreader}
-%% korrigiert am 2013-09-26 21:15
 
 \begin{wrapfigure}{r}{9cm}
     \centering
@@ -323,26 +317,25 @@ Um auf Informationen über die Struktur von Foren, sozialen Online-Netzwerken un
     \label{fig:uml_post_reader}
 \end{wrapfigure}
 
-Der \texttt{PostReader} dient als Schnittstelle für das Lesen geschriebener Beiträge innerhalb eines Containers oder der Kommentare auf einen anderen Beitrag. Er stellt nach außen hin Funktionen bereit mit denen entweder ein einzelner Beitrag oder alle Beiträge, die bestimmte Kriterien erfüllen, gelesen werden können. Bevor ein Beitrag zurück gegeben wird, müssen die Methoden prüfen, ob der Autor eines Beitrag das Lesen für diesen erlaubt hat. Falls nicht, wird der Beitrag aus der Ergebnisliste gestrichen und nicht zurückgegeben. Die Funktionsweise der einzelnen Methoden ist wie folgt:
+Der \texttt{PostReader} dient als Schnittstelle für das Lesen geschriebener Beiträge innerhalb eines Containers oder der Kommentare auf einen anderen Beitrag. Er stellt nach außen hin Funktionen bereit mit denen entweder ein einzelner Beitrag oder alle Beiträge, die bestimmte Kriterien erfüllen, gelesen werden können. Bevor ein Beitrag zurück gegeben wird, müssen die Methoden prüfen, ob der Autor eines Beitrag das Lesen für diesen erlaubt hat. Falls nicht, wird der Beitrag aus der Ergebnisliste gelöscht. Die Funktionsweise der einzelnen Methoden ist wie folgt:
 
 \begin{description}
-    \item[\texttt{isPost(uri: URI)}] kann zur Überprüfung eingesetzt werden, ob sich hinter einer URI ein Beitrag befindet.
+    \item[\textbf{\texttt{isPost(uri: URI)}}] kann zur Überprüfung eingesetzt werden, ob sich hinter einer URI ein Beitrag befindet.
 
-    \item[\texttt{getPost(uri: URI)}] ist dazu gedacht einen einzelnen Beitrag anhand seiner URI zu lesen. Sie liefert dann den Beitrag als Objekt der SIOC-Klasse Post zurück.
+    \item[\textbf{\texttt{getPost(uri: URI)}}] ist dazu gedacht einen einzelnen Beitrag anhand seiner URI zu lesen. Sie liefert dann den Beitrag als Objekt der SIOC-Klasse \texttt{sioc:Post} zurück.
 
-    \item[\texttt{hasPost(uri: URI)}] funktioniert ähnlich wie isPost, überprüft aber ob sich hinter der angegeben URI noch weitere Beiträge befinden können. 
+    \item[\textbf{\texttt{hasPost(uri: URI)}}] funktioniert ähnlich wie isPost, überprüft aber ob sich hinter der angegeben URI noch weitere Beiträge befinden können. 
 
-    \item[\texttt{pollPosts(uri: URI, since: Date, limit: int)}] ist eine Methode die alle Beiträge hinter eine URI liest welche die gegeben Kriterien erfüllen. Insgesamt erhält diese Methode drei Parameter. Der Erste ist eine URI die den Ort angibt von der die Beiträge gelesen werden sollen. Mit dem zweiten Parameter kann ein Zeitpunkt angegeben werden, ab dem ein zu lesender Beitrag geschrieben sein muss. Zum Beispiel der Zeitpunkt als diese Methode das letzte mal aufgerufen wurde, um alle Beiträge die danach geschrieben wurden zu lesen. Der letzte Parameter gibt eine obere Schranke an, wie viele Beiträge maximal pro Aufruf dieser Methode gelesen werden dürfen. Ist dieses Limit erreicht, werden keine weiteren Beiträge in die Ergebnisliste aufgenommen.
+    \item[\textbf{\texttt{pollPosts(uri: URI, since: Date, limit: int)}}] ist eine Methode die alle Beiträge hinter eine URI liest, welche die übergeben Kriterien erfüllen. Insgesamt erhält diese Methode drei Parameter. Der Erste ist eine URI die den Ort angibt, von der die Beiträge gelesen werden sollen. Mit dem zweiten Parameter kann ein Zeitpunkt angegeben werden, ab dem ein zu lesender Beitrag geschrieben sein muss. Zum Beispiel der Zeitpunkt als diese Methode das letzte mal aufgerufen wurde, um alle Beiträge die danach geschrieben wurden zu lesen. Der letzte Parameter gibt eine obere Schranke an, wie viele Beiträge maximal pro Aufruf dieser Methode gelesen werden dürfen. Ist dieses Limit erreicht, werden keine weiteren Beiträge in die Ergebnisliste aufgenommen.
 \end{description}
 
 % subsubsection postreader (end)
 
 \subsection{PostWriter} % (fold)
 \label{sub:postwriter}
-%% korrigiert am 2013-09-26 21:35
 
-In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein Sequenzdiagramm der PostWriter Komponente zu sehen. Dort ist visualisiert, welche Schritte für das stellvertretende Schreiben von Beiträgen eines Benutzers unternommen werden müssen. Soll nun ein Beitrag in Plattform des Connectors geschrieben werden, wird die Methode \texttt{writePost(URI, String, Syntax)} mit dem Zielort als URI, dem Beitrag als serialisiertes RDF Objekt und dem verwendeten Serialisierungsformat aufgerufen. Es beginnt damit, dass zuerst nach einem Benutzerkonto des Beitragautors für die Plattform des aktuellen Connectors gesucht wird. Dieser sollte im Idealfall im Triplestore des Connectors nach dem im Abschnitt \ref{sub:benutzerdaten} Schema vorliegen. Mit diesem Benutzerkonto, in Form der Klasse UserAccount von SIOC, kann dann vom ClientManager ein Client für die verwendete API geholt werden. Sollte die Suche negativ verlaufen, steht noch der Defaultclient zur Verfügung. 
-Bevor der Beitrag aber geschrieben werden kann, muss nachgeschaut werden, ob eine Erlaubnis für das Schreiben mit dem Client vorliegt. Ist dies der Fall kann der Beitrag in das von der API verwendete Format konvertiert und an die richtige Stellen der Plattform geschrieben werden.
+In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein UML-Sequenzdiagramm der PostWriter-Komponente zu sehen. Dort ist visualisiert, welche Schritte für das stellvertretende Schreiben von Beiträgen eines Benutzers unternommen werden müssen. Soll nun ein Beitrag in Plattform des Connectors geschrieben werden, wird die Methode \texttt{writePost(URI, String, Syntax)} mit dem Zielort als URI, den Beiträgen als serialisierte RDF-Objekte und dem verwendeten Serialisierungsformat aufgerufen. Es beginnt damit, dass zuerst nach einem Benutzerkonto des Beitragautors für die Plattform des aktuellen Connectors gesucht wird. Dieser sollte im Idealfall im Triplestore des Connectors nach dem im Abschnitt \ref{sub:benutzerdaten} Schema vorliegen. Mit diesem Benutzerkonto, in Form der Klasse \texttt{sioc:UserAccount} aus SIOC, kann dann vom ClientManager ein Client für die verwendete API geholt werden. Sollte die Suche negativ verlaufen, steht noch der Defaultclient zur Verfügung. 
+Bevor der Beitrag aber geschrieben werden kann, muss nachgeschaut werden, ob eine Erlaubnis für das Schreiben mit diesem Client vorliegt. Ist dies der Fall kann der Beitrag in das von der API verwendete Format konvertiert und an die richtige Stellen der Plattform geschrieben werden.
 
 \begin{minipage}{\textwidth}
     \centering
@@ -352,7 +345,7 @@ Bevor der Beitrag aber geschrieben werden kann, muss nachgeschaut werden, ob ein
         clip=true,
         trim= 90 180 220 75]
     {assets/images/postwriter_sequencediagram}
-    \captionof{figure}{UML Sequenzdiagramm eines PostWriters}
+    \captionof{figure}{UML-Sequenzdiagramm eines PostWriters}
     \label{fig:postwriter_sequenzdiagramm}
 \end{minipage}
 
@@ -366,7 +359,7 @@ Bevor der Beitrag aber geschrieben werden kann, muss nachgeschaut werden, ob ein
 \label{sec:socc_camel}
 %% korrigiert am 2013-09-26 22:04
 
-\emph{SOCC-Camel} ist eine Modul der SOCC für die Integration von Connectoren in Camel. Durch dieses ist auf flexible Weise möglich die gelesenen Beiträge von einer Plattform über die Connectoren in eine andere zu schreiben. Abbildung \ref{fig:uebersicht_socc_camel} zeigt SOCC-Camel als EIP-Diagramm. 
+\emph{SOCC-Camel} ist eine Modul von SOCC für die Integration von Connectoren in Camel. Durch dieses ist auf flexible Weise möglich die gelesenen Beiträge von einer Plattform über die Connectoren in eine andere zu schreiben. Die Abbildung \ref{fig:uebersicht_socc_camel} zeigt SOCC-Camel als EIP-Diagramm. 
 
 \begin{minipage}{\textwidth}
     \centering
@@ -374,25 +367,25 @@ Bevor der Beitrag aber geschrieben werden kann, muss nachgeschaut werden, ob ein
         width=\textwidth,
         keepaspectratio=true]
         {assets/images/socc_camel_overview}
-    \captionof{figure}{Übersicht des Socc-Camel Moduls in EIP-Notation}
+    \captionof{figure}{Übersicht des SOCC-Camel Moduls als EIP-Diagramm.}
     \label{fig:uebersicht_socc_camel}
 \end{minipage}
 
-Hauptklasse dieses Moduls ist \texttt{SoccComponent}. Sie ist für die Verwaltung von Connectoren und Erstellen der Endpunkte für Camel zuständig. Von dieser Klasse muss zuerst ein Objekt erzeugt und ein SoccContext mit dem Tripelstore und alle Informationen für die Connectoren wie ConnectorConfigs Benutzerkonten und Services übergeben werden. Also alle Daten die in Anschnitt \ref{sec:konfiguration} beschrieben wurden. Das SoccComponent Objekt wird dann unter einen frei wählbaren Namen in Camel registriert. Als Namen ist \enquote(socc) aber vorzuziehen.  Nun kann wie in Abschnitt \ref{ssub:apache_camel} mit dieser Komponente Routen erstellt werden. 
+Hauptklasse dieses Moduls ist \texttt{SoccComponent}. Sie ist für die Verwaltung von Connectoren und Erstellen der Endpunkte für Camel zuständig. Von dieser Klasse muss zuerst ein Objekt erzeugt und ein SoccContext mit dem Tripelstore und alle Informationen für die Connectoren wie für deren Konfiguration, Benutzerkonten oder Servicebeschreibungen übergeben werden. Also alle Daten die in Anschnitt \ref{sec:konfiguration} beschrieben wurden. Das SoccComponent-Objekt wird dann unter einen frei wählbaren Namen in Camel registriert. Als Namen ist \enquote{socc} aber vorzuziehen.  Nun kann wie in Abschnitt \ref{ssub:apache_camel} mit dieser Komponente Routen zusammengesetzt werden.
 
-Die URIs für die Konfiguration der Endpunkte mit SOCC-Camel habe dazu den folgenden Aufbau: \enquote{\texttt{socc://{connectorId}?uri={targetUri}[\&{parameter}...]}}. Der Anfang der URI mit \enquote{socc://} sagt Camel, dass es für diesen Endpunkt die Komponente benutzten soll, die vorher unter dem Namen \enquote{socc} registriert wurde - also die SoccComponent. Für den Platzhalter \enquote{\{connectorId\}} muss eine gültige ID eines Connectors sein, dessen Konfigurationsdaten im TripleStore hinterlegt wurden. Über den Parameter \enquote{uri} wird dann die Quell- beziehungsweise Ziel-URI für den Connector angegeben, von der er Beiträge lesen soll. Je nach Endpunkt können dann noch weitere Parameter angegeben werden. So ein Endpunkt wird in SOCC-Camel durch die Klasse \texttt{SoccEndpoint} modelliert (nicht explizit in der Abbildung angegeben) und leitet sich von der Klasse \texttt{ScheduledPollEndpoint}, die das Verwenden der folgenden \texttt{SoccPostPollConsumer} Klasse vereinfacht.
+Die URIs für die Konfiguration der Endpunkte mit SOCC-Camel habe dazu den folgenden Aufbau: \enquote{\texttt{socc://{connectorId}?uri={targetUri}[\&{parameter}...]}}. Der Anfang der URI mit \enquote{\texttt{socc://}} sagt Camel, dass es für diesen Endpunkt die Komponente benutzten soll, die vorher unter dem Namen \enquote{socc} registriert wurde - also SoccComponent. Für den Platzhalter \enquote{\{connectorId\}} muss eine gültige ID eines Connectors sein, dessen Konfigurationsdaten im TripleStore hinterlegt wurden. Über den Parameter \enquote{uri} wird dann die Quell- beziehungsweise Ziel-URI für den Connector angegeben, von der Beiträge gelesen beziehungsweise in die Beiträge geschrieben werden sollen. Je nach Endpunkt können dann noch weitere Parameter angegeben werden. Ein Endpunkt wird in SOCC-Camel durch die Klasse \texttt{SoccEndpoint} modelliert (nicht explizit in der Abbildung angegeben) und leitet sich von der Camel-Klasse \texttt{ScheduledPollEndpoint}, die das Verwenden der folgenden \texttt{SoccPostPollConsumer} Klasse vereinfacht.
 
 \subsection{SoccPostPollConsumer} % (fold)
 \label{sub:soccpostpollingconsumer}
 
-Wird ein Endpunkt mit der Absicht zum Lesen von Beiträgen erstellt, erzeugt die Klasse SoccComponent ein Objekt der Klasse SoccPostPollConsumer und übergibt im die Parameter aus der Konfigurations-URI. Da SoccPostPollingConsumer sich von der Klasse ScheduledPollConsumer ableitet, ist es über dem Parameter \texttt{delay} möglich in periodischen Abständen das Lesen von Beiträgen auszuführen. Die Angabe erfolgt dabei in Millisekunden. Der Parameter \texttt{limit} entspricht dabei den gleichnamigen Argument der Methode \texttt{pollPosts(\dots)} des PostReaders aus Abschnitt \ref{sub:postreader}. Das dort noch fehlende Argument \texttt{since}, für das Datum, ab wann ein Beitrag als neu gilt, holt sich der SoccPostPollConsumer aus den im TripleStore gespeicherten Daten. Da dort in den Strukturdaten gespeichert wird, wann der letzte Beitrag eines Threads oder der letzte Kommentar auf einen Beitrag gespeichert wird. Alle neuen, gelesenen Beiträge werden am Ende in das RDF/XML-Format serialisiert und als Nachricht an Camel übergeben, welches es dann anhand der festgelegten Routen weiterleitet. Damit andere Komponenten diese Nachricht wieder korrekt de-serialisieren können, muss der Nachricht noch ein Header mit dem Schlüssel \enquote{Content-Type} und dem MIME-Type\footnote{ Multipurpose Internet Mail Extension - Types: \url{http://tools.ietf.org/html/rfc2046}} vom RDF/XML \enquote{application/rdf+xml} mitgegeben werden.
+Wird ein Endpunkt mit der Absicht zum Lesen von Beiträgen erstellt, erzeugt die Klasse SoccEndpoint ein Objekt der Klasse SoccPostPollConsumer und übergibt im die Parameter aus der Konfigurations-URI. Da SoccPostPollingConsumer sich von der Camel-Klasse \texttt{ScheduledPollConsumer} ableitet, ist es über den Parameter \texttt{delay} möglich in periodischen Abständen das Lesen von Beiträgen auszuführen. Die Angabe erfolgt dabei in Millisekunden. Der Parameter \texttt{limit} entspricht dabei den gleichnamigen Argument der Methode \texttt{pollPosts(\dots)} des PostReaders aus Abschnitt \ref{sub:postreader}. Das dort noch fehlende Argument \texttt{since}, für das Datum, ab wann ein Beitrag als neu gilt, wird mit dem Zeitpunkt belegt wann die Methode \texttt{pollPosts(\dots)} das letzte Mal aufgerufen wurde. Alle neuen, gelesenen Beiträge werden am Ende in das RDF/XML-Format serialisiert und als Nachricht an Camel übergeben. Damit andere Komponenten diese Nachricht wieder korrekt de-serialisieren können, muss der Nachricht noch ein Header mit dem Schlüssel \enquote{Content-Type} und dem MIME-Type\footnote{ Multipurpose Internet Mail Extension - Types: \url{http://tools.ietf.org/html/rfc2046}} vom RDF/XML \enquote{application/rdf+xml} als Wert mitgegeben werden.
 
 % subsection soccpostpollconsumer (end)
 
 \subsection{SoccPostProducer} % (fold)
 \label{sub:soccpostproducer}
 
-Der SoccPostProducer ist das Gegenstück zum SoccPostPollConsumer. Er ist der Endpunkt der zum Schreiben von Beiträgen in die Plattform des Connectors von der Klasse SoccComponent erzeugt wird. Intern verwendet er den PostWriter des betreffenden Connetors und leitet den Inhalt der Nachricht an diese weiter. Außer der Angabe über die Ziel-URI erhält der SoccPostProducer keine weiteren Parameter über die Konfigurations-URI. Der SoccPostProducer überprüft auch ob ein gültiger MIME-Type angeben wurde. Akzeptiert wird auf jeden Fall \enquote{application/rdf+xml} für RDF/XML. Je nach verwendeten Adapter für RDF2Go können auch \enquote{"application/x-turtle"} für Turtle oder \enquote{application/rdf+json} für RDFJson\footnote{\url{https://dvcs.w3.org/hg/rdf/raw-file/default/rdf-json/index.html}} verwendet werden.
+Der \texttt{SoccPostProducer} ist das Gegenstück zum SoccPostPollConsumer. Er ist der Endpunkt der zum Schreiben von Beiträgen in die Plattform des Connectors von der Klasse SoccEndpoint erzeugt wird. Intern verwendet er den PostWriter des betreffenden Connetors und leitet den Inhalt der Nachricht an diesen weiter. Außer der Angabe über die Ziel-URI erhält der SoccPostProducer keine weiteren Parameter über die Konfigurations-URI. Der SoccPostProducer überprüft auch ob ein gültiger MIME-Type angeben wurde. Akzeptiert wird auf jeden Fall \enquote{application/rdf+xml} für RDF/XML. Je nach verwendeten Adapter für RDF2Go können auch \enquote{"application/x-turtle"} für Turtle oder \enquote{application/rdf+json} für RDFJson\footnote{\url{https://dvcs.w3.org/hg/rdf/raw-file/default/rdf-json/index.html}} verwendet werden.
 
 % subsection soccpostproducer (end)
 

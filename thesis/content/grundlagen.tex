@@ -106,13 +106,11 @@ Wird eine solche WSDL-Datei öffentlich zugänglich gemacht, kann festgestellt w
 
 \section{Datenintegration} % (fold)
 \label{sec:datenintegration}
-%% korrigiert am 2013-10-01
 
 Der Begriff Datenintegration beschreibt das zusammenführen von heterogenen Datenquellen an einen gemeinsamen Ort. Gerade bei der Integration verschiedener, teils kommerzieller Plattformen im Web ist dies ein Problem, da sie zwar ein ähnliches Ziel verfolgen aber sich von anderen abgrenzen wollen. So sind die verwendeten Datenformate in der Regel nicht direkt untereinander austauschbar. Um dies trotzdem zu erreichen, muss ein Mapping (Zuordnung) zwischen den verschiedenen Formaten erfolgen. In dieser Arbeit wird dazu auf RDF und Ontologien wie FOAF und SIOC gesetzt welche im den Folgenden Abschnitten erklärt werden.
 
 \subsection{Semantic Web} % (fold)
 \label{sub:semantic_web}
-%% korrigiert am 2013-10-01
 
 Seit den Anfängen des Webs hat die Masse an abrufbaren Information immer mehr zugenommen, wobei die Vorteile eindeutig in der guten Aktualität und Erreichbarkeit von überall auf Erde liegen. Die Menge an Informationen sind aber auch ein Problem im Web. Da diese überall verteilt sind, ist es schwer für einen einzelnen alles zu einem Thema zu finden. Suchmaschinen wie Google\footnote{\url{https://www.google.com}}, Yahoo\footnote{\url{yahoo.com}} oder Microsoft Bing\footnote{\url{http://www.bing.com/}} leisten hier gute Dienste. Doch für Maschinen ist es noch immer nicht einfach die Inhalte von Webseiten zu verstehen, da diese für Menschen gemacht wurden. Auch das Erlernen von neuen Wissen anhand vorhandener Informationen ist in der aktuellen Form des Webs nur schwer realisierbar (vgl. \cite{Hitzler2008a}). 
 
@@ -120,7 +118,6 @@ Seit den Anfängen des Webs hat die Masse an abrufbaren Information immer mehr z
 
 \subsubsection{Resource Description Framework} % (fold)
 \label{ssub:resource_description_framework}
-%% korrigiert am 2013-10-01
 
 Eine Baustein des Semantic Webs ist das Resource Description Framework. Wie der Name schon suggeriert, dient RDF zur Beschreibung von einzelnen Ressourcen innerhalb des Webs. Nach \cite{Klyne2004,Manola2004} bestand die Motivation bei der Entwicklung von RDF Information über Ressource in einen offenen Datenmodell zu speichern, so dass diese Daten von Maschinen automatisch verarbeitet, manipulieren und untereinander ausgetauscht werden können. Gleichzeitig sollte es auch einfach von jedem erweiterbar sein. Ressourcen stellen dabei alle Dinge dar, über die man eine Aussage treffen kann. 
 
@@ -144,13 +141,11 @@ Doch nicht jede dieser drei Belegungen ist in jedem Teil des Tripels erlaubt. Da
 
 \subsubsection{Repräsentation von RDF-Graphen} % (fold)
 \label{ssub:darstellung_von_rdf_graphen}
-%% korrigiert am 2013-10-01
 
 In Laufe der Zeit von RDF wurde verschiedene Möglichkeiten erfunden einen RDF-Graphen darzustellen. In diesem Abschnitt werden drei Formen vorgestellt die auch in dieser Arbeit zur Visualisierung benutzt werden. Zuerst die graphische Darstellung für das visualisieren von RDF-Daten in Abbildung, dann eine Form mit der Extensible Markup Language (XML)\footnote{\url{http://www.w3.org/XML}} und als letztes mit der platzsparenden Sprache Turtle.
 
 \paragraph{Graphische Darstellung} % (fold)
 \label{par:graphische_darstellung}
-%% korrigiert am 2013-10-01
 
 Graphisch lässt sich RDF als gerichteter Graph mit Knoten und Kanten darstellen. Ressourcen werden dabei als Ellipsen, Literale als Rechtecke und die Prädikate als gerichtete Kante dazwischen gezeichnet. Ein Beispiel ist in Abbildung \ref{fig:graphisch_rdf_triple} zu sehen. Es verdeutlicht noch einmal den Aufbau von RDF-Dokumenten als gerichteter Graph.
 
@@ -169,7 +164,6 @@ Graphisch lässt sich RDF als gerichteter Graph mit Knoten und Kanten darstellen
 
 \paragraph{RDF/XML} % (fold)
 \label{par:rdf_xml}
-%% korrigiert am 2013-10-01
 
 RDF/XML ist eine verbreitete Form RDF-Dokumente zu beschreiben. Die Basis bildet hierbei die Verwendung von XML. In Listing \ref{lst:rdf_xml_beispiel} ist ein Beispieldokument in RDF/XML zusehen. Das in Zeile 2 zu sehende \texttt{rdf:RDF} ist das Wurzelelement für den RDF-Graphen. In diesem Wurzelelement werden mit \texttt{xmlns:\dots} einige Präfixe für Namensräume  definiert, um das Dokument übersichtlicher zu gestalten. Alle Präfixe werden danach mit den angegebenen Namensraum ersetzt. Das \texttt{Description} in Zeile 5 stellt die Beschreibung einer Ressource im RDF-Graphen dar. Die URI der Ressource wird mit dem Attribut \texttt{rdf:about} definiert. Innerhalb des Description-Elements befinden sich die Prädikate. In Zeile 6 steht also, dass die Ressource die Eigenschaft \texttt{exterms:enthaelt} hat und auf das Literal \texttt{Kekse} verweist. Wäre das Objekt nicht wie hier ein Literal sondern eine weitere Ressource, könnte man über das Attribut \texttt{rdf:ressource} für das \texttt{exterms:enthaelt} URI der Ressource angeben.
 
@@ -190,7 +184,6 @@ RDF/XML ist eine verbreitete Form RDF-Dokumente zu beschreiben. Die Basis bildet
 
 \paragraph{Turtle} % (fold)
 \label{par:turtle}
-%% korrigiert am 2013-10-01
 
 Turtle\footnote{\url{http://www.w3.org/TeamSubmission/turtle/}} (Ausgeschrieben: \emph{Terse RDF Triple Language}) ist eine weiter Möglichkeit RDF-Graphen darzustellen und ging aus der Sprache N3\footnote{\url{http://www.w3.org/DesignIssues/Notation3.html}} (Kurzform für Notation 3) hervor. In Turtle wird das Triple aus Subjekt, Prädikat und Objekt hintereinander geschrieben und zwischen jeden mindestens ein Leerzeichen gelassen. Als Abschluss folgt nach jedem Tripel noch ein Punkt. Der Punkt verdeutlicht noch einmal die Ähnlichkeit mit gesprochenen Sätzen. Listing \ref{lst:turtle_beispiel} zeigt das Beispiel mit der Keksdose noch einmal in Turtle Notation. 
 
@@ -232,7 +225,6 @@ Leere Knoten können dann noch in Turtle durch angeben einer geöffneten eckigen
 
 \subsection{Ontologien} % (fold)
 \label{sub:ontologien}
-%% korrigiert am 2013-10-01
 
 Sollen Daten aus verschiedenen Quellen zusammengefügt werden, stellt sich häufig das Problem dass Teile dieser dieser Daten zwar den gleichen Sinn haben, aber aufgrund der Sichtweise des jeweiligen Systems eine andere Bezeichnung besitzen. Dies kann zum Beispiel zu Missverständnissen bei der Verarbeitung führen oder dass Teile eines anderen Systems nicht wiederverwendet werden können (vgl \cite{Uschold1996a}). Einen Ausweg aus diesem Dilemma kann die Verwendung von Ontologien zeigen. Ontolgien können allgemein als Wissensbasis \cite{Uschold1996a,Hitzler2008a} bezeichnet werden und liefern eine formale Spezifikation über eine bestimmte Interessensdömäne. Sie beschreibt nicht nur wie das verwendete Vokabular aussieht, sondern legt auch fest welche einheitliche Bedeutung jede Vokabel hat. 
 
@@ -272,7 +264,6 @@ Listing \ref{lst:foaf_beispiel} zeigt ein Beispiel FOAF-Dokument in RDF/XML. Es 
 
 \subsubsection{Semantically-Interlinked Online Communities (SIOC)} % (fold)
 \label{ssub:semantically_interlinked_online_communities}
-%% korrigiert am 2013-10-01
 
 Semantically-Interlinked Online Communities ist ein Projekt, welches von Uldis Boj\=ars und John Breslin begonnen wurde, um unterschiedliche, webbasierte Diskussionsplattformen(Blog, Forum, Mailinglisten,\dots) untereinander verbinden zu können (siehe \cite{deri2013,Breslin2005,Bojars2008a}). Der Kern von SIOC besteht aus einer Ontologie (RDF-Präfix \texttt{sioc:}), welche den Inhalt und die Struktur diese Plattformen in ein maschinenlesbares Format bringen kann und es erlaubt diese auf semantischer Ebene zu verbinden. Auch soll es so möglich sein Daten von einer Plattform zu einer Anderen zu transferieren und so einfacher Inhalte austauschen zu können. Als Basis für SIOC dient RDF, die Ontologie selber wurde in RDFS und OWL designt. Um nicht das Rad neu erfinden zu müssen greift SIOC auf schon bestehende und bewährte Ontologien zurück. Für die Abbildung von Beziehungen zwischen einzelnen Personen wird FOAF und für einige Inhaltliche- und Metadaten (Titel, Inhalt, Erstelldatum, \dots) Dublin Core Terms\footnote{\url{http://dublincore.org/documents/dcmi-terms}} eingesetzt.
 
@@ -297,7 +288,6 @@ Die wichtigsten Klassen von SIOC sind in Abbildung \ref{fig:sioc_aufbau_diagramm
 
 \section{Datenaustausch} % (fold)
 \label{sec:datenverteilung}
-%% korrigiert am 2013-10-01
 
 Sollen zwischen zwei unabhängigen Systemen Daten ausgetauscht werden, hat man im Allgemeinen mehrere Ansätze dieses Problem zu lösen. Beide Programme könnten Dateien mit den Daten an einen festen Ort speichern, die der jeweilig andere lesen kann. Auch ist das Benutzen eines gemeinsamen Datenbankmanagementsystems oder die Verwendung von RPCs denkbar. Ebenso ist der Datenaustausch mit Nachrichten über ein Netzwerk ein sehr flexibler und sicherer Weg. Jeder dieser Ansätze hat seine eigenen Vor- und Nachteile und sollte am Besten nach den Anforderungen für den Verwendungszweck gewählt werden. 
 
@@ -307,7 +297,6 @@ Dieser Abschnitt beschäftigt sich explizit nur mit dem Versenden und Empfangen 
 
 \subsection{Java Messaging Service} % (fold)
 \label{sub:java_messaging_service}
-%% korrigiert am 2013-10-01
 
 Das JMS ist ein Sammlung von Schnittstellen für das Erstellen, Senden und Empfangen von Nachrichten zwischen Programmen. JMS erlaubt eine Entwicklung von verteilten Anwendung die nicht nur lose gekoppelt, sondern auch asynchron und zuverlässig arbeiten (vgl. \cite{jms}). 
 
@@ -351,7 +340,6 @@ Listing \ref{lst:jms_beispiel} zeig ein kleines Beispiel zum Senden eine Textnac
 
 \subsection{Enterprise Integration Patterns (EIP)} % (fold)
 \label{sub:enterprise_integration_pattern}
-%% korrigiert am 2013-10-01
 
 Bezeichnungen wie \enquote{Iterator}, \enquote{Factory Method}, \enquote{Observer} oder \enquote{Proxy} hat bestimmt schon jeder Programmieren mindestens einmal gehört. Hierbei handelt es sich im sogenannte Entwurfsmuster für Softwareprogramme. Sie sind Schablonen für Lösungen von Problemen, die in der Entwicklung von Software immer wieder auftreten und sich als hilfreich erwiesen haben. Auch in der Integration von verschiedenen Geschäftsanwendungen in ein System treten solche Muster immer wieder auf. Gregor Hohpe und Bobby Woolf beschreiben in ihren Buch \enquote{Enterprise Integration Patterns: Designing, Building, and Deploying Messaging Solutions}\cite{Hohpe:2003:EIP:940308} eine Vielzahl solcher EIP für die Integration mittels MOM. Alle hier aufzuzählen würde jedoch den Rahmen dieser Arbeit sprengen. Aus diesem Grund werden in Tabelle \ref{tbl:eip_beispiel_muster} fünf Muster inklusive der verwendeten Symbole vorgestellt, die später noch vorkommen werden. Die restlichen Muster sind auf der Webseite der EIP\footnote{\url{http://www.enterpriseintegrationpatterns.com/toc.html}} zu finden.
 
@@ -406,7 +394,6 @@ Bezeichnungen wie \enquote{Iterator}, \enquote{Factory Method}, \enquote{Observe
 
 \subsubsection{Apache Camel} % (fold)
 \label{ssub:apache_camel}
-%% korrigiert am 2013-10-01
 
 \emph{Apache Camel}\cite{ApacheCamel} (kurz: Camel) ist ein Projekt der Apache Software Foundation (kurz: Apache) für das Routen und Verteilen von Nachrichten zur Integration von System auf Basis von definierten Regeln. Camel stellt dazu eine Java-basierte API für den Einsatz der EIP bereit. Die Regeln für die Routen, die Nachrichten nehmen können, können direkt in Java, aber auch durch das Spring Framework\footnote{\url{http://www.springsource.org/}} in XML definiert werden. 
 
@@ -434,7 +421,6 @@ Für Camel existieren schon eine Menge vorgefertigter Komponenten\footnote{\url{
 
 \section{Lernplattformen und soziale Online-Netzwerke} % (fold)
 \label{sec:lernplattformen_und_soziale_online_netzwerke}
-%% korrigiert am 2013-10-01
 
 An dieser Stelle sollen kurz einige Lernplattformen und soziale Online-Netzwerke vorgestellt, die im späteren Verlauf dieser Arbeit für die Implementierung verwendet wurden. Im Einzelnen waren dies \emph{Moodle}, \emph{Canvas}, \emph{Facebook}, \emph{Google+} und \emph{Youtube}, da sie einen guten Schnitt von den Plattformen bilden, die heutzutage sowohl im Bereich E-Learning als auch von der breiten Masse verwendet werden.
 
@@ -459,7 +445,6 @@ Moodle wurde in der Programmiersprache PHP geschrieben und unterstützt die  Dat
 
 \subsection{Canvas} % (fold)
 \label{sub:canvas}
-%% korrigiert am 2013-10-01
 
 Das von der Firma Instructure\footnote{\url{https://www.instructure.com}} entwickelte \emph{Canvas} ist ein recht neues, unter Open Source Lizenz gestelltes LMS. Vom Funktionsumfang ist es Moodle nicht unähnlich. Es existiert eine Verwaltung einzelner Kurse. Innerhalb dieser Kurse können in einem Forum Diskussionen geführt und Lernmieteralien hoch- und heruntergeladenen werden. Verteilung von Aufgaben, deren Benotung und ein Benachrichtigungssystem existiert ebenfalls. Canvas erlaubt auch das Einbinden von externen Diensten zum kollaborativen Lernen und Arbeiten wie Google Docs\footnote{\url{https://drive.google.com}} oder der Webkonferenz Anwendung BigBlueButton\footnote{\url{http://www.bigbluebutton.org}}.
 
@@ -479,7 +464,6 @@ Canvas wird mittels des Webframeworks \emph{Ruby on Rails}\footnote{\url{http://
 
 \subsection{Youtube} % (fold)
 \label{sub:youtube}
-%% korrigiert am 2013-10-01
 
 Youtube\footnote{\url{https://www.youtube.com}} gehört wohl heute zu den beliebtesten Anlaufpunkten im Internet, wenn es um das Thema Videos geht. Monatlich nutzen über 1 Milliarde Nutzer die Seite und pro Minute werden 100 Stunden neuer Videos hochgeladen (siehe \cite{youtube2013statistics}). Doch nicht das komplette Videomaterial besteht aus Katzen, Musik oder Unfallvideos. Ein Teil der Benutzer, die eigene Videos hochladen, wollen anderen Dinge beibringen, weil es in ihr Interessengebiet passt oder früher selber Probleme damit hatten. Einer erklärt die Logarithmengesetze, ein anderer wie man Feuer ohne Feuerzeug macht und eine ganz andere gibt Schönheitstipps. Youtube ist also auch im E-Learning Bereich gut einsetzbar. Lehrende können eigene Videos hochladen, von anderen interessante Videos in Playlisten zusammenfassen und die Lernenden können über Kommentare Fragen zum Inhalt stellen. 
 

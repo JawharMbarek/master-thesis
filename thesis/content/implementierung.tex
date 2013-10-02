@@ -991,7 +991,7 @@ Vor den Start des Programm befinden sich in der Canvas Diskussion für die erste
 
 \wrapfill
 
-\subsection{Ablauf der Synchronisierung} % (fold)
+\subsection{Ablauf der Synchronisation} % (fold)
 \label{sub:ablauf_der_synchronisierung}
 
 Nach dem Camel gestartet wurde in den Routen definierten Komponenten anzulegen und zu starten. Der PostReader des CanvasConnectors beginnt also die Beiträge mit den eingestellten Defaultuser aus der durch die URI angegeben Diskussion zu lesen. Da dies der erste Aufruf ist, werden die Beiträge noch nicht nach den Erstellungszeitpunk gefiltert. Beide Beiträge von Florian und Max Hiwi kommen also in die Ergebnisliste, werden in das SIOC Format konvertiert und im Triplestore gespeichert. Das Resultat der Konvertierung wird im Listing \ref{lst:poc_init_posts} gezeigt. In Zeile 11 ist zu sehen, dass der erste Beitrag einen Kommentar und zwar den zweiten Beitrag besitzt. Genau so ist im Zeile 22 zu sehe, dass der zweite Beitrag ein Kommentar auf den ersten ist. Diese stimmt mit dem Aussehen der Ausgangssituation überein. Diese beiden Ergebnisse werden dann an den aufrufenden SoccPostPollingConsumer zurückgeben. Dieser serialisiert das Ergebnis dann in das RDF/XML Format, verpackt diese in eine Nachricht und gibt diese an Camel weiter.

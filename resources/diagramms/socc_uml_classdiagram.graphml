@@ -30,7 +30,7 @@
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="interface" use3DEffect="false">
             <y:AttributeLabel/>
-            <y:MethodLabel>+ writePost(uri: URI, post: String, format: Syntax): void</y:MethodLabel>
+            <y:MethodLabel>+ writePosts(uri: URI, post: String, format: Syntax): void</y:MethodLabel>
           </y:UML>
         </y:UMLClassNode>
       </data>

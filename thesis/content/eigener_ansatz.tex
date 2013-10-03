@@ -334,8 +334,9 @@ Der \texttt{PostReader} dient als Schnittstelle für das Lesen geschriebener Bei
 \subsection{PostWriter} % (fold)
 \label{sub:postwriter}
 
-In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein UML-Sequenzdiagramm der PostWriter-Komponente zu sehen. Dort ist visualisiert, welche Schritte für das stellvertretende Schreiben von Beiträgen eines Benutzers unternommen werden müssen. Soll nun ein Beitrag in Plattform des Connectors geschrieben werden, wird die Methode \texttt{writePost(URI, String, Syntax)} mit dem Zielort als URI, den Beiträgen als serialisierte RDF-Objekte und dem verwendeten Serialisierungsformat aufgerufen. Es beginnt damit, dass zuerst nach einem Benutzerkonto des Beitragautors für die Plattform des aktuellen Connectors gesucht wird. Dieser sollte im Idealfall im Triplestore des Connectors nach dem im Abschnitt \ref{sub:benutzerdaten} Schema vorliegen. Mit diesem Benutzerkonto, in Form der Klasse \texttt{sioc:UserAccount} aus SIOC, kann dann vom ClientManager ein Client für die verwendete API geholt werden. Sollte die Suche negativ verlaufen, steht noch der Defaultclient zur Verfügung. 
-Bevor der Beitrag aber geschrieben werden kann, muss nachgeschaut werden, ob eine Erlaubnis für das Schreiben mit diesem Client vorliegt. Ist dies der Fall kann der Beitrag in das von der API verwendete Format konvertiert und an die richtige Stellen der Plattform geschrieben werden.
+In Abbildung \ref{fig:postwriter_sequenzdiagramm} ist ein UML-Sequenzdiagramm der PostWriter-Komponente zu sehen. Dort ist visualisiert, welche Schritte für das stellvertretende Schreiben von Beiträgen eines Benutzers unternommen werden müssen. Soll nun ein Beitrag in Plattform des Connectors geschrieben werden, wird die Methode \texttt{writePosts(URI, String, Syntax)} mit dem Zielort als URI, den Beiträgen als serialisierte RDF-Objekte und dem verwendeten Serialisierungsformat aufgerufen. Die folgenden Schritte werden dann für jeden \texttt{sioc:Post} in den serialisierten Daten durchgeführt:
+
+Es beginnt damit, dass zuerst nach einem Benutzerkonto des Beitragautors für die Plattform des aktuellen Connectors gesucht wird. Dieser sollte im Idealfall im Triplestore des Connectors nach dem im Abschnitt \ref{sub:benutzerdaten} Schema vorliegen. Mit diesem Benutzerkonto, in Form der Klasse \texttt{sioc:UserAccount} aus SIOC, kann dann vom ClientManager ein Client für die verwendete API geholt werden. Sollte die Suche negativ verlaufen, steht noch der Defaultclient zur Verfügung. Bevor der Beitrag aber geschrieben werden kann, muss nachgeschaut werden, ob eine Erlaubnis für das Schreiben mit diesem Client vorliegt. Ist dies der Fall kann der Beitrag in das von der API verwendete Format konvertiert und an die richtige Stellen der Plattform geschrieben werden.
 
 \begin{minipage}{\textwidth}
     \centering
@@ -343,7 +344,7 @@ Bevor der Beitrag aber geschrieben werden kann, muss nachgeschaut werden, ob ein
         width=\textwidth,
         keepaspectratio=true,
         clip=true,
-        trim= 90 180 220 75]
+        trim= 94 170 200 75]
     {assets/images/postwriter_sequencediagram}
     \captionof{figure}{UML-Sequenzdiagramm eines PostWriters}
     \label{fig:postwriter_sequenzdiagramm}

@@ -47,7 +47,7 @@ public class FacebookPostWriter extends
 	}
 
 	@Override
-	public void writePost(
+	public void writePosts(
 	        final URI targetUri,
 	        final String rdfString,
 	        final Syntax syntax )

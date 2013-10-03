@@ -66,7 +66,7 @@ public class SoccPostProducer extends DefaultProducer implements ISoccProducer {
 			        postWriter.getConnector().getId() );
 		}
 
-		postWriter.writePost( uri, rdfString, syntax );
+		postWriter.writePosts( uri, rdfString, syntax );
 	}
 
 	private Syntax getSyntax( String contentType ) {

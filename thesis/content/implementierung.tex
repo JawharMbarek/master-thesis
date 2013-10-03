@@ -294,15 +294,15 @@ Ein Problem mit der API von Canvas war es, dass es zwar eine gute REST-basierte 
 
 Anhand der für die REST-API verwendeten URIs ist auffällig, dass die einzelnen Bestandteile aufeinander aufbauen. Zum Beispiel ist der Ablauf für den REST-Zugriff auf DiscussionTopics in Gruppen und Kursen der gleiche, nur der Anfang der verwendeten URIs unterscheidet sich. Aus diesem Grund wurden die einzelnen Ressource (Course, Groupe, DiscussionTopic, Entries, ...) als einzelne Endpunkte implementiert, die sich von der Klasse \texttt{IEnpoint} ableiten. Jeder Endpunkt kann einen Eltern-Endpunkt haben, wobei sich die endgültige URI für die REST-Abfrage aus dem Pfad des Eltern-Endpunktes und dem des aktuellen Endpunktes zusammensetzt. Zur Verdeutlichung sei hier die URI \texttt{https:\{canvasUri\}/api/v1/courses/1/discussion\_topics} als Demonstration genannt. Sie besteht aus den statischen Teil \texttt{https:\{canvasUri\}/api/v1/} der den Ort für die verwendete Canvasinstanz angibt. Darauf folgt ein Kurs als erster Endpunkt mit der Kurs-ID \enquote{1}. Für diesen Kurs sollen nun alle Diskussionen abgefragt werden. Dies geschieht durch die Angabe des zweiten Endpunktes \texttt{/discussion\_topics}. der Pfad \enquote{/courses/1} bildet hier also den Eltern-Endpunkt von \texttt{/discussion\_topics}. Sollen aber nun alle Diskussionen in einer Gruppe abgefragt werden, reicht es aus den Kurs-Endpunkt durch einen Gruppen-Endpunkt auszutauschen: \texttt{https:\{canvasUri\}/api/v1/groups/42/discussion\_topics}.
 
-\begin{minipage}{\textwidth}
+\begin{figure}[p]
     \centering
     \includegraphics[
         width=\textwidth,
         keepaspectratio=true,]
     {assets/images/canvaslms4j_uml_classdiagramm}
-    \captionof{figure}{UML Klassendiagramm von CanvasLMS4J}
+    \caption{UML Klassendiagramm von CanvasLMS4J}
     \label{fig:canvaslms4j_uml_classdiagram}
-\end{minipage} 
+\end{figure} 
 
 Ausgangspunkt für CanvasLMS4J ist der Client mir der Klasse \texttt{CanvasLmsClient} (siehe Abbildung \ref{fig:canvaslms4j_uml_classdiagram}). Über sie werden alle Endpunkte verwaltet, die keinen Eltern-Endpunkt besitzen. Bei der Erzeugung eines Objektes dieser Klasse, werden ihr die URI zur verwendenden Canvasinstanz (ohne \enquote{\texttt{/api/v1}}) und der Accesstoken des Benutzerkontos übergeben. Im aktuellen Stadium können von einem Client aus nur auf Endpunkte für Kurse oder Gruppe zugegriffen werden.
 
@@ -598,14 +598,12 @@ Wie schon erwähnt setzt die Google+ API für die Autorisierung auf OAuth 2.0. E
 \begin{lstlisting}[
     caption={Google+ API Java: Access- und Refreshtoken}\label{lst:gplus_java_accesstoken},
     captionpos=t]
-MemoryCredentialStore credentialStore = new MemoryCredentialStore();
 GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
         new NetHttpTransport(),
         new JacksonFactory(),
         CLIENT_ID,
         CLIENT_SECRET,
         Arrays.asList("https://www.googleapis.com/auth/plus.login"))
-    .setCredentialStore(credentialStore)
     .build();
 
 Credential credentials = new AuthorizationCodeInstalledApp(
@@ -614,7 +612,7 @@ Credential credentials = new AuthorizationCodeInstalledApp(
     .authorize("user");
 \end{lstlisting}
 
-Listing \ref{lst:gplus_java_accesstoken} zeigt wie man sich Access- und Refreshtoken für Google+ in Java holen kann. In der ersten Zeile wird ein \texttt{MemoryCredentialStore} erstellt, mit dem die Token im flüchtigen Speicher des Systems zwischengespeichert werden können. Es gibt aber auch Klassen die alles in einer Datei auf der Festplatte ablegen. So können sie auch nach Programmneustarts benutzt werden. Von Zeile 2 bis 9 wir ein sogenannter \enquote{AuthorizationCodeFlow} erzeugt. Dieser abstrahiert für den Benutzer den OAuht-Mechanismus, über den man die Token von Google bekommt. In der Zeile 3 und 4 bekommt dieser CodeFlow externe Objekte übergeben mit dem er HTTP-Operationen ausführen und die zurückgelieferten Daten verarbeiten kann. In den zwei Folgezeilen werden die ClientID und das ClientSecret übergeben. In der siebten Zeile muss, wie schon bei Facebook, ein Geltungsbereich (Scope) für den Accesstoken festgelegt werden. In diesem Falle wollen wir mit \enquote{\texttt{https://www.googleapis.com/auth/plus.login}} Operationen stellvertretend für einen Benutzer ausführen. In Zeile 8 wird noch der oben erstellte MemoryCredentialStore übergeben und das Code-Flow-Objekt in Zeile 9 über die \texttt{build()} Methode erzeugt. Für Desktopprogramme wird wieder eine externer Internetbrowser zum Holen der Token benötigt. Doch auch dafür bietet Google eine fertige Klasse an, die (fast) alle Schritte automatisiert. Diese Klasse heißt \texttt{AuthorizationCodeInstalledApp}. Ihr werden der obige CodeFlow und ein lokaler Webserver (ebenfalls schon fertig vorhanden) übergeben und über die Methode \texttt{authorize(\dots)} die Token erzeugt. Die Zeichenkette \enquote{\texttt{user}} legt dabei fest, unter welchen Namen die Token im MemoryCredentialStore abgelegt werden.
+Listing \ref{lst:gplus_java_accesstoken} zeigt wie man sich Access- und Refreshtoken für Google+ in Java holen kann. Von Zeile Eins bis 9 wir ein sogenannter \enquote{AuthorizationCodeFlow} erzeugt. Dieser abstrahiert für das Programm den OAuth-Mechanismus, über den man die Token von Google bezieht. In der Zeile 2 und 3 bekommt dieser CodeFlow externe Objekte übergeben mit dem er HTTP-Operationen ausführen und die zurückgelieferten Daten verarbeiten kann. In den zwei Folgezeilen werden die ClientID und das ClientSecret übergeben. In der sechsten Zeile muss, wie schon bei Facebook, ein Geltungsbereich (Scope) für den Accesstoken festgelegt werden. In diesem Falle wollen wir mit \enquote{\texttt{https://www.googleapis.com/auth/plus.login}} Operationen stellvertretend für einen Benutzer ausführen. In Zeile 8 wird das Code-Flow-Objekt über die \texttt{build()}-Methode erzeugt. Für Desktopprogramme wird wieder eine externer Internetbrowser zum Holen der Token benötigt. Doch auch dafür bietet Google eine fertige Klasse an, die (fast) alle Schritte automatisiert. Diese Klasse heißt \texttt{AuthorizationCodeInstalledApp}. Ihr werden der obige CodeFlow und ein lokaler Webserver (ebenfalls schon fertig vorhanden) übergeben und über die Methode \texttt{authorize(\dots)} die Token erzeugt. Die Zeichenkette \enquote{\texttt{user}} ist nur von Bedeutung, wenn man dem CodeFlow noch einen \enquote{DataStore} für die Accestoken mit gibt, was hier weggelassen wurde. .
 
 \begin{lstlisting}[
     caption={Google+ API: Zugriff auf Activity-Feed mit Java}\label{lst:gplus_activity_feed_java},
@@ -966,9 +964,11 @@ camelContext.start();
 \subsection{Ausgangssituation} % (fold)
 \label{sub:ausgangssituation}
 
-% subsubsection ausgangssituation (end)
+In einen fiktiven Szenario für einen Kurs werden mehrere Gruppenübungen über das Semester verteilt durchgeführt. Für jede Gruppenübung existiert in Canvas eine Diskussion in der über allgemeine Dinge zu jeweiligen Übungen diskutiert werden kann. In Facebook wird dafür die Kommentarfunktion von Beiträgen zur jeweiligen Übung genutzt. 
 
-\begin{wrapfigure}{r}{10cm}
+Vor dem Start des Programms befinden sich in der Canvas-Diskussion für die erste Gruppenübung schon zwei Beiträge, wie in der rechten Abbildung \ref{fig:poc_ausgangssituation} oben zu sehen ist. Der Benutzer Florian stellte eine Frage und diese wurde von Max Hiwi mit einer Gegenfrage kommentiert. Der Beitrag auf Facebook ist dagegen noch leer (Rechte Abbildung unten).
+
+\begin{figure}[ht]
     \centering
     \includegraphics[
         width=10cm,
@@ -977,13 +977,9 @@ camelContext.start();
     {assets/images/poc/poc_ausgangssituation_gray}
     \caption{Proof of Concept: Ausgangssituation}
     \label{fig:poc_ausgangssituation}
-\end{wrapfigure} 
+\end{figure} 
 
-In einen fiktiven Szenario für einen Kurs werden mehrere Gruppenübungen über das Semester verteilt durchgeführt. Für jede Gruppenübung existiert in Canvas eine Diskussion in der über allgemeine Dinge zu jeweiligen Übungen diskutiert werden kann. In Facebook wird dafür die Kommentarfunktion von Beiträgen zur jeweiligen Übung genutzt. 
-
-Vor dem Start des Programms befinden sich in der Canvas-Diskussion für die erste Gruppenübung schon zwei Beiträge, wie in der rechten Abbildung \ref{fig:poc_ausgangssituation} oben zu sehen ist. Der Benutzer Florian stellte eine Frage und diese wurde von Max Hiwi mit einer Gegenfrage kommentiert. Der Beitrag auf Facebook ist dagegen noch leer (Rechte Abbildung unten).
-
-\wrapfill
+% subsubsection ausgangssituation (end)
 
 \subsection{Ablauf der Synchronisation} % (fold)
 \label{sub:ablauf_der_synchronisierung}
@@ -1024,20 +1020,20 @@ Zuerst beginnt im SoccPostPollingConsumer der ersten Route der PostReader des Ca
 
 Camel schaut nun anhand der definierten Routen, wohin diese Nachricht weitergeleitet werden soll. In diesem Fall wird sie an die ActiveMQ-Komponente übergeben, die sie in das JMS-Topic \enquote{canvas-topic} schickt. Von dort kann sie von jedem JMS-Client gelesen werden, der dieses Topic abonniert hat, wie zum Beispiel in der zweiten Route von vorhin. Dies nimmt die über das Topic gesendete Nachricht entgegen und gibt sie an den SoccPostProducer des Endpunktes weiter. Dieser holt die serialisierten RDF-Daten und die Syntaxbeschreibung aus der Nachricht und ruft damit dann die Methode \texttt{writePosts(\dots)} vom PostWriter des FacebookConnectors auf. Dieser de-serialisiert die beiden Beiträge wieder in RDF und sucht dann im Triplestore nach den passenden Benutzerkonten für Facebook von den beiden Autoren. Dann schreibt er die Beiträge als Kommentare in den festgelegten Facebook-Beitrag.
 
-\begin{wrapfigure}[19]{r}{11cm}
+\begin{figure}[ht]
     \centering
     \includegraphics[
-        width=11cm,
+        width=0.8\textwidth,
         keepaspectratio=true,]
     %{assets/images/poc/poc_facebook}
     {assets/images/poc/poc_facebook_gray}
     \caption{Proof of Concept: Beiträge aus Canvas in Facebook}
     \label{fig:poc_beitraege_aus_canvas_in_facebook}
-\end{wrapfigure}
+\end{figure}
 
 In der Rechten Abbildung \ref{fig:poc_beitraege_aus_canvas_in_facebook} sind die eben in Facebook geschriebenen Beiträge aus Canvas zu sehen. Da Facebook kommentieren von anderen Kommentaren in Gruppen nicht ermöglicht, sind diese nun untereinander angelegt. Zugleich ist zusehen, dass Florian gleich danach die Gegenfrage von Max Hiwi, der auf Facebook das Benutzerkonto \enquote{TK Hiwi} benutzt, in Facebook beantwortet hat.
 
-Im Hintergrund arbeitet derweil Camal weiter und startet alle fünf Minuten den PostReader des FacebookConnectors aus der dritten Route. Dieser liest nun diese drei, für ihn neuen Beiträge, und konvertiert diese dann aus dem Facebook- in das SIOC-Format (Siehe Listing \ref{lst:poc_facebook_posts}). Die Beiträge werden dann wieder an den SoccPostPollingConsumer zurück gegeben, serialisiert und als Nachricht an Camel geschickt. Diesmal geht geht diese Nachricht auf direkten Wege über den SoccPostProducer und an den PostWriter des CanvasConnectors. Dieser verarbeitet nun die gesendeten Beiträge und merkt, dass zwei von ihnen ursprüngliche aus Canvas kommen, worauf er diese verwirft. Der dritte Beitrag wird aber mit den Benutzerkonto von Florian in das Diskussionsthema eingefügt.
+Im Hintergrund arbeitet derweil Camel weiter und startet alle fünf Minuten den PostReader des FacebookConnectors aus der dritten Route. Dieser liest nun diese drei, für ihn neuen Beiträge, und konvertiert diese dann aus dem Facebook- in das SIOC-Format (Siehe Listing \ref{lst:poc_facebook_posts}). Die Beiträge werden dann wieder an den SoccPostPollingConsumer zurück gegeben, serialisiert und als Nachricht an Camel geschickt. Diesmal geht geht diese Nachricht auf direkten Wege über den SoccPostProducer und an den PostWriter des CanvasConnectors. Dieser verarbeitet nun die gesendeten Beiträge und merkt, dass zwei von ihnen ursprüngliche aus Canvas kommen, worauf er diese verwirft. Der dritte Beitrag wird aber mit den Benutzerkonto von Florian in das Diskussionsthema eingefügt.
 
 Wie in Abbildung \ref{fig:poc_final_at_canas} zu sehen ist, enthalten die Diskussion in Canvas und in Facebook die gleichen Beiträge. Dieser Ablauf wiederholt sich nun so lange, wie Camel die Routen und Connectoren ausführt. Es wurde also gezeigt, dass mittels SOCC, SOCC-Camel zwei verteilte Diskussionen synchronisiert werden können. 
 
@@ -1054,6 +1050,8 @@ Wie in Abbildung \ref{fig:poc_final_at_canas} zu sehen ist, enthalten die Diskus
     \captionof{figure}{Proof of Concept: Finales Ergebnis in Canvas}
     \label{fig:poc_final_at_canas}
 \end{minipage}
+
+\pagebreak
 
 \begin{lstlisting}[
     language={},

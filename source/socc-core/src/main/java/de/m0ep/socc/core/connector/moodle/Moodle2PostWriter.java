@@ -66,7 +66,7 @@ public class Moodle2PostWriter extends
 	}
 
 	@Override
-	public void writePost( final URI targetUri, final String rdfString, final Syntax syntax )
+	public void writePosts( final URI targetUri, final String rdfString, final Syntax syntax )
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {

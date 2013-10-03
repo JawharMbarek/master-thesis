@@ -18,7 +18,7 @@ public class GooglePlusPostWriter extends DefaultConnectorIOComponent<GooglePlus
 	}
 
 	@Override
-	public void writePost( URI targetUri, String rdfString, Syntax syntax )
+	public void writePosts( URI targetUri, String rdfString, Syntax syntax )
 	        throws NotFoundException, AuthenticationException, IOException {
 		throw new UnsupportedOperationException(
 		        "Google Plus supports currently no writing of posts" );

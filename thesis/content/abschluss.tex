@@ -14,20 +14,25 @@ In Kapitel \ref{cha:analyse} wurde analysiert, welche Schritte für eine solche 
 
 Das Kapitel \ref{cha:eigener_ansatz_social_online_community_connectors_socc_} widmet sich der Beschreibung des Systems, welches die Anforderungen aus Kapiel \ref{cha:analyse} erfüllen soll. Dieses SOCC genannte System definiert dazu Conectoren, welche die Schnittstellen zu den einzelnen Plattformen abstrahiert und die unterschiedlichen Formate in das SIOC-Format konvertiert. Ein Connector bestehen aus drei Komponenten die je für eine bestimmte Teilaufgabe des Systems verantwortlich sind. Der StructureReader hilft dabei die Struktur der jeweiligen Plattform zu lesen und  in SIOC abzubilden, so dass die Beiträge von den richtigen Stellen gelesen und an die richtigen Stellen geschrieben werden können. Der PostReader ist dabei für das Lesen von Beiträgen und deren Konvertierung vom Format der gelesenen Plattform in das SIOC-Format. Für dem umgekehrten Weg wird dann der PostWriter eingesetzt. Für den Betrieb der Connectoren brauchen diese einige Informationen von den Benutzern, für den Zugriff auf die einzelnen APIs. Für diese Informationen konnte auf der vorhandene Service Modul von SIOC für API Beschreibungen, die Basic Access Control Ontologie für die Autorisierung, sowie auf die aus vorhandenen Ontologien zusammengesetzte und erweiterte Services Authentication Ontologie zur Authentifizierung aufgebaut werden. Gespeichert wird alles in einen RDF-Triplestore und erlaubt so einen einfachen Zugriff auf die untereinander verbunden Datensätze. Für die Integration der Connectoren in Camel wurde die Komponente SOCC-Camel entwickelt. Mit den EIP aus Camel können so die Connectoren auf verschiedenste Weisen verbunden werden.
 
-Im letzten Kapitel wird die Implementierung von Connectoren beschrieben. Dabei wird drauf eingegangen wie man auf die Plattformen Moodle, Canvas, Facebook, Google+ und Youtube über deren API zugreifen kann und welche Voraussetzungen dafür getroffen werden müssen. Ebenso wird ein Mapping von den Strukturen und Ressourcen dieser Plattformen nach SIOC. 
-
-
-\todo[inline]{fertig schreiben}
+Im letzten Kapitel wurde die Implementierung von Connectoren beschrieben. Dabei wurde drauf eingegangen, auf welche Art und Weise man über die APIs der  Plattformen Moodle, Canvas, Facebook, Google+ und Youtube auf deren Daten zugreifen kann und welche Voraussetzungen dafür getroffen werden müssen. Außerdem wurde für jede Plattform gezeigt, wie ihre Struktur den Klassen von SIOC zugeordnet werden kann. Nicht bei allen Plattformen funktionierte alle Einwandfrei. Es wurde beschrieben welche Probleme auftraten und falls möglich eine Lösung präsentiert. Gleiches galt für die Implementierung von SOCC-Camel. Abgeschlossen wurde das Kapitel mit einem Proof of Concept mit einen Schritt-für-Schritt-Beispiel für den Einsatz von SOCC und SOCC-Camel in einem Programm.
 
 % section zusammenfassung (end)
 
-\section{Bewertung} % (fold)
+\section{Reflektion} % (fold)
 \label{sec:bewertung}
+
+Abschließend betrachtet bin ich sehr zufrieden mit der Implementierung von meinen SOCC-Ansatz. Die Entscheidung für RDF und SIOC als Datenformat für die Integration von verteilen Diskussionen hat sich von Anfang an als eine gute erwiesen. Es stand zwar immer die Frage im Raum, ob sich in SIOC wirklich alle Inhalte der einzelnen Plattformen zusammenführen lassen. Diese war aber vollkommen unbegründet. Bis das endgültige Konzept für SOCC feststand, waren aber trotzdem einige Versuche notwendig. Dies lag nicht nur daran, dass das Thema Datenintegration mit RDF und Ontologien für mich relativ neu war, aber auch dass mit fortschreitender Zeit man immer mehr Erfahrung sammelt und merkt was man am Anfang hätte besser machen können. Gerade solche Erfahrungen immer wieder etwas neues zu entdecken was man vorher noch nicht kannte macht den ganzen Reiz aus. Eine ebenfalls gute Wahl war auch die Verwendung von Camel für den Datenaustausch. Der Implementierungsaufwand war sehr gering und durch die Nutzung der beliebig konfigurierbaren Routen ist ein sehr flexibles System entstanden. 
+
+Aber dass alles perfekt ist, kann man auch nicht sagen. Die in Abschnitt \ref{sub:allgemeine_probleme} beschrieben Lösungen zu doppelten Beiträgen und Rekonstruktion der Kommentarstruktur funktionieren zwar, sind aber alles andre als perfekt. Statt dem einfügen eines Wasserzeichens könnte man nach einen Beitrag im Triplestore suchen der dem vermeintlichen Duplikat gleicht. Die Rekonstruktion der Kommentarstruktur könnte auch besser funktionieren. Es ist schade, dass dies nur in eine Richtung reibungslos vonstatten geht. Um die Connectoren weiterhin unabhängig zu halten, müsste es in einer Verbesserung möglich sein, auch Daten über die Struktur der Plattformen auszutauschen. 
+
+Zum Schluss noch ein paar Worte zu RDF2Go. Um es gleich zu sagen, RDF2Go ist ein guter Weg innerhalb von Java mit RDF-Daten zu arbeiten. Dadurch dass man nicht an einen bestimmten Triplestore und dessen API gebunden ist (dafür aber an die von RDF2Go) kann man für seine Zwecke den richtigen wählen. Auch der Generator zum Generieren von Java-Klassen aus Ontologien arbeitet besser als der von anderen Frameworks und das Arbeiten mir Klassen ist wesentlich einfacher als alle Triple einzeln zu manipulieren. Doch hat auch der Generator und die generierten Klassen so ihre Macken. Zum Beispiel werden für die einzelnen Eigenschaften keine Methoden generiert, um sich nur einen Wert zurückgeben zu lassen. Man bekommt immer einen Iterator den man durchlaufen musste. Diese Methoden wurden aber dann von Hand hinzugefügt. Ein Problem mit der Generierung von Java-Klassen war das fehlen der Mehrfachvererbung. Java kennt so etwas nicht, aber RDFSchema und OWL sehr wohl. So mussten einige Methoden aus der Java-Klasse \texttt{OnlineAccount} von FOAF in \texttt{UserAccount} von SIOC kopiert werden, um die Eigenschaften aus FOAF auf dort nutzen zu können.
 
 % section bewertung (end)
 
 \section{Ausblick} % (fold)
 \label{sec:ausblick}
+
+
 
 \todo[inline]{Text schreiben}
 

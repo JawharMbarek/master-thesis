@@ -272,7 +272,7 @@ public interface IConnector {
 		                + "(.+)"
 		                + MESSAGE_WATERMARK_POSTFIX;
 
-		public void writePost( URI targetUri, String rdfString, Syntax syntax ) throws
+		public void writePosts( URI targetUri, String rdfString, Syntax syntax ) throws
 		        NotFoundException,
 		        AuthenticationException,
 		        IOException;

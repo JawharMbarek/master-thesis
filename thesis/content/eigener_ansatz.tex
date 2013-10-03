@@ -201,16 +201,16 @@ Die rechte Abbildung \ref{fig:uml_connector_interface} zeigt die Schnittstelle \
 
 Für den Lebenszyklus eines Connectors sind noch die Methoden \texttt{initialize()} und \texttt{shutdown()} wichtig. Nach dem Erzeugen eines Connectors muss die Methode \texttt{initialize()} aufgerufen, um noch mögliche Vorarbeiten durchzuführen bevor der Connector genutzt werden kann. Ob ein Connector schon initialisiert wurde, kann mit der Methode \texttt{isInitialized()} überprüft werden. Bevor eine Connector gelöscht werden kann, sollte noch die Methode \texttt{shutdown()} aufgerufen werden. Sie dient dazu verwendete Ressourcen wieder freizugeben.
 
-\begin{minipage}{\textwidth}
+\begin{figure}[p]
     \centering
     \includegraphics[
         scale=0.95,
         keepaspectratio=true,
         angle=90]
     {assets/images/socc_uml_classdiagram}
-    \captionof{figure}{UML-Klassendiagramm eines Connectors}
+    \caption{UML-Klassendiagramm der Connectoren}
     \label{fig:connector_uml_classdiagram}
-\end{minipage}
+\end{figure}
 
 % subsection design_eines_connectors (end)
 
@@ -236,7 +236,9 @@ Der SOCCContext eines Connectors, beschreibt die Umgebung die er zum Arbeiten br
 \subsection{AccessControl} % (fold)
 \label{sub:accesscontrol}
 
-\begin{wrapfigure}{r}{12cm}
+Die AccessControl-Schnittstelle ist sehr einfach gehalten und dient für den Zugriff auf die in Abschnitt \ref{sub:autorisierung} beschriebenen ACL-Information. Die Methode \texttt{checkAccessTo(\dots)} prüft, ob der Zugriff auf eine Ressource mit allen übergebenen Rechten erlaubt ist. Die andere Methode \texttt{checkAccessToClass} ist zur Überprüfung, ob die Rechte für den Zugriff auf eine komplette Klasse von Ressourcen vorhanden sind.
+
+\begin{figure}[ht]
     \centering
     \includegraphics[
         width=12cm,
@@ -246,9 +248,7 @@ Der SOCCContext eines Connectors, beschreibt die Umgebung die er zum Arbeiten br
     {assets/images/socc_uml_classdiagram}
     \caption{AccessControl}
     \label{fig:uml_accesscontrol}
-\end{wrapfigure}
-
-Die AccessControl-Schnittstelle ist sehr einfach gehalten und dient für den Zugriff auf die in Abschnitt \ref{sub:autorisierung} beschriebenen ACL-Information. Die Methode \texttt{checkAccessTo(\dots)} prüft, ob der Zugriff auf eine Ressource mit allen übergebenen Rechten erlaubt ist. Die andere Methode \texttt{checkAccessToClass} ist zur Überprüfung, ob die Rechte für den Zugriff auf eine komplette Klasse von Ressourcen vorhanden sind. 
+\end{figure} 
 
 % subsubsection accesscontrol (end)
 
@@ -270,6 +270,7 @@ Die AccessControl-Schnittstelle ist sehr einfach gehalten und dient für den Zug
 Der Zugriff innerhalb des Programms auf eine API erfolgt in der Regel über einen Client. Dieser Client erlaubt es mit den Anmeldedaten für ein Benutzerkonto auf die Funktionen der API über verschiedene Methoden zu zugreifen. Da ein Client immer nur mit einem Benutzerkonto verknüpft ist und von diesen eine große Anzahl verwaltet werden müssen, enthält jeder Connector einen eigen ClientManager für diese Aufgaben. Für alle vom Benutzer unabhängigen Daten erhält der ClientManager ein wie Abschnitt \ref{sub:services} beschriebenes Objekt der Klasse Service das oftmals wichtige Daten wie ClientID und ClientSecret enthält. Das Erzeugen eines neuen Clients erfolgt dann durch den Aufruf der Methode \texttt{createClient(\dots)}. Als Parameter wird er ein Benutzerkonto (\texttt{sioc:UserAccount}) übergeben. Sind alle erforderlichen Authentifizierungsinformation aus Abschnitt \ref{sub:authentifizierung} vorhanden, wird ein neuer Client erstellt und zurück an den Aufrufer gegeben. Dieser Client wird aber dadurch nicht automatisch vom ClientManager verwaltet. Hierzu muss der im vorherigen Schritt erzeugte Client durch die Übergabe an \texttt{add(userAccount: UserAccount, client: T )} dauerhaft mit den angegeben Benutzerkonto verknüpft und intern gespeichert werden. In der aktuellen Implementierung ist es wichtig, dass die Eigenschaften \texttt{foaf:accountName} und \texttt{foaf:accountServiceHomepage} des \texttt{sioc:UserAccount}-Objekts gesetzt sind. Aus diesen wird ein eindeutiger Schlüssel generiert, der zur Zuordnung von Benutzerkonto und Client innerhalb des ClientManagers dient. Des weiteren stehen noch Methoden \texttt{remove(userAccount: UserAccount)} zum Entfernen, \texttt{get(userAccount: UserAccount)} zum Suchen von Clients sowie \texttt{contains(userAccount: UserAccount)} zum Testen, ob ein Client zu einem Benutzerkonto existiert zur Verfügung. Sollen zum Beispiel am Ende der Laufzeit des Programms alle erzeugten Clients auf einmal abgemeldet und gelöscht werden, kann dies über die Methode \texttt{clear()} erfolgen. Der ClientManager verwaltet ebenfalls den Client für den in Abschnitt \ref{sub:connector_config_ontologie} angesprochenen Defaultuser. Dieser \emph{Defaultclient} kann über die Methode  \texttt{setDefaultClient(client: T)} gesetzt und durch \texttt{getDefaultClient()} jederzeit wieder abgerufen werden. 
 
 % subsubsection clientmanager (end)
+\pagebreak
 
 \subsection{StructureReader} % (fold)
 \label{sub:structurereader}
@@ -301,6 +302,8 @@ Um auf Informationen über die Struktur von Foren, sozialen Online-Netzwerken un
 \end{description}
 
 % subsubsection structurereader (end)
+
+\pagebreak
 
 \subsection{PostReader} % (fold)
 \label{sub:postreader}
@@ -341,7 +344,7 @@ Es beginnt damit, dass zuerst nach einem Benutzerkonto des Beitragautors für di
 \begin{minipage}{\textwidth}
     \centering
     \includegraphics[
-        width=\textwidth,
+        width=0.95\textwidth,
         keepaspectratio=true,
         clip=true,
         trim= 94 170 200 75]
@@ -362,6 +365,10 @@ Es beginnt damit, dass zuerst nach einem Benutzerkonto des Beitragautors für di
 
 \emph{SOCC-Camel} ist eine Modul von SOCC für die Integration von Connectoren in Camel. Durch dieses ist auf flexible Weise möglich die gelesenen Beiträge von einer Plattform über die Connectoren in eine andere zu schreiben. Die Abbildung \ref{fig:uebersicht_socc_camel} zeigt SOCC-Camel als EIP-Diagramm. 
 
+Hauptklasse dieses Moduls ist \texttt{SoccComponent}. Sie ist für die Verwaltung von Connectoren und Erstellen der Endpunkte für Camel zuständig. Von dieser Klasse muss zuerst ein Objekt erzeugt und ein SoccContext mit dem Tripelstore und alle Informationen für die Connectoren wie für deren Konfiguration, Benutzerkonten oder Servicebeschreibungen übergeben werden. Also alle Daten die in Anschnitt \ref{sec:konfiguration} beschrieben wurden. Das SoccComponent-Objekt wird dann unter einen frei wählbaren Namen in Camel registriert. Als Namen ist \enquote{socc} aber vorzuziehen.  Nun kann wie in Abschnitt \ref{ssub:apache_camel} mit dieser Komponente Routen zusammengesetzt werden.
+
+Die URIs für die Konfiguration der Endpunkte mit SOCC-Camel habe dazu den folgenden Aufbau: \enquote{\texttt{socc://{connectorId}?uri={targetUri}[\&{parameter}...]}}. Der Anfang der URI mit \enquote{\texttt{socc://}} sagt Camel, dass es für diesen Endpunkt die Komponente benutzten soll, die vorher unter dem Namen \enquote{socc} registriert wurde - also SoccComponent. Für den Platzhalter \enquote{\{connectorId\}} muss eine gültige ID eines Connectors sein, dessen Konfigurationsdaten im TripleStore hinterlegt wurden. Über den Parameter \enquote{uri} wird dann die Quell- beziehungsweise Ziel-URI für den Connector angegeben, von der Beiträge gelesen beziehungsweise in die Beiträge geschrieben werden sollen. Je nach Endpunkt können dann noch weitere Parameter angegeben werden. Ein Endpunkt wird in SOCC-Camel durch die Klasse \texttt{SoccEndpoint} modelliert (nicht explizit in der Abbildung angegeben) und leitet sich von der Camel-Klasse \texttt{ScheduledPollEndpoint}, die das Verwenden der folgenden \texttt{SoccPostPollConsumer} Klasse vereinfacht.
+
 \begin{minipage}{\textwidth}
     \centering
      \includegraphics[
@@ -371,10 +378,6 @@ Es beginnt damit, dass zuerst nach einem Benutzerkonto des Beitragautors für di
     \captionof{figure}{Übersicht des SOCC-Camel Moduls als EIP-Diagramm.}
     \label{fig:uebersicht_socc_camel}
 \end{minipage}
-
-Hauptklasse dieses Moduls ist \texttt{SoccComponent}. Sie ist für die Verwaltung von Connectoren und Erstellen der Endpunkte für Camel zuständig. Von dieser Klasse muss zuerst ein Objekt erzeugt und ein SoccContext mit dem Tripelstore und alle Informationen für die Connectoren wie für deren Konfiguration, Benutzerkonten oder Servicebeschreibungen übergeben werden. Also alle Daten die in Anschnitt \ref{sec:konfiguration} beschrieben wurden. Das SoccComponent-Objekt wird dann unter einen frei wählbaren Namen in Camel registriert. Als Namen ist \enquote{socc} aber vorzuziehen.  Nun kann wie in Abschnitt \ref{ssub:apache_camel} mit dieser Komponente Routen zusammengesetzt werden.
-
-Die URIs für die Konfiguration der Endpunkte mit SOCC-Camel habe dazu den folgenden Aufbau: \enquote{\texttt{socc://{connectorId}?uri={targetUri}[\&{parameter}...]}}. Der Anfang der URI mit \enquote{\texttt{socc://}} sagt Camel, dass es für diesen Endpunkt die Komponente benutzten soll, die vorher unter dem Namen \enquote{socc} registriert wurde - also SoccComponent. Für den Platzhalter \enquote{\{connectorId\}} muss eine gültige ID eines Connectors sein, dessen Konfigurationsdaten im TripleStore hinterlegt wurden. Über den Parameter \enquote{uri} wird dann die Quell- beziehungsweise Ziel-URI für den Connector angegeben, von der Beiträge gelesen beziehungsweise in die Beiträge geschrieben werden sollen. Je nach Endpunkt können dann noch weitere Parameter angegeben werden. Ein Endpunkt wird in SOCC-Camel durch die Klasse \texttt{SoccEndpoint} modelliert (nicht explizit in der Abbildung angegeben) und leitet sich von der Camel-Klasse \texttt{ScheduledPollEndpoint}, die das Verwenden der folgenden \texttt{SoccPostPollConsumer} Klasse vereinfacht.
 
 \subsection{SoccPostPollConsumer} % (fold)
 \label{sub:soccpostpollingconsumer}

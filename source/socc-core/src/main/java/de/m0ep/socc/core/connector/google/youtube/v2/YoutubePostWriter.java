@@ -65,7 +65,7 @@ public class YoutubePostWriter extends
 	}
 
 	@Override
-	public void writePost( URI targetUri, String rdfString, Syntax syntax )
+	public void writePosts( URI targetUri, String rdfString, Syntax syntax )
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {

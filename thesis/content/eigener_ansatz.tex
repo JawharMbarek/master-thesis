@@ -182,6 +182,8 @@ Das Listing \ref{lst:acl_beispiel} zeigt ein Beispiel, wie eine Autorisierung mi
 
 % section konfiguration (end)
 
+\pagebreak
+
 \section{Design eines Connectors} % (fold)
 \label{sec:design_eines_connectors}
 
@@ -270,7 +272,6 @@ Die AccessControl-Schnittstelle ist sehr einfach gehalten und dient für den Zug
 Der Zugriff innerhalb des Programms auf eine API erfolgt in der Regel über einen Client. Dieser Client erlaubt es mit den Anmeldedaten für ein Benutzerkonto auf die Funktionen der API über verschiedene Methoden zu zugreifen. Da ein Client immer nur mit einem Benutzerkonto verknüpft ist und von diesen eine große Anzahl verwaltet werden müssen, enthält jeder Connector einen eigen ClientManager für diese Aufgaben. Für alle vom Benutzer unabhängigen Daten erhält der ClientManager ein wie Abschnitt \ref{sub:services} beschriebenes Objekt der Klasse Service das oftmals wichtige Daten wie ClientID und ClientSecret enthält. Das Erzeugen eines neuen Clients erfolgt dann durch den Aufruf der Methode \texttt{createClient(\dots)}. Als Parameter wird er ein Benutzerkonto (\texttt{sioc:UserAccount}) übergeben. Sind alle erforderlichen Authentifizierungsinformation aus Abschnitt \ref{sub:authentifizierung} vorhanden, wird ein neuer Client erstellt und zurück an den Aufrufer gegeben. Dieser Client wird aber dadurch nicht automatisch vom ClientManager verwaltet. Hierzu muss der im vorherigen Schritt erzeugte Client durch die Übergabe an \texttt{add(userAccount: UserAccount, client: T )} dauerhaft mit den angegeben Benutzerkonto verknüpft und intern gespeichert werden. In der aktuellen Implementierung ist es wichtig, dass die Eigenschaften \texttt{foaf:accountName} und \texttt{foaf:accountServiceHomepage} des \texttt{sioc:UserAccount}-Objekts gesetzt sind. Aus diesen wird ein eindeutiger Schlüssel generiert, der zur Zuordnung von Benutzerkonto und Client innerhalb des ClientManagers dient. Des weiteren stehen noch Methoden \texttt{remove(userAccount: UserAccount)} zum Entfernen, \texttt{get(userAccount: UserAccount)} zum Suchen von Clients sowie \texttt{contains(userAccount: UserAccount)} zum Testen, ob ein Client zu einem Benutzerkonto existiert zur Verfügung. Sollen zum Beispiel am Ende der Laufzeit des Programms alle erzeugten Clients auf einmal abgemeldet und gelöscht werden, kann dies über die Methode \texttt{clear()} erfolgen. Der ClientManager verwaltet ebenfalls den Client für den in Abschnitt \ref{sub:connector_config_ontologie} angesprochenen Defaultuser. Dieser \emph{Defaultclient} kann über die Methode  \texttt{setDefaultClient(client: T)} gesetzt und durch \texttt{getDefaultClient()} jederzeit wieder abgerufen werden. 
 
 % subsubsection clientmanager (end)
-\pagebreak
 
 \subsection{StructureReader} % (fold)
 \label{sub:structurereader}
@@ -300,6 +301,8 @@ Um auf Informationen über die Struktur von Foren, sozialen Online-Netzwerken un
 
     \item[\textbf{\texttt{listContainer(\dots)}}] sind Methoden, welche für den das Auflisten aller Container einer Seite (aus der Sicht des Defaultusers) zur Verfügung stehen. Die Methode ohne Parameter listet alle Container auf der ersten Ebene der Seitenstruktur auf . Dies könnten zum Beispiel alle Kurse innerhalb von Canvas oder alle beigetretenen Gruppen auf Facebook sein. Die zweite Methode mit einer URI als Parameter gibt eine Liste alle Container, welche den Container hinter der übergeben URI als Elternteil haben zurück. Dies könnten im Falle von Canvas alle Diskussionsthemen innerhalb eines Kurses sein.
 \end{description}
+
+\vfill
 
 % subsubsection structurereader (end)
 

@@ -846,11 +846,11 @@ Vorteil der Youtube Data API v2 ist die Verwendung von Atom als Datenformat. So 
 Die Implementierung des SOCC-Camel Moduls als Komponente für Camel ist relativ unkompliziert. Die Java-API von Camel enthält schon viele vorbereitet Klassen, von denen die Klassen für SOCC-Camel abgeleitet werden können. Danach ist nur noch wenig Arbeit zusätzlich zu machen.
 
 \begin{description}
-    \item[\textbf{SoccComponent:}] Die Klasse SoccComponent muss die in der Konfigurations-URI angegeben Connectoren mit den Daten aus den Triplestore erzeugen und verwalten und für jeden Endpunkt eine Objekt der Klasse SoccEndpoint mit dem Parametern und dem Connector erzeugen. 
+    \item[\textbf{SoccComponent:}] Die Klasse SoccComponent muss die in der Konfigurations-URI angegeben Connectoren mit den Daten aus den Triplestore erzeugen, verwalten und für jeden Endpunkt eine Objekt der Klasse SoccEndpoint mit dem Parametern und dem Connector erzeugen. 
 
     \item[\textbf{SoccEndpoint:}] Die Klasse SoccEndpoint ist wiederum nur eine Fabrik für den SoccPostPollConsumer und den SoccPostProducer. 
 
-    \item[\textbf{SoccPostPollConsumer:}] Die komplette Arbeit des SoccPostPollConsumer findet in der Methode \texttt{poll()} statt, die aus der abgeleiteten Klasse ScheduledPollConsumer von Camel überschrieben wird. Das Listing \ref{lst:socc_camel_polling_code} zeigt den Quellecode dieser Methode. In der zweiten Zeile wird der PostReader des Connectors aufgerufen, wobei die Variable \texttt{lastPollTime} den Zeitpunkt enthält, an dem \texttt{poll()} das letzte mal aufgerufen wurde. Ist mindesten ein Beitrag in der zurückgelieferten Liste, werden diese ab Zeile 4 serialisiert, in eine Nachricht verpackt und an Camel zum Versenden übergeben. Mit RDF2Go können leider nur komplette Triplestores serialisiert werden, deswegen müssen die Daten der Beiträge erst in einen neuen, leeren Triplestore kopiert werden, so dass nicht auch unerwünschte Daten mitgeschickt werden die noch im Triplestore des Connectors liegen. Dieser temporäre Triplestore wird in Zeile 5 und 6 angelegt. Der Quellcode in den Zeilen 9 bis 13 kopiert erst alle Prefixe aus dem originalen Triplestore in den neuen. Dieser Schritt ist zwar nicht zwingend notwendig, erleichtert aber das lesen der serialisierten RDF-Daten für das Debuggen. In den Zeilen 15 bis 20 werden dann alle RDF-Daten der Beiträge in das temporäre Model kopiert. Danach kann ab Zeile 22 angefangen werden die zu sendende Nachricht zusammen zu bauen. Die serialisierten Daten kommen dann in Zeile 23 als \enquote{Body} in die Nachricht. Zusätzlich wird in Zeile 27 das verwendete Serialisierungsformat als MIME-Type angegeben. Nachrichten werden in Camel zusätzlich in eine Art Umschlagt der Klasse \texttt{Exchange} verpackt. Das verwenden der Methode \texttt{setIn(\dots)} sagt dabei Camel, dass diese Nachricht als eingehende Nachricht für einen anderen Endpunkt gedacht ist. Möchte man auf eine Nachricht eine Antwort schicken, macht man dies mit der Methode \texttt{setOut(\dots)} tun. In Zeile 33 wird die Nachricht dann abgeschickt. Am Ende muss dann nur noch die Variable \texttt{lastPollTime} auf die aktuell Zeit aktualisiert werden.
+    \item[\textbf{SoccPostPollConsumer:}] Die komplette Arbeit des SoccPostPollConsumer findet in der Methode \texttt{poll()} statt, die aus der abgeleiteten Klasse ScheduledPollConsumer von Camel überschrieben wird. Das Listing \ref{lst:socc_camel_polling_code} zeigt den Quellecode dieser Methode. In der zweiten Zeile wird der PostReader des Connectors aufgerufen, wobei die Variable \texttt{lastPollTime} den Zeitpunkt enthält, an dem \texttt{poll()} das letzte mal aufgerufen wurde. Ist mindesten ein Beitrag in der zurückgelieferten Liste, werden diese ab Zeile 4 serialisiert, in eine Nachricht verpackt und an Camel zum Versenden übergeben. Mit RDF2Go können leider nur komplette Triplestores serialisiert werden, deswegen müssen die Daten der Beiträge erst in einen neuen, leeren Triplestore kopiert werden, so dass nicht auch unerwünschte Daten mitgeschickt werden die noch im Triplestore des Connectors liegen. Dieser temporäre Triplestore wird in Zeile 5 und 6 angelegt. Der Quellcode in den Zeilen 9 bis 13 kopiert erst alle Prefixe aus dem originalen Triplestore in den neuen. Dieser Schritt ist zwar nicht zwingend notwendig, erleichtert aber das lesen der serialisierten RDF-Daten für das Debuggen. In den Zeilen 15 bis 20 werden dann alle RDF-Daten der Beiträge in das temporäre Model kopiert. Danach kann ab Zeile 22 angefangen werden die zu sendende Nachricht zusammen zu bauen. Die serialisierten Daten kommen dann in Zeile 23 als \enquote{Body} in die Nachricht. Zusätzlich wird in Zeile 27 das verwendete Serialisierungsformat als MIME-Type angegeben. Nachrichten werden in Camel zusätzlich in eine Art Umschlagt der Klasse \texttt{Exchange} verpackt. Das verwenden der Methode \texttt{setIn(\dots)} sagt dabei Camel, dass diese Nachricht als eingehende Nachricht für einen anderen Endpunkt gedacht ist. Möchte man auf eine Nachricht eine Antwort schicken, macht man dies mit der Methode \texttt{setOut(\dots)}. In Zeile 33 wird die Nachricht dann abgeschickt. Am Ende muss dann nur noch die Variable \texttt{lastPollTime} auf die aktuell Zeit aktualisiert werden.
  
 \begin{lstlisting}[
 caption={Quellcode zum Polling im  SoccPostPollConsumer}\label{lst:socc_camel_polling_code},
@@ -896,7 +896,7 @@ protected int poll() throws Exception {
 }
 \end{lstlisting}
 
-    \item[\textbf{SoccPostProducer:}] Die Klasse SoccPostProducer ist wieder nur sehr unspektakulär. Sie nimmt alle ankommenden Nachrichten, holt die serialisierten Daten aus den Body, überprüft ob ein gültiger MIME-Type vorliegt und gibt alles an den PostWriter des Connectors weiter. 
+    \item[\textbf{SoccPostProducer:}] Die Klasse SoccPostProducer ist wieder nur sehr unspektakulär. Sie nimmt alle ankommenden Nachrichten, holt die serialisierten Daten aus dem Body, überprüft ob ein gültiger MIME-Type vorliegt und gibt alles an den PostWriter des Connectors weiter. 
     
 \end{description}
 
@@ -907,16 +907,16 @@ protected int poll() throws Exception {
 \section{Proof of Concept} % (fold)
 \label{sec:proof_of_concept}
 
-Um die Funktionsweise von SOCC und SOCC-Camel zu demonstrieren, soll nun ein \enquote{Proof of Concept} erstellt werden. Hierzu wird ein Programm vorgestellt, das die Beiträge einer Diskussion aus Canvas mit den Kommentaren eines Beitrags aus einer Facebook-Gruppe synchronisiert. Danach die Ausführung dieses Programm Schritt für Schritt erklärt und gezeigt welche Daten ausgetauscht werden. In der Realität sind die gezeigten SIOC-Daten im RDF/XML-Format, aber aufgrund der besseren Lesbarkeit sind sie hier in Turtle dargestellt.
+Um die Funktionsweise von SOCC und SOCC-Camel zu demonstrieren, soll nun ein \enquote{Proof of Concept} erstellt werden. Hierzu wird ein Programm vorgestellt, das die Beiträge einer Diskussion aus Canvas mit den Kommentaren eines Beitrags aus einer Facebook-Gruppe synchronisiert. Danach wird die Ausführung dieses Programm Schritt für Schritt erklärt und gezeigt welche Daten ausgetauscht werden. In der Realität sind die gezeigten SIOC-Daten im RDF/XML-Format oder im Triplestore, aber aufgrund der besseren Lesbarkeit sind sie hier in Turtle dargestellt.
 
 \subsection{Vorbereitungen} % (fold)
 \label{sub:vorbereitungen}
 
-Die Konfigurationsdaten für dieses Programm sind im Anhang \ref{sec:anhang_proof_of_concept_konfigurationsdaten} im Turtle-Format zu sehen. Dort befindet sich die Definitionen von den zwei Personen \enquote{Max Hiwi} und \enquote{Florian} mit jeweils ihren Benutzerkonten für Canvas und Facebook. Für beide Plattformen wurde für die Benutzerkonten Accesstoken erstellt und dort hinterlegt. Beide Personen erlauben einen öffentlichen Zugriff auf all ihre Beiträge durch eine ACL-Autorisierung. Ebenfalls wurden die Servicebeschreibungen und die Konfigurationen für die Canvas und Facebook Connectoren angegeben. Der Service für Facebook enthält zusätzlich die ClientID und den ClientSecret, um aus kurzlebigen Accesstoken welche mit einer Haltbarkeit von zwei Monaten generieren zu können, falls sie das nicht schon sind. Sowohl Accesstoken als auch ClientID und ClientSecret wurden aus Datenschutzgründen nicht vollständig angeben.
+Die Konfigurationsdaten für dieses Programm sind im Anhang \ref{sec:anhang_proof_of_concept_konfigurationsdaten} im Turtle-Format zu sehen. Dort befindet sich die Definitionen von den zwei Personen \enquote{Max Hiwi} und \enquote{Florian} mit jeweils ihren Benutzerkonten für Canvas und Facebook. Für beide Plattformen wurde für die Benutzerkonten Accesstoken erstellt und dort hinterlegt. Beide Personen erlauben einen öffentlichen Zugriff auf all ihre Beiträge durch eine ACL-Autorisierung. Ebenfalls wurden die Servicebeschreibungen und die Konfigurationen für die Canvas und Facebook Connectoren angegeben. Der Service für Facebook enthält zusätzlich die Client-ID und den Client-Secret, um aus kurzlebigen Accesstoken welche mit einer Haltbarkeit von zwei Monaten generieren zu können, falls sie das nicht schon sind. Sowohl Accesstoken als auch Client-ID und Client-Secret wurden aus Datenschutzgründen nicht vollständig angeben.
 
 Die Synchronisation zwischen Canvas und Facebook mit Camel soll dabei auf zwei Arten demonstriert werden. Der Nachrichtenweg von Canvas aus wird erst an ein JMS-Topic geschickt, bevor die Beiträge an den FacebookConnector weitergeben werden. Der umgekehrte Weg von Facebook nach Canvas erfolgt direkt durch Camel, ohne eine Verwendung von JMS. Als JMS-Provider wird das freie ActiveMQ von Apache eingesetzt. Dieser kann sowohl als eigener Server als auch eingebettet in einem Programm ausgeführt werden.
 
-Zuerst muss für die Verwendung von ActiveMQ und SOCC der CamelContext mit den entsprechenden Komponenten vorbereitet werden. In Zeile Eins des Listings \ref{lst:poc_prepare_camel} wird ein Objekt dieses CamelContextes aus der Klasse \texttt{DefaultCamelContext} erzeugt. Um auf ActiveMQ von Camel aus nutzen zu können, muss ein Objekt der Klasse \texttt{ActiveMQComponent}\footnote{\url{http://camel.apache.org/activemq.html}} in Zeile 2 vorzugsweise unter dem Namen \enquote{activemq} registriert und die Adresse zum ActiveMQ Server angegeben werden. Danach folgt in Zile 5 die Registrierung von SOCC-Camel mit dem Namen \enquote{socc}. Übergeben wird das Objekt des CamelContextes und ein SoccContext mit einem RDF2Go Model, in das zuvor die Konfigurationsdaten geladen wurden.  
+Zuerst muss für die Verwendung von ActiveMQ und SOCC der CamelContext mit den entsprechenden Komponenten vorbereitet werden. In Zeile Eins des Listings \ref{lst:poc_prepare_camel} wird ein Objekt dieses CamelContextes aus der Klasse \texttt{DefaultCamelContext} erzeugt. Um ActiveMQ von Camel aus nutzen zu können, muss ein Objekt der Klasse \texttt{ActiveMQComponent}\footnote{\url{http://camel.apache.org/activemq.html}} in Zeile 2 vorzugsweise unter dem Namen \enquote{activemq} registriert und die Adresse zum ActiveMQ Server angegeben werden. Danach folgt in Zeile 5 die Registrierung von SOCC-Camel mit dem Namen \enquote{socc}. Übergeben wird das Objekt des CamelContextes und ein SoccContext mit einem RDF2Go Model, in das zuvor die Konfigurationsdaten geladen wurden.  
 
 \begin{lstlisting}[
     caption={Proof of Concept: CamelContext vorbereiten} \label{lst:poc_prepare_camel},
@@ -964,7 +964,7 @@ camelContext.start();
 \subsection{Ausgangssituation} % (fold)
 \label{sub:ausgangssituation}
 
-In einen fiktiven Szenario für einen Kurs werden mehrere Gruppenübungen über das Semester verteilt durchgeführt. Für jede Gruppenübung existiert in Canvas eine Diskussion in der über allgemeine Dinge zu jeweiligen Übungen diskutiert werden kann. In Facebook wird dafür die Kommentarfunktion von Beiträgen zur jeweiligen Übung genutzt. 
+In einen fiktiven Szenario für einen Kurs, werden mehrere Gruppenübungen über das Semester verteilt durchgeführt. Für jede Gruppenübung existiert in Canvas eine Diskussion in der über allgemeine Dinge zu jeweiligen Übungen diskutiert werden kann. In Facebook wird dafür die Kommentarfunktion von Beiträgen zur jeweiligen Übung genutzt. 
 
 Vor dem Start des Programms befinden sich in der Canvas-Diskussion für die erste Gruppenübung schon zwei Beiträge, wie in der Abbildung \ref{fig:poc_ausgangssituation} zu sehen ist. Der Benutzer Florian stellte eine Frage und diese wurde von Max Hiwi mit einer Gegenfrage kommentiert. Der Beitrag auf Facebook ist dagegen noch leer (Nicht abgebildet).
 
@@ -988,7 +988,7 @@ Vor dem Start des Programms befinden sich in der Canvas-Diskussion für die erst
 
 Nach dem Camel gestartet wurde, beginnt es die in den Routen definierten Komponenten anzulegen und zu starten. Mit den angegebenen URIs werden die einzelnen Endpunkte und von denen die passenden SoccPostPollingConsumer und SoccPostProducer erzeugt. Dabei werden auch die in den URIs angegebenen Connectoren mit den Daten aus dem Triplestore angelegt.
 
-Zuerst beginnt im SoccPostPollingConsumer der ersten Route der PostReader des CanvasConnectors die Beiträge mit den festgelegten Defaultuser aus der Diskussion zu lesen. Da dies der erste Aufruf ist, werden die Beiträge noch nicht nach den Erstellungszeitpunkt gefiltert. Beide Beiträge von Florian und Max Hiwi kommen also in die Ergebnisliste, werden in das SIOC Format konvertiert und im Triplestore gespeichert. Das Resultat der Konvertierung wird im Listing \ref{lst:poc_init_posts} gezeigt. In Zeile 11 ist zu sehen, dass der erste Beitrag einen Kommentar und zwar den zweiten Beitrag besitzt. Genau so ist im Zeile 22 zu sehen, dass der zweite Beitrag ein Kommentar auf den ersten ist. Diese stimmt mit dem Aussehen der Ausgangssituation überein. Diese beiden Ergebnisse werden dann an den aufrufenden SoccPostPollingConsumer zurückgeben. Dieser serialisiert das Ergebnis dann in das RDF/XML-Format, verpackt diese in eine Nachricht und gibt diese an Camel weiter.
+Zuerst beginnt im SoccPostPollingConsumer der ersten Route der PostReader des CanvasConnectors die Beiträge mit den festgelegten Defaultuser aus der Diskussion zu lesen. Da dies der erste Aufruf ist, werden die Beiträge noch nicht nach den Erstellungszeitpunkt gefiltert. Beide Beiträge von Florian und Max Hiwi kommen also in die Ergebnisliste, werden in das SIOC Format konvertiert und im Triplestore gespeichert. Das Resultat der Konvertierung wird im Listing \ref{lst:poc_init_posts} gezeigt. In Zeile 11 ist zu sehen, dass der erste Beitrag einen Kommentar und zwar den zweiten Beitrag hat. Genau so ist im Zeile 22 zu sehen, dass der zweite Beitrag ein Kommentar auf den ersten ist. Diese stimmt mit dem Aussehen der Ausgangssituation überein. Diese beiden Ergebnisse werden dann an den aufrufenden SoccPostPollingConsumer zurückgeben. Dieser serialisiert das Ergebnis dann in das RDF/XML-Format, verpackt diese in eine Nachricht und gibt diese an Camel weiter.
 
 % subsubsection ablauf_der_synchronisierung (end)
 
@@ -1020,7 +1020,7 @@ Zuerst beginnt im SoccPostPollingConsumer der ersten Route der PostReader des Ca
     sioc:reply_of <https://canvas.instructure.com/api/v1/courses/798152/discussion_topics/1540697/entries/3284842> .
 \end{lstlisting}
 
-Camel schaut nun anhand der definierten Routen, wohin diese Nachricht weitergeleitet werden soll. In diesem Fall wird sie an die ActiveMQ-Komponente übergeben, die sie in das JMS-Topic \enquote{canvas-topic} schickt. Von dort kann sie von jedem JMS-Client gelesen werden, der dieses Topic abonniert hat, wie zum Beispiel in der zweiten Route von vorhin. Dies nimmt die über das Topic gesendete Nachricht entgegen und gibt sie an den SoccPostProducer des Endpunktes weiter. Dieser holt die serialisierten RDF-Daten und die Syntaxbeschreibung aus der Nachricht und ruft damit dann die Methode \texttt{writePosts(\dots)} vom PostWriter des FacebookConnectors auf. Dieser de-serialisiert die beiden Beiträge wieder in RDF und sucht dann im Triplestore nach den passenden Benutzerkonten für Facebook von den beiden Autoren. Dann schreibt er die Beiträge als Kommentare in den festgelegten Facebook-Beitrag.
+Camel schaut nun anhand der definierten Routen, wohin diese Nachricht weitergeleitet werden soll. In diesem Fall wird sie an die ActiveMQ-Komponente übergeben, die sie in das JMS-Topic \enquote{canvas-topic} schickt. Von dort kann sie von jedem JMS-Client gelesen werden, der dieses Topic abonniert hat. Wie zum Beispiel in der zweiten Route von vorhin. Dies nimmt die über das Topic gesendete Nachricht entgegen und gibt sie an den SoccPostProducer des Endpunktes weiter. Dieser holt die serialisierten RDF-Daten und die Syntaxbeschreibung aus der Nachricht und ruft damit dann die Methode \texttt{writePosts(\dots)} vom PostWriter des FacebookConnectors auf. Dieser de-serialisiert die beiden Beiträge wieder in RDF und sucht dann im Triplestore nach den passenden Benutzerkonten für Facebook von den beiden Autoren. Dann schreibt er die Beiträge als Kommentare in den festgelegten Facebook-Beitrag.
 
 \begin{figure}[ht]
     \centering
@@ -1037,7 +1037,7 @@ Camel schaut nun anhand der definierten Routen, wohin diese Nachricht weitergele
 
 In der Abbildung \ref{fig:poc_beitraege_aus_canvas_in_facebook} sind die eben in Facebook geschriebenen Beiträge aus Canvas zu sehen. Da Facebook kommentieren von anderen Kommentaren in Gruppen nicht ermöglicht, sind diese nun untereinander angelegt. Zugleich ist zusehen, dass Florian gleich danach die Gegenfrage von Max Hiwi, der auf Facebook das Benutzerkonto \enquote{TK Hiwi} benutzt, in Facebook beantwortet hat.
 
-Im Hintergrund arbeitet derweil Camel weiter und startet alle fünf Minuten den PostReader des FacebookConnectors aus der dritten Route. Dieser liest nun diese drei, für ihn neuen Beiträge, und konvertiert diese dann aus dem Facebook- in das SIOC-Format (Siehe Listing \ref{lst:poc_facebook_posts}). Die Beiträge werden dann wieder an den SoccPostPollingConsumer zurück gegeben, serialisiert und als Nachricht an Camel geschickt. Diesmal geht geht diese Nachricht auf direkten Wege über den SoccPostProducer und an den PostWriter des CanvasConnectors. Dieser verarbeitet nun die gesendeten Beiträge und merkt, dass zwei von ihnen ursprüngliche aus Canvas kommen, worauf er diese verwirft. Der dritte Beitrag wird aber mit den Benutzerkonto von Florian in das Diskussionsthema eingefügt.
+Im Hintergrund arbeitet derweil Camel weiter und startet alle fünf Minuten den PostReader des FacebookConnectors aus der dritten Route. Dieser liest nun diese drei, für ihn neuen Beiträge, und konvertiert diese dann aus dem Facebook- in das SIOC-Format (Siehe Listing \ref{lst:poc_facebook_posts}). Die Beiträge werden dann wieder an den SoccPostPollingConsumer zurück gegeben, serialisiert und als Nachricht an Camel übergeben. Diesmal geht geht diese Nachricht auf direkten Wege über den SoccPostProducer und an den PostWriter des CanvasConnectors. Dieser verarbeitet nun die gesendeten Beiträge und merkt, dass zwei von ihnen ursprüngliche aus Canvas kommen, worauf er diese verwirft. Der dritte Beitrag wird aber mit den Benutzerkonto von Florian in das Diskussionsthema eingefügt.
 
 \begin{lstlisting}[
     language={},
@@ -1074,20 +1074,22 @@ Im Hintergrund arbeitet derweil Camel weiter und startet alle fünf Minuten den 
     sioc:reply_of <https://graph.facebook.com/520312298060793_520417398050283> .
 \end{lstlisting}
 
-Wie in Abbildung \ref{fig:poc_final_at_canas} zu sehen ist, enthalten die Diskussion in Canvas und in Facebook die gleichen Beiträge. Dieser Ablauf wiederholt sich nun so lange, wie Camel die Routen und Connectoren ausführt. Es wurde also gezeigt, dass mittels SOCC, SOCC-Camel zwei verteilte Diskussionen synchronisiert werden können. 
+Wie in den Abbildungen \ref{lst:poc_facebook_posts} und \ref{fig:poc_final_at_canas} zu sehen ist, enthalten die Diskussion in Canvas und in Facebook die gleichen Beiträge. Dieser Ablauf wiederholt sich nun so lange, wie Camel die Routen und Connectoren ausführt. Es wurde also gezeigt, dass mittels SOCC, SOCC-Camel zwei verteilte Diskussionen synchronisiert werden können. 
 
-\begin{figure}[!ht]
+\begin{figure}[t]
     \centering
     \includegraphics[
-        width=0.8\textwidth,
+        width=10cm,
         keepaspectratio=true,
-        clip=true,
-        trim= 0 10 0 300]
+       % clip=true,
+        %trim= 0 10 0 300
+        ]
     %{assets/images/poc/poc_canvas}
     {assets/images/poc/poc_canvas_gray}
     \caption{Proof of Concept: Finales Ergebnis in Canvas}
     \label{fig:poc_final_at_canas}
 \end{figure}
+\vfill
 
 % section proof_of_concept (end)
 

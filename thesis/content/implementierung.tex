@@ -537,6 +537,8 @@ Die Struktur von Facebook baut auf Walls von Benutzern, Gruppen und Facebook-Sei
 
 Wie weiter oben erklärt, verwendet Facebook für die Autorisierung der Abfragen in der Graph API OAuth 2.0. Die Benutzerkonten, die für das stellvertretende Schreiben verwendet werden sollen, müssen also einen Accesstoken für das Konto enthalten. Das gleiche gilt für die Servicebeschreibung für die Graph API mit der \texttt{siocs:Service} Klasse. Die Eigenschaft \texttt{siocsa:serviceAuthentication} zeigen auf ein Objekt der Klasse \texttt{waa:OAuth} das die ClientID und das ClientSecret enthält, wie es in der Abbildung \ref{fig:facebook_useraccount_mapping} zu sehen ist.
 
+Die in RDF verwendeten URIs für die Klassen \texttt{sioc:Post} und \texttt{sioc:UserAccount} von Facebook bekommen das Format \texttt{https://graph.facebook.com/\{facebookId\}}, wobei \texttt{\{facebookId\}} der ID der Ressource entspricht. Ausnahme bildete die URIs für die Klasse \texttt{sioc:Forum}. Da die ID eines Benutzers sowohl für sein Konto als auch für seine Wall stehen würden, wird der URI für die Wall noch der Pfad \enquote{\texttt{/feed}} angehängt. Die URI \\texttt{https://graph.facebook.com/\{facebookId\}/feed} ist dann immer noch gültig und liefert von der Graph API die enthaltenen Beiträge zurück. Als URI für die Klasse \texttt{sioc:Site} wurde \texttt{https://www.facebook.com} und für \texttt{siocs:Service} wurde \texttt{https://graph.facebook.com} gewählt.
+
 \begin{figure}[ht]
     \centering
     \includegraphics[
@@ -546,8 +548,6 @@ Wie weiter oben erklärt, verwendet Facebook für die Autorisierung der Abfragen
     \caption{ Authentifizierungsdaten für Facebook in SIOC}
     \label{fig:facebook_useraccount_mapping}
 \end{figure}
-
-Die in RDF verwendeten URIs für die Klassen \texttt{sioc:Post} und \texttt{sioc:UserAccount} von Facebook bekommen das Format \texttt{https://graph.facebook.com/\{facebookId\}}, wobei \texttt{\{facebookId\}} der ID der Ressource entspricht. Ausnahme bildete die URIs für die Klasse \texttt{sioc:Forum}. Da die ID eines Benutzers sowohl für sein Konto als auch für seine Wall stehen würden, wird der URI für die Wall noch der Pfad \enquote{\texttt{/feed}} angehängt. Die URI \\texttt{https://graph.facebook.com/\{facebookId\}/feed} ist dann immer noch gültig und liefert von der Graph API die enthaltenen Beiträge zurück. Als URI für die Klasse \texttt{sioc:Site} wurde \texttt{https://www.facebook.com} und für \texttt{siocs:Service} wurde \texttt{https://graph.facebook.com} gewählt.
 
 % subsubsection facebook_mapping_nach_sioc (end)
 

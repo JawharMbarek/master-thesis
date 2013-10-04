@@ -2,8 +2,8 @@
 
 \chapter{Abschlussbetrachtung und Ausblick} % (fold)
 \label{cha:zusammenfassung_und_ausblick}
-\todo[inline]{Einleitung schreiben}
 
+Zum Abschluss dieser Masterarbeit, soll noch einmal kurz alle vorherigen Kapitel mit dem wichtigsten Inhalten zusammengefasst werden. Danach folgt eine kritische Würdigung in der diese Arbeit rückblickend bewertet wird und außerdem ein Ausblick auf weiterführende Themen. 
 
 \section{Zusammenfassung} % (fold)
 \label{sec:zusammenfassung} 
@@ -18,23 +18,21 @@ Im letzten Kapitel wurde die Implementierung von Connectoren beschrieben. Dabei 
 
 % section zusammenfassung (end)
 
-\section{Reflektion} % (fold)
+\section{kritische Würdigung} % (fold)
 \label{sec:bewertung}
 
 Abschließend betrachtet bin ich sehr zufrieden mit der Implementierung von meinen SOCC-Ansatz. Die Entscheidung für RDF und SIOC als Datenformat für die Integration von verteilen Diskussionen hat sich von Anfang an als eine gute erwiesen. Es stand zwar immer die Frage im Raum, ob sich in SIOC wirklich alle Inhalte der einzelnen Plattformen zusammenführen lassen, diese war aber vollkommen unbegründet. Bis das endgültige Konzept für SOCC feststand, waren aber trotzdem einige Versuche notwendig. Dies lag nicht nur daran, dass das Thema Datenintegration mit RDF und Ontologien für mich relativ neu war, aber auch dass mit fortschreitender Zeit man immer mehr Erfahrung sammelt und merkt was man am Anfang hätte besser machen können. Eine ebenfalls gute Wahl war auch die Verwendung von Camel für den Datenaustausch. Der Implementierungsaufwand war sehr gering und durch die Nutzung der beliebig konfigurierbaren Routen ist ein sehr flexibles System entstanden. 
 
-Aber dass alles perfekt ist, kann man auch nicht sagen. Die in Abschnitt \ref{sub:allgemeine_probleme} beschrieben Lösungen zu doppelten Beiträgen und Rekonstruktion der Kommentarstruktur funktionieren zwar, sind aber alles andre als perfekt. Statt dem Einfügen eines Wasserzeichens könnte man nach einen Beitrag im Triplestore suchen der dem vermeintlichen Duplikat gleicht. Die Rekonstruktion der Kommentarstruktur könnte auch besser funktionieren. Es ist schade, dass dies nur in eine Richtung reibungslos vonstatten geht. Um die Connectoren weiterhin unabhängig zu halten, müsste es in einer Verbesserung möglich sein, auch Daten über die Struktur der Plattformen auszutauschen. 
+Aber dass alles perfekt ist, kann man auch nicht sagen. Die in Abschnitt \ref{sub:allgemeine_probleme} beschrieben Lösungen zu doppelten Beiträgen und Rekonstruktion der Kommentarstruktur funktionieren zwar, sind aber alles andere als perfekt. Statt dem Einfügen eines Wasserzeichens könnte man nach einen Beitrag im Triplestore suchen, der dem vermeintlichen Duplikat gleicht. Die Rekonstruktion der Kommentarstruktur könnte auch besser funktionieren. Es ist schade, dass dies nur in eine Richtung reibungslos vonstatten geht. Um die Connectoren weiterhin unabhängig zu halten, müsste es in einer Verbesserung möglich sein, auch Daten über die Struktur der Plattformen auszutauschen. 
 
-Zum Schluss noch ein paar Worte zu RDF2Go. Um es gleich zu sagen, RDF2Go ist ein guter Weg innerhalb von Java mit RDF-Daten zu arbeiten. Dadurch dass man nicht an einen bestimmten Triplestore und dessen API gebunden ist (dafür aber an die von RDF2Go) kann man für seine Zwecke den richtigen wählen. Auch der Generator zum Generieren von Java-Klassen aus Ontologien arbeitet besser als der von anderen Frameworks und das Arbeiten mir Klassen ist wesentlich einfacher als alle Triple einzeln zu manipulieren. Doch hat auch der Generator und die generierten Klassen so ihre Macken. Zum Beispiel werden für die einzelnen Eigenschaften keine Methoden generiert, um sich nur einen Wert zurückgeben zu lassen. Man bekommt immer einen Iterator den man durchlaufen musste. Diese fehlenden Methoden wurden aber dann von Hand hinzugefügt. Ein Problem mit der Generierung von Java-Klassen war das fehlen der Mehrfachvererbung. Java kennt so etwas nicht, aber RDFSchema und OWL sehr wohl. So mussten einige Methoden aus der Java-Klasse \texttt{OnlineAccount} von FOAF in \texttt{UserAccount} von SIOC kopiert werden, um die Eigenschaften aus FOAF auch dort nutzen zu können.
+Auch sei noch folgendes zu RDF2Go erwähnt. Um es gleich zu sagen, RDF2Go ist ein guter Weg innerhalb von Java mit RDF-Daten zu arbeiten. Dadurch dass man nicht an einen bestimmten Triplestore und dessen API gebunden ist (dafür aber an die von RDF2Go) kann man für seine Zwecke den richtigen wählen. Auch der Generator zum Generieren von Java-Klassen aus Ontologien arbeitet besser als der von anderen Frameworks und das Arbeiten mir Klassen ist wesentlich einfacher als alle Triple einzeln zu manipulieren. Doch hat auch der Generator und die generierten Klassen so ihre Macken. Zum Beispiel werden für die einzelnen Eigenschaften keine Methoden generiert, um sich nur einen Wert einen Eigenschaft zurückgeben zu lassen. Man bekommt immer einen Iterator, aus dem das erste Ergebnis geholt werden musste. Diese fehlenden Methoden wurden aber dann von Hand hinzugefügt. Ein Problem mit der Generierung von Java-Klassen war das Fehlen der Mehrfachvererbung. Java kennt so etwas nicht, aber RDFSchema und OWL sehr wohl. So mussten einige Methoden aus der Java-Klasse \texttt{OnlineAccount} von FOAF in \texttt{UserAccount} von SIOC kopiert werden, um die Eigenschaften aus FOAF auch dort nutzen zu können.
 
 % section bewertung (end)
 
 \section{Ausblick} % (fold)
 \label{sec:ausblick}
 
-
-
-\todo[inline]{Text schreiben}
+Einer der Vorteile der Trennung von der Datenkonvertierung mit SOCC und dem Datenaustausch mit SOCC-Camel ist, dass die Connectoren auch genutzt werden können, um nur Daten von Plattformen in das SIOC-Format zu konvertieren ohne sie unbedingt an andere Connectoren auszutauschen. So können diese Daten auch zu anderen Zwecken verwendet werden. Vorstellbar wäre es die Beiträge durch weitere Ontologien mit Zusatzmaterialien wie Folien zu einer Vorlesung zu verbinden und so Beiträge auch für Maschinen verständlich zusammen in einen Kontext zu bringen. Dadurch bekommt man, wenn man nach Fragen zu einen Thema such auch gleichzeitig weiterführende Materialien ausgegeben. Ebenfalls könnten die unterschiedlichen Beiträge mit Fragen zu Inhalten eines Kurses dazu genutzt werden, automatisch Fragenkataloge mit den Fragen generiert werden, bei denen es die meisten Probleme gab. Schlussendlich decken die fünf Plattformen für die hier Connectoren Implementiert wurden nicht alle Orte ab, die für Diskussionen genutzt werden und voneinander isoliert sind. Es gibt noch eine Menge weiterer die von einer Verwendung des SIOC-Formats profitieren könnten.
 
 % section ausblick (end)
 

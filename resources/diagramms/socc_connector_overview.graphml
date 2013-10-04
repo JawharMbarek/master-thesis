@@ -103,7 +103,7 @@
       <data key="d6">
         <y:GenericNode configuration="com.yworks.flowchart.cloud">
           <y:Geometry height="100.0" width="175.0" x="398.5" y="71.0719999999996"/>
-          <y:Fill color="#FFFFFF" color2="#C0C0C0" transparent="false"/>
+          <y:Fill color="#EDEDED" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="48.103515625" modelName="custom" textColor="#000000" visible="true" width="64.6796875" x="55.16015625" y="25.9482421875">Social
 Online
@@ -124,7 +124,7 @@ Community<y:LabelModel>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.flowchart.cloud">
           <y:Geometry height="100.0" width="175.0" x="396.0" y="532.9280000000003"/>
-          <y:Fill color="#FFFFFF" color2="#C0C0C0" transparent="false"/>
+          <y:Fill color="#EDEDED" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" modelName="custom" textColor="#000000" visible="true" width="62.03125" x="56.484375" y="33.298828125">Messaging
 Network<y:LabelModel>

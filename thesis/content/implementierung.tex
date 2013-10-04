@@ -511,7 +511,7 @@ In Zeile Eins wird eine Objekt der Klasse \texttt{FacebookClient} mit einem Acce
 FacebookType result = client.publish(
         userId + "/feed,
         FacebookType.class,
-        Parameter.with("message", "Tolles Wetter heute \o/"));
+        Parameter.with("message", "Tolles Wetter heute \\o/"));
 \end{lstlisting}
 
 Beiträge können bei Facebook nur an Ressourcen geschrieben werden, die eine \enquote{feed} oder \enquote{comment} Connection haben. In Listing \ref{lst:restfb_write_post} ist zu sehen wie ein neuer Beitrag auf die Wall eines Benutzers geschrieben werden kann. Zu diesem Zweck enthält der Client aus RestFB die Methode \texttt{publish(\dots)} zum Schreiben von Daten in Ressourcen. Das erste Argument ist die Zielressource, die in Zeile 2 aus der ID des Benutzers gefolgt von einen \enquote{/} und dem Namen der Connection, hier \enquote{feed}, besteht. Da \texttt{publish(\dots)} bei Erfolgt die ID des erstellten Beitrags zurückliefert, wird als Klasse für das erwartete Ergebnis die Basisklasse \texttt{FacebookType} angegeben. Als letztes muss noch der Inhalt des Beitrags festgelegt werden. Dies geschieht nicht im JSON-Format, sondern wird als Parameter in der URI für die HTTP-POST-Operation angegeben. RestFB bietet dazu die Klasse \texttt{Parameter} an, mit der ein Parameter \enquote{message} und dem Inhalt des Beitrags als Wert erzeugt wird.

@@ -14,6 +14,11 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+import de.m0ep.oauthtool.facebook.FacebookController;
+import de.m0ep.oauthtool.facebook.FacebookDialog;
+import de.m0ep.oauthtool.google.GooglePlusController;
+import de.m0ep.oauthtool.google.GooglePlusDialog;
+
 public class OAuthToolApp {
 
 	private JFrame frmOauthTool;
@@ -25,6 +30,7 @@ public class OAuthToolApp {
 	 */
 	public static void main( String[] args ) {
 		EventQueue.invokeLater( new Runnable() {
+			@Override
 			public void run() {
 				try {
 					OAuthToolApp window = new OAuthToolApp();
@@ -65,6 +71,7 @@ public class OAuthToolApp {
 
 		btnGooglePlus = new JButton( "" );
 		btnGooglePlus.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed( ActionEvent e ) {
 				GooglePlusController ctrl = new GooglePlusController( new GooglePlusDialog() );
 				ctrl.run();
@@ -78,6 +85,13 @@ public class OAuthToolApp {
 		frmOauthTool.getContentPane().add( btnGooglePlus, "2, 2" );
 
 		btnFacebook = new JButton( "" );
+		btnFacebook.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent e ) {
+				FacebookController ctrl = new FacebookController( new FacebookDialog() );
+				ctrl.run();
+			}
+		} );
 		btnFacebook.setToolTipText( "Create Facebook Accesstoken" );
 		btnFacebook.setMargin( new Insets( 2, 2, 2, 2 ) );
 		btnFacebook.setIcon( new ImageIcon( OAuthToolApp.class

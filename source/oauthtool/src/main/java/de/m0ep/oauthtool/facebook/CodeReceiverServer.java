@@ -1,4 +1,4 @@
-package de.m0ep.oauthtool;
+package de.m0ep.oauthtool.facebook;
 
 import java.io.IOException;
 import java.io.PrintWriter;

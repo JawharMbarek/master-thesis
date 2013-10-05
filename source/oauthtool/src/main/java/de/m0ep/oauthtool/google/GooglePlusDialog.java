@@ -1,4 +1,4 @@
-package de.m0ep.oauthtool;
+package de.m0ep.oauthtool.google;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -18,6 +18,8 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+
+import de.m0ep.oauthtool.OAuthToolApp;
 
 public class GooglePlusDialog extends JDialog {
 	private static final long serialVersionUID = 1L;

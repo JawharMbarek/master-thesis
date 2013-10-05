@@ -1,4 +1,4 @@
-package de.m0ep.oauthtool;
+package de.m0ep.oauthtool.google;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

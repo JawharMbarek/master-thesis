@@ -5,9 +5,11 @@
 	<artifactId>canvaslms4j</artifactId>
 	<version>0.0.1</version>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+	<parent>
+		<groupId>de.m0ep.masterthesis</groupId>
+    	<artifactId>apis</artifactId>
+    	<version>1.0.1</version>
+	</parent>
 
 	<dependencies>
 		<dependency>
@@ -52,18 +54,4 @@
 			<version>1.1.7</version>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-s					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.m0ep.masterthesis.apis</groupId>
+    <artifactId>rdf2go</artifactId>
+    <version>1.0.2</version>
+    <name>Masterthesis APIs RDF2Go</name>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>de.m0ep.masterthesis</groupId>
+        <artifactId>apis</artifactId>
+        <version>1.0.1</version>
+    </parent>
+
+    <modules>
+        <module>rdf2go-dcterms</module>
+        <module>rdf2go-foaf</module>
+        <module>rdf2go-sioc</module>
+        <module>rdf2go-sioc-services</module>
+        <module>rdf2go-sioc-services-auth</module>
+        <module>rdf2go-socc-config</module>
+        <module>rdf2go-w3-wacl</module>
+    </modules>
+
+    <repositories>
+        <repository>
+            <releases />
+            <id>semweb4j-repo</id>
+            <name>Semweb4j.org maven repo</name>
+            <url>http://semweb4j.org/repo/</url>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+            <id>semweb4j-snapshots</id>
+            <name>Semweb4j.org maven snapshot repo</name>
+            <url>http://semweb4j.org/snapshots/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.semweb4j</groupId>
+            <artifactId>rdfreactor.generator</artifactId>
+            <version>4.8.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.semweb4j</groupId>
+            <artifactId>rdf2go.api</artifactId>
+            <version>4.8.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.semweb4j</groupId>
+            <artifactId>rdfreactor.runtime</artifactId>
+            <version>4.8.3</version>
+        </dependency>
+    </dependencies>
+</project>

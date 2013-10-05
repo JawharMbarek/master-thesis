@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.w3.ns.auth.acl</groupId>
+	<artifactId>rdf2go-w3-wacl</artifactId>
+	<version>1.0.0</version>
+	
+    <parent>
+        <groupId>de.m0ep.masterthesis.apis</groupId>
+        <artifactId>rdf2go</artifactId>
+        <version>1.0.2</version>
+    </parent>
+	
+	<dependencies>
+		<dependency>
+			<groupId>de.m0ep.rdf2go</groupId>
+			<artifactId>rdf2go-foaf</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	</dependencies>
+</project>

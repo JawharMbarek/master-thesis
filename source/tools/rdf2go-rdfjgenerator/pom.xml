@@ -4,26 +4,34 @@
 	<groupId>de.m0ep.rdf2go</groupId>
 	<artifactId>rdfjgenerator</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
+	<parent>
+		<groupId>de.m0ep.masterthesis</groupId>
+    	<artifactId>tools</artifactId>
+    	<version>1.0.1</version>
+	</parent>
     
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-					<!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
+    <repositories>
+        <repository>
+            <releases />
+            <id>semweb4j-repo</id>
+            <name>Semweb4j.org maven repo</name>
+            <url>http://semweb4j.org/repo/</url>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+            <id>semweb4j-snapshots</id>
+            <name>Semweb4j.org maven snapshot repo</name>
+            <url>http://semweb4j.org/snapshots/</url>
+        </repository>
+    </repositories>
+    
 	<dependencies>
 		<dependency>
 			<groupId>org.semweb4j</groupId>
@@ -53,7 +61,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>14.0.1</version>
+			<version>15.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.jgoodies</groupId>

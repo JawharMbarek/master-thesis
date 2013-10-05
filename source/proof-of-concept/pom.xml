@@ -3,12 +3,18 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.m0ep.uni.ma</groupId>
 	<artifactId>proof-of-concept</artifactId>
-	<version>0.0.1</version>
+
+  <parent>
+    <groupId>de.m0ep</groupId>
+    <artifactId>masterthesis</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
 	<dependencies>
 		<dependency>
 			<groupId>de.m0ep.socc.camel</groupId>
 			<artifactId>socc-camel</artifactId>
-			<version>0.0.1</version>
+			<version>1.0.0</version>
 		</dependency>
   	<dependency>
   		<groupId>com.google.guava</groupId>
@@ -49,22 +55,8 @@
   	<dependency>
   		<groupId>de.m0ep.socc</groupId>
   		<artifactId>socc-core</artifactId>
-  		<version>0.7</version>
+  		<version>1.0.0</version>
   	</dependency>
   </dependencies>
-  
-  <build>
-    <plugins>
-        <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+	<version>1.0.1</version>
 </project>

@@ -35,6 +35,7 @@ import org.rdfs.sioc.UserAccount;
 import org.rdfs.sioc.services.Service;
 
 import de.m0ep.socc.core.ISoccContext;
+import de.m0ep.socc.core.exceptions.AccessControlException;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
@@ -229,11 +230,13 @@ public interface IConnector {
 		public Post getPost( URI uri ) throws
 		        NotFoundException,
 		        AuthenticationException,
-		        IOException;
+		        IOException,
+		        AccessControlException;
 
 		public List<Post> pollPosts( URI sourceUri, Date since, int limit ) throws
 		        AuthenticationException,
-		        IOException;
+		        IOException,
+		        AccessControlException;
 	}
 
 	/**
@@ -275,6 +278,7 @@ public interface IConnector {
 		public void writePosts( URI targetUri, String rdfString, Syntax syntax ) throws
 		        NotFoundException,
 		        AuthenticationException,
-		        IOException;
+		        IOException,
+		        AccessControlException;
 	}
 }

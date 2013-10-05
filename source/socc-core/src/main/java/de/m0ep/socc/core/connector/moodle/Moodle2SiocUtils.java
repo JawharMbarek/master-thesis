@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.Builder;
+import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Site;
@@ -210,7 +211,7 @@ public final class Moodle2SiocUtils {
 	public static Post createSiocPost(
 	        final Moodle2Connector connector,
 	        final ForumPostRecord postRecord,
-	        final Thread container,
+	        final Container container,
 	        final Post parentPost )
 	        throws IOException,
 	        AuthenticationException {

@@ -47,9 +47,11 @@ import de.m0ep.moodlews.soap.ForumPostDatum;
 import de.m0ep.moodlews.soap.ForumPostRecord;
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
+import de.m0ep.socc.core.exceptions.AccessControlException;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
+import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
 
@@ -69,7 +71,8 @@ public class Moodle2PostWriter extends
 	public void writePosts( final URI targetUri, final String rdfString, final Syntax syntax )
 	        throws NotFoundException,
 	        AuthenticationException,
-	        IOException {
+	        IOException,
+	        AccessControlException {
 		Model tmpModel = RDFTool.stringToModel( rdfString, syntax );
 
 		boolean isForumDiscussionUri = Moodle2SiocUtils.isForumDiscussionUri(
@@ -102,6 +105,14 @@ public class Moodle2PostWriter extends
 				Resource resource = postIter.next();
 				Post post = Post.getInstance( tmpModel, resource );
 
+				if ( LOG.isDebugEnabled() ) {
+					LOG.debug( "Try to write Post to {}:\n{}",
+					        getServiceEndpoint(),
+					        RdfUtils.resourceToString(
+					                post,
+					                Syntax.Turtle ) );
+				}
+
 				// skip all posts that are already forwarded from this site
 				if ( SoccUtils.hasContentWatermark(
 				        getConnector().getStructureReader().getSite(),
@@ -119,6 +130,8 @@ public class Moodle2PostWriter extends
 						LOG.debug( "Write {} as reply to {}.", post, sibling );
 						writeReplyToPost( sibling, post );
 						return;
+					} else {
+						LOG.debug( "No sibling found for {}", post.getReplyOf() );
 					}
 				}
 
@@ -162,6 +175,12 @@ public class Moodle2PostWriter extends
 			content = SoccUtils.formatUnknownMessage(
 			        getConnector(),
 			        post );
+		} else if ( !SoccUtils.haveWriteAccess( // check for write access 
+		        getConnector(),
+		        creatorAccount,
+		        targetContainer ) ) {
+			LOG.info( "Skip writing post {}, have no writing permission.", post );
+			return;
 		}
 
 		// Add Attachments to message content
@@ -234,15 +253,22 @@ public class Moodle2PostWriter extends
 			        } );
 
 			if ( null != resultPostRecords && 0 < resultPostRecords.length ) {
-				int numChildren = resultPostRecords[0].getChildren().length;
-				ForumPostRecord postRecord = resultPostRecords[0].getChildren()[numChildren - 1];
-				Post addedPost = Moodle2SiocUtils.createSiocPost(
-				        getConnector(),
-				        postRecord,
-				        SiocUtils.asThread( targetContainer ),
-				        firstPost );
+				ForumPostRecord parentPostRecord = resultPostRecords[0];
+				if ( null != parentPostRecord ) {
+					ForumPostRecord[] childrenRecords = parentPostRecord.getChildren();
+					if ( null != childrenRecords && 0 < childrenRecords.length ) {
+						// get last children of the parent post, it's the previously written reply
+						int len = childrenRecords.length;
+						ForumPostRecord resultPostRecord = childrenRecords[len - 1];
 
-				addedPost.addSibling( post );
+						convertWrittenEntryToPost(
+						        post,
+						        targetContainer,
+						        firstPost,
+						        resultPostRecord );
+						return;
+					}
+				}
 			} else {
 				LOG.warn( "Failed to write post(s) to uri " + targetContainer );
 			}
@@ -277,6 +303,12 @@ public class Moodle2PostWriter extends
 			content = SoccUtils.formatUnknownMessage(
 			        getConnector(),
 			        post );
+		} else if ( !SoccUtils.haveWriteAccess( // check for write access 
+		        getConnector(),
+		        creatorAccount,
+		        targetPost.getContainer() ) ) {
+			LOG.info( "Skip writing post {}, have no writing permission.", post );
+			return;
 		}
 
 		// Add Attachments to message content
@@ -284,8 +316,7 @@ public class Moodle2PostWriter extends
 
 		if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
 			// add watermark for 'already forwarded' check
-			content = SoccUtils
-			        .addContentWatermark( post.getIsPartOf(), content );
+			content = SoccUtils.addContentWatermark( post.getIsPartOf(), content );
 		}
 
 		final Moodle2ClientWrapper finalClient = client;
@@ -307,50 +338,48 @@ public class Moodle2PostWriter extends
 			        }
 		        } );
 
-		ForumPostRecord parentPostRecord = findForumPostRecord( resultPostRecords, postId );
-		if ( null != parentPostRecord
-		        && null != parentPostRecord.getChildren()
-		        && 0 < parentPostRecord.getChildren().length ) {
-			int numChildren = parentPostRecord.getChildren().length;
-			// get last children of the parent post -> the previously written reply
-			ForumPostRecord postRecord = parentPostRecord.getChildren()[numChildren - 1];
+		if ( null != resultPostRecords && 0 < resultPostRecords.length ) {
+			ForumPostRecord parentPostRecord = findForumPostRecord( resultPostRecords, postId );
+			if ( null != parentPostRecord ) {
+				ForumPostRecord[] childrenRecords = parentPostRecord.getChildren();
+				if ( null != childrenRecords && 0 < childrenRecords.length ) {
+					// get last children of the parent post, it's the previously written reply
+					int len = childrenRecords.length;
+					ForumPostRecord resultPostRecord = childrenRecords[len - 1];
 
-			Container container = targetPost.getContainer();
-			Post addedPost = Moodle2SiocUtils.createSiocPost(
-			        getConnector(),
-			        postRecord,
-			        SiocUtils.asThread( container ),
-			        targetPost );
-
-			addedPost.addSibling( post );
-
-			SoccUtils.logPost( LOG, addedPost, "Writing successful, result post" );
+					convertWrittenEntryToPost(
+					        post,
+					        targetPost.getContainer(),
+					        targetPost,
+					        resultPostRecord );
+					return;
+				}
+			}
 		} else {
 			LOG.warn( "Failed to write post(s) to uri " + targetPost );
 		}
 	}
 
 	/**
-	 * Searchs through the an array of {@link ForumPostRecord}s and searchs for
-	 * a post whit an specific ID.
+	 * Searches in an array of ForumPosts for an entry with an specific id.
 	 * 
 	 * @param forumPostRecords
-	 * @param postId
+	 * @param id
 	 * @return
 	 */
 	private ForumPostRecord findForumPostRecord(
 	        final ForumPostRecord[] forumPostRecords,
-	        final int postId ) {
+	        final int id ) {
 		if ( null != forumPostRecords ) {
 			for ( ForumPostRecord postRecord : forumPostRecords ) {
-				if ( postId == postRecord.getId() ) {
+				if ( id == postRecord.getId() ) {
 					return postRecord;
 				}
 
 				// iterate through all replies
 				ForumPostRecord result = findForumPostRecord(
 				        postRecord.getChildren(),
-				        postId );
+				        id );
 
 				if ( null != result ) {
 					return result;
@@ -358,5 +387,37 @@ public class Moodle2PostWriter extends
 			}
 		}
 		return null;
+	}
+
+	private void convertWrittenEntryToPost( final Post originalPost,
+	        final Container targetContainer, Post parentPost, ForumPostRecord postRecord )
+	        throws IOException, AuthenticationException {
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Received written entry:\n{}",
+			        getServiceEndpoint(),
+			        postRecord );
+		} else {
+			LOG.info( "Received written entry '{}'",
+			        getServiceEndpoint(),
+			        postRecord.getId() );
+		}
+
+		Post resultPost = Moodle2SiocUtils.createSiocPost(
+		        getConnector(),
+		        postRecord,
+		        SiocUtils.asThread( targetContainer ),
+		        parentPost );
+
+		resultPost.addSibling( originalPost );
+
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Writing a post to {} was successful:\n{}",
+			        getServiceEndpoint(),
+			        RdfUtils.resourceToString( resultPost, Syntax.Turtle ) );
+		} else {
+			LOG.info( "Writing a post to {} was successful: '{}'",
+			        getServiceEndpoint(),
+			        resultPost );
+		}
 	}
 }

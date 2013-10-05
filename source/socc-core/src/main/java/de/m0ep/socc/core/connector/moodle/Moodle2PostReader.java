@@ -7,10 +7,10 @@ import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
-import org.rdfs.sioc.Thread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +20,10 @@ import com.google.common.collect.Lists;
 import de.m0ep.moodlews.soap.ForumPostRecord;
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
+import de.m0ep.socc.core.exceptions.AccessControlException;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
 
@@ -43,7 +45,10 @@ public class Moodle2PostReader extends
 	}
 
 	@Override
-	public Post getPost( URI uri ) throws AuthenticationException, IOException {
+	public Post getPost( URI uri )
+	        throws AuthenticationException,
+	        IOException,
+	        AccessControlException {
 		Preconditions.checkNotNull( uri,
 		        "Required parameter uri must be specified." );
 
@@ -68,31 +73,54 @@ public class Moodle2PostReader extends
 					                        defaultClient.getAuthClient(),
 					                        defaultClient.getSessionKey(),
 					                        discussionId,
-					                        9999999 );
+					                        Integer.MAX_VALUE );
 				        }
 			        } );
 
 			ForumPostRecord postRecord = findPostRecordWithId( postRecordArray, postId );
 
 			if ( null != postRecord ) {
-				Container discussion = getConnector().getStructureReader().getContainer(
+				Container container = getConnector().getStructureReader().getContainer(
 				        Moodle2SiocUtils.createForumDiscussionUri(
 				                getServiceEndpoint(),
 				                discussionId ) );
 
 				if ( LOG.isDebugEnabled() ) {
-					LOG.debug( "Loaded ForumPost:\n {}", postRecord );
+					LOG.debug( "Read entry '{}' from '{}':\n{}",
+					        postRecord.getId(),
+					        getServiceEndpoint(),
+					        postRecord );
 				} else {
-					LOG.info( "Loaded ForumPost with id='{}'", postRecord.getId() );
+					LOG.info( "Read entry '{}' from '{}'",
+					        postRecord.getId(),
+					        getServiceEndpoint() );
 				}
 
 				Post result = Moodle2SiocUtils.createSiocPost(
 				        getConnector(),
 				        postRecord,
-				        SiocUtils.asThread( discussion ),
+				        container,
 				        null );
 
-				SoccUtils.logPost( LOG, result, "Converted ForumPost to SIOC" );
+				if ( LOG.isDebugEnabled() ) {
+					LOG.debug( "Converted entry '{}' to SIOC:\n{}",
+					        postRecord.getId(),
+					        RdfUtils.resourceToString( result, Syntax.Turtle ) );
+				} else {
+					LOG.info( "Converted entry '{}' to SIOC {}",
+					        postRecord.getId(),
+					        result );
+				}
+
+				if ( !SoccUtils.haveReadAccess(
+				        getConnector(),
+				        result.getCreator(),
+				        result.getContainer() ) ) {
+					SoccUtils.anonymisePost( result );
+					throw new AccessControlException( "Have no permission to read post '"
+					        + uri
+					        + "'" );
+				}
 
 				return result;
 			}
@@ -108,9 +136,13 @@ public class Moodle2PostReader extends
 	}
 
 	@Override
-	public List<Post> pollPosts( final URI sourceUri, final Date since, final int limit ) throws
-	        AuthenticationException,
-	        IOException {
+	public List<Post> pollPosts(
+	        final URI sourceUri,
+	        final Date since,
+	        final int limit )
+	        throws AuthenticationException,
+	        IOException,
+	        AccessControlException {
 		Preconditions.checkNotNull( sourceUri,
 		        "Required parameter uri must be specified." );
 
@@ -138,9 +170,11 @@ public class Moodle2PostReader extends
 	 * @throws AuthenticationException
 	 * @throws IOException
 	 */
-	private List<Post> pollPostsAtContainer( final Container container, final Date since,
-	        final long limit ) throws
-	        AuthenticationException,
+	private List<Post> pollPostsAtContainer(
+	        final Container container,
+	        final Date since,
+	        final long limit )
+	        throws AuthenticationException,
 	        IOException {
 
 		final int discussionId;
@@ -162,18 +196,21 @@ public class Moodle2PostReader extends
 				                        defaultClient.getAuthClient(),
 				                        defaultClient.getSessionKey(),
 				                        discussionId,
-				                        (int) limit );
+				                        Integer.MAX_VALUE );
 			        }
 		        } );
 
 		List<Post> result = Lists.newArrayList();
-		if ( null != postRecordArray && 0 < postRecordArray.length ) {
-			result.addAll( extractPosts(
-			        since,
-			        limit,
-			        SiocUtils.asThread( container ),
-			        null,
-			        postRecordArray ) );
+		if ( null != postRecordArray ) {
+			for ( ForumPostRecord postRecord : postRecordArray ) {
+				addEntryToList(
+				        result,
+				        since,
+				        limit,
+				        container,
+				        null,
+				        postRecord );
+			}
 		}
 
 		return result;
@@ -190,8 +227,7 @@ public class Moodle2PostReader extends
 	 * @throws IOException
 	 */
 	private List<Post> pollRepliesAtPost( final Post post, final Date since, final long limit )
-	        throws
-	        AuthenticationException,
+	        throws AuthenticationException,
 	        IOException {
 		Container container = getConnector().getStructureReader()
 		        .getContainer( post.getContainer().asURI() );
@@ -223,28 +259,29 @@ public class Moodle2PostReader extends
 				                        defaultClient.getAuthClient(),
 				                        defaultClient.getSessionKey(),
 				                        discussionId,
-				                        (int) limit );
+				                        Integer.MAX_VALUE );
 			        }
 		        } );
 
 		List<Post> result = Lists.newArrayList();
-		if ( null != postRecordArray && 0 < postRecordArray.length ) {
-			ForumPostRecord postRecord = findPostRecordWithId( postRecordArray,
-			        postId );
+		if ( null != postRecordArray ) {
+			ForumPostRecord postRecord = findPostRecordWithId( postRecordArray, postId );
 
 			if ( null != postRecord ) {
 				ForumPostRecord[] children = postRecord.getChildren();
-				if ( null != children && 0 < children.length ) {
-					result.addAll( extractPosts(
-					        since,
-					        limit,
-					        SiocUtils.asThread( container ),
-					        post,
-					        children ) );
+				if ( null != children ) {
+					for ( ForumPostRecord forumPost : children ) {
+						addEntryToList(
+						        result,
+						        since,
+						        limit,
+						        container,
+						        post,
+						        forumPost );
+					}
 				}
 			} else {
-				LOG.warn(
-				        "No post found in thread {} with id {} to read replies from.",
+				LOG.warn( "No post found in thread {} with id {} to read replies from.",
 				        discussionId, postId );
 			}
 		}
@@ -252,66 +289,95 @@ public class Moodle2PostReader extends
 		return result;
 	}
 
-	private List<Post> extractPosts( final Date since, final long limit, final Thread container,
-	        final Post parentPost, final ForumPostRecord[] postRecordArray ) throws
-	        AuthenticationException,
-	        IOException {
-		List<Post> results = Lists.newArrayList();
-
-		for ( ForumPostRecord postRecord : postRecordArray ) {
-			if ( 0 > limit || limit < results.size() ) {
-				Date createdDate = new Date( postRecord.getCreated() * 1000L );
-				Post post = Moodle2SiocUtils.createSiocPost(
-				        getConnector(),
-				        postRecord,
-				        container,
-				        parentPost );
-
-				if ( null == since || createdDate.after( since ) ) {
-					if ( LOG.isDebugEnabled() ) {
-						LOG.debug( "Loaded ForumPost:\n {}", postRecord );
-					} else {
-						LOG.info( "Loaded ForumPost with id='{}'", postRecord.getId() );
-					}
-
-					results.add( post );
-
-					SoccUtils.logPost( LOG, post, "Converted ForumPost to SIOC" );
-				}
-
-				ForumPostRecord[] children = postRecord.getChildren();
-				if ( null != children && 0 < children.length ) {
-					results.addAll( extractPosts(
-					        since,
-					        0 > limit
-					                ? -1
-					                : Math.max( 0, limit - results.size() ),
-					        container,
-					        post,
-					        postRecord.getChildren() ) );
-				}
-			}
-		}
-
-		return results;
-	}
-
 	private ForumPostRecord findPostRecordWithId( ForumPostRecord[] postRecordArray, int postId ) {
 		for ( ForumPostRecord postRecord : postRecordArray ) {
 			if ( postId == postRecord.getId() ) {
 				return postRecord;
 			}
-
+	
 			ForumPostRecord[] children = postRecord.getChildren();
 			if ( null != children && 0 < children.length ) {
 				ForumPostRecord result = findPostRecordWithId( children, postId );
-
+	
 				if ( null != result ) {
 					return result;
 				}
 			}
 		}
-
+	
 		return null;
+	}
+
+	private void addEntryToList(
+	        final List<Post> resultList,
+	        final Date since,
+	        final long limit,
+	        final Container container,
+	        final Post parentPost,
+	        final ForumPostRecord postRecord )
+	        throws AuthenticationException,
+	        IOException {
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Read entry '{}' from '{}':\n{}",
+			        postRecord.getId(),
+			        getServiceEndpoint(),
+			        postRecord );
+		} else {
+			LOG.info( "Read entry '{}' from '{}'",
+			        postRecord.getId(),
+			        getServiceEndpoint() );
+		}
+
+		if ( 0 > limit || limit < resultList.size() ) {
+			Post post = Moodle2SiocUtils.createSiocPost(
+			        getConnector(),
+			        postRecord,
+			        SiocUtils.asThread( container ),
+			        parentPost );
+
+			if ( LOG.isDebugEnabled() ) {
+				LOG.debug( "Converted entry '{}' to SIOC:\n{}",
+				        postRecord.getId(),
+				        RdfUtils.resourceToString( post, Syntax.Turtle ) );
+			} else {
+				LOG.info( "Converted entry '{}' to SIOC {}",
+				        postRecord.getId(),
+				        post );
+			}
+
+			if ( SoccUtils.haveReadAccess(
+			        getConnector(),
+			        post.getCreator(),
+			        post.getContainer() ) ) {
+				Date createdDate = new Date( postRecord.getCreated() * 1000L );
+				if ( null == since || createdDate.after( since ) ) {
+					resultList.add( post );
+					LOG.info( "Added {} to polling result. result size: {}",
+					        post,
+					        resultList.size() );
+				} else {
+					LOG.info( "Skip Post '{}', it's to old.", post );
+				}
+			} else {
+				LOG.info( "Have no permission to read posts for this UserAccount='{}'",
+				        post.getCreator() );
+				SoccUtils.anonymisePost( post );
+			}
+
+			// add children
+			if ( null != postRecord.getChildren() ) {
+				for ( ForumPostRecord children : postRecord.getChildren() ) {
+					addEntryToList(
+					        resultList,
+					        since,
+					        Math.max( -1, limit - resultList.size() ),
+					        container,
+					        post,
+					        children );
+				}
+			}
+		} else {
+			LOG.info( "Limit reached: limit={} size={}", limit, resultList.size() );
+		}
 	}
 }

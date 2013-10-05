@@ -422,7 +422,7 @@ public class CanvasLmsPostReader extends
 			        getServiceEndpoint(),
 			        entry );
 		} else {
-			LOG.info( "Converted entry '{}' from '{}'",
+			LOG.info( "Read entry '{}' from '{}'",
 			        entry.getId(),
 			        getServiceEndpoint() );
 		}
@@ -502,6 +502,8 @@ public class CanvasLmsPostReader extends
 					}
 				}
 			}
+		} else {
+			LOG.info( "Limit reached: limit={} size={}", limit, resultList.size() );
 		}
 	}
 }

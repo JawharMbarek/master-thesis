@@ -35,127 +35,144 @@ import de.m0ep.sioc.services.auth.ClientSecret;
 import de.m0ep.sioc.services.auth.Credentials;
 import de.m0ep.sioc.services.auth.ServicesAuthVocabulary;
 import de.m0ep.socc.core.connector.DefaultClientManager;
+import de.m0ep.socc.core.connector.IClientManager;
 import de.m0ep.socc.core.utils.RdfUtils;
 
+/**
+ * Implementation of an {@link IClientManager} for a {@link FacebookConnector}.
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class FacebookClientManager extends
         DefaultClientManager<FacebookClientWrapper> {
-    private ClientId clientId;
-    private ClientSecret clientSecret;
+	private ClientId clientId;
+	private ClientSecret clientSecret;
 
-    public FacebookClientManager(Service service, UserAccount defaultUserAccount)
-            throws Exception {
-        super(service, defaultUserAccount);
-    }
+	/**
+	 * Constructs a new {@link FacebookClientManager}.
+	 * 
+	 * @param service
+	 *            The {@link Service} object for Moodle.
+	 * @param defaultUserAccount
+	 *            The default user.
+	 * @throws Exception
+	 *             Throw if there is a problem initializing the clientmanager.
+	 */
+	public FacebookClientManager( final Service service, final UserAccount defaultUserAccount )
+	        throws Exception {
+		super( service, defaultUserAccount );
+	}
 
-    public ClientId getClientId() {
-        return clientId;
-    }
+	public ClientId getClientId() {
+		return clientId;
+	}
 
-    public ClientSecret getClientSecret() {
-        return clientSecret;
-    }
+	public ClientSecret getClientSecret() {
+		return clientSecret;
+	}
 
-    @Override
-    protected void init() {
-        clientId = null;
-        clientSecret = null;
-        de.m0ep.sioc.services.auth.Service authService =
-                de.m0ep.sioc.services.auth.Service.getInstance(
-                        getService().getModel(),
-                        getService().getResource());
+	@Override
+	protected void init() {
+		clientId = null;
+		clientSecret = null;
+		de.m0ep.sioc.services.auth.Service authService =
+		        de.m0ep.sioc.services.auth.Service.getInstance(
+		                getService().getModel(),
+		                getService().getResource() );
 
-        Preconditions.checkArgument(authService.hasServiceAuthentication(),
-                "The parameter service has no authentication.");
+		Preconditions.checkArgument( authService.hasServiceAuthentication(),
+		        "The parameter service has no authentication." );
 
-        AuthenticationMechanism authentication = authService
-                .getServiceAuthentication();
-        Preconditions.checkArgument(authentication.hasCredentials(),
-                "The service authentication has no credentials.");
+		AuthenticationMechanism authentication = authService
+		        .getServiceAuthentication();
+		Preconditions.checkArgument( authentication.hasCredentials(),
+		        "The service authentication has no credentials." );
 
-        ClosableIterator<Credentials> credIter = authentication
-                .getAllCredentials();
-        try {
-            while (credIter.hasNext()) {
-                Credentials credential = (Credentials) credIter.next();
+		ClosableIterator<Credentials> credIter = authentication
+		        .getAllCredentials();
+		try {
+			while ( credIter.hasNext() ) {
+				Credentials credential = credIter.next();
 
-                if (credential.hasValue()) {
-                    if (RdfUtils.isType(
-                            credential.getModel(),
-                            credential.getResource(),
-                            ServicesAuthVocabulary.ClientId)) {
-                        clientId = ClientId.getInstance(
-                                credential.getModel(),
-                                credential.getResource());
-                    } else if (RdfUtils.isType(
-                            credential.getModel(),
-                            credential.getResource(),
-                            ServicesAuthVocabulary.ClientSecret)) {
-                        clientSecret = ClientSecret.getInstance(
-                                credential.getModel(),
-                                credential.getResource());
-                    }
-                }
-            }
-        } finally {
-            credIter.close();
-        }
+				if ( credential.hasValue() ) {
+					if ( RdfUtils.isType(
+					        credential.getModel(),
+					        credential.getResource(),
+					        ServicesAuthVocabulary.ClientId ) ) {
+						clientId = ClientId.getInstance(
+						        credential.getModel(),
+						        credential.getResource() );
+					} else if ( RdfUtils.isType(
+					        credential.getModel(),
+					        credential.getResource(),
+					        ServicesAuthVocabulary.ClientSecret ) ) {
+						clientSecret = ClientSecret.getInstance(
+						        credential.getModel(),
+						        credential.getResource() );
+					}
+				}
+			}
+		} finally {
+			credIter.close();
+		}
 
-        Preconditions.checkArgument(null != clientId,
-                "The service contains no authentication with a clientid.");
+		Preconditions.checkArgument( null != clientId,
+		        "The service contains no authentication with a clientid." );
 
-        Preconditions.checkArgument(null != clientSecret,
-                "The service contains no authentication with a clientsecret.");
-    }
+		Preconditions.checkArgument( null != clientSecret,
+		        "The service contains no authentication with a clientsecret." );
+	}
 
-    @Override
-    public FacebookClientWrapper createClient(UserAccount userAccount)
-            throws Exception {
-        Preconditions.checkState(null != clientId,
-                "Client id missing.");
-        Preconditions.checkState(null != clientSecret,
-                "Client secret missing.");
+	@Override
+	public FacebookClientWrapper createClient( final UserAccount userAccount )
+	        throws Exception {
+		Preconditions.checkState( null != clientId,
+		        "Client id missing." );
+		Preconditions.checkState( null != clientSecret,
+		        "Client secret missing." );
 
-        de.m0ep.sioc.services.auth.UserAccount authAccount =
-                de.m0ep.sioc.services.auth.UserAccount.getInstance(
-                        userAccount.getModel(),
-                        userAccount.getResource());
+		de.m0ep.sioc.services.auth.UserAccount authAccount =
+		        de.m0ep.sioc.services.auth.UserAccount.getInstance(
+		                userAccount.getModel(),
+		                userAccount.getResource() );
 
-        Preconditions.checkArgument(authAccount.hasAccountAuthentication(),
-                "The paramater userAccount has no authentication");
+		Preconditions.checkArgument( authAccount.hasAccountAuthentication(),
+		        "The paramater userAccount has no authentication" );
 
-        AuthenticationMechanism authentication = authAccount
-                .getAccountAuthentication();
-        Preconditions.checkArgument(authentication.hasCredentials(),
-                "The authentication of the parameter userAccount " +
-                        "has no credentials");
+		AuthenticationMechanism authentication = authAccount
+		        .getAccountAuthentication();
+		Preconditions.checkArgument( authentication.hasCredentials(),
+		        "The authentication of the parameter userAccount " +
+		                "has no credentials" );
 
-        AccessToken accessToken = null;
-        ClosableIterator<Credentials> credIter = authentication
-                .getAllCredentials();
-        try {
-            while (credIter.hasNext()) {
-                Credentials credential = (Credentials) credIter.next();
+		AccessToken accessToken = null;
+		ClosableIterator<Credentials> credIter = authentication
+		        .getAllCredentials();
+		try {
+			while ( credIter.hasNext() ) {
+				Credentials credential = credIter.next();
 
-                if (credential.hasValue()) {
-                    if (RdfUtils.isType(
-                            credential.getModel(),
-                            credential.getResource(),
-                            ServicesAuthVocabulary.AccessToken)) {
-                        accessToken = AccessToken.getInstance(
-                                credential.getModel(),
-                                credential.getResource());
-                    }
-                }
+				if ( credential.hasValue() ) {
+					if ( RdfUtils.isType(
+					        credential.getModel(),
+					        credential.getResource(),
+					        ServicesAuthVocabulary.AccessToken ) ) {
+						accessToken = AccessToken.getInstance(
+						        credential.getModel(),
+						        credential.getResource() );
+					}
+				}
 
-            }
-        } finally {
-            credIter.close();
-        }
+			}
+		} finally {
+			credIter.close();
+		}
 
-        Preconditions.checkArgument(null != accessToken,
-                "The authentication of the parameter userAccount has no " +
-                        "accesstoken credential.");
+		Preconditions.checkArgument( null != accessToken,
+		        "The authentication of the parameter userAccount has no " +
+		                "accesstoken credential." );
 
-        return new FacebookClientWrapper(clientId, clientSecret, accessToken);
-    }
+		return new FacebookClientWrapper( clientId, clientSecret, accessToken );
+	}
 }

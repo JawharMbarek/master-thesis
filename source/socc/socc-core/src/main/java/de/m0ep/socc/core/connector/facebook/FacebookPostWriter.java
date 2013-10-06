@@ -29,6 +29,7 @@ import de.m0ep.socc.core.connector.IConnector.IPostWriter;
 import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.Connections;
 import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.Fields;
 import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.RequestParameters;
+import de.m0ep.socc.core.exceptions.AccessControlException;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
@@ -36,12 +37,24 @@ import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
 
+/**
+ * Implementation of a {@link IPostWriter} for the {@link FacebookConnector}.
+ * 
+ * @author Florian Müller
+ */
 public class FacebookPostWriter extends
         DefaultConnectorIOComponent<FacebookConnector> implements
         IPostWriter<FacebookConnector> {
 	private static final Logger LOG = LoggerFactory
 	        .getLogger( FacebookPostWriter.class );
 
+	/**
+	 * Constructs a new {@link FacebookPostWriter}.
+	 * 
+	 * @param connector
+	 *            The {@link FacebookConnector} for that
+	 *            {@link FacebookPostWriter}.
+	 */
 	public FacebookPostWriter( final FacebookConnector connector ) {
 		super( connector );
 	}
@@ -53,8 +66,8 @@ public class FacebookPostWriter extends
 	        final Syntax syntax )
 	        throws NotFoundException,
 	        AuthenticationException,
-	        IOException {
-
+	        IOException,
+	        AccessControlException {
 		boolean targetIsPost = false;
 		boolean targetIsContainer = false;
 		Thing targetResource = null;
@@ -162,12 +175,30 @@ public class FacebookPostWriter extends
 		}
 	}
 
+	/**
+	 * Writes a Post to a Container.
+	 * 
+	 * @param targetContainer
+	 *            Container to write the {@link Post} to
+	 * @param post
+	 *            The {@link Post} to write.
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 * @throws AccessControlException
+	 *             Thrown if there is a problem with access control.
+	 */
 	private void writePostToContainer(
 	        final Container targetContainer,
 	        final Post post )
 	        throws AuthenticationException,
 	        NotFoundException,
-	        IOException {
+	        IOException,
+	        AccessControlException {
 		UserAccount creatorAccount = PostWriterUtils.getCreatorUserAccount(
 		        getConnector(),
 		        post );
@@ -245,12 +276,30 @@ public class FacebookPostWriter extends
 		}
 	}
 
+	/**
+	 * Writes a {@link Post} to another {@link Post} as a comment.
+	 * 
+	 * @param targetPost
+	 *            {@link Post} to write the {@link Post} to as a comment
+	 * @param post
+	 *            The {@link Post} to write.
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 * @throws AccessControlException
+	 *             Thrown if there is a problem with access control.
+	 */
 	private void writeReplyToPost(
 	        final Post targetPost,
 	        final Post post )
 	        throws AuthenticationException,
 	        NotFoundException,
-	        IOException {
+	        IOException,
+	        AccessControlException {
 		UserAccount creatorAccount = PostWriterUtils.getCreatorUserAccount(
 		        getConnector(),
 		        post );

@@ -1,3 +1,25 @@
+/*
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package de.m0ep.socc.core.connector.moodle;
 
 import java.io.IOException;
@@ -27,25 +49,36 @@ import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
 
+/**
+ * Implementation of an {@link IPostReader} for an {@link Moodle2Connector}.
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class Moodle2PostReader extends
         DefaultConnectorIOComponent<Moodle2Connector> implements IPostReader<Moodle2Connector> {
-	private static final Logger LOG = LoggerFactory
-	        .getLogger( Moodle2PostReader.class );
+	private static final Logger LOG = LoggerFactory.getLogger( Moodle2PostReader.class );
 
 	private final Moodle2ClientWrapper defaultClient;
 
-	public Moodle2PostReader( Moodle2Connector connector ) {
+	/**
+	 * Constructs a new {@link Moodle2PostReader}.
+	 * 
+	 * @param connector
+	 *            Connector to use.
+	 */
+	public Moodle2PostReader( final Moodle2Connector connector ) {
 		super( connector );
 		this.defaultClient = connector.getClientManager().getDefaultClient();
 	}
 
 	@Override
-	public boolean isPost( URI uri ) {
+	public boolean isPost( final URI uri ) {
 		return Moodle2SiocUtils.isForumPostUri( uri, getServiceEndpoint() );
 	}
 
 	@Override
-	public Post getPost( URI uri )
+	public Post getPost( final URI uri )
 	        throws AuthenticationException,
 	        IOException,
 	        AccessControlException {
@@ -130,7 +163,7 @@ public class Moodle2PostReader extends
 	}
 
 	@Override
-	public boolean hasPosts( URI uri ) {
+	public boolean hasPosts( final URI uri ) {
 		return Moodle2SiocUtils.isForumDiscussionUri( uri, getServiceEndpoint() )
 		        || Moodle2SiocUtils.isForumPostUri( uri, getServiceEndpoint() );
 	}
@@ -164,11 +197,17 @@ public class Moodle2PostReader extends
 	 * Polls post from a {@link Container}.
 	 * 
 	 * @param container
+	 *            Source {@link Container} to poll from.
 	 * @param since
+	 *            Data since a post is new
 	 * @param limit
-	 * @return
+	 *            Limit result size to this number.
+	 * @return A {@link List} of {@link Post}s
+	 * 
 	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
 	 * @throws IOException
+	 *             Thrown if there is a problem in communication.
 	 */
 	private List<Post> pollPostsAtContainer(
 	        final Container container,
@@ -220,11 +259,17 @@ public class Moodle2PostReader extends
 	 * Polls replies from a post.0
 	 * 
 	 * @param post
+	 *            Source {@link Post} to poll from.
 	 * @param since
+	 *            Data since a post is new
 	 * @param limit
-	 * @return
+	 *            Limit result size to this number.
+	 * @return A {@link List} of {@link Post}s
+	 * 
 	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
 	 * @throws IOException
+	 *             Thrown if there is a problem in communication.
 	 */
 	private List<Post> pollRepliesAtPost( final Post post, final Date since, final long limit )
 	        throws AuthenticationException,
@@ -289,25 +334,56 @@ public class Moodle2PostReader extends
 		return result;
 	}
 
+	/**
+	 * Searchs for a {@link ForumPostRecord} with a specific ID in an array.
+	 * 
+	 * @param postRecordArray
+	 *            Array to search in
+	 * @param postId
+	 *            Id of the searched {@link ForumPostRecord}.
+	 * @return The {@link ForumPostRecord} or <code>null</code>.
+	 */
 	private ForumPostRecord findPostRecordWithId( ForumPostRecord[] postRecordArray, int postId ) {
 		for ( ForumPostRecord postRecord : postRecordArray ) {
 			if ( postId == postRecord.getId() ) {
 				return postRecord;
 			}
-	
+
 			ForumPostRecord[] children = postRecord.getChildren();
 			if ( null != children && 0 < children.length ) {
 				ForumPostRecord result = findPostRecordWithId( children, postId );
-	
+
 				if ( null != result ) {
 					return result;
 				}
 			}
 		}
-	
+
 		return null;
 	}
 
+	/**
+	 * Adds a {@link ForumPostRecord} to the resultList, if it matches the
+	 * criteria.
+	 * 
+	 * @param resultList
+	 *            ResultList to add entry.
+	 * @param since
+	 *            Data since a post is new
+	 * @param limit
+	 *            Limit result size to this number.
+	 * @param container
+	 *            The parent {@link Container}.
+	 * @param parentPost
+	 *            The parent {@link Post}.
+	 * @param postRecord
+	 *            The {@link ForumPostRecord} to add.
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there is a problem in communication.
+	 */
 	private void addEntryToList(
 	        final List<Post> resultList,
 	        final Date since,

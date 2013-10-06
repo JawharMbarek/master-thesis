@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.util.Builder;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Site;
@@ -42,6 +43,11 @@ import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
+/**
+ * Implementation of an {@link IStructureReader} for Google+.
+ * 
+ * @author Florian Müller
+ */
 public class GooglePlusStructureReader extends
         DefaultConnectorIOComponent<GooglePlusConnector> implements
         IStructureReader<GooglePlusConnector> {
@@ -49,32 +55,37 @@ public class GooglePlusStructureReader extends
 	private final GooglePlusClientWrapper defaultClient;
 	private Container defaultsPublicFeed;
 
-	public GooglePlusStructureReader( GooglePlusConnector connector ) {
+	/**
+	 * Constructs a new {@link GooglePlusStructureReader} for a
+	 * {@link GooglePlusConnector}.
+	 * 
+	 * @param connector
+	 *            THe connector to use.
+	 */
+	public GooglePlusStructureReader( final GooglePlusConnector connector ) {
 		super( connector );
-
 		this.defaultClient = getConnector().getClientManager().getDefaultClient();
 	}
 
 	@Override
 	public Site getSite() {
-		Site result = null;
-		if ( Site.hasInstance( getModel(), getServiceEndpoint() ) ) {
-			result = Site.getInstance( getModel(), getServiceEndpoint() );
-		} else {
-			result = new Site( getModel(), getServiceEndpoint(), true );
+		URI uri = Builder.createURI( "https://plus.google.com" );
+		if ( !Site.hasInstance( getModel(), uri ) ) {
+			Site result = new Site( getModel(), uri, true );
 			result.setName( "Google Plus" );
+			return result;
 		}
 
-		return result;
+		return Site.getInstance( getModel(), uri );
 	}
 
 	@Override
-	public boolean isContainer( URI uri ) {
+	public boolean isContainer( final URI uri ) {
 		return GooglePlusSiocUtils.isActivityFeedUri( uri );
 	}
 
 	@Override
-	public Container getContainer( URI uri )
+	public Container getContainer( final URI uri )
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {
@@ -85,9 +96,7 @@ public class GooglePlusStructureReader extends
 			return Forum.getInstance( getModel(), uri );
 		}
 
-		Pattern pattern = Pattern.compile( "^"
-		        + GooglePlusSiocUtils.GOOGLE_PLUS_API_ROOT_URI
-		        + GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
+		Pattern pattern = Pattern.compile( GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
 		if ( matcher.find() && 3 <= matcher.groupCount() ) {
@@ -137,12 +146,12 @@ public class GooglePlusStructureReader extends
 	}
 
 	@Override
-	public boolean hasChildContainer( URI uri ) {
+	public boolean hasChildContainer( final URI uri ) {
 		return false;
 	}
 
 	@Override
-	public List<Container> listContainer( URI parentUri ) {
+	public List<Container> listContainer( final URI parentUri ) {
 		throw new UnsupportedOperationException(
 		        "listContainers is not supported by Google+ Connector" );
 	}

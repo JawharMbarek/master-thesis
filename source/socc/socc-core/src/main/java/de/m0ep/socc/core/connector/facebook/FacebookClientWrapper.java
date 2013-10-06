@@ -37,45 +37,68 @@ import de.m0ep.sioc.services.auth.ClientId;
 import de.m0ep.sioc.services.auth.ClientSecret;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
+/**
+ * Class that wraps a Facebook client to store extra information.
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class FacebookClientWrapper {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(FacebookClientWrapper.class);
+	private static final Logger LOG = LoggerFactory
+	        .getLogger( FacebookClientWrapper.class );
 
-    private User user;
-    private FacebookClient client;
+	private User user;
+	private final FacebookClient client;
 
-    public FacebookClientWrapper(ClientId clientId, ClientSecret clientSecret,
-            AccessToken accessToken) throws IOException,
-            AuthenticationException {
+	/**
+	 * Constructs a new {@link FacebookClientWrapper}.
+	 * 
+	 * @param clientId
+	 *            Client id of the facebook application.
+	 * @param clientSecret
+	 *            Client secret of the facebook application.
+	 * @param accessToken
+	 *            Accesstoken for a facebook user account.s
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	public FacebookClientWrapper(
+	        final ClientId clientId,
+	        final ClientSecret clientSecret,
+	        final AccessToken accessToken )
+	        throws IOException,
+	        AuthenticationException {
+		try {
+			DefaultFacebookClient client = new DefaultFacebookClient();
+			com.restfb.FacebookClient.AccessToken token = client
+			        .obtainExtendedAccessToken(
+			                clientId.getValue(),
+			                clientSecret.getValue(),
+			                accessToken.getValue() );
 
-        try {
-            DefaultFacebookClient client = new DefaultFacebookClient();
-            com.restfb.FacebookClient.AccessToken token = client
-                    .obtainExtendedAccessToken(
-                            clientId.getValue(),
-                            clientSecret.getValue(),
-                            accessToken.getValue());
+			accessToken.setValue( token.getAccessToken() );
+		} catch ( Exception e ) {
+			LOG.warn( "Failed to obtain extended accesstoken: {}", e
+			        .getMessage() );
+		}
 
-            accessToken.setValue(token.getAccessToken());
-        } catch (Exception e) {
-            LOG.warn("Failed to obtain extended accesstoken: {}", e
-                    .getMessage());
-        }
+		this.client = new DefaultFacebookClient( accessToken.getValue() );
 
-        this.client = new DefaultFacebookClient(accessToken.getValue());
+		try {
+			this.user = this.client.fetchObject( "me", User.class );
+		} catch ( FacebookException e ) {
+			FacebookConnector.handleFacebookException( e );
+		}
+	}
 
-        try {
-            this.user = this.client.fetchObject("me", User.class);
-        } catch (FacebookException e) {
-            FacebookConnector.handleFacebookException(e);
-        }
-    }
+	public User getUser() {
+		return user;
+	}
 
-    public User getUser() {
-        return user;
-    }
-
-    public FacebookClient getFacebookClient() {
-        return client;
-    }
+	public FacebookClient getFacebookClient() {
+		return client;
+	}
 }

@@ -1,19 +1,23 @@
 /*
- * The MIT License (MIT) Copyright © 2013 Florian Müller Permission is hereby granted,
- * free of charge, to any person obtaining a copy of this software and
- * associated documentation files (the “Software”), to deal in the Software
- * without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the
- * Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions: The above copyright notice and this
- * permission notice shall be included in all copies or substantial portions of
- * the Software. THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
- * EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES
- * OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 package de.m0ep.socc.core.connector.moodle;
@@ -44,19 +48,32 @@ import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
+/**
+ * Implmentation of an {@link IStructureReader} for a {@link Moodle2Connector}.
+ * 
+ * @author Florian
+ * 
+ */
 public class Moodle2StructureReader extends
         DefaultConnectorIOComponent<Moodle2Connector>
         implements
         IStructureReader<Moodle2Connector> {
-
 	private static final Logger LOG = LoggerFactory.getLogger( Moodle2StructureReader.class );
-	static private Map<Integer, CourseRecord> courseMap;
+	private static Map<Integer, CourseRecord> courseMap; // map to store course informations.
+
 	private final Moodle2ClientWrapper defaultClient;
 
 	static {
 		courseMap = Maps.newHashMap();
 	}
 
+	/**
+	 * Constructs a new {@link Moodle2StructureReader} for a
+	 * {@link Moodle2Connector}.
+	 * 
+	 * @param connector
+	 *            Connector to create for.
+	 */
 	public Moodle2StructureReader( Moodle2Connector connector ) {
 		super( connector );
 		this.defaultClient = connector.getClientManager()
@@ -145,6 +162,18 @@ public class Moodle2StructureReader extends
 		return results;
 	}
 
+	/**
+	 * Reads a {@link Forum} from an URI and converts it to SIOC.
+	 * 
+	 * @param uri
+	 *            URI to read {@link Forum} from.
+	 * @return The {@link Forum} of the URI.
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	private Forum getForum( URI uri ) throws AuthenticationException, IOException {
 		if ( Forum.hasInstance( getModel(), uri ) ) {
 			return Forum.getInstance( getModel(), uri );
@@ -180,26 +209,18 @@ public class Moodle2StructureReader extends
 		throw new NotFoundException( "No forum found at the uri " + uri );
 	}
 
-	private CourseRecord getCourse( final int courseId ) throws AuthenticationException,
-	        IOException {
-		if ( !courseMap.containsKey( courseId ) ) {
-			CourseRecord[] courses = defaultClient.callMethod( new Callable<CourseRecord[]>() {
-				@Override
-				public CourseRecord[] call() throws Exception {
-					return defaultClient.getBindingStub().get_course_byid(
-					        defaultClient.getAuthClient(),
-					        defaultClient.getSessionKey(),
-					        Integer.toString( courseId ) );
-				}
-			} );
-			if ( null != courses ) {
-				courseMap.put( courses[0].getId(), courses[0] );
-			}
-		}
-
-		return courseMap.get( courseId );
-	}
-
+	/**
+	 * Reads a {@link Thread} from an URI and converts it to SIOC.
+	 * 
+	 * @param uri
+	 *            URI to read {@link Thread} from.
+	 * @return The {@link Thread} of the URI.
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	private Thread getThread( URI uri ) throws AuthenticationException, IOException {
 		if ( Thread.hasInstance( getModel(), uri ) ) {
 			return Thread.getInstance( getModel(), uri );
@@ -236,6 +257,40 @@ public class Moodle2StructureReader extends
 		}
 
 		throw new NotFoundException( "No thread found at the uri " + uri );
+	}
+
+	/**
+	 * Reads a {@link CourseRecord} with the <code>id</code> and converts it to
+	 * SIOC.
+	 * 
+	 * @param courseId
+	 *            Id of the course.
+	 * @return The {@link CourseRecord} of the id.
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	private CourseRecord getCourse( final int courseId )
+	        throws AuthenticationException,
+	        IOException {
+		if ( !courseMap.containsKey( courseId ) ) {
+			CourseRecord[] courses = defaultClient.callMethod( new Callable<CourseRecord[]>() {
+				@Override
+				public CourseRecord[] call() throws Exception {
+					return defaultClient.getBindingStub().get_course_byid(
+					        defaultClient.getAuthClient(),
+					        defaultClient.getSessionKey(),
+					        Integer.toString( courseId ) );
+				}
+			} );
+			if ( null != courses ) {
+				courseMap.put( courses[0].getId(), courses[0] );
+			}
+		}
+	
+		return courseMap.get( courseId );
 	}
 
 	/**

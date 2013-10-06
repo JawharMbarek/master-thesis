@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
@@ -47,30 +48,42 @@ import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.utils.SoccUtils;
 
+/**
+ * Implementation of an {@link IPostReader} for Google+.
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class GooglePlusPostReader extends
         DefaultConnectorIOComponent<GooglePlusConnector> implements
         IPostReader<GooglePlusConnector> {
-	private static final Logger LOG = LoggerFactory
-	        .getLogger( GooglePlusPostReader.class );
+	private static final Logger LOG = LoggerFactory.getLogger( GooglePlusPostReader.class );
 
 	private final GooglePlusClientWrapper defaultClient;
 
-	public GooglePlusPostReader( GooglePlusConnector connector ) {
+	/**
+	 * Creates a new {@link GooglePlusPostReader} for an
+	 * {@link GooglePlusConnector}.
+	 * 
+	 * @param connector
+	 *            Connector of that PostReader.
+	 */
+	public GooglePlusPostReader( final GooglePlusConnector connector ) {
 		super( connector );
-
-		this.defaultClient = getConnector().getClientManager()
-		        .getDefaultClient();
+		this.defaultClient = getConnector().getClientManager().getDefaultClient();
 	}
 
 	@Override
-	public boolean isPost( URI uri ) {
+	public boolean isPost( final URI uri ) {
 		return GooglePlusSiocUtils.isActivityUri( uri )
 		        || GooglePlusSiocUtils.isCommentUri( uri );
 	}
 
 	@Override
-	public Post getPost( URI uri )
+	public Post getPost( final URI uri )
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {
@@ -89,14 +102,14 @@ public class GooglePlusPostReader extends
 	}
 
 	@Override
-	public boolean hasPosts( URI uri ) {
+	public boolean hasPosts( final URI uri ) {
 		return null != uri
 		        && ( GooglePlusSiocUtils.isActivityFeedUri( uri )
 		        || GooglePlusSiocUtils.isActivityUri( uri ) );
 	}
 
 	@Override
-	public List<Post> pollPosts( URI sourceUri, Date since, int limit )
+	public List<Post> pollPosts( final URI sourceUri, final Date since, final int limit )
 	        throws AuthenticationException, IOException {
 		Preconditions.checkNotNull( since,
 		        "Required parameter since must be specified." );
@@ -112,13 +125,25 @@ public class GooglePlusPostReader extends
 		throw new IOException( "Can't poll for Google+ posts at this uri " + sourceUri );
 	}
 
-	private Post readActivity( URI uri )
+	/**
+	 * Reads an {@link Activity} from an URI and convert it to SIOC.
+	 * 
+	 * @param uri
+	 *            URI to read the {@link Activity}
+	 * @return A {@link Post} of the {@link Activity} from that URI.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	private Post readActivity( final URI uri )
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {
-		Pattern pattern = Pattern.compile( "^"
-		        + GooglePlusSiocUtils.GOOGLE_PLUS_API_ROOT_URI
-		        + GooglePlusSiocUtils.REGEX_ACTIVITY_URI );
+		Pattern pattern = Pattern.compile( GooglePlusSiocUtils.REGEX_ACTIVITY_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
 		if ( matcher.find() && 2 <= matcher.groupCount() ) {
@@ -139,13 +164,25 @@ public class GooglePlusPostReader extends
 		throw new NotFoundException( "No Google+ post found at uri " + uri );
 	}
 
-	private Post readComment( URI uri )
+	/**
+	 * Reads an {@link Comment} from an URI and convert it to SIOC.
+	 * 
+	 * @param uri
+	 *            URI to read the {@link Comment}
+	 * @return A {@link Post} of the {@link Comment} from that URI.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	private Post readComment( final URI uri )
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {
-		Pattern pattern = Pattern.compile( "^"
-		        + GooglePlusSiocUtils.GOOGLE_PLUS_API_ROOT_URI
-		        + GooglePlusSiocUtils.REGEX_COMMENT_URI );
+		Pattern pattern = Pattern.compile( GooglePlusSiocUtils.REGEX_COMMENT_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
 		if ( matcher.find() && 2 <= matcher.groupCount() ) {
@@ -166,14 +203,34 @@ public class GooglePlusPostReader extends
 		throw new NotFoundException( "No Google+ post found at uri " + uri );
 	}
 
-	private List<Post> pollActivityFeed( URI sourceUri, Date since, int limit )
+	/**
+	 * Poll {@link Activity}s from an {@link ActivityFeed} from an URI an
+	 * convert them to SIOC.
+	 * 
+	 * @param sourceUri
+	 *            URI of that {@link ActivityFeed}.
+	 * @param since
+	 *            Data since a post is new
+	 * @param limit
+	 *            Limit result size to this number.
+	 * @return A {@link List} of {@link Post}s
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	private List<Post> pollActivityFeed(
+	        final URI sourceUri,
+	        final Date since,
+	        final int limit )
 	        throws AuthenticationException,
 	        IOException {
-		Pattern pattern = Pattern.compile( "^"
-		        + GooglePlusSiocUtils.GOOGLE_PLUS_API_ROOT_URI
-		        + GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
+		Pattern pattern = Pattern.compile( GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
 		Matcher matcher = pattern.matcher( sourceUri.toString() );
-		List<Post> result = Lists.newArrayList();
+		List<Post> resultList = Lists.newArrayList();
 
 		if ( matcher.find() && 3 <= matcher.groupCount() ) {
 			String userId = matcher.group( 1 );
@@ -195,15 +252,61 @@ public class GooglePlusPostReader extends
 					ActivityFeed activityFeed = activityFeedList.execute();
 
 					for ( Activity activity : activityFeed.getItems() ) {
-						Date createdDate = new Date( activity.getPublished().getValue() );
-						if ( ( 0 > limit || limit < result.size() )
-						        && ( null == since || createdDate.after( since ) ) ) {
-							result.add( GooglePlusSiocUtils.createSiocPost(
+						if ( LOG.isDebugEnabled() ) {
+							LOG.debug( "Read entry '{}' from '{}':\n{}",
+							        activity.getId(),
+							        getServiceEndpoint(),
+							        activity );
+						} else {
+							LOG.info( "Read entry '{}' from '{}'",
+							        activity.getId(),
+							        getServiceEndpoint() );
+						}
+
+						if ( 0 > limit || limit < resultList.size() ) {
+							Post post = GooglePlusSiocUtils.createSiocPost(
 							        getConnector(),
 							        activity,
-							        container ) );
+							        container );
+
+							if ( LOG.isDebugEnabled() ) {
+								LOG.debug( "Converted entry '{}' to SIOC:\n{}",
+								        activity.getId(),
+								        RdfUtils.resourceToString( post, Syntax.Turtle ) );
+							} else {
+								LOG.info( "Converted entry '{}' to SIOC {}",
+								        activity.getId(),
+								        post );
+							}
+
+							if ( SoccUtils.haveReadAccess(
+							        getConnector(),
+							        post.getCreator(),
+							        post.getContainer() ) ) {
+								Date createdDate = new Date( activity.getPublished().getValue() );
+								if ( null == since || createdDate.after( since ) ) {
+									resultList.add( post );
+									LOG.info( "Added {} to polling result. result size: {}",
+									        post,
+									        resultList.size() );
+								} else {
+									LOG.info( "Skip Post '{}', it's to old.", post );
+								}
+							} else {
+								LOG.info(
+								        "Have no permission to read posts for this UserAccount='{}'",
+								        post.getCreator() );
+								SoccUtils.anonymisePost( post );
+							}
+
+							// check for new comments
+							resultList.addAll( pollActivityCommentFeed(
+							        post.getResource().asURI(),
+							        since,
+							        Math.max( -1, limit - resultList.size() ) ) );
 						} else {
-							return result;
+							LOG.info( "Limit reached: limit={} size={}", limit, resultList.size() );
+							return resultList;
 						}
 					}
 
@@ -214,19 +317,38 @@ public class GooglePlusPostReader extends
 			}
 		}
 
-		LOG.debug( "polled {} activities from Google+ uri '{}'", result.size(), sourceUri );
-		return result;
+		return resultList;
 	}
 
-	private List<Post> pollActivityCommentFeed( URI sourceUri, Date since, int limit )
+	/**
+	 * Poll {@link Comment}s from an {@link CommentFeed} from an URI an convert
+	 * them to SIOC.
+	 * 
+	 * @param sourceUri
+	 *            URI of that {@link CommentFeed}.
+	 * @param since
+	 *            Data since a post is new
+	 * @param limit
+	 *            Limit result size to this number.
+	 * @return A {@link List} of {@link Post}s
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	private List<Post> pollActivityCommentFeed(
+	        final URI sourceUri,
+	        final Date since,
+	        final int limit )
 	        throws AuthenticationException,
 	        IOException {
-		Pattern pattern = Pattern.compile( "^"
-		        + GooglePlusSiocUtils.GOOGLE_PLUS_API_ROOT_URI
-		        + GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
-		Matcher matcher = pattern.matcher( sourceUri.toString() );
-		List<Post> result = Lists.newArrayList();
+		List<Post> resultList = Lists.newArrayList();
 
+		Pattern pattern = Pattern.compile( GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
+		Matcher matcher = pattern.matcher( sourceUri.toString() );
 		if ( matcher.find() && 2 <= matcher.groupCount() ) {
 			String activityId = matcher.group( 1 );
 			String pageToken = null;
@@ -245,15 +367,55 @@ public class GooglePlusPostReader extends
 					CommentFeed commentFeed = commentFeedList.execute();
 
 					for ( Comment comment : commentFeed.getItems() ) {
-						Date createdDate = new Date( comment.getPublished().getValue() );
-						if ( ( 0 > limit || limit < result.size() )
-						        && ( null == since || createdDate.after( since ) ) ) {
-							result.add( GooglePlusSiocUtils.createSiocPost(
+						if ( LOG.isDebugEnabled() ) {
+							LOG.debug( "Read entry '{}' from '{}':\n{}",
+							        comment.getId(),
+							        getServiceEndpoint(),
+							        comment );
+						} else {
+							LOG.info( "Read entry '{}' from '{}'",
+							        comment.getId(),
+							        getServiceEndpoint() );
+						}
+
+						if ( 0 > limit || limit < resultList.size() ) {
+							Post post = GooglePlusSiocUtils.createSiocPost(
 							        getConnector(),
 							        comment,
-							        parentPost ) );
+							        parentPost );
+
+							if ( LOG.isDebugEnabled() ) {
+								LOG.debug( "Converted entry '{}' to SIOC:\n{}",
+								        comment.getId(),
+								        RdfUtils.resourceToString( post, Syntax.Turtle ) );
+							} else {
+								LOG.info( "Converted entry '{}' to SIOC {}",
+								        comment.getId(),
+								        post );
+							}
+
+							if ( SoccUtils.haveReadAccess(
+							        getConnector(),
+							        post.getCreator(),
+							        post.getContainer() ) ) {
+								Date createdDate = new Date( comment.getPublished().getValue() );
+								if ( null == since || createdDate.after( since ) ) {
+									resultList.add( post );
+									LOG.info( "Added {} to polling result. result size: {}",
+									        post,
+									        resultList.size() );
+								} else {
+									LOG.info( "Skip Post '{}', it's to old.", post );
+								}
+							} else {
+								LOG.info(
+								        "Have no permission to read posts for this UserAccount='{}'",
+								        post.getCreator() );
+								SoccUtils.anonymisePost( post );
+							}
 						} else {
-							return result;
+							LOG.info( "Limit reached: limit={} size={}", limit, resultList.size() );
+							return resultList;
 						}
 					}
 
@@ -264,8 +426,7 @@ public class GooglePlusPostReader extends
 			}
 		}
 
-		LOG.debug( "polled {} comments from Google+ uri '{}'", result.size(), sourceUri );
-		return result;
+		return resultList;
 	}
 
 }

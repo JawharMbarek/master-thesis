@@ -23,6 +23,7 @@
 package de.m0ep.socc.core.connector.google.youtube.v2;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.Builder;
@@ -40,28 +41,58 @@ import com.google.gdata.util.ServiceForbiddenException;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.DefaultConnector;
+import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
+/**
+ * Implmentation of an {@link IConnector} for Youtube.
+ * 
+ * @author Florian Müller
+ */
 public class YoutubeConnector extends DefaultConnector {
 	private static final Logger LOG = LoggerFactory
 	        .getLogger( YoutubeConnector.class );
 
-	private final URI serviceEndpoint = Builder.createURI( "http://www.youtube.com" );
+	private static final URI YOUTUBE_SERVICE_ENDPOINT = Builder.createURI(
+	        "http://gdata.youtube.com" );
 
 	private YoutubeClientManager serviceClientManager;
 	private YoutubeStructureReader serviceStructureReader;
 	private YoutubePostReader postReader;
 	private YoutubePostWriter postWriter;
 
-	private final long lastServiceRequest = 0;
+	private final AtomicLong lastServiceRequest = new AtomicLong( 0 );
 
+	/**
+	 * Construct a new {@link YoutubeConnector} wich an <code>id</code>,
+	 * <code>context</code>, <code>defaultUserAccount</code> and
+	 * <code>service</code> objects.
+	 * 
+	 * @param id
+	 *            The Id of the connector.
+	 * @param context
+	 *            The context of the connector.
+	 * @param defaultUserAccount
+	 *            The default user account of the connector.
+	 * @param service
+	 *            The service object of the Youtube service.
+	 */
 	private YoutubeConnector( String id, ISoccContext context,
 	        UserAccount defaultUserAccount,
 	        Service service ) {
 		super( id, context, defaultUserAccount, service );
 	}
 
+	/**
+	 * Construct a new {@link YoutubeConnector} with a <code>context</code> and
+	 * a connector <code>config</code>.
+	 * 
+	 * @param context
+	 *            The context of the connector.
+	 * @param config
+	 *            {@link ConnectorConfig} with all other data.
+	 */
 	public YoutubeConnector( ISoccContext context, ConnectorConfig config ) {
 		super( context, config );
 	}
@@ -69,6 +100,9 @@ public class YoutubeConnector extends DefaultConnector {
 	@Override
 	@SuppressWarnings( "unchecked" )
 	public YoutubeClientManager getClientManager() {
+		Preconditions.checkState( isInitialized(),
+		        "Connector was not initialized" );
+
 		return serviceClientManager;
 	}
 
@@ -90,6 +124,7 @@ public class YoutubeConnector extends DefaultConnector {
 	public YoutubePostReader getPostReader() {
 		Preconditions.checkState( isInitialized(),
 		        "Connector was not initialized" );
+
 		if ( null == postReader ) {
 			postReader = new YoutubePostReader( this );
 		}
@@ -112,10 +147,11 @@ public class YoutubeConnector extends DefaultConnector {
 
 	@Override
 	public void initialize() throws AuthenticationException, IOException {
-		getService().setServiceEndpoint( serviceEndpoint );
+		getService().setServiceEndpoint( YOUTUBE_SERVICE_ENDPOINT ); // set default service endpoint
 
 		try {
-			serviceClientManager = new YoutubeClientManager( getService(),
+			serviceClientManager = new YoutubeClientManager(
+			        getService(),
 			        getDefaultUserAccount() );
 		} catch ( Exception e ) {
 			Throwables.propagateIfInstanceOf( e, AuthenticationException.class );
@@ -124,37 +160,54 @@ public class YoutubeConnector extends DefaultConnector {
 		}
 
 		setInitialized( true );
-
-		LOG.info( "Create Youtube connector." );
+		LOG.info( "Initialized YoutubeConnector '{}'", getId() );
 	}
 
 	@Override
 	public void shutdown() {
+		LOG.info( "Shuting down YoutubeConnector '{}'", getId() );
 		serviceClientManager.clear();
 		setInitialized( false );
 	}
 
+	/**
+	 * Method to wait 500ms between API requests.
+	 */
 	synchronized void waitForCooldown() {
-		long delta = System.currentTimeMillis() - lastServiceRequest;
+		long delta = System.currentTimeMillis() - lastServiceRequest.get();
 
 		if ( 500 >= delta ) {
 			try {
 				Thread.sleep( 500 - delta );
 			} catch ( InterruptedException e ) {
-				LOG.debug( "Cooldown interrupted" );
+				LOG.warn( "waitForCooldown() interrupted" );
 			}
 		}
+
+		// update timestamp
+		lastServiceRequest.set( System.currentTimeMillis() );
 	}
 
-	static void handleYoutubeExceptions( ServiceException e )
+	/**
+	 * Convert all Youtube exceptions to SOCC equivalents.
+	 * 
+	 * @param exception
+	 *            The Youtube exception.
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	static void handleYoutubeExceptions( ServiceException exception )
 	        throws NotFoundException,
 	        AuthenticationException {
-		if ( e instanceof ServiceForbiddenException ) {
-			throw new AuthenticationException( e );
-		} else if ( e instanceof ResourceNotFoundException ) {
-			throw new NotFoundException( e );
+		if ( exception instanceof ServiceForbiddenException ) {
+			throw new AuthenticationException( exception );
+		} else if ( exception instanceof ResourceNotFoundException ) {
+			throw new NotFoundException( exception );
 		}
 
-		Throwables.propagate( e );
+		Throwables.propagate( exception );
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * The MIT License (MIT) Copyright © 2013 "Florian Mueller"
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the “Software”), to deal
@@ -34,6 +34,7 @@ import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
 import org.ontoware.rdf2go.util.RDFTool;
 import org.rdfs.sioc.Container;
+import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.Thing;
 import org.rdfs.sioc.UserAccount;
@@ -55,14 +56,26 @@ import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
 
+/**
+ * Implementation of an {@link IPostWriter} for a {@link Moodle2Connector}.
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class Moodle2PostWriter extends
         DefaultConnectorIOComponent<Moodle2Connector> implements
         IPostWriter<Moodle2Connector> {
+	private static final Logger LOG = LoggerFactory.getLogger( Moodle2PostWriter.class );
 
-	private static final Logger LOG = LoggerFactory
-	        .getLogger( Moodle2PostWriter.class );
+	// Map to store all first Posts in all read threads.
 	private final Map<Integer, Post> firstPostIdMap = new HashMap<Integer, Post>();
 
+	/**
+	 * Constructs a new {@link Moodle2PostWriter}.
+	 * 
+	 * @param connector
+	 *            Connector to use.
+	 */
 	public Moodle2PostWriter( Moodle2Connector connector ) {
 		super( connector );
 	}
@@ -147,6 +160,19 @@ public class Moodle2PostWriter extends
 		}
 	}
 
+	/**
+	 * Writes a Post to a Container.
+	 * 
+	 * @param targetContainer
+	 *            Container to write the {@link Post} to
+	 * @param post
+	 *            The {@link Post} to write.
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	private void writePostToContainer( final Container targetContainer, final Post post )
 	        throws AuthenticationException,
 	        IOException {
@@ -275,6 +301,19 @@ public class Moodle2PostWriter extends
 		}
 	}
 
+	/**
+	 * Writes a {@link Post} to another {@link Post} as a comment.
+	 * 
+	 * @param targetPost
+	 *            {@link Post} to write the {@link Post} to as a comment
+	 * @param post
+	 *            The {@link Post} to write.
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	private void writeReplyToPost( final Post targetPost, final Post post )
 	        throws AuthenticationException,
 	        IOException {
@@ -361,11 +400,13 @@ public class Moodle2PostWriter extends
 	}
 
 	/**
-	 * Searches in an array of ForumPosts for an entry with an specific id.
+	 * Searchs for a {@link ForumPostRecord} with a specific ID in an array.
 	 * 
 	 * @param forumPostRecords
-	 * @param id
-	 * @return
+	 *            Array to search in
+	 * @param postId
+	 *            Id of the searched {@link ForumPostRecord}.
+	 * @return The {@link ForumPostRecord} or <code>null</code>.
 	 */
 	private ForumPostRecord findForumPostRecord(
 	        final ForumPostRecord[] forumPostRecords,
@@ -389,6 +430,23 @@ public class Moodle2PostWriter extends
 		return null;
 	}
 
+	/**
+	 * Converts an written {@link ForumPostRecord} to SIOC
+	 * 
+	 * @param originalPost
+	 *            The original {@link Post} that was written.
+	 * @param targetContainer
+	 *            The {@link Container} where this post was written.
+	 * @param parentPost
+	 *            The parent {@link Post} of the wirrten {@link Post}.
+	 * @param postRecord
+	 *            The {@link Forum} to convert
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	private void convertWrittenEntryToPost( final Post originalPost,
 	        final Container targetContainer, Post parentPost, ForumPostRecord postRecord )
 	        throws IOException, AuthenticationException {

@@ -36,25 +36,56 @@ import com.google.api.client.repackaged.com.google.common.base.Throwables;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.DefaultConnector;
+import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
+/**
+ * Implementation of an {@link IConnector} for Google+.
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class GooglePlusConnector extends DefaultConnector {
-
-	private static final URI URI_SERVICE_ENDPOINT = Builder
-	        .createURI( "https://plus.google.com" );
+	private static final URI GOOGLEPLUS_SERVICE_ENDPOINT = Builder.createURI(
+	        "https://www.googleapis.com/plus/v1" );
 
 	private GooglePlusClientManager clientManager;
 	private GooglePlusStructureReader structureReader;
 	private GooglePlusPostReader postReader;
 
-	public GooglePlusConnector( ISoccContext context, ConnectorConfig config ) {
+	/**
+	 * Construct a new {@link GooglePlusConnector} wich an <code>id</code>,
+	 * <code>context</code>, <code>defaultUserAccount</code> and
+	 * <code>service</code> objects.
+	 * 
+	 * @param id
+	 *            The Id of the connector.
+	 * @param context
+	 *            The context of the connector.
+	 * @param defaultUserAccount
+	 *            The default user account of the connector.
+	 * @param service
+	 *            The service object of the Google+ service.
+	 */
+	public GooglePlusConnector( final ISoccContext context, final ConnectorConfig config ) {
 		super( context, config );
 	}
 
-	public GooglePlusConnector( String id, ISoccContext context,
-	        UserAccount defaultUserAccount,
-	        Service service ) {
+	/**
+	 * Construct a new {@link GooglePlusConnector} with a <code>context</code>
+	 * and a connector <code>config</code>.
+	 * 
+	 * @param context
+	 *            The context of the connector.
+	 * @param config
+	 *            {@link ConnectorConfig} with all other data.
+	 */
+	public GooglePlusConnector(
+	        final String id,
+	        final ISoccContext context,
+	        final UserAccount defaultUserAccount,
+	        final Service service ) {
 		super( id, context, defaultUserAccount, service );
 	}
 
@@ -94,7 +125,7 @@ public class GooglePlusConnector extends DefaultConnector {
 
 	@Override
 	public void initialize() throws AuthenticationException, IOException {
-		getService().setServiceEndpoint( URI_SERVICE_ENDPOINT );
+		getService().setServiceEndpoint( GOOGLEPLUS_SERVICE_ENDPOINT );
 
 		try {
 			this.clientManager = new GooglePlusClientManager(
@@ -115,23 +146,35 @@ public class GooglePlusConnector extends DefaultConnector {
 		setInitialized( false );
 	}
 
-	public static void handleGoogleException( Exception e )
-	        throws AuthenticationException, IOException {
-		if ( e instanceof GoogleJsonResponseException ) {
-			GoogleJsonResponseException gjre = (GoogleJsonResponseException) e;
+	/**
+	 * Convert Google+ Exceptions to SOCC equivalents and propagate them.
+	 * 
+	 * @param exception
+	 *            Google+ exception to convert.
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	static void handleGoogleException( final Exception exception )
+	        throws AuthenticationException,
+	        IOException {
+		if ( exception instanceof GoogleJsonResponseException ) {
+			GoogleJsonResponseException gjre = (GoogleJsonResponseException) exception;
 			GoogleJsonError error = gjre.getDetails();
 
 			switch ( error.getCode() ) {
 				case 404:
 					throw new NotFoundException(
-					        "Requested resource not found.", e );
+					        "Requested resource not found.", exception );
 				case 401:
 					throw new AuthenticationException( "Authentication failed.",
-					        e );
+					        exception );
 			}
 		}
 
-		Throwables.propagateIfInstanceOf( e, IOException.class );
+		Throwables.propagateIfInstanceOf( exception, IOException.class );
 	}
 
 }

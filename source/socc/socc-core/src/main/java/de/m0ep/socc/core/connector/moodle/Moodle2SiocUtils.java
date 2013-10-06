@@ -1,3 +1,25 @@
+/*
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package de.m0ep.socc.core.connector.moodle;
 
 import java.io.IOException;
@@ -38,6 +60,11 @@ import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.StringUtils;
 import de.m0ep.socc.core.utils.UserAccountUtils;
 
+/**
+ * Utility methods to convert Moodle resouces to SIOC and handle URIs.
+ * 
+ * @author Florian Müller
+ */
 public final class Moodle2SiocUtils {
 	public static final String REGEX_INT_ID_GROUP = "([0-9]+)";
 
@@ -92,6 +119,20 @@ public final class Moodle2SiocUtils {
 	private Moodle2SiocUtils() {
 	}
 
+	/**
+	 * Creates an {@link UserAccount} for an Moodle user.
+	 * 
+	 * @param connector
+	 *            Used Connector.
+	 * @param userid
+	 *            Id of the user
+	 * @return A {@link UserAccount} for the User with hat id.
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	public static UserAccount createSiocUserAccount(
 	        final Moodle2Connector connector,
 	        final int userid )
@@ -136,6 +177,18 @@ public final class Moodle2SiocUtils {
 		throw new IOException( "Failed to read user data" );
 	}
 
+	/**
+	 * Creates a {@link Forum} for an {@link ForumRecord} of a
+	 * {@link CourseRecord}.
+	 * 
+	 * @param connector
+	 *            Used Connector.
+	 * @param forumRecord
+	 *            The {@link ForumRecord} to convert.
+	 * @param courseRecord
+	 *            The {@link CourseRecord} of the {@link ForumRecord}.
+	 * @return A {@link Forum} of the {@link ForumRecord}.
+	 */
 	public static Forum createSiocForum(
 	        final Moodle2Connector connector,
 	        final ForumRecord forumRecord,
@@ -172,6 +225,17 @@ public final class Moodle2SiocUtils {
 		return result;
 	}
 
+	/**
+	 * Creates a {@link Thread} from a {@link ForumDiscussionRecord}.
+	 * 
+	 * @param connector
+	 *            Used Connector.
+	 * @param discussionRecord
+	 *            The {@link ForumDiscussionRecord} to convert.
+	 * @param parentForum
+	 *            The parent {@link Forum}.
+	 * @return A Thread from the {@link ForumDiscussionRecord}.
+	 */
 	public static Thread createSiocThread(
 	        final Moodle2Connector connector,
 	        final ForumDiscussionRecord discussionRecord,
@@ -208,6 +272,24 @@ public final class Moodle2SiocUtils {
 		return result;
 	}
 
+	/**
+	 * Creates a {@link Post} from a {@link ForumPostRecord}.
+	 * 
+	 * @param connector
+	 *            Used Connector.
+	 * @param postRecord
+	 *            {@link ForumPostRecord} to convert.
+	 * @param container
+	 *            Parent {@link Container}.
+	 * @param parentPost
+	 *            Parent {@link Post}.
+	 * @return A Post from the {@link ForumPostRecord}.
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	public static Post createSiocPost(
 	        final Moodle2Connector connector,
 	        final ForumPostRecord postRecord,
@@ -293,6 +375,15 @@ public final class Moodle2SiocUtils {
 		return result;
 	}
 
+	/**
+	 * Creates a URI for an {@link UserAccount}.
+	 * 
+	 * @param rootUri
+	 *            Root URI of the Moodle instance.
+	 * @param id
+	 *            Id of the user.
+	 * @return A URI for an {@link UserAccount}.
+	 */
 	public static URI createUserUri( final URI rootUri, final int id ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( rootUri + TEMPLATE_USER_URI )
@@ -300,6 +391,15 @@ public final class Moodle2SiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Crates a URI for a {@link Forum}.
+	 * 
+	 * @param rootUri
+	 *            Root URI of the Moodle instance.
+	 * @param id
+	 *            Id of the {@link Forum}.
+	 * @return A URI for a {@link Forum}.
+	 */
 	public static URI createForumUri( final URI rootUri, final int id ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( rootUri + TEMPLATE_FORUM_URI )
@@ -307,6 +407,16 @@ public final class Moodle2SiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Crates an URI for a {@link Thread}.
+	 * 
+	 * @param rootUri
+	 *            Root URI of the Moodle instance.
+	 * @param id
+	 *            Id of the {@link Thread}.
+	 * 
+	 * @return An URI for a {@link Thread}.
+	 */
 	public static URI createForumDiscussionUri( final URI rootUri, final int id ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( rootUri + TEMPLATE_DISCUSSION_URI )
@@ -314,6 +424,18 @@ public final class Moodle2SiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Creates a URI for a {@link Post}
+	 * 
+	 * 
+	 * @param rootUri
+	 *            Root URI of the Moodle instance.
+	 * @param discussionId
+	 *            Id of the Thread of the {@link Post}.
+	 * @param entryId
+	 *            Id of the {@link Post}.
+	 * @return A URI for a Post.
+	 */
 	public static URI createForumPostUri(
 	        final URI rootUri,
 	        final int discussionId,
@@ -325,6 +447,16 @@ public final class Moodle2SiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Tests if an URI is from a {@link Forum}.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @param rootUri
+	 *            Root URI of the Moodle instance.
+	 * @return <code>true</code> if the URI is form a {@link Forum},
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isForumUri( final URI uri, final URI rootUri ) {
 		Pattern pattern = Pattern.compile(
 		        "^" + rootUri + Moodle2SiocUtils.REGEX_FORUM_URI );
@@ -333,6 +465,16 @@ public final class Moodle2SiocUtils {
 		return matcher.matches();
 	}
 
+	/**
+	 * Tests if an URI is from a Thread.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @param rootUri
+	 *            Root URI of the Moodle instance.
+	 * @return <code>true</code> if the URI is form a {@link Thread},
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isForumDiscussionUri( final URI uri, final URI rootUri ) {
 		Pattern pattern = Pattern.compile(
 		        "^" + rootUri + Moodle2SiocUtils.REGEX_DISCUSSION_URI );
@@ -341,6 +483,16 @@ public final class Moodle2SiocUtils {
 		return matcher.matches();
 	}
 
+	/**
+	 * Tests if the URI is from a {@link Post}.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @param rootUri
+	 *            Root URI of the Moodle instance.
+	 * @return <code>true</code> if the URI is form a {@link Post},
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isForumPostUri( final URI uri, final URI rootUri ) {
 		Pattern pattern = Pattern.compile(
 		        "^" + rootUri + Moodle2SiocUtils.REGEX_FORUM_POST_URI );

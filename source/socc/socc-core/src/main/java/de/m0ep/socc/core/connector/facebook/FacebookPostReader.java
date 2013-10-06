@@ -49,26 +49,38 @@ import de.m0ep.socc.core.connector.IConnector.IPostReader;
 import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.Connections;
 import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.Fields;
 import de.m0ep.socc.core.connector.facebook.FacebookSiocUtils.RequestParameters;
+import de.m0ep.socc.core.exceptions.AccessControlException;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
 
-public class FacebookPostReader extends
-        DefaultConnectorIOComponent<FacebookConnector> implements IPostReader<FacebookConnector> {
+/**
+ * Implementation of an {@link IPostReader} for a {@link FacebookConnector}.
+ * 
+ * @author Florian Müller
+ * 
+ */
+public class FacebookPostReader extends DefaultConnectorIOComponent<FacebookConnector>
+        implements IPostReader<FacebookConnector> {
 	private static final Logger LOG = LoggerFactory.getLogger( FacebookPostReader.class );
 
 	private final FacebookClientWrapper defaultClient;
 
-	public FacebookPostReader( FacebookConnector connector ) {
+	/**
+	 * Constructs a new {@link FacebookPostReader}.
+	 * 
+	 * @param connector
+	 *            {@link FacebookConnector} for that {@link FacebookPostReader}.
+	 */
+	public FacebookPostReader( final FacebookConnector connector ) {
 		super( connector );
 
-		this.defaultClient = connector.getClientManager()
-		        .getDefaultClient();
+		this.defaultClient = connector.getClientManager().getDefaultClient();
 	}
 
 	@Override
-	public boolean isPost( URI uri ) {
+	public boolean isPost( final URI uri ) {
 		if ( Post.hasInstance( getModel(), uri ) ) {
 			return true;
 		}
@@ -103,10 +115,11 @@ public class FacebookPostReader extends
 	}
 
 	@Override
-	public Post getPost( URI uri )
+	public Post getPost( final URI uri )
 	        throws NotFoundException,
 	        AuthenticationException,
-	        IOException {
+	        IOException,
+	        AccessControlException {
 		LOG.info( "Read post from '{}'.", uri );
 
 		if ( Post.hasInstance( getModel(), uri ) ) {
@@ -142,7 +155,10 @@ public class FacebookPostReader extends
 					        uri );
 				}
 
-				Post resultPost = FacebookSiocUtils.createSiocPost( getConnector(), object, null,
+				Post resultPost = FacebookSiocUtils.createSiocPost(
+				        getConnector(),
+				        object,
+				        null,
 				        null );
 
 				if ( LOG.isDebugEnabled() ) {
@@ -155,6 +171,15 @@ public class FacebookPostReader extends
 					        resultPost );
 				}
 
+				if ( SoccUtils.haveReadAccess(
+				        getConnector(),
+				        resultPost.getCreator(),
+				        resultPost.getContainer() ) ) {
+					throw new AccessControlException( "Have no permission to read post '"
+					        + uri
+					        + "'" );
+				}
+
 				return resultPost;
 			}
 		}
@@ -163,7 +188,7 @@ public class FacebookPostReader extends
 	}
 
 	@Override
-	public boolean hasPosts( URI uri ) {
+	public boolean hasPosts( final URI uri ) {
 		Pattern pattern = Pattern.compile( FacebookSiocUtils.REGEX_FACEBOOK_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
@@ -194,8 +219,9 @@ public class FacebookPostReader extends
 	}
 
 	@Override
-	public List<Post> pollPosts( URI sourceUri, Date since, int limit )
-	        throws AuthenticationException, IOException {
+	public List<Post> pollPosts( final URI sourceUri, final Date since, final int limit )
+	        throws AuthenticationException,
+	        IOException {
 		LOG.info( "Poll posts from sourceUri='{}' since='{}' limit='{}'",
 		        sourceUri, since, limit );
 
@@ -247,8 +273,28 @@ public class FacebookPostReader extends
 		                + getServiceEndpoint() );
 	}
 
-	private List<Post> pollPostsAtContainer( Container sourceContainer, Date since, long limit )
-	        throws AuthenticationException, IOException {
+	/**
+	 * Polls post from a {@link Container}.
+	 * 
+	 * @param sourceContainer
+	 *            Source {@link Container} to poll from.
+	 * @param since
+	 *            Data since a post is new
+	 * @param limit
+	 *            Limit result size to this number.
+	 * @return A {@link List} of {@link Post}s
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there is a problem in communication.
+	 */
+	private List<Post> pollPostsAtContainer(
+	        final Container sourceContainer,
+	        final Date since,
+	        final long limit )
+	        throws AuthenticationException,
+	        IOException {
 		Preconditions.checkNotNull( sourceContainer,
 		        "Required parameter sourceContainer must be specified." );
 
@@ -351,7 +397,23 @@ public class FacebookPostReader extends
 		return result;
 	}
 
-	private List<Post> pollRepliesAtPost( Post sourcePost, Date since, long limit )
+	/**
+	 * Polls post from a {@link Post}.
+	 * 
+	 * @param sourcePost
+	 *            Source {@link Post} to poll from.
+	 * @param since
+	 *            Data since a post is new
+	 * @param limit
+	 *            Limit result size to this number.
+	 * @return A {@link List} of {@link Post}s
+	 * 
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there is a problem in communication.
+	 */
+	private List<Post> pollRepliesAtPost( final Post sourcePost, final Date since, final long limit )
 	        throws AuthenticationException, IOException {
 		Preconditions.checkNotNull( sourcePost,
 		        "Required parameter sourcePost must be specified." );

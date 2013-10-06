@@ -62,51 +62,50 @@ import de.m0ep.socc.core.utils.DateUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.StringUtils;
 
+/**
+ * Utility methods to convert Youtube resources to SIOC and handle URIs
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class YoutubeSiocUtils {
-
 	public static final String YOUTUBE_GDATA_API_ROOT_URI = "http://gdata.youtube.com/feeds/api";
 
 	public static final String REGEX_STRING_ID_GROUP = "([^/\\s?]+)";
 
-	public static final String REGEX_USER_URI =
-	        "^"
-	                + YOUTUBE_GDATA_API_ROOT_URI
-	                + "/users/"
-	                + REGEX_STRING_ID_GROUP;
+	public static final String REGEX_USER_URI = "^"
+	        + YOUTUBE_GDATA_API_ROOT_URI
+	        + "/users/"
+	        + REGEX_STRING_ID_GROUP;
 
-	public static final String REGEX_PLAYLIST_URI =
-	        "^"
-	                + YOUTUBE_GDATA_API_ROOT_URI
-	                + "/playlists/"
-	                + REGEX_STRING_ID_GROUP;
+	public static final String REGEX_PLAYLIST_URI = "^"
+	        + YOUTUBE_GDATA_API_ROOT_URI
+	        + "/playlists/"
+	        + REGEX_STRING_ID_GROUP;
 
-	public static final String REGEX_VIDEO_URI =
-	        "^"
-	                + YOUTUBE_GDATA_API_ROOT_URI
-	                + "/videos/"
-	                + REGEX_STRING_ID_GROUP;
+	public static final String REGEX_VIDEO_URI = "^"
+	        + YOUTUBE_GDATA_API_ROOT_URI
+	        + "/videos/"
+	        + REGEX_STRING_ID_GROUP;
 
-	public static final String REGEX_COMMENT_URI =
-	        "^"
-	                + YOUTUBE_GDATA_API_ROOT_URI
-	                + "/videos/"
-	                + REGEX_STRING_ID_GROUP
-	                + "/comments/"
-	                + REGEX_STRING_ID_GROUP;
+	public static final String REGEX_COMMENT_URI = "^"
+	        + YOUTUBE_GDATA_API_ROOT_URI
+	        + "/videos/"
+	        + REGEX_STRING_ID_GROUP
+	        + "/comments/"
+	        + REGEX_STRING_ID_GROUP;
 
-	public static final String REGEX_USER_UPLOADS_URI =
-	        "^"
-	                + YOUTUBE_GDATA_API_ROOT_URI
-	                + "/users/"
-	                + REGEX_STRING_ID_GROUP
-	                + "/uploads";
+	public static final String REGEX_USER_UPLOADS_URI = "^"
+	        + YOUTUBE_GDATA_API_ROOT_URI
+	        + "/users/"
+	        + REGEX_STRING_ID_GROUP
+	        + "/uploads";
 
-	public static final String REGEX_USER_PLAYLISTS_URI =
-	        "^"
-	                + YOUTUBE_GDATA_API_ROOT_URI
-	                + "/users/"
-	                + REGEX_STRING_ID_GROUP
-	                + "/playlists";
+	public static final String REGEX_USER_PLAYLISTS_URI = "^"
+	        + YOUTUBE_GDATA_API_ROOT_URI
+	        + "/users/"
+	        + REGEX_STRING_ID_GROUP
+	        + "/playlists";
 
 	public static final String TEMPLATE_VAR_USER_ID = "userId";
 
@@ -117,7 +116,7 @@ public class YoutubeSiocUtils {
 	public static final String TEMPLATE_VAR_COMMENT_ID = "commentId";
 
 	/*
-	 * http://gdata.youtube.com/feeds/api/users/{userId}?v=2
+	 * http://gdata.youtube.com/feeds/api/users/{userId}
 	 */
 	public static final String TEMPLATE_USER_URI =
 	        YOUTUBE_GDATA_API_ROOT_URI
@@ -125,7 +124,7 @@ public class YoutubeSiocUtils {
 	                + TEMPLATE_VAR_USER_ID
 	                + "}";
 	/*
-	 * http://gdata.youtube.com/feeds/api/playlists/{playlistId}?v=2
+	 * http://gdata.youtube.com/feeds/api/playlists/{playlistId}
 	 */
 	public static final String TEMPLATE_PLAYLIST_URI =
 	        YOUTUBE_GDATA_API_ROOT_URI
@@ -134,7 +133,7 @@ public class YoutubeSiocUtils {
 	                + "}";
 
 	/*
-	 * http://gdata.youtube.com/feeds/api/videos/{videoId}?v=2
+	 * http://gdata.youtube.com/feeds/api/videos/{videoId}
 	 */
 	public static final String TEMPLATE_VIDEO_URI =
 	        YOUTUBE_GDATA_API_ROOT_URI
@@ -142,8 +141,7 @@ public class YoutubeSiocUtils {
 	                + TEMPLATE_VAR_VIDEO_ID
 	                + "}";
 	/*
-	 * http://gdata.youtube.com/feeds/api/videos/{videoId}/comments/{commentId}?v
-	 * =2
+	 * http://gdata.youtube.com/feeds/api/videos/{videoId}/comments/{commentId}
 	 */
 	public static final String TEMPLATE_COMMENT_URI =
 	        YOUTUBE_GDATA_API_ROOT_URI
@@ -153,7 +151,7 @@ public class YoutubeSiocUtils {
 	                + TEMPLATE_VAR_COMMENT_ID
 	                + "}";
 	/*
-	 * http://gdata.youtube.com/feeds/api/users/{userId}/uploads?v=2
+	 * http://gdata.youtube.com/feeds/api/users/{userId}/uploads
 	 */
 	public static final String TEMPLATE_USER_UPLOADS_URI =
 	        YOUTUBE_GDATA_API_ROOT_URI
@@ -162,7 +160,7 @@ public class YoutubeSiocUtils {
 	                + "}/uploads";
 
 	/*
-	 * http://gdata.youtube.com/feeds/api/users/{userId}/playlists?v=2
+	 * http://gdata.youtube.com/feeds/api/users/{userId}/playlists
 	 */
 	public static final String TEMPLATE_USER_PLAYLISTS_URI =
 	        YOUTUBE_GDATA_API_ROOT_URI
@@ -173,6 +171,22 @@ public class YoutubeSiocUtils {
 	private YoutubeSiocUtils() {
 	}
 
+	/**
+	 * Create {@link UserAccount} from an author {@link Person}
+	 * 
+	 * @param connector
+	 *            Used Connector
+	 * @param author
+	 *            Author {@link Person}
+	 * @return An {@link UserAccount} from the converted authors {@link Person}.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	public static UserAccount createSiocUserAccount(
 	        final YoutubeConnector connector,
 	        final Person author )
@@ -189,7 +203,7 @@ public class YoutubeSiocUtils {
 			try {
 				// load full profile
 				connector.waitForCooldown();
-				profileEntry = client.getService().getEntry(
+				profileEntry = client.getYoutubeService().getEntry(
 				        new URL( author.getUri() ),
 				        UserProfileEntry.class );
 			} catch ( MalformedURLException e ) {
@@ -215,6 +229,17 @@ public class YoutubeSiocUtils {
 		return UserAccount.getInstance( model, uri );
 	}
 
+	/**
+	 * Creates an {@link Forum} of an {@link PlaylistLinkFeed}.
+	 * 
+	 * @param connector
+	 *            Used Connector.
+	 * @param uri
+	 *            URI of the {@link PlaylistLinkFeed}.
+	 * @param playlistFeed
+	 *            The {@link PlaylistLinkFeed}.
+	 * @return An {@link Forum} converted from {@link PlaylistLinkFeed}
+	 */
 	public static Forum createSiocForum(
 	        final YoutubeConnector connector,
 	        final URI uri,
@@ -228,8 +253,6 @@ public class YoutubeSiocUtils {
 		Forum result = new Forum( model, uri, true );
 		result.setId( matcher.group( 1 ) + "/playlists" );
 		result.setName( playlistFeed.getTitle().toString() );
-		result.setNumItems( 0 );
-		result.setNumThreads( 0 );
 
 		Site site = connector.getStructureReader().getSite();
 		result.setHost( site );
@@ -237,6 +260,17 @@ public class YoutubeSiocUtils {
 		return result;
 	}
 
+	/**
+	 * Creates an {@link Forum} of an {@link VideoFeed}.
+	 * 
+	 * @param connector
+	 *            Used Connector.
+	 * @param uri
+	 *            URI of the {@link VideoFeed}.
+	 * @param videoFeed
+	 *            The {@link VideoFeed}.
+	 * @return An {@link Forum} converted from {@link VideoFeed}
+	 */
 	public static Forum createSiocForum(
 	        final YoutubeConnector connector,
 	        final URI uri,
@@ -251,15 +285,26 @@ public class YoutubeSiocUtils {
 		Forum result = new Forum( model, uri, true );
 		result.setId( matcher.group( 1 ) + "/uploads" );
 		result.setName( videoFeed.getTitle().toString() );
-		result.setNumItems( 0 );
-		result.setNumThreads( 0 );
 
 		Site site = connector.getStructureReader().getSite();
 		result.setHost( site );
 		site.addHostOf( result );
+
 		return result;
 	}
 
+	/**
+	 * Creates an {@link Thread} from a {@link PlaylistLinkEntry} of a parent
+	 * {@link PlaylistLinkFeed} {@link Forum}.
+	 * 
+	 * @param connector
+	 *            Used Connector.
+	 * @param playlistEntry
+	 *            The {@link PlaylistLinkEntry}.
+	 * @param parent
+	 *            The parent {@link PlaylistLinkFeed} {@link Forum}.
+	 * @return A {@link Thread} converted from a {@link PlaylistLinkEntry}.
+	 */
 	public static Thread createSiocThread(
 	        final YoutubeConnector connector,
 	        final PlaylistLinkEntry playlistEntry,
@@ -300,6 +345,24 @@ public class YoutubeSiocUtils {
 		return Thread.getInstance( model, uri );
 	}
 
+	/**
+	 * Creates a {@link Post} from a {@link VideoEntry}.
+	 * 
+	 * @param connector
+	 *            Used Connector.
+	 * @param videoEntry
+	 *            {@link VideoEntry} to convert.
+	 * @param container
+	 *            The parent {@link Container} of the {@link VideoEntry}.
+	 * @return A {@link Post} converted from a {@link VideoEntry}.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	public static Post createSiocPost(
 	        final YoutubeConnector connector,
 	        final VideoEntry videoEntry,
@@ -361,6 +424,24 @@ public class YoutubeSiocUtils {
 		return result;
 	}
 
+	/**
+	 * Creates a {@link Post} from a {@link CommentEntry}.
+	 * 
+	 * @param connector
+	 *            Used Connector.
+	 * @param commentEntry
+	 *            {@link CommentEntry} to convert.
+	 * @param parentPost
+	 *            The parent {@link Post} of the {@link CommentEntry}.
+	 * @return A {@link Post} converted from a {@link CommentEntry}.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	public static Post createSiocPost(
 	        final YoutubeConnector connector,
 	        final CommentEntry commentEntry,
@@ -415,6 +496,7 @@ public class YoutubeSiocUtils {
 			SiocUtils.updateLastItemDate( container, createdDate );
 		}
 
+		// check for in_reply_to
 		Link replyToLink = commentEntry.getLink(
 		        YouTubeNamespace.IN_REPLY_TO,
 		        "application/atom+xml" );
@@ -454,6 +536,13 @@ public class YoutubeSiocUtils {
 		return result;
 	}
 
+	/**
+	 * Creates an URI for an users account in Youtube.
+	 * 
+	 * @param userId
+	 *            Id of the users account.
+	 * @return URI for that user account
+	 */
 	public static URI createUserUri( final String userId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( TEMPLATE_USER_URI )
@@ -461,6 +550,13 @@ public class YoutubeSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Creates an URI for an Uploads {@link Forum} of an user.
+	 * 
+	 * @param userId
+	 *            Id of the user
+	 * @return URI for that Uploads {@link Forum}
+	 */
 	public static URI createUserUploadsUri( final String userId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( TEMPLATE_USER_UPLOADS_URI )
@@ -468,6 +564,13 @@ public class YoutubeSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Creates an URI for an Playlists {@link Forum} of an user.
+	 * 
+	 * @param userId
+	 *            Id of the user
+	 * @return URI for that Playlists {@link Forum}
+	 */
 	public static URI createUserPlaylistsUri( final String userId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( TEMPLATE_USER_PLAYLISTS_URI )
@@ -475,6 +578,13 @@ public class YoutubeSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Creates an URI for an playlist {@link Thread}.
+	 * 
+	 * @param playlistId
+	 *            Id of the playlist.
+	 * @return URI of that playlist {@link Thread}.
+	 */
 	public static URI createPlaylistUri( final String playlistId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( TEMPLATE_PLAYLIST_URI )
@@ -482,6 +592,13 @@ public class YoutubeSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Creates an URI for a Video {@link Post}.
+	 * 
+	 * @param videoId
+	 *            Id of the video.
+	 * @return URI for that Video {@link Post}.
+	 */
 	public static URI createVideoUri( final String videoId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( TEMPLATE_VIDEO_URI )
@@ -489,6 +606,15 @@ public class YoutubeSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Creates an URI for a video comment {@link Post}.
+	 * 
+	 * @param videoId
+	 *            Id of the video.
+	 * @param commentId
+	 *            Id of the comment.
+	 * @return URI for that video comment {@link Post}.
+	 */
 	public static URI createCommentUri( final String videoId, final String commentId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( TEMPLATE_COMMENT_URI )
@@ -497,39 +623,87 @@ public class YoutubeSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Tests if the URI is from an {@link UserAccount}.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @return <code>true</code> if the URI is from an {@link UserAccount},
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isUserUri( final URI uri ) {
 		Pattern pattern = Pattern.compile( REGEX_USER_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
-		return matcher.find();
+		return matcher.matches();
 	}
 
+	/**
+	 * Tests if the URI is from an uploads {@link Forum}.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @return <code>true</code> if the URI is from an {@link Forum},
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isUserUploadsUri( final URI uri ) {
 		Pattern pattern = Pattern.compile( REGEX_USER_UPLOADS_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
-		return matcher.find();
+		return matcher.matches();
 	}
 
+	/**
+	 * Tests if an URI is from from a playlists {@link Forum}.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @return <code>true</code> if the URI is from a playlists {@link Forum},
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isUserPlaylistsUri( final URI uri ) {
 		Pattern pattern = Pattern.compile( REGEX_USER_PLAYLISTS_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
-		return matcher.find();
+		return matcher.matches();
 	}
 
+	/**
+	 * Tests if an URI is from a playlist {@link Thread}.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @return <code>true</code> if the URI is from a playlist {@link Thread},
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isPlaylistUri( final URI uri ) {
 		Pattern pattern = Pattern.compile( REGEX_PLAYLIST_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
-		return matcher.find();
+		return matcher.matches();
 	}
 
+	/**
+	 * Tests if an URI is from an video {@link Post}.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @return <code>true</code> if the URI is from a video {@link Post},
+	 *         <code>false</code> otherwise
+	 */
 	public static boolean isVideoUri( final URI uri ) {
 		Pattern pattern = Pattern.compile( REGEX_VIDEO_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
-		return matcher.find() && !isCommentUri( uri );
+		return matcher.matches() && !isCommentUri( uri );
 	}
 
+	/**
+	 * Tests if an URI is from an video comment {@link Post}.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @return <code>true</code> if the URI is from a video comment {@link Post}
+	 *         , <code>false</code> otherwise.
+	 */
 	public static boolean isCommentUri( final URI uri ) {
 		Pattern pattern = Pattern.compile( REGEX_COMMENT_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
-		return matcher.find();
+		return matcher.matches();
 	}
 }

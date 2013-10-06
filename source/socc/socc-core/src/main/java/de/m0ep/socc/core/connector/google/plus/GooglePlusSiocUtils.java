@@ -44,6 +44,7 @@ import com.damnhandy.uri.template.UriTemplate;
 import com.google.api.services.plus.model.Activity;
 import com.google.api.services.plus.model.Activity.Actor;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments;
+import com.google.api.services.plus.model.ActivityFeed;
 import com.google.api.services.plus.model.Comment;
 import com.google.api.services.plus.model.Comment.InReplyTo;
 import com.google.api.services.plus.model.Person;
@@ -55,9 +56,13 @@ import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.StringUtils;
 import de.m0ep.socc.core.utils.UserAccountUtils;
 
+/**
+ * Utility methods to convert Google+ resources to SIOC and handle URIs.
+ * 
+ * @author Florian Müller
+ */
 public final class GooglePlusSiocUtils {
-	private static final Logger LOG = LoggerFactory
-	        .getLogger( GooglePlusSiocUtils.class );
+	private static final Logger LOG = LoggerFactory.getLogger( GooglePlusSiocUtils.class );
 
 	public static final String GOOGLE_PLUS_API_ROOT_URI = "https://www.googleapis.com/plus/v1";
 
@@ -128,12 +133,34 @@ public final class GooglePlusSiocUtils {
 	private GooglePlusSiocUtils() {
 	}
 
+	/**
+	 * Converts a comment
+	 * {@link com.google.api.services.plus.model.Comment.Actor} to a
+	 * {@link UserAccount}.
+	 * 
+	 * @param connector
+	 *            Used Connector.
+	 * @param actor
+	 *            The comment
+	 *            {@link com.google.api.services.plus.model.Comment.Actor}
+	 * @return A {@link UserAccount} of the comment
+	 *         {@link com.google.api.services.plus.model.Comment.Actor}.
+	 */
 	public static UserAccount createSiocUserAccount(
 	        final GooglePlusConnector connector,
 	        final Comment.Actor actor ) {
 		return createSiocUserAccount( connector, actor.getId(), actor.getDisplayName() );
 	}
 
+	/**
+	 * Converts a comment {@link Actor} to a {@link UserAccount}.
+	 * 
+	 * @param connector
+	 *            Used Connector.
+	 * @param actor
+	 *            The comment {@link Actor}
+	 * @return A {@link UserAccount} of the comment {@link Actor}.
+	 */
 	public static UserAccount createSiocUserAccount(
 	        final GooglePlusConnector connector,
 	        final Actor actor ) {
@@ -141,6 +168,17 @@ public final class GooglePlusSiocUtils {
 		return createSiocUserAccount( connector, actor.getId(), actor.getDisplayName() );
 	}
 
+	/**
+	 * Creates an {@link UserAccount} for Google+ with an user id and name.
+	 * 
+	 * @param connector
+	 *            Used Connector
+	 * @param userId
+	 *            The id of the user.
+	 * @param username
+	 *            The name of the user
+	 * @return An {@link UserAccount} with that id and name.
+	 */
 	public static UserAccount createSiocUserAccount(
 	        final GooglePlusConnector connector,
 	        final String userId,
@@ -162,6 +200,17 @@ public final class GooglePlusSiocUtils {
 		return result;
 	}
 
+	/**
+	 * Creates a Forum for a Google+ {@link ActivityFeed}.
+	 * 
+	 * @param connector
+	 *            Used Connector
+	 * @param person
+	 *            Person where the {@link ActivityFeed} belongs to.
+	 * @param collection
+	 *            The collection of that {@link ActivityFeed}.
+	 * @return A {@link Forum} for that {@link ActivityFeed}.
+	 */
 	public static Forum createSiocForum(
 	        final GooglePlusConnector connector,
 	        final Person person,
@@ -195,6 +244,17 @@ public final class GooglePlusSiocUtils {
 		}
 	}
 
+	/**
+	 * Crates a {@link Post} for an {@link Activity}.
+	 * 
+	 * @param connector
+	 *            Used Connector
+	 * @param activity
+	 *            The {@link Activity} to convert.
+	 * @param container
+	 *            The parent {@link Container} of that {@link Activity}.
+	 * @return A {@link Post} convertet from the {@link Activity}.
+	 */
 	public static Post createSiocPost(
 	        final GooglePlusConnector connector,
 	        final Activity activity,
@@ -292,6 +352,17 @@ public final class GooglePlusSiocUtils {
 		return result;
 	}
 
+	/**
+	 * Crates a {@link Post} for an {@link Comment}.
+	 * 
+	 * @param connector
+	 *            Used Connector
+	 * @param activity
+	 *            The {@link Comment} to convert.
+	 * @param parentPost
+	 *            The parent {@link Post} of that {@link Comment}.
+	 * @return A {@link Post} convertet from the {@link Comment}.
+	 */
 	public static Post createSiocPost(
 	        final GooglePlusConnector connector,
 	        final Comment comment,
@@ -392,6 +463,13 @@ public final class GooglePlusSiocUtils {
 		return result;
 	}
 
+	/**
+	 * Creates an URI for an {@link UserAccount}.
+	 * 
+	 * @param userId
+	 *            Id of the user account.
+	 * @return A URI for an {@link UserAccount} with that id.
+	 */
 	public static URI createPersonUri( final String userId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( TEMPLATE_PEOPLE_URI )
@@ -399,6 +477,16 @@ public final class GooglePlusSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Creates an URI for an {@link ActivityFeed} {@link Forum} with an
+	 * <code>userId</code> and a <code>collection</code>.
+	 * 
+	 * @param userId
+	 *            The id of the user for that {@link ActivityFeed} {@link Forum}
+	 * @param collection
+	 *            The collection
+	 * @return A Forum for that {@link ActivityFeed} forum.
+	 */
 	public static URI createActivityFeedUri( final String userId, final String collection ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( TEMPLATE_ACTIVITY_FEED_URI )
@@ -407,6 +495,13 @@ public final class GooglePlusSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Creates an URI for an {@link Activity} {@link Post}.
+	 * 
+	 * @param activityId
+	 *            The {@link Activity} id.
+	 * @return The URI for that {@link Activity} {@link Post}.
+	 */
 	public static URI createActivityUri( final String activityId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( TEMPLATE_ACTIVITY_URI )
@@ -414,6 +509,13 @@ public final class GooglePlusSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Creates an URI for an {@link Comment} {@link Post}.
+	 * 
+	 * @param activityId
+	 *            The {@link Comment} id.
+	 * @return The URI for that {@link Comment} {@link Post}.
+	 */
 	public static URI createCommentUri( final String commentId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( TEMPLATE_COMMENT_URI )
@@ -421,6 +523,14 @@ public final class GooglePlusSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Tests if an URI is from an {@link UserAccount}.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @return <code>true</code> if the URI is from an {@link UserAccount},
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isPersonUri( final URI uri ) {
 		Preconditions.checkNotNull( uri,
 		        "Required parameter uri must be specified." );
@@ -431,6 +541,14 @@ public final class GooglePlusSiocUtils {
 		return matcher.matches();
 	}
 
+	/**
+	 * Tests if an URI is from an {@link ActivityFeed}.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @return true if the URI is <code>from</code> an {@link ActivityFeed},
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isActivityFeedUri( final URI uri ) {
 		Preconditions.checkNotNull( uri,
 		        "Required parameter uri must be specified." );
@@ -441,6 +559,14 @@ public final class GooglePlusSiocUtils {
 		return matcher.matches();
 	}
 
+	/**
+	 * Tests if an URI is from an {@link Activity}.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @return <code>true</code> if the URI is from an {@link Activity},
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isActivityUri( final URI uri ) {
 		Preconditions.checkNotNull( uri,
 		        "Required parameter uri must be specified." );
@@ -451,6 +577,14 @@ public final class GooglePlusSiocUtils {
 		return matcher.matches();
 	}
 
+	/**
+	 * Tests if an URI is from an {@link Comment}.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @return <code>true</code> if the URI is from an {@link Comment},
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isCommentUri( final URI uri ) {
 		Preconditions.checkNotNull( uri,
 		        "Required parameter uri must be specified." );

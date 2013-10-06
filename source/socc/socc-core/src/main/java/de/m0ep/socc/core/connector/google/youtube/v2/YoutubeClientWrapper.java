@@ -37,52 +37,81 @@ import de.m0ep.sioc.services.auth.Password;
 import de.m0ep.sioc.services.auth.Username;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
+/**
+ * Wraps the service client of Youtube to store extra stuff.
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class YoutubeClientWrapper {
-    private YouTubeService service;
-    private UserProfileEntry userProfile;
+	private final YouTubeService service;
+	private UserProfileEntry userProfile;
 
-    public YoutubeClientWrapper(APIKey apiKey, Username username,
-            Password password)
-            throws AuthenticationException, IOException {
-        Preconditions.checkNotNull(apiKey,
-                "Required parameter apiKey must be specified.");
-        Preconditions.checkArgument(apiKey.hasValue(),
-                "The parameter apiKey has no value");
-        Preconditions.checkNotNull(username,
-                "Required parameter username must be specified.");
-        Preconditions.checkArgument(username.hasValue(),
-                "The parameter username has no value");
-        Preconditions.checkNotNull(password,
-                "Required parameter password must be specified.");
-        Preconditions.checkArgument(password.hasValue(),
-                "The parameter password has no value");
+	/**
+	 * Constructs a new {@link YoutubeClientWrapper} with an <code>apiKey</code>
+	 * , <code>username</code> and <code>password</code>.
+	 * 
+	 * @param apiKey
+	 *            The API key for Youtube.
+	 * @param username
+	 *            The username of an Youtube account.
+	 * @param password
+	 *            The password for an Youtube account.
+	 * 
+	 * @throws NullPointerException
+	 *             Thrown if one ore more parameters are <code>null</code>.
+	 * @throws IllegalArgumentException
+	 *             Thrown if one or more parameters have no valid value.
+	 * @throws IOException
+	 *             Thrown if a network error occurred.
+	 * @throws AuthenticationException
+	 *             Thrown if creating the defaultClient failed because of
+	 *             authentication problems.
+	 */
+	public YoutubeClientWrapper(
+	        APIKey apiKey,
+	        Username username,
+	        Password password )
+	        throws AuthenticationException,
+	        IOException {
+		Preconditions.checkNotNull( apiKey,
+		        "Required parameter apiKey must be specified." );
+		Preconditions.checkArgument( apiKey.hasValue(),
+		        "The parameter apiKey has no value" );
+		Preconditions.checkNotNull( username,
+		        "Required parameter username must be specified." );
+		Preconditions.checkArgument( username.hasValue(),
+		        "The parameter username has no value" );
+		Preconditions.checkNotNull( password,
+		        "Required parameter password must be specified." );
+		Preconditions.checkArgument( password.hasValue(),
+		        "The parameter password has no value" );
 
-        this.service = new YouTubeService("socc", apiKey.getValue());
+		this.service = new YouTubeService( "socc", apiKey.getValue() );
 
-        try {
-            this.service.setUserCredentials(
-                    username.getValue(),
-                    password.getValue());
-        } catch (com.google.gdata.util.AuthenticationException e) {
-            throw new AuthenticationException(e);
-        }
+		try {
+			this.service.setUserCredentials(
+			        username.getValue(),
+			        password.getValue() );
+		} catch ( com.google.gdata.util.AuthenticationException e ) {
+			throw new AuthenticationException( e );
+		}
 
-        try {
-            this.userProfile = this.service
-                    .getEntry(
-                            new URL(
-                                    "http://gdata.youtube.com/feeds/api/users/default?v=2"),
-                            UserProfileEntry.class);
-        } catch (MalformedURLException | ServiceException e) {
-            Throwables.propagate(e);
-        }
-    }
+		try {
+			this.userProfile = this.service
+			        .getEntry(
+			                new URL( "http://gdata.youtube.com/feeds/api/users/default" ),
+			                UserProfileEntry.class );
+		} catch ( MalformedURLException | ServiceException e ) {
+			Throwables.propagate( e );
+		}
+	}
 
-    public YouTubeService getService() {
-        return service;
-    }
+	public YouTubeService getYoutubeService() {
+		return service;
+	}
 
-    public UserProfileEntry getUserProfile() {
-        return userProfile;
-    }
+	public UserProfileEntry getUserProfile() {
+		return userProfile;
+	}
 }

@@ -37,9 +37,15 @@ import com.restfb.exception.FacebookOAuthException;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.DefaultConnector;
+import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 
+/**
+ * Implementation of an {@link IConnector} for Facebook.
+ * 
+ * @author Florian Müller
+ */
 public class FacebookConnector extends DefaultConnector {
 	public static final URI URI_SERVICE_ENDPOINT = Builder
 	        .createURI( "https://www.facebook.com" );
@@ -49,13 +55,38 @@ public class FacebookConnector extends DefaultConnector {
 	private FacebookPostReader postReader;
 	private FacebookPostWriter postWriter;
 
-	public FacebookConnector( String id, ISoccContext context,
-	        UserAccount defaultUserAccount,
-	        Service service ) {
+	/**
+	 * Construct a new {@link FacebookConnector} wich an <code>id</code>,
+	 * <code>context</code>, <code>defaultUserAccount</code> and
+	 * <code>service</code> objects.
+	 * 
+	 * @param id
+	 *            The Id of the connector.
+	 * @param context
+	 *            The context of the connector.
+	 * @param defaultUserAccount
+	 *            The default user account of the connector.
+	 * @param service
+	 *            The service object of the Moodle service.
+	 */
+	public FacebookConnector(
+	        final String id,
+	        final ISoccContext context,
+	        final UserAccount defaultUserAccount,
+	        final Service service ) {
 		super( id, context, defaultUserAccount, service );
 	}
 
-	public FacebookConnector( ISoccContext context, ConnectorConfig config ) {
+	/**
+	 * Construct a new {@link FacebookConnector} with a <code>context</code> and
+	 * a connector <code>config</code>.
+	 * 
+	 * @param context
+	 *            The context of the connector.
+	 * @param config
+	 *            {@link ConnectorConfig} with all other data.
+	 */
+	public FacebookConnector( final ISoccContext context, final ConnectorConfig config ) {
 		super( context, config );
 	}
 
@@ -116,11 +147,24 @@ public class FacebookConnector extends DefaultConnector {
 		setInitialized( false );
 	}
 
-	public static void handleFacebookException( FacebookException e )
+	/**
+	 * Converts Facebook exceptions to SOCC exceptions an propagates them.
+	 * 
+	 * @param eexception
+	 *            Exception to convert.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there is problem in communication.
+	 */
+	public static void handleFacebookException( final FacebookException eexception )
 	        throws AuthenticationException,
 	        NotFoundException, IOException {
-		if ( e instanceof FacebookOAuthException ) {
-			FacebookOAuthException fae = (FacebookOAuthException) e;
+		if ( eexception instanceof FacebookOAuthException ) {
+			FacebookOAuthException fae = (FacebookOAuthException) eexception;
 
 			// error codes:
 			// http://www.fb-developers.info/tech/fb_dev/faq/general/gen_10.html
@@ -148,12 +192,12 @@ public class FacebookConnector extends DefaultConnector {
 				case 803: // Specified object cannot be found
 					throw new NotFoundException( "Not found", fae );
 			}
-		} else if ( e instanceof FacebookNetworkException ) {
-			FacebookNetworkException fne = (FacebookNetworkException) e;
+		} else if ( eexception instanceof FacebookNetworkException ) {
+			FacebookNetworkException fne = (FacebookNetworkException) eexception;
 			throw new IOException( "Network error: "
 			        + fne.getHttpStatusCode() + " " + fne.getMessage(), fne );
 		}
 
-		throw Throwables.propagate( e );
+		throw Throwables.propagate( eexception );
 	}
 }

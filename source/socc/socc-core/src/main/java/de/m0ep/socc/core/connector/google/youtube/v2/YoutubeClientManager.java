@@ -37,135 +37,137 @@ import de.m0ep.sioc.services.auth.Password;
 import de.m0ep.sioc.services.auth.ServicesAuthVocabulary;
 import de.m0ep.sioc.services.auth.Username;
 import de.m0ep.socc.core.connector.DefaultClientManager;
+import de.m0ep.socc.core.connector.IClientManager;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
+/**
+ * Implementation of a {@link IClientManager} for the {@link YoutubeConnector}.
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class YoutubeClientManager extends
         DefaultClientManager<YoutubeClientWrapper> {
-    private APIKey apiKey;
+	private APIKey apiKey;
 
-    /**
-     * Constructs a new {@link YoutubeClientManager} for a <code>service</code>
-     * with a <code>defaultUserAccount</code>.
-     * 
-     * @param service
-     * @param defaultUserAccount
-     * @throws NullPointerException
-     *             Thrown if one or more parameters are <code>null</code>.
-     * @throws IllegalArgumentException
-     *             Thrown if <code>service</code> or
-     *             <code>defaultUserAccount</code> has missing authentication
-     *             parameter.
-     * @throws IOException
-     *             Thrown if a network error occurred.
-     * @throws AuthenticationException
-     *             Thrown if creating the defaultClient failed because of
-     *             authentication problems.
-     */
-    public YoutubeClientManager(Service service, UserAccount defaultUserAccount)
-            throws Exception {
-        super(service, defaultUserAccount);
-    }
+	/**
+	 * Constructs a new {@link YoutubeClientManager} for a <code>service</code>
+	 * with a <code>defaultUserAccount</code>.
+	 * 
+	 * @param service
+	 * @param defaultUserAccount
+	 * @throws NullPointerException
+	 *             Thrown if one or more parameters are <code>null</code>.
+	 * @throws IllegalArgumentException
+	 *             Thrown if <code>service</code> or
+	 *             <code>defaultUserAccount</code> has missing authentication
+	 *             parameter.
+	 * @throws IOException
+	 *             Thrown if a network error occurred.
+	 * @throws AuthenticationException
+	 *             Thrown if creating the defaultClient failed because of
+	 *             authentication problems.
+	 */
+	public YoutubeClientManager( final Service service, final UserAccount defaultUserAccount )
+	        throws Exception {
+		super( service, defaultUserAccount );
+	}
 
-    public APIKey getApiKey() {
-        return apiKey;
-    }
+	public APIKey getApiKey() {
+		return apiKey;
+	}
 
-    @Override
-    protected void init() {
-        Preconditions.checkArgument(getService().hasServiceEndpoint(),
-                "The parameter service has no serviceEndpoint.");
+	@Override
+	protected void init() {
+		Preconditions.checkArgument( getService().hasServiceEndpoint(),
+		        "The parameter service has no serviceEndpoint." );
 
-        de.m0ep.sioc.services.auth.Service authService = de.m0ep.sioc.services.auth.Service
-                .getInstance(
-                        getService().getModel(),
-                        getService().getResource());
+		de.m0ep.sioc.services.auth.Service authService =
+		        de.m0ep.sioc.services.auth.Service.getInstance(
+		                getService().getModel(),
+		                getService().getResource() );
 
-        Preconditions.checkArgument(authService.hasServiceAuthentication(),
-                "The parameter service has no authentication.");
+		Preconditions.checkArgument( authService.hasServiceAuthentication(),
+		        "The parameter service has no authentication." );
 
-        AuthenticationMechanism authentication = authService
-                .getServiceAuthentication();
-        Preconditions.checkArgument(authentication.hasCredentials(),
-                "The service authentication has no credentials.");
+		AuthenticationMechanism authentication = authService
+		        .getServiceAuthentication();
+		Preconditions.checkArgument( authentication.hasCredentials(),
+		        "The service authentication has no credentials." );
 
-        ClosableIterator<Credentials> credIter = authentication
-                .getAllCredentials();
-        try {
-            while (credIter.hasNext()) {
-                Credentials credential = (Credentials) credIter.next();
+		ClosableIterator<Credentials> credIter = authentication
+		        .getAllCredentials();
+		try {
+			while ( credIter.hasNext() ) {
+				Credentials credential = credIter.next();
 
-                if (RdfUtils.isType(
-                        credential.getModel(),
-                        credential.getResource(),
-                        ServicesAuthVocabulary.APIKey)
-                        && credential.hasValue()) {
-                    apiKey = APIKey.getInstance(credential.getModel(),
-                            credential.getResource());
-                    return;
-                }
-            }
-        } finally {
-            credIter.close();
-        }
+				if ( RdfUtils.isType(
+				        credential.getModel(),
+				        credential.getResource(),
+				        ServicesAuthVocabulary.APIKey )
+				        && credential.hasValue() ) {
+					apiKey = APIKey.getInstance( credential.getModel(),
+					        credential.getResource() );
+					return;
+				}
+			}
+		} finally {
+			credIter.close();
+		}
 
-        throw new IllegalArgumentException(
-                "The service authentication has no apikey credential.");
-    }
+		throw new IllegalArgumentException(
+		        "The service authentication has no apikey credential." );
+	}
 
-    @Override
-    public YoutubeClientWrapper createClient(UserAccount userAccount)
-            throws Exception {
-        Preconditions.checkState(null != apiKey,
-                "API key missing.");
+	@Override
+	public YoutubeClientWrapper createClient( final UserAccount userAccount )
+	        throws Exception {
+		Preconditions.checkState( null != apiKey,
+		        "API key missing." );
 
-        de.m0ep.sioc.services.auth.UserAccount authUserAccount =
-                de.m0ep.sioc.services.auth.UserAccount.getInstance(
-                        userAccount.getModel(),
-                        userAccount.getResource());
+		de.m0ep.sioc.services.auth.UserAccount authUserAccount =
+		        de.m0ep.sioc.services.auth.UserAccount.getInstance(
+		                userAccount.getModel(),
+		                userAccount.getResource() );
 
-        Preconditions.checkArgument(
-                authUserAccount.hasAccountAuthentication(),
-                "The defaultUserAccount has no required authentication data.");
-        AuthenticationMechanism authentication = authUserAccount
-                .getAccountAuthentication();
+		Preconditions.checkArgument( authUserAccount.hasAccountAuthentication(),
+		        "The defaultUserAccount has no required authentication data." );
+		AuthenticationMechanism authentication = authUserAccount
+		        .getAccountAuthentication();
 
-        Preconditions
-                .checkArgument(
-                        authentication.hasCredentials(),
-                        "The defaultUserAccount authentication has no required credentials");
-        ClosableIterator<Credentials> credentialIter = authentication
-                .getAllCredentials();
+		Preconditions.checkArgument( authentication.hasCredentials(),
+		        "The defaultUserAccount authentication has no required credentials" );
+		ClosableIterator<Credentials> credentialIter = authentication
+		        .getAllCredentials();
 
-        Username username = null;
-        Password password = null;
-        while (credentialIter.hasNext()) {
-            Credentials credential = (Credentials) credentialIter.next();
+		Username username = null;
+		Password password = null;
+		while ( credentialIter.hasNext() ) {
+			Credentials credential = credentialIter.next();
 
-            if (RdfUtils.isType(
-                    credential.getModel(),
-                    credential.getResource(),
-                    ServicesAuthVocabulary.Username)
-                    && credential.hasValue()) {
-                username = Username.getInstance(credential.getModel(),
-                        credential.asResource());
-            } else if (RdfUtils.isType(
-                    credential.getModel(),
-                    credential.getResource(),
-                    ServicesAuthVocabulary.Password)
-                    && credential.hasValue()) {
-                password = Password.getInstance(credential.getModel(),
-                        credential.asResource());
-            }
-        }
+			if ( RdfUtils.isType(
+			        credential.getModel(),
+			        credential.getResource(),
+			        ServicesAuthVocabulary.Username )
+			        && credential.hasValue() ) {
+				username = Username.getInstance( credential.getModel(),
+				        credential.asResource() );
+			} else if ( RdfUtils.isType(
+			        credential.getModel(),
+			        credential.getResource(),
+			        ServicesAuthVocabulary.Password )
+			        && credential.hasValue() ) {
+				password = Password.getInstance( credential.getModel(),
+				        credential.asResource() );
+			}
+		}
 
-        Preconditions
-                .checkArgument(null != username,
-                        "The defaultUserAccount authentication contains no required username");
-        Preconditions
-                .checkArgument(null != password,
-                        "The defaultUserAccount authentication contains no required password");
+		Preconditions.checkArgument( null != username,
+		        "The defaultUserAccount authentication contains no required username" );
+		Preconditions.checkArgument( null != password,
+		        "The defaultUserAccount authentication contains no required password" );
 
-        return new YoutubeClientWrapper(apiKey, username, password);
-    }
+		return new YoutubeClientWrapper( apiKey, username, password );
+	}
 }

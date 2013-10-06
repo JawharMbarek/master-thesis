@@ -35,9 +35,12 @@ import com.google.common.base.Throwables;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.DefaultConnector;
+import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 
 /**
+ * Implementation of an {@link IConnector} for Canvas.
+ * 
  * @author Florian Müller
  */
 public class CanvasLmsConnector extends DefaultConnector {
@@ -50,21 +53,37 @@ public class CanvasLmsConnector extends DefaultConnector {
 	private CanvasLmsPostWriter postWriter;
 
 	/**
-	 * Constructs a new {@link CanvasLmsConnector} from a
-	 * {@link ConnectorConfig} and a given {@link ISoccContext}.
+	 * Construct a new {@link CanvasLmsConnector} wich an <code>id</code>,
+	 * <code>context</code>, <code>defaultUserAccount</code> and
+	 * <code>service</code> objects.
 	 * 
+	 * @param id
+	 *            The Id of the connector.
 	 * @param context
-	 * @param config
+	 *            The context of the connector.
+	 * @param defaultUserAccount
+	 *            The default user account of the connector.
+	 * @param service
+	 *            The service object of the Moodle service.
 	 */
-	public CanvasLmsConnector( final ISoccContext context,
-	        final ConnectorConfig config ) {
-		super( context, config );
-	}
-
 	public CanvasLmsConnector( final String id, final ISoccContext context,
 	        final UserAccount defaultUserAccount,
 	        Service service ) {
 		super( id, context, defaultUserAccount, service );
+	}
+
+	/**
+	 * Construct a new {@link CanvasLmsConnector} with a <code>context</code>
+	 * and a connector <code>config</code>.
+	 * 
+	 * @param context
+	 *            The context of the connector.
+	 * @param config
+	 *            {@link ConnectorConfig} with all other data.
+	 */
+	public CanvasLmsConnector( final ISoccContext context,
+	        final ConnectorConfig config ) {
+		super( context, config );
 	}
 
 	@Override

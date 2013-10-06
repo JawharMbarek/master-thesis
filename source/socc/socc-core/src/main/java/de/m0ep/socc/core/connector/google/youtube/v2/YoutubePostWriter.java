@@ -49,33 +49,49 @@ import com.google.gdata.util.ServiceException;
 
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
+import de.m0ep.socc.core.exceptions.AccessControlException;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.PostWriterUtils;
+import de.m0ep.socc.core.utils.RdfUtils;
+import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
 
+/**
+ * Implementation of an {@link IPostWriter} for Youtube.
+ * 
+ * @author Florian Müller
+ */
 public class YoutubePostWriter extends
         DefaultConnectorIOComponent<YoutubeConnector> implements
         IPostWriter<YoutubeConnector> {
-	private static final Logger LOG = LoggerFactory
-	        .getLogger( YoutubePostWriter.class );
+	private static final Logger LOG = LoggerFactory.getLogger( YoutubePostWriter.class );
 
-	public YoutubePostWriter( YoutubeConnector connector ) {
+	/**
+	 * Construct a new {@link YoutubePostWriter}.
+	 * 
+	 * @param connector
+	 *            Connector of this PostWriter
+	 */
+	public YoutubePostWriter( final YoutubeConnector connector ) {
 		super( connector );
 	}
 
 	@Override
-	public void writePosts( URI targetUri, String rdfString, Syntax syntax )
+	public void writePosts(
+	        final URI targetUri,
+	        final String rdfString,
+	        final Syntax syntax )
 	        throws NotFoundException,
 	        AuthenticationException,
-	        IOException {
+	        IOException,
+	        AccessControlException {
 		boolean isVideo = YoutubeSiocUtils.isVideoUri( targetUri );
 		boolean isComment = YoutubeSiocUtils.isCommentUri( targetUri );
 
 		if ( isVideo || isComment ) {
 			Model tmpModel = RDFTool.stringToModel( rdfString, syntax );
-			ClosableIterator<Resource> postIter = Post
-			        .getAllInstances( tmpModel );
+			ClosableIterator<Resource> postIter = Post.getAllInstances( tmpModel );
 			try {
 				while ( postIter.hasNext() ) {
 					Resource resource = postIter.next();
@@ -105,6 +121,12 @@ public class YoutubePostWriter extends
 						content = SoccUtils.formatUnknownMessage(
 						        getConnector(),
 						        post );
+					} else if ( !SoccUtils.haveWriteAccess( // check for write access 
+					        getConnector(),
+					        creatorAccount,
+					        null ) ) {
+						LOG.info( "Skip writing post {}, have no writing permission.", post );
+						return;
 					}
 
 					// Add Attachments to message content
@@ -120,8 +142,26 @@ public class YoutubePostWriter extends
 					CommentEntry entry = new CommentEntry();
 					entry.setContent( new PlainTextConstruct( content ) );
 
-					// if it's a comment, add reply_of link to the parent
-					if ( isComment ) {
+					// set in_reply_to link
+					boolean linkInReplyOfSet = false;
+					if ( post.hasReplyOf() ) {
+						Post sibling = SoccUtils.findSibling(
+						        getModel(),
+						        SiocUtils.asPost( post.getReplyOf() ),
+						        getConnector().getStructureReader().getSite() );
+
+						if ( null != sibling ) {
+							LOG.debug( "Write {} as reply to {}.", post, sibling );
+							entry.getLinks().add(
+							        new Link( YouTubeNamespace.IN_REPLY_TO,
+							                "application/atom+xml",
+							                sibling.toString() ) );
+							linkInReplyOfSet = true;
+						}
+					}
+
+					// if the target is a comment, add in_reply_to link to that target
+					if ( !linkInReplyOfSet && isComment ) {
 						entry.getLinks().add(
 						        new Link( YouTubeNamespace.IN_REPLY_TO,
 						                "application/atom+xml",
@@ -131,15 +171,14 @@ public class YoutubePostWriter extends
 					// find video ID by regular expression
 					Pattern pattern = Pattern.compile( YoutubeSiocUtils.REGEX_VIDEO_URI );
 					Matcher matcher = pattern.matcher( targetUri.toString() );
-
 					if ( matcher.find() ) {
 						CommentEntry result = null;
 						try {
-							result = client.getService().insert(
+							getConnector().waitForCooldown();
+							result = client.getYoutubeService().insert(
 							        new URL(
 							                YoutubeSiocUtils.createVideoUri(
-							                        matcher.group( 1 ) )
-							                        .toString()
+							                        matcher.group( 1 ) ).toString()
 							                        + "/comments" ),
 							        entry );
 						} catch ( MalformedURLException e ) {
@@ -150,20 +189,12 @@ public class YoutubePostWriter extends
 						}
 
 						if ( null != result ) {
-							Post parentPost = getConnector().getPostReader()
-							        .getPost( targetUri );
-							Post resultPost = YoutubeSiocUtils.createSiocPost(
-							        getConnector(),
-							        result,
-							        parentPost );
-
-							resultPost.setSibling( post );
-
-							return;
+							convertWrittenEntryToSioc( targetUri, post, result );
 						} else {
-							LOG.warn( "Failed to write post(s) to uri "
-							        + targetUri );
+							LOG.warn( "Failed to write post(s) to uri " + targetUri );
 						}
+					} else {
+						LOG.warn( "Failed to parse '{}' for video id", targetUri );
 					}
 				}
 			} finally {
@@ -171,10 +202,65 @@ public class YoutubePostWriter extends
 				tmpModel.close();
 			}
 		}
+		else {
+			throw new NotFoundException(
+			        "No suitable Youtube target found at uri '"
+			                + targetUri
+			                + "' to write posts to it." );
+		}
+	}
 
-		throw new IOException(
-		        "Failed to write post to target uri "
-		                + targetUri
-		                + ", it's neither a conainer nor a post od comment" );
+	/**
+	 * Convert the result of the writing to sioc and store it in the
+	 * triplestore.
+	 * 
+	 * @param targetUri
+	 *            Target URI of the writing process.
+	 * @param originalPost
+	 *            The original {@link Post} that was written.
+	 * @param commentEntry
+	 *            The written {@link CommentEntry} result.
+	 * 
+	 * @throws NotFoundException
+	 * @throws AuthenticationException
+	 * @throws IOException
+	 * @throws AccessControlException
+	 */
+	private void convertWrittenEntryToSioc(
+	        final URI targetUri,
+	        final Post originalPost,
+	        final CommentEntry commentEntry )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException,
+	        AccessControlException {
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Received written entry:\n{}",
+			        getServiceEndpoint(),
+			        commentEntry );
+		} else {
+			LOG.info( "Received written entry '{}'",
+			        getServiceEndpoint(),
+			        commentEntry.getId() );
+		}
+
+		// get Parent 
+		Post parentPost = getConnector().getPostReader().getPost( targetUri );
+		Post resultPost = YoutubeSiocUtils.createSiocPost(
+		        getConnector(),
+		        commentEntry,
+		        parentPost );
+
+		resultPost.setSibling( originalPost );
+
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Writing a post to {} was successful:\n{}",
+			        getServiceEndpoint(),
+			        RdfUtils.resourceToString( resultPost, Syntax.Turtle ) );
+		} else {
+			LOG.info( "Writing a post to {} was successful: '{}'",
+			        getServiceEndpoint(),
+			        resultPost );
+		}
 	}
 }

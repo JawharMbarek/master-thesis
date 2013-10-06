@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.util.Builder;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Site;
@@ -50,6 +51,13 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
 
+/**
+ * Implementation of an {@link IStructureReader} for a {@link FacebookConnector}
+ * .
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class FacebookStructureReader extends DefaultConnectorIOComponent<FacebookConnector>
         implements IStructureReader<FacebookConnector> {
 	private static final Logger LOG = LoggerFactory.getLogger( FacebookStructureReader.class );
@@ -64,15 +72,15 @@ public class FacebookStructureReader extends DefaultConnectorIOComponent<Faceboo
 
 	@Override
 	public Site getSite() {
-		if ( !Site.hasInstance( getModel(), getServiceEndpoint() ) ) {
-			Site result = new Site( getModel(), getServiceEndpoint(), true );
-			result.setName( "Facebook" );
+		URI uri = Builder.createURI( "https://www.facebook.com" );
 
-			LOG.info( "Created Facebook site {}", result );
+		if ( !Site.hasInstance( getModel(), uri ) ) {
+			Site result = new Site( getModel(), uri, true );
+			result.setName( "Facebook" );
 			return result;
 		}
 
-		return Site.getInstance( getModel(), getServiceEndpoint() );
+		return Site.getInstance( getModel(), uri );
 	}
 
 	@Override

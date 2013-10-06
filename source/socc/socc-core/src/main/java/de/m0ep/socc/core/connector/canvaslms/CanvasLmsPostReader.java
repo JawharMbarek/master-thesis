@@ -54,6 +54,8 @@ import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SoccUtils;
 
 /**
+ * Implementation of an {@link IPostReader} for the {@link CanvasLmsConnector}.
+ * 
  * @author Florian Müller
  */
 public class CanvasLmsPostReader extends
@@ -67,7 +69,10 @@ public class CanvasLmsPostReader extends
 	MemoryStore store;
 
 	/**
+	 * Constructs a new {@link CanvasLmsPostReader}.
+	 * 
 	 * @param connector
+	 *            {@link CanvasLmsConnector} for that PostWriter.
 	 */
 	public CanvasLmsPostReader( final CanvasLmsConnector connector ) {
 		super( connector );

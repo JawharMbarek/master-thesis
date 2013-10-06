@@ -28,9 +28,12 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
+import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Forum;
 import org.rdfs.sioc.Post;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -45,43 +48,74 @@ import com.google.gdata.util.ServiceException;
 
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
+import de.m0ep.socc.core.exceptions.AccessControlException;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
+import de.m0ep.socc.core.utils.RdfUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
+import de.m0ep.socc.core.utils.SoccUtils;
 
+/**
+ * Implementation of an {@link IPostReader} for Youtube
+ * 
+ * @author Florian Müller
+ */
 public class YoutubePostReader extends
         DefaultConnectorIOComponent<YoutubeConnector> implements
         IPostReader<YoutubeConnector> {
+	private static final Logger LOG = LoggerFactory.getLogger( YoutubePostReader.class );
+
 	private final YoutubeClientWrapper defaultClient;
 
-	public YoutubePostReader( YoutubeConnector connector ) {
+	/**
+	 * Construct a new {@link YoutubePostReader} for a {@link YoutubeConnector}.
+	 * 
+	 * @param connector
+	 *            Connector of this PostReaeder
+	 */
+	public YoutubePostReader( final YoutubeConnector connector ) {
 		super( connector );
 		this.defaultClient = connector.getClientManager().getDefaultClient();
 	}
 
 	@Override
-	public boolean isPost( URI uri ) {
+	public boolean isPost( final URI uri ) {
 		return YoutubeSiocUtils.isCommentUri( uri )
 		        || YoutubeSiocUtils.isVideoUri( uri );
 	}
 
 	@Override
-	public Post getPost( URI uri ) throws NotFoundException, AuthenticationException, IOException {
+	public Post getPost( final URI uri )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException,
+	        AccessControlException {
 		if ( Post.hasInstance( getModel(), uri ) ) {
 			return Post.getInstance( getModel(), uri );
 		}
 
+		Post result;
 		if ( YoutubeSiocUtils.isVideoUri( uri ) ) {
-			return readVideo( uri );
+			result = readVideo( uri );
 		} else if ( YoutubeSiocUtils.isCommentUri( uri ) ) {
-			return readComment( uri );
+			result = readComment( uri );
+		} else {
+			throw new NotFoundException( "There is no Youtube post at " + uri );
 		}
 
-		throw new NotFoundException( "There is no Youtube post at uri " + uri );
+		if ( !SoccUtils.haveReadAccess(
+		        getConnector(),
+		        result.getCreator(),
+		        result.getContainer() ) ) {
+			SoccUtils.anonymisePost( result );
+			throw new AccessControlException( "Have no permission to read post '" + uri + "'" );
+		}
+
+		return result;
 	}
 
 	@Override
-	public boolean hasPosts( URI uri ) {
+	public boolean hasPosts( final URI uri ) {
 		return null != uri &&
 		        ( YoutubeSiocUtils.isUserUploadsUri( uri )
 		                || YoutubeSiocUtils.isPlaylistUri( uri )
@@ -89,28 +123,46 @@ public class YoutubePostReader extends
 	}
 
 	@Override
-	public List<Post> pollPosts( URI sourceUri, Date since, int limit )
+	public List<Post> pollPosts( final URI sourceUri, final Date since, final int limit )
 	        throws NotFoundException,
 	        AuthenticationException,
-	        IOException {
-
+	        IOException,
+	        AccessControlException {
 		if ( YoutubeSiocUtils.isUserUploadsUri( sourceUri )
 		        || YoutubeSiocUtils.isPlaylistUri( sourceUri ) ) {
 			return pollFromVideoFeed( sourceUri, since, Math.max( -1, limit ) );
 		} else if ( YoutubeSiocUtils.isVideoUri( sourceUri ) ) {
-			return pollFromVideoCommentsFeed( sourceUri, since, Math.max( -1, limit ) );
+			return pollFromVideoCommentFeed( sourceUri, since, Math.max( -1, limit ) );
 		}
 
-		throw new NotFoundException( "Can't poll Youtube posts from uri " + sourceUri );
+		throw new IOException( "Can't poll posts from uri "
+		        + sourceUri
+		        + " at service "
+		        + getServiceEndpoint() );
 	}
 
-	private Post readVideo( URI uri )
+	/**
+	 * Reads a {@link VideoEntry} from an URI and converts it to SIOC.
+	 * 
+	 * @param uri
+	 *            URI to read the {@link VideoEntry} from.
+	 * @return A {@link Post} of the {@link VideoEntry}.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	private Post readVideo( final URI uri )
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {
 		VideoEntry videoEntry = null;
 		try {
-			videoEntry = defaultClient.getService().getEntry(
+			getConnector().waitForCooldown();
+			videoEntry = defaultClient.getYoutubeService().getEntry(
 			        new URL( uri.toString() ),
 			        VideoEntry.class );
 		} catch ( MalformedURLException e ) {
@@ -120,16 +172,54 @@ public class YoutubePostReader extends
 			YoutubeConnector.handleYoutubeExceptions( e );
 		}
 
-		return YoutubeSiocUtils.createSiocPost( getConnector(), videoEntry, null );
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Read entry '{}' from '{}':\n{}",
+			        videoEntry.getId(),
+			        getServiceEndpoint(),
+			        videoEntry );
+		} else {
+			LOG.info( "Read entry '{}' from '{}'",
+			        videoEntry.getId(),
+			        getServiceEndpoint() );
+		}
+
+		Post result = YoutubeSiocUtils.createSiocPost( getConnector(), videoEntry, null );
+
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Converted entry '{}' to SIOC:\n{}",
+			        videoEntry.getId(),
+			        RdfUtils.resourceToString( result, Syntax.Turtle ) );
+		} else {
+			LOG.info( "Converted entry '{}' to SIOC {}",
+			        videoEntry.getId(),
+			        result );
+		}
+
+		return result;
 	}
 
-	private Post readComment( URI uri )
+	/**
+	 * Reads a {@link CommentEntry} from an URI and converts it to SIOC.
+	 * 
+	 * @param uri
+	 *            URI to read the {@link CommentEntry} from.
+	 * @return A {@link Post} of the {@link CommentEntry}.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	private Post readComment( final URI uri )
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {
 		CommentEntry commentEntry = null;
 		try {
-			commentEntry = defaultClient.getService().getEntry(
+			getConnector().waitForCooldown();
+			commentEntry = defaultClient.getYoutubeService().getEntry(
 			        new URL( uri.toString() ),
 			        CommentEntry.class );
 		} catch ( MalformedURLException e ) {
@@ -139,28 +229,74 @@ public class YoutubePostReader extends
 			YoutubeConnector.handleYoutubeExceptions( e );
 		}
 
-		return YoutubeSiocUtils.createSiocPost( getConnector(), commentEntry, null );
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Read entry '{}' from '{}':\n{}",
+			        commentEntry.getId(),
+			        getServiceEndpoint(),
+			        commentEntry );
+		} else {
+			LOG.info( "Read entry '{}' from '{}'",
+			        commentEntry.getId(),
+			        getServiceEndpoint() );
+		}
+
+		Post result = YoutubeSiocUtils.createSiocPost( getConnector(), commentEntry, null );
+
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Converted entry '{}' to SIOC:\n{}",
+			        commentEntry.getId(),
+			        RdfUtils.resourceToString( result, Syntax.Turtle ) );
+		} else {
+			LOG.info( "Converted entry '{}' to SIOC {}",
+			        commentEntry.getId(),
+			        result );
+		}
+
+		return result;
 	}
 
+	/**
+	 * Poll videos from a video-feed
+	 * 
+	 * @param sourceUri
+	 *            URI of the video-feed
+	 * @param since
+	 *            Data since a post is new
+	 * @param limit
+	 *            Limit result size to this number.
+	 * @return A {@link List} of {@link Post}s
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 * @throws AccessControlException
+	 *             Thrown if there is an access controll error.
+	 */
 	private List<Post> pollFromVideoFeed( URI sourceUri, Date since, int limit )
 	        throws NotFoundException,
 	        AuthenticationException,
-	        IOException {
+	        IOException, AccessControlException, ClassCastException {
 		Forum parent = SiocUtils.asForum( getConnector().getStructureReader()
 		        .getContainer( sourceUri ) );
 		String pageUrl = sourceUri.toString();
 
-		List<Post> result = Lists.newArrayList();
+		List<Post> resultList = Lists.newArrayList();
 		do {
+			getConnector().waitForCooldown();
 			VideoFeed videoFeed = null;
 			try {
 				if ( null != since ) {
-					videoFeed = defaultClient.getService().getFeed(
+					getConnector().waitForCooldown();
+					videoFeed = defaultClient.getYoutubeService().getFeed(
 					        new URL( pageUrl ),
 					        VideoFeed.class,
 					        new DateTime( since ) );
 				} else {
-					videoFeed = defaultClient.getService().getFeed(
+					getConnector().waitForCooldown();
+					videoFeed = defaultClient.getYoutubeService().getFeed(
 					        new URL( pageUrl ),
 					        VideoFeed.class );
 				}
@@ -168,48 +304,121 @@ public class YoutubePostReader extends
 				// shouldn't happened
 				Throwables.propagate( e );
 			} catch ( NotModifiedException e ) {
-				return result;
+				return resultList;
 			} catch ( ServiceException e ) {
 				YoutubeConnector.handleYoutubeExceptions( e );
 			}
 
 			for ( VideoEntry videoEntry : videoFeed.getEntries() ) {
-				if ( 0 > limit || limit < result.size() ) {
-					result.add( YoutubeSiocUtils.createSiocPost(
+				if ( LOG.isDebugEnabled() ) {
+					LOG.debug( "Read entry '{}' from '{}':\n{}",
+					        videoEntry.getId(),
+					        getServiceEndpoint(),
+					        videoEntry );
+				} else {
+					LOG.info( "Read entry '{}' from '{}'",
+					        videoEntry.getId(),
+					        getServiceEndpoint() );
+				}
+
+				if ( 0 > limit || limit < resultList.size() ) {
+					Post post = YoutubeSiocUtils.createSiocPost(
 					        getConnector(),
 					        videoEntry,
-					        parent ) );
+					        parent );
+
+					if ( LOG.isDebugEnabled() ) {
+						LOG.debug( "Converted entry '{}' to SIOC:\n{}",
+						        videoEntry.getId(),
+						        RdfUtils.resourceToString( post, Syntax.Turtle ) );
+					} else {
+						LOG.info( "Converted entry '{}' to SIOC {}",
+						        videoEntry.getId(),
+						        post );
+					}
+
+					if ( SoccUtils.haveReadAccess(
+					        getConnector(),
+					        post.getCreator(),
+					        post.getContainer() ) ) {
+						Date createdDate = new Date( videoEntry.getPublished().getValue() );
+						if ( null == since || createdDate.after( since ) ) {
+							resultList.add( post );
+							LOG.info( "Added {} to polling result. result size: {}",
+							        post,
+							        resultList.size() );
+						} else {
+							LOG.info( "Skip Post '{}', it's to old.", post );
+						}
+					} else {
+						LOG.info( "Have no permission to read posts for this UserAccount='{}'",
+						        post.getCreator() );
+						SoccUtils.anonymisePost( post );
+					}
+
+					// poll for comments
+					resultList.addAll( pollFromVideoCommentFeed(
+					        post.getResource().asURI(),
+					        since,
+					        Math.max( -1, limit - resultList.size() ) ) );
 				} else {
-					return result;
+					LOG.info( "Limit reached: limit={} size={}", limit, resultList.size() );
+					return resultList;
 				}
 			}
 
+			// get next page Link, if there is one
 			Link nextLink = videoFeed.getNextLink();
 			pageUrl = ( null != nextLink ) ? nextLink.getHref() : null;
 		} while ( null != pageUrl );
 
-		return result;
+		return resultList;
 	}
 
-	private List<Post> pollFromVideoCommentsFeed( URI sourceUri, Date since, int limit )
+	/**
+	 * Poll comments from a comment-feed
+	 * 
+	 * @param sourceUri
+	 *            URI of the comment-feed
+	 * @param since
+	 *            Data since a post is new
+	 * @param limit
+	 *            Limit result size to this number.
+	 * @return A {@link List} of {@link Post}s
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	private List<Post> pollFromVideoCommentFeed(
+	        final URI sourceUri,
+	        final Date since,
+	        final int limit )
 	        throws NotFoundException,
 	        AuthenticationException,
-	        IOException {
+	        IOException,
+	        AccessControlException {
 		Post parentPost = getPost( sourceUri );
 		String pageUrl = sourceUri.toString();
 
-		List<Post> result = Lists.newArrayList();
+		List<Post> resultList = Lists.newArrayList();
 		do {
+			getConnector().waitForCooldown();
 			CommentFeed commentFeed = null;
 			try {
 
 				if ( null != since ) {
-					commentFeed = defaultClient.getService().getFeed(
+					getConnector().waitForCooldown();
+					commentFeed = defaultClient.getYoutubeService().getFeed(
 					        new URL( pageUrl ),
 					        CommentFeed.class,
 					        new DateTime( since ) );
 				} else {
-					commentFeed = defaultClient.getService().getFeed(
+					getConnector().waitForCooldown();
+					commentFeed = defaultClient.getYoutubeService().getFeed(
 					        new URL( pageUrl ),
 					        CommentFeed.class );
 				}
@@ -217,27 +426,68 @@ public class YoutubePostReader extends
 				// shouldn't happened
 				Throwables.propagate( e );
 			} catch ( NotModifiedException e ) {
-				return result;
+				return resultList;
 			} catch ( ServiceException e ) {
 				YoutubeConnector.handleYoutubeExceptions( e );
 			}
 
 			for ( CommentEntry commentEntry : commentFeed.getEntries() ) {
-				if ( 0 > limit || limit < result.size() ) {
-					result.add( YoutubeSiocUtils.createSiocPost(
+				if ( LOG.isDebugEnabled() ) {
+					LOG.debug( "Read entry '{}' from '{}':\n{}",
+					        commentEntry.getId(),
+					        getServiceEndpoint(),
+					        commentEntry );
+				} else {
+					LOG.info( "Read entry '{}' from '{}'",
+					        commentEntry.getId(),
+					        getServiceEndpoint() );
+				}
+
+				if ( 0 > limit || limit < resultList.size() ) {
+					Post post = YoutubeSiocUtils.createSiocPost(
 					        getConnector(),
 					        commentEntry,
-					        parentPost ) );
+					        parentPost );
+
+					if ( LOG.isDebugEnabled() ) {
+						LOG.debug( "Converted entry '{}' to SIOC:\n{}",
+						        commentEntry.getId(),
+						        RdfUtils.resourceToString( post, Syntax.Turtle ) );
+					} else {
+						LOG.info( "Converted entry '{}' to SIOC {}",
+						        commentEntry.getId(),
+						        post );
+					}
+
+					if ( SoccUtils.haveReadAccess(
+					        getConnector(),
+					        post.getCreator(),
+					        post.getContainer() ) ) {
+						Date createdDate = new Date( commentEntry.getPublished().getValue() );
+						if ( null == since || createdDate.after( since ) ) {
+							resultList.add( post );
+							LOG.info( "Added {} to polling result. result size: {}",
+							        post,
+							        resultList.size() );
+						} else {
+							LOG.info( "Skip Post '{}', it's to old.", post );
+						}
+					} else {
+						LOG.info( "Have no permission to read posts for this UserAccount='{}'",
+						        post.getCreator() );
+						SoccUtils.anonymisePost( post );
+					}
 				} else {
-					return result;
+					LOG.info( "Limit reached: limit={} size={}", limit, resultList.size() );
+					return resultList;
 				}
 			}
 
+			// get next page Link, if there is one
 			Link nextLink = commentFeed.getNextLink();
 			pageUrl = ( null != nextLink ) ? nextLink.getHref() : null;
 		} while ( null != pageUrl );
 
-		return result;
+		return resultList;
 	}
-
 }

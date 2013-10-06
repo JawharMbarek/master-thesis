@@ -48,19 +48,28 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.SiocUtils;
 
+/**
+ * Implementation of an {@link IStructureReader} for Youtube.
+ * 
+ * @author Florian Müller
+ */
 public class YoutubeStructureReader extends
         DefaultConnectorIOComponent<YoutubeConnector> implements
         IStructureReader<YoutubeConnector> {
 
 	private final YoutubeClientWrapper defaultClient;
-
 	private Forum playlists;
 	private Forum uploads;
 
+	/**
+	 * Constructs a new {@link YoutubeStructureReader} for a connector.
+	 * 
+	 * @param connector
+	 *            Connector for this {@link YoutubeStructureReader}.
+	 */
 	public YoutubeStructureReader( YoutubeConnector connector ) {
 		super( connector );
-		this.defaultClient = connector.getClientManager()
-		        .getDefaultClient();
+		this.defaultClient = connector.getClientManager().getDefaultClient();
 
 		try {
 			URI playlistsUri = YoutubeSiocUtils.createUserPlaylistsUri(
@@ -77,14 +86,14 @@ public class YoutubeStructureReader extends
 
 	@Override
 	public Site getSite() {
-		Site result = Site.getInstance( getModel(), getServiceEndpoint() );
-
-		if ( null == result ) {
-			result = new Site( getModel(), getServiceEndpoint(), true );
+		URI uri = Builder.createURI( "http://www.youtube.com" );
+		if ( !Site.hasInstance( getModel(), uri ) ) {
+			Site result = new Site( getModel(), uri, true );
 			result.setName( "Youtube" );
+			return result;
 		}
 
-		return result;
+		return Site.getInstance( getModel(), uri );
 	}
 
 	@Override
@@ -111,85 +120,6 @@ public class YoutubeStructureReader extends
 		throw new NotFoundException( "No Youtube container found at uri " + uri );
 	}
 
-	private Container getPlaylist( URI uri )
-	        throws NotFoundException,
-	        AuthenticationException,
-	        IOException {
-		if ( Thread.hasInstance( getModel(), uri ) ) {
-			return Thread.getInstance( getModel(), uri );
-		}
-
-		PlaylistLinkEntry playlistEntry = null;
-		try {
-			getConnector().waitForCooldown();
-			playlistEntry = defaultClient.getService().getEntry(
-			        new URL( uri.toString() ),
-			        PlaylistLinkEntry.class );
-		} catch ( MalformedURLException e ) {
-			// shouldn't happened
-			Throwables.propagate( e );
-		} catch ( ServiceException e ) {
-			YoutubeConnector.handleYoutubeExceptions( e );
-		}
-
-		Container parent = getContainer( Builder.createURI(
-		        playlistEntry.getAuthors().get( 0 ).getUri()
-		                + "/playlists" ) );
-
-		return YoutubeSiocUtils.createSiocThread(
-		        getConnector(),
-		        playlistEntry,
-		        SiocUtils.asForum( parent ) );
-	}
-
-	private Container getUserUploads( URI uri )
-	        throws NotFoundException,
-	        AuthenticationException,
-	        IOException {
-		if ( Forum.hasInstance( getModel(), uri ) ) {
-			return Forum.getInstance( getModel(), uri );
-		}
-
-		VideoFeed videoFeed = null;
-		try {
-			getConnector().waitForCooldown();
-			videoFeed = defaultClient.getService().getFeed(
-			        new URL( uri.toString() ),
-			        VideoFeed.class );
-		} catch ( MalformedURLException e ) {
-			// shouldn't happened
-			Throwables.propagate( e );
-		} catch ( ServiceException e ) {
-			YoutubeConnector.handleYoutubeExceptions( e );
-		}
-
-		return YoutubeSiocUtils.createSiocForum( getConnector(), uri, videoFeed );
-	}
-
-	private Container getUserPlaylists( URI uri )
-	        throws NotFoundException,
-	        AuthenticationException,
-	        IOException {
-		if ( Forum.hasInstance( getModel(), uri ) ) {
-			return Forum.getInstance( getModel(), uri );
-		}
-
-		PlaylistLinkFeed playlistFeed = null;
-		try {
-			getConnector().waitForCooldown();
-			playlistFeed = defaultClient.getService().getFeed(
-			        new URL( uri.toString() ),
-			        PlaylistLinkFeed.class );
-		} catch ( MalformedURLException e ) {
-			// shouldn't happened
-			Throwables.propagate( e );
-		} catch ( ServiceException e ) {
-			YoutubeConnector.handleYoutubeExceptions( e );
-		}
-
-		return YoutubeSiocUtils.createSiocForum( getConnector(), uri, playlistFeed );
-	}
-
 	@Override
 	public List<Container> listContainer() {
 		return Lists.newArrayList( (Container) uploads, (Container) playlists );
@@ -214,7 +144,7 @@ public class YoutubeStructureReader extends
 				PlaylistLinkFeed playlistFeed = null;
 				try {
 					getConnector().waitForCooldown();
-					playlistFeed = defaultClient.getService().getFeed(
+					playlistFeed = defaultClient.getYoutubeService().getFeed(
 					        new URL( pageUrl ),
 					        PlaylistLinkFeed.class );
 				} catch ( MalformedURLException e ) {
@@ -241,5 +171,126 @@ public class YoutubeStructureReader extends
 		throw new NotFoundException(
 		        "There are no Youtube sub containers for the uri "
 		                + parentUri );
+	}
+
+	/**
+	 * Gets a playlist from that URI as an {@link Container}.
+	 * 
+	 * @param uri
+	 *            URI to get the playlist from.
+	 * @return The playlist {@link Container} of the URI.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	private Container getPlaylist( URI uri )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		if ( Thread.hasInstance( getModel(), uri ) ) {
+			return Thread.getInstance( getModel(), uri );
+		}
+
+		PlaylistLinkEntry playlistEntry = null;
+		try {
+			getConnector().waitForCooldown();
+			playlistEntry = defaultClient.getYoutubeService().getEntry(
+			        new URL( uri.toString() ),
+			        PlaylistLinkEntry.class );
+		} catch ( MalformedURLException e ) {
+			// shouldn't happened
+			Throwables.propagate( e );
+		} catch ( ServiceException e ) {
+			YoutubeConnector.handleYoutubeExceptions( e );
+		}
+
+		Container parent = getContainer( Builder.createURI(
+		        playlistEntry.getAuthors().get( 0 ).getUri()
+		                + "/playlists" ) );
+
+		return YoutubeSiocUtils.createSiocThread(
+		        getConnector(),
+		        playlistEntry,
+		        SiocUtils.asForum( parent ) );
+	}
+
+	/**
+	 * Get an uploads-feed from an URI as {@link Container}.
+	 * 
+	 * @param uri
+	 *            URI to get the uploads-feed from.
+	 * @return A {@link Container} of that uploads-feed.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	private Container getUserUploads( URI uri )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		if ( Forum.hasInstance( getModel(), uri ) ) {
+			return Forum.getInstance( getModel(), uri );
+		}
+
+		VideoFeed videoFeed = null;
+		try {
+			getConnector().waitForCooldown();
+			videoFeed = defaultClient.getYoutubeService().getFeed(
+			        new URL( uri.toString() ),
+			        VideoFeed.class );
+		} catch ( MalformedURLException e ) {
+			// shouldn't happened
+			Throwables.propagate( e );
+		} catch ( ServiceException e ) {
+			YoutubeConnector.handleYoutubeExceptions( e );
+		}
+
+		return YoutubeSiocUtils.createSiocForum( getConnector(), uri, videoFeed );
+	}
+
+	/**
+	 * Gets a playlists-feed from an URI as a {@link Container}.
+	 * 
+	 * @param uri
+	 *            URI to get the playlists-feed from.
+	 * @return A Container of that playlists-feed.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	private Container getUserPlaylists( URI uri )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		if ( Forum.hasInstance( getModel(), uri ) ) {
+			return Forum.getInstance( getModel(), uri );
+		}
+
+		PlaylistLinkFeed playlistFeed = null;
+		try {
+			getConnector().waitForCooldown();
+			playlistFeed = defaultClient.getYoutubeService().getFeed(
+			        new URL( uri.toString() ),
+			        PlaylistLinkFeed.class );
+		} catch ( MalformedURLException e ) {
+			// shouldn't happened
+			Throwables.propagate( e );
+		} catch ( ServiceException e ) {
+			YoutubeConnector.handleYoutubeExceptions( e );
+		}
+
+		return YoutubeSiocUtils.createSiocForum( getConnector(), uri, playlistFeed );
 	}
 }

@@ -44,6 +44,12 @@ import de.m0ep.socc.core.utils.DateUtils;
 import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.UserAccountUtils;
 
+/**
+ * Utility methods do convert Facebook resources to SIOC and handle URIs.
+ * 
+ * @author Florian Müller
+ * 
+ */
 public final class FacebookSiocUtils {
 
 	// Connection names
@@ -129,6 +135,15 @@ public final class FacebookSiocUtils {
 	        + Fields.CREATED_TIME + ","
 	        + Fields.ATTACHMENT;
 
+	/**
+	 * Creates an {@link UserAccount} for a Facebook user.
+	 * 
+	 * @param connector
+	 *            Used Connector
+	 * @param jsonObject
+	 *            User data.
+	 * @return An {@link UserAccount} of the user data.
+	 */
 	public static UserAccount createSiocUserAccount(
 	        final FacebookConnector connector,
 	        final JsonObject jsonObject ) {
@@ -154,6 +169,15 @@ public final class FacebookSiocUtils {
 		return result;
 	}
 
+	/**
+	 * Create a Forum from Facebook resource with a wall
+	 * 
+	 * @param connector
+	 *            Used connector
+	 * @param object
+	 *            Data of the resource
+	 * @return
+	 */
 	public static Forum createSiocForum( final FacebookConnector connector,
 	        final JsonObject object ) {
 		Model model = connector.getContext().getModel();
@@ -181,6 +205,19 @@ public final class FacebookSiocUtils {
 		return result;
 	}
 
+	/**
+	 * Creates a {@link Post} for a Facebook post.
+	 * 
+	 * @param connector
+	 *            Used Connector
+	 * @param object
+	 *            Post data
+	 * @param container
+	 *            The parent {@link Container}
+	 * @param parentPost
+	 *            The parent {@link Post}.
+	 * @return A Post of the post data.
+	 */
 	public static Post createSiocPost(
 	        final FacebookConnector connector,
 	        final JsonObject object,
@@ -305,6 +342,13 @@ public final class FacebookSiocUtils {
 		return result;
 	}
 
+	/**
+	 * Creates an URI for a Facebook resource.
+	 * 
+	 * @param id
+	 *            Id of the resource
+	 * @return The URI for that resource.
+	 */
 	public static URI createSiocUri( final String id ) {
 		Preconditions.checkNotNull( id,
 		        "Required parameter id must be specified." );
@@ -329,6 +373,16 @@ public final class FacebookSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Checks if the resource data has a specific connection.
+	 * 
+	 * @param object
+	 *            Object data to check
+	 * @param connection
+	 *            Connection to check for.
+	 * @return <code>true</code> if the resource has the connection,
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean hasConnection( JsonObject object, String connection ) {
 		if ( null != object && object.has( Fields.METADATA ) ) {
 			JsonObject metadata = object.getJsonObject( Fields.METADATA );

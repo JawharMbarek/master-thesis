@@ -36,174 +36,192 @@ import de.m0ep.sioc.services.auth.Credentials;
 import de.m0ep.sioc.services.auth.RefreshToken;
 import de.m0ep.sioc.services.auth.ServicesAuthVocabulary;
 import de.m0ep.socc.core.connector.DefaultClientManager;
+import de.m0ep.socc.core.connector.IClientManager;
 import de.m0ep.socc.core.utils.RdfUtils;
 
+/**
+ * Implementation of an {@link IClientManager} for {@link GooglePlusConnector}.
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class GooglePlusClientManager extends
         DefaultClientManager<GooglePlusClientWrapper> {
 
-    private ClientId clientId;
-    private ClientSecret clientSecret;
+	private ClientId clientId;
+	private ClientSecret clientSecret;
 
-    public GooglePlusClientManager(Service service,
-            UserAccount defaultUserAccount)
-            throws Exception {
-        super(service, defaultUserAccount);
-    }
+	/**
+	 * Constructs a new {@link GooglePlusClientManager} with a
+	 * <code>service</code> and a <code>defaultUserAccount</code>.
+	 * 
+	 * @param service
+	 *            {@link Service} object for Google+.
+	 * @param defaultUserAccount
+	 *            The {@link UserAccount} of the default user.
+	 * 
+	 * @throws Exception
+	 *             Thrown if there is an error while creating the
+	 *             {@link GooglePlusClientManager}.
+	 */
+	public GooglePlusClientManager( final Service service, final UserAccount defaultUserAccount )
+	        throws Exception {
+		super( service, defaultUserAccount );
+	}
 
-    public ClientId getClientId() {
-        return clientId;
-    }
+	public ClientId getClientId() {
+		return clientId;
+	}
 
-    public ClientSecret getClientSecret() {
-        return clientSecret;
-    }
+	public ClientSecret getClientSecret() {
+		return clientSecret;
+	}
 
-    @Override
-    protected void init() {
-        de.m0ep.sioc.services.auth.Service authService =
-                de.m0ep.sioc.services.auth.Service.getInstance(
-                        getService().getModel(),
-                        getService().getResource());
+	@Override
+	protected void init() {
+		de.m0ep.sioc.services.auth.Service authService =
+		        de.m0ep.sioc.services.auth.Service.getInstance(
+		                getService().getModel(),
+		                getService().getResource() );
 
-        Preconditions.checkArgument(authService.hasServiceAuthentication(),
-                "The service has no authentication");
+		Preconditions.checkArgument( authService.hasServiceAuthentication(),
+		        "The service has no authentication" );
 
-        ClosableIterator<AuthenticationMechanism> authIter =
-                authService.getAllServiceAuthentication();
+		ClosableIterator<AuthenticationMechanism> authIter =
+		        authService.getAllServiceAuthentication();
 
-        try {
-            while (authIter.hasNext()) {
-                AuthenticationMechanism authentication =
-                        (AuthenticationMechanism) authIter.next();
+		try {
+			while ( authIter.hasNext() ) {
+				AuthenticationMechanism authentication =
+				        authIter.next();
 
-                if (authentication.hasCredentials()) {
-                    ClosableIterator<Credentials> credIter = authentication
-                            .getAllCredentials();
-                    try {
-                        clientId = null;
-                        clientSecret = null;
-                        while (credIter.hasNext()) {
-                            Credentials credentials = (Credentials) credIter
-                                    .next();
+				if ( authentication.hasCredentials() ) {
+					ClosableIterator<Credentials> credIter = authentication
+					        .getAllCredentials();
+					try {
+						clientId = null;
+						clientSecret = null;
+						while ( credIter.hasNext() ) {
+							Credentials credentials = credIter
+							        .next();
 
-                            if (credentials.hasValue()) {
-                                if (RdfUtils.isType(
-                                        credentials.getModel(),
-                                        credentials.getResource(),
-                                        ServicesAuthVocabulary.ClientId)) {
-                                    clientId = ClientId.getInstance(
-                                            credentials.getModel(),
-                                            credentials.getResource());
-                                } else if (RdfUtils.isType(
-                                        credentials.getModel(),
-                                        credentials.getResource(),
-                                        ServicesAuthVocabulary.ClientSecret)) {
-                                    clientSecret = ClientSecret.getInstance(
-                                            credentials.getModel(),
-                                            credentials.getResource());
-                                }
-                            }
-                        }
-                    } finally {
-                        credIter.close();
-                    }
+							if ( credentials.hasValue() ) {
+								if ( RdfUtils.isType(
+								        credentials.getModel(),
+								        credentials.getResource(),
+								        ServicesAuthVocabulary.ClientId ) ) {
+									clientId = ClientId.getInstance(
+									        credentials.getModel(),
+									        credentials.getResource() );
+								} else if ( RdfUtils.isType(
+								        credentials.getModel(),
+								        credentials.getResource(),
+								        ServicesAuthVocabulary.ClientSecret ) ) {
+									clientSecret = ClientSecret.getInstance(
+									        credentials.getModel(),
+									        credentials.getResource() );
+								}
+							}
+						}
+					} finally {
+						credIter.close();
+					}
 
-                    if (null != clientId && null != clientSecret) {
-                        break;
-                    }
-                }
-            }
-        } finally {
-            authIter.close();
-        }
+					if ( null != clientId && null != clientSecret ) {
+						break;
+					}
+				}
+			}
+		} finally {
+			authIter.close();
+		}
 
-        Preconditions.checkArgument(null != clientId,
-                "No client id found in the authentications of the service");
+		Preconditions.checkArgument( null != clientId,
+		        "No client id found in the authentications of the service" );
 
-        Preconditions.checkArgument(null != clientSecret,
-                "No client secret found in the authentications of the service");
-    }
+		Preconditions.checkArgument( null != clientSecret,
+		        "No client secret found in the authentications of the service" );
+	}
 
-    @Override
-    public GooglePlusClientWrapper createClient(
-            UserAccount userAccount)
-            throws Exception {
+	@Override
+	public GooglePlusClientWrapper createClient( final UserAccount userAccount )
+	        throws Exception {
 
-        Preconditions.checkNotNull(userAccount,
-                "Required parameter userAccount must be specified.");
+		Preconditions.checkNotNull( userAccount,
+		        "Required parameter userAccount must be specified." );
 
-        de.m0ep.sioc.services.auth.UserAccount authAccount =
-                de.m0ep.sioc.services.auth.UserAccount.getInstance(
-                        userAccount.getModel(),
-                        userAccount.getResource());
+		de.m0ep.sioc.services.auth.UserAccount authAccount =
+		        de.m0ep.sioc.services.auth.UserAccount.getInstance(
+		                userAccount.getModel(),
+		                userAccount.getResource() );
 
-        Preconditions.checkArgument(authAccount.hasAccountAuthentication(),
-                "The parameter userAccount has no authentications.");
+		Preconditions.checkArgument( authAccount.hasAccountAuthentication(),
+		        "The parameter userAccount has no authentications." );
 
-        ClosableIterator<AuthenticationMechanism> authIter =
-                authAccount.getAllAccountAuthentication();
+		ClosableIterator<AuthenticationMechanism> authIter =
+		        authAccount.getAllAccountAuthentication();
 
-        AccessToken accessToken = null;
-        RefreshToken refreshToken = null;
+		AccessToken accessToken = null;
+		RefreshToken refreshToken = null;
 
-        try {
-            while (authIter.hasNext()) {
-                AuthenticationMechanism authentication =
-                        (AuthenticationMechanism) authIter.next();
+		try {
+			while ( authIter.hasNext() ) {
+				AuthenticationMechanism authentication =
+				        authIter.next();
 
-                if (authentication.hasCredentials()) {
-                    ClosableIterator<Credentials> credIter = authentication
-                            .getAllCredentials();
-                    try {
-                        accessToken = null;
-                        refreshToken = null;
-                        while (credIter.hasNext()) {
-                            Credentials credentials = (Credentials) credIter
-                                    .next();
+				if ( authentication.hasCredentials() ) {
+					ClosableIterator<Credentials> credIter = authentication
+					        .getAllCredentials();
+					try {
+						accessToken = null;
+						refreshToken = null;
+						while ( credIter.hasNext() ) {
+							Credentials credentials = credIter
+							        .next();
 
-                            if (credentials.hasValue()) {
-                                if (RdfUtils.isType(
-                                        credentials.getModel(),
-                                        credentials.getResource(),
-                                        ServicesAuthVocabulary.AccessToken)) {
-                                    accessToken = AccessToken.getInstance(
-                                            credentials.getModel(),
-                                            credentials.getResource());
-                                } else if (RdfUtils.isType(
-                                        credentials.getModel(),
-                                        credentials.getResource(),
-                                        ServicesAuthVocabulary.RefreshToken)) {
-                                    refreshToken = RefreshToken.getInstance(
-                                            credentials.getModel(),
-                                            credentials.getResource());
-                                }
-                            }
-                        }
-                    } finally {
-                        credIter.close();
-                    }
+							if ( credentials.hasValue() ) {
+								if ( RdfUtils.isType(
+								        credentials.getModel(),
+								        credentials.getResource(),
+								        ServicesAuthVocabulary.AccessToken ) ) {
+									accessToken = AccessToken.getInstance(
+									        credentials.getModel(),
+									        credentials.getResource() );
+								} else if ( RdfUtils.isType(
+								        credentials.getModel(),
+								        credentials.getResource(),
+								        ServicesAuthVocabulary.RefreshToken ) ) {
+									refreshToken = RefreshToken.getInstance(
+									        credentials.getModel(),
+									        credentials.getResource() );
+								}
+							}
+						}
+					} finally {
+						credIter.close();
+					}
 
-                    if (null != accessToken && null != refreshToken) {
-                        break;
-                    }
-                }
-            }
-        } finally {
-            authIter.close();
-        }
+					if ( null != accessToken && null != refreshToken ) {
+						break;
+					}
+				}
+			}
+		} finally {
+			authIter.close();
+		}
 
-        Preconditions.checkArgument(null != accessToken,
-                "No accesstoken found in the authentications of " +
-                        "the userAccount");
+		Preconditions.checkArgument( null != accessToken,
+		        "No accesstoken found in the authentications of " +
+		                "the userAccount" );
 
-        Preconditions.checkArgument(null != refreshToken,
-                "No refreshtoken secret found in the authentications of " +
-                        "the userAccount");
+		Preconditions.checkArgument( null != refreshToken,
+		        "No refreshtoken secret found in the authentications of " +
+		                "the userAccount" );
 
-        return new GooglePlusClientWrapper(
-                clientId,
-                clientSecret,
-                accessToken,
-                refreshToken);
-    }
+		return new GooglePlusClientWrapper(
+		        clientId,
+		        clientSecret,
+		        accessToken,
+		        refreshToken );
+	}
 }

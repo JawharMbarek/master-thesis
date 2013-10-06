@@ -119,24 +119,24 @@ public class ConnectorTestApp {
 			// kaiAuthorization.setAccessToClass( SiocVocabulary.Post );
 			// kaiAuthorization.addAccessMode( AclVocabulary.Read );
 
-			//			addMoodleRdfData( model );
+			//addMoodleRdfData( model );
 			//			addCanvasLmsRdfData( model );
-			addFacebookRdfData( model );
+			//addFacebookRdfData( model );
 			// addYoutubeRdfData( model );
 
-			//			IConnector connector =
-			//			        ConnectorFactory.getInstance().createConnector(
-			//			                context,
-			//			                MOODLE_CONNECTOR_ID );
+			IConnector connector =
+			        ConnectorFactory.getInstance().createConnector(
+			                context,
+			                MOODLE_CONNECTOR_ID );
 
 			//			IConnector connector = ConnectorFactory.getInstance()
 			//			        .createConnector(
 			//			                context,
 			//			                CANVAS_LMS_CONNECTOR_ID );
 
-			IConnector connector = ConnectorFactory.getInstance().createConnector(
-			        context,
-			        FACEBOOK_CONNECTOR_ID );
+			//			IConnector connector = ConnectorFactory.getInstance().createConnector(
+			//			        context,
+			//			        FACEBOOK_CONNECTOR_ID );
 
 			// IConnector connector = ConnectorFactory.getInstance()
 			// .createConnector(

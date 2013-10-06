@@ -3,7 +3,8 @@ package de.m0ep.canvas;
 import java.util.Date;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -16,7 +17,7 @@ public class CanvasLmsClient {
 	private static final String SERVICE_PATH = "/api/v1";
 
 	private final String oauthToken;
-	private final HttpClient httpClient;
+	private final CloseableHttpClient httpClient;
 
 	private final Gson gson;
 
@@ -56,7 +57,7 @@ public class CanvasLmsClient {
 		        !oauthtoken.isEmpty(),
 		        "Required parameter oauthToken may not be empty" );
 
-		this.httpClient = new DefaultHttpClient();
+		this.httpClient = HttpClients.createDefault();
 		this.gson = new GsonBuilder()
 		        .registerTypeAdapter( Date.class,
 		                new ISO8601TypeAdapter().nullSafe() )

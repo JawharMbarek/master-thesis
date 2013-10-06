@@ -337,7 +337,6 @@ public final class SoccUtils {
 		post.removeAllAttachments();
 		post.removeAllCreated();
 		post.removeAllModified();
-		post.setComment( "--- anonymised ---" );
-		;
+		post.setContent( "--- anonymised ---" );
 	}
 }

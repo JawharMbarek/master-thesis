@@ -55,15 +55,17 @@ public class SoccPostProducer extends DefaultProducer implements ISoccProducer {
 
 		if ( LOG.isDebugEnabled() ) {
 			LOG.debug( "Write post(s) to uri='{}' syntax='{}' with connector '{}':\n{}",
-			        uri,
-			        syntax,
-			        postWriter.getConnector().getId(),
-			        rdfString );
+			        new Object[] {
+			                uri,
+			                syntax,
+			                postWriter.getConnector().getId(),
+			                rdfString } );
 		} else {
 			LOG.info( "Write post(s) to uri='{}' syntax='{}' with connector '{}'",
-			        uri,
-			        syntax,
-			        postWriter.getConnector().getId() );
+			        new Object[] {
+			                uri,
+			                syntax,
+			                postWriter.getConnector().getId() } );
 		}
 
 		postWriter.writePosts( uri, rdfString, syntax );

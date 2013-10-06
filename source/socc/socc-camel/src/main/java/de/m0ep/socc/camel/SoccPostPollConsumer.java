@@ -77,10 +77,11 @@ public class SoccPostPollConsumer extends ScheduledPollConsumer implements ISocc
 		List<Post> posts = postReader.pollPosts( uri, lastPollTime, limit );
 
 		LOG.info( "Polling posts from connector '{}' uri='{}' since='{}' limit='{}'",
-		        postReader.getConnector().getId(),
-		        uri,
-		        ( null != lastPollTime ) ? DateUtils.formatISO8601( lastPollTime ) : "",
-		        limit );
+		        new Object[] {
+		                postReader.getConnector().getId(),
+		                uri,
+		                ( null != lastPollTime ) ? DateUtils.formatISO8601( lastPollTime ) : "",
+		                limit } );
 
 		if ( !posts.isEmpty() ) {
 			Model tmpModel = RDF2Go.getModelFactory().createModel();

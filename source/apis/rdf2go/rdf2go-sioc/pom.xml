@@ -9,7 +9,7 @@
 
     <parent>
         <groupId>de.m0ep.masterthesis.apis</groupId>
-        <artifactId>rdf2go</artifactId>
+        <artifactId>rdf2go-parent</artifactId>
         <version>1.0.2</version>
     </parent>
 	

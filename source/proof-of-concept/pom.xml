@@ -6,7 +6,7 @@
 
   <parent>
     <groupId>de.m0ep</groupId>
-    <artifactId>masterthesis</artifactId>
+    <artifactId>masterthesis-parent</artifactId>
     <version>1.0.0</version>
   </parent>
 

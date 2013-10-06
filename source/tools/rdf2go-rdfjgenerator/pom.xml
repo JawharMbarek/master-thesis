@@ -2,12 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.m0ep.rdf2go</groupId>
-	<artifactId>rdfjgenerator</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>rdf2go-rdfjgenerator</artifactId>
+	<version>1.0.0</version>
 
 	<parent>
 		<groupId>de.m0ep.masterthesis</groupId>
-    	<artifactId>tools</artifactId>
+    	<artifactId>tools-parent</artifactId>
     	<version>1.0.1</version>
 	</parent>
     

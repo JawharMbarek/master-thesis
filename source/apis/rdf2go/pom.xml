@@ -4,14 +4,14 @@
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.m0ep.masterthesis.apis</groupId>
-    <artifactId>rdf2go</artifactId>
+    <artifactId>rdf2go-parent</artifactId>
     <version>1.0.2</version>
     <name>Masterthesis APIs RDF2Go</name>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>de.m0ep.masterthesis</groupId>
-        <artifactId>apis</artifactId>
+        <artifactId>api-parent</artifactId>
         <version>1.0.1</version>
     </parent>
 

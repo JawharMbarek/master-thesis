@@ -8,7 +8,7 @@
 
 	<parent>
 		<groupId>de.m0ep.masterthesis</groupId>
-    	<artifactId>socc</artifactId>
+    	<artifactId>socc-parent</artifactId>
     	<version>1.0.1</version>
 	</parent>
 

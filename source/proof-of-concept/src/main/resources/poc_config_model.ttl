@@ -1,0 +1,270 @@
+@prefix ccfg: <http://www.m0ep.de/socc/config#> .
+@prefix sioc: <http://rdfs.org/sioc/ns#> .
+@prefix waa: <http://purl.oclc.org/NET/WebApiAuthentication#> .
+@prefix siocs: <http://rdfs.org/sioc/services#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix acl: <http://www.w3.org/ns/auth/acl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix siocsa: <http://www.m0ep.de/sioc/services/auth#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+###################################################################################################
+# Definitions of the default User
+###################################################################################################
+
+<http://www.example.org#bot> a foaf:Person ;
+    foaf:account <https://canvas.instructure.com/api/v1/users/3478501/profile> ,
+        <https://graph.facebook.com/100003876610187> , 
+        <http://gdata.youtube.com/feeds/api/users/qX2si9NbFXXGS14BWC1juw> ,
+        <http://localhost/moodle/user/profile.php?id=7> ;
+    foaf:name "Socc Bot" .
+    
+[] a acl:Authorization ;
+    acl:accessToClass sioc:Post ;
+    acl:agentClass foaf:Agent ;
+    acl:mode acl:Read , acl:Write ;
+    acl:owner <http://www.example.org#bot> .
+    
+<https://canvas.instructure.com/api/v1/users/3478501/profile> a sioc:UserAccount ;
+    ccfg:mappedTo <https://graph.facebook.com/100003876610187> ,
+        <http://localhost/moodle/user/profile.php?id=7> , 
+        <http://gdata.youtube.com/feeds/api/users/qX2si9NbFXXGS14BWC1juw> ;
+    foaf:accountName "3478501" ;
+    foaf:accountServiceHomepage <https://canvas.instructure.com/api/v1> ;
+    sioc:account_of <http://www.example.org#bot> ;
+    siocs:has_service <https://canvas.instructure.com/api/v1> ;
+    siocsa:accountAuthentication [
+        a waa:OAuth ; 
+        siocsa:credentials [
+            a siocsa:AccessToken ;
+            rdf:value "#######_ADD_ACCESSTOKEN_#######"
+        ]
+    ] .
+    
+<https://graph.facebook.com/100003876610187> a sioc:UserAccount ;
+    ccfg:mappedTo <https://canvas.instructure.com/api/v1/users/3478501/profile> ,
+        <http://localhost/moodle/user/profile.php?id=7>,
+        <http://gdata.youtube.com/feeds/api/users/qX2si9NbFXXGS14BWC1juw> ;
+    foaf:accountName "100003876610187" ;
+    foaf:accountServiceHomepage <https://graph.facebook.com> ;
+    sioc:account_of <http://www.example.org#bot> ;
+    siocs:has_service <https://graph.facebook.com> ;
+    siocsa:accountAuthentication [
+        a waa:OAuth ;
+        siocsa:credentials [
+            a siocsa:AccessToken ;
+            rdf:value "#######_ADD_ACCESSTOKEN_#######"
+        ] 
+    ] .
+    
+<http://localhost/moodle/user/profile.php?id=7> a sioc:UserAccount ;
+    ccfg:mappedTo <https://canvas.instructure.com/api/v1/users/3478501/profile> ,
+        <https://graph.facebook.com/100003876610187>,
+        <http://gdata.youtube.com/feeds/api/users/qX2si9NbFXXGS14BWC1juw> ;
+    foaf:accountName "7" ;
+    foaf:accountServiceHomepage <http://localhost/moodle> ;
+    sioc:account_of <http://www.example.org#bot> ;
+    siocs:has_service <http://localhost/moodle/wspp> ;
+    siocsa:accountAuthentication [
+        a waa:Direct ;
+        siocsa:credentials [
+            a waa:Password ;
+            rdf:value "#######_PASSWORD_#######" 
+        ] , [
+            a waa:Username ;
+            rdf:value "#######_ADD_USERNAME_#######"
+        ]
+    ].
+    
+<http://gdata.youtube.com/feeds/api/users/qX2si9NbFXXGS14BWC1juw> a sioc:UserAccount ;
+    ccfg:mappedTo <https://canvas.instructure.com/api/v1/users/3478501/profile> ,
+        <https://graph.facebook.com/100003876610187> ,
+        <http://localhost/moodle/user/profile.php?id=7> ;
+    foaf:accountName "qX2si9NbFXXGS14BWC1juw" ;
+    foaf:accountServiceHomepage <http://gdata.youtube.com> ;
+    sioc:id "qX2si9NbFXXGS14BWC1juw" ;
+    sioc:name "com.google.gdata.data.PlainTextConstruct@762eefed" ;
+    sioc:account_of <http://www.example.org#bot> ;
+    siocs:has_service <http://gdata.youtube.com/> ;
+    siocsa:accountAuthentication [
+        a waa:Direct ;
+        siocsa:credentials [
+            a waa:Username ;
+            rdf:value "#######_ADD_USERNAME_#######"
+        ] , [
+            a waa:Password ;
+            rdf:value "#######_ADD_PASSWORD_#######"
+        ]
+    ] .
+    
+###################################################################################################
+# Definition of another User
+###################################################################################################
+
+<http://www.example.org#florian> a foaf:Person ;
+    foaf:account <https://canvas.instructure.com/api/v1/users/3457836/profile> ,
+        <https://graph.facebook.com/100000490230885>,
+        <http://localhost/moodle/user/profile.php?id=6> ,
+        <http://gdata.youtube.com/feeds/api/users/m0eper> ;
+    foaf:name "Florian" .
+
+[] a acl:Authorization ;
+    acl:accessToClass sioc:Post ;
+    acl:agentClass foaf:Agent ;
+    acl:mode acl:Read , acl:Write ;
+    acl:owner <http://www.example.org#florian> .
+
+<https://canvas.instructure.com/api/v1/users/3457836/profile> a sioc:UserAccount ;
+    ccfg:mappedTo <https://graph.facebook.com/100000490230885>, 
+        <http://localhost/moodle/user/profile.php?id=6> , 
+        <http://gdata.youtube.com/feeds/api/users/m0eper> ;
+    foaf:accountName "3457836" ;
+    foaf:accountServiceHomepage <https://canvas.instructure.com/api/v1> ;
+    sioc:account_of <http://www.example.org#florian> ;
+    siocs:has_service <https://canvas.instructure.com/api/v1> ;
+    siocsa:accountAuthentication [
+        a waa:OAuth ;
+        siocsa:credentials [
+            a siocsa:AccessToken ;
+            rdf:value "#######_ADD_ACCESSTOKEN_#######"
+        ]
+    ] .
+    
+<https://graph.facebook.com/100000490230885> a sioc:UserAccount ;
+    ccfg:mappedTo <https://canvas.instructure.com/api/v1/users/3457836/profile> ,
+        <http://localhost/moodle/user/profile.php?id=6> ,
+        <http://gdata.youtube.com/feeds/api/users/m0eper> ;
+    foaf:accountName "100000490230885" ;
+    foaf:accountServiceHomepage <https://graph.facebook.com> ;
+    sioc:account_of <http://www.example.org#florian> ;
+    siocs:has_service <https://graph.facebook.com> ;
+    siocsa:accountAuthentication [
+        a waa:OAuth ;
+        siocsa:credentials [
+            a siocsa:AccessToken ;
+            rdf:value "#######_ADD_ACCESSTOKEN_#######" 
+        ]
+    ] .
+    
+<http://localhost/moodle/user/profile.php?id=6> a sioc:UserAccount ;
+    ccfg:mappedTo <https://canvas.instructure.com/api/v1/users/3457836/profile>,
+        <https://graph.facebook.com/100000490230885> ,
+        <http://gdata.youtube.com/feeds/api/users/m0eper> ;
+    foaf:accountName "6" ;
+    foaf:accountServiceHomepage <http://localhost/moodle> ;
+    sioc:account_of <http://www.example.org#florian> ;
+    siocs:has_service <http://localhost/moodle/wspp> ;
+    siocsa:accountAuthentication [
+        a waa:Direct ;
+        siocsa:credentials [
+            a waa:Password ;
+            rdf:value "#######_ADD_PASSWORD_#######"
+        ] , [
+            a waa:Username ;
+            rdf:value "#######_ADD_USERNAME_#######"
+        ]
+    ] .
+    
+<http://gdata.youtube.com/feeds/api/users/m0eper> a sioc:UserAccount ;
+    ccfg:mappedTo <https://canvas.instructure.com/api/v1/users/3457836/profile>,
+        <https://graph.facebook.com/100000490230885> ,
+        <http://localhost/moodle/user/profile.php?id=6> ;
+    foaf:accountName "m0eper" ;
+    foaf:accountServiceHomepage <http://gdata.youtube.com> ;
+    sioc:account_of <http://www.example.org#florian> ;
+    siocs:has_service <http://gdata.youtube.com> ;
+    siocsa:accountAuthentication [
+        a waa:Direct ;
+        siocsa:credentials [
+            a waa:Username ;
+            rdf:value "#######_ADD_USERNAME_#######"
+        ] , [
+            a waa:Password ;
+            rdf:value "#######_ADD_PASSWORD_#######"
+        ]
+    ] .
+    
+###################################################################################################
+# Definition of the Canvas Service and Connector
+###################################################################################################
+
+<https://canvas.instructure.com/api/v1> a siocs:Service ;
+    siocs:service_endpoint <https://canvas.instructure.com> ;
+    siocs:service_of <https://canvas.instructure.com/api/v1/users/3478501/profile> , 
+        <https://canvas.instructure.com/api/v1/users/3478501/profile> .
+
+[] a ccfg:ConnectorConfig
+    ccfg:connectorClassName "de.m0ep.socc.core.connector.canvaslms.CanvasLmsConnector" ;
+    ccfg:defaultUserAccount <https://canvas.instructure.com/api/v1/users/3478501/profile> ;
+    ccfg:id "poc-canvas" ;
+    ccfg:service <https://canvas.instructure.com/api/v1> ;
+    ccfg:unknownMessageTemplate "{authorName} wrote:<br>{message}" .
+
+###################################################################################################
+# Definition of the Facebook Service and Connector
+###################################################################################################
+
+<https://graph.facebook.com> a siocs:Service ;
+    siocs:service_endpoint <https://graph.facebook.com> ;
+    siocs:service_of <https://graph.facebook.com/100003876610187> , 
+        <https://graph.facebook.com/100000490230885> ;
+    siocsa:serviceAuthentication [
+        a waa:OAuth ;
+        siocsa:credentials [
+            a siocsa:ClientId ;
+            rdf:value "#######_ADD_CLIENT_ID_#######"
+        ] , [
+            a siocsa:ClientSecret ;
+            rdf:value "#######_ADD_CLIENT_SECRET_#######"
+        ]
+    ] .
+
+[] a ccfg:ConnectorConfig ;
+    ccfg:connectorClassName "de.m0ep.socc.core.connector.facebook.FacebookConnector" ;
+    ccfg:defaultUserAccount <https://graph.facebook.com/100003876610187> ;
+    ccfg:id "poc-facebook" ;
+    ccfg:service <https://graph.facebook.com> ;
+    ccfg:unknownMessageTemplate "{authorName} wrote: {message}" .
+    
+###################################################################################################
+# Definition of the Moodle Service and Connector
+###################################################################################################
+
+<http://localhost/moodle/wspp> a siocs:Service ;
+    siocs:service_of <http://localhost/moodle/user/profile.php?id=7> ,
+        <http://localhost/moodle/user/profile.php?id=6> ;
+    siocs:service_endpoint <http://localhost/moodle> .
+
+[] a ccfg:ConnectorConfig
+    ccfg:connectorClassName "de.m0ep.socc.core.connector.moodle.Moodle2Connector" ;
+    ccfg:defaultUserAccount <http://localhost/moodle/user/profile.php?id=7> ;
+    ccfg:id "poc-moodle" ;
+    ccfg:service <http://localhost/moodle/wspp> ;
+    ccfg:unknownMessageTemplate "{authorName} wrote: {message}" .
+    
+###################################################################################################
+# Definition of the Youtube Service and Connector
+###################################################################################################
+
+<http://gdata.youtube.com/> a siocs:Service ;
+    siocs:service_endpoint <http://data.youtube.com> ;
+    siocs:service_of <http://gdata.youtube.com/feeds/api/users/m0eper> , 
+    <http://gdata.youtube.com/feeds/api/users/qX2si9NbFXXGS14BWC1juw> ;
+    siocsa:serviceAuthentication [
+        a siocsa:WebAPI ;
+        siocsa:credentials [
+            a waa:APIKey ;
+            rdf:value "#######_ADD_API_KEY_#######"
+        ]
+    ] .
+
+[] a ccfg:ConnectorConfig ;
+    ccfg:connectorClassName "de.m0ep.socc.core.connector.google.youtube.v2.YoutubeConnector" ;
+    ccfg:defaultUserAccount <http://gdata.youtube.com/feeds/api/users/qX2si9NbFXXGS14BWC1juw> ;
+    ccfg:id "poc-youtube" ;
+    ccfg:service <http://gdata.youtube.com/> ;
+    ccfg:unknownMessageTemplate "{authorName} wrote: {message}" .
+    
+    
+    

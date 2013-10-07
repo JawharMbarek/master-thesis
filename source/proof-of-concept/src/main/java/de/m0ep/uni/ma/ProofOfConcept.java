@@ -23,9 +23,6 @@ import de.m0ep.socc.core.utils.RdfUtils;
 public class ProofOfConcept {
 	private static final Logger LOG = LoggerFactory.getLogger( ProofOfConcept.class );
 
-	public static final String CANVAS_TOPIC = "canvas-topic";
-	public static final String FACEBOOK_TOPIC = "facebook-topic";
-
 	public static void main( String[] args ) {
 		ProofOfConcept poc = new ProofOfConcept();
 		poc.start();
@@ -66,7 +63,7 @@ public class ProofOfConcept {
 	private void initModel() {
 		File defaultModelFile = null;
 		try {
-			URL defaultModelUrl = getClass().getClassLoader().getResource( "default_model.ttl" );
+			URL defaultModelUrl = getClass().getClassLoader().getResource( "poc_config_model.ttl" );
 			defaultModelFile = new File( defaultModelUrl.toURI() );
 		} catch ( URISyntaxException e ) {
 			LOG.error( "Failed to get URI of default model file", e );
@@ -99,19 +96,40 @@ public class ProofOfConcept {
 			from( "socc://poc-canvas?uri=https://canvas.instructure.com/api/v1/"
 			        + "courses/798152/discussion_topics/1540697"
 			        + "&delay=20000" )
-			        .to( "activemq:topic:" + CANVAS_TOPIC );
+			        .to( "activemq:topic:canvas-topic" );
 
-			from( "activemq:topic:" + CANVAS_TOPIC )
-			        .to( "socc://poc-facebook?uri=https://graph.facebook.com/"
-			                + "520312298060793_520417398050283" );
+			from( "activemq:topic:canvas-topic" )
+			        .to( "socc://poc-facebook"
+			                + "?uri=https://graph.facebook.com/520312298060793_520417398050283" );
 
 			// Route 2: direkt route from facebook group feed to canvas discussion topic 
-			from(
-			        "socc://poc-facebook?uri=https://graph.facebook.com/"
-			                + "520312298060793_520417398050283"
-			                + "&delay=20000" )
+			from( "socc://poc-facebook"
+			        + "?uri=https://graph.facebook.com/520312298060793_520417398050283"
+			        + "&delay=20000" )
 			        .to( "socc://poc-canvas?uri=https://canvas.instructure.com/api/v1/"
 			                + "courses/798152/discussion_topics/1540697" );
+
+			// example routes for facebook, moodle and youtube to their own JMS topic
+
+			//from( "socc://poc-facebook?uri=https://graph.facebook.com/"
+			//        + "520312298060793_520417398050283"
+			//        + "&delay=20000" )
+			//        .to( "activemq:topic:facebook-topic" );
+
+			//from( "socc://poc-moodle"
+			//        + "?uri=http://localhost/moodle/mod/forum/discuss.php"
+			//        + "?d=3&delay=10000" )
+			//        .to( "activemq:topic:moodle-topic" );
+
+			//from( "socc://poc-youtube"
+			//        + "?uri=http://gdata.youtube.com/feeds/api/videos/80_b2-BA_Qg"
+			//        + "&delay=10000" )
+			//        .to( "activemq:topic:youtube-topic" );
+
+			// log topic messages
+			//from( "activemq:topic:youtube" )
+			//        .to( "log://poc-log" );
+
 		}
 	};
 

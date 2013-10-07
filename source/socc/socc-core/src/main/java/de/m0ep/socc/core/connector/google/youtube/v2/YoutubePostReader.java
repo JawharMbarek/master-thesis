@@ -402,7 +402,7 @@ public class YoutubePostReader extends
 	        IOException,
 	        AccessControlException {
 		Post parentPost = getPost( sourceUri );
-		String pageUrl = sourceUri.toString();
+		String pageUrl = sourceUri.toString() + "/comments";
 
 		List<Post> resultList = Lists.newArrayList();
 		do {

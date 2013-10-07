@@ -7,8 +7,8 @@
 
 	<parent>
 		<groupId>de.m0ep.masterthesis</groupId>
-    	<artifactId>tools-parent</artifactId>
-    	<version>1.0.1</version>
+		<artifactId>tools-parent</artifactId>
+		<version>1.0.1</version>
 	</parent>
 
 	<dependencies>
@@ -68,4 +68,22 @@
 			<version>2.0.0</version>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>de.m0ep.oauthtool.OAuthToolApp</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

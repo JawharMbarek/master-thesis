@@ -252,7 +252,7 @@ public class YoutubeSiocUtils {
 
 		Forum result = new Forum( model, uri, true );
 		result.setId( matcher.group( 1 ) + "/playlists" );
-		result.setName( playlistFeed.getTitle().toString() );
+		result.setName( playlistFeed.getTitle().getPlainText() );
 
 		Site site = connector.getStructureReader().getSite();
 		result.setHost( site );
@@ -284,7 +284,7 @@ public class YoutubeSiocUtils {
 
 		Forum result = new Forum( model, uri, true );
 		result.setId( matcher.group( 1 ) + "/uploads" );
-		result.setName( videoFeed.getTitle().toString() );
+		result.setName( videoFeed.getTitle().getPlainText() );
 
 		Site site = connector.getStructureReader().getSite();
 		result.setHost( site );

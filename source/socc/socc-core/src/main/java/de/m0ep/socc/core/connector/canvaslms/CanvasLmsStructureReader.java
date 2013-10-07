@@ -83,14 +83,10 @@ public class CanvasLmsStructureReader
 		if ( !Site.hasInstance( getModel(), getServiceEndpoint() ) ) {
 			Site result = new Site( getModel(), getServiceEndpoint(), true );
 			result.setName( "Canvas LMS (" + getServiceEndpoint() + ")" );
-
-			LOG.info( "Create SIOC Site '{}'.", result );
 			return result;
 		}
 
-		return Site.getInstance(
-		        getModel(),
-		        getServiceEndpoint() );
+		return Site.getInstance( getModel(), getServiceEndpoint() );
 	}
 
 	@Override
@@ -257,8 +253,20 @@ public class CanvasLmsStructureReader
 		return result;
 	}
 
-	/**** Utility Methods ****/
-
+	/**
+	 * Reads a course and converts it to SIOC
+	 * 
+	 * @param uri
+	 *            URI to the course
+	 * @return A {@link Forum} converted from the course
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	private Forum getCourse( URI uri ) throws
 	        NotFoundException,
 	        AuthenticationException,
@@ -318,6 +326,20 @@ public class CanvasLmsStructureReader
 		throw new NotFoundException( "No course found at uri " + uri );
 	}
 
+	/**
+	 * Reads a discussion topic and converts it to SIOC.
+	 * 
+	 * @param uri
+	 *            URI to the discussion topic.
+	 * @return A {@link Forum} converted from the discussion topic.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	private Thread getDiscussionTopic( URI uri ) throws
 	        NotFoundException,
 	        AuthenticationException,

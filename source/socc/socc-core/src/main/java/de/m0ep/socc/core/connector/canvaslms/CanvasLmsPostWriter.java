@@ -1,5 +1,5 @@
 /*
- * The MIT License (MIT) Copyright © 2013 "Florian Mueller"
+ * The MIT License (MIT) Copyright © 2013 Florian Mueller
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the “Software”), to deal
@@ -39,12 +39,7 @@ import org.rdfs.sioc.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Throwables;
-
 import de.m0ep.canvas.CanvasLmsClient;
-import de.m0ep.canvas.exceptions.AuthorizationException;
-import de.m0ep.canvas.exceptions.CanvasLmsException;
-import de.m0ep.canvas.exceptions.NetworkException;
 import de.m0ep.canvas.model.Entry;
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostWriter;
@@ -59,7 +54,7 @@ import de.m0ep.socc.core.utils.SoccUtils;
  * Class to write post to a Canvas LMS instance through a
  * {@link CanvasLmsConnector}.
  * 
- * @author "Florian Mueller"
+ * @author Florian Mueller
  */
 public class CanvasLmsPostWriter extends
         DefaultConnectorIOComponent<CanvasLmsConnector> implements
@@ -78,7 +73,7 @@ public class CanvasLmsPostWriter extends
 	}
 
 	@Override
-	public void writePosts( URI targetUri, String rdfString, Syntax syntax )
+	public void writePosts( final URI targetUri, final String rdfString, final Syntax syntax )
 	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {
@@ -171,7 +166,7 @@ public class CanvasLmsPostWriter extends
 	 * @throws IOException
 	 *             Thrown if there are errors writing the post.
 	 */
-	private void writePostToContainer( Container targetContainer, Post post )
+	private void writePostToContainer( final Container targetContainer, final Post post )
 	        throws AuthenticationException,
 	        IOException {
 		Pattern pattern = Pattern.compile( getServiceEndpoint()
@@ -235,14 +230,8 @@ public class CanvasLmsPostWriter extends
 					convertWrittenEntryToSioc( post, resultEntry, targetContainer, null );
 					return;
 				}
-			} catch ( CanvasLmsException e ) {
-				if ( e instanceof NetworkException ) {
-					throw new IOException( e );
-				} else if ( e instanceof AuthorizationException ) {
-					throw new AuthenticationException( e );
-				}
-
-				throw Throwables.propagate( e );
+			} catch ( Exception e ) {
+				CanvasLmsConnector.handleCanvasExceptions( e );
 			}
 		} else {
 			LOG.warn( "Invalid URI to write post to {}: {}", getServiceEndpoint(), targetContainer );
@@ -263,7 +252,7 @@ public class CanvasLmsPostWriter extends
 	 * @throws IOException
 	 *             Thrown if there are errors writing the post.
 	 */
-	private void writeReplyToPost( Post targetPost, Post post )
+	private void writeReplyToPost( final Post targetPost, final Post post )
 	        throws AuthenticationException,
 	        IOException {
 		Pattern pattern = Pattern.compile( getServiceEndpoint()
@@ -333,21 +322,34 @@ public class CanvasLmsPostWriter extends
 					        targetPost );
 					return;
 				}
-			} catch ( CanvasLmsException e ) {
-				if ( e instanceof NetworkException ) {
-					throw new IOException( e );
-				} else if ( e instanceof AuthorizationException ) {
-					throw new AuthenticationException( e );
-				}
-
-				throw Throwables.propagate( e );
+			} catch ( Exception e ) {
+				CanvasLmsConnector.handleCanvasExceptions( e );
 			}
 		} else {
 			LOG.warn( "Invalid URI to write post to {}: {}", getServiceEndpoint(), targetPost );
 		}
 	}
 
-	private Post convertWrittenEntryToSioc(
+	/**
+	 * Converts a written entry to SIOC and stores it in the triplestore
+	 * 
+	 * @param post
+	 *            The original {@link Post}.
+	 * @param entry
+	 *            The written entry.
+	 * @param container
+	 *            The parent {@link Container}.
+	 * @param parentPost
+	 *            The parent {@link Post}
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	private void convertWrittenEntryToSioc(
 	        final Post post,
 	        final Entry entry,
 	        final Container container,
@@ -382,7 +384,5 @@ public class CanvasLmsPostWriter extends
 			        getServiceEndpoint(),
 			        resultPost );
 		}
-
-		return resultPost;
 	}
 }

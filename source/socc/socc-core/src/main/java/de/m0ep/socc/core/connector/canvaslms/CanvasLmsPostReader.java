@@ -48,6 +48,7 @@ import de.m0ep.canvas.model.DiscussionTopic;
 import de.m0ep.canvas.model.Entry;
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IPostReader;
+import de.m0ep.socc.core.exceptions.AccessControlException;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.RdfUtils;
@@ -61,8 +62,7 @@ import de.m0ep.socc.core.utils.SoccUtils;
 public class CanvasLmsPostReader extends
         DefaultConnectorIOComponent<CanvasLmsConnector> implements
         IPostReader<CanvasLmsConnector> {
-	private static final Logger LOG = LoggerFactory
-	        .getLogger( CanvasLmsPostReader.class );
+	private static final Logger LOG = LoggerFactory.getLogger( CanvasLmsPostReader.class );
 
 	private final CanvasLmsClient defaultClient;
 
@@ -81,14 +81,16 @@ public class CanvasLmsPostReader extends
 	}
 
 	@Override
-	public boolean isPost( URI uri ) {
+	public boolean isPost( final URI uri ) {
 		return CanvasLmsSiocUtils.isInitialEntryUri( uri, getServiceEndpoint() )
 		        || CanvasLmsSiocUtils.isEntryUri( uri, getServiceEndpoint() );
 	}
 
 	@Override
-	public Post getPost( URI uri ) throws NotFoundException,
-	        AuthenticationException, IOException {
+	public Post getPost( final URI uri )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
 		LOG.info( "Read post from '{}'", uri );
 
 		if ( Post.hasInstance( getModel(), uri ) ) {
@@ -102,23 +104,15 @@ public class CanvasLmsPostReader extends
 			        getServiceEndpoint() ) ) {
 				return readInitialEntry( uri );
 			}
-		} catch ( CanvasLmsException e ) {
-			if ( e instanceof NetworkException ) {
-				throw new IOException( e );
-			} else if ( e instanceof AuthorizationException ) {
-				throw new AuthenticationException( e );
-			} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
-				throw new NotFoundException( e );
-			}
-
-			throw Throwables.propagate( e );
+		} catch ( Exception e ) {
+			CanvasLmsConnector.handleCanvasExceptions( e );
 		}
 
 		throw new NotFoundException( "No Canvas LMS post found at uri " + uri );
 	}
 
 	@Override
-	public boolean hasPosts( URI uri ) {
+	public boolean hasPosts( final URI uri ) {
 		return CanvasLmsSiocUtils.isDiscussionTopicUri( uri,
 		        getServiceEndpoint() )
 		        || CanvasLmsSiocUtils.isInitialEntryUri( uri,
@@ -127,8 +121,9 @@ public class CanvasLmsPostReader extends
 	}
 
 	@Override
-	public List<Post> pollPosts( URI sourceUri, Date since, int limit )
-	        throws AuthenticationException, IOException {
+	public List<Post> pollPosts( final URI sourceUri, final Date since, final int limit )
+	        throws AuthenticationException,
+	        IOException {
 		LOG.info( "Poll posts from sourceUri='{}' since='{}' limit='{}'",
 		        sourceUri, since, limit );
 
@@ -140,16 +135,8 @@ public class CanvasLmsPostReader extends
 			} else if ( CanvasLmsSiocUtils.isEntryUri( sourceUri, getServiceEndpoint() ) ) {
 				return pollPostsFromEntry( sourceUri, since, limit );
 			}
-		} catch ( CanvasLmsException e ) {
-			if ( e instanceof NetworkException ) {
-				throw new IOException( e );
-			} else if ( e instanceof AuthorizationException ) {
-				throw new AuthenticationException( e );
-			} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
-				throw new NotFoundException( e );
-			}
-
-			throw Throwables.propagate( e );
+		} catch ( Exception e ) {
+			CanvasLmsConnector.handleCanvasExceptions( e );
 		}
 
 		throw new IOException(
@@ -159,19 +146,33 @@ public class CanvasLmsPostReader extends
 		                + getServiceEndpoint() );
 	}
 
-	/**** Util methods ****/
-
-	private Post readEntry( URI uri ) throws
+	/**
+	 * Reads a an Entry from an URI and converts it to SIOC
+	 * 
+	 * @param uri
+	 *            URI of an Entry
+	 * @return A {@link Post} converted from the Entry
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 * @throws AccessControlException
+	 *             Thrown if there is a problem with access control.
+	 */
+	private Post readEntry( final URI uri ) throws
 	        NotFoundException,
 	        AuthenticationException,
-	        IOException, CanvasLmsException {
+	        IOException,
+	        AccessControlException {
 		if ( Post.hasInstance( getModel(), uri ) ) {
 			return Post.getInstance( getModel(), uri );
 		}
 
-		Pattern pattern = Pattern.compile(
-		        getServiceEndpoint()
-		                + CanvasLmsSiocUtils.REGEX_ENTRY_URI );
+		Pattern pattern = Pattern.compile( getServiceEndpoint()
+		        + CanvasLmsSiocUtils.REGEX_ENTRY_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
 		if ( matcher.find() ) {
@@ -179,11 +180,16 @@ public class CanvasLmsPostReader extends
 			long topicId = Long.parseLong( matcher.group( 2 ) );
 			long entryId = Long.parseLong( matcher.group( 3 ) );
 
-			Entry entry = defaultClient.courses()
-			        .discussionTopics( courseId )
-			        .entries( topicId )
-			        .get( entryId )
-			        .execute();
+			Entry entry = null;
+			try {
+				entry = defaultClient.courses()
+				        .discussionTopics( courseId )
+				        .entries( topicId )
+				        .get( entryId )
+				        .execute();
+			} catch ( Exception e ) {
+				CanvasLmsConnector.handleCanvasExceptions( e );
+			}
 
 			if ( null != entry ) {
 				Container container = getConnector().getStructureReader()
@@ -220,6 +226,16 @@ public class CanvasLmsPostReader extends
 					        result );
 				}
 
+				if ( !SoccUtils.haveReadAccess(
+				        getConnector(),
+				        result.getCreator(),
+				        result.getContainer() ) ) {
+					SoccUtils.anonymisePost( result );
+					throw new AccessControlException( "Have no permission to read post '"
+					        + uri
+					        + "'" );
+				}
+
 				return result;
 			}
 		}
@@ -227,10 +243,28 @@ public class CanvasLmsPostReader extends
 		throw new NotFoundException( "Can't read post from uri " + uri );
 	}
 
-	private Post readInitialEntry( URI uri ) throws
+	/**
+	 * Reads the initial entry of a discussion topic and converts it to SIOC
+	 * 
+	 * @param uri
+	 *            URI of the discussion topic
+	 * 
+	 * @return A {@link Post} convertet form the initial entry.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 * @throws AccessControlException
+	 *             Thrown if there is a problem with access control.
+	 */
+	private Post readInitialEntry( final URI uri ) throws
 	        NotFoundException,
 	        AuthenticationException,
-	        IOException {
+	        IOException,
+	        AccessControlException {
 		if ( Post.hasInstance( getModel(), uri ) ) {
 			return Post.getInstance( getModel(), uri );
 		}
@@ -274,6 +308,16 @@ public class CanvasLmsPostReader extends
 				        discussionTopic,
 				        courseId );
 
+				if ( !SoccUtils.haveReadAccess(
+				        getConnector(),
+				        result.getCreator(),
+				        result.getContainer() ) ) {
+					SoccUtils.anonymisePost( result );
+					throw new AccessControlException( "Have no permission to read post '"
+					        + uri
+					        + "'" );
+				}
+
 				if ( LOG.isDebugEnabled() ) {
 					LOG.debug( "Converted initial entry to SIOC:\n{}",
 					        RdfUtils.resourceToString(
@@ -300,12 +344,36 @@ public class CanvasLmsPostReader extends
 		throw new NotFoundException( "Can't read post from uri " + uri );
 	}
 
-	private List<Post> pollPostsFromDiscussionTopic( URI sourceUri, Date since,
-	        int limit )
+	/**
+	 * Polls new entries from a discussion topic and converts them to a
+	 * {@link List} of {@link Post}s.
+	 * 
+	 * @param sourceUri
+	 *            URI to the discussion topic.
+	 * @param since
+	 *            Data since a post is new
+	 * @param limit
+	 *            Limit result size to this number.
+	 * @return A {@link List} of {@link Post}s
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 * @throws AccessControlException
+	 *             Thrown if there is a problem with access control.
+	 */
+	private List<Post> pollPostsFromDiscussionTopic(
+	        final URI sourceUri,
+	        final Date since,
+	        final int limit )
 	        throws CanvasLmsException,
 	        NotFoundException,
 	        AuthenticationException,
-	        IOException {
+	        IOException,
+	        AccessControlException {
 		Pattern pattern = Pattern.compile(
 		        getServiceEndpoint() + CanvasLmsSiocUtils.REGEX_DISCUSSION_TOPIC_URI );
 		Matcher matcher = pattern.matcher( sourceUri.toString() );
@@ -352,18 +420,37 @@ public class CanvasLmsPostReader extends
 		return result;
 	}
 
-	private List<Post> pollPostsFromEntry( URI sourceUri, Date since, int limit )
-	        throws
-	        CanvasLmsException,
-	        NotFoundException,
+	/**
+	 * Polls all new comments of an entry and converts them to a {@link List} of
+	 * {@link Post}s.
+	 * 
+	 * @param sourceUri
+	 *            URI to the entry.
+	 * @param since
+	 *            Data since a post is new
+	 * @param limit
+	 *            Limit result size to this number.
+	 * @return A {@link List} of {@link Post}s
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 * @throws AccessControlException
+	 *             Thrown if there is a problem with access control.
+	 */
+	private List<Post> pollPostsFromEntry( final URI sourceUri, final Date since, final int limit )
+	        throws NotFoundException,
 	        AuthenticationException,
-	        IOException {
-		Pattern pattern = Pattern.compile(
-		        getServiceEndpoint()
-		                + CanvasLmsSiocUtils.REGEX_ENTRY_URI );
-		Matcher matcher = pattern.matcher( sourceUri.toString() );
+	        IOException,
+	        AccessControlException {
 		List<Post> result = Lists.newArrayList();
 
+		Pattern pattern = Pattern.compile( getServiceEndpoint()
+		        + CanvasLmsSiocUtils.REGEX_ENTRY_URI );
+		Matcher matcher = pattern.matcher( sourceUri.toString() );
 		if ( matcher.find() ) {
 			long courseId = Long.parseLong( matcher.group( 1 ) );
 			long topicId = Long.parseLong( matcher.group( 2 ) );
@@ -383,23 +470,30 @@ public class CanvasLmsPostReader extends
 			                topicId,
 			                entryId ) );
 
-			Pagination<Entry> pagination = defaultClient.courses()
-			        .discussionTopics( courseId )
-			        .entries( topicId )
-			        .listReplies( entryId )
-			        .executePagination();
+			Pagination<Entry> pagination = null;
+			try {
+				pagination = defaultClient.courses()
+				        .discussionTopics( courseId )
+				        .entries( topicId )
+				        .listReplies( entryId )
+				        .executePagination();
+			} catch ( Exception e ) {
+				CanvasLmsConnector.handleCanvasExceptions( e );
+			}
 
-			for ( List<Entry> replyPage : pagination ) {
-				for ( Entry reply : replyPage ) {
-					addEntryToList(
-					        result,
-					        since,
-					        Math.max( -1, limit - result.size() ),
-					        reply,
-					        container,
-					        parentPost,
-					        topicId,
-					        topicId );
+			if ( null != pagination ) {
+				for ( List<Entry> replyPage : pagination ) {
+					for ( Entry reply : replyPage ) {
+						addEntryToList(
+						        result,
+						        since,
+						        Math.max( -1, limit - result.size() ),
+						        reply,
+						        container,
+						        parentPost,
+						        topicId,
+						        topicId );
+					}
 				}
 			}
 		}
@@ -407,6 +501,34 @@ public class CanvasLmsPostReader extends
 		return result;
 	}
 
+	/**
+	 * Adds a entry to the <code>resultList</code> and all it's comments
+	 * matching the <code>since</code> and <code>limit</code> criteria.
+	 * 
+	 * @param resultList
+	 *            {@link List} to add the entry to.
+	 * @param since
+	 *            Data since a post is new
+	 * @param limit
+	 *            Limit result size to this number.
+	 * @param entry
+	 *            The entry to add
+	 * @param container
+	 *            The parent {@link Container}
+	 * @param parentPost
+	 *            The parent {@link Post}.
+	 * @param courseId
+	 *            The id of the course.
+	 * @param topicId
+	 *            The id of the discussion topic.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	private void addEntryToList(
 	        final List<Post> resultList,
 	        final Date since,
@@ -416,8 +538,7 @@ public class CanvasLmsPostReader extends
 	        final Post parentPost,
 	        final long courseId,
 	        final long topicId )
-	        throws CanvasLmsException,
-	        NotFoundException,
+	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {
 
@@ -456,10 +577,14 @@ public class CanvasLmsPostReader extends
 
 				Date createdDate = entry.getCreatedAt();
 				if ( null == since || createdDate.after( since ) ) {
-					resultList.add( post );
-					LOG.info( "Added {} to polling result. result size: {}",
-					        post,
-					        resultList.size() );
+					if ( !resultList.contains( post ) ) {
+						resultList.add( post );
+						LOG.info( "Added {} to polling result. result size: {}",
+						        post,
+						        resultList.size() );
+					} else {
+						LOG.info( "Post {} already in list", post );
+					}
 				} else {
 					LOG.info( "Skip Post '{}', it's to old.", post );
 				}
@@ -487,23 +612,30 @@ public class CanvasLmsPostReader extends
 
 			// read more replies if necessary
 			if ( entry.hasMoreReplies() ) {
-				Pagination<Entry> pagination = defaultClient.courses()
-				        .discussionTopics( courseId )
-				        .entries( topicId )
-				        .listReplies( entry.getId() )
-				        .executePagination();
+				Pagination<Entry> pagination = null;
+				try {
+					pagination = defaultClient.courses()
+					        .discussionTopics( courseId )
+					        .entries( topicId )
+					        .listReplies( entry.getId() )
+					        .executePagination();
+				} catch ( Exception e ) {
+					CanvasLmsConnector.handleCanvasExceptions( e );
+				}
 
-				for ( List<Entry> replyPage : pagination ) {
-					for ( Entry replyEntry : replyPage ) {
-						addEntryToList(
-						        resultList,
-						        since,
-						        Math.max( -1, limit - resultList.size() ),
-						        replyEntry,
-						        container,
-						        post,
-						        courseId,
-						        topicId );
+				if ( null != pagination ) {
+					for ( List<Entry> replyPage : pagination ) {
+						for ( Entry replyEntry : replyPage ) {
+							addEntryToList(
+							        resultList,
+							        since,
+							        Math.max( -1, limit - resultList.size() ),
+							        replyEntry,
+							        container,
+							        post,
+							        courseId,
+							        topicId );
+						}
 					}
 				}
 			}

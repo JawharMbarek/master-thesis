@@ -32,6 +32,12 @@ import de.m0ep.socc.core.utils.SiocUtils;
 import de.m0ep.socc.core.utils.StringUtils;
 import de.m0ep.socc.core.utils.UserAccountUtils;
 
+/**
+ * Utility methods to convert Canvas resources to SIOC and handle URIs.
+ * 
+ * @author Florian Mueller
+ * 
+ */
 public final class CanvasLmsSiocUtils {
 
 	public static final String CANVAS_LMS_API_PATH = "/api/v1";
@@ -111,6 +117,15 @@ public final class CanvasLmsSiocUtils {
 	 * SIOC object creation methods
 	 */
 
+	/**
+	 * Creates a {@link UserAccount} for eht author of a discussion topic.
+	 * 
+	 * @param connector
+	 *            Used Connector.
+	 * @param author
+	 *            The author data
+	 * @return A {@link UserAccount} converted from the author data.
+	 */
 	public static UserAccount createSiocUserAccount(
 	        final CanvasLmsConnector connector,
 	        final DiscussionTopic.Author author ) {
@@ -118,6 +133,15 @@ public final class CanvasLmsSiocUtils {
 		return createSiocUserAccount( connector, author.getId(), author.getDisplayName() );
 	}
 
+	/**
+	 * Creates a {@link UserAccount} for the author of a discussion topic entry.
+	 * 
+	 * @param connector
+	 *            Used Connector.
+	 * @param entry
+	 *            The entry data,
+	 * @return A {@link UserAccount} converted from the entry data.
+	 */
 	public static UserAccount createSiocUserAccount(
 	        final CanvasLmsConnector connector,
 	        final Entry entry ) {
@@ -125,6 +149,17 @@ public final class CanvasLmsSiocUtils {
 		return createSiocUserAccount( connector, entry.getUserId(), entry.getUserName() );
 	}
 
+	/**
+	 * Creates a {@link UserAccount} for a Canvas user from it's id and name.
+	 * 
+	 * @param connector
+	 *            Used connector.
+	 * @param userId
+	 *            The id of the user.
+	 * @param username
+	 *            The name of the user.
+	 * @return A {@link UserAccount} from that data.
+	 */
 	public static UserAccount createSiocUserAccount(
 	        final CanvasLmsConnector connector,
 	        final long userId,
@@ -132,9 +167,7 @@ public final class CanvasLmsSiocUtils {
 
 		Model model = connector.getContext().getModel();
 		Service service = connector.getService();
-		URI userUri = createUserUri(
-		        service.getServiceEndpoint().asURI(),
-		        userId );
+		URI userUri = createUserUri( service.getServiceEndpoint().asURI(), userId );
 
 		UserAccount result = new UserAccount( model, userUri, true );
 		result.setId( Long.toString( userId ) );
@@ -148,11 +181,19 @@ public final class CanvasLmsSiocUtils {
 		return result;
 	}
 
+	/**
+	 * Creates a {@link Forum} from a course.
+	 * 
+	 * @param connector
+	 *            Used connector.
+	 * @param course
+	 *            Course data.
+	 * @return A {@link Forum} from that course data.
+	 */
 	public static Forum createSiocForum(
 	        final CanvasLmsConnector connector,
 	        final Course course ) {
-		URI serviceEndpoint = connector.getService().getServiceEndpoint()
-		        .asURI();
+		URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
 		URI uri = createCourseUri( serviceEndpoint, course.getId() );
 
 		if ( !Forum.hasInstance( connector.getContext().getModel(), uri ) ) {
@@ -170,6 +211,18 @@ public final class CanvasLmsSiocUtils {
 		return Forum.getInstance( connector.getContext().getModel(), uri );
 	}
 
+	/**
+	 * Creates a {@link Thread} from a discussion topic. Creates also the inital
+	 * post.
+	 * 
+	 * @param connector
+	 *            Used connector.
+	 * @param discussionTopic
+	 *            The discussion topic data.
+	 * @param parent
+	 *            The parent course {@link Forum}.
+	 * @return A Thread converted from that data.
+	 */
 	public static Thread createSiocThread(
 	        final CanvasLmsConnector connector,
 	        final DiscussionTopic discussionTopic,
@@ -215,6 +268,19 @@ public final class CanvasLmsSiocUtils {
 		return Thread.getInstance( model, uri );
 	}
 
+	/**
+	 * Creates a {@link Post} form the initial post of a discussion topic.
+	 * 
+	 * @param connector
+	 *            Used connector.
+	 * @param container
+	 *            The parent thread {@link Container}.
+	 * @param discussionTopic
+	 *            The discussion topic data.
+	 * @param courseId
+	 *            The course id.
+	 * @return A {@link Post} converted from that data.
+	 */
 	public static Post createSiocPost(
 	        final CanvasLmsConnector connector,
 	        final Container container,
@@ -276,6 +342,26 @@ public final class CanvasLmsSiocUtils {
 		return result;
 	}
 
+	/**
+	 * Creates a {@link Post} from a discussion topic entry.
+	 * 
+	 * @param connector
+	 *            Used connector.
+	 * @param entry
+	 *            Entry to convert
+	 * @param container
+	 *            The parent {@link Container}.
+	 * @param parentPost
+	 *            The parent {@link Post} (can be null).
+	 * @return A {@link Post} converted from these data.
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
 	public static Post createSiocPost(
 	        final CanvasLmsConnector connector,
 	        final Entry entry,
@@ -370,6 +456,15 @@ public final class CanvasLmsSiocUtils {
 		return result;
 	}
 
+	/**
+	 * Creates an URI for an {@link UserAccount}.
+	 * 
+	 * @param rootUri
+	 *            URI of the Canvas instance
+	 * @param userId
+	 *            The user id.
+	 * @return The created URI
+	 */
 	public static URI createUserUri( final URI rootUri, final long userId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( rootUri + TEMPLATE_USER_URI )
@@ -377,6 +472,15 @@ public final class CanvasLmsSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Creates an URI for a {@link Forum} of a course.
+	 * 
+	 * @param rootUri
+	 *            URI of the Canvas instance
+	 * @param courseId
+	 *            The course id.
+	 * @return The created URI.
+	 */
 	public static URI createCourseUri( final URI rootUri, final long courseId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( rootUri + TEMPLATE_COURSE_URI )
@@ -384,6 +488,17 @@ public final class CanvasLmsSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Creates the URI for a Thread of a discussion topic.
+	 * 
+	 * @param rootUri
+	 *            URI of the Canvas instance
+	 * @param courseId
+	 *            The course id.
+	 * @param discussionId
+	 *            The discussion topic id-
+	 * @return The created URI.
+	 */
 	public static URI createDiscussionTopicUri(
 	        final URI rootUri,
 	        final long courseId,
@@ -396,6 +511,17 @@ public final class CanvasLmsSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Creates the URI for a {@link Post} of a discussion topic inital entry.
+	 * 
+	 * @param rootUri
+	 *            URI of the Canvas instance.
+	 * @param courseId
+	 *            The course ID.
+	 * @param discussionId
+	 *            The discussionTopic.
+	 * @return The created URI.
+	 */
 	public static URI createInitialEntryUri(
 	        final URI rootUri,
 	        final long courseId,
@@ -407,6 +533,19 @@ public final class CanvasLmsSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Creates the URI of a {@link Post} from a discussion topic entry.
+	 * 
+	 * @param rootUri
+	 *            URI of the Canvas instance,
+	 * @param courseId
+	 *            The course id.
+	 * @param discussionId
+	 *            The discussion topic id.
+	 * @param entryId
+	 *            The entry id.
+	 * @return The created URI.
+	 */
 	public static URI createEntryUri(
 	        final URI rootUri,
 	        final long courseId,
@@ -420,6 +559,16 @@ public final class CanvasLmsSiocUtils {
 		                .expand() );
 	}
 
+	/**
+	 * Tests if the URI is one of an user.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @param rootUri
+	 *            URI of the Canvas instance
+	 * @return <code>true</code> if the URI is a user, <code>false</code>
+	 *         otherwise.
+	 */
 	public static boolean isUserUri( final URI uri, final URI rootUri ) {
 		Pattern pattern = Pattern.compile( "^" + rootUri + REGEX_USER_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
@@ -427,6 +576,16 @@ public final class CanvasLmsSiocUtils {
 		return matcher.matches();
 	}
 
+	/**
+	 * Test if the URI is one of a course.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @param rootUri
+	 *            URI of the Canvas instance
+	 * @return <code>true</code> if the URI is a course, <code>false</code>
+	 *         otherwise.
+	 */
 	public static boolean isCourseUri( final URI uri, final URI rootUri ) {
 		Pattern pattern = Pattern.compile( "^" + rootUri + REGEX_COURSE_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
@@ -434,6 +593,16 @@ public final class CanvasLmsSiocUtils {
 		return matcher.matches();
 	}
 
+	/**
+	 * Test if the URI is one of a discussion topic.
+	 * 
+	 * @param uri
+	 *            Uri to test.
+	 * @param rootUri
+	 *            URI of the Canvas instance
+	 * @return <code>true</code> if the URI is a discussion topic,
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isDiscussionTopicUri( final URI uri, final URI rootUri ) {
 		Pattern pattern = Pattern.compile( "^" + rootUri + REGEX_DISCUSSION_TOPIC_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
@@ -441,6 +610,16 @@ public final class CanvasLmsSiocUtils {
 		return matcher.matches();
 	}
 
+	/**
+	 * Test if the URI is one of a discussion topic initial entry.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @param rootUri
+	 *            URI of the Canvas instance
+	 * @return <code>true</code> if the URI is a discussion topic initial entry,
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isInitialEntryUri( final URI uri, final URI rootUri ) {
 		Pattern pattern = Pattern.compile( "^" + rootUri + REGEX_INITIAL_ENTRY_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
@@ -448,6 +627,16 @@ public final class CanvasLmsSiocUtils {
 		return matcher.matches();
 	}
 
+	/**
+	 * Test if the URI is one of a discussion topic entry.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @param rootUri
+	 *            URI of the Canvas instance
+	 * @return <code>true</code> if the URI is a discussion topic entry,
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isEntryUri( final URI uri, final URI rootUri ) {
 		Pattern pattern = Pattern.compile( "^" + rootUri + REGEX_ENTRY_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );

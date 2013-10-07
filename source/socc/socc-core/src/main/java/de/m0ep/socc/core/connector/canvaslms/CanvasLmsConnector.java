@@ -32,11 +32,14 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
+import de.m0ep.canvas.exceptions.AuthorizationException;
+import de.m0ep.canvas.exceptions.NetworkException;
 import de.m0ep.socc.config.ConnectorConfig;
 import de.m0ep.socc.core.ISoccContext;
 import de.m0ep.socc.core.connector.DefaultConnector;
 import de.m0ep.socc.core.connector.IConnector;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
+import de.m0ep.socc.core.exceptions.NotFoundException;
 
 /**
  * Implementation of an {@link IConnector} for Canvas.
@@ -160,5 +163,33 @@ public class CanvasLmsConnector extends DefaultConnector {
 		clientManager = null;
 
 		setInitialized( false );
+	}
+
+	/**
+	 * Converts CanvasLms4J Exceptions, convert them to SOCC exceptions and
+	 * propagates them.
+	 * 
+	 * @param exception
+	 *            Exception to convert and propagate.
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	static void handleCanvasExceptions( Exception exception )
+	        throws NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		if ( exception instanceof NetworkException ) {
+			throw new IOException( exception );
+		} else if ( exception instanceof AuthorizationException ) {
+			throw new AuthenticationException( exception );
+		} else if ( exception instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
+			throw new NotFoundException( exception );
+		}
+
+		throw Throwables.propagate( exception );
 	}
 }

@@ -92,8 +92,7 @@ public class CanvasLmsPostWriter extends
 
 		Thing targetResource = null;
 		if ( isDiscussionTopicUri || isInitialEntryUri ) {
-			targetResource = getConnector().getStructureReader().getContainer(
-			        targetUri );
+			targetResource = getConnector().getStructureReader().getContainer( targetUri );
 		} else if ( isEntryUri ) {
 			targetResource = getConnector().getPostReader().getPost( targetUri );
 		} else {
@@ -174,27 +173,13 @@ public class CanvasLmsPostWriter extends
 		Matcher matcher = pattern.matcher( targetContainer.toString() );
 
 		if ( matcher.find() ) {
-			long courseId = Long.parseLong( matcher.group( 1 ) );
-			long topicId = Long.parseLong( matcher.group( 2 ) );
+			String endpoint = matcher.group( 1 );
+			long endpointId = Long.parseLong( matcher.group( 2 ) );
+			long topicId = Long.parseLong( matcher.group( 3 ) );
 
 			UserAccount creatorAccount = PostWriterUtils.getCreatorUserAccount(
 			        getConnector(),
 			        post );
-
-			// check if the creator has an UserAccount and a corresponding Person 
-			// in the connectors triplestore, then check if we can write with the client
-			if ( null != creatorAccount
-			        && UserAccount.hasInstance( getModel(), creatorAccount )
-			        && creatorAccount.hasAccountOf() ) {
-				// skip post, if we have no write permission  
-				if ( !SoccUtils.haveWriteAccess(
-				        getConnector(),
-				        creatorAccount,
-				        targetContainer ) ) {
-					LOG.info( "Skip writing post {}, have no writing permission.", post );
-					return;
-				}
-			}
 
 			CanvasLmsClient client = PostWriterUtils.getClientOfCreator(
 			        getConnector(),
@@ -208,6 +193,12 @@ public class CanvasLmsPostWriter extends
 				content = SoccUtils.formatUnknownMessage(
 				        getConnector(),
 				        post );
+			} else if ( !SoccUtils.haveWriteAccess(
+			        getConnector(),
+			        creatorAccount,
+			        targetContainer ) ) {
+				LOG.info( "Skip writing post {}, have no writing permission.", post );
+				return;
 			}
 
 			// Add Attachments to message content
@@ -215,23 +206,33 @@ public class CanvasLmsPostWriter extends
 
 			if ( !SoccUtils.hasAnyContentWatermark( content ) ) {
 				// add watermark for 'already forwarded' check
-				content = SoccUtils.addContentWatermark( post.getIsPartOf(),
-				        content );
+				content = SoccUtils.addContentWatermark( post.getIsPartOf(), content );
 			}
 
+			Entry resultEntry = null;
 			try {
-				Entry resultEntry = client.courses()
-				        .discussionTopics( courseId )
-				        .entries( topicId )
-				        .post( content )
-				        .execute();
-
-				if ( null != resultEntry ) {
-					convertWrittenEntryToSioc( post, resultEntry, targetContainer, null );
-					return;
+				if ( CanvasLmsSiocUtils.ENDPOINT_COURSE.equals( endpoint ) ) {
+					resultEntry = client.courses()
+					        .discussionTopics( endpointId )
+					        .entries( topicId )
+					        .post( content )
+					        .execute();
+				} else if ( CanvasLmsSiocUtils.ENDPOINT_GROUPS.equals( endpoint ) ) {
+					resultEntry = client.groups()
+					        .discussionTopics( endpointId )
+					        .entries( topicId )
+					        .post( content )
+					        .execute();
+				} else {
+					throw new IOException( "Unknown Canvas endpoint '" + endpoint + "'" );
 				}
 			} catch ( Exception e ) {
 				CanvasLmsConnector.handleCanvasExceptions( e );
+			}
+
+			if ( null != resultEntry ) {
+				convertWrittenEntryToSioc( post, endpoint, resultEntry, targetContainer, null );
+				return;
 			}
 		} else {
 			LOG.warn( "Invalid URI to write post to {}: {}", getServiceEndpoint(), targetContainer );
@@ -260,28 +261,14 @@ public class CanvasLmsPostWriter extends
 		Matcher matcher = pattern.matcher( targetPost.toString() );
 
 		if ( matcher.find() ) {
-			long courseId = Long.parseLong( matcher.group( 1 ) );
-			long topicId = Long.parseLong( matcher.group( 2 ) );
-			long entryId = Long.parseLong( matcher.group( 3 ) );
+			String endpoint = matcher.group( 1 );
+			long endpointId = Long.parseLong( matcher.group( 2 ) );
+			long topicId = Long.parseLong( matcher.group( 3 ) );
+			long entryId = Long.parseLong( matcher.group( 4 ) );
 
 			UserAccount creatorAccount = PostWriterUtils.getCreatorUserAccount(
 			        getConnector(),
 			        post );
-
-			// check if the creator has an UserAccount and a corresponding Person 
-			// in the connectors triplestore, then check if we can write with the client
-			if ( null != creatorAccount
-			        && UserAccount.hasInstance( getModel(), creatorAccount )
-			        && creatorAccount.hasAccountOf() ) {
-				// skip post, if we have no write permission
-				if ( !SoccUtils.haveWriteAccess(
-				        getConnector(),
-				        creatorAccount,
-				        targetPost.getContainer() ) ) {
-					LOG.info( "Skip writing post {}, have no writing permission.", post );
-					return;
-				}
-			}
 
 			CanvasLmsClient client = PostWriterUtils.getClientOfCreator(
 			        getConnector(),
@@ -296,6 +283,12 @@ public class CanvasLmsPostWriter extends
 				content = SoccUtils.formatUnknownMessage(
 				        getConnector(),
 				        post );
+			} else if ( !SoccUtils.haveWriteAccess(
+			        getConnector(),
+			        creatorAccount,
+			        targetPost.getContainer() ) ) {
+				LOG.info( "Skip writing post {}, have no writing permission.", post );
+				return;
 			}
 
 			// Add Attachments to message content
@@ -307,23 +300,35 @@ public class CanvasLmsPostWriter extends
 				content = SoccUtils.addContentWatermark( post.getIsPartOf(), content );
 			}
 
+			Entry resultEntry = null;
 			try {
-				Entry resultEntry = client.courses()
-				        .discussionTopics( courseId )
-				        .entries( topicId )
-				        .postReply( content, entryId )
-				        .execute();
-
-				if ( null != resultEntry ) {
-					convertWrittenEntryToSioc(
-					        post,
-					        resultEntry,
-					        targetPost.getContainer(),
-					        targetPost );
-					return;
+				if ( CanvasLmsSiocUtils.ENDPOINT_COURSE.equals( endpoint ) ) {
+					resultEntry = client.courses()
+					        .discussionTopics( endpointId )
+					        .entries( topicId )
+					        .postReply( content, entryId )
+					        .execute();
+				} else if ( CanvasLmsSiocUtils.ENDPOINT_GROUPS.equals( endpoint ) ) {
+					resultEntry = client.groups()
+					        .discussionTopics( endpointId )
+					        .entries( topicId )
+					        .postReply( content, entryId )
+					        .execute();
+				} else {
+					throw new IOException( "Unknown Canvas endpoint '" + endpoint + "'" );
 				}
 			} catch ( Exception e ) {
 				CanvasLmsConnector.handleCanvasExceptions( e );
+			}
+
+			if ( null != resultEntry ) {
+				convertWrittenEntryToSioc(
+				        post,
+				        endpoint,
+				        resultEntry,
+				        targetPost.getContainer(),
+				        targetPost );
+				return;
 			}
 		} else {
 			LOG.warn( "Invalid URI to write post to {}: {}", getServiceEndpoint(), targetPost );
@@ -335,6 +340,7 @@ public class CanvasLmsPostWriter extends
 	 * 
 	 * @param post
 	 *            The original {@link Post}.
+	 * @param endpoint
 	 * @param entry
 	 *            The written entry.
 	 * @param container
@@ -351,6 +357,7 @@ public class CanvasLmsPostWriter extends
 	 */
 	private void convertWrittenEntryToSioc(
 	        final Post post,
+	        final String endpoint,
 	        final Entry entry,
 	        final Container container,
 	        final Post parentPost )
@@ -369,6 +376,7 @@ public class CanvasLmsPostWriter extends
 
 		Post resultPost = CanvasLmsSiocUtils.createSiocPost(
 		        getConnector(),
+		        endpoint,
 		        entry,
 		        container,
 		        parentPost );

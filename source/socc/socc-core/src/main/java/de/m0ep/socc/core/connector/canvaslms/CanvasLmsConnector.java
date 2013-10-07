@@ -24,6 +24,8 @@ package de.m0ep.socc.core.connector.canvaslms;
 
 import java.io.IOException;
 
+import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.util.Builder;
 import org.rdfs.sioc.UserAccount;
 import org.rdfs.sioc.services.Service;
 import org.slf4j.Logger;
@@ -139,6 +141,17 @@ public class CanvasLmsConnector extends DefaultConnector {
 		Preconditions.checkArgument(
 		        service.hasServiceEndpoint(),
 		        "Provided parameter service contains no ServiceEndpoint." );
+
+		// remove '/' at the end
+		URI serviceEndpointUri = getService().getServiceEndpoint().asURI();
+		String uriString = serviceEndpointUri.toString();
+		if ( uriString.endsWith( "/" ) ) {
+			serviceEndpointUri = Builder.createURI(
+			        uriString.substring(
+			                0,
+			                uriString.length() - 1 ) );
+			getService().setServiceEndpoint( serviceEndpointUri );
+		}
 
 		try {
 			clientManager = new CanvasLmsClientManager( getService(),

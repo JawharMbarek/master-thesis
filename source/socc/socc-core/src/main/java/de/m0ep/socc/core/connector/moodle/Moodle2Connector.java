@@ -25,6 +25,7 @@ package de.m0ep.socc.core.connector.moodle;
 import java.io.IOException;
 
 import org.ontoware.rdf2go.model.node.URI;
+import org.ontoware.rdf2go.util.Builder;
 import org.rdfs.sioc.UserAccount;
 import org.rdfs.sioc.services.Service;
 import org.slf4j.Logger;
@@ -46,8 +47,6 @@ import de.m0ep.socc.core.exceptions.AuthenticationException;
  */
 public class Moodle2Connector extends DefaultConnector {
 	private static final Logger LOG = LoggerFactory.getLogger( Moodle2Connector.class );
-
-	private URI serviceEndpointUri;
 
 	private Moodle2ClientManager serviceClientManager;
 	private Moodle2StructureReader serviceStructureReader;
@@ -139,7 +138,17 @@ public class Moodle2Connector extends DefaultConnector {
 		Preconditions.checkArgument(
 		        service.hasServiceEndpoint(),
 		        "The service contains no required serviceEndpoint." );
-		serviceEndpointUri = getService().getServiceEndpoint().asURI();
+
+		// remove '/' at the end
+		URI serviceEndpointUri = getService().getServiceEndpoint().asURI();
+		String uriString = serviceEndpointUri.toString();
+		if ( uriString.endsWith( "/" ) ) {
+			serviceEndpointUri = Builder.createURI(
+			        uriString.substring(
+			                0,
+			                uriString.length() - 1 ) );
+			getService().setServiceEndpoint( serviceEndpointUri );
+		}
 
 		LOG.info( "Create Moodle connector with endpoint at {}.",
 		        serviceEndpointUri );

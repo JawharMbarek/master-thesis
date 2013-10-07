@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.ontoware.rdf2go.model.Syntax;
 import org.ontoware.rdf2go.model.node.URI;
 import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Forum;
@@ -36,21 +35,18 @@ import org.rdfs.sioc.Thread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 import de.m0ep.canvas.CanvasLmsClient;
 import de.m0ep.canvas.Pagination;
-import de.m0ep.canvas.exceptions.AuthorizationException;
 import de.m0ep.canvas.exceptions.CanvasLmsException;
-import de.m0ep.canvas.exceptions.NetworkException;
 import de.m0ep.canvas.model.Course;
 import de.m0ep.canvas.model.DiscussionTopic;
+import de.m0ep.canvas.model.Group;
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
 import de.m0ep.socc.core.connector.IConnector.IStructureReader;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
-import de.m0ep.socc.core.utils.RdfUtils;
 
 /**
  * Structure reader for the CanvasLMS.
@@ -60,13 +56,12 @@ import de.m0ep.socc.core.utils.RdfUtils;
 public class CanvasLmsStructureReader
         extends DefaultConnectorIOComponent<CanvasLmsConnector>
         implements IStructureReader<CanvasLmsConnector> {
-	private static final Logger LOG =
-	        LoggerFactory.getLogger( CanvasLmsStructureReader.class );
+	private static final Logger LOG = LoggerFactory.getLogger( CanvasLmsStructureReader.class );
 
 	private final CanvasLmsClient defaultClient;
 
 	/**
-	 * Constructs a new {@link CanvasLmsStructureReader} for the given
+	 * Constructs a new {@link CanvasLmsStructureReader} for a
 	 * {@link CanvasLmsConnector}.
 	 * 
 	 * @param connector
@@ -91,20 +86,21 @@ public class CanvasLmsStructureReader
 
 	@Override
 	public boolean isContainer( URI uri ) {
-		return CanvasLmsSiocUtils.isDiscussionTopicUri( uri,
-		        getServiceEndpoint() )
-		        || CanvasLmsSiocUtils.isCourseUri( uri, getServiceEndpoint() );
+		return CanvasLmsSiocUtils.isDiscussionTopicUri( uri, getServiceEndpoint() )
+		        || CanvasLmsSiocUtils.isCourseUri( uri, getServiceEndpoint() )
+		        || CanvasLmsSiocUtils.isGroupUri( uri, getServiceEndpoint() );
 	}
 
 	@Override
-	public Container getContainer( URI uri ) throws
-	        NotFoundException,
+	public Container getContainer( URI uri )
+	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException {
 		if ( CanvasLmsSiocUtils.isCourseUri( uri, getServiceEndpoint() ) ) {
 			return getCourse( uri );
-		} else if ( CanvasLmsSiocUtils.isDiscussionTopicUri( uri,
-		        getServiceEndpoint() ) ) {
+		} else if ( CanvasLmsSiocUtils.isGroupUri( uri, getServiceEndpoint() ) ) {
+			return getGroup( uri );
+		} else if ( CanvasLmsSiocUtils.isDiscussionTopicUri( uri, getServiceEndpoint() ) ) {
 			return getDiscussionTopic( uri );
 		}
 
@@ -116,52 +112,79 @@ public class CanvasLmsStructureReader
 	        NotFoundException,
 	        AuthenticationException,
 	        IOException {
-		Pagination<Course> coursePages = null;
 		List<Container> result = Lists.newArrayList();
 
+		// list all courses
+		Pagination<Course> coursePages = null;
 		try {
 			coursePages = defaultClient.courses()
 			        .list()
 			        .executePagination();
+		} catch ( de.m0ep.canvas.exceptions.NotFoundException e ) {
+			LOG.warn( "DefaultUserAccount no courses found", e );
 		} catch ( CanvasLmsException e ) {
-			if ( e instanceof NetworkException ) {
-				throw new IOException( e );
-			} else if ( e instanceof AuthorizationException ) {
-				throw new AuthenticationException( e );
-			} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
-				throw new NotFoundException( e );
-			}
-
-			throw Throwables.propagate( e );
+			CanvasLmsConnector.handleCanvasExceptions( e );
 		}
 
 		if ( null != coursePages ) {
 			for ( List<Course> courses : coursePages ) {
 				for ( Course course : courses ) {
-					if ( LOG.isDebugEnabled() ) {
-						LOG.debug( "Read course {} from {}:\n{}",
-						        course.getId(),
-						        getServiceEndpoint(),
-						        course );
-					} else {
-						LOG.info( "Read course {} from {}.", course.getId(), getServiceEndpoint() );
-					}
-
 					Forum courseForum = CanvasLmsSiocUtils.createSiocForum(
 					        getConnector(),
 					        course );
 
-					if ( LOG.isDebugEnabled() ) {
-						LOG.debug( "Converted course {} to SIOC:\n{}",
-						        course.getId(),
-						        RdfUtils.resourceToString( courseForum, Syntax.Turtle ) );
-					} else {
-						LOG.info( "Converted course {} to SIOC {}",
-						        course.getId(),
-						        courseForum );
+					result.add( courseForum );
+
+					// list all course groups
+					Pagination<Group> groupPages = null;
+					try {
+						groupPages = defaultClient.groups()
+						        .listFromCourse( course.getId() )
+						        .executePagination();
+					} catch ( de.m0ep.canvas.exceptions.NotFoundException e ) {
+						LOG.warn( "Course '{}' no groups found", course.getId() );
+						continue;
+					} catch ( CanvasLmsException e ) {
+						CanvasLmsConnector.handleCanvasExceptions( e );
 					}
 
-					result.add( courseForum );
+					if ( null != groupPages ) {
+						for ( List<Group> list : groupPages ) {
+							for ( Group group : list ) {
+								Forum groupForum = CanvasLmsSiocUtils.createSiocForum(
+								        getConnector(),
+								        group );
+
+								result.add( groupForum );
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// list all groups of default user
+		Pagination<Group> groupPages = null;
+		try {
+			groupPages = defaultClient.groups()
+			        .listFromSelf()
+			        .executePagination();
+		} catch ( de.m0ep.canvas.exceptions.NotFoundException e ) {
+			LOG.warn( "DefaultUserAccount has no groups" );
+		} catch ( CanvasLmsException e ) {
+			CanvasLmsConnector.handleCanvasExceptions( e );
+		}
+
+		if ( null != groupPages ) {
+			for ( List<Group> list : groupPages ) {
+				for ( Group group : list ) {
+					Forum groupForum = CanvasLmsSiocUtils.createSiocForum(
+					        getConnector(),
+					        group );
+
+					if ( !result.contains( groupForum ) ) {
+						result.add( groupForum );
+					}
 				}
 			}
 		}
@@ -171,7 +194,8 @@ public class CanvasLmsStructureReader
 
 	@Override
 	public boolean hasChildContainer( URI uri ) {
-		return CanvasLmsSiocUtils.isCourseUri( uri, getServiceEndpoint() );
+		return CanvasLmsSiocUtils.isCourseUri( uri, getServiceEndpoint() )
+		        || CanvasLmsSiocUtils.isGroupUri( uri, getServiceEndpoint() );
 	}
 
 	@Override
@@ -180,65 +204,55 @@ public class CanvasLmsStructureReader
 	        AuthenticationException,
 	        IOException {
 		List<Container> result = Lists.newArrayList();
-		Pattern pattern = Pattern.compile(
-		        getServiceEndpoint()
-		                + CanvasLmsSiocUtils.REGEX_COURSE_URI );
+		Pattern pattern = Pattern.compile( getServiceEndpoint()
+		        + CanvasLmsSiocUtils.REGEX_ENDPOINT_URI );
 		Matcher matcher = pattern.matcher( parentUri.toString() );
 
 		if ( matcher.find() ) {
-			long courseId = Long.parseLong( matcher.group( 1 ) );
-			Forum parentCourse = getCourse(
-			        CanvasLmsSiocUtils.createCourseUri(
-			                getServiceEndpoint(),
-			                courseId ) );
+			String endpoint = matcher.group( 1 );
+			long endpointId = Long.parseLong( matcher.group( 2 ) );
+
+			Forum parentContainer = null;
+			if ( CanvasLmsSiocUtils.ENDPOINT_COURSE.equals( endpoint ) ) {
+				parentContainer = getCourse( CanvasLmsSiocUtils.createCourseUri(
+				        getServiceEndpoint(),
+				        endpointId ) );
+			} else if ( CanvasLmsSiocUtils.ENDPOINT_GROUPS.equals( endpoint ) ) {
+				parentContainer = getGroup( CanvasLmsSiocUtils.createGroupUri(
+				        getServiceEndpoint(),
+				        endpointId ) );
+			} else {
+				throw new IOException( "Unknown Canvas endpoint '" + endpoint + "'" );
+			}
 
 			Pagination<DiscussionTopic> discussionTopicPages = null;
 			try {
-				discussionTopicPages = defaultClient.courses()
-				        .discussionTopics( courseId )
-				        .list()
-				        .executePagination();
-			} catch ( CanvasLmsException e ) {
-				if ( e instanceof NetworkException ) {
-					throw new IOException( e );
-				} else if ( e instanceof AuthorizationException ) {
-					throw new AuthenticationException( e );
-				} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
-					throw new NotFoundException( e );
+				if ( CanvasLmsSiocUtils.ENDPOINT_COURSE.equals( endpoint ) ) {
+					discussionTopicPages = defaultClient.courses()
+					        .discussionTopics( endpointId )
+					        .list()
+					        .executePagination();
+				} else if ( CanvasLmsSiocUtils.ENDPOINT_GROUPS.equals( endpoint ) ) {
+					discussionTopicPages = defaultClient.groups()
+					        .discussionTopics( endpointId )
+					        .list()
+					        .executePagination();
+				} else {
+					throw new IOException( "Unknown Canvas endpoint '" + endpoint + "'" );
 				}
-
-				throw Throwables.propagate( e );
+			} catch ( CanvasLmsException e ) {
+				CanvasLmsConnector.handleCanvasExceptions( e );
 			}
 
 			if ( null != discussionTopicPages ) {
 				for ( List<DiscussionTopic> topics : discussionTopicPages ) {
 					for ( DiscussionTopic discussionTopic : topics ) {
-						if ( LOG.isDebugEnabled() ) {
-							LOG.debug( "Read discussion topic {} from {}:\n{}",
-							        discussionTopic.getId(),
-							        getServiceEndpoint(),
-							        discussionTopic );
-						} else {
-							LOG.info( "Read discussion topic {} from {}.",
-							        discussionTopic.getId(),
-							        getServiceEndpoint() );
-						}
-
 						Thread topicThread = CanvasLmsSiocUtils
 						        .createSiocThread(
 						                getConnector(),
+						                endpoint,
 						                discussionTopic,
-						                parentCourse );
-
-						if ( LOG.isDebugEnabled() ) {
-							LOG.debug( "Converted discussion topic {} to SIOC:\n{}",
-							        discussionTopic.getId(),
-							        RdfUtils.resourceToString( topicThread, Syntax.Turtle ) );
-						} else {
-							LOG.info( "Converted discussion topic {} to SIOC {}",
-							        discussionTopic.getId(),
-							        topicThread );
-						}
+						                parentContainer );
 
 						result.add( topicThread );
 					}
@@ -277,53 +291,76 @@ public class CanvasLmsStructureReader
 
 		Pattern pattern = Pattern.compile( CanvasLmsSiocUtils.REGEX_COURSE_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
-
 		if ( matcher.find() ) {
 			long courseId = Long.parseLong( matcher.group( 1 ) );
 
+			Course course = null;
 			try {
-				Course course = defaultClient.courses()
+				course = defaultClient.courses()
 				        .get( courseId )
 				        .execute();
 
-				if ( LOG.isDebugEnabled() ) {
-					LOG.debug( "Read course {} from {}:\n{}",
-					        course.getId(),
-					        getServiceEndpoint(),
-					        course );
-				} else {
-					LOG.info( "Read course {} from {}.", course.getId(), getServiceEndpoint() );
-				}
+			} catch ( CanvasLmsException e ) {
+				CanvasLmsConnector.handleCanvasExceptions( e );
+			}
 
+			if ( null != course ) {
 				Forum courseForum = CanvasLmsSiocUtils.createSiocForum(
 				        getConnector(),
 				        course );
-
-				if ( LOG.isDebugEnabled() ) {
-					LOG.debug( "Converted course {} to SIOC:\n{}",
-					        course.getId(),
-					        RdfUtils.resourceToString( courseForum, Syntax.Turtle ) );
-				} else {
-					LOG.info( "Converted course {} to SIOC {}",
-					        course.getId(),
-					        courseForum );
-				}
-
 				return courseForum;
-			} catch ( CanvasLmsException e ) {
-				if ( e instanceof NetworkException ) {
-					throw new IOException( e );
-				} else if ( e instanceof AuthorizationException ) {
-					throw new AuthenticationException( e );
-				} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
-					throw new NotFoundException( e );
-				}
-
-				throw Throwables.propagate( e );
 			}
 		}
 
 		throw new NotFoundException( "No course found at uri " + uri );
+	}
+
+	/**
+	 * Reads a course and converts it to SIOC
+	 * 
+	 * @param uri
+	 *            URI to the course
+	 * @return A {@link Forum} converted from the course
+	 * 
+	 * @throws NotFoundException
+	 *             Thrown if no resource was found at the URI
+	 * @throws AuthenticationException
+	 *             Thrown if there is a problem with authentication.
+	 * @throws IOException
+	 *             Thrown if there ist problem in communication.
+	 */
+	private Forum getGroup( URI uri ) throws
+	        NotFoundException,
+	        AuthenticationException,
+	        IOException {
+		if ( Forum.hasInstance( getModel(), uri ) ) {
+			return Forum.getInstance( getModel(), uri );
+		}
+
+		Pattern pattern = Pattern.compile( CanvasLmsSiocUtils.REGEX_GROUP_URI );
+		Matcher matcher = pattern.matcher( uri.toString() );
+		if ( matcher.find() ) {
+			long groupId = Long.parseLong( matcher.group( 1 ) );
+
+			Group group = null;
+			try {
+				group = defaultClient.groups()
+				        .get( groupId )
+				        .execute();
+			} catch ( CanvasLmsException e ) {
+				CanvasLmsConnector.handleCanvasExceptions( e );
+			}
+
+			if ( null != group ) {
+				Forum groupForum = CanvasLmsSiocUtils.createSiocForum(
+				        getConnector(),
+				        group );
+
+				return groupForum;
+			}
+		}
+
+		throw new NotFoundException( "No group found at uri " + uri );
 	}
 
 	/**
@@ -348,63 +385,55 @@ public class CanvasLmsStructureReader
 			return Thread.getInstance( getModel(), uri );
 		}
 
-		Pattern pattern = Pattern
-		        .compile( CanvasLmsSiocUtils.REGEX_DISCUSSION_TOPIC_URI );
+		Pattern pattern = Pattern.compile( CanvasLmsSiocUtils.REGEX_DISCUSSION_TOPIC_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
-
 		if ( matcher.find() ) {
-			long courseId = Long.parseLong( matcher.group( 1 ) );
-			long topicId = Long.parseLong( matcher.group( 2 ) );
-			Forum parentCourse = getCourse(
-			        CanvasLmsSiocUtils.createCourseUri(
-			                getServiceEndpoint(),
-			                courseId ) );
+			String endpoint = matcher.group( 1 );
+			long endpointId = Long.parseLong( matcher.group( 2 ) );
+			long topicId = Long.parseLong( matcher.group( 3 ) );
 
+			Forum parentContainer = null;
+			if ( CanvasLmsSiocUtils.ENDPOINT_COURSE.equals( endpoint ) ) {
+				parentContainer = getCourse( CanvasLmsSiocUtils.createCourseUri(
+				        getServiceEndpoint(),
+				        endpointId ) );
+			} else if ( CanvasLmsSiocUtils.ENDPOINT_GROUPS.equals( endpoint ) ) {
+				parentContainer = getGroup( CanvasLmsSiocUtils.createGroupUri(
+				        getServiceEndpoint(),
+				        endpointId ) );
+			} else {
+				throw new IOException( "Unknown Canvas endpoint '" + endpoint + "'" );
+			}
+
+			DiscussionTopic discussionTopic = null;
 			try {
-				DiscussionTopic discussionTopic = defaultClient.courses()
-				        .discussionTopics( courseId )
-				        .get( topicId )
-				        .execute();
-
-				if ( LOG.isDebugEnabled() ) {
-					LOG.debug( "Read discussion topic {} from {}:\n{}",
-					        discussionTopic.getId(),
-					        getServiceEndpoint(),
-					        discussionTopic );
+				if ( CanvasLmsSiocUtils.ENDPOINT_COURSE.equals( endpoint ) ) {
+					discussionTopic = defaultClient.courses()
+					        .discussionTopics( endpointId )
+					        .get( topicId )
+					        .execute();
+				} else if ( CanvasLmsSiocUtils.ENDPOINT_GROUPS.equals( endpoint ) ) {
+					discussionTopic = defaultClient.groups()
+					        .discussionTopics( endpointId )
+					        .get( topicId )
+					        .execute();
 				} else {
-					LOG.info( "Read discussion topic {} from {}.",
-					        discussionTopic.getId(),
-					        getServiceEndpoint() );
+					throw new IOException( "Unknown Canvas endpoint '" + endpoint + "'" );
 				}
+			} catch ( CanvasLmsException e ) {
+				CanvasLmsConnector.handleCanvasExceptions( e );
+			}
 
+			if ( null != discussionTopic ) {
 				Thread topicThread = CanvasLmsSiocUtils.createSiocThread(
 				        getConnector(),
+				        endpoint,
 				        discussionTopic,
-				        parentCourse );
-
-				if ( LOG.isDebugEnabled() ) {
-					LOG.debug( "Converted discussion topic {} to SIOC:\n{}",
-					        discussionTopic.getId(),
-					        RdfUtils.resourceToString( topicThread, Syntax.Turtle ) );
-				} else {
-					LOG.info( "Converted discussion topic {} to SIOC {}",
-					        discussionTopic.getId(),
-					        topicThread );
-				}
+				        parentContainer );
 
 				return topicThread;
-			} catch ( CanvasLmsException e ) {
-				if ( e instanceof NetworkException ) {
-					throw new IOException( e );
-				} else if ( e instanceof AuthorizationException ) {
-					throw new AuthenticationException( e );
-				} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
-					throw new NotFoundException( e );
-				}
-
-				throw Throwables.propagate( e );
 			}
-		} else {
+
 		}
 
 		throw new NotFoundException( "No discussion topic found at uri " + uri );

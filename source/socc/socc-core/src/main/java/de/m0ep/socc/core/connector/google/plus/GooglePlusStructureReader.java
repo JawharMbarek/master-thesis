@@ -99,7 +99,7 @@ public class GooglePlusStructureReader extends
 		Pattern pattern = Pattern.compile( GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		if ( matcher.find() && 3 <= matcher.groupCount() ) {
+		if ( matcher.find() ) {
 			String userId = matcher.group( 1 );
 			String collection = matcher.group( 2 );
 

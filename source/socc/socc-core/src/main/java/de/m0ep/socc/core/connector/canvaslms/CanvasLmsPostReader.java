@@ -36,14 +36,11 @@ import org.rdfs.sioc.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 import de.m0ep.canvas.CanvasLmsClient;
 import de.m0ep.canvas.Pagination;
-import de.m0ep.canvas.exceptions.AuthorizationException;
 import de.m0ep.canvas.exceptions.CanvasLmsException;
-import de.m0ep.canvas.exceptions.NetworkException;
 import de.m0ep.canvas.model.DiscussionTopic;
 import de.m0ep.canvas.model.Entry;
 import de.m0ep.socc.core.connector.DefaultConnectorIOComponent;
@@ -125,8 +122,9 @@ public class CanvasLmsPostReader extends
 	        throws AuthenticationException,
 	        IOException {
 		LOG.info( "Poll posts from sourceUri='{}' since='{}' limit='{}'",
-		        sourceUri, since, limit );
-
+		        sourceUri,
+		        since,
+		        limit );
 		try {
 			if ( CanvasLmsSiocUtils.isDiscussionTopicUri( sourceUri, getServiceEndpoint() )
 			        || CanvasLmsSiocUtils.isInitialEntryUri( sourceUri, getServiceEndpoint() ) ) {
@@ -162,8 +160,8 @@ public class CanvasLmsPostReader extends
 	 * @throws AccessControlException
 	 *             Thrown if there is a problem with access control.
 	 */
-	private Post readEntry( final URI uri ) throws
-	        NotFoundException,
+	private Post readEntry( final URI uri )
+	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException,
 	        AccessControlException {
@@ -176,28 +174,39 @@ public class CanvasLmsPostReader extends
 		Matcher matcher = pattern.matcher( uri.toString() );
 
 		if ( matcher.find() ) {
-			long courseId = Long.parseLong( matcher.group( 1 ) );
-			long topicId = Long.parseLong( matcher.group( 2 ) );
-			long entryId = Long.parseLong( matcher.group( 3 ) );
+			String endpoint = matcher.group( 1 );
+			long endpointId = Long.parseLong( matcher.group( 2 ) );
+			long topicId = Long.parseLong( matcher.group( 3 ) );
+			long entryId = Long.parseLong( matcher.group( 4 ) );
 
 			Entry entry = null;
 			try {
-				entry = defaultClient.courses()
-				        .discussionTopics( courseId )
-				        .entries( topicId )
-				        .get( entryId )
-				        .execute();
-			} catch ( Exception e ) {
+				if ( CanvasLmsSiocUtils.ENDPOINT_COURSE.equals( endpoint ) ) {
+					entry = defaultClient.courses()
+					        .discussionTopics( endpointId )
+					        .entries( topicId )
+					        .get( entryId )
+					        .execute();
+				} else if ( CanvasLmsSiocUtils.ENDPOINT_GROUPS.equals( endpoint ) ) {
+					entry = defaultClient.groups()
+					        .discussionTopics( endpointId )
+					        .entries( topicId )
+					        .get( entryId )
+					        .execute();
+				} else {
+					throw new IOException( "Unknown Canvas endpoint '" + endpoint + "'" );
+				}
+			} catch ( CanvasLmsException e ) {
 				CanvasLmsConnector.handleCanvasExceptions( e );
 			}
 
 			if ( null != entry ) {
-				Container container = getConnector().getStructureReader()
-				        .getContainer(
-				                CanvasLmsSiocUtils.createDiscussionTopicUri(
-				                        getServiceEndpoint(),
-				                        courseId,
-				                        topicId ) );
+				Container container = getConnector().getStructureReader().getContainer(
+				        CanvasLmsSiocUtils.createDiscussionTopicUri(
+				                getServiceEndpoint(),
+				                endpoint,
+				                endpointId,
+				                topicId ) );
 
 				if ( LOG.isDebugEnabled() ) {
 					LOG.debug( "Read entry '{}' from {}:\n{}",
@@ -212,6 +221,7 @@ public class CanvasLmsPostReader extends
 
 				Post result = CanvasLmsSiocUtils.createSiocPost(
 				        getConnector(),
+				        endpoint,
 				        entry,
 				        container,
 				        null );
@@ -249,7 +259,7 @@ public class CanvasLmsPostReader extends
 	 * @param uri
 	 *            URI of the discussion topic
 	 * 
-	 * @return A {@link Post} convertet form the initial entry.
+	 * @return A {@link Post} converted form the initial entry.
 	 * 
 	 * @throws NotFoundException
 	 *             Thrown if no resource was found at the URI
@@ -260,8 +270,8 @@ public class CanvasLmsPostReader extends
 	 * @throws AccessControlException
 	 *             Thrown if there is a problem with access control.
 	 */
-	private Post readInitialEntry( final URI uri ) throws
-	        NotFoundException,
+	private Post readInitialEntry( final URI uri )
+	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException,
 	        AccessControlException {
@@ -269,28 +279,41 @@ public class CanvasLmsPostReader extends
 			return Post.getInstance( getModel(), uri );
 		}
 
-		Pattern pattern = Pattern.compile(
-		        getServiceEndpoint()
-		                + CanvasLmsSiocUtils.REGEX_INITIAL_ENTRY_URI );
+		Pattern pattern = Pattern.compile( getServiceEndpoint()
+		        + CanvasLmsSiocUtils.REGEX_INITIAL_ENTRY_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
 		if ( matcher.find() ) {
-			long courseId = Long.parseLong( matcher.group( 1 ) );
-			long topicId = Long.parseLong( matcher.group( 2 ) );
+			String endpoint = matcher.group( 1 );
+			long endpointId = Long.parseLong( matcher.group( 2 ) );
+			long topicId = Long.parseLong( matcher.group( 3 ) );
 
+			DiscussionTopic discussionTopic = null;
 			try {
-				DiscussionTopic discussionTopic = defaultClient.courses()
-				        .discussionTopics( courseId )
-				        .get( topicId )
-				        .execute();
+				if ( CanvasLmsSiocUtils.ENDPOINT_COURSE.equals( endpoint ) ) {
+					discussionTopic = defaultClient.courses()
+					        .discussionTopics( endpointId )
+					        .get( topicId )
+					        .execute();
+				} else if ( CanvasLmsSiocUtils.ENDPOINT_GROUPS.equals( endpoint ) ) {
+					discussionTopic = defaultClient.groups()
+					        .discussionTopics( endpointId )
+					        .get( topicId )
+					        .execute();
+				} else {
+					throw new IOException( "Unknown Canvas endpoint '" + endpoint + "'" );
+				}
+			} catch ( CanvasLmsException e ) {
+				CanvasLmsConnector.handleCanvasExceptions( e );
+			}
 
-				Container container = getConnector().getStructureReader()
-				        .getContainer(
-				                CanvasLmsSiocUtils.createDiscussionTopicUri(
-				                        getServiceEndpoint(),
-				                        courseId,
-				                        topicId ) );
-
+			if ( null != discussionTopic ) {
+				Container container = getConnector().getStructureReader().getContainer(
+				        CanvasLmsSiocUtils.createDiscussionTopicUri(
+				                getServiceEndpoint(),
+				                endpoint,
+				                endpointId,
+				                topicId ) );
 				if ( LOG.isDebugEnabled() ) {
 					LOG.debug( "Read initial entry '{}' from {}:\n{}",
 					        discussionTopic.getId(),
@@ -301,13 +324,12 @@ public class CanvasLmsPostReader extends
 					        discussionTopic.getId(),
 					        uri );
 				}
-
 				Post result = CanvasLmsSiocUtils.createSiocPost(
 				        getConnector(),
+				        endpoint,
 				        container,
 				        discussionTopic,
-				        courseId );
-
+				        endpointId );
 				if ( !SoccUtils.haveReadAccess(
 				        getConnector(),
 				        result.getCreator(),
@@ -317,7 +339,6 @@ public class CanvasLmsPostReader extends
 					        + uri
 					        + "'" );
 				}
-
 				if ( LOG.isDebugEnabled() ) {
 					LOG.debug( "Converted initial entry to SIOC:\n{}",
 					        RdfUtils.resourceToString(
@@ -328,17 +349,8 @@ public class CanvasLmsPostReader extends
 				}
 
 				return result;
-			} catch ( CanvasLmsException e ) {
-				if ( e instanceof NetworkException ) {
-					throw new IOException( e );
-				} else if ( e instanceof AuthorizationException ) {
-					throw new AuthenticationException( e );
-				} else if ( e instanceof de.m0ep.canvas.exceptions.NotFoundException ) {
-					throw new NotFoundException( e );
-				}
-
-				throw Throwables.propagate( e );
 			}
+
 		}
 
 		throw new NotFoundException( "Can't read post from uri " + uri );
@@ -369,8 +381,7 @@ public class CanvasLmsPostReader extends
 	        final URI sourceUri,
 	        final Date since,
 	        final int limit )
-	        throws CanvasLmsException,
-	        NotFoundException,
+	        throws NotFoundException,
 	        AuthenticationException,
 	        IOException,
 	        AccessControlException {
@@ -380,39 +391,58 @@ public class CanvasLmsPostReader extends
 		List<Post> result = Lists.newArrayList();
 
 		if ( matcher.find() ) {
-			long courseId = Long.parseLong( matcher.group( 1 ) );
-			long topicId = Long.parseLong( matcher.group( 2 ) );
+			String endpoint = matcher.group( 1 );
+			long endpointId = Long.parseLong( matcher.group( 2 ) );
+			long topicId = Long.parseLong( matcher.group( 3 ) );
 
-			Container container = getConnector().getStructureReader()
-			        .getContainer(
-			                CanvasLmsSiocUtils.createDiscussionTopicUri(
-			                        getServiceEndpoint(),
-			                        courseId,
-			                        topicId ) );
-
-			Post initPost = readInitialEntry(
-			        CanvasLmsSiocUtils.createInitialEntryUri(
+			Container container = getConnector().getStructureReader().getContainer(
+			        CanvasLmsSiocUtils.createDiscussionTopicUri(
 			                getServiceEndpoint(),
-			                courseId,
+			                endpoint,
+			                endpointId,
 			                topicId ) );
 
-			Pagination<Entry> pagination = defaultClient.courses()
-			        .discussionTopics( courseId )
-			        .entries( topicId )
-			        .list()
-			        .executePagination();
+			Post initPost = readInitialEntry( CanvasLmsSiocUtils.createInitialEntryUri(
+			        getServiceEndpoint(),
+			        endpoint,
+			        endpointId,
+			        topicId ) );
 
-			for ( List<Entry> entryPage : pagination ) {
-				for ( Entry entry : entryPage ) {
-					addEntryToList(
-					        result,
-					        since,
-					        limit,
-					        entry,
-					        container,
-					        initPost,
-					        courseId,
-					        topicId );
+			Pagination<Entry> pagination = null;
+			try {
+				if ( CanvasLmsSiocUtils.ENDPOINT_COURSE.equals( endpoint ) ) {
+					pagination = defaultClient.courses()
+					        .discussionTopics( endpointId )
+					        .entries( topicId )
+					        .list()
+					        .executePagination();
+				} else if ( CanvasLmsSiocUtils.ENDPOINT_GROUPS.equals( endpoint ) ) {
+					pagination = defaultClient.groups()
+					        .discussionTopics( endpointId )
+					        .entries( topicId )
+					        .list()
+					        .executePagination();
+				} else {
+					throw new IOException( "Unknown Canvas endpoint '" + endpoint + "'" );
+				}
+			} catch ( CanvasLmsException e ) {
+				CanvasLmsConnector.handleCanvasExceptions( e );
+			}
+
+			if ( null != pagination ) {
+				for ( List<Entry> entryPage : pagination ) {
+					for ( Entry entry : entryPage ) {
+						addEntryToList(
+						        result,
+						        since,
+						        limit,
+						        entry,
+						        container,
+						        initPost,
+						        endpoint,
+						        endpointId,
+						        topicId );
+					}
 				}
 			}
 		}
@@ -452,31 +482,42 @@ public class CanvasLmsPostReader extends
 		        + CanvasLmsSiocUtils.REGEX_ENTRY_URI );
 		Matcher matcher = pattern.matcher( sourceUri.toString() );
 		if ( matcher.find() ) {
-			long courseId = Long.parseLong( matcher.group( 1 ) );
-			long topicId = Long.parseLong( matcher.group( 2 ) );
-			long entryId = Long.parseLong( matcher.group( 3 ) );
+			String endpoint = matcher.group( 1 );
+			long endpointId = Long.parseLong( matcher.group( 2 ) );
+			long topicId = Long.parseLong( matcher.group( 3 ) );
+			long entryId = Long.parseLong( matcher.group( 4 ) );
 
-			Container container = getConnector().getStructureReader()
-			        .getContainer(
-			                CanvasLmsSiocUtils.createDiscussionTopicUri(
-			                        getServiceEndpoint(),
-			                        courseId,
-			                        topicId ) );
-
-			Post parentPost = readEntry(
-			        CanvasLmsSiocUtils.createEntryUri(
+			Container container = getConnector().getStructureReader().getContainer(
+			        CanvasLmsSiocUtils.createDiscussionTopicUri(
 			                getServiceEndpoint(),
-			                courseId,
-			                topicId,
-			                entryId ) );
+			                endpoint,
+			                endpointId,
+			                topicId ) );
+
+			Post parentPost = readEntry( CanvasLmsSiocUtils.createEntryUri(
+			        getServiceEndpoint(),
+			        endpoint,
+			        endpointId,
+			        topicId,
+			        entryId ) );
 
 			Pagination<Entry> pagination = null;
 			try {
-				pagination = defaultClient.courses()
-				        .discussionTopics( courseId )
-				        .entries( topicId )
-				        .listReplies( entryId )
-				        .executePagination();
+				if ( CanvasLmsSiocUtils.ENDPOINT_COURSE.equals( endpoint ) ) {
+					pagination = defaultClient.courses()
+					        .discussionTopics( endpointId )
+					        .entries( topicId )
+					        .listReplies( entryId )
+					        .executePagination();
+				} else if ( CanvasLmsSiocUtils.ENDPOINT_GROUPS.equals( endpoint ) ) {
+					pagination = defaultClient.groups()
+					        .discussionTopics( endpointId )
+					        .entries( topicId )
+					        .listReplies( entryId )
+					        .executePagination();
+				} else {
+					throw new IOException( "Unknown Canvas endpoint '" + endpoint + "'" );
+				}
 			} catch ( Exception e ) {
 				CanvasLmsConnector.handleCanvasExceptions( e );
 			}
@@ -491,7 +532,8 @@ public class CanvasLmsPostReader extends
 						        reply,
 						        container,
 						        parentPost,
-						        topicId,
+						        endpoint,
+						        endpointId,
 						        topicId );
 					}
 				}
@@ -536,7 +578,8 @@ public class CanvasLmsPostReader extends
 	        final Entry entry,
 	        final Container container,
 	        final Post parentPost,
-	        final long courseId,
+	        final String endpoint,
+	        final long endpointId,
 	        final long topicId )
 	        throws NotFoundException,
 	        AuthenticationException,
@@ -556,6 +599,7 @@ public class CanvasLmsPostReader extends
 		if ( 0 > limit || limit < resultList.size() ) {
 			Post post = CanvasLmsSiocUtils.createSiocPost(
 			        getConnector(),
+			        endpoint,
 			        entry,
 			        container,
 			        parentPost );
@@ -605,7 +649,8 @@ public class CanvasLmsPostReader extends
 					        replyEntry,
 					        container,
 					        post,
-					        courseId,
+					        endpoint,
+					        endpointId,
 					        topicId );
 				}
 			}
@@ -614,12 +659,22 @@ public class CanvasLmsPostReader extends
 			if ( entry.hasMoreReplies() ) {
 				Pagination<Entry> pagination = null;
 				try {
-					pagination = defaultClient.courses()
-					        .discussionTopics( courseId )
-					        .entries( topicId )
-					        .listReplies( entry.getId() )
-					        .executePagination();
-				} catch ( Exception e ) {
+					if ( CanvasLmsSiocUtils.ENDPOINT_COURSE.equals( endpoint ) ) {
+						pagination = defaultClient.courses()
+						        .discussionTopics( endpointId )
+						        .entries( topicId )
+						        .listReplies( entry.getId() )
+						        .executePagination();
+					} else if ( CanvasLmsSiocUtils.ENDPOINT_GROUPS.equals( endpoint ) ) {
+						pagination = defaultClient.groups()
+						        .discussionTopics( endpointId )
+						        .entries( topicId )
+						        .listReplies( entry.getId() )
+						        .executePagination();
+					} else {
+						throw new IOException( "Unknown Canvas endpoint '" + endpoint + "'" );
+					}
+				} catch ( CanvasLmsException e ) {
 					CanvasLmsConnector.handleCanvasExceptions( e );
 				}
 
@@ -633,7 +688,8 @@ public class CanvasLmsPostReader extends
 							        replyEntry,
 							        container,
 							        post,
-							        courseId,
+							        endpoint,
+							        endpointId,
 							        topicId );
 						}
 					}

@@ -146,7 +146,7 @@ public class GooglePlusPostReader extends
 		Pattern pattern = Pattern.compile( GooglePlusSiocUtils.REGEX_ACTIVITY_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		if ( matcher.find() && 2 <= matcher.groupCount() ) {
+		if ( matcher.find() ) {
 			String activityId = matcher.group( 1 );
 
 			try {
@@ -185,7 +185,7 @@ public class GooglePlusPostReader extends
 		Pattern pattern = Pattern.compile( GooglePlusSiocUtils.REGEX_COMMENT_URI );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
-		if ( matcher.find() && 2 <= matcher.groupCount() ) {
+		if ( matcher.find() ) {
 			String commentId = matcher.group( 1 );
 
 			try {
@@ -232,13 +232,12 @@ public class GooglePlusPostReader extends
 		Matcher matcher = pattern.matcher( sourceUri.toString() );
 		List<Post> resultList = Lists.newArrayList();
 
-		if ( matcher.find() && 3 <= matcher.groupCount() ) {
+		if ( matcher.find() ) {
 			String userId = matcher.group( 1 );
 			String collection = matcher.group( 2 );
 			String pageToken = null;
 
 			Container container = getConnector().getStructureReader().getContainer( sourceUri );
-
 			try {
 				do {
 					Activities.List activityFeedList = defaultClient.getGooglePlusService()
@@ -349,7 +348,7 @@ public class GooglePlusPostReader extends
 
 		Pattern pattern = Pattern.compile( GooglePlusSiocUtils.REGEX_ACTIVITY_FEED_URI );
 		Matcher matcher = pattern.matcher( sourceUri.toString() );
-		if ( matcher.find() && 2 <= matcher.groupCount() ) {
+		if ( matcher.find() ) {
 			String activityId = matcher.group( 1 );
 			String pageToken = null;
 			Post parentPost = readActivity( sourceUri );

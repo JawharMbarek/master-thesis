@@ -9,6 +9,7 @@ import org.ontoware.rdf2go.util.Builder;
 import org.ontoware.rdf2go.vocabulary.RDF;
 import org.ontoware.rdf2go.vocabulary.XSD;
 import org.purl.dc.terms.DCTermsVocabulary;
+import org.rdfs.sioc.Container;
 import org.rdfs.sioc.Post;
 import org.rdfs.sioc.SiocVocabulary;
 import org.rdfs.sioc.services.ServicesVocabulary;
@@ -120,19 +121,19 @@ public class ConnectorTestApp {
 			// kaiAuthorization.addAccessMode( AclVocabulary.Read );
 
 			//addMoodleRdfData( model );
-			//			addCanvasLmsRdfData( model );
+			addCanvasLmsRdfData( model );
 			//addFacebookRdfData( model );
 			// addYoutubeRdfData( model );
 
-			IConnector connector =
-			        ConnectorFactory.getInstance().createConnector(
-			                context,
-			                MOODLE_CONNECTOR_ID );
-
-			//			IConnector connector = ConnectorFactory.getInstance()
-			//			        .createConnector(
+			//			IConnector connector =
+			//			        ConnectorFactory.getInstance().createConnector(
 			//			                context,
-			//			                CANVAS_LMS_CONNECTOR_ID );
+			//			                MOODLE_CONNECTOR_ID );
+
+			IConnector connector = ConnectorFactory.getInstance()
+			        .createConnector(
+			                context,
+			                CANVAS_LMS_CONNECTOR_ID );
 
 			//			IConnector connector = ConnectorFactory.getInstance().createConnector(
 			//			        context,
@@ -150,33 +151,31 @@ public class ConnectorTestApp {
 			IPostWriter<?> postWriter = connector.getPostWriter();
 
 			//			List<Container> forums = structureReader.listContainer();
+			//			System.err.println( forums.size() );
 			//			for ( Container forum : forums ) {
-			//				System.out.println(
-			//				        RdfUtils.resourceToString(
-			//				                forum,
-			//				                Syntax.Turtle ) );
-			//				if ( structureReader.hasChildContainer( forum.getResource().asURI() ) ) {
-			//					List<Container> threads = structureReader.listContainer( forum.asURI() );
-			//					for ( Container thread : threads ) {
-			//						System.out.println(
-			//						        RdfUtils.resourceToString(
-			//						                thread,
-			//						                Syntax.Turtle ) );
-			//						if ( postReader.hasPosts( thread.getResource().asURI() ) ) {
-			//							List<Post> posts = postReader.pollPosts(
-			//							        thread.asURI(),
-			//							        null,
-			//							        2 );
-			//
-			//							for ( Post post : posts ) {
-			//								System.out.println(
-			//								        RdfUtils.resourceToString(
-			//								                post,
-			//								                Syntax.Turtle ) );
-			//							}
-			//						}
-			//					}
-			//				}
+
+			Container forum = structureReader
+			        .getContainer( Builder
+			                .createURI( "https://canvas.instructure.com/groups/61377/discussion_topics" ) );
+
+			System.err.println( RdfUtils.resourceToString( forum, Syntax.Turtle ) );
+			if ( structureReader.hasChildContainer( forum.getResource().asURI() ) ) {
+				List<Container> threads = structureReader.listContainer( forum.asURI() );
+				for ( Container thread : threads ) {
+					System.err.println( RdfUtils.resourceToString( thread, Syntax.Turtle ) );
+					if ( postReader.hasPosts( thread.getResource().asURI() ) ) {
+						List<Post> posts = postReader.pollPosts(
+						        thread.asURI(),
+						        null,
+						        -1 );
+
+						for ( Post post : posts ) {
+							System.err.println(
+							        RdfUtils.resourceToString( post, Syntax.Turtle ) );
+						}
+					}
+				}
+			}
 			//			}
 
 			//			System.err
@@ -243,12 +242,12 @@ public class ConnectorTestApp {
 			// System.out.println(
 			// "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<o>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 			// );
-			List<Post> posts = postReader.pollPosts( Builder.createURI(
-			        "https://graph.facebook.com/520312298060793" ), null, 25 );
-			for ( Post post : posts ) {
-				System.out.println( RdfUtils.resourceToString( post,
-				        Syntax.Turtle ) );
-			}
+			//			List<Post> posts = postReader.pollPosts( Builder.createURI(
+			//			        "https://graph.facebook.com/520312298060793" ), null, 25 );
+			//			for ( Post post : posts ) {
+			//				System.out.println( RdfUtils.resourceToString( post,
+			//				        Syntax.Turtle ) );
+			//			}
 
 		} finally {
 			System.err

@@ -23,6 +23,7 @@ import de.m0ep.canvas.model.Attachment;
 import de.m0ep.canvas.model.Course;
 import de.m0ep.canvas.model.DiscussionTopic;
 import de.m0ep.canvas.model.Entry;
+import de.m0ep.canvas.model.Group;
 import de.m0ep.socc.core.exceptions.AuthenticationException;
 import de.m0ep.socc.core.exceptions.NotFoundException;
 import de.m0ep.socc.core.utils.DateUtils;
@@ -40,6 +41,9 @@ import de.m0ep.socc.core.utils.UserAccountUtils;
  */
 public final class CanvasLmsSiocUtils {
 
+	public static final String ENDPOINT_COURSE = "courses";
+	public static final String ENDPOINT_GROUPS = "groups";
+
 	public static final String CANVAS_LMS_API_PATH = "/api/v1";
 
 	public static final String REGEX_API_PATH = "(?:/api/v1)?";
@@ -47,6 +51,10 @@ public final class CanvasLmsSiocUtils {
 	public static final String REGEX_INT_ID_GROUP = "([\\d]+)";
 
 	public static final String REGEX_QUERY_PARAMETER = "(?:\\?.*)?";
+
+	public static final String REGEX_ENDPOINT_GROUP = "([\\w]+)";
+
+	public static final String REGEX_DISCUSSION_TOPIC_PATH = "(?:/discussion_topics)?";
 
 	public static final String REGEX_USER_URI =
 	        REGEX_API_PATH
@@ -60,8 +68,18 @@ public final class CanvasLmsSiocUtils {
 	                + "/courses/"
 	                + REGEX_INT_ID_GROUP;
 
+	public static final String REGEX_GROUP_URI =
+	        REGEX_API_PATH
+	                + "/groups/"
+	                + REGEX_INT_ID_GROUP;
+
+	public static final String REGEX_ENDPOINT_URI =
+	        REGEX_API_PATH +
+	                "/" + REGEX_ENDPOINT_GROUP + "/"
+	                + REGEX_INT_ID_GROUP;
+
 	public static final String REGEX_DISCUSSION_TOPIC_URI =
-	        REGEX_COURSE_URI
+	        REGEX_ENDPOINT_URI
 	                + "/discussion_topics/"
 	                + REGEX_INT_ID_GROUP;
 
@@ -77,6 +95,12 @@ public final class CanvasLmsSiocUtils {
 	public static final String TEMPLATE_VAR_USER_ID = "userId";
 
 	public static final String TEMPLATE_VAR_COURSE_ID = "courseId";
+
+	public static final String TEMPLATE_VAR_GROUP_ID = "groupId";
+
+	public static final String TEMPLATE_VAR_ENDPOINT = "endpoint";
+
+	public static final String TEMPLATE_VAR_ENDPOINT_ID = "endpointId";
 
 	public static final String TEMPLATE_VAR_DISCUSSION_TOPIC_ID = "discussionId";
 
@@ -94,8 +118,19 @@ public final class CanvasLmsSiocUtils {
 	                + TEMPLATE_VAR_COURSE_ID
 	                + "}";
 
+	public static final String TEMPLATE_GROUP_URI =
+	        CANVAS_LMS_API_PATH
+	                + "/groups/{"
+	                + TEMPLATE_VAR_GROUP_ID
+	                + "}";
+
 	public static final String TEMPLATE_DISCUSSION_TOPIC_URI =
-	        TEMPLATE_COURSE_URI
+	        CANVAS_LMS_API_PATH
+	                + "/{"
+	                + TEMPLATE_VAR_ENDPOINT
+	                + "}/{"
+	                + TEMPLATE_VAR_ENDPOINT_ID
+	                + "}"
 	                + "/discussion_topics/{"
 	                + TEMPLATE_VAR_DISCUSSION_TOPIC_ID
 	                + "}";
@@ -211,12 +246,33 @@ public final class CanvasLmsSiocUtils {
 		return Forum.getInstance( connector.getContext().getModel(), uri );
 	}
 
+	public static Forum createSiocForum( final CanvasLmsConnector connector, final Group group ) {
+		URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
+		URI uri = createGroupUri( serviceEndpoint, group.getId() );
+
+		if ( !Forum.hasInstance( connector.getContext().getModel(), uri ) ) {
+			Forum result = new Forum( connector.getContext().getModel(), uri,
+			        true );
+
+			result.setId( Long.toString( group.getId() ) );
+			result.setName( group.getName() );
+
+			Site site = connector.getStructureReader().getSite();
+			result.setHost( site );
+			site.addHostOf( result );
+		}
+
+		return Forum.getInstance( connector.getContext().getModel(), uri );
+	}
+
 	/**
 	 * Creates a {@link Thread} from a discussion topic. Creates also the inital
 	 * post.
 	 * 
 	 * @param connector
 	 *            Used connector.
+	 * @param endpoint
+	 *            Name of the discussion topics endpoint.
 	 * @param discussionTopic
 	 *            The discussion topic data.
 	 * @param parent
@@ -225,16 +281,15 @@ public final class CanvasLmsSiocUtils {
 	 */
 	public static Thread createSiocThread(
 	        final CanvasLmsConnector connector,
+	        final String endpoint,
 	        final DiscussionTopic discussionTopic,
 	        final Forum parent ) {
 		Model model = connector.getContext().getModel();
-		URI serviceEndpoint = connector.getService()
-		        .getServiceEndpoint()
-		        .asURI();
+		URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
 
-		long courseId;
+		long endpointId;
 		try {
-			courseId = Long.parseLong( parent.getId() );
+			endpointId = Long.parseLong( parent.getId() );
 		} catch ( NumberFormatException e1 ) {
 			throw new IllegalArgumentException(
 			        "The parent has an invalid id: was "
@@ -243,7 +298,8 @@ public final class CanvasLmsSiocUtils {
 
 		URI uri = createDiscussionTopicUri(
 		        serviceEndpoint,
-		        courseId,
+		        endpoint,
+		        endpointId,
 		        discussionTopic.getId() );
 
 		if ( !Thread.hasInstance( model, uri ) ) {
@@ -258,9 +314,10 @@ public final class CanvasLmsSiocUtils {
 
 			createSiocPost(
 			        connector,
+			        endpoint,
 			        result,
 			        discussionTopic,
-			        courseId );
+			        endpointId );
 
 			return result;
 		}
@@ -273,28 +330,28 @@ public final class CanvasLmsSiocUtils {
 	 * 
 	 * @param connector
 	 *            Used connector.
+	 * @param endpoint
+	 *            Name of the discussion topics endpoint.
 	 * @param container
 	 *            The parent thread {@link Container}.
 	 * @param discussionTopic
 	 *            The discussion topic data.
-	 * @param courseId
+	 * @param endpointId
 	 *            The course id.
 	 * @return A {@link Post} converted from that data.
 	 */
 	public static Post createSiocPost(
 	        final CanvasLmsConnector connector,
+	        final String endpoint,
 	        final Container container,
 	        final DiscussionTopic discussionTopic,
-	        final long courseId ) {
+	        final long endpointId ) {
 		Model model = connector.getContext().getModel();
-		URI serviceEndpoint = connector.getService()
-		        .getServiceEndpoint()
-		        .asURI();
+		URI serviceEndpoint = connector.getService().getServiceEndpoint().asURI();
 
 		UserAccount creator = null;
 		try {
-			String accountName = Long.toString( discussionTopic.getAuthor()
-			        .getId() );
+			String accountName = Long.toString( discussionTopic.getAuthor().getId() );
 			creator = UserAccountUtils.findUserAccount(
 			        model,
 			        accountName,
@@ -309,7 +366,8 @@ public final class CanvasLmsSiocUtils {
 
 		URI initPostUri = createInitialEntryUri(
 		        serviceEndpoint,
-		        courseId,
+		        endpoint,
+		        endpointId,
 		        discussionTopic.getId() );
 
 		Post result = new Post( model, initPostUri, true );
@@ -347,6 +405,8 @@ public final class CanvasLmsSiocUtils {
 	 * 
 	 * @param connector
 	 *            Used connector.
+	 * @param endpoint
+	 *            Name of the discussion topics endpoint.
 	 * @param entry
 	 *            Entry to convert
 	 * @param container
@@ -364,6 +424,7 @@ public final class CanvasLmsSiocUtils {
 	 */
 	public static Post createSiocPost(
 	        final CanvasLmsConnector connector,
+	        final String endpoint,
 	        final Entry entry,
 	        final Container container,
 	        final Post parentPost )
@@ -375,9 +436,9 @@ public final class CanvasLmsSiocUtils {
 		Container containerParent = connector.getStructureReader().getContainer(
 		        container.getParent().asURI() );
 
-		long courseId;
+		long endpointId;
 		try {
-			courseId = Long.parseLong( containerParent.getId() );
+			endpointId = Long.parseLong( containerParent.getId() );
 		} catch ( NumberFormatException e1 ) {
 			throw new IllegalArgumentException(
 			        "The parent of the container has an invalid id: was "
@@ -395,7 +456,8 @@ public final class CanvasLmsSiocUtils {
 
 		URI uri = createEntryUri(
 		        serviceEndpoint,
-		        courseId,
+		        endpoint,
+		        endpointId,
 		        discussionId,
 		        entry.getId() );
 
@@ -489,24 +551,44 @@ public final class CanvasLmsSiocUtils {
 	}
 
 	/**
+	 * Creates an URI for a {@link Forum} of a group.
+	 * 
+	 * @param rootUri
+	 *            URI of the Canvas instance
+	 * @param groupid
+	 *            The group id.
+	 * @return The created URI.
+	 */
+	public static URI createGroupUri( URI rootUri, long groupid ) {
+		return Builder.createURI(
+		        UriTemplate.fromTemplate( rootUri + TEMPLATE_GROUP_URI )
+		                .set( TEMPLATE_VAR_GROUP_ID, groupid )
+		                .expand() );
+	}
+
+	/**
 	 * Creates the URI for a Thread of a discussion topic.
 	 * 
 	 * @param rootUri
 	 *            URI of the Canvas instance
-	 * @param courseId
-	 *            The course id.
+	 * @param endpoint
+	 *            Name of the endpoint.
+	 * @param endpointId
+	 *            The endpoint id.
 	 * @param discussionId
 	 *            The discussion topic id-
 	 * @return The created URI.
 	 */
 	public static URI createDiscussionTopicUri(
 	        final URI rootUri,
-	        final long courseId,
+	        final String endpoint,
+	        final long endpointId,
 	        final long discussionId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate(
 		                rootUri + TEMPLATE_DISCUSSION_TOPIC_URI )
-		                .set( TEMPLATE_VAR_COURSE_ID, courseId )
+		                .set( TEMPLATE_VAR_ENDPOINT, endpoint )
+		                .set( TEMPLATE_VAR_ENDPOINT_ID, endpointId )
 		                .set( TEMPLATE_VAR_DISCUSSION_TOPIC_ID, discussionId )
 		                .expand() );
 	}
@@ -516,19 +598,23 @@ public final class CanvasLmsSiocUtils {
 	 * 
 	 * @param rootUri
 	 *            URI of the Canvas instance.
-	 * @param courseId
-	 *            The course ID.
+	 * @param endpoint
+	 *            Name of the endpoint.
+	 * @param endpointId
+	 *            The endpoint ID.
 	 * @param discussionId
 	 *            The discussionTopic.
 	 * @return The created URI.
 	 */
 	public static URI createInitialEntryUri(
 	        final URI rootUri,
-	        final long courseId,
+	        final String endpoint,
+	        final long endpointId,
 	        final long discussionId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( rootUri + TEMPLATE_INITIAL_ENTRY_URI )
-		                .set( TEMPLATE_VAR_COURSE_ID, courseId )
+		                .set( TEMPLATE_VAR_ENDPOINT, endpoint )
+		                .set( TEMPLATE_VAR_ENDPOINT_ID, endpointId )
 		                .set( TEMPLATE_VAR_DISCUSSION_TOPIC_ID, discussionId )
 		                .expand() );
 	}
@@ -538,8 +624,10 @@ public final class CanvasLmsSiocUtils {
 	 * 
 	 * @param rootUri
 	 *            URI of the Canvas instance,
-	 * @param courseId
-	 *            The course id.
+	 * @param endpoint
+	 *            Name of the endpoint.
+	 * @param endpointId
+	 *            The endpoint id.
 	 * @param discussionId
 	 *            The discussion topic id.
 	 * @param entryId
@@ -548,12 +636,14 @@ public final class CanvasLmsSiocUtils {
 	 */
 	public static URI createEntryUri(
 	        final URI rootUri,
-	        final long courseId,
+	        final String endpoint,
+	        final long endpointId,
 	        final long discussionId,
 	        final long entryId ) {
 		return Builder.createURI(
 		        UriTemplate.fromTemplate( rootUri + TEMPLATE_ENTRY_URI )
-		                .set( TEMPLATE_VAR_COURSE_ID, courseId )
+		                .set( TEMPLATE_VAR_ENDPOINT, endpoint )
+		                .set( TEMPLATE_VAR_ENDPOINT_ID, endpointId )
 		                .set( TEMPLATE_VAR_DISCUSSION_TOPIC_ID, discussionId )
 		                .set( TEMPLATE_VAR_ENTRY_ID, entryId )
 		                .expand() );
@@ -587,7 +677,26 @@ public final class CanvasLmsSiocUtils {
 	 *         otherwise.
 	 */
 	public static boolean isCourseUri( final URI uri, final URI rootUri ) {
-		Pattern pattern = Pattern.compile( "^" + rootUri + REGEX_COURSE_URI );
+		Pattern pattern = Pattern.compile( "^" + rootUri + REGEX_COURSE_URI
+		        + REGEX_DISCUSSION_TOPIC_PATH );
+		Matcher matcher = pattern.matcher( uri.toString() );
+
+		return matcher.matches();
+	}
+
+	/**
+	 * Test if the URI is one of a course.
+	 * 
+	 * @param uri
+	 *            URI to test.
+	 * @param rootUri
+	 *            URI of the Canvas instance
+	 * @return <code>true</code> if the URI is a course, <code>false</code>
+	 *         otherwise.
+	 */
+	public static boolean isGroupUri( final URI uri, final URI rootUri ) {
+		Pattern pattern = Pattern.compile( "^" + rootUri + REGEX_GROUP_URI
+		        + REGEX_DISCUSSION_TOPIC_PATH );
 		Matcher matcher = pattern.matcher( uri.toString() );
 
 		return matcher.matches();

@@ -96,7 +96,7 @@ public class Groups extends AbstractEndpoint {
 
 	public Groups( final CanvasLmsClient client ) {
 		setClient( client );
-		setEndpointPath( parentEndpointPath + PATH );
+		setEndpointPath( PATH );
 	}
 
 	public ListFromCrourse listFromCourse( long courseId ) {

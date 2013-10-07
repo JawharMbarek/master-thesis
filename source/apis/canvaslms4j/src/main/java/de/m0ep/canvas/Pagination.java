@@ -99,6 +99,18 @@ public class Pagination<T> implements Iterable<List<T>> {
 	private final String nextURL;
 	private final List<T> data;
 
+	/**
+	 * Constructs a new {@link Pagination}.
+	 * 
+	 * @param client
+	 *            The {@link CanvasLmsClient}.
+	 * @param json
+	 *            The JSON data.
+	 * @param next
+	 *            The URI to the next page.
+	 * @param paginationType
+	 *            The class of the data in <code>json</code> parameter.
+	 */
 	public Pagination(
 	        final CanvasLmsClient client,
 	        final String json,
@@ -125,6 +137,11 @@ public class Pagination<T> implements Iterable<List<T>> {
 		return new PaginationIterator( this );
 	}
 
+	/**
+	 * Fetch the next page of this pagination
+	 * 
+	 * @return A new {@link Pagination} for the next page.
+	 */
 	public Pagination<T> fetchNextPage() {
 		LOG.info( "Fetch next page {}.", getNextURL() );
 		try {

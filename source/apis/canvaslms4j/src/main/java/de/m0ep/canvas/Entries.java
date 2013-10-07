@@ -1,3 +1,25 @@
+/*
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package de.m0ep.canvas;
 
 import java.nio.charset.Charset;
@@ -16,6 +38,12 @@ import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.exceptions.NotFoundException;
 import de.m0ep.canvas.model.Entry;
 
+/**
+ * Implementation of an Entries endpoint
+ * 
+ * @author Florian Müller
+ * 
+ */
 public class Entries extends AbstractEndpoint {
 	private static final Logger LOG = LoggerFactory.getLogger( Entries.class );
 
@@ -149,30 +177,65 @@ public class Entries extends AbstractEndpoint {
 		LOG.info( "Create Entries for '{}' endpoint.", getParentEndpointPath() );
 	}
 
+	/**
+	 * Create a request to list all entries.
+	 * 
+	 * @return A {@link List} request.
+	 */
 	public List list() {
 		List request = new List();
 		initializeRequest( request );
 		return request;
 	}
 
+	/**
+	 * Create a request to get a single entry.
+	 * 
+	 * @param entryId
+	 *            Entry id.
+	 * @return A {@link Get} request.
+	 */
 	public Get get( final long entryId ) {
 		Get request = new Get( entryId );
 		initializeRequest( request );
 		return request;
 	}
 
+	/**
+	 * Request to post a message.
+	 * 
+	 * @param message
+	 *            The message content.
+	 * @return A {@link Post} request.
+	 */
 	public Post post( final String message ) {
 		Post request = new Post( message );
 		initializeRequest( request );
 		return request;
 	}
 
+	/**
+	 * Creates a request to list all replies of an entry.
+	 * 
+	 * @param entryId
+	 *            The entry id.
+	 * @return A {@link ListReplies} request.
+	 */
 	public ListReplies listReplies( final long entryId ) {
 		ListReplies request = new ListReplies( entryId );
 		initializeRequest( request );
 		return request;
 	}
 
+	/**
+	 * Creates a request to post a reply to an entry.
+	 * 
+	 * @param message
+	 *            Message content
+	 * @param entryId
+	 *            The id of the entry.
+	 * @return A {@link PostReply} request.
+	 */
 	public PostReply postReply( final String message, final long entryId ) {
 		PostReply request = new PostReply( message, entryId );
 		initializeRequest( request );

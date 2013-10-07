@@ -1,3 +1,25 @@
+/*
+ * The MIT License (MIT) Copyright © 2013 Florian Müller
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package de.m0ep.canvas;
 
 import java.io.IOException;
@@ -24,6 +46,14 @@ import de.m0ep.canvas.exceptions.CanvasLmsException;
 import de.m0ep.canvas.exceptions.NetworkException;
 import de.m0ep.canvas.exceptions.NotFoundException;
 
+/**
+ * Abstract implementation of a REST-Request to the Canvas REST-API
+ * 
+ * @author Florian Müller
+ * 
+ * @param <T>
+ *            Class of the returned data.
+ */
 public abstract class CanvasLmsRequest<T> {
 	private static final Logger LOG = LoggerFactory.getLogger( CanvasLmsRequest.class );
 
@@ -34,6 +64,18 @@ public abstract class CanvasLmsRequest<T> {
 	private HttpEntity content;
 	private Class<T> responseType;
 
+	/**
+	 * Constructs a new {@link CanvasLmsRequest}.
+	 * 
+	 * @param client
+	 *            The {@link CanvasLmsClient}.
+	 * @param methodType
+	 *            The HTTP operation type.
+	 * @param uri
+	 *            The request URI.
+	 * @param responseType
+	 *            The class of the returned data.
+	 */
 	public CanvasLmsRequest(
 	        final CanvasLmsClient client,
 	        final Class<? extends HttpRequestBase> methodType,
@@ -155,6 +197,13 @@ public abstract class CanvasLmsRequest<T> {
 		}
 	}
 
+	/**
+	 * Execute this request as a {@link Pagination}.
+	 * 
+	 * @return
+	 * @throws CanvasLmsException
+	 *             Thrown if sth. gone wrong.
+	 */
 	public Pagination<T> executePagination() throws CanvasLmsException {
 		HttpResponse response = executeUnparsed();
 
@@ -199,6 +248,13 @@ public abstract class CanvasLmsRequest<T> {
 		return new Pagination<T>( getClient(), responseContent, nextUri, getResponseType() );
 	}
 
+	/**
+	 * Executes this request for a single resource.
+	 * 
+	 * @return The result as the defined class.
+	 * @throws CanvasLmsException
+	 *             Thrown if sth. gone wrong.
+	 */
 	public T execute() throws CanvasLmsException {
 		HttpResponse response = executeUnparsed();
 
@@ -231,6 +287,16 @@ public abstract class CanvasLmsRequest<T> {
 		return getClient().getGson().fromJson( responseContent, getResponseType() );
 	}
 
+	/**
+	 * Throw exceptions if the request was not "OK"
+	 * 
+	 * @param statusLine
+	 *            The {@link StatusLine} of the response.
+	 * @param content
+	 *            The response content.
+	 * @throws CanvasLmsException
+	 *             Thrown exception goes here.
+	 */
 	private void isHttpStatusOkOrThrow( StatusLine statusLine, String content )
 	        throws CanvasLmsException {
 		int statusCode = statusLine.getStatusCode();
